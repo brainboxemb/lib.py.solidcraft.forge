@@ -30,3 +30,7 @@ evidence only and are not implementation sources.
 The dependency-ordered implementation sequence is in
 [the foundational remediation plan](remediation-plan.md). Product changes must
 follow that order unless this architecture is deliberately revised.
+
+
+The verification layers and migration of current tests are defined in
+[Forge test and qualification architecture](test-architecture.md).
