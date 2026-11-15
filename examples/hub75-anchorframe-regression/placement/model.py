@@ -1,6 +1,9 @@
 """Known-good Placement baseline for the HUB75-like AnchorFrame regression."""
 
 
+from scpf import BOTTOM, FRONT
+
+
 class SideBoard:
     width = 12.0
     depth = 60.0
