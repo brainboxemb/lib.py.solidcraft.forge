@@ -74,23 +74,20 @@ The primary explicit API is:
 Board(..., placement=Placement(x=100, y=0, z=20))
 ```
 
-Convenience methods operate on Placement:
+Placement is the primary occurrence-positioning API:
 
 ```python
-part.at(x=100)       # absolute placement
-part.move(x=20)      # relative placement change
-part.rotate(Y, 90)   # absolute axis-angle orientation
+part = Board(..., placement=Placement(x=100, y=0, z=20))
 ```
 
-These Python methods describe final model intent. They do **not** prescribe
-same-named SolidCraft commands.
+`at()` remains an absolute-placement convenience and `rotate()` sets an
+absolute axis-angle orientation. Forge intentionally has no public relative
+`move()` convenience: relative movement obscures the final absolute
+placement and was too easily confused with SolidCraft `occurrence.move`.
 
-In particular:
-
-> Python `move()` does not imply SolidCraft `occurrence.move`.
-
-The compiler sees the final Placement and chooses the native representation
-that best preserves it.
+These Python APIs describe final model intent. They do **not** prescribe
+same-named SolidCraft commands. The compiler sees the final Placement and
+chooses the native representation that best preserves it.
 
 ## 3. Foundational use cases
 
@@ -135,14 +132,15 @@ Expected:
 - no required follow-up move of the second occurrence merely because Forge
   used `copy()`.
 
-### U4 — relative convenience
+### U4 — absolute convenience
 
 ```python
-right = left.copy().move(x=100)
+right = left.copy().at(x=100)
 ```
 
-The final Placement is what matters. The compiler may fold the relative Python
-operation into creation-time native placement.
+`at()` is only shorthand for an absolute Placement update. The final
+Placement is what matters; no relative movement API is part of the public
+contract.
 
 ### U5 — parameter-driven placement
 
