@@ -8,4 +8,4 @@ marker = (
     .rotate([0, 0, 90])
     .translate([50, 20, 15])
 )
-show(base | marker)
+model = base | marker
