@@ -12,6 +12,25 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 - Nothing yet.
 
+## [0.3.1] - 2026-11-15
+
+Rotated-copy Placement lowering correction.
+
+### Fixed
+
+- Keep numeric translation and rotation from one copied `Placement` together
+  in a single native `occurrence.move`. Forge no longer applies translation
+  through `occurrence.copy` and then rotates that already-translated occurrence
+  around the native origin.
+- Added native qualification for a copied occurrence with both translation and
+  rotation so downstream panel-style layouts catch this transform-order bug.
+
+### Compatibility
+
+- SCPF package version: **0.3.1**
+- Qualified SolidCraft version: **0.42.0**
+- Python: **3.10+**
+
 ## [0.3.0] - 2026-11-15
 
 Replay-first placement cleanup and foundational API correction.
