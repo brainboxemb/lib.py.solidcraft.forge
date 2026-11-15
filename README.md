@@ -26,9 +26,12 @@ and regression-checked in CI.
 The library website also provides a [full, multi-chapter API Guide](https://brainboxemb.github.io/lib.py.solidcraft.forge/guide/) covering geometry, transforms, native features, reusable components and verification.
 [Why SCPF delegates geometry to SolidCraft](scpf/docs/architecture.md) explains the code structure, native component placement and verification.
 
-SolidCraft compatibility: **0.30.1 tested**; older versions are refused by the native-version guard, newer ones generate a warning. See the
-[SCPF API guide](scpf/README.md) for parameters, placement, sketches, features,
-reusable components, and GUI/CLI execution.
+SolidCraft compatibility is defined once by
+`scpf.version.TESTED_SOLIDCRAFT_VERSION`. The qualification site publishes
+that exact tested version together with source-matched native results; older
+versions are refused by the native-version guard and newer unqualified versions
+generate a warning. See the [SCPF API guide](scpf/README.md) for parameters,
+placement, sketches, features, reusable components, and GUI/CLI execution.
 
 ## Reusable component parameters
 

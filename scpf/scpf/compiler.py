@@ -11,7 +11,16 @@ from .core import (
 
 
 class ModelError(ValueError):
-    """An unsupported or geometrically invalid CAD description."""
+    """Report unsupported or invalid CAD model intent.
+
+    Use when:
+        Catch Forge compilation/model validation failures separately from normal
+        Python argument errors when integrating the lower-level compiler API.
+
+    Limits:
+        User model code normally fixes the underlying model instead of handling
+        this exception as a recoverable geometry result.
+    """
 
 
 def _require_positive(value, label):
@@ -51,7 +60,16 @@ def _collect(node, values=None):
 
 
 def compile_model(shape: Shape, name: str) -> dict:
-    """Compile a shape tree by operation semantics, not example names."""
+    """Compile one Shape tree to a native SolidCraft command document.
+
+    Use when:
+        Lower-level tooling already has a final Shape object and needs the JSON
+        command plan without executing a model source file.
+
+    Limits:
+        The final value must be a Shape and name must be a valid identifier.
+        Normal user workflows usually call the scpf runner/CLI instead.
+    """
     if not isinstance(shape, Shape):
         raise TypeError("the final script expression must produce a Shape")
     if not name or not name.isidentifier():

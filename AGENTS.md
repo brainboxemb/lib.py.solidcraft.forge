@@ -1,10 +1,86 @@
-# SCPF repository notes
+# SCPF repository instructions
 
-Python SCPF is the only supported scripting frontend. Keep model objects
-and CAD feature intent separate from SolidCraft command JSON and transport.
-The adapter may translate one high-level feature into multiple native commands.
-SolidCraft remains the only engine for BRep geometry and native feature history.
+## Read the minimum context
 
-When changing example models, update Python regression tests, generated command
-fixtures where applicable, and native qualification checks. Do not reintroduce
-the retired SCRF Rust scripting layer.
+Do not browse external documentation by default. Start with the smallest local
+source that answers the task:
+
+| Task | Read first |
+| --- | --- |
+| Public Forge API lookup/semantics | `docs/agent/forge-api.json` |
+| Exact Forge names/signatures/enums | relevant code in `scpf/scpf/` |
+| Qualification rules | `qualification/README.md` |
+| SolidCraft command/API lookup | `docs/agent/solidcraft.md` |
+| SolidCraft version upgrade | `docs/qualification/solidcraft-upgrade-protocol.md` |
+| PythonSCAD / pyBOSL2 qualification reference | `docs/agent/reference-libraries.md` |
+
+Only read additional files when the first source is insufficient. The compact
+`docs/agent/forge-api.json` snapshot is generated from the same public Python
+objects/docstrings as the human API reference. It is intentionally a first-read
+index rather than a full manual: use its exact signature/value and short summary,
+then read the linked local guide or relevant implementation/docstring only when
+more semantics are needed. Do not edit the snapshot by hand.
+For SolidCraft, use the version-pinned local vendor snapshot or local CLI
+introspection before any website lookup. Only consult upstream/external
+PythonSCAD or pyBOSL2 documentation when the local agent reference does not
+cover the required operation or when intentionally refreshing that reference.
+
+## Public API source of truth
+
+Read `docs/09-documentation-architecture.md` for the documentation/source-of-truth split.
+Exact public names, signatures, defaults, enum members and object-local semantics live
+with the Python implementation and its public docstrings. Cross-object design rules that
+cannot sensibly live on one Python object remain in `docs/05-cad-api-design.md`.
+Generated API/reference output, qualification fixtures, README/site examples and downstream
+CAD models do not redefine either source.
+
+If implementation and the API contract disagree, treat that as an
+implementation bug or unresolved API decision. Never make a qualification pass
+by adding a copied numeric offset when the API should express the relationship
+semantically.
+
+## Public API change procedure
+
+1. Read `docs/05-cad-api-design.md`.
+2. Decide whether the behaviour is already specified.
+3. If specified: fix implementation + focused regression.
+4. If not specified: update the API contract first.
+5. Update the smallest proving qualification fixture.
+6. Update derived user documentation/examples.
+7. Run Q1/Q2 first and only affected native cases while iterating.
+8. Run full Q1-Q6 before promotion/release.
+
+Forge describes CAD intent and lowers it to SolidCraft commands. SolidCraft is
+the BRep/feature-history engine; do not add a competing geometry or mating
+engine to Forge.
+
+## Qualification references
+
+Every qualification case contains:
+
+- `examples/<case>/scpf/model.py`
+- `examples/<case>/pythonscad/model.py`
+- `examples/<case>/pybosl2/model.py`
+
+PythonSCAD and pyBOSL2 express the same modelling intent for comparison. They
+are not alternative Forge specifications. Use
+`docs/agent/reference-libraries.md` before looking upstream.
+
+When another library lacks a SolidCraft-style associative relationship, compare
+the visible geometry and state the semantic limitation in a short source
+comment. Do not fake associativity with unexplained coordinates.
+
+## Qualification performance
+
+Keep the edit-check loop short:
+
+- Q1/Q2 require no SolidCraft.
+- Native qualification must support selected cases.
+- Time compile/build/eval/snapshot/mutation steps before optimizing startup.
+- Reuse a supported persistent native process only when measured useful and
+  case isolation remains reliable.
+- Full Q1-Q6 is mandatory for SolidCraft-version promotion and final
+  main-branch qualification.
+
+When changing a qualification model, update its regression/native checks and
+both reference implementations.

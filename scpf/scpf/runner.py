@@ -27,7 +27,17 @@ from .explicit_sketch import Sketch
 
 
 class ModelParameterWarning(UserWarning):
-    """A declared editable model parameter lost its native CAD dependency."""
+    """Warn that an editable model parameter lost a native CAD dependency.
+
+    Use when:
+        Tooling wants to detect parameters that became concrete Python values or
+        are only partly associative in the generated SolidCraft model.
+
+    Limits:
+        This is a warning category, not an exception. The preferred fix is to
+        preserve the symbolic relationship or mark an intentional build-time
+        input with a leading underscore.
+    """
 
 
 @dataclass(frozen=True)
@@ -402,13 +412,17 @@ def _model_factory(cls):
 
 
 def component(cls):
-    """Declare a reusable component with implicit editable public parameters.
+    """Declare one reusable physical component definition.
 
-    Public lower-case numeric fields become component-local editable native
-    parameters automatically. Passing a parent Parameter/Expression into a
-    component input preserves that existing dependency and does not create a
-    duplicate child parameter. Private underscore-prefixed defaults remain
-    Forge/build-time inputs.
+    Use when:
+        Decorate a model class when its build() result represents one reusable
+        physical part. Calling the decorated class creates an occurrence of
+        that shared definition.
+
+    Limits:
+        build() must produce one Shape when the class is reused as a component.
+        Public lower-case numeric fields become editable native parameters;
+        underscore-prefixed inputs remain Forge/build-time inputs.
     """
     if not isinstance(cls, type) or not callable(getattr(cls, "build", None)):
         raise TypeError("component() expects a model class with build()")
@@ -433,7 +447,17 @@ def _assembly_factory(cls):
 
 
 def assembly(cls):
-    """Declare an imported class whose build() returns an SCPF assembly."""
+    """Declare a reusable class that composes component occurrences.
+
+    Use when:
+        Decorate a class when the class itself represents a reusable assembly
+        or subassembly built from component occurrences and their relationships.
+
+    Limits:
+        build() must return a component occurrence or Assembly. The decorator
+        does not itself create grouping or attachment relationships; those come
+        from the objects returned by build().
+    """
     if not isinstance(cls, type) or not callable(getattr(cls, "build", None)):
         raise TypeError("assembly() expects a model class with build()")
     return _assembly_factory(cls)
@@ -486,7 +510,17 @@ def _model_import_context(path: Path):
 
 
 def run_script(path: str | Path) -> dict:
-    """Run a trusted SCPF script and return its native command document."""
+    """Execute a trusted SCPF model source file and return its command document.
+
+    Use when:
+        Programmatic tooling needs the same model-loading/root-selection and
+        compilation behaviour as the SCPF CLI.
+
+    Limits:
+        The source is executed as trusted Python. A file must either end in an
+        explicit root model call or define exactly one unambiguous public model
+        class with build().
+    """
     path = Path(path).resolve()
     syntax = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
 

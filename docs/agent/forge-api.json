@@ -1,0 +1,470 @@
+{
+  "schema": 1,
+  "generated_from": "scpf public objects and docstrings",
+  "symbols": {
+    "Faces": {
+      "kind": "enum",
+      "summary": "Select named planar faces for within-component feature operations.",
+      "reference": "reference/Faces/",
+      "guide": "guide/features/#hole",
+      "members": {
+        "TOP": "top",
+        "BOTTOM": "bottom",
+        "LEFT": "left",
+        "RIGHT": "right",
+        "FRONT": "front",
+        "BACK": "back"
+      }
+    },
+    "Anchor": {
+      "kind": "enum",
+      "summary": "Select component attachment references and cardinal directions.",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice",
+      "members": {
+        "CENTER": "center",
+        "TOP": "top",
+        "BOTTOM": "bottom",
+        "LEFT": "left",
+        "RIGHT": "right",
+        "FRONT": "front",
+        "BACK": "back",
+        "FRONT_TOP_LEFT": "front_top_left",
+        "FRONT_TOP_RIGHT": "front_top_right",
+        "FRONT_BOTTOM_LEFT": "front_bottom_left",
+        "FRONT_BOTTOM_RIGHT": "front_bottom_right",
+        "BACK_TOP_LEFT": "back_top_left",
+        "BACK_TOP_RIGHT": "back_top_right",
+        "BACK_BOTTOM_LEFT": "back_bottom_left",
+        "BACK_BOTTOM_RIGHT": "back_bottom_right",
+        "INNER_BOTTOM": "inner_bottom",
+        "UP": "top",
+        "DOWN": "bottom"
+      }
+    },
+    "Axis": {
+      "kind": "enum",
+      "summary": "Select one of the native principal X, Y or Z axes.",
+      "reference": "reference/Axis/",
+      "guide": "guide/geometry/#solids",
+      "members": {
+        "X": "X",
+        "Y": "Y",
+        "Z": "Z"
+      }
+    },
+    "Direction": {
+      "kind": "enum",
+      "summary": "Choose how an extrusion extends relative to its sketch-plane normal.",
+      "reference": "reference/Direction/",
+      "guide": "guide/geometry/#profiles",
+      "members": {
+        "POSITIVE": "positive",
+        "NEGATIVE": "negative",
+        "SYMMETRIC": "symmetric"
+      }
+    },
+    "Depth": {
+      "kind": "enum",
+      "summary": "Choose a supported feature-depth policy.",
+      "reference": "reference/Depth/",
+      "guide": "guide/features/#hole",
+      "members": {
+        "THROUGH_ALL": "through_all"
+      }
+    },
+    "Edges": {
+      "kind": "enum",
+      "summary": "Select edges for supported fillet and chamfer feature operations.",
+      "reference": "reference/Edges/",
+      "guide": "guide/features/#fillet",
+      "members": {
+        "VERTICAL": "vertical"
+      }
+    },
+    "Shape": {
+      "kind": "callable",
+      "summary": "Represent Forge geometry/feature intent before SolidCraft executes it.",
+      "reference": "reference/Shape/",
+      "guide": "guide/model-objects/#shape",
+      "signature": "Shape(kind: str, data: Any, history: Any = None) -> None"
+    },
+    "component": {
+      "kind": "callable",
+      "summary": "Declare one reusable physical component definition.",
+      "reference": "reference/component/",
+      "guide": "guide/assembly-basics/#simple-component",
+      "signature": "component(cls)"
+    },
+    "assembly": {
+      "kind": "callable",
+      "summary": "Declare a reusable class that composes component occurrences.",
+      "reference": "reference/assembly/",
+      "guide": "guide/assembly-basics/#reusable-assembly",
+      "signature": "assembly(cls)"
+    },
+    "Occurrence.copy": {
+      "kind": "callable",
+      "summary": "Create another occurrence of the same reusable definition.",
+      "reference": "reference/Occurrence.copy/",
+      "guide": "guide/assembly-basics/#collection",
+      "signature": "Occurrence.copy(self)"
+    },
+    "Occurrence.move": {
+      "kind": "callable",
+      "summary": "Translate an occurrence without changing its shared component geometry.",
+      "reference": "reference/Occurrence.move/",
+      "guide": "guide/assembly-basics/#collection",
+      "signature": "Occurrence.move(self, x=0, y=0, z=0)"
+    },
+    "Occurrence.attach": {
+      "kind": "callable",
+      "summary": "Create a rigid relationship from this occurrence to another component.",
+      "reference": "reference/Occurrence.attach/",
+      "guide": "guide/assembly-basics/#relationship",
+      "signature": "Occurrence.attach(self, target, *, parent=<Anchor.RIGHT: 'right'>, child=<Anchor.LEFT: 'left'>, offset=(0, 0), gap=0, angle=None, as_built=False)"
+    },
+    "Occurrence.group": {
+      "kind": "callable",
+      "summary": "Place this occurrence in a named native subassembly component.",
+      "reference": "reference/Occurrence.group/",
+      "guide": "guide/assembly-basics/#group",
+      "signature": "Occurrence.group(self, name)"
+    },
+    "Assembly.group": {
+      "kind": "callable",
+      "summary": "Wrap these assembly occurrences in a real nested native component.",
+      "reference": "reference/Assembly.group/",
+      "guide": "guide/assembly-basics/#group",
+      "signature": "Assembly.group(self, name)"
+    },
+    "Assembly.with_anchor": {
+      "kind": "callable",
+      "summary": "Expose one named attachment datum owned by this assembly.",
+      "reference": "reference/Assembly.with_anchor/",
+      "guide": "guide/components/#assembly-anchor",
+      "signature": "Assembly.with_anchor(self, name, target, reference, *, offset=(0, 0))"
+    },
+    "Assembly.anchor": {
+      "kind": "callable",
+      "summary": "Return one named assembly-owned attachment datum.",
+      "reference": "reference/Assembly.anchor/",
+      "guide": "guide/components/#assembly-anchor",
+      "signature": "Assembly.anchor(self, name)"
+    },
+    "Shape.at": {
+      "kind": "callable",
+      "summary": "Place a shape at absolute coordinates or align it to another Shape.",
+      "reference": "reference/Shape.at/",
+      "guide": "guide/geometry/#solids",
+      "signature": "Shape.at(self, x=0, y=0, z=0, *, anchor=<Anchor.CENTER: 'center'>, child=<Anchor.CENTER: 'center'>)"
+    },
+    "Shape.on": {
+      "kind": "callable",
+      "summary": "Place a supported within-component feature on a target face.",
+      "reference": "reference/Shape.on/",
+      "guide": "guide/features/#hole",
+      "signature": "Shape.on(self, target, *, face=<Faces.TOP: 'top'>, offset=(0, 0))"
+    },
+    "Shape.attach": {
+      "kind": "callable",
+      "summary": "Anchor a supported feature explicitly to another Shape.",
+      "reference": "reference/Shape.attach/",
+      "guide": "guide/features/#anchors",
+      "signature": "Shape.attach(self, target, *, parent=<Anchor.TOP: 'top'>, child=<Anchor.BOTTOM: 'bottom'>, offset=(0, 0))"
+    },
+    "Shape.shell": {
+      "kind": "callable",
+      "summary": "Hollow a supported solid and leave selected Faces open.",
+      "reference": "reference/Shape.shell/",
+      "guide": "guide/features/#shell",
+      "signature": "Shape.shell(self, thickness, *, open=<Faces.TOP: 'top'>)"
+    },
+    "Sketch": {
+      "kind": "callable",
+      "summary": "Create an explicit named 2D sketch scope.",
+      "reference": "reference/Sketch/",
+      "guide": "guide/geometry/#profiles",
+      "signature": "Sketch(*, name='Profile', on=None, parent=<Anchor.TOP: 'top'>, plane=None, origin=None, offset=None)"
+    },
+    "Sketch.add": {
+      "kind": "callable",
+      "summary": "Add a supported 2D profile to this Sketch.",
+      "reference": "reference/Sketch.add/",
+      "guide": "guide/geometry/#profiles",
+      "signature": "Sketch.add(self, profile, *, offset=(0, 0))"
+    },
+    "Sketch.extrude": {
+      "kind": "callable",
+      "summary": "Extrude a completed Sketch into a supported 3D feature.",
+      "reference": "reference/Sketch.extrude/",
+      "guide": "guide/geometry/#profiles",
+      "signature": "Sketch.extrude(self, distance, *, direction=<Direction.POSITIVE: 'positive'>)"
+    },
+    "Box": {
+      "kind": "callable",
+      "summary": "Create a native rectangular solid.",
+      "reference": "reference/geometry-constructors/#Box",
+      "guide": "guide/geometry/#solids",
+      "signature": "Box(length, width, thickness)"
+    },
+    "Cylinder": {
+      "kind": "callable",
+      "summary": "Create a native cylinder on a principal axis.",
+      "reference": "reference/geometry-constructors/#Cylinder",
+      "guide": "guide/geometry/#solids",
+      "signature": "Cylinder(*, d, h, axis=<Axis.Z: 'Z'>)"
+    },
+    "Sphere": {
+      "kind": "callable",
+      "summary": "Create a sphere from its radius.",
+      "reference": "reference/geometry-constructors/#Sphere",
+      "guide": "guide/geometry/#solids",
+      "signature": "Sphere(radius)"
+    },
+    "Rectangle2D": {
+      "kind": "callable",
+      "summary": "Create a rectangular 2D profile.",
+      "reference": "reference/geometry-constructors/#Rectangle2D",
+      "guide": "guide/geometry/#solids",
+      "signature": "Rectangle2D(width, depth)"
+    },
+    "RoundedRectangle2D": {
+      "kind": "callable",
+      "summary": "Create a native rounded-rectangle 2D profile.",
+      "reference": "reference/geometry-constructors/#RoundedRectangle2D",
+      "guide": "guide/geometry/#solids",
+      "signature": "RoundedRectangle2D(width, depth, radius)"
+    },
+    "Circle2D": {
+      "kind": "callable",
+      "summary": "Create a circular 2D profile by diameter or radius.",
+      "reference": "reference/geometry-constructors/#Circle2D",
+      "guide": "guide/geometry/#solids",
+      "signature": "Circle2D(*, d=None, r=None)"
+    },
+    "Polygon2D": {
+      "kind": "callable",
+      "summary": "Create a closed named or unnamed polygon profile.",
+      "reference": "reference/geometry-constructors/#Polygon2D",
+      "guide": "guide/geometry/#solids",
+      "signature": "Polygon2D(points, *, plane='XY', ids=None, world=False)"
+    },
+    "Hole": {
+      "kind": "callable",
+      "summary": "Create hole feature intent, optionally directional and countersunk.",
+      "reference": "reference/feature-constructors/#Hole",
+      "guide": "guide/features/#features",
+      "signature": "Hole(*, d, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None, countersink_d=None, countersink_angle=90, countersink_recess=0)"
+    },
+    "Lip": {
+      "kind": "callable",
+      "summary": "Create plastic enclosure lip feature intent.",
+      "reference": "reference/feature-constructors/#Lip",
+      "guide": "guide/features/#features",
+      "signature": "Lip(*, width, height)"
+    },
+    "SnapFit": {
+      "kind": "callable",
+      "summary": "Create cantilever snap-fit feature intent.",
+      "reference": "reference/feature-constructors/#SnapFit",
+      "guide": "guide/features/#features",
+      "signature": "SnapFit(*, length, thickness, width, catch_depth, catch_length, hook, direction=None)"
+    },
+    "Boss": {
+      "kind": "callable",
+      "summary": "Create plastic screw-boss feature intent.",
+      "reference": "reference/feature-constructors/#Boss",
+      "guide": "guide/features/#features",
+      "signature": "Boss(*, d, h, hole_d=None, direction=None)"
+    },
+    "Rest": {
+      "kind": "callable",
+      "summary": "Create plastic support/rest feature intent.",
+      "reference": "reference/feature-constructors/#Rest",
+      "guide": "guide/features/#features",
+      "signature": "Rest(*, width, height, length=None, along=None, direction=None)"
+    },
+    "Parameter": {
+      "kind": "callable",
+      "summary": "Represent one named editable CAD dimension.",
+      "reference": "reference/parameters-positioning/#Parameter",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "Parameter(name: str, value: float) -> None"
+    },
+    "X": {
+      "kind": "constant",
+      "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
+      "reference": "reference/parameters-positioning/#X",
+      "guide": "guide/model-objects/#parameter-intent",
+      "value": "X"
+    },
+    "Y": {
+      "kind": "constant",
+      "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
+      "reference": "reference/parameters-positioning/#Y",
+      "guide": "guide/model-objects/#parameter-intent",
+      "value": "Y"
+    },
+    "Z": {
+      "kind": "constant",
+      "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
+      "reference": "reference/parameters-positioning/#Z",
+      "guide": "guide/model-objects/#parameter-intent",
+      "value": "Z"
+    },
+    "up": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the +Z direction.",
+      "reference": "reference/parameters-positioning/#up",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "up(distance)"
+    },
+    "down": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the -Z direction.",
+      "reference": "reference/parameters-positioning/#down",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "down(distance)"
+    },
+    "left": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the -X direction.",
+      "reference": "reference/parameters-positioning/#left",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "left(distance)"
+    },
+    "right": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the +X direction.",
+      "reference": "reference/parameters-positioning/#right",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "right(distance)"
+    },
+    "front": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the -Y direction.",
+      "reference": "reference/parameters-positioning/#front",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "front(distance)"
+    },
+    "back": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the +Y direction.",
+      "reference": "reference/parameters-positioning/#back",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "back(distance)"
+    },
+    "half": {
+      "kind": "callable",
+      "summary": "Return half of a numeric or symbolic CAD dimension.",
+      "reference": "reference/parameters-positioning/#half",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "half(value)"
+    },
+    "midpoint": {
+      "kind": "callable",
+      "summary": "Return the midpoint between two numeric or symbolic dimensions.",
+      "reference": "reference/parameters-positioning/#midpoint",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "midpoint(start, end)"
+    },
+    "pv": {
+      "kind": "callable",
+      "summary": "Return the concrete Python value of a symbolic CAD dimension.",
+      "reference": "reference/parameters-positioning/#pv",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "pv(dim) -> float"
+    },
+    "AnchorFrame": {
+      "kind": "callable",
+      "summary": "Describe one local attachment point and orientation.",
+      "reference": "reference/attachment-references/#AnchorFrame",
+      "guide": "guide/assembly-basics/#anchor-choice",
+      "signature": "AnchorFrame(origin: tuple[float, float, float] = (0.0, 0.0, 0.0), z: tuple[float, float, float] | scpf.core.Anchor = <Anchor.TOP: 'top'>, x: tuple[float, float, float] | scpf.core.Anchor = <Anchor.RIGHT: 'right'>) -> None"
+    },
+    "AnchorTopology": {
+      "kind": "callable",
+      "summary": "Describe an attachment datum that follows native SolidCraft topology.",
+      "reference": "reference/attachment-references/#AnchorTopology",
+      "guide": "guide/assembly-basics/#anchor-choice",
+      "signature": "AnchorTopology(edge: tuple[float, float, float], on: tuple[float, float, float], corner: tuple[float, float, float] | None = None, z: tuple[float, float, float] | None = None, x: tuple[float, float, float] | None = None) -> None"
+    },
+    "History": {
+      "kind": "enum",
+      "summary": "Choose how supported semantic features are lowered to native history.",
+      "reference": "reference/history-control/#History",
+      "members": {
+        "AUTO": "auto",
+        "NATIVE": "native",
+        "SKETCH": "sketch"
+      }
+    },
+    "behavior": {
+      "kind": "callable",
+      "summary": "Temporarily select a History policy for objects created in the scope.",
+      "reference": "reference/history-control/#behavior",
+      "signature": "behavior(*, history=<History.AUTO: 'auto'>)"
+    },
+    "compile_model": {
+      "kind": "callable",
+      "summary": "Compile one Shape tree to a native SolidCraft command document.",
+      "reference": "reference/execution-api/#compile_model",
+      "guide": "guide/getting-started/#run",
+      "signature": "compile_model(shape: scpf.core.Shape, name: str) -> dict"
+    },
+    "run_script": {
+      "kind": "callable",
+      "summary": "Execute a trusted SCPF model source file and return its command document.",
+      "reference": "reference/execution-api/#run_script",
+      "guide": "guide/getting-started/#run",
+      "signature": "run_script(path: str | pathlib.Path) -> dict"
+    },
+    "ModelError": {
+      "kind": "callable",
+      "summary": "Report unsupported or invalid CAD model intent.",
+      "reference": "reference/diagnostics/#ModelError"
+    },
+    "ModelParameterWarning": {
+      "kind": "callable",
+      "summary": "Warn that an editable model parameter lost a native CAD dependency.",
+      "reference": "reference/diagnostics/#ModelParameterWarning"
+    },
+    "TOP": {
+      "kind": "alias",
+      "target": "Anchor.TOP",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
+    },
+    "BOTTOM": {
+      "kind": "alias",
+      "target": "Anchor.BOTTOM",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
+    },
+    "LEFT": {
+      "kind": "alias",
+      "target": "Anchor.LEFT",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
+    },
+    "RIGHT": {
+      "kind": "alias",
+      "target": "Anchor.RIGHT",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
+    },
+    "FRONT": {
+      "kind": "alias",
+      "target": "Anchor.FRONT",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
+    },
+    "BACK": {
+      "kind": "alias",
+      "target": "Anchor.BACK",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
+    }
+  }
+}

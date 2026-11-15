@@ -8,6 +8,7 @@ import argparse
 import html
 import json
 from pathlib import Path
+import re
 import shutil
 from string import Template
 import sys
@@ -19,6 +20,16 @@ from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from guides import GUIDES
 from api_coverage import EXPORT_COVERAGE, CAPABILITY_COVERAGE
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
+from api_reference import (
+    ENUM_REFERENCES,
+    GROUP_REFERENCES,
+    METHOD_REFERENCES,
+    anchor_aliases,
+    api_manifest,
+    enum_members,
+    group_members,
+    references_for_guide,
+)
 
 sys.path.insert(0, str(ROOT))
 try:
@@ -443,6 +454,66 @@ def _render_native_results(native_case, solidcraft_version):
     )
 
 
+COPY_SCRIPT = r"""(() => {
+  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
+  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
+
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    document.execCommand('copy');
+    helper.remove();
+  }
+
+  document.querySelectorAll('pre > code').forEach((code) => {
+    const pre = code.parentElement;
+    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-copy';
+    button.title = 'Copy code';
+    button.setAttribute('aria-label', 'Copy code');
+    button.innerHTML = copyIcon;
+    wrapper.appendChild(button);
+
+    button.addEventListener('click', async () => {
+      try {
+        await copyText(code.textContent);
+        button.innerHTML = doneIcon;
+        button.classList.add('copied');
+        button.title = 'Copied';
+        button.setAttribute('aria-label', 'Copied');
+        window.setTimeout(() => {
+          button.innerHTML = copyIcon;
+          button.classList.remove('copied');
+          button.title = 'Copy code';
+          button.setAttribute('aria-label', 'Copy code');
+        }, 1400);
+      } catch (_error) {
+        button.title = 'Copy failed';
+        button.setAttribute('aria-label', 'Copy failed');
+      }
+    });
+  });
+})();
+"""
+
+
 def page(title, body, *, stylesheet, home, cheatsheet):
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -451,13 +522,14 @@ def page(title, body, *, stylesheet, home, cheatsheet):
 <link rel="stylesheet" href="{escape(stylesheet)}"></head>
 <body><header class="top"><div class="wrap nav">
 <a class="brand" href="{escape(home)}">SCPF <span>Python library</span></a>
-<nav aria-label="Main"><a href="{escape(home)}">Examples</a><a href="{escape(home)}guide/">API Guide</a><a href="{escape(home)}qualification/">Qualification</a><a href="{escape(cheatsheet)}">Cheatsheet</a>\n<a href="{LIBRARY_URL}">Source</a></nav></div></header>
+<nav aria-label="Main"><a href="{escape(home)}">Examples</a><a href="{escape(home)}guide/">API Guide</a><a href="{escape(home)}reference/">API Reference</a><a href="{escape(home)}qualification/">Qualification</a><a href="{escape(cheatsheet)}">Cheatsheet</a>\n<a href="{LIBRARY_URL}">Source</a></nav></div></header>
 <div class="development-banner" role="status"><div class="wrap">
 <strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
 </div></div>
 {body}
 <footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
 <a href="{CAD_SITE}">Full SolidCraft CAD projects →</a></div></footer>
+<script>{COPY_SCRIPT}</script>
 </body></html>"""
 
 
@@ -470,7 +542,7 @@ def render_template(name, **values):
     return Template(text(template_path)).substitute(values)
 
 
-def build(out, sha, native_root=None, diagram_root=None):
+def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root=None):
     """Compile the public examples and attach verified native screenshots if available.
 
     A .png is accepted only when the native verification file identifies the
@@ -486,9 +558,20 @@ def build(out, sha, native_root=None, diagram_root=None):
         metadata = json.loads(meta_file.read_text(encoding="utf-8"))
         verified = (metadata.get("source_commit") == sha
                     and metadata.get("verified") is True
-                    and metadata.get("solidcraft_version") == "0.30.1")
+                    and metadata.get("solidcraft_version") == TESTED_SOLIDCRAFT_VERSION)
         if not verified:
             raise ValueError("Native screenshots do not match this source commit")
+
+    reference_verified = False
+    reference_summary = {}
+    if reference_evidence_root is not None:
+        summary_file = reference_evidence_root / "summary.json"
+        if not summary_file.is_file():
+            raise ValueError("Reference directory is missing summary.json")
+        reference_summary = json.loads(summary_file.read_text(encoding="utf-8"))
+        reference_verified = reference_summary.get("source_commit") == sha
+        if not reference_verified:
+            raise ValueError("Reference renders do not match this source commit")
 
     out.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / "site" / "style.css", out / "style.css")
@@ -512,7 +595,10 @@ def build(out, sha, native_root=None, diagram_root=None):
             shutil.copyfile(screenshot, dest / "preview.png")
             preview_path = "preview.png"
             preview_kind = "native-snapshot"
-            preview_caption = "Native SolidCraft 0.30.1 render, verified against this source commit."
+            preview_caption = (
+                f"Native SolidCraft {TESTED_SOLIDCRAFT_VERSION} render, "
+                "verified against this source commit."
+            )
         else:
             (dest / "preview.svg").write_text(schematic(slug), encoding="utf-8")
             preview_path = "preview.svg"
@@ -550,50 +636,433 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
 <a class="button" href="examples/{slug}/">View source and command steps →</a></div></article>""")
 
     # Expanded, navigable documentation remains separate from tiny smoke-test
-    # examples and from the quick cheatsheet.
+    # examples and from the quick cheatsheet. Relevant API facts are repeated
+    # inline from the generated reference data so ordinary guide use does not
+    # require a click for every enum value or signature.
     guide_root = out / "guide"
     guide_root.mkdir(exist_ok=True)
-    guide_cards = []
+    def guide_sidebar(*, active=None, prefix=""):
+        active_chapter = next(
+            (chapter for chapter in GUIDES if chapter["slug"] == active),
+            None,
+        )
+
+        def nav_link(slug, title):
+            cls = ' class="active"' if slug == active else ""
+            link = (
+                f'<a{cls} href="{escape(prefix + slug + "/")}">'
+                f'{escape(title)}</a>'
+            )
+            if slug == active and active_chapter is not None:
+                headings = re.findall(
+                    r'<h2 id="([^"]+)">([^<]+)</h2>',
+                    active_chapter["body"],
+                )
+                if headings:
+                    link += (
+                        '<div class="guide-subnav">'
+                        + "".join(
+                            f'<a href="#{escape(anchor)}">{escape(title)}</a>'
+                            for anchor, title in headings
+                        )
+                        + '</div>'
+                    )
+            return link
+
+        overview_cls = ' class="active"' if active == "overview" else ""
+        return (
+            '<aside class="guide-sidebar">'
+            '<h2>API Guide</h2>'
+            f'<a{overview_cls} href="{escape(prefix or "./")}">Overview</a>'
+            + "".join(
+                nav_link(chapter["slug"], chapter["title"])
+                for chapter in GUIDES
+            )
+            + '</aside>'
+        )
+
+    def guide_shell(content, *, active, prefix):
+        return (
+            '<main class="wrap guide-layout">'
+            + guide_sidebar(active=active, prefix=prefix)
+            + '<article class="guide-article">'
+            + content
+            + '</article></main>'
+        )
+
+    def _member_details(member, *, compact=False):
+        if member["kind"] == "enum":
+            return (
+                '<div class="guide-api-members">'
+                + " · ".join(
+                    f'<code>{escape(member["name"])}.{escape(row["name"])}</code>'
+                    for row in member["members"]
+                )
+                + '</div>'
+            )
+        if member["kind"] == "constant":
+            return f'<p><code>{escape(member["name"])} = {escape(member["value"])}</code></p>'
+        if member.get("signature"):
+            css = ' class="guide-api-signature"' if compact else ""
+            return f'<pre{css}><code>{escape(member["signature"])}</code></pre>'
+        return ""
+
+    def _guide_group_details(spec):
+        rows = []
+        for member in group_members(spec):
+            rows.append(
+                f'<div class="guide-api-group-member" id="api-{escape(member["name"])}">'
+                f'<h4><code>{escape(member["name"])}</code></h4>'
+                + _member_details(member, compact=True)
+                + (f'<p>{escape(member["summary"])}</p>' if member["summary"] else "")
+                + (
+                    f'<p><strong>Use when:</strong> {escape(member["use_when"])}</p>'
+                    if member["use_when"] else ""
+                )
+                + (
+                    f'<p><strong>Current limits:</strong> {escape(member["limits"])}</p>'
+                    if member["limits"] else ""
+                )
+                + '</div>'
+            )
+        return '<div class="guide-api-group-members">' + "".join(rows) + '</div>'
+
+    def guide_api_summary(slug):
+        specs = references_for_guide(slug)
+        if not specs:
+            return ""
+        cards = []
+        for spec in specs:
+            if spec["kind"] == "enum":
+                details = (
+                    '<div class="guide-api-members">'
+                    + " · ".join(
+                        f'<code>{escape(spec["slug"])}.{escape(name)}</code>'
+                        for name, _value in enum_members(spec)
+                    )
+                    + '</div>'
+                )
+            elif spec["kind"] == "group":
+                details = _guide_group_details(spec)
+            else:
+                details = (
+                    f'<pre class="guide-api-signature"><code>'
+                    f'{escape(spec["signature"])}</code></pre>'
+                )
+            cards.append(
+                '<article class="guide-api-item">'
+                f'<h3><a href="../../reference/{escape(spec["slug"])}/">'
+                f'{escape(spec["title"])}</a></h3>'
+                f'<p>{escape(spec["summary"])}</p>'
+                + details
+                + (
+                    f'<p><strong>Use when:</strong> {escape(spec["use_when"])}</p>'
+                    if spec.get("use_when") else ""
+                )
+                + (
+                    f'<p><strong>Current limits:</strong> {escape(spec["limits"])}</p>'
+                    if spec.get("limits") else ""
+                )
+                + '</article>'
+            )
+        return (
+            '<section class="guide-api-summary">'
+            '<h2>API on this page</h2>'
+            '<p class="guide-api-intro">These values and signatures are generated '
+            'from the current Python API. They are shown here so the normal guide '
+            'flow does not require opening the reference for every detail.</p>'
+            '<div class="guide-api-grid">' + "".join(cards) + '</div></section>'
+        )
+
     for chapter in GUIDES:
         slug = chapter["slug"]
         dest = guide_root / slug
         dest.mkdir(exist_ok=True)
-        aside = "".join(
-            f'<a href="../{escape(item["slug"])}/">{escape(item["title"])}</a>'
-            for item in GUIDES
-        )
-        body = (
-            '<main class="wrap guide-layout"><aside class="guide-sidebar">'
-            '<h2>API Guide</h2><a href="../">All chapters</a>'
-            + aside + '</aside><article class="guide-article">'
-            + f'<p class="crumb"><a href="../">← API Guide</a> / {escape(chapter["title"])}</p>'
+        content = (
+            f'<p class="crumb"><a href="../">API Guide</a> / {escape(chapter["title"])}</p>'
             + f'<h1>{escape(chapter["title"])}</h1>'
             + f'<p class="guide-lead">{escape(chapter["summary"])}</p>'
-            + chapter["body"] + '</article></main>'
+            + chapter["body"]
+            + guide_api_summary(slug)
         )
+        body = guide_shell(content, active=slug, prefix="../")
         (dest / "index.html").write_text(
             page(chapter["title"], body, stylesheet="../../style.css",
                  home="../../", cheatsheet="../../cheatsheet/"),
             encoding="utf-8",
         )
-        guide_cards.append(
-            f'<article class="reference"><h2><a href="{escape(slug)}/">'
-            f'{escape(chapter["title"])}</a></h2>'
-            f'<p>{escape(chapter["summary"])}</p></article>'
-        )
-    guide_index = (
-        '<main class="wrap"><section class="hero small">'
-        '<p class="eyebrow">Detailed SCPF documentation</p>'
+    guide_overview = (
+        '<p class="crumb">API Guide / Overview</p>'
         '<h1>API Guide</h1>'
-        '<p>Learn the concepts, understand the generated native commands, '
-        'and check current support and limitations. '
-        'The cheatsheet is a quick lookup, not a substitute for this guide.</p>'
-        '</section><div class="reference-grid">'
-        + "".join(guide_cards) + '</div></main>'
+        '<p class="guide-lead">Learn the modelling concepts, understand when to '
+        'use them, and see the generated native SolidCraft behaviour.</p>'
+        '<section class="panel"><h2>Start here</h2>'
+        '<p>Use the chapter navigation on the left. The layout remains the same '
+        'while you move through the guide, so you can switch directly between '
+        'components, assemblies, features, transformations and other topics '
+        'without returning to a separate overview page.</p>'
+        '<p>Use the <a href="../reference/">API Reference</a> when you already '
+        'know the concept and need exact signatures, enum values or limits. '
+        'Use the <a href="../cheatsheet/">Cheatsheet</a> for the shortest lookup.</p>'
+        '</section>'
+    )
+    guide_index = guide_shell(
+        guide_overview,
+        active="overview",
+        prefix="",
     )
     (guide_root / "index.html").write_text(
         page("API Guide", guide_index, stylesheet="../style.css",
              home="../", cheatsheet="../cheatsheet/"), encoding="utf-8"
+    )
+
+    # Complete public API lookup. Facts and explanatory text are derived
+    # from the implementation/docstrings; this block only renders them.
+    reference_root = out / "reference"
+    reference_root.mkdir(exist_ok=True)
+    def reference_sidebar(*, active=None, prefix=""):
+        def nav_link(slug, title):
+            cls = ' class="active"' if slug == active else ""
+            link = (
+                f'<a{cls} href="{escape(prefix + slug + "/")}">'
+                f'{escape(title)}</a>'
+            )
+            if slug == active:
+                group = next(
+                    (spec for spec in GROUP_REFERENCES if spec["slug"] == slug),
+                    None,
+                )
+                if group is not None:
+                    link += (
+                        '<div class="reference-subnav">'
+                        + "".join(
+                            f'<a href="#{escape(member["name"])}">'
+                            f'{escape(member["name"])}</a>'
+                            for member in group_members(group)
+                        )
+                        + '</div>'
+                    )
+            return link
+
+        component_methods = [
+            spec for spec in METHOD_REFERENCES
+            if (
+                spec["slug"] in {"component", "assembly"}
+                or spec["slug"].startswith("Occurrence.")
+                or spec["slug"].startswith("Assembly.")
+            )
+        ]
+        shape_methods = [
+            spec for spec in METHOD_REFERENCES
+            if spec not in component_methods
+        ]
+
+        overview_cls = ' class="active"' if active == "overview" else ""
+        return (
+            '<aside class="reference-sidebar">'
+            '<h2>API Reference</h2>'
+            f'<a{overview_cls} href="{escape(prefix or "./")}">Overview</a>'
+            '<h3>Browse by task</h3>'
+            + "".join(
+                nav_link(spec["slug"], spec["title"])
+                for spec in GROUP_REFERENCES
+            )
+            + '<h3>Selectors</h3>'
+            + "".join(
+                nav_link(spec["slug"], spec["title"])
+                for spec in ENUM_REFERENCES
+            )
+            + '<h3>Components &amp; assemblies</h3>'
+            + "".join(
+                nav_link(spec["slug"], spec["title"])
+                for spec in component_methods
+            )
+            + '<h3>Shape &amp; sketch</h3>'
+            + "".join(
+                nav_link(spec["slug"], spec["title"])
+                for spec in shape_methods
+            )
+            + '</aside>'
+        )
+
+    def reference_shell(content, *, active, prefix):
+        return (
+            '<main class="wrap reference-layout">'
+            + reference_sidebar(active=active, prefix=prefix)
+            + '<article class="reference-article">'
+            + content
+            + '</article></main>'
+        )
+
+    for spec in ENUM_REFERENCES:
+        slug = spec["slug"]
+        dest = reference_root / slug
+        dest.mkdir(exist_ok=True)
+        rows = "".join(
+            "<tr>"
+            f"<td><code>{escape(slug)}.{escape(name)}</code></td>"
+            f"<td><code>{escape(str(value))}</code></td>"
+            "</tr>"
+            for name, value in enum_members(spec)
+        )
+        content = (
+            '<p class="crumb"><a href="../">API Reference</a> / '
+            + escape(spec["title"]) + '</p>'
+            + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
+            + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p></section>'
+            + '<section class="panel">'
+            + (
+                f'<h2>When to use it</h2><p>{escape(spec["use_when"])}</p>'
+                if spec["use_when"] else ""
+            )
+            + '<h2>Members</h2>'
+            + '<table class="api-table"><thead><tr><th>Name</th><th>Value</th></tr></thead>'
+            + f'<tbody>{rows}</tbody></table>'
+            + (
+                '<h2>Convenience aliases</h2><p>'
+                + " · ".join(f'<code>{escape(name)}</code>' for name in anchor_aliases())
+                + '</p>'
+                if spec["slug"] == "Anchor" else ""
+            )
+            + (
+                f'<h2>Current limits</h2><p>{escape(spec["limits"])}</p>'
+                if spec["limits"] else ""
+            )
+            + f'<p><a href="../../guide/{escape(spec["guide"])}/#{escape(spec["guide_anchor"])}">'
+              'Worked usage in the guide →</a> · '
+              '<a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
+            + '</section>'
+        )
+        body = reference_shell(content, active=slug, prefix="../")
+        (dest / "index.html").write_text(
+            page(spec["title"], body, stylesheet="../../style.css",
+                 home="../../", cheatsheet="../../cheatsheet/"),
+            encoding="utf-8",
+        )
+    for spec in METHOD_REFERENCES:
+        slug = spec["slug"]
+        dest = reference_root / slug
+        dest.mkdir(exist_ok=True)
+        content = (
+            '<p class="crumb"><a href="../">API Reference</a> / '
+            + escape(spec["title"]) + '</p>'
+            + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
+            + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p></section>'
+            + '<section class="panel"><h2>Current Python signature</h2>'
+            + f'<pre><code>{escape(spec["signature"])}</code></pre>'
+            + (
+                f'<h2>When to use it</h2><p>{escape(spec["use_when"])}</p>'
+                if spec["use_when"] else ""
+            )
+            + (
+                f'<h2>Current limits</h2><p>{escape(spec["limits"])}</p>'
+                if spec["limits"] else ""
+            )
+            + f'<p><a href="../../guide/{escape(spec["guide"])}/#{escape(spec["guide_anchor"])}">'
+              'Worked usage in the guide →</a> · '
+              '<a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
+            + '</section>'
+        )
+        body = reference_shell(content, active=slug, prefix="../")
+        (dest / "index.html").write_text(
+            page(spec["title"], body, stylesheet="../../style.css",
+                 home="../../", cheatsheet="../../cheatsheet/"),
+            encoding="utf-8",
+        )
+    for spec in GROUP_REFERENCES:
+        slug = spec["slug"]
+        dest = reference_root / slug
+        dest.mkdir(exist_ok=True)
+        member_sections = []
+        for member in group_members(spec):
+            member_sections.append(
+                f'<section class="panel api-group-member" id="{escape(member["name"])}">'
+                f'<h2><code>{escape(member["name"])}</code></h2>'
+                + _member_details(member)
+                + (f'<p>{escape(member["summary"])}</p>' if member["summary"] else "")
+                + (
+                    f'<h3>When to use it</h3><p>{escape(member["use_when"])}</p>'
+                    if member["use_when"] else ""
+                )
+                + (
+                    f'<h3>Current limits</h3><p>{escape(member["limits"])}</p>'
+                    if member["limits"] else ""
+                )
+                + '</section>'
+            )
+        guide_link = (
+            f'<p><a href="../../guide/{escape(spec["guide"])}/#{escape(spec["guide_anchor"])}">'
+            'Worked usage in the guide →</a> · '
+            '<a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
+            if spec.get("guide")
+            else '<p><a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
+        )
+        content = (
+            '<p class="crumb"><a href="../">API Reference</a> / '
+            + escape(spec["title"]) + '</p>'
+            + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
+            + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p>'
+            + guide_link + '</section>'
+            + "".join(member_sections)
+        )
+        body = reference_shell(content, active=slug, prefix="../")
+        (dest / "index.html").write_text(
+            page(spec["title"], body, stylesheet="../../style.css",
+                 home="../../", cheatsheet="../../cheatsheet/"),
+            encoding="utf-8",
+        )
+    # Compact machine-readable lookup for agents is generated from exactly the
+    # same objects/docstrings as the human reference.
+    (reference_root / "api.json").write_text(
+        json.dumps(api_manifest(), indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    contract_source = (ROOT / "docs" / "05-cad-api-design.md").read_text(encoding="utf-8")
+    (out / "api-design-contract.html").write_text(
+        page(
+            "API design contract",
+            '<main class="wrap"><p class="crumb"><a href="reference/">API Reference</a> / '
+            'API design contract</p><section class="hero small">'
+            '<p class="eyebrow">Cross-object design rules</p><h1>Forge API design contract</h1>'
+            '<p>Design rules that span several public objects live here. Exact '
+            'names, signatures, enum values and object-specific semantics come '
+            'from the Python implementation and public docstrings.</p>'
+            '</section><section class="panel"><pre><code>'
+            + escape(contract_source) + '</code></pre></section></main>',
+            stylesheet="style.css", home="./", cheatsheet="cheatsheet/",
+        ),
+        encoding="utf-8",
+    )
+
+    reference_overview = (
+        '<p class="crumb">API Reference / Overview</p>'
+        '<section class="hero small">'
+        '<p class="eyebrow">Complete generated lookup</p><h1>API Reference</h1>'
+        '<p>Use the navigation on the left for direct access to task groups, '
+        'selectors and exact public API operations. The layout stays the same '
+        'while you move through the reference.</p>'
+        '<p>If you are still deciding which modelling concept to use, start with '
+        '<a href="../guide/">the API Guide</a>.</p>'
+        '</section>'
+        '<section class="panel"><h2>How to use this reference</h2>'
+        '<p><strong>Browse by task</strong> keeps related constructors and helpers '
+        'together. <strong>Selectors</strong> contains complete generated values '
+        'such as Anchor and Faces. <strong>Core API</strong> gives exact current '
+        'signatures for components, assemblies, shapes and sketches.</p>'
+        '<p><a href="api.json">Machine-readable API index →</a> · '
+        '<a href="../api-design-contract.html">Cross-object API design rules →</a></p>'
+        '</section>'
+    )
+    reference_index = reference_shell(
+        reference_overview,
+        active="overview",
+        prefix="",
+    )
+    (reference_root / "index.html").write_text(
+        page("API Reference", reference_index, stylesheet="../style.css",
+             home="../", cheatsheet="../cheatsheet/"),
+        encoding="utf-8",
     )
 
     # Qualification pages explain the full contract for each native fixture:
@@ -611,6 +1080,83 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         case_dir.mkdir(exist_ok=True)
         source = text(source_path)
         (case_dir / "model.py").write_text(source, encoding="utf-8")
+
+        reference_sources = {}
+        for reference_name in ("pythonscad", "pybosl2"):
+            reference_path = (
+                ROOT / "examples" / slug / reference_name / "model.py"
+            )
+            if not reference_path.is_file():
+                raise ValueError(
+                    f"Qualification reference missing: {reference_path}"
+                )
+            reference_source = text(reference_path)
+            try:
+                compile(reference_source, str(reference_path), "exec")
+            except SyntaxError as exc:
+                raise ValueError(
+                    f"Invalid {reference_name} reference syntax: {reference_path}"
+                ) from exc
+            reference_sources[reference_name] = reference_source
+            (case_dir / f"reference-{reference_name}.py").write_text(
+                reference_source,
+                encoding="utf-8",
+            )
+
+        reference_evidence_html = (
+            '<div class="notice">Executable reference renders were not supplied '
+            'to this site build. The source comparisons remain available.</div>'
+        )
+        reference_evidence_files = []
+        if reference_verified:
+            reference_render_cards = []
+            for reference_name in ("pythonscad", "pybosl2"):
+                result_path = (
+                    reference_evidence_root / slug / reference_name / "result.json"
+                )
+                if not result_path.is_file():
+                    raise ValueError(f"Reference result missing: {result_path}")
+                result = json.loads(result_path.read_text(encoding="utf-8"))
+                if result.get("status") != "pass":
+                    raise ValueError(
+                        f"Reference result is not PASS: {slug}/{reference_name}"
+                    )
+                dest = case_dir / f"reference-{reference_name}"
+                dest.mkdir(exist_ok=True)
+                source_dir = result_path.parent
+                for name in (
+                    "result.json",
+                    "model.stl",
+                    "model-front.png",
+                    "model-right.png",
+                    "model-iso.png",
+                ):
+                    source_file = source_dir / name
+                    if not source_file.is_file() or source_file.stat().st_size == 0:
+                        raise ValueError(
+                            f"Reference evidence missing or empty: {source_file}"
+                        )
+                    shutil.copyfile(source_file, dest / name)
+                    reference_evidence_files.append(
+                        f"reference-{reference_name}/{name}"
+                    )
+                label = "PythonSCAD" if reference_name == "pythonscad" else "pyBOSL2"
+                reference_render_cards.append(
+                    '<figure class="qualification-reference-preview">'
+                    f'<a href="reference-{reference_name}/model-iso.png" '
+                    'class="qualification-image-link" target="_blank" rel="noopener">'
+                    f'<img src="reference-{reference_name}/model-iso.png" '
+                    f'alt="{escape(case["title"])} {label} reference render">'
+                    '</a>'
+                    f'<figcaption><strong>{label}</strong> · independently exported STL · '
+                    f'max bounds delta {escape(result.get("max_delta_mm"))} mm</figcaption>'
+                    '</figure>'
+                )
+            reference_evidence_html = (
+                '<div class="twocol qualification-reference-renders">'
+                + "".join(reference_render_cards)
+                + '</div>'
+            )
 
         diagram_html = ""
         diagram_name = case.get("diagram")
@@ -778,7 +1324,9 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             )
 
         evidence_items = [
-            '<li><a href="model.py">Fixture source</a></li>',
+            '<li><a href="model.py">Forge fixture source</a></li>',
+            '<li><a href="reference-pythonscad.py">PythonSCAD reference source</a></li>',
+            '<li><a href="reference-pybosl2.py">pyBOSL2 reference source</a></li>',
             '<li><a href="commands.json">Generated command JSON</a></li>',
         ]
         evidence_items.extend(
@@ -790,6 +1338,10 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 f'<li><a href="{escape(name)}">Native snapshot: {escape(name)}</a></li>'
                 for name in native_images
             )
+        evidence_items.extend(
+            f'<li><a href="{escape(name)}">Reference evidence: {escape(name)}</a></li>'
+            for name in reference_evidence_files
+        )
 
         case_body = render_template(
             "case.html",
@@ -813,6 +1365,9 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             lowering_detail=escape(lowering_detail),
             reference_items="".join(reference_items),
             source=escape(source),
+            pythonscad_source=escape(reference_sources["pythonscad"]),
+            pybosl2_source=escape(reference_sources["pybosl2"]),
+            reference_evidence=reference_evidence_html,
         )
         (case_dir / "index.html").write_text(
             page(
@@ -830,8 +1385,13 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             "status": status,
             "status_detail": status_detail,
             "command_count": len(commands["commands"]),
+            "reference_sources": [
+                "reference-pythonscad.py",
+                "reference-pybosl2.py",
+            ],
             "native_evidence": native_files,
             "native_images": native_images,
+            "reference_evidence": reference_evidence_files,
             "qualification_status": (
                 qualification_result.get("status") if qualification_result else None
             ),
@@ -1148,7 +1708,7 @@ Cheatsheet fragments describe API calls; a fragment alone is not a complete runn
     home = f"""<main class="wrap"><section class="hero"><p class="eyebrow">lib.py.solidcraft.forge / Python Forge</p>
 <h1>SCPF examples & API cheatsheet</h1><p class="meta">Tested SolidCraft version: {TESTED_SOLIDCRAFT_VERSION} · older releases rejected, newer releases warned</p><p>Small, readable Python examples to verify the SCPF command compiler.
 This is <strong>not</strong> the SolidCraft CAD model gallery.</p>
-<div class="actions"><a class="button primary" href="guide/">Read the API Guide →</a>\n<a class="button" href="qualification/">Qualification →</a>\n<a class="button" href="cheatsheet/">Quick cheatsheet →</a>\n<a class="button" href="{CAD_SITE}">See real CAD models →</a></div></section>
+<div class="actions"><a class="button primary" href="guide/">Read the API Guide →</a>\n<a class="button" href="reference/">API Reference →</a>\n<a class="button" href="qualification/">Qualification →</a>\n<a class="button" href="cheatsheet/">Quick cheatsheet →</a>\n<a class="button" href="{CAD_SITE}">See real CAD models →</a></div></section>
 <section class="section-heading"><h2>Small public examples</h2><p>Each source produces its own native-command JSON.
 Source and commands are regenerated together by CI.</p></section>
 <div class="cards">{"".join(cards)}</div>
@@ -1173,6 +1733,13 @@ if __name__ == "__main__":
     parser.add_argument("--source-sha", required=True)
     parser.add_argument("--native", type=Path, help="Source-matched native screenshot directory")
     parser.add_argument("--diagram-root", type=Path, help="Generated qualification setup diagrams")
+    parser.add_argument("--references", type=Path, help="Source-matched PythonSCAD/pyBOSL2 evidence")
     options = parser.parse_args()
-    build(options.out, options.source_sha, native_root=options.native, diagram_root=options.diagram_root)
+    build(
+        options.out,
+        options.source_sha,
+        native_root=options.native,
+        diagram_root=options.diagram_root,
+        reference_evidence_root=options.references,
+    )
     print(f"Built independent SCPF library site: {options.out}")

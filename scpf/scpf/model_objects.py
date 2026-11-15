@@ -345,7 +345,16 @@ class ModelInstance:
     flattened_parameters: tuple[str, ...] = ()
 
     def group(self, name):
-        """Keep this occurrence in a named native subassembly component."""
+        """Place this occurrence in a named native subassembly component.
+
+        Use when:
+            Give one occurrence a useful native browser/subassembly parent.
+
+        Limits:
+            Grouping changes hierarchy only. It does not align, attach or
+            otherwise create a mechanical relationship. One occurrence cannot
+            belong to several different groups.
+        """
         if not isinstance(name, str) or not name.strip():
             raise ValueError("group name must be non-empty text")
         if self.group_name is not None and self.group_name != name:
@@ -353,16 +362,28 @@ class ModelInstance:
         return replace(self, group_name=name)
 
     def copy(self):
-        """Another unnamed occurrence of the same reusable component."""
+        """Create another occurrence of the same reusable definition.
+
+        Use when:
+            Reuse the same physical component definition at another placement.
+
+        Limits:
+            copy() does not duplicate the component feature definition. The new
+            occurrence starts without the source attachment and explicit name.
+        """
         return replace(self, attachment=None, name=None)
 
     def move(self, x=0, y=0, z=0):
-        """Translate this occurrence without changing shared component geometry.
+        """Translate an occurrence without changing its shared component geometry.
 
-        Keep Parameter/Expression values symbolic so parameter-driven
-        placement stays associative instead of being flattened to the current
-        Python value. The compiler lowers that intent to the native placement
-        mechanism supported by the targeted SolidCraft version.
+        Use when:
+            The intended design rule is an explicit placement/offset rather
+            than a relationship to a face, corner or datum of another part.
+
+        Limits:
+            move() clears an existing attachment because it defines placement
+            directly. Parameter/Expression inputs stay symbolic where supported;
+            use attach() when another component should own the relationship.
         """
         values = (x, y, z)
         concrete = tuple(pv(value) for value in values)
@@ -379,15 +400,16 @@ class ModelInstance:
         )
 
     def rotate(self, axis=(0, 0, 1), degrees=None):
-        """Set this occurrence's absolute local-axis orientation in degrees.
+        """Set an occurrence's absolute local-axis orientation.
 
-        Named axis tokens allow concise calls such as rotate(X, 180) and
-        rotate(Y, 90). The explicit tuple form remains supported:
-        rotate(axis=(0, 1, 0), degrees=90).
+        Use when:
+            Give a placed component an explicit orientation using X, Y, Z or
+            an XYZ axis tuple and an angle in degrees.
 
-        Rotates only the placement of the shared component definition.
-        The pivot is the component's local origin; translation is preserved.
-        One axis-angle orientation is supported, not chained Euler rotations.
+        Limits:
+            Rotation changes only occurrence placement and clears an existing
+            attachment. One absolute axis-angle orientation is supported; a
+            second rotate() replaces the first rather than composing Euler turns.
         """
         if degrees is None:
             raise ValueError("model rotate() requires an angle in degrees")
@@ -430,14 +452,19 @@ class ModelInstance:
 
     def attach(self, target, *, parent=Anchor.RIGHT, child=Anchor.LEFT,
                offset=(0, 0), gap=0, angle=None, as_built=False):
-        """Attach this component rigidly to another component.
+        """Create a rigid relationship from this occurrence to another component.
 
-        ``gap`` is the normal distance between the references.
-        ``angle`` is their relative turn in degrees around the attachment
-        normal. Both stay native SolidCraft joint values.
+        Use when:
+            Placement should be expressed semantically between component
+            references, such as left face to right face or one mounting frame
+            to another, rather than as a calculated global XYZ position.
 
-        ``as_built=True`` keeps both occurrences exactly where they already
-        are and records only a fixed assembly relationship.
+        Limits:
+            The target must be another component occurrence. Supported standard
+            anchors currently focus on rectangular component geometry; custom
+            AnchorFrame/AnchorTopology references cover more specific datums.
+            as_built=True records the existing pose and takes no anchor/offset
+            relationship arguments.
         """
         if not isinstance(target, ModelInstance):
             raise TypeError("component attach target must be another model object")
@@ -554,7 +581,16 @@ class Assembly:
     anchors: tuple[tuple[str, AssemblyAnchor], ...] = ()
 
     def group(self, name):
-        """Wrap these occurrences in a real nested native component."""
+        """Wrap these assembly occurrences in a real nested native component.
+
+        Use when:
+            The collection should appear as one named subassembly/browser unit
+            in SolidCraft.
+
+        Limits:
+            Grouping changes native hierarchy, not placement or relationships.
+            Use attach() for mechanical relationships between occurrences.
+        """
         grouped = tuple(instance.group(name) for instance in self.instances)
         remap = {
             id(original): replacement
@@ -574,12 +610,16 @@ class Assembly:
         return Assembly(grouped, anchors)
 
     def with_anchor(self, name, target, reference, *, offset=(0, 0)):
-        """Expose one named datum owned by this assembly.
+        """Expose one named attachment datum owned by this assembly.
 
-        ``offset`` is an optional symbolic in-plane (u, v) correction that a
-        consumer can pass through to ``attach(offset=...)``. Keeping it on the
-        assembly lets a semantic datum depend on assembly parameters without
-        putting that knowledge on the reusable component.
+        Use when:
+            A mounting/reference name belongs to the meaning of the larger
+            assembly rather than to the generic reusable component itself.
+
+        Limits:
+            target must be an occurrence already in this Assembly. offset is an
+            optional in-plane correction to pass through to attach(); this does
+            not create the attachment by itself.
         """
         if not isinstance(name, str) or not name.strip():
             raise ValueError("assembly anchor name must be non-empty text")
@@ -609,7 +649,15 @@ class Assembly:
         )
 
     def anchor(self, name):
-        """Return one named assembly-owned attachment datum."""
+        """Return one named assembly-owned attachment datum.
+
+        Use when:
+            A consumer needs the target/reference pair previously exposed with
+            with_anchor() in order to create an attachment.
+
+        Limits:
+            The name must resolve to exactly one assembly-owned anchor.
+        """
         matches = [anchor for anchor_name, anchor in self.anchors
                    if anchor_name == name]
         if len(matches) != 1:
