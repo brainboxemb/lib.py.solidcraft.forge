@@ -14,5 +14,3 @@ for x, y, angle in [(-60, -40, 0), (60, -40, 90), (60, 40, 180), (-60, 40, 270)]
     low = l_profile().rotz(angle).translate([x, y, 0])
     high = l_profile().rotz(angle).translate([x, y, 44])
     model = model | low | high
-
-show(model)
