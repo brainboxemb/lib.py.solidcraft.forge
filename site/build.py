@@ -1081,8 +1081,14 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         source = text(source_path)
         (case_dir / "model.py").write_text(source, encoding="utf-8")
 
+        reference_names = tuple(
+            case.get(
+                "reference_implementations",
+                ("pythonscad", "pybosl2"),
+            )
+        )
         reference_sources = {}
-        for reference_name in ("pythonscad", "pybosl2"):
+        for reference_name in reference_names:
             reference_path = (
                 ROOT / "examples" / slug / reference_name / "model.py"
             )
@@ -1110,7 +1116,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         reference_evidence_files = []
         if reference_verified:
             reference_render_cards = []
-            for reference_name in ("pythonscad", "pybosl2"):
+            for reference_name in reference_names:
                 result_path = (
                     reference_evidence_root / slug / reference_name / "result.json"
                 )
@@ -1140,7 +1146,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                     reference_evidence_files.append(
                         f"reference-{reference_name}/{name}"
                     )
-                label = "PythonSCAD" if reference_name == "pythonscad" else "pyBOSL2"
+                label = {
+                    "pythonscad": "PythonSCAD",
+                    "pybosl2": "pyBOSL2",
+                    "cadquery": "CadQuery",
+                }.get(reference_name, reference_name)
                 reference_render_cards.append(
                     '<figure class="qualification-reference-preview">'
                     f'<a href="reference-{reference_name}/model-iso.png" '
@@ -1325,10 +1335,20 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
 
         evidence_items = [
             '<li><a href="model.py">Forge fixture source</a></li>',
-            '<li><a href="reference-pythonscad.py">PythonSCAD reference source</a></li>',
-            '<li><a href="reference-pybosl2.py">pyBOSL2 reference source</a></li>',
-            '<li><a href="commands.json">Generated command JSON</a></li>',
         ]
+        for reference_name in reference_names:
+            label = {
+                "pythonscad": "PythonSCAD",
+                "pybosl2": "pyBOSL2",
+                "cadquery": "CadQuery",
+            }.get(reference_name, reference_name)
+            evidence_items.append(
+                f'<li><a href="reference-{escape(reference_name)}.py">'
+                f'{escape(label)} reference source</a></li>'
+            )
+        evidence_items.append(
+            '<li><a href="commands.json">Generated command JSON</a></li>'
+        )
         evidence_items.extend(
             f'<li><a href="{escape(name)}">{escape(name)}</a></li>'
             for name in native_files
@@ -1365,8 +1385,23 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             lowering_detail=escape(lowering_detail),
             reference_items="".join(reference_items),
             source=escape(source),
-            pythonscad_source=escape(reference_sources["pythonscad"]),
-            pybosl2_source=escape(reference_sources["pybosl2"]),
+            reference_source_blocks="".join(
+                '<div><h4>' + escape({
+                    "pythonscad": "PythonSCAD",
+                    "pybosl2": "pyBOSL2",
+                    "cadquery": "CadQuery",
+                }.get(reference_name, reference_name))
+                + '</h4><pre><code>' + escape(reference_sources[reference_name])
+                + '</code></pre><p><a href="reference-' + escape(reference_name)
+                + '.py">Open '
+                + escape({
+                    "pythonscad": "PythonSCAD",
+                    "pybosl2": "pyBOSL2",
+                    "cadquery": "CadQuery",
+                }.get(reference_name, reference_name))
+                + ' source →</a></p></div>'
+                for reference_name in reference_names
+            ),
             reference_evidence=reference_evidence_html,
         )
         (case_dir / "index.html").write_text(
@@ -1386,8 +1421,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             "status_detail": status_detail,
             "command_count": len(commands["commands"]),
             "reference_sources": [
-                "reference-pythonscad.py",
-                "reference-pybosl2.py",
+                f"reference-{reference_name}.py"
+                for reference_name in reference_names
             ],
             "native_evidence": native_files,
             "native_images": native_images,
