@@ -2,323 +2,296 @@
 
 Status: **normative design foundation for SCPF 0.3.0**
 
-This document defines the occurrence model that must be implemented and
-qualified before Forge 0.3.0 is a valid downstream CAD baseline.
+This document defines the occurrence-positioning model that implementation,
+qualification, guides and downstream CAD models must follow.
 
-## 1. Three separate concepts
-
-Forge deliberately separates three concepts.
+## 1. Separate concepts
 
 ### ModelDefinition
 
-A ModelDefinition describes **what a reusable physical part is**: geometry,
-material, features, parameters and local anchors. Multiple occurrences may
+A ModelDefinition describes what one reusable physical part is: geometry,
+features, material, parameters and local anchors. Multiple occurrences may
 share one definition.
 
-### Placement
+### Position
 
-A Placement describes **the complete pose of one occurrence in its parent
-coordinate frame**.
+A Position is an absolute XYZ coordinate in an occurrence's parent coordinate
+frame.
 
 ```python
-Board(
-    width=frame_wood_thickness,
-    height=opening_height,
-    placement=Placement(
-        x=-half(opening_width) - half(frame_wood_thickness),
-        z=opening_bottom_z,
-    ),
+Position(
+    x=-half(opening_width) - half(frame_wood_thickness),
+    z=opening_bottom_z,
 )
 ```
 
-Placement is declarative occurrence data, not an action. Position may contain
-numbers, Parameter values or Expressions. Rotation is part of the same pose:
+Coordinates may be numbers, Parameters or Expressions. "Absolute" means in the
+parent coordinate frame; it does not mean numeric-only or evaluated once.
+
+Position is data. It never means "move by this amount".
+
+### Placement
+
+A Placement is the complete pose of one occurrence:
 
 ```python
 Placement(
-    x=100,
-    z=half(frame_height),
+    position=Position(x=100, z=half(frame_height)),
     rotation=(Y, 90),
 )
 ```
 
-"Absolute" means relative to the occurrence's parent coordinate frame. It does
-**not** mean "numeric only" or "evaluated once". A parametric Placement must
-remain associative in the saved SolidCraft design.
+Placement combines Position with one absolute axis-angle orientation.
 
 ### Attachment
 
-An Attachment describes **a relationship between occurrences**.
+An Attachment describes a relationship between occurrences.
 
 ```python
-bracket = CornerBracket(...).attach(
+bracket = CornerBracket().attach(
     board,
     parent=Anchor.FRONT_TOP_LEFT,
     child=Anchor.BACK_BOTTOM_RIGHT,
 )
 ```
 
-Attachments may lower to native SolidCraft joints. Placement alone must not.
+Attachment may lower to a native SolidCraft joint. Position/Placement alone
+must not create a joint.
 
 ## 2. Public occurrence API
 
-The primary placement API is constructor data:
+Occurrence positioning is declarative:
 
 ```python
-part = Part(..., placement=Placement(...))
+left = Board().at(Position(x=-400))
+right = left.copy().at(Position(x=400))
 ```
 
-A repeated occurrence receives its desired pose explicitly:
+`at(Position(...))` replaces only XYZ and preserves the occurrence's current
+orientation.
 
 ```python
-right = left.copy(
-    placement=Placement(x=half(opening_width))
+rotated = Panel().at(
+    Placement(
+        position=Position(z=160),
+        rotation=(X, 90),
+    )
 )
+
+copy = rotated.copy().at(Position(x=160, z=160))
 ```
 
-The public occurrence API intentionally has no movement-operation conveniences:
+The copy keeps the X-axis 90 degree orientation while receiving the new
+Position.
 
-- no `occurrence.move(...)`;
-- no `occurrence.at(...)`;
-- no `occurrence.rotate(...)`.
+`at(Placement(...))` replaces the complete pose.
 
-Those methods made declarative occurrence state look like a sequence of
-imperative transformations. Rotation belongs in Placement.
+There is no public occurrence `.move()` or `.rotate()`. Shape-level
+`Shape.at()`, `Shape.move()` and geometry transforms are separate APIs and
+are unaffected.
 
-`copy()` without an explicit Placement preserves the source Placement.
-`copy(placement=...)` replaces it for the new occurrence. Copying never
-duplicates the shared ModelDefinition.
+## 3. Copy contract
 
-## 3. API semantics are not backend command names
+`copy()`:
 
-Forge Placement is a CAD-domain concept. SolidCraft `occurrence.move` is a
-native implementation mechanism.
+- creates another occurrence of the same ModelDefinition;
+- preserves the source Placement initially;
+- clears occurrence-specific attachment and explicit occurrence name;
+- does not duplicate component feature history.
 
-Therefore this is valid lowering:
+A copied occurrence is normally repositioned declaratively:
 
-```text
-Forge:
-    placement=Placement(x=half(opening_width))
-
-SolidCraft:
-    occurrence.move(..., translate=["opening_width / 2", 0, 0])
+```python
+right = left.copy().at(Position(x=half(spacing)))
 ```
 
-It does **not** mean Forge exposes a move action.
+This is not a relative displacement. The resulting right-hand X position is
+exactly `half(spacing)` in the parent coordinate frame.
 
-The compiler may choose different native commands for different Placement
-forms, provided the saved SolidCraft model preserves the same declared pose.
+## 4. API semantics versus native lowering
 
-## 4. Proven native SolidCraft 0.42 placement capability
+Forge Position/Placement are CAD-domain concepts. SolidCraft command names are
+backend implementation details.
 
-PR #158 already qualified native parametric occurrence placement.
+A parametric source position such as:
 
-The proven native shape is:
+```python
+right = Block().at(Position(x=self.offset))
+```
+
+may lower to:
 
 ```json
-{"command":"parameters.add","params":{"name":"offset","expression":"40 mm"}}
-{"command":"occurrence.copy","params":{"component":"Block"}}
 {"command":"occurrence.move","params":{
   "occurrence":"Block:2",
   "translate":["offset",0,0]
 }}
 ```
 
-The saved design was mutated from `offset=40` to `offset=70` without
-rerunning Python. The second Block moved from X=40 to X=70 and no placement
-joint was generated.
+That does not make Forge `at()` a move action. The native command stores the
+declared position expression.
 
-SCPF 0.3.0 changes the **public source representation** from `.move(...)` to
-`Placement(...)`; it must retain this proven native associative behaviour.
+For concrete copied positions, Forge may use creation-time placement:
 
-## 5. Foundational use cases
+```text
+occurrence.copy(..., translate=[40, 0, 0])
+```
 
-These use cases drive implementation and release qualification.
+The compiler chooses the native representation; the public semantics remain the
+same.
 
-### P1 — default Placement
+## 5. Proven SolidCraft 0.42 behaviour
+
+PR #158 already qualified native parametric occurrence placement:
+
+- one reusable Block definition;
+- a second Block occurrence;
+- native `occurrence.move.translate=["offset",0,0]`;
+- no hidden placement joint;
+- saved-model mutation `offset=40 -> 70`;
+- the second occurrence moved from X=40 to X=70 without rerunning Python.
+
+SCPF 0.3.0 changes the public source vocabulary to
+`at(Position(...))`. It must retain that proven associative native behaviour.
+
+## 6. Required use cases
+
+### P1 — origin
 
 ```python
 block = Block()
 ```
 
-Equivalent occurrence pose:
+Expected Position is (0, 0, 0), identity orientation, no placement joint.
+
+### P2 — numeric Position
 
 ```python
-Placement()
+block = Block().at(Position(x=40, y=10, z=5))
 ```
 
-Expected: origin position, identity orientation, no placement joint.
+Expected final XYZ is exactly (40, 10, 5).
 
-### P2 — numeric Placement
+### P3 — parametric Position
 
 ```python
-block = Block(placement=Placement(x=40, y=10, z=5))
+block = Block().at(Position(x=self.offset))
 ```
 
-Expected final occurrence pose is exactly (40, 10, 5). The compiler may use
-the appropriate native creation/placement command.
+Baseline: `offset=40 -> x=40`.
 
-A directly executed reusable component file is currently compiled as standalone
-root geometry rather than an occurrence. Explicit non-zero root-component
-Placement is therefore a documented capability gap; P2 is qualified inside an
-assembly occurrence.
+After mutating the saved SolidCraft design to `offset=70`: `x=70`, without
+rerunning Python and without a placement joint.
 
-### P3 — parametric Placement
+### P4 — repeated numeric Position
 
 ```python
-placed = Block(
-    placement=Placement(x=self.offset)
-)
+left = Block().at(Position(x=-40))
+right = left.copy().at(Position(x=40))
 ```
 
-Baseline:
+Expected: one shared Block definition and two occurrences at -40/+40.
 
-```text
-offset = 40
-x = 40
-```
-
-Saved-model mutation:
-
-```text
-offset = 70
-x = 70
-```
-
-No Python rerun and no generated placement joint. This is the public-API
-successor of the already-qualified PR #158 parametric-move fixture.
-
-### P4 — repeated numeric Placement
+### P5 — repeated parametric Position
 
 ```python
-left = Block(placement=Placement(x=-40))
-right = left.copy(placement=Placement(x=40))
-return left + right
+left = Block().at(Position(x=-half(spacing)))
+right = left.copy().at(Position(x=half(spacing)))
 ```
 
-Expected:
+For `spacing=80`: -40/+40. After saved-model mutation to `spacing=120`:
+-60/+60, without rerunning Python.
 
-- one shared Block definition;
-- two occurrences;
-- left X=-40;
-- right X=40.
+This is mandatory because it matches the HUB75 WoodFrame dependency shape.
 
-Where SolidCraft supports concrete creation-time translation, Forge may lower
-the second occurrence directly through `occurrence.copy(..., translate=...)`.
-
-### P5 — repeated parametric Placement
+### P6 — Position plus orientation
 
 ```python
-left = Block(
-    placement=Placement(x=-half(spacing))
-)
-right = left.copy(
-    placement=Placement(x=half(spacing))
-)
-```
-
-For `spacing=80`, positions are -40/+40. After saved-model mutation to
-`spacing=120`, positions must become -60/+60 without rerunning Python.
-
-This is a mandatory qualification because it represents the same dependency
-shape used by the HUB75 WoodFrame.
-
-### P6 — Placement plus rotation
-
-```python
-strip = Strip(
-    placement=Placement(
-        z=half(height),
+strip = Strip().at(
+    Placement(
+        position=Position(z=half(height)),
         rotation=(Y, 90),
     )
 )
 ```
 
-After `height=100 -> 140`, Z must change 50 -> 70 while orientation remains
+After `height=100 -> 140`, Z changes 50 -> 70 while orientation remains
 Y=90 degrees.
 
-### P7 — Placement plus Attachment
+### P7 — copy preserves orientation
 
 ```python
-parent = Board(
-    placement=Placement(x=half(frame_width))
+first = Panel().at(
+    Placement(
+        position=Position(x=-160, z=160),
+        rotation=(X, 90),
+    )
 )
-child = Bracket(...).attach(parent, ...)
+second = first.copy().at(Position(x=160, z=160))
 ```
 
-Placement describes the parent's pose. Attachment describes the child's
-relationship to the parent. After parameter mutation the parent follows its
-Placement expression and the child follows through the explicit Attachment.
+Both occurrences remain X=90 degrees. Only Position differs.
 
-A child may have an initial seed Placement before attachment, but Forge must
-not manufacture a hidden placement joint.
+### P8 — Position plus Attachment
 
-### P8 — parameter scope
+A parent may have a parametric Position while a child is attached to it. After
+saved-model mutation the parent follows its Position expression and the child
+follows through the explicit Attachment. Forge must not introduce a hidden
+placement joint.
 
-Expressions used only by Placement must reference the existing parent
-parameters. Forge must not publish derived helper parameters such as
-`Board_x`, `Board_offset` or `Board_half_width`.
+### P9 — parameter scope
 
-Shared parent parameters are emitted once.
+Position expressions reuse existing parent parameters. Forge must not publish
+derived helper parameters such as `Board_x`, `Board_offset` or
+`Board_half_width`.
 
-## 6. HUB75 WoodFrame release case
-
-The WoodFrame must support symmetric parametric board Placement:
+## 7. HUB75 WoodFrame release case
 
 ```python
-left = Board(
-    ...,
-    placement=Placement(
+left = Board().at(
+    Position(
         x=-half(opening_width) - half(frame_wood_thickness),
         z=opening_bottom_z,
-    ),
+    )
 )
 
-right = Board(
-    ...,
-    placement=Placement(
+right = Board().at(
+    Position(
         x=half(opening_width) + half(frame_wood_thickness),
         z=opening_bottom_z,
-    ),
+    )
 )
 ```
 
-Changing `opening_width` in the saved SolidCraft design must move the left
-board toward -X and the right board toward +X, without:
+Changing `opening_width` in the saved SolidCraft design must move left toward
+-X and right toward +X without:
 
 - rerunning Forge;
-- creating new component definitions;
+- duplicating component definitions;
 - hidden placement joints;
-- duplicate placement parameters.
+- duplicate/helper placement parameters.
 
-## 7. Occurrence identity is a separate compiler contract
+## 8. Identity is a separate compiler concern
 
-Two questions must remain separate:
+The CAD contract answers "where/how should this occurrence stand?" Occurrence
+identity answers "how does a backend command address it?". These are separate
+layers.
 
-1. What does Placement mean?
-2. How does a backend command reliably target an occurrence?
+An identity limitation must not redefine Position or invalidate already
+qualified parametric placement semantics. Runtime result-handle execution is a
+separate possible future mode tracked by issue #168 and is not part of the
+normal SCPF 0.3.0 replay-first contract.
 
-The first is the Forge CAD model defined above. The second is a compiler/native
-identity problem.
+## 9. Release gate
 
-A backend identity limitation must not redefine Placement or invalidate already
-qualified native parametric placement. If a particular lowering is unreliable,
-that lowering must be corrected or explicitly capability-gapped.
+SCPF 0.3.0 is a valid baseline only when:
 
-Runtime result-handle execution is a separate possible future execution mode
-tracked in roadmap issue #168. It is not part of the normal SCPF 0.3.0
-replay-first compiler contract.
-
-## 8. Release gate
-
-SCPF 0.3.0 may be released only when:
-
-- P1-P8 command/API tests are green where applicable;
-- parametric Placement reuses the proven SolidCraft 0.42 expressed-move
+- P1-P9 API/command tests are green where applicable;
+- P3 and P5 have saved-design mutation evidence;
+- parametric Position retains the proven SolidCraft 0.42 expressed-placement
   behaviour from PR #158;
-- saved-design parameter mutation proves P3 and P5;
-- no public occurrence movement convenience remains;
-- no hidden placement joint is emitted;
-- parameter-list scope remains clean;
-- the downstream HUB75 CAD model is migrated to Placement and passes its
-  qualification/tests.
+- no public occurrence `.move()` or `.rotate()` remains;
+- `.at()` accepts Position or Placement only;
+- no hidden placement joint is generated;
+- parameter scope remains clean;
+- the downstream HUB75 model is migrated and qualified.
