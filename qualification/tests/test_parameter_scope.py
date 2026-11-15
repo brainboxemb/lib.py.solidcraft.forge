@@ -42,6 +42,12 @@ class ParameterScopeCommandTests(unittest.TestCase):
         self.assertIn("shared_width", lengths)
         self.assertIn("shared_width / 2", lengths)
 
+        self.assertFalse(any(
+            row["name"].startswith("Panel") and row["name"].endswith("_depth")
+            for row in params
+        ))
+        self.assertTrue(all(row["width"] == 20.0 for row in boxes))
+
         creates = [
             row["params"]["name"]
             for row in document["commands"]
