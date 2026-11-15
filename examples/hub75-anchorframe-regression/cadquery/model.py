@@ -6,8 +6,8 @@ import cadquery as cq
 left_board = cq.Solid.makeBox(12, 60, 80, cq.Vector(-72, 0, 12))
 right_board = cq.Solid.makeBox(12, 60, 80, cq.Vector(60, 0, 12))
 
-horizontal = cq.Solid.makeBox(28, 24, 4, cq.Vector(0, -12, 0))
-vertical = cq.Solid.makeBox(4, 24, 28, cq.Vector(-4, -12, -28))
+horizontal = cq.Solid.makeBox(28, 24, 12, cq.Vector(0, -12, 0))
+vertical = cq.Solid.makeBox(12, 24, 28, cq.Vector(-12, -12, -28))
 profile = horizontal.fuse(vertical)
 
 model = cq.Assembly()
