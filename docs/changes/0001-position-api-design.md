@@ -1,91 +1,271 @@
-# 0001 — Position API design
+# 0001 — Placement constructor API design
 
 Status: **active design for SCPF 0.3.0**  
-SolidCraft target: **0.42.0**  
-Supersedes the scattered Position/Placement discussion in `docs/design/` for
-this change.
+SolidCraft target: **0.42.0**
 
-## 1. Goal
+This change replaces ad-hoc occurrence-position parameters such as
+`_x_position`, `_y_position` and `_z_position` with one explicit Forge
+`Placement` value supplied when the occurrence is created.
 
-Forge needs one clear placement model for two different levels:
+## 1. The problem this change solves
 
-1. **shape geometry inside one component**;
-2. **component occurrences inside an assembly**.
-
-Those levels must not be mixed.
-
-The public assembly API becomes:
+The motivating WoodFrame code currently mixes two different kinds of data in
+one component constructor:
 
 ```python
-left = Board().at(Position(x=-400))
-right = left.copy().at(Position(x=400))
+left = Board(
+    name="left",
+    width=self.frame_wood_thickness,
+    depth=self.cabinet_depth,
+    height=self.opening_height,
+    _x_position=-(
+        self.opening_width / 2
+        + self.frame_wood_thickness / 2
+    ),
+    _y_position=0.0,
+    _z_position=opening_bottom,
+    material_name="LIGHTPLY side board",
+).attach(
+    bottom,
+    as_built=True,
+).group("WoodBoxFrame")
 ```
 
-There is no public occurrence `.move()` or occurrence `.rotate()`.
+`width`, `depth`, `height` and `material_name` describe the reusable
+**Board definition**.
 
-The central rule is:
+`_x_position`, `_y_position` and `_z_position` do not describe the Board
+at all. They describe where this particular **occurrence of the Board** belongs
+inside its parent assembly.
 
-> **Placement belongs to object creation.** A Position says where the object is
-> created/placed in its parent frame. It is not an instruction to create the
-> object at the origin and then move it.
+Those placement values therefore must not be disguised as private Board model
+parameters.
 
-Forge must therefore encode Position in the native creation/copy command
-whenever SolidCraft exposes that capability. A later native move command is
-only an implementation fallback for a SolidCraft capability gap; it never
-changes the public semantics.
+## 2. Decision
 
-Shape-level geometry transforms such as:
+Occurrence placement is supplied as Forge metadata at occurrence creation time:
 
 ```python
-bottom = Box(20, 20, 4).move(x=10, y=10, z=-2)
+left = Board(
+    name="left",
+    width=self.frame_wood_thickness,
+    depth=self.cabinet_depth,
+    height=self.opening_height,
+    placement=Placement(
+        x=-(
+            self.opening_width / 2
+            + self.frame_wood_thickness / 2
+        ),
+        y=0.0,
+        z=opening_bottom,
+    ),
+    material_name="LIGHTPLY side board",
+).attach(
+    bottom,
+    as_built=True,
+).group("WoodBoxFrame")
 ```
 
-already follow this rule: Forge emits the box at the translated coordinates in
-the original `solid.box` creation command. It does not create the box and then
-emit `solid.move`.
+The important boundary is:
 
----
+```text
+Board(...)
+    component-definition arguments
+    + reserved occurrence metadata
 
-## 2. Forge concepts
-
-### Position
-
-```python
-Position(x=0, y=0, z=0)
+Placement(...)
+    occurrence pose only
 ```
 
-Meaning:
+`placement` is consumed by Forge. It is not passed to the component's
+`build()` method and it does not become a Board parameter.
 
-- absolute XYZ coordinate in the occurrence's parent coordinate frame;
-- values may be numeric, Parameter or Expression;
-- Position is data, not a relative movement.
+## 3. Public Placement type
 
-### Placement
+The public value is deliberately small:
 
 ```python
 Placement(
-    position=Position(x=100, z=160),
-    rotation=(Y, 90),
+    x=0,
+    y=0,
+    z=0,
+    rotation=None,
 )
 ```
 
-Meaning:
+Where:
 
-- complete occurrence pose;
-- Position plus one absolute axis-angle orientation.
+- `x`, `y`, `z` are the absolute coordinates of the occurrence origin in
+  its parent coordinate frame;
+- each coordinate may be numeric, a Forge Parameter or an Expression;
+- `rotation` is optional absolute axis-angle orientation, currently
+  `(axis, degrees)`;
+- omitted coordinates default to zero;
+- omitted rotation means identity orientation.
 
-### Attachment
+Example with orientation:
 
-Attachment is a relationship between occurrences and is separate from
-Position/Placement. Position must never be implemented as a hidden joint.
+```python
+panel = Panel(
+    placement=Placement(
+        x=160,
+        z=160,
+        rotation=(X, 90),
+    )
+)
+```
 
----
+There is **no separate public `Position` class** in this design.
+`Placement` already contains the position, so wrapping XYZ in another object
+adds syntax without adding a required modelling concept.
 
-## 3. Shape creation: `solid.box`
+## 4. Placement is creation state, not a move action
 
-Forge's ordinary `Box` creates native SolidCraft box geometry directly.
+The central semantic rule is:
 
-### SolidCraft 0.42 complete input contract
+> **An occurrence has its Placement when Forge creates that occurrence.**
+
+The user is not asking Forge to:
+
+```text
+1. create object at origin
+2. move object afterwards
+```
+
+The user is declaring:
+
+```text
+create/place this occurrence at this pose
+```
+
+Therefore this:
+
+```python
+Board(
+    placement=Placement(x=400)
+)
+```
+
+means "the Board occurrence is at X=400 in its parent frame".
+
+It does **not** mean "move the Board +400 from wherever it currently happens to
+be".
+
+The same rule applies to copies.
+
+## 5. Copy creates a new occurrence with its Placement
+
+A repeated occurrence should not require a post-copy placement call.
+
+Preferred API:
+
+```python
+left = Board(
+    name="left",
+    width=self.frame_wood_thickness,
+    depth=self.cabinet_depth,
+    height=self.opening_height,
+    placement=Placement(
+        x=-(
+            self.opening_width / 2
+            + self.frame_wood_thickness / 2
+        ),
+        z=opening_bottom,
+    ),
+    material_name="LIGHTPLY side board",
+)
+
+right = left.copy(
+    name="right",
+    placement=Placement(
+        x=(
+            self.opening_width / 2
+            + self.frame_wood_thickness / 2
+        ),
+        z=opening_bottom,
+    ),
+)
+```
+
+`copy()` still shares the same reusable component definition. Its
+`placement` argument describes the newly created occurrence.
+
+Copy rules:
+
+- no `placement` supplied: inherit the source occurrence Placement;
+- `placement=Placement(...)`: the new occurrence receives that complete
+  Placement;
+- occurrence-specific attachment is not inherited;
+- an explicitly supplied occurrence `name` belongs to the new occurrence.
+
+This is the copy equivalent of constructor-time placement; no public
+`.at()` step is required.
+
+## 6. API deliberately not selected
+
+This change does **not** use:
+
+```python
+Board().at(Position(x=400))
+Board().move(Position(x=400))
+Board().move(x=400)
+```
+
+Reasons:
+
+- the occurrence would first be constructed without the information that
+  belongs to its creation;
+- `Position` duplicates the position part already naturally contained by
+  `Placement`;
+- public occurrence `move` invites ambiguity between an absolute pose and a
+  relative displacement;
+- the WoodFrame source remains clearest when definition data and occurrence
+  metadata are visible together in one constructor.
+
+A future API may add an explicit editing operation if Forge ever needs to
+mutate an already-existing occurrence object. That is a separate change and
+does not define initial placement.
+
+## 7. Shape geometry is a separate layer
+
+Forge remains object-first at assembly level and expression-first inside
+component geometry.
+
+This is still valid inside a component:
+
+```python
+bottom = Box(20, 20, 4).move(
+    x=10,
+    y=10,
+    z=-2,
+)
+```
+
+Shape `.move()` is not occurrence placement.
+
+Forge currently folds that shape translation into native primitive creation
+coordinates. For example:
+
+```json
+{
+  "command": "solid.box",
+  "params": {
+    "length": 20,
+    "width": 20,
+    "height": 4,
+    "center": [10, 10, -2],
+    "operation": "new",
+    "body_name": "CornerProtector"
+  }
+}
+```
+
+The native body is therefore created at the intended geometry coordinates; no
+later `solid.move` is needed.
+
+## 8. SolidCraft 0.42 `solid.box` contract
+
+Complete relevant input contract:
 
 ```json
 {
@@ -110,95 +290,29 @@ Forge's ordinary `Box` creates native SolidCraft box geometry directly.
 }
 ```
 
-### Parameter meaning
-
-| Parameter | SolidCraft 0.42 | Forge Box uses | Notes |
-| --- | --- | --- | --- |
-| `length` | required | yes | X size; number or length expression |
-| `width` | required | yes | Y size; number or length expression |
-| `height` | required | yes | Z size; number or length expression |
-| `corner` | optional | yes | minimum corner; Forge base Box uses this |
-| `center` | optional | CSG path uses it | box remains centred when dimensions change |
-| `operation` | optional, default `new` | CSG path explicitly uses it | `new`, `join`, `cut`, `intersect` |
-| `targets` | optional | yes for join/cut/intersect | body names to operate on |
-| `touching` | optional, default `separate` | not currently emitted by ordinary Box | join behaviour |
-| `participants` | optional | not currently emitted by ordinary Box | overrides target scope |
-| `name` | optional | not normally emitted for Box | timeline feature name |
-| `body_name` | optional | yes for new body | Forge owns this name |
-| `body_names` | optional | no | names for multiple created bodies |
+| Parameter | SolidCraft 0.42 | Forge use |
+| --- | --- | --- |
+| `length` | required | yes |
+| `width` | required | yes |
+| `height` | required | yes |
+| `corner` | optional | base Box path |
+| `center` | optional | translated CSG primitive path |
+| `operation` | optional, default `new` | explicit in CSG path |
+| `targets` | optional | join/cut/intersect |
+| `touching` | optional | not normally emitted by Box |
+| `participants` | optional | not normally emitted by Box |
+| `name` | optional | not normally emitted by Box |
+| `body_name` | optional | yes for a new body |
+| `body_names` | optional | not currently needed |
 
 If both `corner` and `center` are supplied, SolidCraft uses `corner`.
 
-### Forge base Box lowering
+A normal Forge Box remains a native primitive; Forge must not synthesize a
+Sketch just to create a rectangular solid.
 
-Python:
+## 9. Shape CSG naming
 
-```python
-class Board:
-    width = 100
-    depth = 20
-    height = 12
-
-    def build(self):
-        return Box(self.width, self.depth, self.height)
-```
-
-Forge lowers the centred-X/Y Box to a native primitive:
-
-```json
-{
-  "command": "solid.box",
-  "params": {
-    "length": "width",
-    "width": "depth",
-    "height": "height",
-    "corner": ["-(width) / 2", "-(depth) / 2", 0],
-    "body_name": "Board"
-  }
-}
-```
-
-No sketch is synthesized.
-
----
-
-## 4. Shape placement is part of creation
-
-Example:
-
-```python
-bottom = Box(20, 20, 4).move(
-    x=10,
-    y=10,
-    z=-2,
-)
-```
-
-This does **not** lower to `solid.move` and does not require a later target
-lookup.
-
-`.move()` on a Shape is currently the Python expression used to derive the
-shape's creation position. Forge folds that translation into the primitive
-coordinates **before emitting JSON**. The native object is therefore created at
-its final position.
-
-Conceptually:
-
-```json
-{
-  "command": "solid.box",
-  "params": {
-    "length": 20,
-    "width": 20,
-    "height": 4,
-    "center": [10, 10, -2],
-    "operation": "new",
-    "body_name": "CornerProtector"
-  }
-}
-```
-
-For a CSG continuation:
+For:
 
 ```python
 bottom = Box(...).move(...)
@@ -206,54 +320,42 @@ front = Box(...).move(...)
 return bottom + front
 ```
 
-the first primitive starts the body:
+Forge creates the first body using a Forge-owned name:
 
 ```json
 {
   "command": "solid.box",
   "params": {
-    "center": [10, 10, -2],
     "operation": "new",
-    "body_name": "CornerProtector"
+    "body_name": "CornerProtector",
+    "center": [10, 10, -2]
   }
 }
 ```
 
-and later primitives explicitly target that Forge-owned body name:
+and explicitly targets that same body on subsequent CSG primitives:
 
 ```json
 {
   "command": "solid.box",
   "params": {
-    "center": [10, -2, 10],
     "operation": "join",
-    "targets": ["CornerProtector"]
+    "targets": ["CornerProtector"],
+    "center": [10, -2, 10]
   }
 }
 ```
 
-The relationship is therefore explicit in JSON. It is not "apply this to the
-previous command".
-
-### Identity rule for shape geometry
+This is not an implicit "previous command" relationship.
 
 ```text
-body_name = Forge-owned
-targets   = explicit references to that Forge-owned name
+body_name = chosen by Forge
+targets   = explicit reference to that Forge-owned body name
 ```
 
-That is why shape geometry does not have the same identity problem as repeated
-component occurrences.
+## 10. Native `solid.move` is not Placement
 
----
-
-## 5. Native body move: `solid.move`
-
-SolidCraft also has a real body move/copy command. Forge currently does **not**
-use it for `Shape.move()`, but its contract is relevant and must not be
-confused with occurrence placement.
-
-### SolidCraft 0.42 complete input contract
+SolidCraft also has `solid.move`, whose relevant 0.42 contract is:
 
 ```json
 {
@@ -261,17 +363,13 @@ confused with occurrence placement.
   "params": {
     "bodies": ["BodyName"],
     "occurrences": [[1, 2]],
-
     "translate": ["x", "y", "z"],
     "origin": ["x", "y", "z"],
     "axis": [0, 0, 1],
     "angle": "90 deg",
-
     "matrix": [1,0,0,10, 0,1,0,0, 0,0,1,0],
     "tolerance": 1e-9,
-
     "copy": false,
-
     "name": "timeline feature name",
     "body_name": "new body name",
     "body_names": ["new body 1"],
@@ -280,36 +378,18 @@ confused with occurrence placement.
 }
 ```
 
-Rules:
+`solid.move` is a body feature operation. It is **not** the public
+implementation model for occurrence `Placement`.
 
-- `bodies`: bodies to transform;
-- `occurrences`: component occurrence paths to copy; requires `copy: true`;
-- `translate`: translation after rotation;
-- `origin`: rotation pivot;
-- `axis`: rotation axis;
-- `angle`: angle expression;
-- `matrix`: rigid transform alternative to translate/origin/axis/angle;
-- `tolerance`: matrix orthonormality tolerance, default `1e-9`, max `1e-3`;
-- `copy: true`: keep originals and transform copies;
-- scale, shear, mirror and projective matrices are refused.
+Forge continues to fold ordinary Shape translation into primitive creation
+coordinates where possible.
 
-Forge 0.3.0 choice:
+## 11. SolidCraft component creation
 
-> `solid.move` is not the implementation of Forge Position and is not the
-> normal implementation of `Shape.move()`. Placement is encoded in creation
-> commands wherever the native command supports it.
+A reusable Forge model definition is lowered through
+`component.create`.
 
-The command is documented here only to keep the native concepts complete and
-to prevent confusing body movement with declarative placement.
-
----
-
-## 6. Component creation: `component.create`
-
-A Forge model object becomes a reusable SolidCraft component definition and its
-first occurrence.
-
-### SolidCraft 0.42 accepted parameters
+SolidCraft 0.42 accepts:
 
 ```json
 {
@@ -324,21 +404,25 @@ first occurrence.
 }
 ```
 
-| Parameter | Meaning | Forge currently uses |
-| --- | --- | --- |
-| `name` | component definition name | yes |
-| `parent` | owning component | for nested/grouped structures |
-| `parent_path` | exact placement of parent | not normal flat case |
-| `activate` | make new component active | compiler-specific use only |
-| `grounded` | ground first occurrence | yes where required |
+| Parameter | Meaning |
+| --- | --- |
+| `name` | component definition name |
+| `parent` | owning component |
+| `parent_path` | exact placement of the parent |
+| `activate` | activate the new component |
+| `grounded` | ground its first occurrence |
 
-SolidCraft creates the first occurrence as part of component creation.
+Important SolidCraft 0.42 limitation:
 
----
+> `component.create` creates the first occurrence but has no translation or
+> pose parameter.
 
-## 7. Copying a component occurrence: `occurrence.copy`
+Therefore Forge cannot always express constructor-time Placement in that one
+native command. That is a backend limitation, not a change to Forge semantics.
 
-### SolidCraft 0.42 complete input contract
+## 12. SolidCraft occurrence copy
+
+SolidCraft 0.42 `occurrence.copy` accepts:
 
 ```json
 {
@@ -357,28 +441,22 @@ SolidCraft creates the first occurrence as part of component creation.
 
 Rules:
 
-- give `occurrence` **or** `component`;
-- when `occurrence` is present, `component` is ignored;
-- `path` identifies an exact selected placement;
-- `parent` defaults to the copied occurrence's parent;
+- give `occurrence` or `component`;
+- `path` can disambiguate an exact placement;
+- `parent` chooses the destination parent;
 - `translate` is numeric XYZ in mm;
-- `in_place: false` keeps the selected transform in the parent frame;
-- `in_place: true` copies at the selected world transform and interprets
-  `translate` in world axes;
-- `parent_path` is read with `in_place: true`.
+- `in_place` controls parent-local versus selected-world placement;
+- `parent_path` applies to the `in_place` case.
 
-### Forge numeric Position: placement during copy creation
-
-Python:
+For a numeric copied Placement:
 
 ```python
-left = Board()
-right = left.copy().at(Position(x=400))
+right = left.copy(
+    placement=Placement(x=400)
+)
 ```
 
-The Position already exists on the Forge object before compilation. Because
-SolidCraft `occurrence.copy` accepts a numeric `translate`, Forge can create
-the copied occurrence directly at that position:
+Forge should lower directly to:
 
 ```json
 {
@@ -390,39 +468,12 @@ the copied occurrence directly at that position:
 }
 ```
 
-For a purely numeric copied Position no follow-up occurrence move is required.
-This is the preferred lowering because it matches the Forge semantics exactly:
-the new occurrence is created at its declared Position.
+No later occurrence command is needed in this case.
 
-### First occurrence limitation
+## 13. SolidCraft occurrence placement fallback
 
-SolidCraft 0.42 `component.create` creates the component's first occurrence
-but does **not** accept a translation/pose parameter. Therefore a non-origin
-Position for that first occurrence cannot currently be encoded in the creation
-command itself.
-
-This is a SolidCraft backend limitation, not a reason to define Position as a
-move.
-
----
-
-## 8. Native fallback: `occurrence.move`
-
-Forge has **no public occurrence `.move()`**. Native
-`occurrence.move` is used only when SolidCraft 0.42 cannot encode the declared
-Position/Placement in the creation/copy command itself.
-
-Examples of that native gap are:
-
-- the first occurrence created by `component.create`, which has no placement
-  parameter;
-- a copied occurrence whose Position contains parameter expressions, because
-  `occurrence.copy.translate` is numeric-only in SolidCraft 0.42;
-- orientation, which `occurrence.copy` does not encode.
-
-The public meaning remains: **this occurrence has this Position/Placement**.
-
-### SolidCraft 0.42 complete input contract
+SolidCraft 0.42 `occurrence.move` accepts the following placement/movement
+surface:
 
 ```json
 {
@@ -454,222 +505,206 @@ The public meaning remains: **this occurrence has this Position/Placement**.
 }
 ```
 
-### Parameter meaning
+Relevant rules:
 
-| Parameter | Meaning |
-| --- | --- |
-| `occurrence` | occurrence id or name; required |
-| `path` | exact occurrence placement path |
-| `space` | `local` or `world`; default `local` |
-| `translate` | relative XYZ move; entries may be numbers or length expressions |
-| `axis` | rotation axis; default Z |
-| `angle` | radians as number, or angle expression |
-| `origin` | rotation pivot |
-| `matrix` | rigid relative move instead of translate/axis/angle/origin |
-| `to` | absolute pose: position plus optional axis/angle |
-| `to_matrix` | absolute pose as rigid matrix |
-| `tolerance` | matrix tolerance; default `1e-9`, max `1e-3` |
-| `capture` | default true; false leaves pending position |
-| `move_grounded` | default false; true permits grounded occurrence |
-| `base_transform` | explicit starting transform used by browser/drag path |
+- `occurrence`: occurrence id or name;
+- `path`: exact occurrence placement path;
+- `space`: `local` or `world`, default `local`;
+- `translate`: relative XYZ; entries may be numbers or length expressions;
+- `axis`, `angle`, `origin`: relative rotation form;
+- `matrix`: rigid relative transform alternative;
+- `to`: absolute pose;
+- `to_matrix`: absolute rigid pose;
+- `tolerance`: matrix tolerance;
+- `capture`: default true;
+- `move_grounded`: allow a grounded occurrence to be placed;
+- `base_transform`: explicit starting transform used by interactive paths.
 
-Mutual-exclusion rules:
+Mutual exclusion:
 
-- `matrix` cannot be combined with `translate`, `axis`, `angle`, `origin`;
-- `to` and `to_matrix` are absolute alternatives;
-- an absolute target cannot be combined with the relative move parameters;
-- expression-driven `translate` is captured and cannot use
-  `capture: false`.
+- `matrix` is not combined with `translate`, `axis`, `angle`, `origin`;
+- `to` and `to_matrix` are alternatives;
+- absolute forms are not combined with relative move forms;
+- a parameter-expression `translate` is captured.
 
-### Forge parametric Position: fallback only because copy cannot take expressions
+Forge may use this native command **only as a backend fallback** when
+SolidCraft 0.42 cannot express constructor-time Placement in
+`component.create` or `occurrence.copy`.
 
-Python:
+Known 0.42 gaps:
+
+```text
+first occurrence with non-origin Placement
+    component.create has no pose
+    -> component.create(...)
+    -> occurrence.move(...)
+
+copied occurrence with parametric XYZ
+    occurrence.copy.translate is numeric-only
+    -> occurrence.copy(...)
+    -> occurrence.move(... expression ...)
+
+orientation
+    occurrence.copy has no orientation input
+    -> occurrence.move(...) when required
+```
+
+These later native commands do **not** change the Forge API meaning. The
+Placement existed before compilation.
+
+## 14. Parametric Placement
+
+Example:
 
 ```python
-right = Board().at(
-    Position(x=half(opening_width))
+right = left.copy(
+    placement=Placement(
+        x=self.opening_width / 2
+            + self.frame_wood_thickness / 2,
+        z=opening_bottom,
+    )
 )
 ```
 
-Ideally this Position would be part of occurrence creation. SolidCraft 0.42
-does not accept expressions in `occurrence.copy.translate`, so Forge uses the
-qualified expressed-move facility as a backend encoding fallback:
+If those coordinates contain Forge expressions, SolidCraft 0.42 cannot put
+them in `occurrence.copy.translate`.
+
+The qualified fallback is therefore conceptually:
 
 ```json
-{
-  "command": "occurrence.move",
-  "params": {
-    "occurrence": "Board:2",
-    "translate": ["opening_width / 2", 0, 0]
-  }
-}
+{"command":"occurrence.copy","params":{"component":"Board"}}
+{"command":"occurrence.move","params":{
+  "occurrence":"Board:2",
+  "translate":[
+    "opening_width / 2 + frame_wood_thickness / 2",
+    0,
+    "opening_bottom"
+  ]
+}}
 ```
 
-SolidCraft stores parameter-referencing translate entries as
-`expressed_moves`. If `opening_width` changes later in the saved design, the
-occurrence follows without rerunning Forge.
+SolidCraft stores parameter-referencing translations associatively. PR #158
+already proved that changing the parameter in the saved SolidCraft model moves
+the occurrence without rerunning Python/Forge.
 
-This behaviour was qualified in Forge PR #158. The generated
-`occurrence.move` must therefore be read as **native encoding of a declarative
-Position expression**, not as the public Forge operation "move this object".
-
----
-
-## 9. Identity: body names versus occurrence names
-
-This distinction is essential.
-
-### Body geometry
-
-Forge chooses the body name itself:
-
-```json
-{"command":"solid.box","params":{"operation":"new","body_name":"Frame"}}
-{"command":"solid.box","params":{"operation":"join","targets":["Frame"]}}
-```
-
-So:
+The important distinction is:
 
 ```text
-"Frame" = Forge-owned identity
+Forge source:
+    constructor-time declarative Placement
+
+SolidCraft 0.42 lowering:
+    occurrence.move expression only because creation cannot encode it
 ```
 
-### Component occurrence
+## 15. Occurrence identity
 
-SolidCraft creates occurrence placements and gives them occurrence identity.
+Body geometry and occurrences have different identity mechanics.
 
-Current replay-first Forge 0.42 lowering relies on version-qualified labels such
-as:
+For body CSG, Forge controls the body name:
+
+```text
+CornerProtector
+```
+
+and emits it explicitly in `body_name` / `targets`.
+
+For occurrences, SolidCraft creates occurrence identity. Current replay-first
+Forge 0.42 lowering uses version-qualified labels such as:
 
 ```text
 Board:1
 Board:2
 ```
 
-when a later command must address a copied occurrence.
+when a later fallback command must address the created occurrence.
 
-So:
+That targeting rule is a SolidCraft 0.42 backend contract, not part of public
+`Placement` semantics.
 
-```text
-"Board:2" = SolidCraft occurrence identity used by the 0.42-qualified backend
-```
+## 16. Required WoodFrame result
 
-This is a backend/version contract, not part of the public Forge Position API.
-
----
-
-## 10. Public Forge API and lowering decision
-
-### Allowed
+The original code:
 
 ```python
-board = Board()
-
-left = board.at(Position(x=-400))
-
-rotated = Panel().at(
-    Placement(
-        position=Position(z=160),
-        rotation=(X, 90),
-    )
-)
-
-right = rotated.copy().at(Position(x=160, z=160))
+left = Board(
+    name="left",
+    width=self.frame_wood_thickness,
+    depth=self.cabinet_depth,
+    height=self.opening_height,
+    _x_position=-(
+        self.opening_width / 2
+        + self.frame_wood_thickness / 2
+    ),
+    _y_position=0.0,
+    _z_position=opening_bottom,
+    material_name="LIGHTPLY side board",
+).attach(
+    bottom,
+    as_built=True,
+).group("WoodBoxFrame")
 ```
 
-Semantics:
-
-- `.at(Position(...))` sets the occurrence's declared XYZ before native
-  creation/lowering and preserves orientation;
-- `.at(Placement(...))` sets the complete declared pose;
-- `copy()` creates another occurrence of the same reusable definition and
-  initially preserves Placement;
-- the compiler prefers creation-time/native-copy placement;
-- a later native `occurrence.move` is permitted only where SolidCraft 0.42
-  cannot encode that Position/Placement during creation.
-
-### Not part of the occurrence API
+must become:
 
 ```python
-Board().move(...)
-Board().rotate(...)
+left = Board(
+    name="left",
+    width=self.frame_wood_thickness,
+    depth=self.cabinet_depth,
+    height=self.opening_height,
+    placement=Placement(
+        x=-(
+            self.opening_width / 2
+            + self.frame_wood_thickness / 2
+        ),
+        z=opening_bottom,
+    ),
+    material_name="LIGHTPLY side board",
+).attach(
+    bottom,
+    as_built=True,
+).group("WoodBoxFrame")
 ```
 
-Those action-style occurrence methods are removed.
+The result must have:
 
-Shape geometry still has its own transform API, but its translations are
-likewise folded into native creation coordinates whenever possible.
+- no `_x_position`, `_y_position`, `_z_position` Board parameters;
+- no helper placement parameters generated by Forge;
+- one reusable Board definition;
+- occurrence Placement kept separate from Board geometry parameters;
+- saved SolidCraft parameter changes continuing to drive placement;
+- no hidden placement joint.
 
-### Lowering priority
+## 17. Qualification gate
 
-For Position/Placement the compiler uses this order:
+SCPF 0.3.0 is not complete until these cases pass:
 
-```text
-1. encode final placement in the native create/copy command
-2. if SolidCraft cannot represent it there, use the smallest native placement
-   fallback needed to reach the declared final pose
-3. never substitute a joint for placement
-```
+1. constructor with default Placement;
+2. constructor with numeric XYZ Placement;
+3. constructor with parametric XYZ Placement;
+4. constructor with Placement plus rotation;
+5. `copy()` inherits Placement when no override is supplied;
+6. `copy(placement=...)` creates the copy at the supplied Placement;
+7. copied parametric symmetric placements remain associative after saved-model
+   parameter mutation;
+8. Placement plus explicit Attachment works without a hidden placement joint;
+9. placement expressions reuse existing parameters and create no helper
+   parameters;
+10. HUB75 WoodFrame no longer contains private position constructor parameters;
+11. native SolidCraft 0.42 saved/reopen mutation evidence is green.
 
-For the currently qualified SolidCraft 0.42 backend this gives:
+## 18. Change-management rule
 
-```text
-Shape numeric translation
-    -> solid.box(... corner/center=final position)
+This is change **0001**.
 
-Copied occurrence, numeric Position
-    -> occurrence.copy(... translate=final position)
-
-First occurrence, non-origin Position
-    -> component.create(...)
-    -> occurrence.move(...)      # backend gap: create has no pose
-
-Copied occurrence, parametric Position
-    -> occurrence.copy(...)
-    -> occurrence.move(expr)     # backend gap: copy translate is numeric-only
-
-Orientation
-    -> occurrence.move(...) when needed
-```
-
-The final three cases do not change the Forge semantics: Position/Placement is
-still state declared before compilation, not an action requested afterwards.
-
----
-
-## 11. Required qualification
-
-The change is complete only when all of these pass:
-
-1. default Position at origin;
-2. numeric Position;
-3. parametric Position;
-4. repeated numeric Position;
-5. symmetric repeated parametric Position;
-6. Position plus orientation;
-7. `copy().at(Position(...))` preserves orientation;
-8. Position plus Attachment;
-9. no helper/duplicate placement parameters;
-10. no hidden placement joint;
-11. saved-model parameter mutation moves the occurrence without rerunning Forge;
-12. downstream HUB75 WoodFrame uses the new API successfully.
-
-CadQuery may be used as an additional comparison implementation for assembly
-Location semantics. SolidCraft remains the native truth for saved parameter
-associativity and occurrence identity.
-
----
-
-## 12. Change-management rule
-
-This document records change **0001**.
-
-Future design changes go into new files:
+Future design changes are added as new records:
 
 ```text
 docs/changes/0002-....md
 docs/changes/0003-....md
 ```
 
-Do not silently rewrite this decision when a later change supersedes it. The
-later change must say what it changes and link back to this file.
+A later change that supersedes this design must explicitly link back to
+`0001` and state what is being replaced. Do not silently turn old change
+records into a different design history.
