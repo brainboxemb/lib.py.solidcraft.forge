@@ -246,9 +246,8 @@ def compile_assembly(value, name):
         first_is_root = (
             instances[0] is assembly.instances[0] and parent_name is None
         )
-        first_has_symbolic_move = (
-            instances[0].attachment is None
-            and bool(parameters_in(*instances[0].placement.position))
+        first_has_symbolic_move = bool(
+            parameters_in(*instances[0].placement.position)
         )
         create_params = {
             "name": component_name,
@@ -333,16 +332,17 @@ def compile_assembly(value, name):
 
         # Remaining placement work is only what creation-time placement
         # cannot safely express: the definition's first occurrence, symbolic
-        # position, or any Placement that includes rotation. Public Placement
-        # semantics do not prescribe this native command choice.
+        # position, or any Placement that includes rotation. A symbolic seed
+        # Placement remains symbolic even when that occurrence also carries an
+        # Attachment; the later joint owns the semantic relationship, not the
+        # parameter-dependency representation of the seed pose. Public
+        # Placement semantics do not prescribe this native command choice.
         for instance, native_name in occurrences:
             position = instance.placement.position
             rotation = instance.placement.rotation
             positioned_at_copy = id(instance) in copy_positioned
             symbolic_position = bool(parameters_in(*position))
-            expressed_move = (
-                symbolic_position and instance.attachment is None
-            )
+            expressed_move = symbolic_position
 
             if rotation is None and positioned_at_copy:
                 continue
