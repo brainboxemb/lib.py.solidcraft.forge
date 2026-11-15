@@ -11,7 +11,7 @@ class SideBoard:
             self.width,
             self.depth,
             self.height,
-        )
+        ).at(y=half(self.depth))
 
 
 class LProfile:
@@ -92,7 +92,7 @@ class Hub75LikePlacementBaseline:
                 x=outer_x,
                 y=front_y,
                 z=outer_height,
-                rotation=(Z, 180),
+                rotation=(Y, 90),
             ),
         )
         top_right_rear = bracket.copy(
@@ -111,7 +111,7 @@ class Hub75LikePlacementBaseline:
                 x=-outer_x,
                 y=front_y,
                 z=0,
-                rotation=(X, 180),
+                rotation=(Y, 270),
             ),
         )
         bottom_left_rear = bracket.copy(
