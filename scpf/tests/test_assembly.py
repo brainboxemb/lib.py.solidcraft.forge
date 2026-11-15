@@ -46,7 +46,7 @@ class AssemblyTests(unittest.TestCase):
             {"occurrence": "Block:2", "face": [20.0, 0.0, 5.0]},
         )
 
-    def test_component_placement_keyword_is_occurrence_data(self):
+    def test_component_position_is_occurrence_data(self):
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "placement_keyword.py"
             script.write_text(
@@ -107,7 +107,7 @@ class AssemblyTests(unittest.TestCase):
         )
         self.assertEqual(copy["translate"], [50.0, 0.0, 0.0])
 
-    def test_copy_accepts_explicit_placement(self):
+    def test_occurrence_at_accepts_position_or_placement(self):
         from scpf import Box, Placement, component
 
         @component
@@ -124,8 +124,8 @@ class AssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "Placement"):
             original.copy().at((40, 0, 3))
 
-    def test_copies_of_placed_occurrences_use_relative_native_offsets(self):
-        """A copied occurrence inherits its source transform."""
+    def test_copies_of_positioned_occurrences_use_declared_native_positions(self):
+        """Copied occurrences compile from their declared final Position."""
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "sidewalls.py"
             script.write_text(
@@ -1820,7 +1820,7 @@ class AssemblyTests(unittest.TestCase):
             gap=gap,
         )
 
-        self.assertEqual(child.placement.position, (10.0, -2.0, 15.0))
+        self.assertEqual(child.placement.position.values, (10.0, -2.0, 15.0))
         self.assertIs(child.attachment.gap, gap)
         self.assertEqual(child.attachment.offset, (10, -2))
 
@@ -1838,7 +1838,7 @@ class AssemblyTests(unittest.TestCase):
             child=Anchor.LEFT,
             offset=(0, -wood + 12),
         )
-        self.assertEqual(right.placement.position, (40.0, 0.0, -6.0))
+        self.assertEqual(right.placement.position.values, (40.0, 0.0, -6.0))
 
         commands = compile_assembly(left + right, "ParametricOffset")["commands"]
         parameter = next(
