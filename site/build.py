@@ -608,7 +608,7 @@ def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root
             preview_path = "preview.svg"
             preview_kind = "schematic"
             preview_caption = (
-                "Schematic illustration; this example is not part of the "
+                "Schematic illustration only; this example is not part of the "
                 "current native screenshot set."
             )
         manifest["examples"][slug] = {"source": f"examples/{slug}/model.py",
