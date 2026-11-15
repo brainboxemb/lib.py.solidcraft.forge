@@ -129,6 +129,8 @@ def check(
         assert chapter["title"] in page
         assert "guide-sidebar" in page and "guide-article" in page
         assert f'class="active" href="../{chapter["slug"]}/"' in page
+        if '<h2 id="' in chapter["body"]:
+            assert 'class="guide-subnav"' in page, chapter["slug"]
         assert len(page) > 1400, chapter["slug"]
     features = (site / "guide" / "features" / "index.html").read_text(encoding="utf-8")
     assert 'href="../../reference/Faces/"' in features
