@@ -453,23 +453,7 @@ def _render_native_results(native_case, solidcraft_version):
     )
 
 
-def page(title, body, *, stylesheet, home, cheatsheet):
-    return f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>{escape(title)} · SCPF Python library</title>
-<link rel="stylesheet" href="{escape(stylesheet)}"></head>
-<body><header class="top"><div class="wrap nav">
-<a class="brand" href="{escape(home)}">SCPF <span>Python library</span></a>
-<nav aria-label="Main"><a href="{escape(home)}">Examples</a><a href="{escape(home)}guide/">API Guide</a><a href="{escape(home)}reference/">API Reference</a><a href="{escape(home)}qualification/">Qualification</a><a href="{escape(cheatsheet)}">Cheatsheet</a>\n<a href="{LIBRARY_URL}">Source</a></nav></div></header>
-<div class="development-banner" role="status"><div class="wrap">
-<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
-</div></div>
-{body}
-<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
-<a href="{CAD_SITE}">Full SolidCraft CAD projects →</a></div></footer>
-<script>
-(() => {
+COPY_SCRIPT = r"""(() => {
   const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
   const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
 
@@ -526,7 +510,25 @@ def page(title, body, *, stylesheet, home, cheatsheet):
     });
   });
 })();
-</script>
+"""
+
+
+def page(title, body, *, stylesheet, home, cheatsheet):
+    return f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>{escape(title)} · SCPF Python library</title>
+<link rel="stylesheet" href="{escape(stylesheet)}"></head>
+<body><header class="top"><div class="wrap nav">
+<a class="brand" href="{escape(home)}">SCPF <span>Python library</span></a>
+<nav aria-label="Main"><a href="{escape(home)}">Examples</a><a href="{escape(home)}guide/">API Guide</a><a href="{escape(home)}reference/">API Reference</a><a href="{escape(home)}qualification/">Qualification</a><a href="{escape(cheatsheet)}">Cheatsheet</a>\n<a href="{LIBRARY_URL}">Source</a></nav></div></header>
+<div class="development-banner" role="status"><div class="wrap">
+<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
+</div></div>
+{body}
+<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+<a href="{CAD_SITE}">Full SolidCraft CAD projects →</a></div></footer>
+<script>{COPY_SCRIPT}</script>
 </body></html>"""
 
 
