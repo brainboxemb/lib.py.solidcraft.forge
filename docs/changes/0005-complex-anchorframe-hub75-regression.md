@@ -119,6 +119,10 @@ Expected structure:
 - exactly eight authored `joint.create` relationships;
 - no generated hidden placement joints;
 - child AnchorFrames are supplied directly to the authored relationships;
+- standard parent corner origins carry the already-defined
+  `_corner_native_x(anchor)` clocking axis explicitly. SolidCraft 0.42 uses
+  current pose/minimum-turn behaviour when this axis is omitted, which can pick
+  the alternate rigid orientation on the right-side corners;
 - the `CornerBrackets` browser group is not grounded, because its children
   attach to SideBoard occurrences outside that group;
 - attached child `occurrence.move` commands may be concrete solver seeds.
@@ -216,8 +220,14 @@ external joint graph can remain on the wrong solution and fails to follow a
 saved-design parent mutation.
 
 Change 0005 therefore keeps the historical numeric attached-child seed
-lowering and fixes only named-group grounding: independent browser groups stay
-grounded, while a group containing children attached to occurrences outside
-that group remains ungrounded.
+lowering and fixes two compatibility regressions exposed by the newer stack:
 
-The diagnostic evidence, not the earlier seed hypothesis, determines this fix.
+1. named-group grounding: independent browser groups stay grounded, while a
+   group containing children attached to occurrences outside that group remains
+   ungrounded;
+2. SolidCraft 0.42 corner clocking: standard corner origins now emit their
+   existing explicit `x` axis so direct child AnchorFrames do not depend on
+   0.42's minimum-turn choice around the mating normal.
+
+The diagnostic evidence, not the earlier seed hypothesis, determines these
+fixes.
