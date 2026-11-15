@@ -22,12 +22,6 @@ that meaning*, and *which invariants the compiler must preserve*.
    - static replay limitations;
    - lowering rules and forbidden fallbacks.
 
-3. [Forge execution plan and runtime bindings](03-execution-plan.md)
-   - logical result bindings and $ref values;
-   - phased engine.batch execution;
-   - checkpoint-backed atomicity;
-   - replay-safe runtime identity.
-
 ## Change rule
 
 A compiler change that introduces a new CAD representation or fallback must be
