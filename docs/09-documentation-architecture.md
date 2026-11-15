@@ -41,6 +41,25 @@ within-component feature operations, show the complete generated member table,
 state which operations currently accept which faces, and link directly to a
 small feature example.
 
+## Reference navigation
+
+Completeness does not require one page per public symbol. Related public
+constructors and helpers may be rendered together on generated group pages such
+as geometry constructors, feature constructors, parameters/positioning and
+attachment references.
+
+Grouping is navigation metadata only. Every member's signature, enum values,
+description, intended use and limits still come from the real Python object and
+its docstring.
+
+The reference index should present task-oriented groups before the detailed
+alphabetic/method lookup. The guide remains the preferred entry point when the
+reader is still deciding which concept to use.
+
+Every name exported through `scpf.__all__` must resolve to either a direct
+generated reference, a generated group member, or a generated alias. CI treats
+an unmapped public export as a documentation error.
+
 ## Guide pages
 
 The guide is task-oriented rather than an alphabetic API dump. It should
