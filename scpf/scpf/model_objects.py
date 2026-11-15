@@ -86,9 +86,9 @@ def _resolve_anchor_reference(instance, value):
     )
 
 
-def _anchor_local_point(instance, anchor):
+def _anchor_local_point(instance, anchor, *, symbolic=False):
     if isinstance(anchor, Anchor):
-        return _anchor_point(instance, anchor)
+        return _anchor_point(instance, anchor, symbolic=symbolic)
     if isinstance(anchor, AnchorFrame):
         return anchor.origin
     if isinstance(anchor, AnchorTopology):
@@ -169,8 +169,12 @@ def _xz_polygon_rectangle_bounds(shape):
     return ((xmin, xmax), (ymin, ymax), (zmin, zmax))
 
 
-def _rectangular_bounds(instance):
-    """Return local axis-aligned bounds for a supported rectangular component."""
+def _rectangular_bounds(instance, *, symbolic=False):
+    """Return local axis-aligned bounds for a supported rectangular component.
+
+    symbolic=True preserves Parameter/Expression dimensions for assembly seed
+    placement. Native topology picks continue to use the default concrete form.
+    """
     from .placement import _base_rectangle
 
     shape = _unwrap_rectangular_shape(instance.definition.shape)
@@ -183,6 +187,13 @@ def _rectangular_bounds(instance):
             raise ValueError(
                 "component attach requires a supported rectangular model"
             ) from exc
+
+    if symbolic:
+        return (
+            (x, _dim_add(x, width)),
+            (y, _dim_add(y, depth)),
+            (z, _dim_add(z, height)),
+        )
 
     width, depth, height = map(pv, (width, depth, height))
     x, y, z = map(pv, (x, y, z))
@@ -205,9 +216,9 @@ _CORNER_ANCHORS = {
 }
 
 
-def _anchor_point(instance, anchor):
+def _anchor_point(instance, anchor, *, symbolic=False):
     """Local point represented by one reusable-component anchor."""
-    bounds = _rectangular_bounds(instance)
+    bounds = _rectangular_bounds(instance, symbolic=symbolic)
     (xmin, xmax), (ymin, ymax), (zmin, zmax) = bounds
     xmid = midpoint(xmin, xmax)
     ymid = midpoint(ymin, ymax)

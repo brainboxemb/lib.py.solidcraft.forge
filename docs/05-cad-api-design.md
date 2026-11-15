@@ -132,12 +132,30 @@ The semantic boundary is deliberate:
 - `.attach(...)` creates an explicit assembly relationship;
 - Forge must not create visible `joint.create` records merely to implement a
   symbolic `.move(...)`;
-- if a moved occurrence is subsequently attached, its move is only a seed pose
-  for the joint solver; the explicit attachment owns the relationship.
+- if an occurrence is subsequently attached, its move remains a seed pose and
+  may stay parameter-driven; the explicit attachment still owns the relationship.
+
+SolidCraft 0.42.0 has an important solver boundary here: every joint chain must
+reach grounded structure before the joint solver actively places that chain.
+An occurrence driven by an expressed `occurrence.move` is associative
+placement, but it is not a grounded solver node. Grounding it is not an
+alternative because SolidCraft deliberately stops grounded occurrences from
+following expressed moves.
+
+Forge therefore preserves a parameter-dependent seed placement on an attached
+child. This is still placement, not a second relationship. It lets a rigid
+attached child keep the authored parameter-dependent pose even when that
+particular joint graph is floating, while the visible `Attach ...` joint
+remains the only assembly relationship. Mechanisms that need driven joint
+motion still need their joint chain connected to grounded structure.
 
 This rule replaces the older workaround for SolidCraft 0.30.1, where symbolic
 `occurrence.move` translations were not available and Forge used a planar
 placement joint to preserve associativity.
+
+The detailed native-lowering rationale, SolidCraft 0.42 solver constraints and
+qualification contract are recorded in
+[`docs/11-occurrence-placement-and-attachment.md`](11-occurrence-placement-and-attachment.md).
 
 ### `attach()`
 

@@ -35,6 +35,12 @@ EXPECTED_BOUNDS = {
         {"label": "fixed Block", "min": [-10, -10, 0], "max": [10, 10, 10]},
         {"label": "moved Block", "min": [30, -10, 0], "max": [50, 10, 10]},
     ],
+    "parametric-attachment-seed": [
+        {"label": "left Post", "min": [-10, -10, 0], "max": [10, 10, 100]},
+        {"label": "right Post", "min": [70, -10, 0], "max": [90, 10, 100]},
+        {"label": "left Marker", "min": [-5, -5, 100], "max": [5, 5, 110]},
+        {"label": "right Marker", "min": [75, -5, 100], "max": [85, 5, 110]},
+    ],
     "group-hierarchy": [
         {"label": "left Panel", "min": [-5, -1, 0], "max": [5, 1, 20]},
         {"label": "right Panel", "min": [6, -1, 0], "max": [16, 1, 20]},
@@ -129,6 +135,12 @@ EXPECTED_BOUNDS = {
 
 
 EXPECTED_MUTATION_BOUNDS = {
+    "parametric-attachment-seed": [
+        {"label": "left Post", "min": [-10, -10, 0], "max": [10, 10, 140]},
+        {"label": "right Post", "min": [70, -10, 0], "max": [90, 10, 140]},
+        {"label": "left Marker", "min": [-5, -5, 140], "max": [5, 5, 150]},
+        {"label": "right Marker", "min": [75, -5, 140], "max": [85, 5, 150]},
+    ],
     "parametric-move": [
         {"label": "fixed Block", "min": [-10, -10, 0], "max": [10, 10, 10]},
         {"label": "moved Block", "min": [60, -10, 0], "max": [80, 10, 10]},

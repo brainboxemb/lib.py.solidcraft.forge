@@ -86,6 +86,7 @@ CAPABILITY_COVERAGE = [
     ("Occurrences", "copy + move + rotate", "Q6", "Q6", ["custom-anchor"], "Rotation plus attachment is native-qualified; broader placement fixture remains useful."),
     ("Occurrences", "group()", "Q6", "Q6", ["group-hierarchy"], "Native top/flat BOM inspection proves the named subassembly hierarchy and repeated child occurrences."),
     ("Assemblies", "rigid attach()", "Q6", "Q6", ["components"], "Native rigid relationship."),
+    ("Assemblies", "parameter-driven seed placement for attached children", "Q5", "Q5", ["parametric-attachment-seed"], "Two disconnected rigid attachment graphs retain only authored joints while both children follow a saved parent-dimension mutation."),
     ("Assemblies", "@assembly imported subassembly", "Q6", "Q6", ["assembly-decorator"], "An imported @assembly factory returns reusable occurrences that compile and build natively."),
     ("Assemblies", "gap", "Q5", "Q6", ["parametric-attach"], "Saved-design mutation qualified."),
     ("Assemblies", "local planar offset=(u,v)", "Q5", "Q6", ["parametric-offset"], "Current semantics explicitly local to joint frame."),

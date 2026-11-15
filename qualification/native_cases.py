@@ -63,6 +63,12 @@ MUTATIONS = {
         "measurements": "measurements-offset-70.json",
         "label": "offset 40 -> 70 mm",
     },
+    "parametric-attachment-seed": {
+        "command": "qualification/commands/parametric-attachment-seed/change-height.json",
+        "save": "model-height-140.sc",
+        "measurements": "measurements-height-140.json",
+        "label": "Post_height 100 -> 140 mm; both attached children follow",
+    },
     "parametric-attach": {
         "command": "qualification/commands/parametric-attach/change-gap.json",
         "save": "model-gap-30.sc",

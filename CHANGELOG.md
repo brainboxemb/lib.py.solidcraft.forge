@@ -8,9 +8,12 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
-### Added
+### Fixed
 
-- Nothing yet.
+- Preserve parameter-dependent seed placement for attached occurrences so
+  children in otherwise floating SolidCraft 0.42 joint graphs remain
+  associative after parent-dimension changes, without reintroducing hidden
+  placement joints.
 
 ## [0.2.0] - 2026-11-15
 

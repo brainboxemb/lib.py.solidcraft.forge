@@ -142,6 +142,22 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "parametric-attachment-seed",
+        "q5_required": True,
+        "group": "associativity",
+        "title": "Associative seed placement for floating attachment graphs",
+        "intent": "Verify that attached children keep a parameter-dependent native seed pose without adding hidden placement joints, including a second disconnected rigid-joint graph.",
+        "forge_api": "Post(); Marker().attach(post, parent=Anchor.TOP, child=Anchor.BOTTOM)",
+        "forge_model": "Two Post occurrences share one definition and its local editable Post_height parameter. Each has one Marker rigidly attached to TOP; the second Post/Marker pair is a separate floating joint graph.",
+        "lowering": "Parent and child seed placements use native occurrence.move expressions where symbolic; exactly two explicit rigid Attach Marker joints are emitted and no Place joints.",
+        "native_expectation": "Two 20x20x100 posts at X=-40/+40 each carry one 10x10x10 marker at Z=100. joint.inspect reports exactly two authored Marker attachments.",
+        "mutation": "Change Post_height from 100 to 140 mm in the saved design; both markers must follow to Z=140..150, including the child in the otherwise floating second graph.",
+        "references": [
+            ("SolidCraft", "SolidCraft 0.42.0 requires joint chains to reach grounded structure; expressed occurrence moves remain associative placement but are not grounded solver nodes."),
+            ("BOSL2", "Attachment intent remains separate from the seed placement used to establish the initial pose."),
+        ],
+    },
+    {
         "slug": "group-hierarchy",
         "group": "components",
         "title": "Named native subassembly group",

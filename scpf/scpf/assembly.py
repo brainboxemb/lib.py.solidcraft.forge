@@ -2,7 +2,10 @@
 import re
 
 from .compiler import ModelError
-from .core import Anchor, AnchorFrame, AnchorTopology, command_value, parameters_in, pv
+from .core import (
+    Anchor, AnchorFrame, AnchorTopology, Expression, Parameter,
+    _dim_add, _dim_sub, command_value, parameters_in, pv,
+)
 from .model_objects import (
     Assembly,
     ModelInstance,
@@ -11,6 +14,7 @@ from .model_objects import (
     _anchor_origin,
     _corner_native_x,
     _corner_normal,
+    _face_offset,
 )
 from .compiler import compile_model
 
@@ -70,6 +74,111 @@ def _rewrite_value(value, mapping):
     if isinstance(value, dict):
         return {key: _rewrite_value(item, mapping) for key, item in value.items()}
     return value
+
+
+def _parameter_namespace_mapping(definition, component_name):
+    """Map one component's local parameters to their native global names."""
+    prefix = _component_slug(component_name)
+    return {
+        name: f"{prefix}_{name}"
+        for name, _ in definition.parameters
+    }
+
+
+def _rewrite_dimension(value, mapping):
+    """Rewrite a symbolic CAD dimension without losing its dependencies."""
+    if isinstance(value, Parameter):
+        mapped = mapping.get(value.name)
+        return value if mapped is None else Parameter(mapped, value.value)
+    if isinstance(value, Expression):
+        return Expression(
+            value.value,
+            _rewrite_value(value.expression, mapping),
+            tuple(_rewrite_dimension(param, mapping) for param in value.parameters),
+        )
+    return value
+
+
+def _sum_dimensions(*values):
+    result = 0
+    for value in values:
+        result = _dim_add(result, value)
+    return result
+
+
+def _scale_direction_component(component, distance):
+    if component == 0:
+        return 0
+    if component == 1:
+        return distance
+    if component == -1:
+        return -distance
+    return distance * component
+
+
+def _symbolic_attachment_seed(instance, names):
+    """Rebuild an attached child's seed pose from symbolic local anchors.
+
+    Standard attach() stores a concrete authoring-time seed on ModelInstance so
+    Python-side validation remains simple. Native lowering recomputes that seed
+    from the original Attachment references so parent/child dimensions can stay
+    associative in SolidCraft.
+    """
+    attachment = instance.attachment
+    if attachment is None or attachment.as_built:
+        return instance.translation
+
+    target = attachment.target
+    target_name = names[target.definition.key]
+    child_name = names[instance.definition.key]
+    target_mapping = _parameter_namespace_mapping(
+        target.definition, target_name
+    )
+    child_mapping = _parameter_namespace_mapping(
+        instance.definition, child_name
+    )
+
+    target_local = tuple(
+        _rewrite_dimension(value, target_mapping)
+        for value in _anchor_local_point(
+            target, attachment.parent, symbolic=True
+        )
+    )
+    child_local = tuple(
+        _rewrite_dimension(value, child_mapping)
+        for value in _anchor_local_point(
+            instance, attachment.child, symbolic=True
+        )
+    )
+
+    tangent = (0, 0, 0)
+    normal = (0, 0, 0)
+    if attachment.parent in (
+        Anchor.LEFT,
+        Anchor.RIGHT,
+        Anchor.FRONT,
+        Anchor.BACK,
+        Anchor.TOP,
+        Anchor.BOTTOM,
+        Anchor.CENTER,
+    ):
+        tangent = _face_offset(attachment.parent, attachment.offset)
+        if attachment.parent is not Anchor.CENTER:
+            normal = attachment.parent.vector
+
+    target_world = tuple(
+        _sum_dimensions(
+            target_local[i],
+            target.translation[i],
+            tangent[i],
+            _scale_direction_component(normal[i], attachment.gap),
+        )
+        for i in range(3)
+    )
+    return tuple(
+        _dim_sub(target_world[i], child_local[i])
+        for i in range(3)
+    )
 
 
 def _namespace_commands(commands, component_name, external_names=()):
@@ -315,18 +424,23 @@ def compile_assembly(value, name):
         # the native representation of a parametric occurrence placement:
         # move() places an occurrence; it does not create an assembly joint.
         #
-        # An occurrence that will be attached still receives only a numeric
-        # seed pose. The explicit Attachment below owns the relationship and
-        # the native joint solver owns its final placement.
+        # Keep parameter-dependent seed placement symbolic even when the
+        # occurrence is attached. SolidCraft 0.42.0 leaves a joint chain that
+        # reaches nothing grounded floating; the explicit attachment remains
+        # the only relationship, while the expressed seed move keeps the
+        # authored pose associative when parent dimensions change.
         for instance, native_name in occurrences:
-            symbolic_move = bool(parameters_in(*instance.translation))
-            expressed_move = (
-                symbolic_move and instance.attachment is None
+            move_translation = (
+                _symbolic_attachment_seed(instance, names)
+                if instance.attachment is not None
+                else instance.translation
             )
-            if instance.rotation is None and not any(instance.translation):
+            symbolic_move = bool(parameters_in(*move_translation))
+            expressed_move = symbolic_move
+            if instance.rotation is None and not any(move_translation):
                 continue
 
-            for parameter in parameters_in(*instance.translation):
+            for parameter in parameters_in(*move_translation):
                 if not any(
                     command["command"] == "parameters.add"
                     and command["params"]["name"] == parameter.name
@@ -341,9 +455,9 @@ def compile_assembly(value, name):
             params = {
                 "occurrence": native_name,
                 "translate": (
-                    list(instance.translation)
+                    list(move_translation)
                     if expressed_move
-                    else [pv(value) for value in instance.translation]
+                    else [pv(value) for value in move_translation]
                 ),
             }
             if instance.rotation is not None:

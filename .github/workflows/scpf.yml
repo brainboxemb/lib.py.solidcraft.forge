@@ -302,6 +302,13 @@ jobs:
           solidcraft-cli eval output/native/parametric-move/model-offset-70.sc \
             --json-out output/native/parametric-move/measurements-offset-70.json
 
+          solidcraft-cli run qualification/commands/parametric-attachment-seed/change-height.json \
+            --in output/native/parametric-attachment-seed/model.sc \
+            --param-check strict \
+            --save output/native/parametric-attachment-seed/model-height-140.sc
+          solidcraft-cli eval output/native/parametric-attachment-seed/model-height-140.sc \
+            --json-out output/native/parametric-attachment-seed/measurements-height-140.json
+
           cat > output/native/parametric-attach/change-gap.json <<'JSON'
           {"commands":[
             {"command":"parameters.change","params":{
@@ -387,6 +394,7 @@ jobs:
           printf "eight-flightcase-corners\tcase 120x80x60 -> 160x120x90 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "eight-corner-brackets\tframe 120x80x60 -> 160x120x90 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-move\toffset 40 -> 70 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
+          printf "parametric-attachment-seed\tPost_height 100 -> 140 mm; both attached children follow\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-attach\tgap 10 -> 30 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-offset\tshift 5 -> 10 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-anchor\tbase_width 40 -> 80 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv

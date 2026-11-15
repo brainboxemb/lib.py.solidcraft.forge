@@ -333,6 +333,62 @@ def validate_parametric_move(root: Path) -> Validation:
     return v
 
 
+def validate_parametric_attachment_seed(root: Path) -> Validation:
+    v = Validation("parametric-attachment-seed")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "parametric-attachment-seed")
+
+    joint_results = load(root / "joint-inspect.json")
+    joint_payload = (
+        joint_results[0]
+        if isinstance(joint_results, list) and joint_results
+        else joint_results
+    )
+    joints = (
+        joint_payload.get("joints", [])
+        if isinstance(joint_payload, dict)
+        else None
+    )
+    joint_names = (
+        sorted(row.get("name", "") for row in joints)
+        if isinstance(joints, list)
+        else None
+    )
+    v.check(
+        "only the two authored marker attachments are native joints",
+        isinstance(joints, list)
+        and len(joints) == 2
+        and all(name.startswith("Attach Marker:") for name in joint_names),
+        "2 Attach Marker joints and no Place joints",
+        joint_names,
+    )
+
+    m = load(root / "measurements-height-140.json")
+    _check_declared_bounds(
+        v,
+        m,
+        "parametric-attachment-seed",
+        level="q5",
+        mutation=True,
+    )
+    marker_bounds = sorted(
+        (body["bbox"]["min"], body["bbox"]["max"])
+        for body in bodies_named(m, "Marker")
+    )
+    expected_markers = sorted([
+        ([-5, -5, 140], [5, 5, 150]),
+        ([75, -5, 140], [85, 5, 150]),
+    ])
+    v.check(
+        "both attached children follow the saved parent-height mutation",
+        marker_bounds == expected_markers,
+        expected_markers,
+        marker_bounds,
+        "q5",
+    )
+    return v
+
+
 def validate_group_hierarchy(root: Path) -> Validation:
     v = Validation("group-hierarchy")
     d = load(root / "measurements.json")
@@ -828,6 +884,7 @@ VALIDATORS = {
     "components": validate_components,
     "assembly-decorator": validate_assembly_decorator,
     "parametric-move": validate_parametric_move,
+    "parametric-attachment-seed": validate_parametric_attachment_seed,
     "group-hierarchy": validate_group_hierarchy,
     "attach-angle": validate_attach_angle,
     "as-built-attach": validate_as_built_attach,

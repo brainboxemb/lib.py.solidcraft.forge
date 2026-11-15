@@ -30,7 +30,9 @@ class AssemblyTests(unittest.TestCase):
         self.assertNotIn("translate", copies[0]["params"])
         placements = [c["params"] for c in commands if c["command"] == "occurrence.move"]
         self.assertEqual(placements[-1]["occurrence"], "Block:2")
-        self.assertEqual(placements[-1]["translate"], [40.0, 0.0, 0.0])
+        self.assertIn("Block_length", str(placements[-1]["translate"][0]))
+        self.assertIn("Block_width", str(placements[-1]["translate"][1]))
+        self.assertIn("Block_height", str(placements[-1]["translate"][2]))
         box = next(c for c in commands if c["command"] == "solid.box")
         self.assertIn("Block_length", str(box["params"]))
         self.assertIn("Block_width", str(box["params"]))
@@ -984,9 +986,8 @@ class AssemblyTests(unittest.TestCase):
             if command["command"] == "occurrence.move"
             and command["params"]["occurrence"] == "Panel:2"
         )
-        self.assertTrue(
-            all(isinstance(value, (int, float)) for value in child_move["translate"])
-        )
+        self.assertIn("station", str(child_move["translate"][0]))
+        self.assertEqual(child_move["translate"][1:], [0.0, 0.0])
 
         attachment = next(
             command["params"]
@@ -995,6 +996,66 @@ class AssemblyTests(unittest.TestCase):
             and command["params"]["name"].startswith("Attach Panel:2")
         )
         self.assertEqual(attachment["type"], "rigid")
+
+    def test_attached_seed_keeps_namespaced_parent_dimension_symbolic(self):
+        from scpf.assembly import compile_assembly
+        from scpf.core import Anchor, Box
+        from scpf.runner import component
+
+        class Post:
+            height = 100.0
+
+            def build(self):
+                return Box(20, 20, self.height)
+
+        class Marker:
+            def build(self):
+                return Box(10, 10, 10)
+
+        PostObject = component(Post)
+        MarkerObject = component(Marker)
+
+        left = PostObject()
+        right = PostObject().move(x=80)
+        left_marker = MarkerObject().attach(
+            left,
+            parent=Anchor.TOP,
+            child=Anchor.BOTTOM,
+        )
+        right_marker = MarkerObject().attach(
+            right,
+            parent=Anchor.TOP,
+            child=Anchor.BOTTOM,
+        )
+
+        commands = compile_assembly(
+            left + right + left_marker + right_marker,
+            "Pair",
+        )["commands"]
+
+        marker_moves = [
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.move"
+            and command["params"]["occurrence"].startswith("Marker:")
+        ]
+        self.assertEqual(len(marker_moves), 2)
+        self.assertEqual(marker_moves[0]["translate"][2], "Post_height")
+        self.assertEqual(marker_moves[1]["translate"][2], "Post_height")
+        self.assertEqual(marker_moves[1]["translate"][0], 80.0)
+
+        joints = [
+            command["params"]
+            for command in commands
+            if command["command"] == "joint.create"
+        ]
+        self.assertEqual(len(joints), 2)
+        self.assertTrue(
+            all(item["name"].startswith("Attach Marker:") for item in joints)
+        )
+        self.assertFalse(
+            any(item["name"].startswith("Place ") for item in joints)
+        )
 
     def test_parent_parameter_binding_reuses_existing_name_without_child_duplicate(self):
         from scpf.assembly import compile_assembly
