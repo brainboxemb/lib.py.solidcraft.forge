@@ -96,6 +96,10 @@ def check(site: Path, sha: str, require_native: bool = False):
     )
     assert local_agent_api == agent_manifest()
     assert set(scpf.__all__) <= set(local_agent_api["symbols"])
+    agent_source = (ROOT / "docs" / "agent" / "forge-api.json").read_text(encoding="utf-8")
+    assert len(agent_source.encode("utf-8")) < 25000
+    assert '"use_when"' not in agent_source
+    assert '"limits"' not in agent_source
     assert 'class="development-banner"' in home
     assert "Development version." in home
     assert "not a support guarantee" in home
