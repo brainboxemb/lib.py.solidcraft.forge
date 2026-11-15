@@ -274,13 +274,15 @@ def compile_assembly(value, name):
         commands.append(_command("component.activate", component="root"))
 
         # Copies are created while the definition's first occurrence is still
-        # at native identity. A concrete Placement can therefore be supplied
-        # directly to occurrence.copy without first predicting the new
-        # occurrence name and moving it afterwards.
+        # at native identity. A concrete translation with no rotation can be
+        # supplied directly to occurrence.copy.
         #
-        # Parameter-driven placement and rotation still need a later native
-        # operation; those are separate capabilities and are deliberately not
-        # disguised as creation-time placement.
+        # Do not split one Placement across copy translation and a later
+        # relative rotation. SolidCraft occurrence.move rotates the occurrence's
+        # current transform, so a later rotation would rotate a translation
+        # already applied by occurrence.copy. A rotated copy therefore stays at
+        # identity until one occurrence.move establishes translation + rotation
+        # together. Symbolic placement likewise needs the later native move.
         occurrences = []
         copy_positioned = set()
         for index, instance in enumerate(instances, start=1):
@@ -291,7 +293,10 @@ def compile_assembly(value, name):
                 position = instance.placement.position
                 symbolic_position = bool(parameters_in(*position))
                 params = {"component": component_name}
-                if not symbolic_position:
+                if (
+                    not symbolic_position
+                    and instance.placement.rotation is None
+                ):
                     concrete_position = [pv(value) for value in position]
                     if any(concrete_position):
                         params["translate"] = concrete_position
@@ -327,9 +332,9 @@ def compile_assembly(value, name):
                 ))
 
         # Remaining placement work is only what creation-time placement
-        # cannot express: the definition's first occurrence, symbolic position,
-        # or rotation. Public at()/Placement semantics do not prescribe
-        # this native command choice.
+        # cannot safely express: the definition's first occurrence, symbolic
+        # position, or any Placement containing rotation. Public Placement
+        # semantics do not prescribe this native command choice.
         for instance, native_name in occurrences:
             position = instance.placement.position
             rotation = instance.placement.rotation
