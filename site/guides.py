@@ -54,8 +54,10 @@ want to add commands to the current design. Neither form saves the design.
 The CAD project also provides a separate native CLI qualification workflow.</p>
 <h2 id="next">Where to continue</h2>
 <p>Read <a href="../model-objects/">Model objects</a> to understand the difference
-between a shape definition and a placed component occurrence. The
-<a href="../transformations/">Transformations</a> chapter covers coordinate axes,
+between a shape definition and a placed component occurrence. Then read
+<a href="../assembly-basics/">From one component to an assembly</a> before building
+multi-part models: it explains when to use placement, anchors, relationships and
+groups. The <a href="../transformations/">Transformations</a> chapter covers coordinate axes,
 rotation and the common “my panel is lying flat” problem.</p>""",
     },
     {
@@ -152,6 +154,122 @@ At present one shared definition cannot be split among different groups.</p>
 <p>Associative attachment is supported for a limited set of rectangular
 component faces. General mates, arbitrary face queries and rotational
 constraints are not implemented as a complete assembly solver.</p>""",
+    },
+    {
+        "slug": "assembly-basics",
+        "title": "From one component to an assembly",
+        "summary": "When to use a Shape, component, occurrence, anchor, relationship or group.",
+        "body": """
+<h2 id="mental-model">Start with the mental model</h2>
+<p>Forge separates <strong>geometry</strong> from <strong>physical parts</strong>
+and from <strong>relationships between parts</strong>. Most assembly code becomes
+much easier once those three levels are kept separate.</p>
+<table><thead><tr><th>You mean…</th><th>Forge concept</th><th>SolidCraft result</th></tr></thead><tbody>
+<tr><td>Geometry inside one part</td><td><code>Shape</code></td><td>Native geometry/features in one definition</td></tr>
+<tr><td>One reusable physical part</td><td><code>@component</code> class</td><td>Reusable component definition</td></tr>
+<tr><td>One placed copy of that part</td><td><code>Block()</code> / <code>copy()</code></td><td>Component occurrence</td></tr>
+<tr><td>Several parts collected together</td><td><code>a + b</code></td><td>Assembly containing occurrences</td></tr>
+<tr><td>One part depends on another</td><td><code>attach()</code></td><td>Native SolidCraft assembly relationship/joint</td></tr>
+<tr><td>A named mounting reference</td><td><code>Anchor</code>, <code>AnchorFrame</code>, <code>AnchorTopology</code></td><td>Reference used by that relationship</td></tr>
+<tr><td>Browser/subassembly organisation</td><td><code>group()</code></td><td>Nested native component</td></tr>
+</tbody></table>
+
+<h2 id="simple-component">1. Make a simple component</h2>
+<p>If something is one physical reusable part, make one component definition.
+Its <code>build()</code> returns the geometry of that part. You do not need an
+anchor merely because the part is a component.</p>
+""" + code("""from scpf import Box, component
+
+@component
+class Block:
+    length = 40.0
+    width = 20.0
+    height = 10.0
+
+    def build(self):
+        return Box(self.length, self.width, self.height)""") + """
+<p><code>Block</code> is the definition. Calling <code>Block()</code> creates
+an occurrence of that definition. Calling <code>copy()</code> creates another
+occurrence of the same definition; it does not copy the complete feature
+history into a new definition.</p>
+
+<h2 id="collection">2. Put components in one assembly</h2>
+""" + code("""first = Block()
+second = first.copy().move(x=60)
+
+assembly = first + second""") + """
+<p>Here <code>first + second</code> means “these two component occurrences
+belong to one assembly”. It does <strong>not</strong> Boolean-union their solids.
+This is deliberately different from <code>Shape + Shape</code>, where supported
+shape operands describe a geometric union.</p>
+<p><code>move()</code> is enough when the position itself is the intended design
+rule: “put this occurrence at this offset”. It does not by itself say that the
+second block is mechanically related to a face or corner of the first.</p>
+
+<h2 id="relationship">3. Use attach() when the relationship is the intent</h2>
+<p>If the real rule is “the left side of this part belongs on the right side of
+that part”, encode that relationship instead of calculating a replacement XYZ
+coordinate yourself.</p>
+""" + code("""from scpf import Anchor
+
+left = Block()
+right = Block().attach(
+    left,
+    parent=Anchor.RIGHT,
+    child=Anchor.LEFT,
+)
+
+assembly = left + right""") + """
+<p>Forge records an associative attachment between the two occurrences and
+lowers that to the native SolidCraft relationship mechanism. The anchors say
+<strong>which references are related</strong>; they are not just prettier names
+for a hard-coded XYZ point.</p>
+<p>This is the important rule: <strong>use an anchor when you need to describe a
+relationship or semantic mounting reference</strong>. Do not add anchors to every
+component pre-emptively.</p>
+
+<h2 id="anchor-choice">4. Which kind of anchor?</h2>
+<table><thead><tr><th>Situation</th><th>Use</th></tr></thead><tbody>
+<tr><td>Normal rectangular face/corner is enough</td><td><code>Anchor.LEFT</code>, <code>Anchor.FRONT_TOP_RIGHT</code>, etc.</td></tr>
+<tr><td>The reusable part owns a special mounting point and orientation</td><td>Named <code>AnchorFrame</code> returned by the component's <code>anchors()</code></td></tr>
+<tr><td>The reference must follow a particular native edge/corner topology</td><td><code>AnchorTopology</code></td></tr>
+<tr><td>The reference exists only because of this larger assembly</td><td>Assembly-owned <code>with_anchor()</code>, not an application-specific anchor added to the generic part</td></tr>
+</tbody></table>
+<p>Start with the simplest standard <code>Anchor</code>. Move to
+<code>AnchorFrame</code> or <code>AnchorTopology</code> only when a face/corner
+reference cannot express the actual mounting intent.</p>
+
+<h2 id="solidcraft-relations">5. Let SolidCraft own the native relationship</h2>
+<p>Forge describes the relationship; SolidCraft owns the resulting native
+geometry, occurrence hierarchy and joint data. Forge is not intended to grow a
+second general mating solver. That is also why a meaningful
+<code>attach()</code> is preferable to Forge inventing increasingly clever
+coordinate corrections.</p>
+<p><code>offset=(u, v)</code> moves within the attachment plane,
+<code>gap</code> is normal distance between references, and <code>angle</code>
+is the relative turn around the attachment normal. These are relationship
+values, not a replacement global XYZ transform.</p>
+
+<h2 id="group">6. A group is organisation, not a relationship</h2>
+""" + code("""frame = (left + right).group("Frame")""") + """
+<p><code>group("Frame")</code> creates a real nested native component so the
+occurrences appear together in the SolidCraft browser hierarchy. Grouping does
+not mate, align or rotate the parts and does not replace <code>attach()</code>.</p>
+<p>Use a group when the collection itself is a useful named subassembly or
+browser unit. Do not create a group merely because two components touch.</p>
+
+<h2 id="decision">A practical decision sequence</h2>
+<ol>
+<li>Is this geometry part of one physical manufactured item? Keep it inside one component definition.</li>
+<li>Is it another physical item? Make another component occurrence.</li>
+<li>Do you only need a deliberate position? Use <code>move()</code>/<code>rotate()</code>.</li>
+<li>Should its placement follow another part semantically? Use <code>attach()</code> and the simplest suitable anchor.</li>
+<li>Is a standard face/corner insufficient? Define an <code>AnchorFrame</code> or topology-backed reference at the level that owns that meaning.</li>
+<li>Do several occurrences form a useful named subassembly/browser unit? Then use <code>group()</code>.</li>
+</ol>
+<p>After this page, the <a href="../components/">Components and assemblies</a>
+chapter covers parameter sharing, offsets, custom frames, topology anchors and
+assembly-owned datums in detail.</p>""",
     },
     {
         "slug": "geometry",
