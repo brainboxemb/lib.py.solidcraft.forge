@@ -1107,17 +1107,6 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 encoding="utf-8",
             )
 
-        reference_source_cards = []
-        for reference_name in reference_names:
-            label = REFERENCE_IMPLEMENTATION_LABELS[reference_name]
-            reference_source_cards.append(
-                '<div>'
-                f'<h4>{escape(label)}</h4>'
-                f'<pre><code>{escape(reference_sources[reference_name])}</code></pre>'
-                f'<p><a href="reference-{reference_name}.py">'
-                f'Open {escape(label)} source →</a></p>'
-                '</div>'
-            )
         reference_exception_html = ""
         if reference_exceptions:
             items = "".join(
@@ -1130,13 +1119,9 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 f'<ul>{items}</ul></div>'
             )
 
-        reference_evidence_html = (
-            '<div class="notice">Executable reference renders were not supplied '
-            'to this site build. The source comparisons remain available.</div>'
-        )
+        reference_render_html = {}
         reference_evidence_files = []
         if reference_verified:
-            reference_render_cards = []
             for reference_name in reference_names:
                 result_path = (
                     reference_evidence_root / slug / reference_name / "result.json"
@@ -1168,21 +1153,40 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                         f"reference-{reference_name}/{name}"
                     )
                 label = REFERENCE_IMPLEMENTATION_LABELS[reference_name]
-                reference_render_cards.append(
+                reference_render_html[reference_name] = (
                     '<figure class="qualification-reference-preview">'
                     f'<a href="reference-{reference_name}/model-iso.png" '
                     'class="qualification-image-link" target="_blank" rel="noopener">'
                     f'<img src="reference-{reference_name}/model-iso.png" '
                     f'alt="{escape(case["title"])} {label} reference render">'
                     '</a>'
-                    f'<figcaption><strong>{label}</strong> · independently exported STL · '
-                    f'max bounds delta {escape(result.get("max_delta_mm"))} mm</figcaption>'
+                    f'<figcaption>Independently exported STL · '
+                    f'max bounds delta {escape(result.get("max_delta_mm"))} mm · '
+                    f'<a href="reference-{reference_name}/model.stl">Open STL</a></figcaption>'
                     '</figure>'
                 )
-            reference_evidence_html = (
-                '<div class="qualification-reference-renders">'
-                + "".join(reference_render_cards)
+
+        reference_rows = []
+        for reference_name in reference_names:
+            label = REFERENCE_IMPLEMENTATION_LABELS[reference_name]
+            render_html = reference_render_html.get(
+                reference_name,
+                '<div class="notice qualification-reference-missing">'
+                'Executable STL/render evidence was not supplied to this site build.'
+                '</div>',
+            )
+            reference_rows.append(
+                '<section class="qualification-reference-row">'
+                '<div class="qualification-reference-source">'
+                f'<h4>{escape(label)}</h4>'
+                f'<pre><code>{escape(reference_sources[reference_name])}</code></pre>'
+                f'<p><a href="reference-{reference_name}.py">'
+                f'Open {escape(label)} source →</a></p>'
+                '</div>'
+                '<div class="qualification-reference-output">'
+                + render_html
                 + '</div>'
+                '</section>'
             )
 
         diagram_html = ""
@@ -1398,9 +1402,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             lowering_detail=escape(lowering_detail),
             reference_items="".join(reference_items),
             source=escape(source),
-            reference_source_cards="".join(reference_source_cards),
+            reference_rows="".join(reference_rows),
             reference_exceptions=reference_exception_html,
-            reference_evidence=reference_evidence_html,
         )
         (case_dir / "index.html").write_text(
             page(
