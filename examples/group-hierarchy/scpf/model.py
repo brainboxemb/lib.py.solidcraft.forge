@@ -8,14 +8,15 @@ class Panel:
 
 class Frame:
     def build(self):
-        return Box(35, 10, 40)
+        # The frame offset is visual fixture geometry, not the grouping API.
+        return Box(35, 10, 40).move(y=20, z=20)
 
 
 class GroupHierarchy:
     def build(self):
         left = Panel()
         panels = (left + left.copy(placement=Placement(x=11))).group("PanelGroup")
-        frame = Frame(placement=Placement(y=20))
+        frame = Frame()
         return panels + frame
 
 
