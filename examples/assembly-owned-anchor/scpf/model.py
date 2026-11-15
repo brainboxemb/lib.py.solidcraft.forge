@@ -32,7 +32,7 @@ class AssemblyOwnedAnchor:
             height=self.base_height,
             name="base",
         )
-        companion = Companion(name="companion").at(Position(x=70))
+        companion = Companion(name="companion", placement=Placement(x=70))
 
         frame = (base + companion).with_anchor(
             "inspection_corner",
