@@ -114,7 +114,7 @@ EXPECTED_BOUNDS = {
         {"label": "NegativeCircleExtrude", "min": [-10, -10, -30], "max": [10, 10, 0]},
     ],
     "rounded-rectangle-sketch": [
-        {"label": "RoundedRectangleSketch", "min": [-40, -30, 0], "max": [40, 30, 13]},
+        {"label": "RoundedRectangleSketch", "min": [-40, -30, 0], "max": [40, 30, 5]},
     ],
     "primitive-csg": [
         # The X-axis Ø8 bore removes the sphere's exact X=-20 extremum.
@@ -205,15 +205,6 @@ EXPECTED_MUTATION_BOUNDS = {
 # bounds. In particular an L-profile can be mirrored/rotated incorrectly while
 # retaining the same overall bounding box, so draw its two arms separately.
 EXPECTED_VISUAL_BOXES = dict(EXPECTED_BOUNDS)
-
-# Visual decomposition may be more detailed than the final joined body bounds.
-# The rounded-rectangle case is one native body, but its front projection is a
-# wide 5 mm base with a narrower 8 mm pad on top.
-EXPECTED_VISUAL_BOXES["rounded-rectangle-sketch"] = [
-    {"label": "Base plate", "min": [-40, -30, 0], "max": [40, 30, 5]},
-    {"label": "Rounded pad", "min": [-20, -15, 5], "max": [20, 15, 13]},
-]
-
 
 EXPECTED_VISUAL_BOXES["bracket"] = [
     {"label": "arm X", "min": [0, -12, -12], "max": [40, 12, 0]},

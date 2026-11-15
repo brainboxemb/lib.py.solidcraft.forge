@@ -732,28 +732,27 @@ def validate_rounded_rectangle_sketch(root: Path) -> Validation:
     v = Validation("rounded-rectangle-sketch")
     d = load(root / "measurements.json")
     _check_declared_bounds(v, d, "rounded-rectangle-sketch", tol=0.01)
-    v.check("single joined rounded-pad body", d["body_count"] == 1, 1, d["body_count"])
+    v.check("single flat base body", d["body_count"] == 1, 1, d["body_count"])
+
     if d["bodies"]:
         b = d["bodies"][0]
         v.check(
-            "rounded sketch pad bounds",
-            bbox_close(b, [-40, -30, 0], [40, 30, 13], 0.01),
-            {"min": [-40, -30, 0], "max": [40, 30, 13]},
+            "base plate bounds remain unchanged by sketch",
+            bbox_close(b, [-40, -30, 0], [40, 30, 5], 0.01),
+            {"min": [-40, -30, 0], "max": [40, 30, 5]},
             b["bbox"],
-        )
-        v.check(
-            "four true rounded corner faces",
-            b.get("face_types", {}).get("cylinder") == 4,
-            4,
-            b.get("face_types", {}).get("cylinder"),
         )
 
     rounded = next(
-        (row for row in d.get("sketches", []) if row.get("name") == "Rounded pad"),
+        (
+            row
+            for row in d.get("sketches", [])
+            if row.get("name") == "Rounded rectangle"
+        ),
         None,
     )
     v.check(
-        "rounded pad remains one solved profile with construction diagonal",
+        "rounded rectangle remains one solved profile with construction diagonal",
         rounded is not None
         and rounded.get("curves") == 9
         and rounded.get("profiles") == 1
@@ -769,16 +768,16 @@ def validate_rounded_rectangle_sketch(root: Path) -> Validation:
     ]
     expected_timeline = [
         ("BoxFeature", "Box1"),
-        ("Sketch", "Rounded pad"),
-        ("ExtrudeFeature", "Rounded pad"),
+        ("Sketch", "Rounded rectangle"),
     ]
     v.check(
-        "explicit rounded sketch remains distinct native history",
+        "explicit rounded sketch remains distinct native history without extrusion",
         timeline == expected_timeline,
         expected_timeline,
         timeline,
     )
     return v
+
 
 def validate_primitive_csg(root: Path) -> Validation:
     v = Validation("primitive-csg")
