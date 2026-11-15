@@ -11,7 +11,7 @@ class SideBoard:
             self.width,
             self.depth,
             self.height,
-        )
+        ).at(y=half(self.depth))
 
 
 class LProfile:
