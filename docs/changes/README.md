@@ -20,3 +20,4 @@ Rules:
 Current records:
 
 - [0001-position-api-design.md](0001-position-api-design.md) — constructor-time `Placement`, removal of private position model parameters, shape placement and SolidCraft lowering.
+- [0002-rotated-copy-placement-lowering.md](0002-rotated-copy-placement-lowering.md) — keep copied translation and rotation in one native placement operation.
