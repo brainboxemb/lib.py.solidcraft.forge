@@ -71,6 +71,15 @@ Run the complete Forge qualification suite. This first run answers:
 
 Only a demonstrated incompatibility justifies a Forge code change.
 
+New capabilities in the candidate SolidCraft release are deliberately **not**
+adopted during this compatibility step. If a new release can simplify Forge
+lowering or remove an old compatibility workaround, record that as separate
+follow-up work after the version upgrade is qualified. This keeps two questions
+separate:
+
+1. does existing Forge behaviour remain compatible with the new engine?
+2. can Forge later make better use of new engine capabilities?
+
 ## 3. Run Forge's own qualification projects
 
 The candidate is tested only with Forge's self-contained examples and
