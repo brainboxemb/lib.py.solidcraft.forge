@@ -37,7 +37,7 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch supported by the selected target face. The local 2D sketch origin is the centre of that target face. |
 | profile inside a sketch | `sketch.add(profile, anchor=CENTER)` | Place the profile's selected 2D anchor on the sketch origin. CENTER is the default semantic centring operation; numeric offset is not a centring substitute. |
 | deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. Use only when the design actually calls for an offset. |
-| occurrence placement | `placement=Placement(...)`, `copy(placement=Placement(...))` | Describe the complete pose of a reusable component occurrence in its parent coordinate frame. Placement may be numeric or parametric and does not create a joint. |
+| occurrence position/pose | `occurrence.at(Position(...))`, `occurrence.at(Placement(...))` | Declare an absolute XYZ position or complete occurrence pose in the parent coordinate frame. Values may be numeric or parametric and do not create a joint. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
 ### `at()`
@@ -100,47 +100,42 @@ instead.
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
 
-### `Placement`
+### `Position`, `Placement` and occurrence `at()`
 
-Reusable occurrences carry a declarative Forge `Placement`.
+`Position` is the absolute XYZ coordinate of an occurrence in its parent
+coordinate frame. Coordinates may contain numbers, Parameters or Expressions.
 
 ```python
-left = Block(placement=Placement(x=-50))
-right = left.copy(placement=Placement(x=50))
-assembly = left + right
+left = Block().at(Position(x=-50))
+right = left.copy().at(Position(x=50))
 ```
 
-Placement is the complete occurrence pose in its parent coordinate frame. It is
-not an action sequence. Position may be numeric or parameter/expression based;
-rotation is part of the same Placement.
+`Placement` is the complete pose: Position plus one absolute axis-angle
+orientation.
 
-The public occurrence API therefore has no `.move()`, `.at()` or
-`.rotate()` convenience methods. A copy either preserves the source Placement
-or receives a replacement explicitly through
-`copy(placement=Placement(...))`.
+```python
+panel = Panel().at(
+    Placement(
+        position=Position(z=160),
+        rotation=(X, 90),
+    )
+)
+```
 
-The backend command name does not define the Forge semantic model. A parametric
-Placement may legitimately lower to native SolidCraft
-`occurrence.move.translate`, because SolidCraft 0.42 stores that expression
-associatively. PR #158 qualified saved-model mutation of this native behaviour.
+Occurrence `at()` is declarative. `at(Position(...))` replaces XYZ while
+preserving orientation; `at(Placement(...))` replaces the complete pose.
+There is no occurrence `move()` or `rotate()`.
 
-The compiler should use creation-time native placement where possible. For
-example, a concrete extra occurrence may lower directly through
+The backend command name does not define Forge semantics. A parametric Position
+may lower to native SolidCraft `occurrence.move.translate`; SolidCraft 0.42
+stores that expression associatively and PR #158 qualified saved-model
+parameter mutation. A concrete copied Position may lower directly through
 `occurrence.copy(..., translate=[...])`.
 
-The semantic boundary is deliberate:
+Placement must not create a `joint.create` as an implementation workaround.
+Attachments remain explicit relationships and Position expressions reuse
+existing parameters instead of publishing helper parameters.
 
-- `Placement` describes where/how one occurrence stands;
-- `.attach(...)` creates an explicit assembly relationship;
-- placement must not create a `joint.create` record merely as an
-  implementation workaround;
-- expressions used by Placement reuse existing parameters rather than
-  publishing helper parameters.
-
-Historical note: on 2026-11-14 Forge temporarily lowered symbolic placement to
-planar joints while working around an assumed SolidCraft 0.30.1 limitation.
-SolidCraft 0.42 native expressed occurrence placement replaced that workaround
-and is the qualified baseline.
 
 ### `attach()`
 
