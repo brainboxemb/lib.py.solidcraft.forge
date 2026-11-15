@@ -21,7 +21,7 @@ nav{display:flex;flex-wrap:wrap;gap:25px}nav a{color:#34445a;font-weight:600}
 .panel h2,.reference h3{margin-top:0}.panel p,.reference p{color:var(--muted)}
 pre{white-space:pre;overflow:auto;background:#0d1f33;border-radius:8px;color:#e6eef9;font:13px/1.5 Consolas,monospace;padding:16px}
 .code-block{position:relative;min-width:0}
-.code-block>pre{margin-top:0}
+.code-block>pre{margin-top:0;padding-right:52px}
 .code-copy{position:absolute;top:8px;right:8px;z-index:2;width:31px;height:31px;display:grid;place-items:center;padding:0;border:1px solid #4a6078;border-radius:7px;background:#17304d;color:#dce8f6;cursor:pointer}
 .code-copy:hover{background:#244564;border-color:#6f88a3}
 .code-copy:focus-visible{outline:2px solid #9fc8ff;outline-offset:2px}
@@ -72,15 +72,15 @@ color:var(--muted);border-top:1px solid var(--line)}
 .guide-api-summary{margin:24px 0 34px;padding:18px 20px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
 .guide-api-summary>h2{margin:0 0 6px;padding:0;border:0;font-size:1.2rem}
 .guide-api-intro{margin:0 0 14px;color:var(--muted)}
-.guide-api-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:10px}
-.guide-api-item{background:#fff;border:1px solid var(--line);border-radius:9px;padding:13px 14px}
+.guide-api-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.guide-api-item{min-width:0;background:#fff;border:1px solid var(--line);border-radius:9px;padding:16px 18px}
 .guide-api-item h3{margin:0 0 7px}
 .guide-api-item p{margin:7px 0;line-height:1.55;font-size:.91rem}
 .guide-api-members{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}
 .guide-api-members code{background:var(--soft);border:1px solid #d2e2fa;border-radius:5px;padding:2px 6px;font-size:.82rem}
-.guide-api-signature{margin:9px 0!important;padding:10px 12px!important;font-size:11.5px!important}
-.guide-api-group-members{display:grid;gap:9px;margin-top:10px}
-.guide-api-group-member{border-top:1px solid var(--line);padding-top:9px}
+.guide-api-signature{margin:10px 0 12px!important;padding:11px 52px 11px 12px!important;font-size:11.5px!important;max-width:100%;overflow-x:auto}
+.guide-api-group-members{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
+.guide-api-group-member{min-width:0;border-top:1px solid var(--line);padding-top:12px}
 .guide-api-group-member:first-child{border-top:0;padding-top:0}
 .guide-api-group-member h4{margin:0 0 5px}
 .api-group-member{margin:14px 0}
