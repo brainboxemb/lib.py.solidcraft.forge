@@ -1222,6 +1222,7 @@ class AssemblyTests(unittest.TestCase):
                 "edge": [20.0, 0.0, 10.0],
                 "on": [0.0, 0.0, 10.0],
                 "corner": [20.0, 0.0, 20.0],
+                "x": [-1.0, 0.0, 0.0],
             },
         )
         self.assertEqual(
@@ -1231,6 +1232,7 @@ class AssemblyTests(unittest.TestCase):
                 "edge": [-20.0, 0.0, 10.0],
                 "on": [0.0, 0.0, 10.0],
                 "corner": [-20.0, 0.0, 20.0],
+                "x": [0.0, 0.0, -1.0],
             },
         )
         self.assertEqual(
@@ -1809,6 +1811,7 @@ class AssemblyTests(unittest.TestCase):
                 "edge": [20.0, -15.0, 10.0],
                 "on": [0.0, -15.0, 10.0],
                 "corner": [20.0, -15.0, 20.0],
+                "x": [-1.0, 0.0, 0.0],
             },
         )
         self.assertEqual(
