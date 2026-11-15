@@ -19,7 +19,13 @@ from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from guides import GUIDES
 from api_coverage import EXPORT_COVERAGE, CAPABILITY_COVERAGE
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
-from api_reference import ENUM_REFERENCES, METHOD_REFERENCES, enum_members
+from api_reference import (
+    ENUM_REFERENCES,
+    METHOD_REFERENCES,
+    api_manifest,
+    enum_members,
+    references_for_guide,
+)
 
 sys.path.insert(0, str(ROOT))
 try:
@@ -554,10 +560,58 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
 <a class="button" href="examples/{slug}/">View source and command steps →</a></div></article>""")
 
     # Expanded, navigable documentation remains separate from tiny smoke-test
-    # examples and from the quick cheatsheet.
+    # examples and from the quick cheatsheet. Relevant API facts are repeated
+    # inline from the generated reference data so ordinary guide use does not
+    # require a click for every enum value or signature.
     guide_root = out / "guide"
     guide_root.mkdir(exist_ok=True)
     guide_cards = []
+
+    def guide_api_summary(slug):
+        specs = references_for_guide(slug)
+        if not specs:
+            return ""
+        cards = []
+        for spec in specs:
+            if spec["kind"] == "enum":
+                details = (
+                    '<div class="guide-api-members">'
+                    + " · ".join(
+                        f'<code>{escape(spec["slug"])}.{escape(name)}</code>'
+                        for name, _value in enum_members(spec)
+                    )
+                    + '</div>'
+                )
+            else:
+                details = (
+                    f'<pre class="guide-api-signature"><code>'
+                    f'{escape(spec["signature"])}</code></pre>'
+                )
+            cards.append(
+                '<article class="guide-api-item">'
+                f'<h3><a href="../../reference/{escape(spec["slug"])}/">'
+                f'{escape(spec["title"])}</a></h3>'
+                f'<p>{escape(spec["summary"])}</p>'
+                + details
+                + (
+                    f'<p><strong>Use when:</strong> {escape(spec["use_when"])}</p>'
+                    if spec["use_when"] else ""
+                )
+                + (
+                    f'<p><strong>Current limits:</strong> {escape(spec["limits"])}</p>'
+                    if spec["limits"] else ""
+                )
+                + '</article>'
+            )
+        return (
+            '<section class="guide-api-summary">'
+            '<h2>API on this page</h2>'
+            '<p class="guide-api-intro">These values and signatures are generated '
+            'from the current Python API. They are shown here so the normal guide '
+            'flow does not require opening the reference for every detail.</p>'
+            '<div class="guide-api-grid">' + "".join(cards) + '</div></section>'
+        )
+
     for chapter in GUIDES:
         slug = chapter["slug"]
         dest = guide_root / slug
@@ -573,6 +627,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             + f'<p class="crumb"><a href="../">← API Guide</a> / {escape(chapter["title"])}</p>'
             + f'<h1>{escape(chapter["title"])}</h1>'
             + f'<p class="guide-lead">{escape(chapter["summary"])}</p>'
+            + guide_api_summary(slug)
             + chapter["body"] + '</article></main>'
         )
         (dest / "index.html").write_text(
@@ -600,8 +655,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
              home="../", cheatsheet="../cheatsheet/"), encoding="utf-8"
     )
 
-    # Complete public API lookup: exact enum members and signatures come from
-    # the implementation; semantic meaning links back to the normative API contract.
+    # Complete public API lookup. Facts and explanatory text are derived
+    # from the implementation/docstrings; this block only renders them.
     reference_root = out / "reference"
     reference_root.mkdir(exist_ok=True)
     reference_cards = []
@@ -617,18 +672,26 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             "</tr>"
             for name, value in enum_members(spec)
         )
-        notes = "".join(f"<li>{escape(note)}</li>" for note in spec["notes"])
         body = (
             '<main class="wrap"><p class="crumb"><a href="../">← API Reference</a> / '
             + escape(spec["title"]) + '</p>'
-            + '<section class="hero small"><p class="eyebrow">SCPF API reference</p>'
+            + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
             + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p></section>'
-            + '<section class="panel"><h2>Members</h2>'
+            + '<section class="panel">'
+            + (
+                f'<h2>When to use it</h2><p>{escape(spec["use_when"])}</p>'
+                if spec["use_when"] else ""
+            )
+            + '<h2>Members</h2>'
             + '<table class="api-table"><thead><tr><th>Name</th><th>Value</th></tr></thead>'
             + f'<tbody>{rows}</tbody></table>'
-            + (f'<h2>Current notes</h2><ul>{notes}</ul>' if notes else "")
-            + '<p><a href="../../guide/">Usage guide →</a> · '
-              '<a href="../../source-api-contract.html">Normative API contract →</a></p>'
+            + (
+                f'<h2>Current limits</h2><p>{escape(spec["limits"])}</p>'
+                if spec["limits"] else ""
+            )
+            + f'<p><a href="../../guide/{escape(spec["guide"])}/#{escape(spec["guide_anchor"])}">'
+              'Worked usage in the guide →</a> · '
+              '<a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
             + '</section></main>'
         )
         (dest / "index.html").write_text(
@@ -648,14 +711,21 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         body = (
             '<main class="wrap"><p class="crumb"><a href="../">← API Reference</a> / '
             + escape(spec["title"]) + '</p>'
-            + '<section class="hero small"><p class="eyebrow">SCPF API reference</p>'
+            + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
             + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p></section>'
             + '<section class="panel"><h2>Current Python signature</h2>'
             + f'<pre><code>{escape(spec["signature"])}</code></pre>'
-            + '<h2>API contract</h2>'
-            + f'<p>{escape(spec["contract"])}</p>'
-            + '<p><a href="../../guide/">Usage guide →</a> · '
-              '<a href="../../source-api-contract.html">Normative API contract →</a></p>'
+            + (
+                f'<h2>When to use it</h2><p>{escape(spec["use_when"])}</p>'
+                if spec["use_when"] else ""
+            )
+            + (
+                f'<h2>Current limits</h2><p>{escape(spec["limits"])}</p>'
+                if spec["limits"] else ""
+            )
+            + f'<p><a href="../../guide/{escape(spec["guide"])}/#{escape(spec["guide_anchor"])}">'
+              'Worked usage in the guide →</a> · '
+              '<a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
             + '</section></main>'
         )
         (dest / "index.html").write_text(
@@ -670,14 +740,23 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             f'<pre><code>{escape(spec["signature"])}</code></pre></article>'
         )
 
+    # Compact machine-readable lookup for agents is generated from exactly the
+    # same objects/docstrings as the human reference.
+    (reference_root / "api.json").write_text(
+        json.dumps(api_manifest(), indent=2) + "\n",
+        encoding="utf-8",
+    )
+
     contract_source = (ROOT / "docs" / "05-cad-api-design.md").read_text(encoding="utf-8")
-    (out / "source-api-contract.html").write_text(
+    (out / "api-design-contract.html").write_text(
         page(
-            "Normative API contract",
+            "API design contract",
             '<main class="wrap"><p class="crumb"><a href="reference/">API Reference</a> / '
-            'Normative API contract</p><section class="hero small">'
-            '<p class="eyebrow">Source of truth</p><h1>Normative Forge API contract</h1>'
-            '<p>This is the source-maintained contract used by agents and reviewers.</p>'
+            'API design contract</p><section class="hero small">'
+            '<p class="eyebrow">Cross-object design rules</p><h1>Forge API design contract</h1>'
+            '<p>Design rules that span several public objects live here. Exact '
+            'names, signatures, enum values and object-specific semantics come '
+            'from the Python implementation and public docstrings.</p>'
             '</section><section class="panel"><pre><code>'
             + escape(contract_source) + '</code></pre></section></main>',
             stylesheet="style.css", home="./", cheatsheet="cheatsheet/",
@@ -688,9 +767,12 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     reference_index = (
         '<main class="wrap"><section class="hero small">'
         '<p class="eyebrow">Complete lookup</p><h1>API Reference</h1>'
-        '<p>Exact public enum members and current Python signatures. '
-        'For concepts and examples use the API Guide; semantic meaning is defined by the '
-        '<a href="../source-api-contract.html">normative API contract</a>.</p>'
+        '<p>Generated from the current public Python objects and docstrings: '
+        'exact enum members, signatures, intended use and current limits. '
+        'The API Guide repeats the relevant generated facts inline next to '
+        'worked explanations, so normal use does not require constant back-and-forth clicking.</p>'
+        '<p><a href="api.json">Machine-readable API index →</a> · '
+        '<a href="../api-design-contract.html">Cross-object API design rules →</a></p>'
         '</section><div class="reference-grid">'
         + "".join(reference_cards) + '</div></main>'
     )
