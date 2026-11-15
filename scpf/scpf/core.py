@@ -14,7 +14,16 @@ def number_text(value: float) -> str:
 
 
 class Direction(str, Enum):
-    """Extrusion direction relative to the sketch plane normal."""
+    """Choose how an extrusion extends relative to its sketch-plane normal.
+
+    Use when:
+        Pass a Direction to Sketch.extrude() when the default positive
+        extrusion is not the intended direction.
+
+    Limits:
+        Direction describes extrusion relative to the sketch plane; it is not
+        a world-axis selector. Use Axis for principal X/Y/Z directions.
+    """
     POSITIVE = "positive"
     NEGATIVE = "negative"
     SYMMETRIC = "symmetric"
@@ -40,7 +49,17 @@ class _DirectionSelector:
 
 
 class Anchor(str, Enum):
-    """Assembly attachment references and cardinal direction vectors."""
+    """Select component attachment references and cardinal directions.
+
+    Use when:
+        Use cardinal or corner anchors to attach reusable component
+        occurrences, or combine cardinal values to identify Box edges/corners.
+
+    Limits:
+        Anchor is the assembly/alignment vocabulary. Within-component feature
+        placement normally uses Faces instead. INNER_BOTTOM has no direction
+        vector and therefore cannot be used as a cardinal selector.
+    """
     CENTER = "center"
     TOP = "top"
     BOTTOM = "bottom"
@@ -235,19 +254,46 @@ class AnchorTopology:
 
 
 class Depth(str, Enum):
+    """Choose a supported feature-depth policy.
+
+    Use when:
+        Use Depth.THROUGH_ALL for features such as Hole that should pass
+        completely through their target instead of using a fixed distance.
+
+    Limits:
+        THROUGH_ALL is currently the only named depth policy.
+    """
     THROUGH_ALL = "through_all"
 
 
 class Axis(str, Enum):
+    """Select one of the native principal X, Y or Z axes.
+
+    Use when:
+        Use Axis for primitive orientation and supported patterns, for example
+        Cylinder(..., axis=Axis.X) or a linear Hole pattern along Axis.Y.
+
+    Limits:
+        Axis is a principal-axis selector, not an attachment reference and not
+        an extrusion Direction.
+    """
     X = "X"
     Y = "Y"
     Z = "Z"
 
 
 class Edges(Enum):
-    """Named edge selections used by feature operations.
+    """Select edges for supported fillet and chamfer feature operations.
 
-    Explicit edges can alternatively be supplied as 3D coordinates.
+    Use when:
+        Use Edges.VERTICAL for the vertical edges of a supported rectangular
+        body. Use from_profile() for named profile segments and from_vertices()
+        for extrusion-axis edges grown from named profile vertices.
+
+    Limits:
+        Only the selectors implemented here are public. from_profile()
+        currently supports sides="both"; from_vertices() requires named
+        Polygon2D vertices.
     """
     VERTICAL = "vertical"
 
@@ -283,7 +329,17 @@ class _ProfileEdgeSelection:
 
 
 class Faces(Enum):
-    """Named planar face selections for feature operations."""
+    """Select named planar faces for within-component feature operations.
+
+    Use when:
+        Pass a Faces value to operations such as Shape.on() and Shape.shell()
+        to identify a surface of the target body.
+
+    Limits:
+        The enum defines all six cardinal faces. Individual operations may
+        support only a subset; Shape.on() currently accepts TOP and BOTTOM.
+        Component assembly attachment uses Anchor instead.
+    """
     TOP = "top"
     BOTTOM = "bottom"
     LEFT = "left"
@@ -704,7 +760,16 @@ class Shape:
         return Shape("chamfer", (self, distance, tuple(tuple(p) for p in edges)))
 
     def shell(self, thickness, *, open=Faces.TOP):
-        """Hollow a solid to an even wall thickness and leave selected faces open."""
+        """Hollow a supported solid and leave selected Faces open.
+
+        Use when:
+            Create an enclosure-like body with an even wall thickness while
+            removing one or more named planar faces.
+
+        Limits:
+            open= must be one Faces value or a non-empty sequence of Faces
+            values. Support still depends on the underlying feature tree.
+        """
         pv(thickness)
         if isinstance(open, Faces):
             faces = (open,)
@@ -730,14 +795,17 @@ class Shape:
         return Shape("material_assignment", (self, name, density_g_cm3, color))
 
     def at(self, x=0, y=0, z=0, *, anchor=Anchor.CENTER, child=Anchor.CENTER):
-        """Place a shape at coordinates or at an anchor of another Shape.
+        """Place a shape at absolute coordinates or align it to another Shape.
 
-        Coordinate form keeps the existing native placement semantics:
-        `shape.at(x, y, z)`.
+        Use when:
+            Use shape.at(x, y, z) for geometric placement. A Box may additionally
+            use a cardinal anchor. Use shape.at(target) for the supported
+            shape-to-shape CENTER alignment.
 
-        Shape form places one anchor of this shape on an anchor of the target:
-        `shape.at(target, anchor=Anchor.CENTER, child=Anchor.CENTER)`.
-        The first supported shape-to-shape contract is CENTER-to-CENTER.
+        Limits:
+            Shape-to-shape alignment currently supports CENTER-to-CENTER only.
+            at() is geometric placement/alignment; selecting a support face for
+            a feature is the job of Shape.on().
         """
         if isinstance(x, Shape):
             if y != 0 or z != 0:
@@ -800,10 +868,16 @@ class Shape:
         return Shape("linear_pattern", (self, count, spacing, axis))
 
     def on(self, target, *, face=Faces.TOP, offset=(0, 0)):
-        """Place a supported feature on a selected face of another shape.
+        """Place a supported within-component feature on a target face.
 
-        This is simple within-component placement. Use Faces to choose the
-        target surface; assembly Anchor values belong to ModelInstance.attach().
+        Use when:
+            Put a Hole or another supported feature on an existing Shape and
+            select its entry/support surface with Faces.
+
+        Limits:
+            Shape.on() currently accepts Faces.TOP and Faces.BOTTOM. This is
+            feature placement; component assembly attachment uses Anchor and
+            the component occurrence attach() API.
         """
         try:
             face = Faces(face)
@@ -819,7 +893,17 @@ class Shape:
 
     def attach(self, target, *, parent=Anchor.TOP, child=Anchor.BOTTOM,
                offset=(0, 0)):
-        """Legacy explicit feature anchoring; prefer on() for simple placement."""
+        """Anchor a supported feature explicitly to another Shape.
+
+        Use when:
+            Use this lower-level feature-placement form when parent/child
+            Anchor references are required explicitly.
+
+        Limits:
+            This is legacy within-component feature anchoring. Prefer on() for
+            simple face placement. It is separate from component occurrence
+            attachment used by assemblies.
+        """
         return self._anchor_to(target, parent, child, offset)
 
     def _anchor_to(self, target, parent_anchor, child_anchor, offset):
