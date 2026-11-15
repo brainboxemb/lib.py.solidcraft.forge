@@ -7,7 +7,13 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "site"))
-from build import EXAMPLES, QUALIFICATION_CASES, QUALIFICATION_GROUPS
+from build import (
+    EXAMPLES,
+    QUALIFICATION_CASES,
+    QUALIFICATION_GROUPS,
+    REFERENCE_IMPLEMENTATION_LABELS,
+    reference_implementations_for,
+)
 from api_coverage import EXPORT_COVERAGE, CAPABILITY_COVERAGE
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 import scpf
@@ -306,6 +312,7 @@ def check(
             "Reference implementations",
             "PythonSCAD",
             "pyBOSL2",
+            "CadQuery",
             "3. Generated SolidCraft relationship",
             "6. Evidence and references",
         ):
@@ -332,19 +339,24 @@ def check(
         ):
             assert placeholder not in page_text, (slug, placeholder)
         assert (site / "qualification" / slug / "model.py").is_file()
-        assert (site / "qualification" / slug / "reference-pythonscad.py").is_file()
-        assert (site / "qualification" / slug / "reference-pybosl2.py").is_file()
-        assert 'href="reference-pythonscad.py"' in page_text
-        assert 'href="reference-pybosl2.py"' in page_text
+        reference_names = reference_implementations_for(case)
+        for implementation in reference_names:
+            source_name = f"reference-{implementation}.py"
+            assert (site / "qualification" / slug / source_name).is_file()
+            assert f'href="{source_name}"' in page_text
+            assert REFERENCE_IMPLEMENTATION_LABELS[implementation] in page_text
         assert "Rendered comparison" in page_text
-        reference_code_pos = page_text.index('href="reference-pythonscad.py"')
+        reference_code_pos = min(
+            page_text.index(f'href="reference-{implementation}.py"')
+            for implementation in reference_names
+        )
         reference_render_pos = page_text.index("Rendered comparison")
         assert reference_code_pos < reference_render_pos, slug
         assert (site / "qualification" / slug / "commands.json").is_file()
         if require_references:
             manifest_case = qualification_manifest["cases"][slug]
             evidence = manifest_case["reference_evidence"]
-            for implementation in ("pythonscad", "pybosl2"):
+            for implementation in reference_names:
                 prefix = f"reference-{implementation}"
                 for name in (
                     "result.json",

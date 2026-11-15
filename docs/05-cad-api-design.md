@@ -285,14 +285,16 @@ duplicated child parameters. This contract is recorded in
 
 ## Reference implementations
 
-Qualification pages compare Forge with PythonSCAD and pyBOSL2. Those references
-answer "how is the same modelling intent expressed elsewhere?" They are not
-allowed to redefine Forge behaviour.
+Qualification pages compare Forge with PythonSCAD, pyBOSL2 and CadQuery by
+default. Those references answer "how is the same modelling intent expressed
+elsewhere?" They are not allowed to redefine Forge behaviour.
 
-pyBOSL2 is especially useful for reviewing anchor/attachment vocabulary;
-PythonSCAD is useful as a neutral Python CSG comparison. When either library
-lacks a native associative relationship equivalent, the reference must state
-that limitation explicitly.
+PythonSCAD is useful as a neutral Python CSG comparison; pyBOSL2 is especially
+useful for anchor/attachment vocabulary; CadQuery provides a distinct
+object/workplane/assembly/Location comparison. If a technically meaningful
+reference cannot be implemented, the case must carry an explicit documented
+exception. A missing reference or a convenience-only exception is not
+qualified evidence.
 
 ## Responsibility boundaries
 

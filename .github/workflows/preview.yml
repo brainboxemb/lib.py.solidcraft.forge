@@ -88,6 +88,7 @@ jobs:
           python -m pip install \
             "pythonscad==1.1.2" \
             "git+https://github.com/pinkfish/pybosl2@d4279910c12435ed7224b3406616e495db1c96ec" \
+            "cadquery==2.8.0" \
             "trimesh>=4,<5" \
             "matplotlib>=3.8,<4"
 

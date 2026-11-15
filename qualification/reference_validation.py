@@ -1,4 +1,4 @@
-"""Execute PythonSCAD and pyBOSL2 qualification references.
+"""Execute PythonSCAD, pyBOSL2 and CadQuery qualification references.
 
 Each reference source must expose a final 3-D object as model. The runner
 exports that object with the reference library itself, checks the resulting STL
@@ -25,10 +25,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from qualification.case_selection import CASE_BY_SLUG, format_selection_help, parse_case_selection
+from qualification.cases import reference_implementations_for
 from qualification.expectations import EXPECTED_BOUNDS
-
-
-DEFAULT_IMPLEMENTATIONS = ("pythonscad", "pybosl2")
 VIEWS = {
     "front": (0, -90),
     "right": (0, 0),
@@ -51,12 +49,7 @@ def load_reference(path: Path):
 
 
 def implementations_for(slug: str) -> tuple[str, ...]:
-    return tuple(
-        CASE_BY_SLUG[slug].get(
-            "reference_implementations",
-            DEFAULT_IMPLEMENTATIONS,
-        )
-    )
+    return reference_implementations_for(CASE_BY_SLUG[slug])
 
 
 def export_reference(model, implementation: str, stl: Path):

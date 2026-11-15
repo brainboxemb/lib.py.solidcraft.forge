@@ -37,7 +37,9 @@ try:
         QUALIFICATION_CASES,
         QUALIFICATION_LEVELS,
         QUALIFICATION_GROUPS,
+        REFERENCE_IMPLEMENTATION_LABELS,
         REFERENCE_URLS,
+        reference_implementations_for,
     )
     from qualification.expectations import EXPECTED_VISUAL_BOXES
 finally:
@@ -1081,8 +1083,10 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         source = text(source_path)
         (case_dir / "model.py").write_text(source, encoding="utf-8")
 
+        reference_names = reference_implementations_for(case)
+        reference_exceptions = case.get("reference_exceptions", {})
         reference_sources = {}
-        for reference_name in ("pythonscad", "pybosl2"):
+        for reference_name in reference_names:
             reference_path = (
                 ROOT / "examples" / slug / reference_name / "model.py"
             )
@@ -1103,6 +1107,29 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 encoding="utf-8",
             )
 
+        reference_source_cards = []
+        for reference_name in reference_names:
+            label = REFERENCE_IMPLEMENTATION_LABELS[reference_name]
+            reference_source_cards.append(
+                '<div>'
+                f'<h4>{escape(label)}</h4>'
+                f'<pre><code>{escape(reference_sources[reference_name])}</code></pre>'
+                f'<p><a href="reference-{reference_name}.py">'
+                f'Open {escape(label)} source →</a></p>'
+                '</div>'
+            )
+        reference_exception_html = ""
+        if reference_exceptions:
+            items = "".join(
+                f'<li><strong>{escape(REFERENCE_IMPLEMENTATION_LABELS[name])}:</strong> '
+                f'{escape(reason)}</li>'
+                for name, reason in reference_exceptions.items()
+            )
+            reference_exception_html = (
+                '<div class="notice"><strong>Documented reference exceptions</strong>'
+                f'<ul>{items}</ul></div>'
+            )
+
         reference_evidence_html = (
             '<div class="notice">Executable reference renders were not supplied '
             'to this site build. The source comparisons remain available.</div>'
@@ -1110,7 +1137,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         reference_evidence_files = []
         if reference_verified:
             reference_render_cards = []
-            for reference_name in ("pythonscad", "pybosl2"):
+            for reference_name in reference_names:
                 result_path = (
                     reference_evidence_root / slug / reference_name / "result.json"
                 )
@@ -1140,7 +1167,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                     reference_evidence_files.append(
                         f"reference-{reference_name}/{name}"
                     )
-                label = "PythonSCAD" if reference_name == "pythonscad" else "pyBOSL2"
+                label = REFERENCE_IMPLEMENTATION_LABELS[reference_name]
                 reference_render_cards.append(
                     '<figure class="qualification-reference-preview">'
                     f'<a href="reference-{reference_name}/model-iso.png" '
@@ -1153,7 +1180,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                     '</figure>'
                 )
             reference_evidence_html = (
-                '<div class="twocol qualification-reference-renders">'
+                '<div class="qualification-reference-renders">'
                 + "".join(reference_render_cards)
                 + '</div>'
             )
@@ -1325,10 +1352,16 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
 
         evidence_items = [
             '<li><a href="model.py">Forge fixture source</a></li>',
-            '<li><a href="reference-pythonscad.py">PythonSCAD reference source</a></li>',
-            '<li><a href="reference-pybosl2.py">pyBOSL2 reference source</a></li>',
-            '<li><a href="commands.json">Generated command JSON</a></li>',
         ]
+        evidence_items.extend(
+            f'<li><a href="reference-{reference_name}.py">'
+            f'{escape(REFERENCE_IMPLEMENTATION_LABELS[reference_name])} '
+            'reference source</a></li>'
+            for reference_name in reference_names
+        )
+        evidence_items.append(
+            '<li><a href="commands.json">Generated command JSON</a></li>'
+        )
         evidence_items.extend(
             f'<li><a href="{escape(name)}">{escape(name)}</a></li>'
             for name in native_files
@@ -1365,8 +1398,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             lowering_detail=escape(lowering_detail),
             reference_items="".join(reference_items),
             source=escape(source),
-            pythonscad_source=escape(reference_sources["pythonscad"]),
-            pybosl2_source=escape(reference_sources["pybosl2"]),
+            reference_source_cards="".join(reference_source_cards),
+            reference_exceptions=reference_exception_html,
             reference_evidence=reference_evidence_html,
         )
         (case_dir / "index.html").write_text(
@@ -1386,9 +1419,10 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             "status_detail": status_detail,
             "command_count": len(commands["commands"]),
             "reference_sources": [
-                "reference-pythonscad.py",
-                "reference-pybosl2.py",
+                f"reference-{reference_name}.py"
+                for reference_name in reference_names
             ],
+            "reference_exceptions": reference_exceptions,
             "native_evidence": native_files,
             "native_images": native_images,
             "reference_evidence": reference_evidence_files,
@@ -1733,7 +1767,7 @@ if __name__ == "__main__":
     parser.add_argument("--source-sha", required=True)
     parser.add_argument("--native", type=Path, help="Source-matched native screenshot directory")
     parser.add_argument("--diagram-root", type=Path, help="Generated qualification setup diagrams")
-    parser.add_argument("--references", type=Path, help="Source-matched PythonSCAD/pyBOSL2 evidence")
+    parser.add_argument("--references", type=Path, help="Source-matched qualification reference evidence")
     options = parser.parse_args()
     build(
         options.out,
