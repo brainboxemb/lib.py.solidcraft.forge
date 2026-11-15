@@ -25,3 +25,8 @@ The target compiler boundaries and invariants are defined in
 
 The audit is intentionally performed against `main`; exploratory PRs are
 evidence only and are not implementation sources.
+
+
+The dependency-ordered implementation sequence is in
+[the foundational remediation plan](remediation-plan.md). Product changes must
+follow that order unless this architecture is deliberately revised.
