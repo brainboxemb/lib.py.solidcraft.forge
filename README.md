@@ -12,11 +12,13 @@ not SCPF, creates and saves the actual editable CAD geometry and feature history
 
 ## Release
 
-Current library release: **0.1.0**, qualified against **SolidCraft 0.42.0**.
+Current library release: **0.1.1**, qualified against **SolidCraft 0.42.0**.
 
 Release notes are maintained in [CHANGELOG.md](CHANGELOG.md). The Python package
 version is defined only in `scpf/pyproject.toml`; SolidCraft compatibility is
-defined separately by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
+defined separately by `scpf.version.TESTED_SOLIDCRAFT_VERSION`. See
+[docs/10-release-process.md](docs/10-release-process.md) for the guarded
+release procedure and downstream pinning rules.
 
 ## Install and test this library
 
