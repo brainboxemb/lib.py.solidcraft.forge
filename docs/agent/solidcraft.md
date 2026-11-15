@@ -20,6 +20,13 @@ Full local command catalog:
 docs/vendor/solidcraft/0.42.0/commands.md
 ```
 
+Version-pinned occurrence/joint evidence:
+
+```text
+docs/vendor/solidcraft/0.42.0/occurrence-identity.md
+docs/vendor/solidcraft/0.42.0/joint-occurrence-references.md
+```
+
 Read the full catalog only when the command is not listed below.
 
 ## Commands currently emitted by Forge
