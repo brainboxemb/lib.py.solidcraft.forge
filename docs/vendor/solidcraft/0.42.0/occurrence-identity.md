@@ -115,51 +115,35 @@ path?: [occurrence ids from root]
 Thus the same native numeric occurrence identity returned by create/copy is
 usable by later relationship commands.
 
-## Architectural conclusion
+## What this means for Forge
 
-SolidCraft 0.42 does **not** require Forge to predict generated browser labels
-such as `Board:1` or `Board:2`.
+SolidCraft can return numeric occurrence ids at runtime.
 
-The native engine already provides the required identity:
+That is useful SolidCraft information, but normal Forge output is replay-first
+and does not depend on values captured from an earlier command.
 
-```text
-component.create
-    -> result.occurrence
+The important rule for the normal compiler is simpler:
 
-occurrence.copy
-    -> result.occurrence
+- Forge must not guess generated names such as `Board:1` or `Board:2`;
+- ordinary Placement should be expressed in create/copy commands where
+  SolidCraft supports it;
+- later commands that need an existing occurrence need a separately qualified
+  replay-safe reference;
+- if Forge does not have such a reference yet, that case is unsupported.
 
-later move/joint/origin
-    <- occurrence id
-```
-
-The remaining problem is execution/replay architecture: a later static command
-cannot know a runtime id until the create/copy command has executed.
-
-That is a Forge execution-plan problem, not a SolidCraft identity problem.
-
-Historical PRs #166/#167 already implemented one possible solution using
-Forge-owned logical references and result bindings. The foundational audit must
-decide how to restore or redesign that mechanism while preserving the desired
-replay semantics.
-
-## Forbidden fallback
-
-The following is not a valid identity mechanism:
+The following code is therefore not a valid normal Forge solution:
 
 ```python
 native_name = f"{component_name}:{index}"
 ```
 
-Generated browser names may remain useful human-readable labels, but they are
-not Forge occurrence identity and must not be used as the compiler's addressing
-mechanism.
+## Background experiment: two-phase execution
 
+This experiment is kept only as SolidCraft behaviour evidence. It is **not**
+the normal Forge execution model.
 
-## Headless two-phase proof
-
-A pinned SolidCraft 0.42.0 qualification run also proved that runtime identity
-binding works headlessly through saved designs; it does not require the live GUI.
+A pinned SolidCraft 0.42.0 qualification run showed that a runtime occurrence id
+can be used in a later CLI phase.
 
 Audit run: `43759461853`.
 
@@ -221,17 +205,7 @@ SolidCraft returned:
 The copy retained its phase-1 X placement of 40 mm and accepted the phase-2
 Z move of 17 mm through the returned occurrence id.
 
-### Consequence for Forge execution
+### Note
 
-Headless qualification can execute the same logical result-binding plan as live
-mode:
-
-1. execute one phase with `--results`;
-2. bind logical Forge refs from typed native results;
-3. persist an intermediate design;
-4. emit/execute the next resolved phase with `--in`;
-5. publish only the final successful design/evidence.
-
-For file-based headless execution, failed later phases need not overwrite the
-original/final output. Live GUI execution still requires the outer
-checkpoint/restore contract from the architecture document.
+This proves a SolidCraft runtime behaviour only. It must not be used to justify
+adding runtime result binding to the normal replay-first Forge compiler.
