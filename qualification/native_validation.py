@@ -753,13 +753,13 @@ def validate_rounded_rectangle_sketch(root: Path) -> Validation:
         None,
     )
     v.check(
-        "rounded pad sketch remains one solved eight-curve profile",
+        "rounded pad remains one solved profile with construction diagonal",
         rounded is not None
-        and rounded.get("curves") == 8
+        and rounded.get("curves") == 9
         and rounded.get("profiles") == 1
         and rounded.get("status") == "solved"
         and rounded.get("dof") == 0,
-        {"curves": 8, "profiles": 1, "status": "solved", "dof": 0},
+        {"curves": 9, "profiles": 1, "status": "solved", "dof": 0},
         rounded,
     )
 
