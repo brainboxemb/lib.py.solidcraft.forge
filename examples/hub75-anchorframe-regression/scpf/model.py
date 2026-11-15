@@ -153,10 +153,8 @@ class Hub75LikeAnchorFrame:
             gap=gap,
         )
 
-        return (
-            left_board
-            + right_board
-            + top_left_front
+        brackets = (
+            top_left_front
             + top_left_rear
             + top_right_front
             + top_right_rear
@@ -164,7 +162,9 @@ class Hub75LikeAnchorFrame:
             + bottom_right_rear
             + bottom_left_front
             + bottom_left_rear
-        )
+        ).group("CornerBrackets")
+
+        return left_board + right_board + brackets
 
 
 Hub75LikeAnchorFrame()
