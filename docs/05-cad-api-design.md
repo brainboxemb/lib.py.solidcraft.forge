@@ -18,8 +18,12 @@ At assembly level, named Python objects represent meaningful physical
 occurrences:
 
 ```python
-left = Board().at(Position(x=-half(opening_width)))
-right = Board().at(Position(x=half(opening_width)))
+left = Board(
+    placement=Placement(x=-half(opening_width))
+)
+right = left.copy(
+    placement=Placement(x=half(opening_width))
+)
 bracket = CornerBracket().attach(left, ...)
 ```
 
@@ -68,7 +72,7 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch supported by the selected target face. The local 2D sketch origin is the centre of that target face. |
 | profile inside a sketch | `sketch.add(profile, anchor=CENTER)` | Place the profile's selected 2D anchor on the sketch origin. CENTER is the default semantic centring operation; numeric offset is not a centring substitute. |
 | deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. Use only when the design actually calls for an offset. |
-| occurrence position/pose | `occurrence.at(Position(...))`, `occurrence.at(Placement(...))` | Declare an absolute XYZ position or complete occurrence pose in the parent coordinate frame. Values may be numeric or parametric and do not create a joint. |
+| occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Values may be numeric or parametric and do not create a joint. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
 ### `at()`
@@ -131,42 +135,51 @@ instead.
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
 
-### `Position`, `Placement` and occurrence `at()`
+### Occurrence `Placement`
 
-`Position` is the absolute XYZ coordinate of an occurrence in its parent
-coordinate frame. Coordinates may contain numbers, Parameters or Expressions.
-
-```python
-left = Block().at(Position(x=-50))
-right = left.copy().at(Position(x=50))
-```
-
-`Placement` is the complete pose: Position plus one absolute axis-angle
-orientation.
+`Placement` is reserved occurrence metadata, separate from component model
+parameters:
 
 ```python
-panel = Panel().at(
-    Placement(
-        position=Position(z=160),
-        rotation=(X, 90),
-    )
+left = Board(
+    width=frame_wood_thickness,
+    placement=Placement(
+        x=-(half(opening_width) + half(frame_wood_thickness)),
+        z=opening_bottom,
+    ),
+)
+
+right = left.copy(
+    name="right",
+    placement=Placement(
+        x=half(opening_width) + half(frame_wood_thickness),
+        z=opening_bottom,
+    ),
 )
 ```
 
-Occurrence `at()` is declarative. `at(Position(...))` replaces XYZ while
-preserving orientation; `at(Placement(...))` replaces the complete pose.
-There is no occurrence `move()` or `rotate()`.
+`Placement(x=0, y=0, z=0, rotation=None)` stores the absolute pose in the
+parent coordinate frame. XYZ values may contain Parameters or Expressions.
+`half(value)` remains symbolic and lowers to ordinary native `value / 2`
+arithmetic.
 
-The backend command name does not define Forge semantics. A parametric Position
-may lower to native SolidCraft `occurrence.move.translate`; SolidCraft 0.42
-stores that expression associatively and PR #158 qualified saved-model
-parameter mutation. A concrete copied Position may lower directly through
-`occurrence.copy(..., translate=[...])`.
+The component factory consumes `placement=` before building the reusable
+component definition, so placement never becomes a model parameter. There is no
+separate public `Position` object and no occurrence `.at()`, `.move()` or
+`.rotate()` for initial placement.
+
+The compiler encodes Placement in native creation/copy commands where
+SolidCraft 0.42 allows it. A later native `occurrence.move` is only a backend
+fallback for capabilities that creation/copy cannot encode, such as symbolic
+copy translation or orientation. This does not change the constructor-time
+Forge semantics.
 
 Placement must not create a `joint.create` as an implementation workaround.
-Attachments remain explicit relationships and Position expressions reuse
+Attachments remain explicit relationships and Placement expressions reuse
 existing parameters instead of publishing helper parameters.
 
+The detailed decision, native command contracts and release qualification are
+recorded in [change 0001](changes/0001-position-api-design.md).
 
 ### `attach()`
 
