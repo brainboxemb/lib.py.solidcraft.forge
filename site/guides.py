@@ -123,9 +123,18 @@ bracket = Bracket(
 <code>corner_radius</code>. Passing the parent parameter into the child input
 reuses that existing native dependency rather than creating a duplicate child
 parameter.</p>
-<p>If a reusable component owns a public lower-case numeric default itself,
-that default automatically becomes an editable, namespaced component
-parameter. No extra publication or alias declaration is needed.</p>
+<p>Reusable component defaults stay fixed unless they are explicitly
+published with <code>include=</code>. Parent Parameters/Expressions passed into
+child inputs always stay symbolic and reuse the existing parent dependency.</p>
+""" + code("""Bracket = component(
+    CornerBracket,
+    include=("inside_corner_radius",),
+)
+
+# Or publish all public defaults explicitly:
+FullyEditableBracket = component(CornerBracket, include="*")""") + """
+<p>This publication rule is recorded in
+<a href="../../changes/0003-explicit-component-parameter-publication/">change 0003</a>.</p>
 <h2 id="shape">Shape versus component occurrence</h2>
 <p><strong>Shape</strong> describes geometry or a feature expression
 (<code>Box</code>, <code>Hole</code>, an extrusion). A <strong>component
@@ -561,10 +570,9 @@ return callable model objects, so normal model code stays readable as
 A group is a native parent component in the browser, not a Boolean
 fusion of its children.</p>
 <h2 id="component-parameters">Component parameter visibility</h2>
-<p>Public lower-case numeric component defaults are editable automatically.
-Forge namespaces component-local parameter names when necessary, so normal
-component code stays simple:</p>
-""" + code("""@component
+<p>Reusable component defaults are fixed by default. Publish selected child
+parameters explicitly with <code>include=</code>:</p>
+""" + code("""@component(include=("inside_corner_radius",))
 class CornerBracket:
     width = 24.0
     inside_corner_radius = 4.0
