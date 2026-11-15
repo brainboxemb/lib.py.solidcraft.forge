@@ -9,4 +9,4 @@ bore = xcyl(diameter=8, height=60)
 body = body - bore
 
 clip = cuboid([50, 50, 30]).up(15)
-(body & clip).show()
+model = body & clip
