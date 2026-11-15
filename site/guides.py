@@ -695,7 +695,7 @@ directly into the native <code>joint.create</code> reference as
 <code>point</code>, <code>z</code> and <code>x</code>; it does not create a
 persistent visible <code>joint.origin</code>. Named frames on explicitly
 rotated occurrences currently use the native origin fallback so SolidCraft
-owns the transform. A direct <a href="../../reference/Anchor/"><code>AnchorFrame</code></a> on an explicitly rotated
+owns the transform. A direct <code>AnchorFrame</code> on an explicitly rotated
 occurrence is not supported yet.</p>
 <h2 id="anchor-topology">AnchorTopology: follow an edge or corner</h2>
 <p><code>AnchorTopology</code> is a named component datum that stays attached to native SolidCraft topology. <code>edge</code> picks an edge, <code>on</code> selects its adjacent planar face and <code>corner</code> optionally chooses one endpoint. The coordinates are selection picks; SolidCraft keeps the selected edge, face and endpoint by topology name as the design changes.</p>
