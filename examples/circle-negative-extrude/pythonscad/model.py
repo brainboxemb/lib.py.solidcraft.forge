@@ -4,4 +4,4 @@ from pythonscad import *
 
 profile = circle(d=20)
 solid = profile.linear_extrude(height=30).down(30)
-show(solid)
+model = solid
