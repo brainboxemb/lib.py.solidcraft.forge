@@ -25,7 +25,10 @@ class Hub75AnchorFrameDiagnosticTests(unittest.TestCase):
 
         for rows in (anchor, baseline):
             components = [row["name"] for row in of(rows, "component.create")]
-            self.assertEqual(components, ["SideBoard", "LProfile"])
+            self.assertEqual(
+                components,
+                ["CornerBrackets", "SideBoard", "LProfile"],
+            )
 
             copies = of(rows, "occurrence.copy")
             self.assertEqual(
