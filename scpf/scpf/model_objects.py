@@ -14,7 +14,6 @@ from .core import (
     Axis,
     Shape,
     _DirectionSelector,
-    _dim_add,
     _selector_anchor,
     half,
     midpoint,
@@ -418,19 +417,6 @@ class Placement:
         """Return an absolute placement at the supplied XYZ coordinates."""
         return replace(self, x=x, y=y, z=z)
 
-    def moved(self, x=0, y=0, z=0):
-        """Return a placement translated relative to its current position."""
-        values = (x, y, z)
-        concrete = tuple(pv(value) for value in values)
-        if not all(isfinite(value) for value in concrete):
-            raise ValueError("placement move requires finite coordinates")
-        return replace(
-            self,
-            x=_dim_add(self.x, x),
-            y=_dim_add(self.y, y),
-            z=_dim_add(self.z, z),
-        )
-
     def rotated(self, axis=(0, 0, 1), degrees=None):
         """Return a placement with one absolute axis-angle orientation."""
         return replace(
@@ -500,25 +486,6 @@ class ModelInstance:
         else:
             placement = self.placement.at(x=x, y=y, z=z)
         return replace(self, placement=placement, attachment=None)
-
-    def move(self, x=0, y=0, z=0):
-        """Translate an occurrence relative to its current Placement.
-
-        Use when:
-            Apply a deliberate relative offset to an existing occurrence
-            placement.
-
-        Limits:
-            move() updates Forge Placement data and clears an existing
-            attachment. It does not imply SolidCraft occurrence.move; the
-            compiler chooses the native lowering after the final assembly state
-            is known.
-        """
-        return replace(
-            self,
-            placement=self.placement.moved(x=x, y=y, z=z),
-            attachment=None,
-        )
 
     def rotate(self, axis=(0, 0, 1), degrees=None):
         """Set this occurrence's absolute local-axis orientation.
