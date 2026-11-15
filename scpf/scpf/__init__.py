@@ -7,11 +7,11 @@ from .core import (
 from .compiler import compile_model, ModelError
 from .explicit_sketch import Sketch
 from .runner import run_script, component, assembly, ModelParameterWarning
-from .model_objects import Placement, Position
+from .model_objects import Placement
 
 __all__ = [
     "Box", "Cylinder", "Sphere", "Hole", "Lip", "SnapFit", "Boss", "Rest",
     "Depth", "Rectangle2D", "RoundedRectangle2D", "Circle2D", "Polygon2D", "Shape", "Parameter",
     "Direction", "Edges", "Faces", "Anchor", "AnchorFrame", "AnchorTopology", "Axis", "X", "Y", "Z", "TOP", "BOTTOM", "LEFT", "RIGHT", "FRONT", "BACK", "up", "down", "left", "right", "front", "back", "half", "midpoint", "pv",
-    "Sketch", "Position", "Placement", "compile_model", "run_script", "component", "assembly", "ModelParameterWarning", "ModelError",
+    "Sketch", "Placement", "compile_model", "run_script", "component", "assembly", "ModelParameterWarning", "ModelError",
 ]
