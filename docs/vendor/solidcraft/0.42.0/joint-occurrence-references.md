@@ -85,9 +85,9 @@ joint because both sides referred to the same native occurrence.
 PASS after separating the copied occurrence before `joint.create`.
 
 This is why Forge change 0010 gives copied attached children distinct temporary
-parking poses before authoring their joints. The parking pose only makes native
-occurrence inference unambiguous; the joint still defines the final
-relationship.
+staging offsets along the parent attachment direction before authoring their
+joints. The staging pose only makes native occurrence inference unambiguous;
+the joint still defines the final relationship.
 
 ## Forge rule derived from these probes
 
