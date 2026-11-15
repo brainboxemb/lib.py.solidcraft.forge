@@ -380,8 +380,6 @@ jobs:
           printf "four-corner-l\tframe footprint 120x80 -> 160x120 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "eight-flightcase-corners\tcase 120x80x60 -> 160x120x90 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "eight-corner-brackets\tframe 120x80x60 -> 160x120x90 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
-          printf "parametric-move\toffset 40 -> 70 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
-          printf "parametric-placement-pair\tspacing 80 -> 120 mm; pair -40/+40 -> -60/+60 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-attach\tgap 10 -> 30 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-offset\tshift 5 -> 10 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-anchor\tbase_width 40 -> 80 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
