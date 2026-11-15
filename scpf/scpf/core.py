@@ -770,6 +770,19 @@ def _shape_center(shape):
 
 @dataclass(frozen=True)
 class Shape:
+    """Represent Forge geometry/feature intent before SolidCraft executes it.
+
+    Use when:
+        Shape values are normally returned by constructors such as Box(),
+        Cylinder(), Hole() and Sketch.extrude(), then transformed or combined
+        with the supported Shape methods/operators.
+
+    Limits:
+        Shape is Forge's model-intent node, not a second geometry kernel.
+        SolidCraft owns the final BRep and native feature history; users normally
+        do not instantiate Shape(kind, data) directly.
+    """
+
     kind: str
     data: Any
     history: Any = None
