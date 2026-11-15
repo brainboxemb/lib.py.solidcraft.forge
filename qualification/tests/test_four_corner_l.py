@@ -87,7 +87,11 @@ class FourCornerLCommandTests(unittest.TestCase):
                 self.assertEqual(joint["b"]["point"], [0.0, 0.0, 0.0])
             else:
                 self.assertNotIn("occurrence", joint["b"])
-                self.assertEqual(joint["b"]["point"], [0.0, 0.0, 1.0])
+                distance = float(index * 1000)
+                self.assertEqual(
+                    joint["b"]["point"],
+                    [distance, -distance, distance],
+                )
             self.assertEqual(
                 tuple(joint["values"][:2]),
                 expected_xy[index - 1],
