@@ -9,4 +9,4 @@ def box_bounds(lo, hi):
 
 horizontal = box_bounds([0, -12, -12], [40, 12, 0])
 vertical = box_bounds([0, -12, -40], [12, 12, 0])
-show(horizontal | vertical)
+model = horizontal | vertical
