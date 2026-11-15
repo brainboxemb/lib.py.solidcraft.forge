@@ -129,9 +129,12 @@ def _identity_placement(instance):
     )
 
 
-def _ordinary_replay_order(instances, component_name):
-    """Order ordinary occurrences so static replay needs no later occurrence move."""
-    if not all(instance.attachment is None for instance in instances):
+def _ordinary_replay_order(instances, component_name, relationship_occurrence_ids):
+    """Order non-relationship occurrences for replay-safe create/copy placement."""
+    if any(
+        instance.occurrence_id in relationship_occurrence_ids
+        for instance in instances
+    ):
         return list(instances), False
 
     first = next(
@@ -233,6 +236,14 @@ def compile_assembly(value, name):
             grounded=True,
         ))
 
+    relationship_occurrence_ids = set()
+    for instance in assembly.instances:
+        attachment = instance.attachment
+        if attachment is None:
+            continue
+        relationship_occurrence_ids.add(instance.occurrence_id)
+        relationship_occurrence_ids.add(attachment.target.occurrence_id)
+
     by_definition = {}
     for instance in assembly.instances:
         by_definition.setdefault(instance.definition.key, []).append(instance)
@@ -242,6 +253,7 @@ def compile_assembly(value, name):
         instances, ordinary_replay_placement = _ordinary_replay_order(
             instances,
             component_name,
+            relationship_occurrence_ids,
         )
         definition = instances[0].definition
         parent_names = {instance.group_name for instance in instances}
