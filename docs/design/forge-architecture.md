@@ -94,6 +94,12 @@ schema explicitly defines it as a stable programmable identifier.
 > Changing SolidCraft browser numbering must not change which Forge objects are
 > moved, joined or inspected.
 
+**Invariant ID-3**
+
+> One Forge occurrence identity may appear at most once in one assembly graph.
+> A second physical occurrence must be created with `.copy()`, which gets a
+> new OccurrenceId while retaining the same DefinitionId.
+
 ## 3. Definition vs occurrence
 
 Public component code describes reusable geometry:
