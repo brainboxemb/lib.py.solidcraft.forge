@@ -12,8 +12,9 @@ import threading
 import unittest
 from unittest.mock import patch
 
-from scpf.live import LiveError, new_design, send_commands
+from scpf.live import LiveError, new_design, send_commands, send_document
 from scpf.__main__ import read_command_file, main
+from scpf.plan import result_ref
 from scpf.runner import run_script
 
 
@@ -80,6 +81,179 @@ class LiveProtocolTests(unittest.TestCase):
         self.assertEqual(server.request["params"]["commands"], commands)
         self.assertEqual(server.request["params"]["rollback"], True)
         self.assertEqual(server.request["params"]["param_check"], "strict")
+
+    def test_result_binding_uses_phased_batches_with_real_occurrence_id(self):
+        document = {
+            "commands": [
+                {
+                    "command": "occurrence.copy",
+                    "params": {"component": "Block", "translate": [40, 0, 0]},
+                },
+                {
+                    "command": "occurrence.move",
+                    "params": {
+                        "occurrence": result_ref("occurrence:right"),
+                        "translate": [0, 0, 20],
+                    },
+                },
+            ],
+            "bindings": {
+                "occurrence:right": {
+                    "command": 0,
+                    "field": "occurrence",
+                },
+            },
+        }
+        server = FakeSolidCraft([
+            {
+                "id": 1,
+                "ok": True,
+                "result": {"checkpoint": 7},
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 1,
+                    "results": [{"occurrence": 42, "component": 9}],
+                    "undone": 0,
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 1,
+                    "results": [{"occurrence": 42}],
+                    "undone": 0,
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "checkpoint": 7,
+                    "restored": False,
+                },
+            },
+        ])
+        self.configure(server)
+
+        result = send_document(document, directory=self.directory)
+        server.join()
+
+        self.assertEqual(result["completed"], 2)
+        self.assertEqual(result["phases"], 2)
+        self.assertEqual(result["bindings"], {"occurrence:right": 42})
+        self.assertEqual(
+            [request["method"] for request in server.requests],
+            ["engine.execute", "engine.batch", "engine.batch", "engine.execute"],
+        )
+        self.assertEqual(
+            server.requests[0]["params"],
+            {
+                "command": "edit.checkpoint",
+                "params": {},
+                "param_check": "strict",
+            },
+        )
+        self.assertEqual(
+            server.requests[1]["params"]["commands"],
+            [document["commands"][0]],
+        )
+        self.assertEqual(
+            server.requests[2]["params"]["commands"],
+            [{
+                "command": "occurrence.move",
+                "params": {
+                    "occurrence": 42,
+                    "translate": [0, 0, 20],
+                },
+            }],
+        )
+        self.assertEqual(
+            server.requests[3]["params"],
+            {
+                "command": "edit.restore_checkpoint",
+                "params": {"checkpoint": 7, "forget": True},
+                "param_check": "strict",
+            },
+        )
+
+    def test_failed_later_phase_restores_outer_checkpoint(self):
+        document = {
+            "commands": [
+                {
+                    "command": "occurrence.copy",
+                    "params": {"component": "Block"},
+                },
+                {
+                    "command": "occurrence.move",
+                    "params": {
+                        "occurrence": result_ref("occurrence:right"),
+                        "translate": [0, 0, 20],
+                    },
+                },
+            ],
+            "bindings": {
+                "occurrence:right": {
+                    "command": 0,
+                    "field": "occurrence",
+                },
+            },
+        }
+        server = FakeSolidCraft([
+            {
+                "id": 1,
+                "ok": True,
+                "result": {"checkpoint": 11},
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 1,
+                    "results": [{"occurrence": 42}],
+                    "undone": 0,
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 0,
+                    "results": [],
+                    "rolled_back": True,
+                    "failed": {
+                        "index": 0,
+                        "command": "occurrence.move",
+                        "error": "refused",
+                    },
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "checkpoint": 11,
+                    "restored": True,
+                },
+            },
+        ])
+        self.configure(server)
+
+        with self.assertRaisesRegex(LiveError, "occurrence.move"):
+            send_document(document, directory=self.directory)
+        server.join()
+
+        self.assertEqual(
+            server.requests[-1]["params"],
+            {
+                "command": "edit.restore_checkpoint",
+                "params": {"checkpoint": 11},
+                "param_check": "strict",
+            },
+        )
 
     def test_new_design_uses_native_file_new(self):
         server = FakeSolidCraft({
@@ -165,6 +339,80 @@ class LiveProtocolTests(unittest.TestCase):
         self.assertEqual(server.request["params"]["commands"], original["commands"])
         self.assertEqual(server.request["params"]["commands"][0]["command"],
                          "parameters.change")
+
+    def test_replay_execution_plan_resolves_runtime_binding(self):
+        plan_file = self.directory / "plan.json"
+        document = {
+            "commands": [
+                {
+                    "command": "occurrence.copy",
+                    "params": {"component": "Block"},
+                },
+                {
+                    "command": "occurrence.move",
+                    "params": {
+                        "occurrence": result_ref("occurrence:right"),
+                        "translate": [20, 0, 0],
+                    },
+                },
+            ],
+            "bindings": {
+                "occurrence:right": {
+                    "command": 0,
+                    "field": "occurrence",
+                },
+            },
+        }
+        plan_file.write_text(
+            json.dumps(document),
+            encoding="utf-8",
+        )
+        server = FakeSolidCraft([
+            {
+                "id": 1,
+                "ok": True,
+                "result": {"checkpoint": 13},
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 1,
+                    "results": [{"occurrence": 88}],
+                    "undone": 0,
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 1,
+                    "results": [{"occurrence": 88}],
+                    "undone": 0,
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "checkpoint": 13,
+                    "restored": False,
+                },
+            },
+        ])
+        self.configure(server)
+
+        with patch.dict(
+            os.environ,
+            {"SOLIDCRAFT_CONTROL_DIR": str(self.directory)},
+        ):
+            self.assertEqual(main(["replay", str(plan_file)]), 0)
+        server.join()
+
+        self.assertEqual(
+            server.requests[2]["params"]["commands"][0]["params"]["occurrence"],
+            88,
+        )
 
     def test_replay_rejects_invalid_command_document(self):
         invalid = self.directory / "invalid.json"
