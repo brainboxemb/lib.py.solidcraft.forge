@@ -233,8 +233,6 @@ _ATTACHMENT_INFERENCE_STAGE_MM = 1.0
 def _attachment_stage_direction(attachment):
     """Return the parent-facing direction used to separate a copied child."""
     parent = attachment.parent
-    if isinstance(parent, str):
-        parent = dict(attachment.target.definition.anchors)[parent]
 
     if isinstance(parent, Anchor):
         if parent in _CORNER_ANCHORS:
@@ -246,6 +244,19 @@ def _attachment_stage_direction(attachment):
             )
         else:
             direction = parent.vector
+    elif isinstance(parent, str):
+        parent = dict(attachment.target.definition.anchors)[parent]
+        if isinstance(parent, AnchorFrame):
+            direction = parent.z
+        elif isinstance(parent, AnchorTopology):
+            if parent.z is None:
+                raise ModelError(
+                    "copied named AnchorTopology attachment needs an explicit "
+                    "z direction for replay-safe occurrence inference"
+                )
+            direction = parent.z
+        else:
+            raise ModelError("named attachment has no replay-safe staging direction")
     elif isinstance(parent, AnchorFrame):
         direction = parent.z
     elif isinstance(parent, AnchorTopology):
