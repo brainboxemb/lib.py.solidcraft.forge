@@ -163,8 +163,9 @@ For SolidCraft 0.42 the qualified replay-safe rules are concrete:
   `joint.create`, `joint.origin` and `joint.as_built`;
 - a copied side of `joint.create` may omit `occurrence` when Forge supplies
   an unambiguous world topology/point pick;
-- copied attached children use distinct temporary parking poses so their picks
-  remain unambiguous before the joint solves;
+- copied attached children use distinct temporary staging offsets along their
+  attachment direction so their picks remain unambiguous before the joint
+  solves;
 - if a relationship still needs a copied occurrence selector that SolidCraft
   cannot infer, Forge rejects that case.
 
