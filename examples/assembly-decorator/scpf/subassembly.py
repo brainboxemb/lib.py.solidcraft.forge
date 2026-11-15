@@ -8,12 +8,14 @@ from scpf.runner import assembly, component
 @component
 class Post:
     def build(self):
-        return Box(10, 10, 20)
+        # Keep the existing visible -15/+15 qualification geometry while the
+        # occurrence path itself stays replay-safe.
+        return Box(10, 10, 20).move(x=-15, z=10)
 
 
 @assembly
 class PostPair:
     def build(self):
-        left = Post(name="left", placement=Placement(x=-15))
-        right = left.copy(name="right", placement=Placement(x=15))
+        left = Post(name="left")
+        right = left.copy(name="right", placement=Placement(x=30))
         return left + right
