@@ -39,6 +39,10 @@ EXPECTED_BOUNDS = {
         {"label": "left Block", "min": [-50, -10, 0], "max": [-30, 10, 10]},
         {"label": "right Block", "min": [30, -10, 0], "max": [50, 10, 10]},
     ],
+    "rotated-copy-placement": [
+        {"label": "left Panel", "min": [-45, -10, 0], "max": [-35, 10, 4]},
+        {"label": "right Panel", "min": [35, -10, 0], "max": [45, 10, 4]},
+    ],
     "group-hierarchy": [
         {"label": "left Panel", "min": [-5, -1, 0], "max": [5, 1, 20]},
         {"label": "right Panel", "min": [6, -1, 0], "max": [16, 1, 20]},

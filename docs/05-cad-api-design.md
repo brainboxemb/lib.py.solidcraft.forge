@@ -169,10 +169,16 @@ separate public `Position` object and no occurrence `.at()`, `.move()` or
 `.rotate()` for initial placement.
 
 The compiler encodes Placement in native creation/copy commands where
-SolidCraft 0.42 allows it. A later native `occurrence.move` is only a backend
-fallback for capabilities that creation/copy cannot encode, such as symbolic
-copy translation or orientation. This does not change the constructor-time
-Forge semantics.
+SolidCraft 0.42 can do so without changing the declared pose. A concrete
+unrotated copy may use `occurrence.copy(..., translate=...)`. A copy with
+orientation is created at native identity and receives translation plus
+rotation together in `occurrence.move`; otherwise SolidCraft would rotate the
+pre-applied copy translation. Symbolic copy translation likewise uses the
+native move fallback. These lowering choices do not change the
+constructor-time Forge semantics.
+
+The rotated-copy correction is recorded in
+[change 0002](changes/0002-copy-placement-with-rotation.md).
 
 Placement must not create a `joint.create` as an implementation workaround.
 Attachments remain explicit relationships and Placement expressions reuse

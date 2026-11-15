@@ -162,6 +162,22 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "rotated-copy-placement",
+        "group": "components",
+        "title": "Copied Placement with rotation",
+        "intent": "Verify that a copied occurrence combining concrete XYZ and orientation keeps its declared parent-frame position instead of rotating a pre-applied copy translation.",
+        "forge_api": "left = Panel(placement=Placement(x=-40, rotation=(Z, 90))); right = left.copy(placement=Placement(x=40, rotation=(Z, 90)))",
+        "forge_model": "Two occurrences share one non-square Panel definition. Each carries one complete absolute Placement with X translation and Z-axis orientation.",
+        "lowering": "The second occurrence is copied at native identity, then both occurrences receive native occurrence.move commands containing their full translation and Z=90 degree orientation. occurrence.copy has no translate.",
+        "native_expectation": "Two rotated 10 x 20 x 4 mm envelopes remain centred at X=-40 and X=+40. No placement joint is created.",
+        "mutation": "No saved-design mutation is required; this case isolates the concrete copy-plus-rotation lowering corrected by change 0002.",
+        "references": [
+            ("SolidCraft", "Native occurrence.move must receive translation and rotation together for the copied pose; pre-translating occurrence.copy changes the final position when the later rotation is applied."),
+            ("PythonSCAD", "The final visible geometry is two 10 x 20 x 4 mm boxes centred symmetrically at X=-40 and X=+40."),
+            ("BOSL2", "Reference geometry independently checks the final rotated envelope and symmetric placement."),
+        ],
+    },
+    {
         "slug": "group-hierarchy",
         "group": "components",
         "title": "Named native subassembly group",

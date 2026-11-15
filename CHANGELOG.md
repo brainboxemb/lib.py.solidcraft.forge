@@ -12,6 +12,26 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 - Nothing yet.
 
+## [0.3.1] - 2026-11-15
+
+Correct native lowering for copied occurrences that combine translation and
+rotation.
+
+### Fixed
+
+- A concrete copied `Placement` with rotation is now copied at native identity
+  and receives its full XYZ translation and axis-angle orientation in one
+  `occurrence.move`. SCPF 0.3.0 could pre-translate the copy and then rotate
+  that translation, changing the declared parent-frame position.
+- Added native qualification for a non-square rotated copy so this failure is
+  measured in SolidCraft 0.42 rather than covered only by command-plan tests.
+
+### Compatibility
+
+- SCPF package version: **0.3.1**
+- Qualified SolidCraft version: **0.42.0**
+- Python: **3.10+**
+
 ## [0.3.0] - 2026-11-15
 
 Replay-first placement cleanup and foundational API correction.
