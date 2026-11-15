@@ -702,7 +702,9 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     # from the implementation/docstrings; this block only renders them.
     reference_root = out / "reference"
     reference_root.mkdir(exist_ok=True)
-    reference_cards = []
+    enum_reference_cards = []
+    method_reference_cards = []
+    group_reference_cards = []
 
     for spec in ENUM_REFERENCES:
         slug = spec["slug"]
@@ -748,7 +750,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                  home="../../", cheatsheet="../../cheatsheet/"),
             encoding="utf-8",
         )
-        reference_cards.append(
+        enum_reference_cards.append(
             f'<article class="reference"><h2><a href="{escape(slug)}/">'
             f'{escape(spec["title"])}</a></h2><p>{escape(spec["summary"])}</p></article>'
         )
@@ -782,7 +784,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                  home="../../", cheatsheet="../../cheatsheet/"),
             encoding="utf-8",
         )
-        reference_cards.append(
+        method_reference_cards.append(
             f'<article class="reference"><h2><a href="{escape(slug)}/">'
             f'{escape(spec["title"])}</a></h2>'
             f'<p>{escape(spec["summary"])}</p>'
@@ -834,7 +836,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         member_names = " · ".join(
             f'<code>{escape(name)}</code>' for name in spec["member_names"]
         )
-        reference_cards.append(
+        group_reference_cards.append(
             f'<article class="reference"><h2><a href="{escape(slug)}/">'
             f'{escape(spec["title"])}</a></h2><p>{escape(spec["summary"])}</p>'
             f'<p class="reference-members">{member_names}</p></article>'
@@ -867,14 +869,25 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     reference_index = (
         '<main class="wrap"><section class="hero small">'
         '<p class="eyebrow">Complete lookup</p><h1>API Reference</h1>'
-        '<p>Generated from the current public Python objects and docstrings: '
-        'exact enum members, signatures, intended use and current limits. '
-        'The API Guide repeats the relevant generated facts inline next to '
-        'worked explanations, so normal use does not require constant back-and-forth clicking.</p>'
+        '<p>Generated from the current public Python objects and docstrings. '
+        'If you are still deciding which concept to use, start with the '
+        '<a href="../guide/">API Guide</a>. If you already know the task, use '
+        'the grouped reference below; exact selectors and detailed methods follow.</p>'
         '<p><a href="api.json">Machine-readable API index →</a> · '
         '<a href="../api-design-contract.html">Cross-object API design rules →</a></p>'
-        '</section><div class="reference-grid">'
-        + "".join(reference_cards) + '</div></main>'
+        '</section>'
+        '<section class="section-heading"><h2>Browse by task</h2>'
+        '<p>Related public symbols stay together so common work does not require '
+        'opening a separate page for every constructor or helper.</p></section>'
+        '<div class="reference-grid">' + "".join(group_reference_cards) + '</div>'
+        '<section class="section-heading"><h2>Selectors and vocabularies</h2>'
+        '<p>Complete generated values for faces, anchors, axes, directions, depths and edges.</p></section>'
+        '<div class="reference-grid">' + "".join(enum_reference_cards) + '</div>'
+        '<section class="section-heading"><h2>Core types and detailed operations</h2>'
+        '<p>Exact current signatures for model types, component/assembly operations, '
+        'shape placement and sketch operations.</p></section>'
+        '<div class="reference-grid">' + "".join(method_reference_cards) + '</div>'
+        '</main>'
     )
     (reference_root / "index.html").write_text(
         page("API Reference", reference_index, stylesheet="../style.css",
