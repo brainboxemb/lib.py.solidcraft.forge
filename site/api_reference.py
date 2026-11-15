@@ -71,7 +71,7 @@ def _method(slug, title, obj, *, guide, guide_anchor):
 
 ENUM_REFERENCES = (
     _enum("Faces", Faces, guide="features", guide_anchor="hole"),
-    _enum("Anchor", Anchor, guide="components", guide_anchor="attach"),
+    _enum("Anchor", Anchor, guide="assembly-basics", guide_anchor="anchor-choice"),
     _enum("Axis", Axis, guide="geometry", guide_anchor="solids"),
     _enum("Direction", Direction, guide="geometry", guide_anchor="profiles"),
     _enum("Depth", Depth, guide="features", guide_anchor="hole"),
