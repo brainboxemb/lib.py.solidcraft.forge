@@ -10,6 +10,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Changed
 
+- Attachment lowering no longer predicts SolidCraft occurrence names such as
+  `Block:2`. First occurrences use qualified component-name selectors; copied
+  joint origins are resolved by SolidCraft from a temporary distinct seed pick.
+- Relationship rotation, copied as-built attachments and chained attachments
+  now fail clearly where replay-safe SolidCraft 0.42 addressing is not yet
+  available.
+
 - Ordinary occurrence Placement is now limited to replay-safe SolidCraft 0.42
   lowering: one identity occurrence per reusable definition and concrete,
   unrotated copies through `occurrence.copy(..., translate=...)`.
