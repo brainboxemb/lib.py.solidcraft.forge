@@ -10,7 +10,7 @@ class Post:
     def build(self):
         # Keep the existing visible -15/+15 qualification geometry while the
         # occurrence path itself stays replay-safe.
-        return Box(10, 10, 20).move(x=-15, z=10)
+        return Box(10, 10, 20).move(x=-15)
 
 
 @assembly
