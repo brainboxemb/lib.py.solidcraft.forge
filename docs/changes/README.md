@@ -23,3 +23,5 @@ Current records:
 - [0002-copy-placement-with-rotation.md](0002-copy-placement-with-rotation.md) — correct native lowering when a copied occurrence combines XYZ Placement with rotation.
 - [0003-explicit-component-parameter-publication.md](0003-explicit-component-parameter-publication.md) — restore the original explicit `include=` contract for publishing reusable child-component defaults; parent symbolic bindings remain shared.
 - [0004-three-reference-implementations.md](0004-three-reference-implementations.md) — require PythonSCAD, pyBOSL2 and CadQuery reference output for qualification cases unless an explicit technical exception is recorded.
+
+- [0007-runtime-occurrence-result-binding.md](0007-runtime-occurrence-result-binding.md) — add validated logical result references and atomic phased execution so later commands can use actual SolidCraft runtime occurrence ids.
