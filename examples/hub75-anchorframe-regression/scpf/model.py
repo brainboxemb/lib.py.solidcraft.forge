@@ -17,7 +17,7 @@ class SideBoard:
 
 class LProfile:
     ARM_LENGTH = 28.0
-    THICKNESS = 4.0
+    THICKNESS = 12.0
     PROFILE_DEPTH = 24.0
 
     def build(self):
