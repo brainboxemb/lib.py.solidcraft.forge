@@ -18,11 +18,9 @@ At assembly level, named Python objects represent meaningful physical
 occurrences:
 
 ```python
-left = Board(
-    placement=Placement(x=-half(opening_width))
-)
+left = Board()
 right = left.copy(
-    placement=Placement(x=half(opening_width))
+    placement=Placement(x=160)
 )
 bracket = CornerBracket().attach(left, ...)
 ```
@@ -72,7 +70,7 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch supported by the selected target face. The local 2D sketch origin is the centre of that target face. |
 | profile inside a sketch | `sketch.add(profile, anchor=CENTER)` | Place the profile's selected 2D anchor on the sketch origin. CENTER is the default semantic centring operation; numeric offset is not a centring substitute. |
 | deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. Use only when the design actually calls for an offset. |
-| occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Values may be numeric or parametric and do not create a joint. |
+| occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Placement itself does not create a joint; the replay-first SolidCraft 0.42 backend currently supports an identity first occurrence plus concrete unrotated copies and rejects ordinary cases that need a later occurrence selector. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
 ### `at()`
@@ -143,25 +141,22 @@ parameters:
 ```python
 left = Board(
     width=frame_wood_thickness,
-    placement=Placement(
-        x=-(half(opening_width) + half(frame_wood_thickness)),
-        z=opening_bottom,
-    ),
 )
 
 right = left.copy(
     name="right",
     placement=Placement(
-        x=half(opening_width) + half(frame_wood_thickness),
-        z=opening_bottom,
+        x=160,
     ),
 )
 ```
 
 `Placement(x=0, y=0, z=0, rotation=None)` stores the absolute pose in the
-parent coordinate frame. XYZ values may contain Parameters or Expressions.
-`half(value)` remains symbolic and lowers to ordinary native `value / 2`
-arithmetic.
+parent coordinate frame. The value object can contain Parameters or
+Expressions, but ordinary replay-first SolidCraft 0.42 lowering currently
+rejects symbolic occurrence Placement when it would require a later
+`occurrence.move`. `half(value)` remains symbolic for capabilities whose
+native command accepts expressions.
 
 The component factory consumes `placement=` before building the reusable
 component definition, so placement never becomes a model parameter. There is no
