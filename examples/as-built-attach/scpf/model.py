@@ -24,7 +24,7 @@ class AsBuiltAttach:
         base = Base()
         marker = (
             Marker()
-            .move(x=50, y=20, z=15)
+            .at(x=50, y=20, z=15)
             .rotate(axis=(0, 0, 1), degrees=90)
             .attach(base, as_built=True)
         )
