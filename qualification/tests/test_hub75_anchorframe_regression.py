@@ -62,13 +62,12 @@ class Hub75AnchorFrameDiagnosticTests(unittest.TestCase):
                 )
             )
 
-    def test_current_first_divergence_is_attached_child_seed_lowering(self):
-        """Record the regression before changing lowering.
+    def test_attached_child_seed_placement_remains_symbolic(self):
+        """The diagnosed command-level regression must stay fixed.
 
-        The Python attachment calculation retains parameter dependencies in the
-        child Placement. Current assembly lowering intentionally converts an
-        attached occurrence's seed move to concrete numbers. The independent
-        Placement baseline keeps equivalent positions symbolic.
+        An attachment may need a seed pose for the native solver, but adding the
+        semantic joint must not flatten parameter dependencies already present
+        in that occurrence Placement.
         """
 
         anchor_moves = [
@@ -87,18 +86,24 @@ class Hub75AnchorFrameDiagnosticTests(unittest.TestCase):
 
         self.assertTrue(
             all(
-                not any(isinstance(value, str) for value in row["translate"])
+                "opening_width" in str(row["translate"])
                 for row in anchor_moves
-            ),
-            "diagnostic changed: attached seeds are no longer flattened",
+            )
         )
         self.assertTrue(
-            any(
+            all(
+                any(isinstance(value, str) for value in row["translate"])
+                for row in anchor_moves
+            )
+        )
+        self.assertTrue(
+            all(
                 any(isinstance(value, str) for value in row["translate"])
                 for row in baseline_moves
             )
         )
 
+        self.assertEqual(len(of(commands("scpf"), "joint.create")), 8)
         self.assertEqual(len(of(commands("placement"), "joint.create")), 0)
 
 
