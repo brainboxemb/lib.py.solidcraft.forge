@@ -77,28 +77,33 @@ For `joint.create`:
 
 ### Temporary seed gap
 
-A copied normal attachment is created in a temporary assembly-wide parking
-slot before its joint is authored.
+A copied normal attachment is created at a small temporary staging offset
+before its joint is authored.
 
-Parking slots are 1000 mm apart. Slot `n` uses the temporary translation:
+Each copied attached child gets an assembly-wide staging slot. Slot `n` moves
+the child's calculated pre-joint pose by `n mm` along the parent attachment
+direction:
 
-```text
-(+1000n, -1000n, +1000n) mm
-```
+- a standard face anchor uses its outward face direction;
+- a corner anchor uses the normal of the front/back face that owns the corner;
+- `AnchorFrame` uses its `z` direction;
+- `AnchorTopology` must provide a `z` direction when a copied child needs
+  native occurrence inference.
 
-Only copied attached children use these positions. The first occurrence can be
+Only copied attached children use this offset. The first occurrence can be
 addressed by the qualified component-name selector and stays at native
 identity.
 
 The copy and its world joint pick move together. Different copied children
-therefore have different native positions even when their authored attachment
-math produces the same pre-joint pose. This avoids the native 0.42 ambiguity
-proved by the coincident same-definition probe.
+therefore get distinct picks even when their authored attachment math produces
+the same pre-joint pose. This avoids the SolidCraft 0.42 ambiguity proved by
+the coincident same-definition probe without moving temporary geometry to an
+arbitrary distant world location.
 
-The parking translation is compiler setup state only. The authored
-`attach()` relationship remains the final relationship and moves every parked
-copy to its requested position. Saved-design relationship behaviour is checked
-after the native joint solve, not from the temporary parking coordinates.
+The staging offset is compiler setup state only. The authored `attach()`
+relationship remains the final relationship and moves every staged copy to its
+requested position. Saved-design relationship behaviour is checked after the
+native joint solve, not from the temporary staging coordinates.
 
 ### No generated occurrence names
 
@@ -143,7 +148,7 @@ Required command tests:
 - no generated `Component:N` selector appears in an attachment plan;
 - first occurrences use component names;
 - copied joint origins omit `occurrence`;
-- copied attached children receive distinct parking seeds;
+- copied attached children receive distinct local staging seeds;
 - same-definition parent/child attachment remains one reusable component plus a
   copy;
 - repeated copied brackets use point inference without generated names;
