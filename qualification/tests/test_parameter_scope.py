@@ -1,4 +1,4 @@
-"""Qualification tests for implicit component parameter semantics."""
+"""Qualification tests for explicit component publication and inherited bindings."""
 import json
 import os
 from pathlib import Path
