@@ -21,12 +21,28 @@ $case_preview
 
 <section class="panel">
   <h2>2. Implementation under test</h2>
-  <h3>Fixture source</h3>
+  <h3>Forge fixture source</h3>
   <pre><code>$source</code></pre>
   <h3>Public Forge API used</h3>
   <p><code>$forge_api</code></p>
   <h3>Forge model represented by this fixture</h3>
   <p>$forge_model</p>
+
+  <h3>Reference implementations</h3>
+  <p>These implement the same modelling intent for review. They are comparisons,
+  not alternative definitions of the Forge API.</p>
+  <div class="twocol qualification-reference-code">
+    <div>
+      <h4>PythonSCAD</h4>
+      <pre><code>$pythonscad_source</code></pre>
+      <p><a href="reference-pythonscad.py">Open PythonSCAD source →</a></p>
+    </div>
+    <div>
+      <h4>pyBOSL2</h4>
+      <pre><code>$pybosl2_source</code></pre>
+      <p><a href="reference-pybosl2.py">Open pyBOSL2 source →</a></p>
+    </div>
+  </div>
 </section>
 
 <section class="panel">
@@ -53,8 +69,9 @@ $gallery
       </details>
     </div>
     <div>
-      <h3>Reference models</h3>
-      <p>These comparisons clarify concepts; Forge does not promise API compatibility with them.</p>
+      <h3>Reference documentation</h3>
+      <p>External documentation clarifies related concepts; Forge does not
+      promise API compatibility with these projects.</p>
       <ul>$reference_items</ul>
     </div>
   </div>

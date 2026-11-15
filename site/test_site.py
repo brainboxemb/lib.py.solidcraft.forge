@@ -175,6 +175,9 @@ def check(site: Path, sha: str, require_native: bool = False):
             "2. Implementation under test",
             "Public Forge API used",
             "Forge model represented by this fixture",
+            "Reference implementations",
+            "PythonSCAD",
+            "pyBOSL2",
             "3. Generated SolidCraft relationship",
             "6. Evidence and references",
             "Reference models",
@@ -202,6 +205,10 @@ def check(site: Path, sha: str, require_native: bool = False):
         ):
             assert placeholder not in page_text, (slug, placeholder)
         assert (site / "qualification" / slug / "model.py").is_file()
+        assert (site / "qualification" / slug / "reference-pythonscad.py").is_file()
+        assert (site / "qualification" / slug / "reference-pybosl2.py").is_file()
+        assert 'href="reference-pythonscad.py"' in page_text
+        assert 'href="reference-pybosl2.py"' in page_text
         assert (site / "qualification" / slug / "commands.json").is_file()
         if require_native:
             manifest_case = qualification_manifest["cases"][slug]

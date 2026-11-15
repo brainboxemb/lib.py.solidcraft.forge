@@ -615,6 +615,28 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         source = text(source_path)
         (case_dir / "model.py").write_text(source, encoding="utf-8")
 
+        reference_sources = {}
+        for reference_name in ("pythonscad", "pybosl2"):
+            reference_path = (
+                ROOT / "examples" / slug / reference_name / "model.py"
+            )
+            if not reference_path.is_file():
+                raise ValueError(
+                    f"Qualification reference missing: {reference_path}"
+                )
+            reference_source = text(reference_path)
+            try:
+                compile(reference_source, str(reference_path), "exec")
+            except SyntaxError as exc:
+                raise ValueError(
+                    f"Invalid {reference_name} reference syntax: {reference_path}"
+                ) from exc
+            reference_sources[reference_name] = reference_source
+            (case_dir / f"reference-{reference_name}.py").write_text(
+                reference_source,
+                encoding="utf-8",
+            )
+
         diagram_html = ""
         diagram_name = case.get("diagram")
         plan_name = None
@@ -781,7 +803,9 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             )
 
         evidence_items = [
-            '<li><a href="model.py">Fixture source</a></li>',
+            '<li><a href="model.py">Forge fixture source</a></li>',
+            '<li><a href="reference-pythonscad.py">PythonSCAD reference source</a></li>',
+            '<li><a href="reference-pybosl2.py">pyBOSL2 reference source</a></li>',
             '<li><a href="commands.json">Generated command JSON</a></li>',
         ]
         evidence_items.extend(
@@ -816,6 +840,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             lowering_detail=escape(lowering_detail),
             reference_items="".join(reference_items),
             source=escape(source),
+            pythonscad_source=escape(reference_sources["pythonscad"]),
+            pybosl2_source=escape(reference_sources["pybosl2"]),
         )
         (case_dir / "index.html").write_text(
             page(
@@ -833,6 +859,10 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             "status": status,
             "status_detail": status_detail,
             "command_count": len(commands["commands"]),
+            "reference_sources": [
+                "reference-pythonscad.py",
+                "reference-pybosl2.py",
+            ],
             "native_evidence": native_files,
             "native_images": native_images,
             "qualification_status": (
