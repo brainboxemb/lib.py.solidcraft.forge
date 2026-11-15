@@ -27,7 +27,17 @@ from .explicit_sketch import Sketch
 
 
 class ModelParameterWarning(UserWarning):
-    """A declared editable model parameter lost its native CAD dependency."""
+    """Warn that an editable model parameter lost a native CAD dependency.
+
+    Use when:
+        Tooling wants to detect parameters that became concrete Python values or
+        are only partly associative in the generated SolidCraft model.
+
+    Limits:
+        This is a warning category, not an exception. The preferred fix is to
+        preserve the symbolic relationship or mark an intentional build-time
+        input with a leading underscore.
+    """
 
 
 @dataclass(frozen=True)
@@ -500,7 +510,17 @@ def _model_import_context(path: Path):
 
 
 def run_script(path: str | Path) -> dict:
-    """Run a trusted SCPF script and return its native command document."""
+    """Execute a trusted SCPF model source file and return its command document.
+
+    Use when:
+        Programmatic tooling needs the same model-loading/root-selection and
+        compilation behaviour as the SCPF CLI.
+
+    Limits:
+        The source is executed as trusted Python. A file must either end in an
+        explicit root model call or define exactly one unambiguous public model
+        class with build().
+    """
     path = Path(path).resolve()
     syntax = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
 
