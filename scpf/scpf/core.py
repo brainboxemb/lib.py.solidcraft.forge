@@ -153,11 +153,19 @@ def _selector_anchor(value):
 
 @dataclass(frozen=True)
 class AnchorFrame:
-    """One local attachment frame for a reusable component occurrence.
+    """Describe one local attachment point and orientation.
 
-    A frame may be returned from a component's anchors() mapping or supplied
-    directly to attach() by an assembly. origin is a point in component-local
-    millimetres; z and x define the attachment orientation.
+    Use when:
+        A standard face or corner Anchor is not enough and the mounting datum
+        needs its own local origin plus orientation. A reusable component may
+        expose named AnchorFrame values from anchors(), or an assembly may pass
+        one directly to attach().
+
+    Limits:
+        origin is component-local. z is the attachment normal and x fixes the
+        clocking around that normal; both directions must be non-zero and not
+        parallel. Direct frames on explicitly rotated occurrences have limited
+        support as documented by the assembly guide.
     """
 
     origin: tuple[float, float, float] = (0.0, 0.0, 0.0)
@@ -205,12 +213,17 @@ class AnchorFrame:
 
 @dataclass(frozen=True)
 class AnchorTopology:
-    """Topology-backed attachment reference on a planar-face edge.
+    """Describe an attachment datum that follows native SolidCraft topology.
 
-    edge is a pick point on the edge and on selects the adjacent planar face.
-    corner optionally selects one endpoint. SolidCraft keeps the selected
-    topology by name, so the reference follows dimension changes. z and x may
-    override the resulting frame orientation.
+    Use when:
+        A relationship should follow a particular edge, adjacent planar face
+        and optionally one endpoint as dimensions change, rather than freezing
+        one XYZ coordinate.
+
+    Limits:
+        edge and on are native selection pick points; corner is optional. z and
+        x may override frame orientation. Current Forge support focuses on
+        planar-face edges and non-rotated occurrences.
     """
 
     edge: tuple[float, float, float]
@@ -371,7 +384,17 @@ class _BoundOffset:
 
 
 class _AxisRef(str):
-    """Axis token that also exposes parent-bound placement selectors."""
+    """Axis token with MIN, CENTER and MAX parent-bound placement selectors.
+
+    Use when:
+        Public X, Y and Z tokens let feature offsets refer to a parent bound,
+        for example X.MIN + 10 or Y.MAX - 10, without hard-coding the current
+        global coordinate.
+
+    Limits:
+        These X/Y/Z tokens are bound selectors, not Axis.X/Y/Z primitive-axis
+        enum values.
+    """
 
     @property
     def MIN(self):
@@ -388,6 +411,19 @@ class _AxisRef(str):
 
 @dataclass(frozen=True)
 class Parameter:
+    """Represent one named editable CAD dimension.
+
+    Use when:
+        Keep a value symbolic so generated SolidCraft commands can retain an
+        editable dependency instead of baking in the current Python number.
+
+    Limits:
+        Names must be valid Python identifiers and values finite numbers.
+        Normal public lower-case model fields are usually promoted to
+        parameters automatically, so explicit Parameter() is mainly useful in
+        lower-level or assembly code.
+    """
+
     name: str
     value: float
 
@@ -507,51 +543,118 @@ def _scaled_direction(direction, distance):
 
 
 def up(distance):
-    """Return an XYZ offset in the +Z direction."""
+    """Return a symbolic-safe XYZ offset in the +Z direction.
+
+    Use when:
+        Express a readable placement offset while preserving Parameter or
+        Expression values.
+
+    Limits:
+        This returns an XYZ tuple; it does not create an Anchor relationship.
+    """
     return _scaled_direction(Anchor.TOP, distance)
 
 
 def down(distance):
-    """Return an XYZ offset in the -Z direction."""
+    """Return a symbolic-safe XYZ offset in the -Z direction.
+
+    Use when:
+        Express a readable placement offset while preserving Parameter or
+        Expression values.
+
+    Limits:
+        This returns an XYZ tuple; it does not create an Anchor relationship.
+    """
     return _scaled_direction(Anchor.BOTTOM, distance)
 
 
 def left(distance):
-    """Return an XYZ offset in the -X direction."""
+    """Return a symbolic-safe XYZ offset in the -X direction.
+
+    Use when:
+        Express a readable placement offset while preserving Parameter or
+        Expression values.
+
+    Limits:
+        This returns an XYZ tuple; it does not create an Anchor relationship.
+    """
     return _scaled_direction(Anchor.LEFT, distance)
 
 
 def right(distance):
-    """Return an XYZ offset in the +X direction."""
+    """Return a symbolic-safe XYZ offset in the +X direction.
+
+    Use when:
+        Express a readable placement offset while preserving Parameter or
+        Expression values.
+
+    Limits:
+        This returns an XYZ tuple; it does not create an Anchor relationship.
+    """
     return _scaled_direction(Anchor.RIGHT, distance)
 
 
 def front(distance):
-    """Return an XYZ offset in the -Y direction."""
+    """Return a symbolic-safe XYZ offset in the -Y direction.
+
+    Use when:
+        Express a readable placement offset while preserving Parameter or
+        Expression values.
+
+    Limits:
+        This returns an XYZ tuple; it does not create an Anchor relationship.
+    """
     return _scaled_direction(Anchor.FRONT, distance)
 
 
 def back(distance):
-    """Return an XYZ offset in the +Y direction."""
+    """Return a symbolic-safe XYZ offset in the +Y direction.
+
+    Use when:
+        Express a readable placement offset while preserving Parameter or
+        Expression values.
+
+    Limits:
+        This returns an XYZ tuple; it does not create an Anchor relationship.
+    """
     return _scaled_direction(Anchor.BACK, distance)
 
 
 def half(value):
-    """Return half of a numeric or symbolic CAD dimension."""
+    """Return half of a numeric or symbolic CAD dimension.
+
+    Use when:
+        Keep midpoint-style arithmetic readable without converting a symbolic
+        CAD dimension to a concrete Python value.
+
+    Limits:
+        Equivalent to value / 2; the input must support that operation.
+    """
     return value / 2
 
 
 def midpoint(start, end):
-    """Return the point halfway between two numeric or symbolic dimensions."""
+    """Return the midpoint between two numeric or symbolic dimensions.
+
+    Use when:
+        Express a centre position while preserving symbolic CAD dependencies.
+
+    Limits:
+        Equivalent to (start + end) / 2; inputs must support symbolic arithmetic.
+    """
     return (start + end) / 2
 
 
 def pv(dim) -> float:
     """Return the concrete Python value of a symbolic CAD dimension.
 
-    Use this only when Python itself needs a number for control flow or
-    placement logic. Geometry should normally keep Parameter/Expression
-    objects symbolic so SolidCraft receives editable named parameters.
+    Use when:
+        Python itself genuinely needs a number for validation or control flow.
+
+    Limits:
+        Calling pv() intentionally removes the symbolic dependency at that
+        point. Geometry and placement should normally keep Parameter/Expression
+        objects symbolic so SolidCraft remains editable and associative.
     """
     if isinstance(dim, Parameter):
         return dim.value
@@ -959,16 +1062,29 @@ def Text2D(text, *, height=6.0, font="DejaVu Sans Bold"):
 
 
 def Rectangle2D(width, depth):
-    """An XY rectangle with its lower-left corner at the origin."""
+    """Create a rectangular 2D profile.
+
+    Use when:
+        Author a simple rectangle inside an explicit Sketch before extrusion.
+
+    Limits:
+        The profile is authored in sketch coordinates; use the Sketch to choose
+        its plane and placement.
+    """
     from .explicit_sketch import register_profile
     return register_profile(Shape("rectangle", (width, depth)))
 
 
 def RoundedRectangle2D(width, depth, radius):
-    """One native rounded-rectangle profile for a named explicit Sketch.
+    """Create a native rounded-rectangle 2D profile.
 
-    Four true circular sketch arcs; not a polygonal approximation.
-    Current support is for Sketch.add(...), not standalone extrusion.
+    Use when:
+        A sketch needs a rectangle with true circular corner arcs rather than a
+        polygonal approximation.
+
+    Limits:
+        Current support is inside an explicit Sketch. The radius must be below
+        half the shorter side.
     """
     if pv(width) <= 0 or pv(depth) <= 0:
         raise ValueError("RoundedRectangle2D width and depth must be positive")
@@ -979,7 +1095,14 @@ def RoundedRectangle2D(width, depth, radius):
 
 
 def Circle2D(*, d=None, r=None):
-    """An XY circle with diameter d or radius r."""
+    """Create a circular 2D profile by diameter or radius.
+
+    Use when:
+        Author a circular profile inside an explicit Sketch.
+
+    Limits:
+        Supply exactly one of d= or r=; the Sketch determines the plane.
+    """
     if (d is None) == (r is None):
         raise ValueError("Circle2D requires exactly one of d= or r=")
     from .explicit_sketch import register_profile
@@ -987,11 +1110,16 @@ def Circle2D(*, d=None, r=None):
 
 
 def Polygon2D(points, *, plane="XY", ids=None, world=False):
-    """A closed polygon. Rows may be (name, (u, v)) or plain (u, v).
+    """Create a closed named or unnamed polygon profile.
 
-    A name belongs to the vertex AND the segment starting at that vertex;
-    sketch.line uses these names as segment IDs. On the XZ plane, world=True
-    lets model code specify intuitive (x, z) instead of sketch-local (x, -z).
+    Use when:
+        A 2D profile needs arbitrary straight segments or named vertices and
+        segments that later drive selectors such as Edges.from_profile().
+
+    Limits:
+        At least three 2D points are required. plane is XY, XZ or YZ.
+        world=True currently supports only XZ and lets input use intuitive
+        world (x, z) coordinates.
     """
     rows = tuple(points)
     named = [
@@ -1034,15 +1162,42 @@ def Polygon2D(points, *, plane="XY", ids=None, world=False):
 
 
 def Box(length, width, thickness):
+    """Create a native rectangular solid.
+
+    Use when:
+        Model a simple rectangular part directly without introducing a Sketch.
+
+    Limits:
+        The conventional Box base lies in XY and thickness extends along +Z.
+        Use at() for supported placement/anchor semantics.
+    """
     return Shape("box", (length, width, thickness))
 
 
 def Sphere(radius):
+    """Create a sphere from its radius.
+
+    Use when:
+        A direct spherical primitive is sufficient.
+
+    Limits:
+        Sphere has no separate orientation axis; use Shape placement/CSG
+        operations where supported.
+    """
     return Shape("sphere", (radius,))
 
 
 def Cylinder(*, d, h, axis=Axis.Z):
-    """A native cylinder on X, Y or Z; use .at(x, y, z) for its base point."""
+    """Create a native cylinder on a principal axis.
+
+    Use when:
+        Model a cylindrical primitive directly and choose Axis.X, Axis.Y or
+        Axis.Z for its direction.
+
+    Limits:
+        .at(x, y, z) places the cylinder by its base point. axis must be a
+        principal Axis value.
+    """
     try:
         axis = Axis(axis)
     except ValueError as exc:
@@ -1052,11 +1207,16 @@ def Cylinder(*, d, h, axis=Axis.Z):
 
 def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
          countersink_d=None, countersink_angle=90, countersink_recess=0):
-    """Hole intent, optionally directional and countersunk.
+    """Create hole feature intent, optionally directional and countersunk.
 
-    Simple attached holes keep the sketch/cut history used by existing SCPF
-    models. Directional or countersunk holes use SolidCraft's native Hole
-    feature when explicitly positioned with .at().
+    Use when:
+        Remove a manufacturing-style hole from a supported body. Simple holes
+        can be placed with on(); directional or countersunk holes can use the
+        native Hole path with explicit placement.
+
+    Limits:
+        Diameter must be positive. depth is a positive distance or
+        Depth.THROUGH_ALL. Countersink diameter must exceed the hole diameter.
     """
     if pv(d) <= 0:
         raise ValueError("hole diameter must be positive")
@@ -1089,13 +1249,29 @@ def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
 
 
 def Lip(*, width, height):
-    """Plastic enclosure lip placed by a point on a shelled rim face."""
+    """Create plastic enclosure lip feature intent.
+
+    Use when:
+        Add a lip to a supported shelled enclosure rim using feature placement.
+
+    Limits:
+        Placement and parent-shape support follow the feature-placement API.
+    """
     return Shape("lip", (width, height))
 
 
 def SnapFit(*, length, thickness, width, catch_depth, catch_length,
             hook, direction=None):
-    """Cantilever plastic snap fit placed by a point on its supporting face."""
+    """Create cantilever snap-fit feature intent.
+
+    Use when:
+        Add a plastic snap feature to a supported face with an explicit hook
+        direction.
+
+    Limits:
+        hook must be one 3D direction; optional direction must also be an XYZ
+        triple. Placement uses the supported feature-placement API.
+    """
     hook = tuple(hook)
     if len(hook) != 3:
         raise ValueError("SnapFit hook must be a 3D direction")
@@ -1110,7 +1286,16 @@ def SnapFit(*, length, thickness, width, catch_depth, catch_length,
 
 
 def Boss(*, d, h, hole_d=None, direction=None):
-    """Plastic screw boss placed by a point on its supporting face."""
+    """Create plastic screw-boss feature intent.
+
+    Use when:
+        Add a cylindrical support boss, optionally with a central hole, to a
+        supported face.
+
+    Limits:
+        Optional direction is an XYZ triple. The active History policy can
+        affect how the boss is lowered.
+    """
     if direction is not None:
         direction = tuple(direction)
         if len(direction) != 3:
@@ -1125,7 +1310,15 @@ def Boss(*, d, h, hole_d=None, direction=None):
 
 
 def Rest(*, width, height, length=None, along=None, direction=None):
-    """Plastic support pad placed by its centre point on a supporting face."""
+    """Create plastic support/rest feature intent.
+
+    Use when:
+        Add a support pad or elongated rest to a supported face.
+
+    Limits:
+        Optional along and direction values are XYZ triples. Placement uses the
+        supported feature-placement API.
+    """
     if along is not None:
         along = tuple(along)
         if len(along) != 3:
