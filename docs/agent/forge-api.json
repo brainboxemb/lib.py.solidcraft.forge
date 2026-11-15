@@ -91,7 +91,7 @@
     },
     "component": {
       "kind": "callable",
-      "summary": "Declare one reusable physical component definition. Child defaults stay fixed unless explicitly published with include=; parent Parameter/Expression inputs remain symbolic.",
+      "summary": "Declare one reusable physical component definition.",
       "reference": "reference/component/",
       "guide": "guide/assembly-basics/#simple-component",
       "signature": "component(cls=None, *, include=())"
