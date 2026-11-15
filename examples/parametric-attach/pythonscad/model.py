@@ -5,4 +5,4 @@ from pythonscad import *
 gap = 10.0
 base = cube([40, 30, 10], center=True).up(5)
 block = cube([20, 20, 10], center=True).up(5).right(30 + gap)
-show(base | block)
+model = base | block
