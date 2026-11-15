@@ -126,6 +126,22 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "parametric-move",
+        "q5_required": True,
+        "group": "components",
+        "title": "Native parametric occurrence placement",
+        "intent": "Verify that placing one reusable occurrence with a parent parameter is ordinary CAD placement, not an implicit assembly joint.",
+        "forge_api": "Block(); Block().move(x=self.offset)",
+        "forge_model": "Two occurrences share one Block definition. The first remains at the component origin; the second carries a symbolic X translation.",
+        "lowering": "parameters.add(offset), one reusable Block definition, occurrence.copy, then occurrence.move(translate=['offset', 0, 0]); no joint.create is emitted for placement.",
+        "native_expectation": "Two 20 x 20 x 10 mm blocks sit at X=0 and X=40 mm. SolidCraft stores the second occurrence as an expressed move and joint.inspect reports no joints.",
+        "mutation": "Change offset from 40 to 70 mm in the saved design; without rerunning Python the second occurrence must move another 30 mm while the first remains fixed.",
+        "references": [
+            ("SolidCraft", "SolidCraft 0.42.0 occurrence.move accepts length expressions and keeps them as expressed_moves that follow parameter changes."),
+            ("OpenSCAD", "A translate() is placement rather than a mating relationship; Forge preserves that conceptual distinction while using native SolidCraft occurrences."),
+        ],
+    },
+    {
         "slug": "group-hierarchy",
         "group": "components",
         "title": "Named native subassembly group",

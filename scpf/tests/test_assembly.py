@@ -830,7 +830,7 @@ class AssemblyTests(unittest.TestCase):
         )
 
 
-    def test_symbolic_move_lowers_to_parametric_placement_joint(self):
+    def test_symbolic_move_lowers_to_native_expression_move(self):
         import warnings
 
         with tempfile.TemporaryDirectory() as directory:
@@ -855,31 +855,17 @@ class AssemblyTests(unittest.TestCase):
             item for item in caught
             if "parameter 'depth'" in str(item.message)
         ])
-        self.assertFalse(any(
-            command["command"] == "occurrence.move"
-            for command in document["commands"]
-        ))
-        placement = next(
+        moves = [
             command["params"]
             for command in document["commands"]
-            if command["command"] == "joint.create"
-            and command["params"]["name"] == "Place Panel:1"
-        )
-        self.assertEqual(placement["type"], "planar")
-        self.assertEqual(
-            placement["a"],
-            {
-                "occurrence": "root",
-                "frame": {
-                    "origin": [0.0, 0.0, 0.0],
-                    "z": [0.0, 0.0, 1.0],
-                    "x": [1.0, 0.0, 0.0],
-                },
-            },
-        )
-        self.assertEqual(placement["values"], [0, "depth / 2", 0.0])
-        self.assertEqual(placement["offset"], 0)
-        self.assertTrue(placement["flip"])
+            if command["command"] == "occurrence.move"
+        ]
+        self.assertEqual(len(moves), 1)
+        self.assertEqual(moves[0]["translate"][1], "depth / 2")
+        self.assertFalse(any(
+            command["command"] == "joint.create"
+            for command in document["commands"]
+        ))
         names = [
             command["params"]["name"]
             for command in document["commands"]
@@ -918,16 +904,18 @@ class AssemblyTests(unittest.TestCase):
             and command["params"]["name"] == "offset"
         )
         self.assertEqual(parameter["expression"], "30 mm")
-        placement = next(
+        move = next(
             command["params"]
             for command in document["commands"]
-            if command["command"] == "joint.create"
-            and command["params"]["name"] == "Place Panel:1"
+            if command["command"] == "occurrence.move"
         )
-        self.assertEqual(placement["values"], ["offset", 0, 0.0])
-        self.assertEqual(placement["offset"], 0)
+        self.assertEqual(move["translate"][0], "offset")
+        self.assertFalse(any(
+            command["command"] == "joint.create"
+            for command in document["commands"]
+        ))
 
-    def test_symbolic_move_with_rotation_rotates_first_then_places(self):
+    def test_symbolic_move_with_rotation_uses_one_native_expression_move(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "rotated_parametric_move.py"
             path.write_text(
@@ -943,24 +931,21 @@ class AssemblyTests(unittest.TestCase):
             )
             document = run_script(path)
 
-        move = next(
+        moves = [
             command["params"]
             for command in document["commands"]
             if command["command"] == "occurrence.move"
-        )
-        self.assertEqual(move["translate"], [0.0, 0.0, 0.0])
-        self.assertEqual(move["axis"], [0.0, 1.0, 0.0])
-        self.assertEqual(move["angle"], "90 deg")
-
-        placement = next(
-            command["params"]
+        ]
+        self.assertEqual(len(moves), 1)
+        self.assertEqual(moves[0]["translate"][2], "height / 2")
+        self.assertEqual(moves[0]["axis"], [0.0, 1.0, 0.0])
+        self.assertEqual(moves[0]["angle"], "90 deg")
+        self.assertFalse(any(
+            command["command"] == "joint.create"
             for command in document["commands"]
-            if command["command"] == "joint.create"
-            and command["params"]["name"] == "Place Strip:1"
-        )
-        self.assertEqual(placement["offset"], "height / 2")
+        ))
 
-    def test_attachment_uses_numeric_seed_not_second_parametric_placement(self):
+    def test_symbolic_parent_move_and_child_attach_keep_distinct_semantics(self):
         from scpf.assembly import compile_assembly
         from scpf.core import Anchor, Box, Parameter
         from scpf.runner import component
@@ -980,15 +965,19 @@ class AssemblyTests(unittest.TestCase):
 
         commands = compile_assembly(parent + child, "Pair")["commands"]
 
-        placements = [
+        self.assertFalse(any(
+            command["command"] == "joint.create"
+            and command["params"]["name"].startswith("Place ")
+            for command in commands
+        ))
+
+        parent_move = next(
             command["params"]
             for command in commands
-            if command["command"] == "joint.create"
-            and command["params"]["name"].startswith("Place ")
-        ]
-        self.assertEqual(len(placements), 1)
-        self.assertEqual(placements[0]["values"][0], "station")
-
+            if command["command"] == "occurrence.move"
+            and command["params"]["occurrence"] == "Panel:1"
+        )
+        self.assertEqual(parent_move["translate"][0], "station")
         child_move = next(
             command["params"]
             for command in commands

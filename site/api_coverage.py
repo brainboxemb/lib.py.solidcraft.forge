@@ -82,6 +82,7 @@ CAPABILITY_COVERAGE = [
     ("Explicit Sketch", "Sketch.add(RoundedRectangle2D)/extrude()", "Q6", "Q6", ["rounded-rectangle-sketch"], "Saved native sketch has eight curves, one profile and four cylindrical corner faces after join extrusion."),
     ("Explicit Sketch", "Rectangle2D in Sketch / extrude()", "Q6", "Q6", ["anchored-holes"], "Rectangle2D authored in an explicit Sketch is native-qualified."),
     ("Explicit Sketch", "Text2D in Sketch / extrude()", "Q6", "GAP", [], "Text2D explicit-sketch path still needs dedicated native coverage."),
+    ("Occurrences", "parametric move()", "Q5", "Q5", ["parametric-move"], "Native occurrence.move expression is saved without an implicit joint and follows parameters.change."),
     ("Occurrences", "copy + move + rotate", "Q6", "Q6", ["custom-anchor"], "Rotation plus attachment is native-qualified; broader placement fixture remains useful."),
     ("Occurrences", "group()", "Q6", "Q6", ["group-hierarchy"], "Native top/flat BOM inspection proves the named subassembly hierarchy and repeated child occurrences."),
     ("Assemblies", "rigid attach()", "Q6", "Q6", ["components"], "Native rigid relationship."),
