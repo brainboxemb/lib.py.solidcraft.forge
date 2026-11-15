@@ -88,6 +88,23 @@ jobs:
             -s "$GITHUB_WORKSPACE/qualification/tests" \
             -t "$GITHUB_WORKSPACE" -v 2>&1 \
             | tee "$GITHUB_WORKSPACE/output/qualification/q2-python-qualification-tests.txt"
+      - name: Install pinned comparison libraries
+        run: |
+          python -m pip install \
+            "pythonscad==1.1.2" \
+            "git+https://github.com/pinkfish/pybosl2@d4279910c12435ed7224b3406616e495db1c96ec" \
+            "trimesh>=4,<5" \
+            "matplotlib>=3.8,<4"
+
+      - name: Execute and render all reference implementations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qualification/reference_validation.py \
+            --cases all \
+            --out output/references \
+            --source-sha "$GITHUB_SHA"
+
       - name: Compile self-contained API fixtures
         shell: bash
         run: |
@@ -406,6 +423,7 @@ jobs:
             output/qualification
             output/*.json
             output/native
+            output/references
           if-no-files-found: warn
           retention-days: 30
 
@@ -414,8 +432,14 @@ jobs:
         run: |
           set -euo pipefail
           unset PYTHONPATH
-          python site/build.py --out output/site --source-sha "$GITHUB_SHA" --native output/native --diagram-root output/diagrams
-          python site/test_site.py output/site "$GITHUB_SHA" --require-native
+          python site/build.py \
+            --out output/site \
+            --source-sha "$GITHUB_SHA" \
+            --native output/native \
+            --references output/references \
+            --diagram-root output/diagrams
+          python site/test_site.py output/site "$GITHUB_SHA" \
+            --require-native --require-references
       - name: Upload library site preview
         uses: actions/upload-artifact@v4
         with:
