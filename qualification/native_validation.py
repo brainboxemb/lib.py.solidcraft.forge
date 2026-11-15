@@ -584,6 +584,13 @@ def validate_eight_corner_brackets(root: Path) -> Validation:
     return v
 
 
+def _xz_expected(width: float, height: float):
+    return {
+        "right": ([width / 2 - 10, -10, height - 10], [width / 2, 0, height]),
+        "left": ([-width / 2, -10, height - 10], [-width / 2 + 10, 0, height]),
+    }
+
+
 def validate_xz_anchor(root: Path) -> Validation:
     v = Validation("xz-anchor")
     d = load(root / "measurements.json")
