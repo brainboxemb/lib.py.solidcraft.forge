@@ -1696,13 +1696,46 @@ class AssemblyTests(unittest.TestCase):
         )
 
     def test_rotated_custom_anchor_is_rejected_without_occurrence_move_fallback(self):
+        from scpf import Anchor, AnchorFrame, Axis, Box, component
+        from scpf.assembly import compile_assembly
         from scpf.compiler import ModelError
+
+        @component
+        class Arm:
+            def anchors(self):
+                return {
+                    "tip": AnchorFrame(
+                        origin=(20, 0, 5),
+                        z=Anchor.RIGHT,
+                        x=Anchor.UP,
+                    ),
+                }
+
+            def build(self):
+                return Box(40, 10, 10)
+
+        @component
+        class Marker:
+            def anchors(self):
+                return {
+                    "mount": AnchorFrame(
+                        origin=(0, 0, 5),
+                        z=Anchor.LEFT,
+                        x=Anchor.UP,
+                    ),
+                }
+
+            def build(self):
+                return Box(10, 10, 10)
+
+        arm = Arm(placement=Placement(rotation=(Axis.Z, 90)))
+        marker = Marker().attach(arm, parent="tip", child="mount")
 
         with self.assertRaisesRegex(
             ModelError,
             "rotated relationship Placement is not replay-safe",
         ):
-            run_script(ROOT / "examples/custom-anchor/scpf/model.py")
+            compile_assembly(arm + marker, "RotatedCustomAnchor")
 
     def test_composed_directions_are_valid_assembly_anchors(self):
         from scpf import Anchor, BOTTOM, FRONT, LEFT, TOP, Box
