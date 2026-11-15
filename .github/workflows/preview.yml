@@ -9,7 +9,10 @@ on:
       - "site/**"
       - "docs/**"
       - "README.md"
+      - "CHANGELOG.md"
+      - "scripts/release/**"
       - ".github/workflows/preview.yml"
+      - ".github/workflows/release.yml"
       - ".github/workflows/scpf.yml"
       - ".github/workflows/scpf-affected.yml"
 
@@ -109,7 +112,8 @@ jobs:
             qualification/native_cases.py \
             qualification/results.py \
             qualification/report.py \
-            qualification/visual_validation.py
+            qualification/visual_validation.py \
+            scripts/release/validate_release.py
 
       - name: Compile documented qualification fixtures
         shell: bash

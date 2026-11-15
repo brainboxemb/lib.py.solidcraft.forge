@@ -12,6 +12,7 @@ source that answers the task:
 | Qualification rules | `qualification/README.md` |
 | SolidCraft command/API lookup | `docs/agent/solidcraft.md` |
 | SolidCraft version upgrade | `docs/qualification/solidcraft-upgrade-protocol.md` |
+| SCPF version/release work | `docs/10-release-process.md` |
 | PythonSCAD / pyBOSL2 qualification reference | `docs/agent/reference-libraries.md` |
 
 Only read additional files when the first source is insufficient. The compact
@@ -84,3 +85,13 @@ Keep the edit-check loop short:
 
 When changing a qualification model, update its regression/native checks and
 both reference implementations.
+
+
+## Release discipline
+
+Keep user-visible changes under `[Unreleased]` in `CHANGELOG.md` during
+normal development. Do not create or move release tags manually. For a release,
+follow `docs/10-release-process.md`: use a `qualification/**` release branch,
+bump only `scpf/pyproject.toml`, date the changelog section, require full Q1-Q6
+on the release head and main head, then let the generic release workflow create
+the annotated tag and GitHub Release.

@@ -12,7 +12,11 @@ on:
       - "examples/**"
       - "qualification/**"
       - "site/**"
+      - "scripts/release/**"
+      - "CHANGELOG.md"
       - ".github/workflows/scpf.yml"
+      - ".github/workflows/preview.yml"
+      - ".github/workflows/release.yml"
   workflow_dispatch: {}
 
 permissions:
@@ -79,6 +83,9 @@ jobs:
           cd "$RUNNER_TEMP"
           python -m unittest discover -s "$GITHUB_WORKSPACE/scpf/tests" -v 2>&1 \
             | tee "$GITHUB_WORKSPACE/output/qualification/q1-python-tests.txt"
+      - name: Compile release tooling
+        run: python -m py_compile scripts/release/validate_release.py
+
       - name: Run standard qualification tests (command contract)
         shell: bash
         run: |

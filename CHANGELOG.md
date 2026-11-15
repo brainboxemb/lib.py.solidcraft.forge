@@ -12,6 +12,19 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 - Nothing yet.
 
+## [0.1.1] - 2026-11-15
+
+Release-process patch. No public Forge modelling API changes from 0.1.0.
+
+### Changed
+
+- Replaced the one-off v0.1.0 publisher with a reusable release workflow.
+- Releases are created only after the full main-branch SCPF qualification passes.
+- Release metadata is validated against the single package version in
+  `scpf/pyproject.toml`, the dated changelog section and the exact main commit.
+- Release tags are annotated and downstream projects can pin the exact tagged
+  commit while still recording the semantic release version.
+
 ## [0.1.0] - 2026-11-15
 
 Initial qualified Forge release.
