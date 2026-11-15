@@ -12,6 +12,8 @@ from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw
 
+from qualification.case_selection import parse_case_selection
+
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINES = ROOT / "qualification" / "visual_baselines.json"
@@ -165,6 +167,11 @@ def main() -> int:
     parser.add_argument("--native-root", type=Path, required=True)
     parser.add_argument("--qualification-dir", type=Path, required=True)
     parser.add_argument("--baseline-case", help="print a baseline JSON entry for one approved case")
+    parser.add_argument(
+        "--cases",
+        default="all",
+        help="comma/space separated case slugs, group:<name>, or all",
+    )
     args = parser.parse_args()
 
     if args.baseline_case:
@@ -178,8 +185,9 @@ def main() -> int:
     rows = ["case\tstatus\n"]
     summary = {}
 
-    for case_dir in sorted(path for path in args.native_root.iterdir() if path.is_dir()):
-        slug = case_dir.name
+    selected = parse_case_selection(args.cases)
+    for slug in selected:
+        case_dir = args.native_root / slug
         result = validate_case(case_dir, slug, baselines.get(slug))
         summary[slug] = result
         (case_dir / "visual-validation.json").write_text(
