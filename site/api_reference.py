@@ -392,7 +392,7 @@ def unmapped_public_exports():
 
 
 def api_manifest():
-    """Return the compact API index used by both site checks and agents."""
+    """Return the complete machine-readable API reference used by the website."""
     missing = unmapped_public_exports()
     if missing:
         raise ValueError(
@@ -405,6 +405,70 @@ def api_manifest():
     }
 
 
+def _compact_symbol(row, *, guide=None):
+    result = {
+        "kind": row["kind"],
+        "summary": row.get("summary", ""),
+        "reference": row["reference"],
+    }
+    if guide:
+        result["guide"] = guide
+    if row["kind"] == "enum":
+        result["members"] = {
+            item["name"]: item["value"]
+            for item in row["members"]
+        }
+    elif row["kind"] == "callable" and row.get("signature"):
+        result["signature"] = row["signature"]
+    elif row["kind"] == "constant":
+        result["value"] = row["value"]
+    return result
+
+
+def agent_manifest():
+    """Return the small first-read API index intended for coding agents.
+
+    Detailed use/limit prose deliberately remains in the source docstrings,
+    human guide and full site manifest. The local index is only for routing and
+    exact current names/signatures/values.
+    """
+    full = api_manifest()
+    symbols = {}
+
+    for row in full["references"]:
+        if row["kind"] == "group":
+            for member in row["members"]:
+                symbols[member["name"]] = _compact_symbol(
+                    member, guide=row.get("guide")
+                )
+            continue
+
+        symbols[row["name"]] = _compact_symbol(
+            row, guide=row.get("guide")
+        )
+
+    anchor = next(
+        row for row in full["references"]
+        if row["name"] == "Anchor"
+    )
+    for alias in anchor.get("aliases", ()):
+        target = getattr(public_api, alias)
+        symbols[alias] = {
+            "kind": "alias",
+            "target": f"Anchor.{target.name}",
+            "reference": "reference/Anchor/",
+            "guide": anchor.get("guide"),
+        }
+
+    return {
+        "schema": 1,
+        "generated_from": "scpf public objects and docstrings",
+        "symbols": symbols,
+    }
+
+
 if __name__ == "__main__":
     import json
-    print(json.dumps(api_manifest(), indent=2))
+    import sys
+    manifest = agent_manifest() if "--agent" in sys.argv[1:] else api_manifest()
+    print(json.dumps(manifest, indent=2))
