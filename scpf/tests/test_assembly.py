@@ -1154,9 +1154,8 @@ class AssemblyTests(unittest.TestCase):
             if command["command"] == "occurrence.move"
             and command["params"]["occurrence"] == "Panel:2"
         )
-        self.assertIn("station", str(child_move["translate"][0]))
         self.assertTrue(
-            any(isinstance(value, str) for value in child_move["translate"])
+            all(isinstance(value, (int, float)) for value in child_move["translate"])
         )
 
         attachment = next(
