@@ -352,7 +352,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertIsInstance(first, ModelInstance)
         self.assertIsInstance(second, ModelInstance)
         self.assertEqual(first.definition.key, second.definition.key)
-        self.assertEqual(second.placement.position, (20, 0, 0))
+        self.assertEqual(second.placement.position.values, (20, 0, 0))
         with self.assertRaisesRegex(TypeError, "model class"):
             component(42)
 
