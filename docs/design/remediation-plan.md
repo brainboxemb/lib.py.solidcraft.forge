@@ -94,6 +94,16 @@ Exit condition:
 
 ## Phase 3 — Replay-safe joint/attachment command generation
 
+Implemented by [change 0010](../changes/0010-replay-safe-attachments.md).
+
+SolidCraft 0.42 qualification established two replay-safe relationship
+selectors: a component name for that component's first occurrence in supported
+joint commands, and world topology/point inference for copied sides of
+`joint.create`. Copied attached children use unique temporary parking poses so
+their native picks are unambiguous. Relationship rotation, copied as-built
+relationships and chained attachments remain explicitly unsupported until their
+own replay-safe contract is qualified.
+
 Purpose: keep joints/attachments only for genuine relationships.
 
 Deliver:
