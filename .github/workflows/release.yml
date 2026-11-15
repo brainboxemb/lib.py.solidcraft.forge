@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: \${{ github.event.workflow_run.head_sha }}
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
       - uses: actions/setup-python@v5
@@ -32,12 +32,12 @@ jobs:
           set -euo pipefail
           version="$(python -c 'import tomllib; print(tomllib.load(open("scpf/pyproject.toml","rb"))["project"]["version"])')"
           echo "VERSION=$version" >> "$GITHUB_ENV"
-          echo "TARGET_SHA=\${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_ENV"
+          echo "TARGET_SHA=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_ENV"
 
       - name: Skip versions that are already released
         id: existing
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -63,7 +63,7 @@ jobs:
       - name: Create annotated tag and GitHub Release
         if: steps.existing.outputs.released != 'true'
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
