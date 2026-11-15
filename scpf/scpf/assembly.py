@@ -366,19 +366,15 @@ def compile_assembly(value, name):
             commands.append(command)
         first_is_root = (
             parent_name is None
-            and any(
-                instance.occurrence_id == assembly.instances[0].occurrence_id
-                for instance in instances
-            )
-        )
-        first_has_symbolic_move = (
-            not ordinary_replay_placement
-            and instances[0].attachment is None
-            and bool(parameters_in(*instances[0].placement.position))
+            and instances[0].occurrence_id
+            == assembly.instances[0].occurrence_id
         )
         create_params = {
             "name": component_name,
-            "grounded": first_is_root and not first_has_symbolic_move,
+            "grounded": (
+                first_is_root
+                and instances[0].attachment is None
+            ),
         }
         if parent_name is not None:
             create_params["parent"] = parent_name
@@ -399,121 +395,39 @@ def compile_assembly(value, name):
             commands.append(command)
         commands.append(_command("component.activate", component="root"))
 
-        # Ordinary replay-first Placement uses the implicit first occurrence
-        # only at identity. Concrete unrotated copies are placed directly by
-        # occurrence.copy. Symbolic/rotated ordinary copies were rejected above
-        # because they would need a later occurrence selector.
-        #
-        # Attachment paths are handled separately for now. They may still need
-        # a seed move plus a native joint and are repaired in the relationship
-        # change after this one.
-        occurrences = []
-        copy_positioned = set()
+        # SolidCraft creates the first occurrence together with the component.
+        # For relationship definitions the component name is a qualified selector
+        # for that first occurrence in joint commands. Copies do not receive a
+        # Forge-controlled native name, so joint.create resolves them from their
+        # world topology/point picks.
         for index, instance in enumerate(instances, start=1):
-            native_name = (
-                None
-                if ordinary_replay_placement
-                else f"{component_name}:{index}"
-            )
-            if native_name is not None:
-                occurrence_names[instance.occurrence_id] = native_name
-            occurrences.append((instance, native_name))
-            if index > 1:
-                position = instance.placement.position
-                symbolic_position = bool(parameters_in(*position))
-                params = {"component": component_name}
-                if (
-                    not symbolic_position
-                    and instance.placement.rotation is None
-                ):
-                    concrete_position = [pv(value) for value in position]
-                    if any(concrete_position):
-                        params["translate"] = concrete_position
-                    copy_positioned.add(instance.occurrence_id)
-                commands.append(_command("occurrence.copy", **params))
+            if index == 1:
+                if relationship_definition:
+                    occurrence_refs[instance.occurrence_id] = component_name
+                    native_seed_positions[instance.occurrence_id] = (0.0, 0.0, 0.0)
+                continue
 
-        # Only explicitly rotated custom anchors need a persistent native
-        # joint.origin. Author those while occurrences are still at identity;
-        # SolidCraft then owns the local-to-world transform when the occurrence
-        # is rotated. Unrotated AnchorFrames are inlined later in joint.create.
-        for instance, native_name in occurrences:
-            for anchor_name, frame in instance.definition.anchors:
-                anchor_key = (instance.occurrence_id, anchor_name)
-                if anchor_key not in required_custom_origins:
-                    continue
-                origin_name = f"{native_name}.{anchor_name}"
-                custom_origin_names[anchor_key] = origin_name
-                frame_origin = list(frame.origin)
-                if instance.occurrence_id in copy_positioned:
-                    frame_origin = [
-                        frame.origin[i] + pv(instance.placement.position[i])
-                        for i in range(3)
-                    ]
-                commands.append(_command(
-                    "joint.origin",
-                    name=origin_name,
-                    occurrence=native_name,
-                    frame={
-                        "origin": frame_origin,
-                        "z": list(frame.z),
-                        "x": list(frame.x),
-                    },
-                ))
-
-        # Ordinary Placement is complete after create/copy. Do not add a
-        # later occurrence.move that would need a guessed SolidCraft name.
-        if ordinary_replay_placement:
-            continue
-
-        # Attachment paths retain the old seed-placement lowering until their
-        # replay-safe occurrence addressing is repaired separately.
-        for instance, native_name in occurrences:
+            params = {"component": component_name}
             position = instance.placement.position
-            rotation = instance.placement.rotation
-            positioned_at_copy = instance.occurrence_id in copy_positioned
-            symbolic_position = bool(parameters_in(*position))
-            expressed_move = (
-                symbolic_position and instance.attachment is None
-            )
 
-            if rotation is None and positioned_at_copy:
-                continue
-            if rotation is None and not any(position):
-                continue
-
-            for parameter in parameters_in(*position):
-                if not any(
-                    command["command"] == "parameters.add"
-                    and command["params"]["name"] == parameter.name
-                    for command in commands
-                ):
-                    commands.append(_command(
-                        "parameters.add",
-                        name=parameter.name,
-                        expression=f"{parameter.value:g} mm",
-                    ))
-
-            if positioned_at_copy:
-                translate = [0.0, 0.0, 0.0]
-            elif expressed_move:
-                translate = list(position)
+            if relationship_definition:
+                attachment = instance.attachment
+                if attachment is not None and not attachment.as_built:
+                    concrete_position = [pv(value) for value in position]
+                else:
+                    concrete_position = [pv(value) for value in position]
+                if any(concrete_position):
+                    params["translate"] = concrete_position
+                occurrence_refs[instance.occurrence_id] = None
+                native_seed_positions[instance.occurrence_id] = tuple(
+                    concrete_position
+                )
             else:
-                translate = [pv(value) for value in position]
+                concrete_position = [pv(value) for value in position]
+                if any(concrete_position):
+                    params["translate"] = concrete_position
 
-            params = {
-                "occurrence": native_name,
-                "translate": translate,
-            }
-            if rotation is not None:
-                axis, degrees = rotation
-                params.update(axis=list(axis), angle=f"{degrees:g} deg")
-            if (
-                instance is assembly.instances[0]
-                and parent_name is None
-                and not expressed_move
-            ):
-                params["move_grounded"] = True
-            commands.append(_command("occurrence.move", **params))
+            commands.append(_command("occurrence.copy", **params))
 
     for instance in assembly.instances:
         attachment = instance.attachment
