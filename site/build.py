@@ -480,7 +480,7 @@ def render_template(name, **values):
     return Template(text(template_path)).substitute(values)
 
 
-def build(out, sha, native_root=None, diagram_root=None, reference_root=None):
+def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root=None):
     """Compile the public examples and attach verified native screenshots if available.
 
     A .png is accepted only when the native verification file identifies the
@@ -502,8 +502,8 @@ def build(out, sha, native_root=None, diagram_root=None, reference_root=None):
 
     reference_verified = False
     reference_summary = {}
-    if reference_root is not None:
-        summary_file = reference_root / "summary.json"
+    if reference_evidence_root is not None:
+        summary_file = reference_evidence_root / "summary.json"
         if not summary_file.is_file():
             raise ValueError("Reference directory is missing summary.json")
         reference_summary = json.loads(summary_file.read_text(encoding="utf-8"))
@@ -952,7 +952,9 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         if reference_verified:
             cards = []
             for reference_name in ("pythonscad", "pybosl2"):
-                result_path = reference_root / slug / reference_name / "result.json"
+                result_path = (
+                    reference_evidence_root / slug / reference_name / "result.json"
+                )
                 if not result_path.is_file():
                     raise ValueError(f"Reference result missing: {result_path}")
                 result = json.loads(result_path.read_text(encoding="utf-8"))
@@ -1579,6 +1581,6 @@ if __name__ == "__main__":
         options.source_sha,
         native_root=options.native,
         diagram_root=options.diagram_root,
-        reference_root=options.references,
+        reference_evidence_root=options.references,
     )
     print(f"Built independent SCPF library site: {options.out}")
