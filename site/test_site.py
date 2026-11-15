@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Validate that the library Pages site is not a duplicate CAD model gallery."""
+import html
 import json
 from pathlib import Path
 import sys
@@ -47,7 +48,7 @@ def check(site: Path, sha: str, require_native: bool = False):
             assert str(value) in page_text, (spec["slug"], value)
     for spec in METHOD_REFERENCES:
         page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
-        assert spec["signature"] in page_text, spec["slug"]
+        assert html.escape(spec["signature"]) in page_text, spec["slug"]
         assert spec["summary"] in page_text, spec["slug"]
         assert "Cross-object API design rules" in page_text, spec["slug"]
     generated_api = json.loads(
