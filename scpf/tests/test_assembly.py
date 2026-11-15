@@ -358,8 +358,8 @@ class AssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "model class"):
             component(42)
 
-    def test_numeric_copies_receive_placement_during_native_creation(self):
-        """Concrete copy positions lower at occurrence.copy creation time."""
+    def test_rotated_numeric_copies_keep_complete_pose_in_native_move(self):
+        """Rotated copies keep translation and orientation in one native move."""
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "five.py"
             script.write_text(
@@ -381,16 +381,14 @@ class AssemblyTests(unittest.TestCase):
             "occurrence.copy", "occurrence.move")]
         self.assertEqual([c["command"] for c in placements],
                          ["occurrence.copy"] * 4 + ["occurrence.move"] * 5)
-        self.assertEqual(
-            [c["params"]["translate"] for c in placements[:4]],
-            [[-320.0, 0.0, 160.0], [-160.0, 0.0, 160.0],
-             [160.0, 0.0, 160.0], [320.0, 0.0, 160.0]],
+        self.assertTrue(
+            all(c["params"] == {"component": "Panel"} for c in placements[:4])
         )
         self.assertEqual(
             [c["params"]["translate"] for c in placements[4:]],
-            [[0.0, 0.0, 160.0], [0.0, 0.0, 0.0],
-             [0.0, 0.0, 0.0], [0.0, 0.0, 0.0],
-             [0.0, 0.0, 0.0]],
+            [[0.0, 0.0, 160.0], [-320.0, 0.0, 160.0],
+             [-160.0, 0.0, 160.0], [160.0, 0.0, 160.0],
+             [320.0, 0.0, 160.0]],
         )
         self.assertTrue(all(c["params"]["axis"] == [1.,0.,0.]
                             and c["params"]["angle"] == "90 deg"
