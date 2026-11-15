@@ -154,3 +154,84 @@ native_name = f"{component_name}:{index}"
 Generated browser names may remain useful human-readable labels, but they are
 not Forge occurrence identity and must not be used as the compiler's addressing
 mechanism.
+
+
+## Headless two-phase proof
+
+A pinned SolidCraft 0.42.0 qualification run also proved that runtime identity
+binding works headlessly through saved designs; it does not require the live GUI.
+
+Audit run: `43759461853`.
+
+Phase 1 used the normal Forge `components` fixture up to creation/copy and ran:
+
+```text
+solidcraft-cli run phase1.json
+  --results
+  --json-out phase1-results.json
+  --save phase1.sc
+```
+
+The typed results included:
+
+```json
+[
+  {
+    "component": 1,
+    "name": "Block",
+    "occurrence": 2,
+    "parent": 0,
+    "grounded": true
+  },
+  ...,
+  {
+    "component": 1,
+    "occurrence": 4
+  }
+]
+```
+
+Occurrence `4` is the actual runtime id returned by `occurrence.copy`.
+
+Phase 2 generated an `occurrence.move` command using numeric id `4` and ran
+it against the saved phase-1 design:
+
+```text
+solidcraft-cli run phase2.json
+  --in phase1.sc
+  --results
+  --save phase2.sc
+```
+
+SolidCraft returned:
+
+```json
+{
+  "occurrence": 4,
+  "pending": false,
+  "transform": [
+    [1, 0, 0, 0],
+    [0, 1, 0, 0],
+    [0, 0, 1, 0],
+    [40, 0, 17, 1]
+  ]
+}
+```
+
+The copy retained its phase-1 X placement of 40 mm and accepted the phase-2
+Z move of 17 mm through the returned occurrence id.
+
+### Consequence for Forge execution
+
+Headless qualification can execute the same logical result-binding plan as live
+mode:
+
+1. execute one phase with `--results`;
+2. bind logical Forge refs from typed native results;
+3. persist an intermediate design;
+4. emit/execute the next resolved phase with `--in`;
+5. publish only the final successful design/evidence.
+
+For file-based headless execution, failed later phases need not overwrite the
+original/final output. Live GUI execution still requires the outer
+checkpoint/restore contract from the architecture document.
