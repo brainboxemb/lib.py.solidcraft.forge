@@ -124,6 +124,9 @@ def check(
     features = (site / "guide" / "features" / "index.html").read_text(encoding="utf-8")
     assert 'href="../../reference/Faces/"' in features
     assert "API on this page" in features
+    css = (site / "style.css").read_text(encoding="utf-8")
+    assert ".guide-api-grid{display:grid;grid-template-columns:1fr" in css
+    assert ".code-block>pre{margin-top:0;padding-right:52px}" in css
     for face_name in ("TOP", "BOTTOM", "LEFT", "RIGHT", "FRONT", "BACK"):
         assert f"Faces.{face_name}" in features, face_name
     assert "Shape.on(self, target" in features
