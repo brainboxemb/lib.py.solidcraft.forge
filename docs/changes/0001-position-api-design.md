@@ -52,10 +52,7 @@ left = Board(
     depth=self.cabinet_depth,
     height=self.opening_height,
     placement=Placement(
-        x=-(
-            self.opening_width / 2
-            + self.frame_wood_thickness / 2
-        ),
+        x=-(half(self.opening_width) + half(self.frame_wood_thickness)),
         y=0.0,
         z=opening_bottom,
     ),
@@ -119,6 +116,38 @@ There is **no separate public `Position` class** in this design.
 `Placement` already contains the position, so wrapping XYZ in another object
 adds syntax without adding a required modelling concept.
 
+### Readable symbolic arithmetic with `half()`
+
+Placement expressions should stay readable in Python without losing their
+native parameter dependency. Prefer:
+
+```python
+placement=Placement(
+    x=-(half(self.opening_width) + half(self.frame_wood_thickness)),
+    z=opening_bottom,
+)
+```
+
+over manually repeating `/ 2`.
+
+`half(value)` is a Forge/Python readability helper. It returns the symbolic
+expression `value / 2`; SolidCraft does not need a `half` function.
+
+For example, Python such as:
+
+```python
+x=-(half(self.opening_width) + half(self.frame_wood_thickness))
+```
+
+lowers to an ordinary SolidCraft arithmetic expression equivalent to:
+
+```text
+-((opening_width / 2) + (frame_wood_thickness / 2))
+```
+
+The original parameters therefore remain native and editable in the saved
+SolidCraft design.
+
 ## 4. Placement is creation state, not a move action
 
 The central semantic rule is:
@@ -166,10 +195,7 @@ left = Board(
     depth=self.cabinet_depth,
     height=self.opening_height,
     placement=Placement(
-        x=-(
-            self.opening_width / 2
-            + self.frame_wood_thickness / 2
-        ),
+        x=-(half(self.opening_width) + half(self.frame_wood_thickness)),
         z=opening_bottom,
     ),
     material_name="LIGHTPLY side board",
@@ -178,10 +204,7 @@ left = Board(
 right = left.copy(
     name="right",
     placement=Placement(
-        x=(
-            self.opening_width / 2
-            + self.frame_wood_thickness / 2
-        ),
+        x=half(self.opening_width) + half(self.frame_wood_thickness),
         z=opening_bottom,
     ),
 )
@@ -654,10 +677,7 @@ left = Board(
     depth=self.cabinet_depth,
     height=self.opening_height,
     placement=Placement(
-        x=-(
-            self.opening_width / 2
-            + self.frame_wood_thickness / 2
-        ),
+        x=-(half(self.opening_width) + half(self.frame_wood_thickness)),
         z=opening_bottom,
     ),
     material_name="LIGHTPLY side board",
