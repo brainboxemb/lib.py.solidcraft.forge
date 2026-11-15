@@ -106,8 +106,9 @@ Command acceptance alone is not qualification.
 
 ## 4. Visible review result
 
-Every successful `qualify/**` workflow publishes its generated site to a
-separate GitHub Pages preview:
+Every `qualify/**` run that reaches the review stage publishes its generated
+site to a separate GitHub Pages preview **before** the final qualification
+gate:
 
 ```text
 /previews/<qualification-branch>/
@@ -133,10 +134,14 @@ The review page must visibly contain:
 - generated visual evidence.
 
 The Actions artifact remains the complete retained evidence archive. The Pages
-preview is the human review surface.
+preview is the human review surface. A candidate with a Q1-Q6 failure therefore
+still has a reviewable preview, but the final qualification gate makes the
+workflow red.
 
-A candidate is not promoted solely because the workflow icon is green; the
-published qualification results are reviewed as part of the protocol.
+Only after that blocking gate passes may the current `main` site be
+published. A candidate is not promoted solely because the workflow icon is
+green; the published qualification results are reviewed as part of the
+protocol.
 
 ## 5. Investigate a failure
 
