@@ -4,7 +4,8 @@ User scripts keep ordinary class names such as Block() and Enclosure().
 These nodes are the compiler-facing representation; users do not need to
 construct Component or Occurrence objects explicitly.
 """
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
+from itertools import count
 from math import isfinite
 
 from .core import (
@@ -20,6 +21,15 @@ from .core import (
     parameters_in,
     pv,
 )
+
+
+_OCCURRENCE_IDS = count(1)
+
+
+def _next_occurrence_id():
+    """Return one process-local id for a Forge occurrence."""
+    return next(_OCCURRENCE_IDS)
+
 
 
 @dataclass(frozen=True)
@@ -430,6 +440,16 @@ class ModelInstance:
     group_name: str | None = None
     name: str | None = None
     flattened_parameters: tuple[str, ...] = ()
+    _occurrence_id: int = field(
+        default_factory=_next_occurrence_id,
+        repr=False,
+        compare=False,
+    )
+
+    @property
+    def occurrence_id(self):
+        """Internal Forge id for this physical occurrence."""
+        return self._occurrence_id
 
     def group(self, name):
         """Place this occurrence in a named native subassembly component.
@@ -462,6 +482,7 @@ class ModelInstance:
             placement=self.placement if placement is None else placement,
             attachment=None,
             name=name,
+            _occurrence_id=_next_occurrence_id(),
         )
 
     def attach(self, target, *, parent=Anchor.RIGHT, child=Anchor.LEFT,
@@ -612,14 +633,14 @@ class Assembly:
         """
         grouped = tuple(instance.group(name) for instance in self.instances)
         remap = {
-            id(original): replacement
+            original.occurrence_id: replacement
             for original, replacement in zip(self.instances, grouped)
         }
         anchors = tuple(
             (
                 anchor_name,
                 AssemblyAnchor(
-                    target=remap[id(anchor.target)],
+                    target=remap[anchor.target.occurrence_id],
                     reference=anchor.reference,
                     offset=anchor.offset,
                 ),
@@ -701,6 +722,13 @@ class Assembly:
             raise ValueError("assembly must contain at least one model instance")
         if not all(isinstance(item, ModelInstance) for item in self.instances):
             raise TypeError("assembly items must be model instances")
+
+        occurrence_ids = [instance.occurrence_id for instance in self.instances]
+        if len(set(occurrence_ids)) != len(occurrence_ids):
+            raise ValueError(
+                "the same Forge occurrence cannot appear twice in one assembly; "
+                "use .copy() for another physical occurrence"
+            )
 
         names = [instance.name for instance in self.instances if instance.name is not None]
         duplicates = sorted({name for name in names if names.count(name) > 1})
