@@ -77,21 +77,28 @@ For `joint.create`:
 
 ### Temporary seed gap
 
-A copied normal attachment is created 1 mm farther outward along the parent
-attachment normal than its calculated mating pose.
+A copied normal attachment is created in a temporary assembly-wide parking
+slot before its joint is authored.
 
-The copy and the world pick move together. This makes the copied mating
-topology distinct from the parent topology while SolidCraft selects the
-occurrence.
+Parking slots are 1000 mm apart. Slot `n` uses the temporary translation:
 
-The 1 mm displacement is only the pre-joint seed pose. The authored
-`attach()` relationship remains the final relationship and moves the copy to
-the requested position.
+```text
+(+1000n, -1000n, +1000n) mm
+```
 
-For standard face anchors the direction is the parent face normal. Corner
-anchors use their owning front/back face normal. `AnchorFrame` uses its
-`z` direction. `AnchorTopology` must provide `z` when a copied child needs
-this staging step.
+Only copied attached children use these positions. The first occurrence can be
+addressed by the qualified component-name selector and stays at native
+identity.
+
+The copy and its world joint pick move together. Different copied children
+therefore have different native positions even when their authored attachment
+math produces the same pre-joint pose. This avoids the native 0.42 ambiguity
+proved by the coincident same-definition probe.
+
+The parking translation is compiler setup state only. The authored
+`attach()` relationship remains the final relationship and moves every parked
+copy to its requested position. Saved-design relationship behaviour is checked
+after the native joint solve, not from the temporary parking coordinates.
 
 ### No generated occurrence names
 
@@ -136,7 +143,7 @@ Required command tests:
 - no generated `Component:N` selector appears in an attachment plan;
 - first occurrences use component names;
 - copied joint origins omit `occurrence`;
-- copied attached children receive the 1 mm staging seed;
+- copied attached children receive distinct parking seeds;
 - same-definition parent/child attachment remains one reusable component plus a
   copy;
 - repeated copied brackets use point inference without generated names;
