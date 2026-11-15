@@ -8,4 +8,4 @@ from pybosl2 import cuboid
 
 base = cuboid([40, 30, 20]).up(10)
 marker = cuboid([10, 10, 10]).translate([15, -20, 15])
-(base | marker).show()
+model = base | marker
