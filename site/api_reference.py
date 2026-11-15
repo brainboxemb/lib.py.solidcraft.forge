@@ -210,3 +210,8 @@ def api_manifest():
         "generated_from": "scpf public objects and docstrings",
         "references": [public_reference(spec) for spec in all_references()],
     }
+
+
+if __name__ == "__main__":
+    import json
+    print(json.dumps(api_manifest(), indent=2))
