@@ -3,6 +3,12 @@
 Status: **active design for SCPF 0.3.0**  
 SolidCraft target: **0.42.0**
 
+> **Correction:** change [0009](0009-replay-first-placement.md) supersedes the
+> ordinary `occurrence.move` fallback described below. The fallback depended on
+> predicted SolidCraft occurrence names. The historical text remains here to
+> record the 0.3.0 design, but it is no longer the approved replay-first
+> implementation.
+
 This change replaces ad-hoc occurrence-position parameters such as
 `_x_position`, `_y_position` and `_z_position` with one explicit Forge
 `Placement` value supplied when the occurrence is created.
