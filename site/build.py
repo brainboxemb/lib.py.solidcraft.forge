@@ -640,7 +640,34 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     # require a click for every enum value or signature.
     guide_root = out / "guide"
     guide_root.mkdir(exist_ok=True)
-    guide_cards = []
+    def guide_sidebar(*, active=None, prefix=""):
+        def nav_link(slug, title):
+            cls = ' class="active"' if slug == active else ""
+            return (
+                f'<a{cls} href="{escape(prefix + slug + "/")}">'
+                f'{escape(title)}</a>'
+            )
+
+        overview_cls = ' class="active"' if active == "overview" else ""
+        return (
+            '<aside class="guide-sidebar">'
+            '<h2>API Guide</h2>'
+            f'<a{overview_cls} href="{escape(prefix or "./")}">Overview</a>'
+            + "".join(
+                nav_link(chapter["slug"], chapter["title"])
+                for chapter in GUIDES
+            )
+            + '</aside>'
+        )
+
+    def guide_shell(content, *, active, prefix):
+        return (
+            '<main class="wrap guide-layout">'
+            + guide_sidebar(active=active, prefix=prefix)
+            + '<article class="guide-article">'
+            + content
+            + '</article></main>'
+        )
 
     def _member_details(member, *, compact=False):
         if member["kind"] == "enum":
@@ -730,40 +757,38 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         slug = chapter["slug"]
         dest = guide_root / slug
         dest.mkdir(exist_ok=True)
-        aside = "".join(
-            f'<a href="../{escape(item["slug"])}/">{escape(item["title"])}</a>'
-            for item in GUIDES
-        )
-        body = (
-            '<main class="wrap guide-layout"><aside class="guide-sidebar">'
-            '<h2>API Guide</h2><a href="../">All chapters</a>'
-            + aside + '</aside><article class="guide-article">'
-            + f'<p class="crumb"><a href="../">← API Guide</a> / {escape(chapter["title"])}</p>'
+        content = (
+            f'<p class="crumb"><a href="../">API Guide</a> / {escape(chapter["title"])}</p>'
             + f'<h1>{escape(chapter["title"])}</h1>'
             + f'<p class="guide-lead">{escape(chapter["summary"])}</p>'
             + chapter["body"]
             + guide_api_summary(slug)
-            + '</article></main>'
         )
+        body = guide_shell(content, active=slug, prefix="../")
         (dest / "index.html").write_text(
             page(chapter["title"], body, stylesheet="../../style.css",
                  home="../../", cheatsheet="../../cheatsheet/"),
             encoding="utf-8",
         )
-        guide_cards.append(
-            f'<article class="reference"><h2><a href="{escape(slug)}/">'
-            f'{escape(chapter["title"])}</a></h2>'
-            f'<p>{escape(chapter["summary"])}</p></article>'
-        )
-    guide_index = (
-        '<main class="wrap"><section class="hero small">'
-        '<p class="eyebrow">Detailed SCPF documentation</p>'
+    guide_overview = (
+        '<p class="crumb">API Guide / Overview</p>'
         '<h1>API Guide</h1>'
-        '<p>Learn the concepts, understand the generated native commands, '
-        'and check current support and limitations. '
-        'The cheatsheet is a quick lookup, not a substitute for this guide.</p>'
-        '</section><div class="reference-grid">'
-        + "".join(guide_cards) + '</div></main>'
+        '<p class="guide-lead">Learn the modelling concepts, understand when to '
+        'use them, and see the generated native SolidCraft behaviour.</p>'
+        '<section class="panel"><h2>Start here</h2>'
+        '<p>Use the chapter navigation on the left. The layout remains the same '
+        'while you move through the guide, so you can switch directly between '
+        'components, assemblies, features, transformations and other topics '
+        'without returning to a separate overview page.</p>'
+        '<p>Use the <a href="../reference/">API Reference</a> when you already '
+        'know the concept and need exact signatures, enum values or limits. '
+        'Use the <a href="../cheatsheet/">Cheatsheet</a> for the shortest lookup.</p>'
+        '</section>'
+    )
+    guide_index = guide_shell(
+        guide_overview,
+        active="overview",
+        prefix="",
     )
     (guide_root / "index.html").write_text(
         page("API Guide", guide_index, stylesheet="../style.css",
