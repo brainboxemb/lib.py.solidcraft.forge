@@ -22,9 +22,10 @@ model.
 Use **pyBOSL2** when anchors, faces, orientation or attachment intent is the
 important comparison.
 
-Use **CadQuery** selectively when object Location, assembly hierarchy or
-constraint-vs-placement semantics are the useful comparison. It is not required
-for every case.
+Use **CadQuery** as the third default comparison, especially for object
+Location, assembly hierarchy, workplane and constraint-vs-placement semantics.
+If a useful CadQuery comparison is technically unavailable, record an explicit
+qualification exception with the reason.
 
 Do not translate Forge syntax mechanically. Preserve modelling intent.
 
@@ -213,9 +214,10 @@ Pinned comparison version:
 cadquery==2.8.0
 ```
 
-CadQuery is used selectively per qualification case. The first required use is
-occurrence positioning because CadQuery separates assembly child
-`Location` from assembly constraints.
+CadQuery is required by default for every qualification case. Use its native
+solid/workplane/Assembly/Location vocabulary to express the closest useful
+comparison. SolidCraft-specific persistence semantics remain native
+qualification evidence rather than something to imitate in CadQuery.
 
 Typical import:
 
@@ -270,7 +272,7 @@ Consult upstream only when:
 
 1. the required operation is not listed here;
 2. a reference fails against the installed library;
-3. PythonSCAD/pyBOSL2 dependency versions are intentionally upgraded;
+3. PythonSCAD/pyBOSL2/CadQuery dependency versions are intentionally upgraded;
 4. an upstream behavioural change is suspected.
 
 After verifying upstream, update this file with the smallest useful new fact
