@@ -259,7 +259,7 @@ GROUP_REFERENCES = (
         "parameters-positioning",
         "Parameters and positioning helpers",
         (
-            "Parameter", "Placement", "X", "Y", "Z",
+            "Parameter", "Position", "Placement", "X", "Y", "Z",
             "up", "down", "left", "right", "front", "back",
             "half", "midpoint", "pv",
         ),
