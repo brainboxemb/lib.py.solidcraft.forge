@@ -8,8 +8,8 @@ right_board = cuboid([12, 60, 80]).translate([66, 30, 52])
 
 
 def l_profile():
-    horizontal = cuboid([28, 24, 4]).translate([14, 0, 2])
-    vertical = cuboid([4, 24, 28]).translate([-2, 0, -14])
+    horizontal = cuboid([28, 24, 12]).translate([14, 0, 6])
+    vertical = cuboid([12, 24, 28]).translate([-6, 0, -14])
     return horizontal | vertical
 
 
