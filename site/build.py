@@ -512,7 +512,10 @@ def build(out, sha, native_root=None, diagram_root=None):
             shutil.copyfile(screenshot, dest / "preview.png")
             preview_path = "preview.png"
             preview_kind = "native-snapshot"
-            preview_caption = "Native SolidCraft 0.30.1 render, verified against this source commit."
+            preview_caption = (
+                f"Native SolidCraft {TESTED_SOLIDCRAFT_VERSION} render, "
+                "verified against this source commit."
+            )
         else:
             (dest / "preview.svg").write_text(schematic(slug), encoding="utf-8")
             preview_path = "preview.svg"
