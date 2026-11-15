@@ -18,8 +18,8 @@ Replay-first placement cleanup and foundational API correction.
 
 ### Added
 
-- Added public `Position` occurrence data for absolute, optionally symbolic
-  X/Y/Z coordinates and `Placement` for Position plus axis-angle orientation.
+- Added public `Placement(x, y, z, rotation=...)` occurrence metadata for
+  absolute, optionally symbolic pose at component construction/copy time.
 - Concrete placement of additional occurrences lowers directly through
   `occurrence.copy(..., translate=...)` where SolidCraft supports it.
 - Added per-case comparison-engine selection and a pinned CadQuery 2.8.0
@@ -27,17 +27,19 @@ Replay-first placement cleanup and foundational API correction.
 
 ### Changed
 
-- Occurrence `.at(Position(...))` declares absolute XYZ while preserving the
-  current orientation; `.at(Placement(...))` declares the complete pose.
-  `copy()` preserves the source Placement before a new `.at(...)` is applied.
+- Component constructors accept reserved `placement=Placement(...)` metadata;
+  it is consumed by Forge and never becomes a component model parameter.
+- `copy(placement=..., name=...)` creates a new occurrence with the declared
+  Placement while retaining the shared component definition.
 - Runtime result-handle execution is deferred to roadmap issue #168 instead of
   becoming part of the normal replay compiler.
 
 ### Removed
 
-- Removed occurrence `.move()` and `.rotate()` action conveniences. Occurrence
-  `.at()` now accepts only declarative `Position` or `Placement` objects;
-  backend `occurrence.move` remains a valid native lowering mechanism.
+- Removed occurrence `.move()`, `.rotate()` and `.at()` placement actions,
+  plus the redundant public `Position` wrapper. Initial occurrence pose is
+  constructor/copy metadata; backend `occurrence.move` remains a valid native
+  lowering fallback where SolidCraft 0.42 cannot encode placement at creation.
 - Removed the phased runtime-result-binding work from this release line; normal
   Forge output remains replay-first.
 
