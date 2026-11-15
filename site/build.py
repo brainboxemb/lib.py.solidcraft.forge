@@ -774,9 +774,45 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     # from the implementation/docstrings; this block only renders them.
     reference_root = out / "reference"
     reference_root.mkdir(exist_ok=True)
-    enum_reference_cards = []
-    method_reference_cards = []
-    group_reference_cards = []
+    def reference_sidebar(*, active=None, prefix=""):
+        def nav_link(slug, title):
+            cls = ' class="active"' if slug == active else ""
+            return (
+                f'<a{cls} href="{escape(prefix + slug + "/")}">'
+                f'{escape(title)}</a>'
+            )
+
+        overview_cls = ' class="active"' if active == "overview" else ""
+        return (
+            '<aside class="reference-sidebar">'
+            '<h2>API Reference</h2>'
+            f'<a{overview_cls} href="{escape(prefix or "./")}">Overview</a>'
+            '<h3>Browse by task</h3>'
+            + "".join(
+                nav_link(spec["slug"], spec["title"])
+                for spec in GROUP_REFERENCES
+            )
+            + '<h3>Selectors</h3>'
+            + "".join(
+                nav_link(spec["slug"], spec["title"])
+                for spec in ENUM_REFERENCES
+            )
+            + '<h3>Core API</h3>'
+            + "".join(
+                nav_link(spec["slug"], spec["title"])
+                for spec in METHOD_REFERENCES
+            )
+            + '</aside>'
+        )
+
+    def reference_shell(content, *, active, prefix):
+        return (
+            '<main class="wrap reference-layout">'
+            + reference_sidebar(active=active, prefix=prefix)
+            + '<article class="reference-article">'
+            + content
+            + '</article></main>'
+        )
 
     for spec in ENUM_REFERENCES:
         slug = spec["slug"]
@@ -789,8 +825,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             "</tr>"
             for name, value in enum_members(spec)
         )
-        body = (
-            '<main class="wrap"><p class="crumb"><a href="../">← API Reference</a> / '
+        content = (
+            '<p class="crumb"><a href="../">API Reference</a> / '
             + escape(spec["title"]) + '</p>'
             + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
             + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p></section>'
@@ -815,24 +851,20 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             + f'<p><a href="../../guide/{escape(spec["guide"])}/#{escape(spec["guide_anchor"])}">'
               'Worked usage in the guide →</a> · '
               '<a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
-            + '</section></main>'
+            + '</section>'
         )
+        body = reference_shell(content, active=slug, prefix="../")
         (dest / "index.html").write_text(
             page(spec["title"], body, stylesheet="../../style.css",
                  home="../../", cheatsheet="../../cheatsheet/"),
             encoding="utf-8",
         )
-        enum_reference_cards.append(
-            f'<article class="reference"><h2><a href="{escape(slug)}/">'
-            f'{escape(spec["title"])}</a></h2><p>{escape(spec["summary"])}</p></article>'
-        )
-
     for spec in METHOD_REFERENCES:
         slug = spec["slug"]
         dest = reference_root / slug
         dest.mkdir(exist_ok=True)
-        body = (
-            '<main class="wrap"><p class="crumb"><a href="../">← API Reference</a> / '
+        content = (
+            '<p class="crumb"><a href="../">API Reference</a> / '
             + escape(spec["title"]) + '</p>'
             + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
             + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p></section>'
@@ -849,20 +881,14 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             + f'<p><a href="../../guide/{escape(spec["guide"])}/#{escape(spec["guide_anchor"])}">'
               'Worked usage in the guide →</a> · '
               '<a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
-            + '</section></main>'
+            + '</section>'
         )
+        body = reference_shell(content, active=slug, prefix="../")
         (dest / "index.html").write_text(
             page(spec["title"], body, stylesheet="../../style.css",
                  home="../../", cheatsheet="../../cheatsheet/"),
             encoding="utf-8",
         )
-        method_reference_cards.append(
-            f'<article class="reference"><h2><a href="{escape(slug)}/">'
-            f'{escape(spec["title"])}</a></h2>'
-            f'<p>{escape(spec["summary"])}</p>'
-            f'<pre><code>{escape(spec["signature"])}</code></pre></article>'
-        )
-
     for spec in GROUP_REFERENCES:
         slug = spec["slug"]
         dest = reference_root / slug
@@ -891,29 +917,20 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             if spec.get("guide")
             else '<p><a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
         )
-        body = (
-            '<main class="wrap"><p class="crumb"><a href="../">← API Reference</a> / '
+        content = (
+            '<p class="crumb"><a href="../">API Reference</a> / '
             + escape(spec["title"]) + '</p>'
             + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
             + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p>'
             + guide_link + '</section>'
             + "".join(member_sections)
-            + '</main>'
         )
+        body = reference_shell(content, active=slug, prefix="../")
         (dest / "index.html").write_text(
             page(spec["title"], body, stylesheet="../../style.css",
                  home="../../", cheatsheet="../../cheatsheet/"),
             encoding="utf-8",
         )
-        member_names = " · ".join(
-            f'<code>{escape(name)}</code>' for name in spec["member_names"]
-        )
-        group_reference_cards.append(
-            f'<article class="reference"><h2><a href="{escape(slug)}/">'
-            f'{escape(spec["title"])}</a></h2><p>{escape(spec["summary"])}</p>'
-            f'<p class="reference-members">{member_names}</p></article>'
-        )
-
     # Compact machine-readable lookup for agents is generated from exactly the
     # same objects/docstrings as the human reference.
     (reference_root / "api.json").write_text(
@@ -938,28 +955,29 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         encoding="utf-8",
     )
 
-    reference_index = (
-        '<main class="wrap"><section class="hero small">'
-        '<p class="eyebrow">Complete lookup</p><h1>API Reference</h1>'
-        '<p>Generated from the current public Python objects and docstrings. '
-        'If you are still deciding which concept to use, start with the '
-        '<a href="../guide/">API Guide</a>. If you already know the task, use '
-        'the grouped reference below; exact selectors and detailed methods follow.</p>'
+    reference_overview = (
+        '<p class="crumb">API Reference / Overview</p>'
+        '<section class="hero small">'
+        '<p class="eyebrow">Complete generated lookup</p><h1>API Reference</h1>'
+        '<p>Use the navigation on the left for direct access to task groups, '
+        'selectors and exact public API operations. The layout stays the same '
+        'while you move through the reference.</p>'
+        '<p>If you are still deciding which modelling concept to use, start with '
+        '<a href="../guide/">the API Guide</a>.</p>'
+        '</section>'
+        '<section class="panel"><h2>How to use this reference</h2>'
+        '<p><strong>Browse by task</strong> keeps related constructors and helpers '
+        'together. <strong>Selectors</strong> contains complete generated values '
+        'such as Anchor and Faces. <strong>Core API</strong> gives exact current '
+        'signatures for components, assemblies, shapes and sketches.</p>'
         '<p><a href="api.json">Machine-readable API index →</a> · '
         '<a href="../api-design-contract.html">Cross-object API design rules →</a></p>'
         '</section>'
-        '<section class="section-heading"><h2>Browse by task</h2>'
-        '<p>Related public symbols stay together so common work does not require '
-        'opening a separate page for every constructor or helper.</p></section>'
-        '<div class="reference-grid">' + "".join(group_reference_cards) + '</div>'
-        '<section class="section-heading"><h2>Selectors and vocabularies</h2>'
-        '<p>Complete generated values for faces, anchors, axes, directions, depths and edges.</p></section>'
-        '<div class="reference-grid">' + "".join(enum_reference_cards) + '</div>'
-        '<section class="section-heading"><h2>Core types and detailed operations</h2>'
-        '<p>Exact current signatures for model types, component/assembly operations, '
-        'shape placement and sketch operations.</p></section>'
-        '<div class="reference-grid">' + "".join(method_reference_cards) + '</div>'
-        '</main>'
+    )
+    reference_index = reference_shell(
+        reference_overview,
+        active="overview",
+        prefix="",
     )
     (reference_root / "index.html").write_text(
         page("API Reference", reference_index, stylesheet="../style.css",
