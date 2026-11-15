@@ -57,6 +57,12 @@ MUTATIONS = {
         "measurements": "measurements-size-160x120x90.json",
         "label": "frame 120x80x60 -> 160x120x90 mm",
     },
+    "hub75-anchorframe-regression": {
+        "command": "qualification/commands/hub75-anchorframe-regression/change-size.json",
+        "save": "model-size-160x100x80.sc",
+        "measurements": "measurements-size-160x100x80.json",
+        "label": "opening/cabinet 120x80x60 -> 160x100x80 mm",
+    },
     "parametric-move": {
         "command": "qualification/commands/parametric-move/change-offset.json",
         "save": "model-offset-70.sc",
