@@ -23,6 +23,48 @@ RESULT-BINDING OR BY GUESSING SOLIDCRAFT NAMES.**
 Historical runtime-result-handle work (including PRs #166/#167) is design
 evidence only. It is **not** the approved normal Forge architecture.
 
+## WRITE ABOUT THE CODE USING THE CODE'S OWN TERMS
+
+**PREFER CONCRETE WORDS THAT MAP DIRECTLY TO FORGE OBJECTS OR SOLIDCRAFT
+COMMANDS.**
+
+Use terms such as:
+
+- component / component definition;
+- occurrence;
+- `Placement`;
+- copy;
+- group;
+- anchor / attachment / joint;
+- parameter / expression;
+- `component.create`, `occurrence.copy`, `occurrence.move`,
+  `joint.create`;
+- generated SolidCraft occurrence name.
+
+Avoid introducing vague architecture shorthand such as:
+
+- "native-id evidence";
+- "semantic IR";
+- "native adapter contract";
+- "capability boundary";
+- "execution architecture";
+- "identity layer";
+- "lowering" when "generates this SolidCraft command" is clearer.
+
+If an abstract term is genuinely needed, define it immediately in terms of the
+actual Python object, field, function or SolidCraft command it represents.
+
+A design/audit document must answer concrete questions such as:
+
+- Which Forge object are we talking about?
+- Which function currently handles it?
+- Which SolidCraft command is generated?
+- Which exact field/reference is used?
+- What is wrong with that behaviour?
+- What should the code do instead?
+
+Do not hide an unresolved code problem behind architecture vocabulary.
+
 Before implementing any foundational compiler change:
 
 1. read these constraints first;
