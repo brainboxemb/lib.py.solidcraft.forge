@@ -75,3 +75,12 @@ The CI artifact remains the complete archive; Pages is the review surface.
 - Q4 — native measurement
 - Q5 — saved-design parametric mutation
 - Q6 — native visual artifact
+
+
+## SolidCraft upgrades
+
+SolidCraft engine upgrades follow the documented
+[SolidCraft upgrade protocol](solidcraft-upgrade-protocol.md). The protocol
+keeps the candidate version on a qualification branch, uses one version source
+in Forge, and requires native Forge and CAD evidence before promotion to
+`main`.

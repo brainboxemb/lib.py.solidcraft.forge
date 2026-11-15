@@ -25,8 +25,6 @@ concurrency:
 jobs:
   package:
     runs-on: ubuntu-latest
-    env:
-      SOLIDCRAFT_VERSION: "0.42.0"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -34,6 +32,13 @@ jobs:
           python-version: "3.12"
       - name: Install SCPF editable as an external-style package
         run: python -m pip install -e ./scpf pillow
+
+      - name: Read qualified SolidCraft version from Forge
+        shell: bash
+        run: |
+          version="$(python -c 'from scpf.version import TESTED_SOLIDCRAFT_VERSION; print(TESTED_SOLIDCRAFT_VERSION)')"
+          echo "SOLIDCRAFT_VERSION=$version" >> "$GITHUB_ENV"
+          echo "SolidCraft qualification target: $version"
 
       - name: Restore rendered CADCraft diagrams
         id: cadcraft_diagrams
