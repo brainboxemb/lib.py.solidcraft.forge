@@ -1,0 +1,25 @@
+{
+  "commands": [
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "opening_width",
+        "expression": "160 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "opening_height",
+        "expression": "100 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "cabinet_depth",
+        "expression": "80 mm"
+      }
+    }
+  ]
+}
