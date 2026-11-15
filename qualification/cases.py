@@ -382,6 +382,23 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "hub75-anchorframe-regression",
+        "q5_required": True,
+        "group": "anchors",
+        "title": "Two placed sideboards with eight AnchorFrame L-profiles",
+        "intent": "Exercise the HUB75-like relationship graph that the smaller fixtures miss: two independently placed parametric parent occurrences, each owning four attached children, while all eight children reuse one neutral L-profile definition.",
+        "forge_api": "SideBoard(..., placement=Placement(...)); LProfile().copy().attach(board, parent=FRONT/BACK corner Anchor, child=AnchorFrame(...), gap=...); no corrective child Placement.",
+        "forge_model": "Two SideBoard occurrences represent the left/right cabinet walls. One simple polygonal XZ LProfile is reused at front/rear and top/bottom on both boards. A separate explicit-Placement model records the known-good eight poses.",
+        "lowering": "Both sideboard occurrence moves and all eight attachment seed moves retain symbolic parameter expressions. Exactly eight authored rigid joint.create relationships remain; no hidden placement joints are generated.",
+        "native_expectation": "The AnchorFrame model and Placement baseline produce the same two board bodies and the same eight L-profile envelopes. The brackets occupy the proven HUB75 corner poses using Y rotations 0/90/180/270.",
+        "mutation": "Change opening_width/opening_height/cabinet_depth from 120/80/60 to 160/100/80 mm in the saved .sc design. Both parent occurrences and all eight attached brackets must follow without rerunning Python.",
+        "references": [
+            ("SolidCraft", "This case isolates the persisted multi-parent joint graph and saved-design mutation that regressed in the larger HUB75 model."),
+            ("BOSL2", "The reusable bracket geometry remains neutral; assembly placement/attachment semantics determine which cabinet corner each occurrence occupies."),
+            ("CadQuery", "The independent assembly/location model provides a third check of the same visible two-board/eight-bracket layout."),
+        ],
+    },
+    {
         "slug": "eight-flightcase-corners",
         "q5_required": True,
         "group": "anchors",
