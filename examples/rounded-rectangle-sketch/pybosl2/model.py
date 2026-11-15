@@ -22,4 +22,4 @@ profile = rect(
 )
 pad = profile.linear_extrude(height=pad_height).up(base_height)
 
-(base | pad).show()
+model = base | pad
