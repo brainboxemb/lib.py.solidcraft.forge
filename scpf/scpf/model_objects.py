@@ -413,17 +413,6 @@ class Placement:
         """Return the absolute XYZ occurrence position."""
         return (self.x, self.y, self.z)
 
-    def at(self, x=0, y=0, z=0):
-        """Return an absolute placement at the supplied XYZ coordinates."""
-        return replace(self, x=x, y=y, z=z)
-
-    def rotated(self, axis=(0, 0, 1), degrees=None):
-        """Return a placement with one absolute axis-angle orientation."""
-        return replace(
-            self,
-            rotation=_normalize_rotation(axis, degrees),
-        )
-
 
 @dataclass(frozen=True)
 class ModelInstance:
@@ -453,71 +442,28 @@ class ModelInstance:
             raise ValueError("an occurrence cannot belong to multiple groups")
         return replace(self, group_name=name)
 
-    def copy(self):
+    def copy(self, *, placement=None):
         """Create another occurrence of the same reusable definition.
 
         Use when:
-            Reuse the same physical component definition at another placement.
+            Reuse the same physical component definition. Pass
+            placement=Placement(...) when the new occurrence needs a different
+            declared pose.
 
         Limits:
-            copy() does not duplicate the component feature definition. The new
+            copy() does not duplicate the component feature definition. With no
+            placement argument the source Placement is preserved. The new
             occurrence starts without the source attachment and explicit name.
         """
-        return replace(self, attachment=None, name=None)
-
-    def at(self, x=0, y=0, z=0):
-        """Set the absolute placement of this occurrence.
-
-        Use when:
-            State the intended absolute XYZ location of a reusable occurrence.
-            Pass a Placement object directly to reuse an already defined
-            placement.
-
-        Limits:
-            at() changes placement only and clears an existing attachment.
-            It does not create a relationship or prescribe a native command.
-        """
-        if isinstance(x, Placement):
-            if y != 0 or z != 0:
-                raise ValueError(
-                    "at(Placement) does not accept coordinate y/z arguments"
-                )
-            placement = x
-        else:
-            placement = self.placement.at(x=x, y=y, z=z)
-        return replace(self, placement=placement, attachment=None)
-
-    def rotate(self, axis=(0, 0, 1), degrees=None):
-        """Set this occurrence's absolute local-axis orientation.
-
-        Use when:
-            Give an existing Placement one explicit axis-angle orientation.
-
-        Limits:
-            Rotation changes only occurrence placement and clears an existing
-            attachment. One absolute axis-angle orientation is supported; a
-            second rotate() replaces the first rather than composing Euler
-            turns.
-        """
-        axis_values = (
-            axis.value
-            if isinstance(axis, Axis)
-            else axis
-            if isinstance(axis, (tuple, list))
-            else ()
-        )
-        symbolic = tuple(
-            parameter.name
-            for parameter in parameters_in(*axis_values, degrees)
-        )
-        flattened = tuple(dict.fromkeys(
-            (*self.flattened_parameters, *symbolic)
-        ))
+        if placement is None:
+            placement = self.placement
+        elif not isinstance(placement, Placement):
+            raise TypeError("copy placement must be a Placement")
         return replace(
             self,
-            placement=self.placement.rotated(axis=axis, degrees=degrees),
+            placement=placement,
             attachment=None,
-            flattened_parameters=flattened,
+            name=None,
         )
 
     def attach(self, target, *, parent=Anchor.RIGHT, child=Anchor.LEFT,
