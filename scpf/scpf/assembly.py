@@ -227,17 +227,63 @@ def _relationship_replay_order(instances, component_name):
     return ordered
 
 
-_ATTACHMENT_PARKING_STEP_MM = 1000.0
+_ATTACHMENT_STAGE_STEP_MM = 1.0
 
 
-def _relationship_copy_seed(instance, parking_slot):
-    """Return a unique temporary native seed pose for one relationship copy."""
+def _attachment_stage_direction(attachment):
+    """Return a unit direction used to separate one copied attached child."""
+    parent = attachment.parent
+
+    if isinstance(parent, Anchor):
+        if parent in _CORNER_ANCHORS:
+            direction = _corner_normal(parent)
+        elif parent is Anchor.CENTER:
+            raise ModelError(
+                "copied CENTER attachment has no replay-safe staging direction"
+            )
+        else:
+            direction = parent.vector
+    elif isinstance(parent, str):
+        custom = dict(attachment.target.definition.anchors)[parent]
+        if isinstance(custom, AnchorFrame):
+            direction = custom.z
+        elif isinstance(custom, AnchorTopology) and custom.z is not None:
+            direction = custom.z
+        else:
+            raise ModelError(
+                "copied named attachment needs an explicit frame/z direction "
+                "for replay-safe occurrence inference"
+            )
+    elif isinstance(parent, AnchorFrame):
+        direction = parent.z
+    elif isinstance(parent, AnchorTopology) and parent.z is not None:
+        direction = parent.z
+    else:
+        raise ModelError(
+            "copied attachment needs an explicit frame/z direction for "
+            "replay-safe occurrence inference"
+        )
+
+    values = tuple(float(pv(value)) for value in direction)
+    length = sum(value * value for value in values) ** 0.5
+    if length <= 0:
+        raise ModelError("attachment staging direction must be non-zero")
+    return tuple(value / length for value in values)
+
+
+def _relationship_copy_seed(instance, staging_slot):
+    """Return a unique temporary seed pose close to the authored attachment."""
+    position = [pv(value) for value in instance.placement.position]
     attachment = instance.attachment
     if attachment is None or attachment.as_built:
-        return [pv(value) for value in instance.placement.position]
+        return position
 
-    distance = _ATTACHMENT_PARKING_STEP_MM * parking_slot
-    return [distance, -distance, distance]
+    direction = _attachment_stage_direction(attachment)
+    distance = _ATTACHMENT_STAGE_STEP_MM * staging_slot
+    return [
+        position[i] + direction[i] * distance
+        for i in range(3)
+    ]
 
 
 def _occurrence_labels(assembly, names):
@@ -296,8 +342,8 @@ def compile_assembly(value, name):
         ))
 
     relationship_occurrence_ids = set()
-    attachment_parking_slots = {}
-    next_parking_slot = 1
+    attachment_staging_slots = {}
+    next_staging_slot = 1
     for instance in assembly.instances:
         attachment = instance.attachment
         if attachment is None:
@@ -310,8 +356,8 @@ def compile_assembly(value, name):
         relationship_occurrence_ids.add(instance.occurrence_id)
         relationship_occurrence_ids.add(attachment.target.occurrence_id)
         if not attachment.as_built:
-            attachment_parking_slots[instance.occurrence_id] = next_parking_slot
-            next_parking_slot += 1
+            attachment_staging_slots[instance.occurrence_id] = next_staging_slot
+            next_staging_slot += 1
 
     by_definition = {}
     for instance in assembly.instances:
@@ -431,7 +477,7 @@ def compile_assembly(value, name):
             if relationship_definition:
                 concrete_position = _relationship_copy_seed(
                     instance,
-                    attachment_parking_slots.get(instance.occurrence_id, 0),
+                    attachment_staging_slots.get(instance.occurrence_id, 0),
                 )
                 if any(concrete_position):
                     params["translate"] = concrete_position
