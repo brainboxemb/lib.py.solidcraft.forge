@@ -12,11 +12,6 @@ class SideBoard:
             self.width,
             self.depth,
             self.height,
-        ).at(
-            0,
-            0,
-            0,
-            anchor=Anchor.FRONT + Anchor.BOTTOM,
         )
 
 
