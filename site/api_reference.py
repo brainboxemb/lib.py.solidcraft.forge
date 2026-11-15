@@ -178,13 +178,6 @@ METHOD_REFERENCES = (
         guide_anchor="collection",
     ),
     _method(
-        "Occurrence.move",
-        "Occurrence.move()",
-        ModelInstance.move,
-        guide="assembly-basics",
-        guide_anchor="collection",
-    ),
-    _method(
         "Occurrence.attach",
         "Occurrence.attach()",
         ModelInstance.attach,
