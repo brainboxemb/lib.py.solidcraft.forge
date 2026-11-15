@@ -11,7 +11,7 @@ on:
       - "scpf/**"
       - "examples/**"
       - "qualification/**"
-      - "site/api_coverage.py"
+      - "site/**"
       - ".github/workflows/scpf.yml"
   workflow_dispatch: {}
 
