@@ -98,6 +98,128 @@ The parent side-board occurrence remains the real attachment target. The
 application-specific A/B references belong to this diagnostic assembly, not to
 the generic L-profile component definition.
 
+## From Forge relationship to SolidCraft commands
+
+This change must distinguish the **semantic relationship** from the commands
+used to create and seed the participating occurrences.
+
+For one Forge relationship:
+
+```python
+bracket.attach(
+    left_board,
+    parent=Anchor.FRONT_TOP_LEFT,
+    child=front_mount_a,
+    gap=gap,
+)
+```
+
+Forge holds an `Attachment` object containing direct Python references to:
+
+- the child occurrence: `bracket`;
+- the target occurrence: `left_board`;
+- the parent attachment reference: `Anchor.FRONT_TOP_LEFT`;
+- the child attachment frame: the actual `front_mount_a: AnchorFrame` object;
+- the authored `gap`, optional planar `offset`, and optional `angle`.
+
+That one relationship is lowered to SolidCraft in separate stages.
+
+### 1. Create the reusable component definitions and occurrences
+
+Forge emits `component.create` for the reusable definitions and
+`occurrence.copy` for additional occurrences.
+
+These commands create objects; they do **not** express the bracket-to-board
+relationship.
+
+### 2. Seed the occurrence pose
+
+Forge may emit an `occurrence.move` for the bracket before the joint exists.
+
+For attached children this is a solver seed only. It gives SolidCraft a useful
+initial pose from which to solve the later joint. It is **not** the semantic
+attachment and it must not be treated as an alternative to `joint.create`.
+
+Historically working HUB75 evidence already used concrete numeric seed moves
+for attached brackets.
+
+### 3. Convert the two attachment references to native joint references
+
+For this HUB75-like case the parent side is a standard corner `Anchor`.
+Forge converts that to a native reference containing the parent occurrence and
+its geometric corner information:
+
+```text
+a:
+    occurrence = <left SideBoard occurrence>
+    edge       = ...
+    on         = ...
+    corner     = ...
+    x          = explicit corner clocking axis
+```
+
+The child side is a direct `AnchorFrame` object. Forge converts that object to:
+
+```text
+b:
+    occurrence = <LProfile occurrence>
+    point      = AnchorFrame.origin in that occurrence
+    z          = AnchorFrame.z
+    x          = AnchorFrame.x
+```
+
+No lookup by the Python variable name `front_mount_a` is required here. The
+actual `AnchorFrame` value is already stored on the Forge `Attachment`.
+
+### 4. Emit the actual SolidCraft relationship
+
+The semantic relationship becomes one `joint.create` command:
+
+```text
+joint.create
+    type = rigid
+    a    = <parent occurrence + parent frame reference>
+    b    = <child occurrence + child frame reference>
+    offset = gap              # when non-zero
+    angle  = 0                # when the explicit child frame owns clocking
+```
+
+For this diagnostic there must be exactly eight authored `attach()`
+relationships and therefore exactly eight corresponding `joint.create`
+commands.
+
+The `joint.create.name` value is only a human-readable joint label. The actual
+relationship is carried by its `a` and `b` references.
+
+### 5. Grouping is hierarchy, not another relationship
+
+`CornerBrackets` is created as a native browser/subassembly component because
+the eight LProfile occurrences are grouped there. That `component.create`
+does not replace any of the eight joints.
+
+If children inside `CornerBrackets` attach to SideBoard occurrences outside
+that group, the group must remain ungrounded. Grounding that browser parent adds
+an unintended mechanical constraint to the same joint graph.
+
+### Current occurrence-identity weakness
+
+There is still a separate hidden dependency in the current lowering. Forge
+currently predicts SolidCraft occurrence names:
+
+```python
+native_name = f"{component_name}:{index}"
+```
+
+and then uses those predicted strings inside `occurrence.move`,
+`joint.create.a.occurrence`, `joint.create.b.occurrence`, and related
+commands.
+
+That is **not** the cause of the change-0005 regression: the same naming
+assumption exists in the historically working Forge `79b2be2`. But it is a
+real architectural weakness tracked separately in #182. Forge should eventually
+register or receive stable native occurrence identity instead of predicting
+SolidCraft browser numbering.
+
 ## Native command contract
 
 ### Placement baseline
