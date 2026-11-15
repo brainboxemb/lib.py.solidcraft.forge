@@ -16,7 +16,10 @@ from scpf import (
     Faces,
     Shape,
     Sketch,
+    assembly,
+    component,
 )
+from scpf.model_objects import Assembly, ModelInstance
 
 
 def _signature(obj, name):
@@ -80,6 +83,69 @@ ENUM_REFERENCES = (
 
 
 METHOD_REFERENCES = (
+    _method(
+        "component",
+        "component() / @component",
+        component,
+        guide="assembly-basics",
+        guide_anchor="simple-component",
+    ),
+    _method(
+        "assembly",
+        "assembly() / @assembly",
+        assembly,
+        guide="assembly-basics",
+        guide_anchor="reusable-assembly",
+    ),
+    _method(
+        "Occurrence.copy",
+        "Occurrence.copy()",
+        ModelInstance.copy,
+        guide="assembly-basics",
+        guide_anchor="collection",
+    ),
+    _method(
+        "Occurrence.move",
+        "Occurrence.move()",
+        ModelInstance.move,
+        guide="assembly-basics",
+        guide_anchor="collection",
+    ),
+    _method(
+        "Occurrence.attach",
+        "Occurrence.attach()",
+        ModelInstance.attach,
+        guide="assembly-basics",
+        guide_anchor="relationship",
+    ),
+    _method(
+        "Occurrence.group",
+        "Occurrence.group()",
+        ModelInstance.group,
+        guide="assembly-basics",
+        guide_anchor="group",
+    ),
+    _method(
+        "Assembly.group",
+        "Assembly.group()",
+        Assembly.group,
+        guide="assembly-basics",
+        guide_anchor="group",
+    ),
+    _method(
+        "Assembly.with_anchor",
+        "Assembly.with_anchor()",
+        Assembly.with_anchor,
+        guide="components",
+        guide_anchor="assembly-anchor",
+    ),
+    _method(
+        "Assembly.anchor",
+        "Assembly.anchor()",
+        Assembly.anchor,
+        guide="components",
+        guide_anchor="assembly-anchor",
+    ),
     _method("Shape.at", "Shape.at()", Shape.at, guide="geometry", guide_anchor="solids"),
     _method("Shape.on", "Shape.on()", Shape.on, guide="features", guide_anchor="hole"),
     _method(
