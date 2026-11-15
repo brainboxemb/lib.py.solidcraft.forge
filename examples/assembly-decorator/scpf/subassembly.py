@@ -1,6 +1,8 @@
 """Reusable subassembly used by the @assembly qualification fixture."""
 
-from scpf import Box, Position, assembly, component
+from scpf.core import Box
+from scpf.model_objects import Position
+from scpf.runner import assembly, component
 
 
 @component
