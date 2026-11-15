@@ -129,6 +129,13 @@ jobs:
             count="$(jq '.commands | length' "output/$model.json")"
             printf "%s\t%s\tPASS\n" "$model" "$count" >> output/qualification/q2-command-contract.tsv
           done
+
+          # Change 0005 diagnostic baseline: compile the same layout using
+          # explicit Placement, but do not register it as a second public case.
+          python -m scpf \
+            examples/hub75-anchorframe-regression/placement/model.py \
+            --out output/hub75-anchorframe-regression-placement.json
+          python -m json.tool output/hub75-anchorframe-regression-placement.json >/dev/null
       - name: Install official SolidCraft release (checksum-verified)
         shell: bash
         run: |
@@ -189,6 +196,33 @@ jobs:
 
             printf "%s\tPASS\tPASS\tPASS\tPASS\n" "$model" >> output/qualification/q3-q4-q6-native.tsv
           done
+
+          # Change 0005 A/B baseline: build the same two-board/eight-bracket
+          # layout with explicit Placement only.
+          case_dir=output/native/hub75-anchorframe-regression
+          cp output/hub75-anchorframe-regression-placement.json \
+            "$case_dir/commands-placement-baseline.json"
+          solidcraft-cli run output/hub75-anchorframe-regression-placement.json \
+            --param-check strict --results \
+            --json-out "$case_dir/results-placement-baseline.json" \
+            --save "$case_dir/model-placement-baseline.sc" \
+            --out "$case_dir/model-placement-baseline.step"
+          solidcraft-cli eval "$case_dir/model-placement-baseline.sc" \
+            --json-out "$case_dir/measurements-placement-baseline.json"
+          jq -e '(.timeline | all(.error == null))' \
+            "$case_dir/measurements-placement-baseline.json"
+          solidcraft-cli run qualification/commands/inspect-joints.json \
+            --in "$case_dir/model-placement-baseline.sc" \
+            --param-check strict --results \
+            --json-out "$case_dir/joint-inspect-placement-baseline.json"
+          camera="$(python qualification/camera.py \
+            "$case_dir/measurements-placement-baseline.json" iso)"
+          printf '%s\n' "$camera" > "$case_dir/camera-placement-baseline-iso.json"
+          solidcraft-cli snapshot "$case_dir/model-placement-baseline.sc" \
+            --out "$case_dir/placement-baseline-iso.png" \
+            --width 720 --height 540 --camera "$camera" --no-grid --no-axes
+          test -s "$case_dir/placement-baseline-iso.png"
+
           # Four-corner diagnostic evidence. The functional assertions are
           # standard unittest cases in qualification/tests.
           solidcraft-cli run qualification/commands/four-corner-l/inspect-joints.json \
@@ -274,6 +308,39 @@ jobs:
 
           solidcraft-cli eval output/native/eight-corner-brackets/model-size-160x120x90.sc \
             --json-out output/native/eight-corner-brackets/measurements-size-160x120x90.json
+
+          # HUB75-like multi-parent AnchorFrame regression. Mutate the public
+          # AnchorFrame model and the explicit Placement baseline with the same
+          # saved-design parameter commands, without rerunning Python.
+          case_dir=output/native/hub75-anchorframe-regression
+          solidcraft-cli run qualification/commands/hub75-anchorframe-regression/change-size.json \
+            --in "$case_dir/model.sc" \
+            --param-check strict \
+            --save "$case_dir/model-size-160x100x80.sc"
+          solidcraft-cli eval "$case_dir/model-size-160x100x80.sc" \
+            --json-out "$case_dir/measurements-size-160x100x80.json"
+
+          solidcraft-cli run qualification/commands/hub75-anchorframe-regression/change-size.json \
+            --in "$case_dir/model-placement-baseline.sc" \
+            --param-check strict \
+            --save "$case_dir/model-placement-baseline-size-160x100x80.sc"
+          solidcraft-cli eval "$case_dir/model-placement-baseline-size-160x100x80.sc" \
+            --json-out "$case_dir/measurements-placement-baseline-size-160x100x80.json"
+
+          camera="$(python qualification/camera.py \
+            "$case_dir/measurements-placement-baseline-size-160x100x80.json" iso)"
+          printf '%s\n' "$camera" > "$case_dir/camera-placement-baseline-size-160x100x80-iso.json"
+          solidcraft-cli snapshot "$case_dir/model-placement-baseline-size-160x100x80.sc" \
+            --out "$case_dir/placement-baseline-size-160x100x80-iso.png" \
+            --width 720 --height 540 --camera "$camera" --no-grid --no-axes
+          test -s "$case_dir/placement-baseline-size-160x100x80-iso.png"
+
+          python qualification/compare_hub75_anchorframe.py \
+            --anchor-initial "$case_dir/measurements.json" \
+            --placement-initial "$case_dir/measurements-placement-baseline.json" \
+            --anchor-mutated "$case_dir/measurements-size-160x100x80.json" \
+            --placement-mutated "$case_dir/measurements-placement-baseline-size-160x100x80.json" \
+            --out "$case_dir/measurements-placement-comparison.json"
 
           # Parameter-scope native evidence and saved-design mutation.
           solidcraft-cli run output/parameter-scope.json \
