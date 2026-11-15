@@ -9,4 +9,4 @@ bore = cylinder(d=8, h=60).rotate([0, 90, 0]).translate([-30, 0, 0])
 body = body - bore
 
 clip = cube([50, 50, 30], center=True).up(15)
-show(body & clip)
+model = body & clip
