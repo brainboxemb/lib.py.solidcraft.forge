@@ -78,7 +78,7 @@ def check(site: Path, sha: str, require_native: bool = False):
         "From one component to an assembly",
         "one physical reusable part",
         "Shape + Shape",
-        "ComponentOccurrence + ComponentOccurrence",
+        "occurrence + occurrence",
         "Use @assembly when the composition itself is reusable",
         "Use attach() when the relationship is the intent",
         "A group is organisation, not a relationship",
