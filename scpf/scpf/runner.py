@@ -402,10 +402,20 @@ def _component_anchor_frames(instance):
     return tuple(anchors)
 
 
-def _build_object(cls, *args, **kwargs):
+def _build_object(
+    cls,
+    *args,
+    _include=None,
+    _aliases=None,
+    **kwargs,
+):
     """Build one user model and return its classified reusable inputs."""
     instance, concrete, fixed, external, bindings = _parameterized_instance(
-        cls, *args, **kwargs
+        cls,
+        *args,
+        _include=_include,
+        _aliases=_aliases,
+        **kwargs,
     )
     build = getattr(instance, "build", None)
     if not callable(build):
@@ -425,7 +435,13 @@ def _design_object(cls, *args, **kwargs):
     return _BuiltDesign(result=result, parameters=concrete)
 
 
-def _reusable_model_object(cls, *args, **kwargs):
+def _reusable_model_object(
+    cls,
+    *args,
+    _include=(),
+    _aliases=None,
+    **kwargs,
+):
     """Build a nested user model as a reusable component definition."""
     object_name = kwargs.pop("name", None)
     placement = kwargs.pop("placement", None)
@@ -444,7 +460,11 @@ def _reusable_model_object(cls, *args, **kwargs):
             )
 
     result, concrete, fixed, external, bindings, anchors = _build_object(
-        cls, *args, **kwargs
+        cls,
+        *args,
+        _include=_include,
+        _aliases=_aliases,
+        **kwargs,
     )
     if not isinstance(result, Shape):
         raise TypeError(
@@ -465,32 +485,94 @@ def _reusable_model_object(cls, *args, **kwargs):
     )
 
 
-def _model_factory(cls):
+def _component_include(cls, include):
+    """Return explicitly published local inputs and optional shared aliases."""
+    fields = {name for name, _ in _plain_model_fields(cls)}
+    public_fields = {name for name in fields if not name.startswith("_")}
+
+    if include == "*":
+        return frozenset(public_fields), {}
+
+    if isinstance(include, dict):
+        aliases = dict(include)
+        unknown = set(aliases) - public_fields
+        if unknown:
+            raise ValueError(
+                f"{cls.__name__}: unknown component parameter(s): "
+                + ", ".join(sorted(unknown))
+            )
+        for local_name, model_name in aliases.items():
+            if (
+                not isinstance(model_name, str)
+                or not model_name.isidentifier()
+                or model_name.startswith("_")
+                or model_name.isupper()
+            ):
+                raise ValueError(
+                    f"{cls.__name__}.{local_name}: shared model parameter "
+                    "name must be a public lower_case Python identifier"
+                )
+        return frozenset(), aliases
+
+    if isinstance(include, str):
+        include = (include,)
+    try:
+        names = tuple(include)
+    except TypeError as exc:
+        raise TypeError(
+            "component include must be '*', parameter names, or a mapping"
+        ) from exc
+    if any(not isinstance(name, str) or not name for name in names):
+        raise TypeError("component include names must be non-empty text")
+
+    unknown = set(names) - public_fields
+    if unknown:
+        raise ValueError(
+            f"{cls.__name__}: unknown component parameter(s): "
+            + ", ".join(sorted(unknown))
+        )
+    return frozenset(names), {}
+
+
+def _model_factory(cls, include=()):
     """Replace a nested class name with a transparent reusable-model factory."""
+    included, aliases = _component_include(cls, include)
+
     @functools.wraps(cls)
     def factory(*args, **kwargs):
-        return _reusable_model_object(cls, *args, **kwargs)
+        return _reusable_model_object(
+            cls,
+            *args,
+            _include=included,
+            _aliases=aliases,
+            **kwargs,
+        )
 
     factory._scpf_component_class = cls
     return factory
 
 
-def component(cls):
+def component(cls=None, *, include=()):
     """Declare one reusable physical component definition.
 
-    Use when:
-        Decorate a model class when its build() result represents one reusable
-        physical part. Calling the decorated class creates an occurrence of
-        that shared definition.
+    Reusable component defaults stay fixed unless explicitly published with
+    include=. Parent Parameter/Expression inputs always remain symbolic and
+    reuse the existing parent dependency.
 
-    Limits:
-        build() must produce one Shape when the class is reused as a component.
-        Public lower-case numeric fields become editable native parameters;
-        underscore-prefixed inputs remain Forge/build-time inputs.
+    include=("radius",) publishes selected component-local defaults,
+    include="*" publishes all public defaults, and a mapping can publish one
+    child default under a chosen shared model parameter name.
     """
-    if not isinstance(cls, type) or not callable(getattr(cls, "build", None)):
-        raise TypeError("component() expects a model class with build()")
-    return _model_factory(cls)
+    def decorate(model_cls):
+        if not isinstance(model_cls, type) or not callable(
+            getattr(model_cls, "build", None)
+        ):
+            raise TypeError("component() expects a model class with build()")
+        return _model_factory(model_cls, include=include)
+
+    if cls is None:
+        return decorate
+    return decorate(cls)
 
 def _reusable_assembly_object(cls, *args, **kwargs):
     """Build an imported assembly class without exposing build_* helpers."""
