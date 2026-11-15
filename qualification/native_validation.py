@@ -393,6 +393,42 @@ def validate_parametric_placement_pair(root: Path) -> Validation:
     return v
 
 
+def validate_rotated_copy_placement(root: Path) -> Validation:
+    v = Validation("rotated-copy-placement")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "rotated-copy-placement")
+
+    rows = bodies_named(d, "Panel")
+    actual = sorted(
+        (body["bbox"]["min"], body["bbox"]["max"])
+        for body in rows
+    )
+    expected = sorted([
+        ([-45, -10, 0], [-35, 10, 4]),
+        ([35, -10, 0], [45, 10, 4]),
+    ])
+    v.check(
+        "rotated copies retain declared parent-frame translation",
+        actual == expected,
+        expected,
+        actual,
+    )
+
+    joint_results = load(root / "joint-inspect.json")
+    joint_payload = (
+        joint_results[0]
+        if isinstance(joint_results, list) and joint_results
+        else joint_results
+    )
+    joints = (
+        joint_payload.get("joints", [])
+        if isinstance(joint_payload, dict)
+        else None
+    )
+    v.check("placement creates no native joints", joints == [], [], joints)
+    return v
+
+
 def validate_group_hierarchy(root: Path) -> Validation:
     v = Validation("group-hierarchy")
     d = load(root / "measurements.json")
@@ -889,6 +925,7 @@ VALIDATORS = {
     "assembly-decorator": validate_assembly_decorator,
     "parametric-move": validate_parametric_move,
     "parametric-placement-pair": validate_parametric_placement_pair,
+    "rotated-copy-placement": validate_rotated_copy_placement,
     "group-hierarchy": validate_group_hierarchy,
     "attach-angle": validate_attach_angle,
     "as-built-attach": validate_as_built_attach,
