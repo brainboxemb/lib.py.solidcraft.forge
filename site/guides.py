@@ -131,21 +131,22 @@ parameter. No extra publication or alias declaration is needed.</p>
 (<code>Box</code>, <code>Hole</code>, an extrusion). A <strong>component
 occurrence</strong> is one placed instance of a shared, editable model definition.
 Do not confuse a new occurrence with a new feature history.</p>
-""" + code("""from scpf import Box, component
+""" + code("""from scpf import Box, Placement, component
 
 class Block:
     def build(self):
         return Box(40, 20, 10)
 
 BlockComponent = component(Block)
-first = BlockComponent()
-second = first.copy().move(x=50)
+first = BlockComponent(placement=Placement(x=-25))
+second = first.copy().at(x=25)
 assembly = first + second""") + """
 <p>The two occurrences share the same <code>Block</code> definition.
-<code>copy()</code> does not duplicate its features. The compiler creates
-all native occurrences in place first, then sends their individual
-placement commands to SolidCraft. This keeps rotations and offsets
-independent.</p>
+<code>Placement</code> is occurrence state: it describes where a physical copy
+belongs without becoming part of the shared component definition.
+<code>at()</code> sets an absolute placement; <code>move()</code> applies a
+relative change to an existing placement. The compiler chooses the native
+SolidCraft lowering after the final placement is known.</p>
 <h2 id="groups">Groups are actual native parent components</h2>
 """ + code("""blocks = (first + second).group("Blocks")""") + """
 <p>Grouping changes the browser hierarchy, not the geometry's orientation.
@@ -167,6 +168,7 @@ much easier once those three levels are kept separate.</p>
 <table><thead><tr><th>You mean…</th><th>Forge concept</th><th>SolidCraft result</th></tr></thead><tbody>
 <tr><td>Geometry inside one part</td><td><code>Shape</code></td><td>Native geometry/features in one definition</td></tr>
 <tr><td>One reusable physical part</td><td><code>@component</code> class</td><td>Reusable component definition</td></tr>
+<tr><td>Where/how one occurrence stands</td><td><code>Placement</code>, <code>at()</code>, <code>move()</code>, <code>rotate()</code></td><td>Occurrence placement</td></tr>
 <tr><td>One placed copy of that part</td><td><code>Block()</code> / <code>copy()</code></td><td>Component occurrence</td></tr>
 <tr><td>Several parts collected together</td><td><code>a + b</code></td><td>Assembly containing occurrences</td></tr>
 <tr><td>One part depends on another</td><td><code>attach()</code></td><td>Native SolidCraft assembly relationship/joint</td></tr>
@@ -204,8 +206,8 @@ creates another occurrence of the same definition without duplicating the
 feature history.</p>
 
 <h2 id="collection">2. Put components in one assembly</h2>
-""" + code("""first = Block()
-second = first.copy().move(x=60)
+""" + code("""first = Block(placement=Placement(x=-30))
+second = first.copy().at(x=30)
 
 assembly = first + second""") + """
 <p>Here <code>first + second</code> means “these two component occurrences
@@ -213,9 +215,11 @@ belong to one assembly”. It does <strong>not</strong> Boolean-union their soli
 <div class="notice"><strong>Same operator, different level:</strong>
 <code>Shape + Shape</code> describes supported geometric union;
 <code>occurrence + occurrence</code> builds an assembly of physical parts.</div>
-<p><code>move()</code> is enough when the position itself is the intended design
-rule: “put this occurrence at this offset”. It does not by itself say that the
-second block is mechanically related to a face or corner of the first.</p>
+<p><code>Placement</code> is enough when the position itself is the intended
+design rule. <code>at()</code> expresses an absolute location and
+<code>move()</code> a relative offset. Neither creates a mechanical
+relationship; use <code>attach()</code> when another occurrence owns the
+relationship.</p>
 
 <h2 id="reusable-assembly">3. Use @assembly when the composition itself is reusable</h2>
 <p>You do not need <code>@assembly</code> merely because a script contains

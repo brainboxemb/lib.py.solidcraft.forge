@@ -30,7 +30,10 @@ class AssemblyDecoratorCommandTests(unittest.TestCase):
             for row in commands
             if row["command"] == "occurrence.copy"
         ]
-        self.assertEqual(copies, [{"component": "Post"}])
+        self.assertEqual(
+            copies,
+            [{"component": "Post", "translate": [15.0, 0.0, 0.0]}],
+        )
 
         moves = [
             row["params"]
@@ -41,7 +44,6 @@ class AssemblyDecoratorCommandTests(unittest.TestCase):
             [(row["occurrence"], row["translate"]) for row in moves],
             [
                 ("Post:1", [-15.0, 0.0, 0.0]),
-                ("Post:2", [15.0, 0.0, 0.0]),
             ],
         )
 
