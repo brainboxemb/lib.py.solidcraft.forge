@@ -19,7 +19,9 @@ permissions:
   contents: write
 
 concurrency:
-  group: scpf-qualification-${{ github.ref }}
+  # v2 separates the expanded native + reference-render gate from stale runs
+  # created before executable PythonSCAD/pyBOSL2 evidence became blocking.
+  group: scpf-qualification-v2-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
