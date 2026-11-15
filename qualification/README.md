@@ -63,7 +63,19 @@ SolidCraft process; do not add daemon/process-reuse complexity without evidence
 that startup is the bottleneck.
 
 The same runner is available in GitHub Actions through
-`SCPF affected-case qualification` (manual workflow dispatch).
+`SCPF affected-case qualification` (manual workflow dispatch). That workflow
+also executes the selected PythonSCAD and pyBOSL2 references and stores their
+independently exported STL/render evidence.
+
+To run those comparison references locally after installing the pinned
+comparison libraries:
+
+```text
+python qualification/reference_validation.py \
+  --cases four-corner-l \
+  --out output/references \
+  --source-sha local
+```
 
 ## Full gate
 
