@@ -375,7 +375,7 @@ def check(
                     slug,
                     implementation,
                 )
-            assert "independently exported STL" in page_text, slug
+            assert "independently exported stl" in page_text.lower(), slug
         if require_native:
             manifest_case = qualification_manifest["cases"][slug]
             result_path = site / "qualification" / slug / "qualification-result.json"
