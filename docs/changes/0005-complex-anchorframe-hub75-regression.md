@@ -58,9 +58,13 @@ Keep the fixture close to the HUB75 construction but deliberately small:
 
 - opening between side boards;
 - two vertical side boards, each one wall thickness wide;
+- SideBoard itself is only `Box(width, depth, height)`; all cabinet position
+  belongs to its occurrence `Placement`;
 - cabinet depth along +Y;
 - boards start one wall thickness above the outside bottom datum;
 - one neutral polygonal L-profile in local XZ;
+- in this diagnostic the L-profile wall thickness is the same 12 mm as the
+  side-board/frame wall, matching the historically working HUB75 mount frames;
 - the profile is extruded symmetrically along Y;
 - front/rear profiles share the same X/Z corner class and differ only in Y.
 
@@ -68,9 +72,9 @@ The four expected X/Z orientation classes are:
 
 | Corner | Baseline orientation |
 | --- | --- |
-| top-left | neutral |
-| top-right | Z 180° |
-| bottom-left | X 180° |
+| top-left | Y 0° |
+| top-right | Y 90° |
+| bottom-left | Y 270° |
 | bottom-right | Y 180° |
 
 This avoids the ambiguity of quarter-turning an asymmetric L-profile.
@@ -80,7 +84,9 @@ This avoids the ambiguity of quarter-turning an asymmetric L-profile.
 The child frames model the same A/B mounting references used by the earlier
 HUB75 experiment.
 
-Let `w` be the L-profile wall thickness:
+Let `w` be the L-profile wall thickness. In this fixture `w = 12 mm`,
+the same value as the side-board wall thickness, because that equality is part
+of the historically working HUB75 mount geometry:
 
 - A = `(0, 0, -w)`
 - B = `(w, 0, 0)`
@@ -186,11 +192,19 @@ This change does not:
 
 ## Expected implementation investigation
 
-Issue #162 identified a likely interoperability problem: attached occurrences
-can receive a symbolic seed pose in the Python model but assembly lowering may
-flatten that pose when `attachment is not None`. SolidCraft 0.42 can then
-re-solve one floating joint graph differently from another after a parent
-parameter-driven move.
+Historical CI now gives a stronger boundary:
 
-Change 0005 must prove or disprove that mechanism with the new fixture. The
-diagnostic, not the historical hypothesis, determines the fix.
+- CAD commit `7859e3f...`: inside-corner child frames + joint angles, native PASS;
+- CAD commit `4d4130...`: A/B child frames, native PASS;
+- CAD commit `a03c6ae...`: moving the mount frames out of the reusable component,
+  native FAIL;
+- later direct-frame work could pass native again, before the Forge Placement
+  migration exposed the saved-design regression.
+
+Issue #162 also identified a separate lowering problem: attached occurrences
+could receive a symbolic seed pose in the Python model but assembly lowering
+flattened it when `attachment is not None`. Change 0005 fixes and locks that
+command-level regression, then uses the A/B native comparison to determine
+whether any solver/frame issue remains.
+
+The diagnostic, not the historical hypothesis, determines the final fix.
