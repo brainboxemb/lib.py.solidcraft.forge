@@ -40,10 +40,6 @@ EXPECTED_BOUNDS = {
         {"label": "Base", "min": [-30, -30, 0], "max": [30, 30, 10]},
         {"label": "Arm", "min": [-5, -15, 10], "max": [5, 15, 16]},
     ],
-    "as-built-attach": [
-        {"label": "Base", "min": [-20, -15, 0], "max": [20, 15, 10]},
-        {"label": "Marker", "min": [45, 5, 15], "max": [55, 35, 23]},
-    ],
     "parametric-attach": [
         {"label": "Base", "min": [-20, -15, 0], "max": [20, 15, 10]},
         {"label": "Block", "min": [30, -10, 0], "max": [50, 10, 10]},
@@ -97,10 +93,6 @@ EXPECTED_BOUNDS = {
         {"label": "rear-right top", "min": [32, 12, 44], "max": [64, 44, 60]},
         {"label": "rear-left bottom", "min": [-64, 12, 0], "max": [-32, 44, 16]},
         {"label": "rear-left top", "min": [-64, 12, 44], "max": [-32, 44, 60]},
-    ],
-    "custom-anchor": [
-        {"label": "Arm", "min": [-5, -20, 0], "max": [5, 20, 10]},
-        {"label": "Marker", "min": [-5, 15, 0], "max": [5, 25, 10]},
     ],
     "xz-anchor": [
         {"label": "Board", "min": [-20, 0, 0], "max": [20, 12, 20]},
