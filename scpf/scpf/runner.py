@@ -758,6 +758,8 @@ def run_script(path: str | Path) -> dict:
         "Y": core.Y,
         "Z": core.Z,
         "Sketch": Sketch,
+        "component": component,
+        "assembly": assembly,
     }
     if isinstance(definition, ast.FunctionDef):
         _implicit_shape(definition.body)
