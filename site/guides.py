@@ -54,8 +54,10 @@ want to add commands to the current design. Neither form saves the design.
 The CAD project also provides a separate native CLI qualification workflow.</p>
 <h2 id="next">Where to continue</h2>
 <p>Read <a href="../model-objects/">Model objects</a> to understand the difference
-between a shape definition and a placed component occurrence. The
-<a href="../transformations/">Transformations</a> chapter covers coordinate axes,
+between a shape definition and a placed component occurrence. Then read
+<a href="../assembly-basics/">From one component to an assembly</a> before building
+multi-part models: it explains when to use placement, anchors, relationships and
+groups. The <a href="../transformations/">Transformations</a> chapter covers coordinate axes,
 rotation and the common “my panel is lying flat” problem.</p>""",
     },
     {
@@ -152,6 +154,161 @@ At present one shared definition cannot be split among different groups.</p>
 <p>Associative attachment is supported for a limited set of rectangular
 component faces. General mates, arbitrary face queries and rotational
 constraints are not implemented as a complete assembly solver.</p>""",
+    },
+    {
+        "slug": "assembly-basics",
+        "title": "From one component to an assembly",
+        "summary": "When to use a Shape, component, occurrence, anchor, relationship or group.",
+        "body": """
+<h2 id="mental-model">Start with the mental model</h2>
+<p>Forge separates <strong>geometry</strong> from <strong>physical parts</strong>
+and from <strong>relationships between parts</strong>. Most assembly code becomes
+much easier once those three levels are kept separate.</p>
+<table><thead><tr><th>You mean…</th><th>Forge concept</th><th>SolidCraft result</th></tr></thead><tbody>
+<tr><td>Geometry inside one part</td><td><code>Shape</code></td><td>Native geometry/features in one definition</td></tr>
+<tr><td>One reusable physical part</td><td><code>@component</code> class</td><td>Reusable component definition</td></tr>
+<tr><td>One placed copy of that part</td><td><code>Block()</code> / <code>copy()</code></td><td>Component occurrence</td></tr>
+<tr><td>Several parts collected together</td><td><code>a + b</code></td><td>Assembly containing occurrences</td></tr>
+<tr><td>One part depends on another</td><td><code>attach()</code></td><td>Native SolidCraft assembly relationship/joint</td></tr>
+<tr><td>A named mounting reference</td><td><code>Anchor</code>, <code>AnchorFrame</code>, <code>AnchorTopology</code></td><td>Reference used by that relationship</td></tr>
+<tr><td>Browser/subassembly organisation</td><td><code>group()</code></td><td>Nested native component</td></tr>
+</tbody></table>
+
+<h2 id="simple-component">1. A component means one physical part</h2>
+<p>A component is <strong>not</strong> limited to one primitive. It is the
+definition of one physical manufactured item. Its <code>build()</code> may
+contain several primitives, sketches, holes, bosses, fillets and other features
+as long as they together describe that one part.</p>
+""" + code("""from scpf import Box, Cylinder, component
+
+@component
+class MountingPlate:
+    width = 80.0
+    depth = 50.0
+    thickness = 5.0
+
+    def build(self):
+        plate = Box(self.width, self.depth, self.thickness)
+        boss = Cylinder(d=16, h=12).at(0, 0, self.thickness)
+        return plate + boss""") + """
+<p>The plate and cylindrical boss are geometry/features inside
+<strong>one component</strong>. They do not need an assembly joint because
+they are not separate physical parts.</p>
+<div class="notice"><strong>Physical-part test:</strong> if the boss is machined,
+printed or moulded as part of the plate, keep it inside one component. If it is
+actually a separate brass insert pressed into the plate, make a second component
+and relate the two occurrences in an assembly.</div>
+<p><code>MountingPlate</code> is the reusable definition. Calling
+<code>MountingPlate()</code> creates one occurrence; <code>copy()</code>
+creates another occurrence of the same definition without duplicating the
+feature history.</p>
+
+<h2 id="collection">2. Put components in one assembly</h2>
+""" + code("""first = Block()
+second = first.copy().move(x=60)
+
+assembly = first + second""") + """
+<p>Here <code>first + second</code> means “these two component occurrences
+belong to one assembly”. It does <strong>not</strong> Boolean-union their solids.</p>
+<div class="notice"><strong>Same operator, different level:</strong>
+<code>Shape + Shape</code> describes supported geometric union;
+<code>occurrence + occurrence</code> builds an assembly of physical parts.</div>
+<p><code>move()</code> is enough when the position itself is the intended design
+rule: “put this occurrence at this offset”. It does not by itself say that the
+second block is mechanically related to a face or corner of the first.</p>
+
+<h2 id="reusable-assembly">3. Use @assembly when the composition itself is reusable</h2>
+<p>You do not need <code>@assembly</code> merely because a script contains
+several components. Use it when the <em>composition itself</em> is a reusable
+model object that you want to import or instantiate as a subassembly.</p>
+""" + code("""from scpf import Anchor, assembly
+
+@assembly
+class BlockPair:
+    def build(self):
+        left = Block()
+        right = Block().attach(
+            left,
+            parent=Anchor.RIGHT,
+            child=Anchor.LEFT,
+        )
+        return left + right
+
+pair = BlockPair()""") + """
+<p>The component definitions remain the physical parts. <code>BlockPair</code>
+describes how those occurrences are composed. This is different from
+<code>group()</code>: an assembly expresses the model composition; grouping
+controls the native nested hierarchy/browser unit.</p>
+
+<h2 id="relationship">4. Use attach() when the relationship is the intent</h2>
+<p>If the real rule is “the left side of this part belongs on the right side of
+that part”, encode that relationship instead of calculating a replacement XYZ
+coordinate yourself.</p>
+""" + code("""from scpf import Anchor
+
+left = Block()
+right = Block().attach(
+    left,
+    parent=Anchor.RIGHT,
+    child=Anchor.LEFT,
+)
+
+assembly = left + right""") + """
+<p>Forge records an associative attachment between the two occurrences and
+lowers that to the native SolidCraft relationship mechanism. The anchors say
+<strong>which references are related</strong>; they are not just prettier names
+for a hard-coded XYZ point.</p>
+<p>This is the important rule: <strong>use an anchor when you need to describe a
+relationship or semantic mounting reference</strong>. Do not add anchors to every
+component pre-emptively.</p>
+
+<h2 id="anchor-choice">5. Which kind of anchor?</h2>
+<table><thead><tr><th>Situation</th><th>Use</th></tr></thead><tbody>
+<tr><td>Normal rectangular face/corner is enough</td><td><code>Anchor.LEFT</code>, <code>Anchor.FRONT_TOP_RIGHT</code>, etc.</td></tr>
+<tr><td>The reusable part owns a special mounting point and orientation</td><td>Named <code>AnchorFrame</code> returned by the component's <code>anchors()</code></td></tr>
+<tr><td>The reference must follow a particular native edge/corner topology</td><td><code>AnchorTopology</code></td></tr>
+<tr><td>The reference exists only because of this larger assembly</td><td>Assembly-owned <code>with_anchor()</code>, not an application-specific anchor added to the generic part</td></tr>
+</tbody></table>
+<p>Start with the simplest standard <code>Anchor</code>. Move to
+<code>AnchorFrame</code> or <code>AnchorTopology</code> only when a face/corner
+reference cannot express the actual mounting intent.</p>
+
+<h2 id="solidcraft-relations">6. Let SolidCraft own the native relationship</h2>
+<p>Forge describes the relationship; SolidCraft owns the resulting native
+geometry, occurrence hierarchy and joint data. Forge is not intended to grow a
+second general mating solver. That is also why a meaningful
+<code>attach()</code> is preferable to Forge inventing increasingly clever
+coordinate corrections.</p>
+<p><code>offset=(u, v)</code> moves within the attachment plane,
+<code>gap</code> is normal distance between references, and <code>angle</code>
+is the relative turn around the attachment normal. These are relationship
+values, not a replacement global XYZ transform.</p>
+<p>There are two useful attachment modes. Normal <code>attach()</code> uses the
+chosen references to determine the relationship and placement. Use
+<code>attach(..., as_built=True)</code> when both occurrences are already in the
+intended pose and SolidCraft should record that existing pose as a fixed
+assembly relationship instead of repositioning them.</p>
+
+<h2 id="group">7. A group is organisation, not a relationship</h2>
+""" + code("""frame = (left + right).group("Frame")""") + """
+<p><code>group("Frame")</code> creates a real nested native component so the
+occurrences appear together in the SolidCraft browser hierarchy. Grouping does
+not mate, align or rotate the parts and does not replace <code>attach()</code>.</p>
+<p>Use a group when the collection itself is a useful named subassembly or
+browser unit. Do not create a group merely because two components touch.</p>
+
+<h2 id="decision">A practical decision sequence</h2>
+<ol>
+<li>Will these features be manufactured as one physical item? Keep them in one component, even if the geometry is complex.</li>
+<li>Is something installed or manufactured separately? Give it its own component occurrence.</li>
+<li>Do you only need a deliberate position? Use <code>move()</code>/<code>rotate()</code>.</li>
+<li>Should one separate part follow another semantically? Use <code>attach()</code> and the simplest suitable anchor.</li>
+<li>Is a standard face/corner insufficient? Define an <code>AnchorFrame</code> or topology-backed reference at the level that owns that meaning.</li>
+<li>Do several occurrences form a useful named subassembly/browser unit? Then use <code>group()</code>.</li>
+</ol>
+<p>After this page, the <a href="../components/">Components and assemblies</a>
+chapter covers parameter sharing, offsets, custom frames, topology anchors and
+assembly-owned datums in detail.</p>""",
     },
     {
         "slug": "geometry",
@@ -318,11 +475,11 @@ editable shape features are omitted here for clarity.</p>
     }}
   ]
 }""") + """
-<p>SolidCraft 0.30.1 understands the native <code>translate</code>,
+<p>SolidCraft 0.42.0 understands the native <code>translate</code>,
 <code>axis</code> and <code>angle</code> parameters. SCPF does
-<strong>not</strong> calculate transformation matrices. The newer
-<code>to</code> placement field is not supported by 0.30.1; using it
-previously left a panel flat without reporting an error.</p>
+<strong>not</strong> calculate transformation matrices. Forge uses the qualified 0.42.0 occurrence-placement contract directly; it
+does not invent transformation matrices or depend on an unqualified placement
+field.</p>
 <p>Passing a command-plan test is not enough to prove the CAD is right.
 The CAD project's native tests also inspect the rotations and
 positions saved in SolidCraft's own design, and front/rear screenshots
@@ -352,7 +509,7 @@ hole = Hole(d=8, depth=Depth.THROUGH_ALL)
 plate = plate + hole.on(plate, face=Faces.TOP)""") + """
 <p>A <code>Hole</code> is a native hole feature: adding it to the shape
 means adding the operation that <em>removes</em> material.
-<code>Faces.TOP</code> selects its entry face. Simple feature placement
+<a href="../../reference/Faces/"><code>Faces.TOP</code></a> selects its entry face. Simple feature placement
 uses <code>on()</code>; assembly attachment uses explicit anchors.</p>
 <h2 id="fillet">Fillets and chamfers</h2>
 """ + code("""from scpf import Box, Edges
@@ -365,9 +522,9 @@ always be inferred reliably from a visual camera position.</p>
 <h2 id="shell">Shells</h2>
 """ + code("""from scpf import Box, Faces
 case = Box(80, 50, 30).shell(2, open=Faces.TOP)""") + """
-<p><code>Faces.TOP</code> chooses the face to open and is also the same
+<p><a href="../../reference/Faces/"><code>Faces.TOP</code></a> chooses the face to open and is also the same
 surface-selection vocabulary used by <code>feature.on(...)</code>.
-<code>Anchor</code> is reserved for explicit component attachment in
+<a href="../../reference/Anchor/"><code>Anchor</code></a> is reserved for explicit component attachment in
 assemblies. See the source and regression tests for supported feature chains.</p>
 <h2 id="anchors">Position without hard-coded global offsets</h2>
 """ + code("""from scpf import X, Y, Boss, Anchor
@@ -406,9 +563,10 @@ class BeamPair:
         return (left + right).group("Beams")
 
 pair = BeamPair()""") + """
-<p><code>@component</code> marks a reusable physical part whose
-<code>build()</code> returns one Shape. <code>@assembly</code> marks a class
-whose <code>build()</code> composes component occurrences. Both decorators
+<p><code>@component</code> marks one reusable physical part. Its
+<code>build()</code> returns the complete geometry/feature tree for that part;
+that tree may be made from many primitives and features. <code>@assembly</code>
+marks a class whose <code>build()</code> composes separate component occurrences. Both decorators
 return callable model objects, so normal model code stays readable as
 <code>Beam()</code> and <code>BeamPair()</code>.</p>
 <p>SolidCraft receives one reusable definition and multiple occurrences.
@@ -453,7 +611,7 @@ marker = Marker().attach(
     child=Anchor.BACK_TOP_RIGHT,
 )""") + """
 <p><code>attach()</code> is the public Forge relationship between reusable
-components. <code>Anchor</code> selects the attachment reference: a supported
+components. <a href="../../reference/Anchor/"><code>Anchor</code></a> selects the attachment reference: a supported
 face, or one of the eight rectangular corners such as
 <code>FRONT_TOP_RIGHT</code>. Corner anchors compile to native SolidCraft
 edge/corner origins, so they follow dimension changes in a saved design.</p>
@@ -509,7 +667,7 @@ fixed local correction and pass the result to <code>attach(offset=...)</code>.
 This is useful when an assembly datum follows a frame parameter such as wall
 thickness while the reusable part keeps a fixed mounting correction.</p>
 <h2 id="anchor-frame">AnchorFrame: point plus orientation</h2>
-<p>An <code>AnchorFrame</code> describes one local attachment coordinate frame.
+<p>An <a href="../../reference/attachment-references/#AnchorFrame"><code>AnchorFrame</code></a> describes one local attachment coordinate frame.
 <code>origin</code> gives the local point; <code>z</code> gives the attachment
 normal and <code>x</code> fixes the rotation around that normal. Use it when a
 single point or rectangular <code>Anchor</code> is not enough to describe how
@@ -530,7 +688,7 @@ bracket = CornerBracket().attach(
 <p>There are two ownership patterns. If the datum is an intrinsic part of a
 reusable component, expose it with <code>anchors()</code> and refer to it by
 name. If the frame exists only because of a particular assembly or mounting
-choice, construct the <code>AnchorFrame</code> in that assembly and pass it
+choice, construct the <a href="../../reference/attachment-references/#AnchorFrame"><code>AnchorFrame</code></a> in that assembly and pass it
 directly to <code>attach()</code>. This keeps application knowledge out of the
 generic component definition.</p>
 """ + code("""@component
@@ -548,7 +706,7 @@ class Sensor:
         return Box(24, 12, 8)
 
 sensor = Sensor().attach(panel, child="connector")""") + """
-<p>For an unrotated occurrence, Forge lowers an <code>AnchorFrame</code>
+<p>For an unrotated occurrence, Forge lowers an <a href="../../reference/attachment-references/#AnchorFrame"><code>AnchorFrame</code></a>
 directly into the native <code>joint.create</code> reference as
 <code>point</code>, <code>z</code> and <code>x</code>; it does not create a
 persistent visible <code>joint.origin</code>. Named frames on explicitly

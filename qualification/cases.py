@@ -5,6 +5,8 @@ contract between the public Forge API, Forge's compiler model and native
 SolidCraft behaviour.  The site and site tests both consume this table.
 """
 
+from scpf.version import TESTED_SOLIDCRAFT_VERSION
+
 REFERENCE_URLS = {
     "SolidCraft": "https://docs.solidcraft.io/guide/assemblies.html",
     "BOSL2": "https://github.com/BelfrySCAD/BOSL2/wiki/Tutorial-Attachment-Overview",
@@ -16,7 +18,7 @@ REFERENCE_URLS = {
 QUALIFICATION_LEVELS = [
     ("Q1", "Python API", "Public API validation, symbolic values and compiler invariants."),
     ("Q2", "Command contract", "Generated SolidCraft command JSON is complete and inspectable."),
-    ("Q3", "Native build", "SolidCraft 0.30.1 accepts the command plan and saves an editable design."),
+    ("Q3", "Native build", f"SolidCraft {TESTED_SOLIDCRAFT_VERSION} accepts the command plan and saves an editable design."),
     ("Q4", "Native measurement", "Timeline and actual body measurements match the expected result."),
     ("Q5", "Parametric mutation", "A saved design re-solves correctly after parameters.change."),
     ("Q6", "Visual regression", "Fixed-camera native renders are checked from multiple views and published with reference/diff evidence."),
@@ -346,7 +348,7 @@ QUALIFICATION_CASES = [
         "forge_api": "Boss(...).attach(...); with behavior(history=History.SKETCH); explicit Sketch(...).add(Circle2D(...)).extrude(...)",
         "forge_model": "One plate receives the same Boss intent three times: AUTO and explicit NATIVE lower as native plastic features, while SKETCH lowers through editable sketch/extrude/cut history; a separately named explicit sketch adds a circular pad.",
         "lowering": "AUTO and History.NATIVE each emit plastic.boss. History.SKETCH emits a Boss sketch plus join extrusion and a Boss-hole sketch plus cut extrusion. The explicit named Sketch remains a distinct sketch and join extrusion.",
-        "native_expectation": "SolidCraft 0.30.1 builds one plate body with three bosses (AUTO, NATIVE and SKETCH) plus the explicit circular pad, while the saved timeline preserves both native BossFeatures and the forced-sketch feature chain.",
+        "native_expectation": f"SolidCraft {TESTED_SOLIDCRAFT_VERSION} builds one plate body with three bosses (AUTO, NATIVE and SKETCH) plus the explicit circular pad, while the saved timeline preserves both native BossFeatures and the forced-sketch feature chain.",
         "mutation": "No saved-design mutation in this fixture; the contract is persisted native feature history and geometry.",
         "references": [
             ("SolidCraft", "The native timeline is the source of truth for whether feature history remains inspectable after Python compilation."),
@@ -376,7 +378,7 @@ QUALIFICATION_CASES = [
         "forge_api": "with Sketch(name='Rounded pad', on=body): add(RoundedRectangle2D(...)); body + sketch.extrude(...)",
         "forge_model": "One 80 x 60 x 5 mm base plate plus a centered 40 x 30 mm rounded-rectangle pad with 5 mm corner radius and 8 mm height.",
         "lowering": "The named explicit Sketch emits one sketch.rectangle.rounded with true arc corners, then a native solid.extrude(operation='join').",
-        "native_expectation": "One joined body spans 80 x 60 x 13 mm; the saved Rounded pad sketch remains a single closed profile built from four lines and four circular arcs.",
+        "native_expectation": "The result is one joined body: an 80 x 60 x 5 mm base plate with a centered 40 x 30 x 8 mm rounded pad on top. The Rounded pad sketch has one closed profile made from four straight edges and four corner arcs. SolidCraft 0.42 also adds one construction diagonal between opposite arc centres; that construction line is not part of the profile.",
         "mutation": "No saved-design mutation in this fixture; it isolates explicit rounded-rectangle sketch geometry and native join extrusion.",
         "references": [
             ("SolidCraft", "Native rounded sketch rectangles preserve true arc geometry and remain inspectable in the saved sketch."),

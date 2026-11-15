@@ -1,16 +1,15 @@
 """Guard against untested SolidCraft native command interpretations.
 
-SCPF currently targets SolidCraft 0.30.1. In particular occurrence.move
-absolute 'to' is not understood by v0.30.1, even though unknown fields were
-accepted by older lax implementations. Always inspect the effective native
-occurrence transform, not just command acceptance.
+TESTED_SOLIDCRAFT_VERSION is the single source of truth for the SolidCraft
+version qualified by this Forge revision. Workflows and downstream CAD
+projects must read this value rather than duplicating a version literal.
 """
 import re
 import shutil
 import subprocess
 import warnings
 
-TESTED_SOLIDCRAFT_VERSION = "0.30.1"
+TESTED_SOLIDCRAFT_VERSION = "0.42.0"
 _VERSION = re.compile(r"(?<!\d)(\d+)\.(\d+)\.(\d+)(?!\d)")
 
 

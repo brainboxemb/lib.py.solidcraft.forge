@@ -1,0 +1,52 @@
+"""Qualification references must exist for every case and remain valid Python."""
+
+import ast
+from pathlib import Path
+import unittest
+
+from qualification.cases import QUALIFICATION_CASES
+
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+class ReferenceModelTests(unittest.TestCase):
+    def test_every_qualification_has_python_references(self):
+        for case in QUALIFICATION_CASES:
+            slug = case["slug"]
+            with self.subTest(case=slug):
+                for reference in ("pythonscad", "pybosl2"):
+                    path = (
+                        ROOT / "examples" / slug / reference / "model.py"
+                    )
+                    self.assertTrue(path.is_file(), path)
+                    source = path.read_text(encoding="utf-8")
+                    compile(source, str(path), "exec")
+                    self.assertTrue(source.strip(), path)
+                    tree = ast.parse(source, filename=str(path))
+                    self.assertTrue(ast.get_docstring(tree), path)
+                    self.assertTrue(
+                        any(
+                            isinstance(node, ast.Assign)
+                            and any(
+                                isinstance(target, ast.Name)
+                                and target.id == "model"
+                                for target in node.targets
+                            )
+                            for node in ast.walk(tree)
+                        ),
+                        f"{path} must expose final geometry as model",
+                    )
+
+    def test_references_do_not_become_forge_api_sources(self):
+        for case in QUALIFICATION_CASES:
+            slug = case["slug"]
+            for reference in ("pythonscad", "pybosl2"):
+                source = (
+                    ROOT / "examples" / slug / reference / "model.py"
+                ).read_text(encoding="utf-8")
+                self.assertNotIn("from scpf", source, (slug, reference))
+
+
+if __name__ == "__main__":
+    unittest.main()

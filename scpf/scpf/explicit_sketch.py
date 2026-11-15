@@ -19,7 +19,17 @@ def register_profile(profile):
 
 
 class Sketch:
-    """Explicit 2D sketch scope, standalone or attached to an existing shape."""
+    """Create an explicit named 2D sketch scope.
+
+    Use when:
+        Author one or more 2D profiles before creating a 3D extrusion. A
+        Sketch may be standalone on XY/XZ/YZ or supported by an existing Shape.
+
+    Limits:
+        Sketch(on=target) selects the supporting shape; profile placement
+        inside the sketch is a separate operation. Leave the with-scope before
+        extruding.
+    """
 
     def __init__(self, *, name="Profile", on=None, parent=Anchor.TOP, plane=None, origin=None, offset=None):
         if not isinstance(name, str) or not name.strip():
@@ -71,6 +81,16 @@ class Sketch:
         return False
 
     def add(self, profile, *, offset=(0, 0)):
+        """Add a supported 2D profile to this Sketch.
+
+        Use when:
+            Explicitly add or reposition Circle2D, Rectangle2D, Polygon2D,
+            RoundedRectangle2D or Text2D geometry in the active sketch.
+
+        Limits:
+            Placement currently uses numeric offset=(x, y). Semantic 2D anchor
+            placement is not implemented by this method yet.
+        """
         if self._closed:
             raise ValueError("cannot add geometry after leaving the Sketch scope")
         if not isinstance(profile, Shape) or profile.kind not in ("circle", "rectangle", "rounded_rectangle", "text", "polygon"):
@@ -87,6 +107,16 @@ class Sketch:
         return profile
 
     def extrude(self, distance, *, direction=Direction.POSITIVE):
+        """Extrude a completed Sketch into a supported 3D feature.
+
+        Use when:
+            Leave the Sketch context and then create material using a finite
+            distance and, when needed, a Direction relative to the sketch plane.
+
+        Limits:
+            A standalone Sketch requires a finite distance. Depth.THROUGH_ALL
+            is only meaningful for a Sketch attached to an existing Shape.
+        """
         if not self._closed:
             raise ValueError("leave the Sketch scope before extruding it")
         if distance is not Depth.THROUGH_ALL and pv(distance) <= 0:

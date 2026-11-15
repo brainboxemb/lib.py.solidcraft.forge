@@ -11,7 +11,7 @@ on:
       - "scpf/**"
       - "examples/**"
       - "qualification/**"
-      - "site/api_coverage.py"
+      - "site/**"
       - ".github/workflows/scpf.yml"
   workflow_dispatch: {}
 
@@ -19,14 +19,14 @@ permissions:
   contents: write
 
 concurrency:
-  group: scpf-qualification-${{ github.ref }}
+  # v2 separates the expanded native + reference-render gate from stale runs
+  # created before executable PythonSCAD/pyBOSL2 evidence became blocking.
+  group: scpf-qualification-v2-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   package:
     runs-on: ubuntu-latest
-    env:
-      SOLIDCRAFT_VERSION: "0.30.1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -34,6 +34,13 @@ jobs:
           python-version: "3.12"
       - name: Install SCPF editable as an external-style package
         run: python -m pip install -e ./scpf pillow
+
+      - name: Read qualified SolidCraft version from Forge
+        shell: bash
+        run: |
+          version="$(python -c 'from scpf.version import TESTED_SOLIDCRAFT_VERSION; print(TESTED_SOLIDCRAFT_VERSION)')"
+          echo "SOLIDCRAFT_VERSION=$version" >> "$GITHUB_ENV"
+          echo "SolidCraft qualification target: $version"
 
       - name: Restore rendered CADCraft diagrams
         id: cadcraft_diagrams
@@ -80,8 +87,26 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/output/qualification"
           cd "$RUNNER_TEMP"
           python -m unittest discover \
-            -s "$GITHUB_WORKSPACE/qualification/tests" -v 2>&1 \
+            -s "$GITHUB_WORKSPACE/qualification/tests" \
+            -t "$GITHUB_WORKSPACE" -v 2>&1 \
             | tee "$GITHUB_WORKSPACE/output/qualification/q2-python-qualification-tests.txt"
+      - name: Install pinned comparison libraries
+        run: |
+          python -m pip install \
+            "pythonscad==1.1.2" \
+            "git+https://github.com/pinkfish/pybosl2@d4279910c12435ed7224b3406616e495db1c96ec" \
+            "trimesh>=4,<5" \
+            "matplotlib>=3.8,<4"
+
+      - name: Execute and render all reference implementations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qualification/reference_validation.py \
+            --cases all \
+            --out output/references \
+            --source-sha "$GITHUB_SHA"
+
       - name: Compile self-contained API fixtures
         shell: bash
         run: |
@@ -96,7 +121,7 @@ jobs:
             count="$(jq '.commands | length' "output/$model.json")"
             printf "%s\t%s\tPASS\n" "$model" "$count" >> output/qualification/q2-command-contract.tsv
           done
-      - name: Install official SolidCraft 0.30.1 (checksum-verified)
+      - name: Install official SolidCraft release (checksum-verified)
         shell: bash
         run: |
           set -euo pipefail
@@ -400,6 +425,7 @@ jobs:
             output/qualification
             output/*.json
             output/native
+            output/references
           if-no-files-found: warn
           retention-days: 30
 
@@ -408,23 +434,34 @@ jobs:
         run: |
           set -euo pipefail
           unset PYTHONPATH
-          python site/build.py --out output/site --source-sha "$GITHUB_SHA" --native output/native --diagram-root output/diagrams
-          python site/test_site.py output/site "$GITHUB_SHA" --require-native
+          python site/build.py \
+            --out output/site \
+            --source-sha "$GITHUB_SHA" \
+            --native output/native \
+            --references output/references \
+            --diagram-root output/diagrams
+          python site/test_site.py output/site "$GITHUB_SHA" \
+            --require-native --require-references
       - name: Upload library site preview
         uses: actions/upload-artifact@v4
         with:
           name: scpf-library-site
           path: output/site
           if-no-files-found: error
-      - name: Resolve native PR preview target
+      - name: Resolve qualification preview target
         id: native_preview
-        if: success() && startsWith(github.ref_name, 'qualify/pr-')
+        if: success() && startsWith(github.ref_name, 'qualify/')
         shell: bash
         run: |
-          pr="${GITHUB_REF_NAME#qualify/pr-}"
-          echo "destination=previews/pr-$pr" >> "$GITHUB_OUTPUT"
+          slug="${GITHUB_REF_NAME#qualify/}"
+          slug="${slug//\//-}"
+          destination="previews/$slug"
+          repo="${GITHUB_REPOSITORY#*/}"
+          url="https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo}/${destination}/"
+          echo "destination=$destination" >> "$GITHUB_OUTPUT"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
 
-      - name: Publish native qualification to PR preview
+      - name: Publish qualification branch preview
         if: steps.native_preview.outputs.destination != ''
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -435,18 +472,19 @@ jobs:
           keep_files: true
           commit_message: "Native qualification ${{ github.ref_name }} at ${{ github.sha }}"
 
-      - name: Publish current library site
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./output/site
-          keep_files: true
-          commit_message: "SCPF library site at ${{ github.sha }}"
+      - name: Show qualification preview URL
+        if: steps.native_preview.outputs.url != ''
+        shell: bash
+        run: |
+          echo "### SolidCraft qualification preview" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- SolidCraft: **$SOLIDCRAFT_VERSION**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Branch: `$GITHUB_REF_NAME`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit: `$GITHUB_SHA`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Results: ${{ steps.native_preview.outputs.url }}qualification/results/" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Full preview: ${{ steps.native_preview.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Qualification status (non-blocking)
-        continue-on-error: true
+      - name: Enforce qualification status
         shell: bash
         run: |
           set -euo pipefail
@@ -470,4 +508,15 @@ jobs:
               )
           print(f"Qualification passed: {len(results['cases'])} case(s)")
           PY
+
+      - name: Publish current library site
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./output/site
+          keep_files: true
+          commit_message: "SCPF library site at ${{ github.sha }}"
+
 

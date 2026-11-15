@@ -45,7 +45,9 @@ is not yet a supported shorthand; use `rotate(axis=(0, 0, 1), degrees=180)`.
 
 ## Supported SolidCraft version
 
-The native command adapter and verification tests target **SolidCraft 0.30.1**.
+The exact qualified SolidCraft release is defined once by
+`scpf.version.TESTED_SOLIDCRAFT_VERSION`. CI, runtime compatibility checks and
+the generated qualification pages all read that same value.
 The library's `scpf.version.check_cli_version()` reads
 `solidcraft-cli --version`, **rejects older versions**, and emits a warning
 for newer or unverified versions. It is run automatically by the live SCPF
@@ -62,7 +64,7 @@ from scpf.version import check_cli_version
 check_cli_version(require_cli=True)
 ```
 
-### How placement works in SolidCraft 0.30.1
+### How occurrence placement is currently lowered
 
 SCPF does **not** calculate 3D transformation matrices. It tells SolidCraft
 where each occurrence belongs and lets SolidCraft apply the move and rotation.
@@ -117,12 +119,12 @@ The native commands for the first occurrence resemble:
 }
 ```
 
-**Why this matters:** SolidCraft 0.30.1 accepts `translate`, `axis`,
-`angle` and `origin`, but does **not** support the newer
-`to: {position, axis, angle}` syntax. An older command runner could
-silently ignore that unsupported `to` field, leaving panels flat while
-a JSON syntax test passed. Using native parameters and checking the
-**saved SolidCraft transforms** avoids that false success.
+**Why this matters:** this lowering was originally chosen because older
+qualified SolidCraft releases did not support every newer occurrence-placement
+form. Forge therefore verifies the **saved native transform**, not merely
+whether a command was accepted. Newer SolidCraft capabilities are adopted only
+after separate qualification rather than being silently substituted during an
+engine-version upgrade.
 
 `rotate()` currently **sets** one requested axis-angle orientation on
 the Python occurrence. Calling `rotate()` twice **replaces** the first

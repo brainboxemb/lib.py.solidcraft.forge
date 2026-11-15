@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Validate that the library Pages site is not a duplicate CAD model gallery."""
+import html
 import json
 from pathlib import Path
 import sys
@@ -10,9 +11,15 @@ from build import EXAMPLES, QUALIFICATION_CASES, QUALIFICATION_GROUPS
 from api_coverage import EXPORT_COVERAGE, CAPABILITY_COVERAGE
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 import scpf
+from scpf.version import TESTED_SOLIDCRAFT_VERSION
 
 
-def check(site: Path, sha: str, require_native: bool = False):
+def check(
+    site: Path,
+    sha: str,
+    require_native: bool = False,
+    require_references: bool = False,
+):
     template_dir = ROOT / "qualification" / "templates"
     for template_name in (
         "case.html",
@@ -30,7 +37,90 @@ def check(site: Path, sha: str, require_native: bool = False):
     from build import GUIDES
     guide_index = (site / "guide" / "index.html").read_text(encoding="utf-8")
     assert "API Guide" in home and "API Guide" in guide_index
+    assert 'class="guide-sidebar"' in guide_index
+    assert 'class="active" href="./">Overview</a>' in guide_index
+    assert "Start here" in guide_index
+
+    reference_index = (site / "reference" / "index.html").read_text(encoding="utf-8")
+    assert "API Reference" in home and "API Reference" in reference_index
+    assert 'class="reference-sidebar"' in reference_index
+    assert 'class="active" href="./">Overview</a>' in reference_index
+    for heading in (
+        "Browse by task",
+        "Selectors",
+        "Components &amp; assemblies",
+        "Shape &amp; sketch",
+    ):
+        assert heading in reference_index, heading
+    from api_reference import (
+        ENUM_REFERENCES,
+        GROUP_REFERENCES,
+        METHOD_REFERENCES,
+        agent_manifest,
+        api_manifest,
+        enum_members,
+        export_reference_targets,
+        group_members,
+        unmapped_public_exports,
+    )
+    for spec in ENUM_REFERENCES:
+        page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
+        assert spec["summary"] in page_text, spec["slug"]
+        assert "reference-sidebar" in page_text and "reference-article" in page_text
+        assert f'class="active" href="../{spec["slug"]}/"' in page_text
+        for name, value in enum_members(spec):
+            assert f"{spec['slug']}.{name}" in page_text, (spec["slug"], name)
+            assert str(value) in page_text, (spec["slug"], value)
+    anchor_page = (site / "reference" / "Anchor" / "index.html").read_text(encoding="utf-8")
+    assert "Anchor.UP" in anchor_page and "Anchor.DOWN" in anchor_page
+    for spec in METHOD_REFERENCES:
+        page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
+        assert "reference-sidebar" in page_text and "reference-article" in page_text
+        assert f'class="active" href="../{spec["slug"]}/"' in page_text
+        assert html.escape(spec["signature"]) in page_text, spec["slug"]
+        assert spec["summary"] in page_text, spec["slug"]
+        assert "Cross-object API design rules" in page_text, spec["slug"]
+
+    for spec in GROUP_REFERENCES:
+        page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
+        assert "reference-sidebar" in page_text and "reference-article" in page_text
+        assert f'class="active" href="../{spec["slug"]}/"' in page_text
+        assert spec["title"] in page_text and spec["summary"] in page_text
+        for member in group_members(spec):
+            assert f'href="#{member["name"]}"' in page_text, (
+                spec["slug"],
+                member["name"],
+            )
+            assert f'id="{member["name"]}"' in page_text, (spec["slug"], member["name"])
+            assert member["summary"] in page_text, (spec["slug"], member["name"])
+            if member["kind"] == "callable" and member.get("signature"):
+                assert html.escape(member["signature"]) in page_text
+            elif member["kind"] == "enum":
+                for row in member["members"]:
+                    assert f'{member["name"]}.{row["name"]}' in page_text
+            elif member["kind"] == "constant":
+                assert member["value"] in page_text
+
+    assert not unmapped_public_exports()
+    assert set(export_reference_targets()) == set(scpf.__all__)
+
+    generated_api = json.loads(
+        (site / "reference" / "api.json").read_text(encoding="utf-8")
+    )
+    assert generated_api == api_manifest()
+    local_agent_api = json.loads(
+        (ROOT / "docs" / "agent" / "forge-api.json").read_text(encoding="utf-8")
+    )
+    assert local_agent_api == agent_manifest()
+    assert set(scpf.__all__) <= set(local_agent_api["symbols"])
+    agent_source = (ROOT / "docs" / "agent" / "forge-api.json").read_text(encoding="utf-8")
+    assert len(agent_source.encode("utf-8")) < 25000
+    assert '"use_when"' not in agent_source
+    assert '"limits"' not in agent_source
     assert 'class="development-banner"' in home
+    assert "querySelectorAll('pre > code')" in home
+    assert "navigator.clipboard.writeText" in home
+    assert "setAttribute('aria-label', 'Copy code')" in home
     assert "Development version." in home
     assert "not a support guarantee" in home
     assert "full API Guide" in cheatsheet
@@ -38,7 +128,39 @@ def check(site: Path, sha: str, require_native: bool = False):
         page = (site / "guide" / chapter["slug"] / "index.html").read_text(encoding="utf-8")
         assert chapter["title"] in page
         assert "guide-sidebar" in page and "guide-article" in page
+        assert f'class="active" href="../{chapter["slug"]}/"' in page
+        if '<h2 id="' in chapter["body"]:
+            assert 'class="guide-subnav"' in page, chapter["slug"]
         assert len(page) > 1400, chapter["slug"]
+    features = (site / "guide" / "features" / "index.html").read_text(encoding="utf-8")
+    assert 'href="../../reference/Faces/"' in features
+    assert "API on this page" in features
+    css = (site / "style.css").read_text(encoding="utf-8")
+    assert ".guide-api-grid{display:grid;grid-template-columns:1fr" in css
+    assert ".code-block>pre{margin-top:0;padding-right:52px}" in css
+    for face_name in ("TOP", "BOTTOM", "LEFT", "RIGHT", "FRONT", "BACK"):
+        assert f"Faces.{face_name}" in features, face_name
+    assert "Shape.on(self, target" in features
+    assert (site / "api-design-contract.html").is_file()
+
+    assembly_basics = (
+        site / "guide" / "assembly-basics" / "index.html"
+    ).read_text(encoding="utf-8")
+    for term in (
+        "From one component to an assembly",
+        "one physical part",
+        "Shape + Shape",
+        "occurrence + occurrence",
+        "Use @assembly when the composition itself is reusable",
+        "Use attach() when the relationship is the intent",
+        "A group is organisation, not a relationship",
+        "SolidCraft own the native relationship",
+        "API on this page",
+        "Anchor.TOP",
+        "Occurrence.attach",
+        "Assembly.group",
+    ):
+        assert term in assembly_basics, term
     transformations = (site / "guide" / "transformations" / "index.html").read_text(encoding="utf-8")
     for term in ("rotate(", "occurrence.move", "does not compose", "rotate(Z, 180)"):
         assert term in transformations, term
@@ -153,7 +275,7 @@ def check(site: Path, sha: str, require_native: bool = False):
     assert "Q1" in qualification_index and "Q6" in qualification_index
     assert 'class="reference-grid qualification-grid"' in qualification_index
     assert qualification_manifest["library_commit"] == sha
-    assert qualification_manifest["solidcraft_version"] == "0.30.1"
+    assert qualification_manifest["solidcraft_version"] == TESTED_SOLIDCRAFT_VERSION
     assert set(qualification_manifest["cases"]) == {
         case["slug"] for case in QUALIFICATION_CASES
     }
@@ -174,9 +296,11 @@ def check(site: Path, sha: str, require_native: bool = False):
             "2. Implementation under test",
             "Public Forge API used",
             "Forge model represented by this fixture",
+            "Reference implementations",
+            "PythonSCAD",
+            "pyBOSL2",
             "3. Generated SolidCraft relationship",
             "6. Evidence and references",
-            "Reference models",
         ):
             assert heading in page_text, (slug, heading)
         assert case["title"] in page_text
@@ -201,7 +325,41 @@ def check(site: Path, sha: str, require_native: bool = False):
         ):
             assert placeholder not in page_text, (slug, placeholder)
         assert (site / "qualification" / slug / "model.py").is_file()
+        assert (site / "qualification" / slug / "reference-pythonscad.py").is_file()
+        assert (site / "qualification" / slug / "reference-pybosl2.py").is_file()
+        assert 'href="reference-pythonscad.py"' in page_text
+        assert 'href="reference-pybosl2.py"' in page_text
+        assert "Rendered comparison" in page_text
+        reference_code_pos = page_text.index('href="reference-pythonscad.py"')
+        reference_render_pos = page_text.index("Rendered comparison")
+        assert reference_code_pos < reference_render_pos, slug
         assert (site / "qualification" / slug / "commands.json").is_file()
+        if require_references:
+            manifest_case = qualification_manifest["cases"][slug]
+            evidence = manifest_case["reference_evidence"]
+            for implementation in ("pythonscad", "pybosl2"):
+                prefix = f"reference-{implementation}"
+                for name in (
+                    "result.json",
+                    "model.stl",
+                    "model-front.png",
+                    "model-right.png",
+                    "model-iso.png",
+                ):
+                    rel = f"{prefix}/{name}"
+                    assert rel in evidence, (slug, rel)
+                    artifact = site / "qualification" / slug / rel
+                    assert artifact.is_file() and artifact.stat().st_size > 0, artifact
+                result = json.loads(
+                    (site / "qualification" / slug / prefix / "result.json")
+                    .read_text(encoding="utf-8")
+                )
+                assert result["status"] == "pass", (slug, implementation)
+                assert f'src="{prefix}/model-iso.png"' in page_text, (
+                    slug,
+                    implementation,
+                )
+            assert "independently exported STL" in page_text, slug
         if require_native:
             manifest_case = qualification_manifest["cases"][slug]
             result_path = site / "qualification" / slug / "qualification-result.json"
@@ -221,10 +379,10 @@ def check(site: Path, sha: str, require_native: bool = False):
             assert f">{badge}</span>" in page_text, slug
 
             assert structured_result["source_commit"] == sha, slug
-            assert structured_result["solidcraft_version"] == "0.30.1", slug
+            assert structured_result["solidcraft_version"] == TESTED_SOLIDCRAFT_VERSION, slug
             assert manifest_case["levels"] == structured_result["levels"], slug
             assert "Native runtime:" in page_text, slug
-            assert "SolidCraft 0.30.1" in page_text, slug
+            assert f"SolidCraft {TESTED_SOLIDCRAFT_VERSION}" in page_text, slug
 
             image = site / "qualification" / slug / "model.png"
             assert image.is_file() and image.stat().st_size > 0, slug
@@ -309,7 +467,7 @@ def check(site: Path, sha: str, require_native: bool = False):
         if info["preview_kind"] == "native-snapshot":
             assert image.suffix == ".png"
             assert image.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
-            assert "Native SolidCraft 0.30.1 render" in page
+            assert f"Native SolidCraft {TESTED_SOLIDCRAFT_VERSION} render" in page
         else:
             assert image.suffix == ".svg"
             assert "Schematic illustration only" in page
@@ -318,4 +476,9 @@ def check(site: Path, sha: str, require_native: bool = False):
 
 
 if __name__ == "__main__":
-    check(Path(sys.argv[1]), sys.argv[2], require_native="--require-native" in sys.argv[3:])
+    check(
+        Path(sys.argv[1]),
+        sys.argv[2],
+        require_native="--require-native" in sys.argv[3:],
+        require_references="--require-references" in sys.argv[3:],
+    )
