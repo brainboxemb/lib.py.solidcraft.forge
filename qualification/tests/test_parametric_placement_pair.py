@@ -23,7 +23,7 @@ class ParametricPlacementPairCommandTests(unittest.TestCase):
         ]
         self.assertEqual(
             [(row["name"], row["expression"]) for row in parameters],
-            [("spacing", "80")],
+            [("spacing", "80 mm")],
         )
 
         creates = [
