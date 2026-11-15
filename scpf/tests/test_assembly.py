@@ -4,6 +4,7 @@ import tempfile
 import unittest
 
 from scpf.runner import run_script
+from scpf.model_objects import Placement
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -45,7 +46,7 @@ class AssemblyTests(unittest.TestCase):
             {"occurrence": "Block:2", "face": [20.0, 0.0, 5.0]},
         )
 
-    def test_component_placement_keyword_is_occurrence_data(self):
+    def test_component_placement_is_occurrence_data(self):
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "placement_keyword.py"
             script.write_text(
@@ -56,7 +57,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Display:\n"
                 "    def build(self):\n"
                 "        left = Panel(placement=Placement(x=-30))\n"
-                "        right = left.copy().at(x=30)\n"
+                "        right = left.copy(placement=Placement(x=30))\n"
                 "        return left + right\n"
                 "Display()\n",
                 encoding="utf-8",
@@ -82,25 +83,31 @@ class AssemblyTests(unittest.TestCase):
             for command in commands
         ))
 
-    def test_root_component_placement_is_explicit_capability_gap(self):
-        from scpf.compiler import ModelError
-
+    def test_occurrence_placement_is_declared_at_construction(self):
         with tempfile.TemporaryDirectory() as directory:
-            script = Path(directory) / "root_placement.py"
+            script = Path(directory) / "position_at.py"
             script.write_text(
                 "class Block:\n"
                 "    def build(self):\n"
                 "        return Box(20, 10, 2)\n"
-                "Block(placement=Placement(x=50))\n",
+                "class Pair:\n"
+                "    def build(self):\n"
+                "        first = Block()\n"
+                "        second = first.copy(placement=Placement(x=50))\n"
+                "        return first + second\n"
+                "Pair()\n",
                 encoding="utf-8",
             )
-            with self.assertRaisesRegex(
-                ModelError,
-                "identity-aware occurrence executor",
-            ):
-                run_script(script)
+            commands = run_script(script)["commands"]
 
-    def test_at_is_absolute_and_move_is_relative_placement(self):
+        copy = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.copy"
+        )
+        self.assertEqual(copy["translate"], [50.0, 0.0, 0.0])
+
+    def test_copy_accepts_placement_override(self):
         from scpf import Box, Placement, component
 
         @component
@@ -109,16 +116,16 @@ class AssemblyTests(unittest.TestCase):
                 return Box(20, 10, 2)
 
         original = Panel(placement=Placement(x=10, y=5))
-        absolute = original.at(x=40, y=0, z=3)
-        relative = absolute.move(x=2, z=7)
-
+        copied = original.copy(placement=Placement(x=40, y=0, z=3))
         self.assertEqual(original.placement.position, (10, 5, 0))
-        self.assertEqual(absolute.placement.position, (40, 0, 3))
-        self.assertEqual(relative.placement.position, (42, 0, 10))
-        self.assertIsNone(relative.attachment)
+        self.assertEqual(copied.placement.position, (40, 0, 3))
+        self.assertIsNone(copied.attachment)
+        self.assertEqual(original.copy().placement, original.placement)
+        with self.assertRaisesRegex(TypeError, "Placement"):
+            original.copy(placement=(40, 0, 3))
 
-    def test_copies_of_placed_occurrences_use_relative_native_offsets(self):
-        """A copied occurrence inherits its source transform."""
+    def test_copies_use_declared_native_placements(self):
+        """Copied occurrences compile from their declared final Placement."""
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "sidewalls.py"
             script.write_text(
@@ -127,8 +134,8 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(15, 100, 362)\n"
                 "class Cabinet:\n"
                 "    def build(self):\n"
-                "        left = SideWall().move(x=-429.5, y=25)\n"
-                "        right = left.copy().move(x=859)\n"
+                "        left = SideWall(placement=Placement(x=-429.5, y=25))\n"
+                "        right = left.copy(placement=Placement(x=429.5, y=25))\n"
                 "        return (left + right).group('WoodBoxFrame')\n"
                 "Cabinet()\n",
                 encoding="utf-8",
@@ -151,8 +158,8 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(20, 10, 2)\n"
                 "class Cabinet:\n"
                 "    def build(self):\n"
-                "        first = Panel().move(x=-40).rotate(degrees=180)\n"
-                "        right = first.copy().move(x=80).rotate(degrees=0)\n"
+                "        first = Panel(placement=Placement(x=-40, rotation=(Z, 180)))\n"
+                "        right = first.copy(placement=Placement(x=40, rotation=(Z, 0)))\n"
                 "        return first + right\n"
                 "Cabinet()\n",
                 encoding="utf-8",
@@ -184,8 +191,8 @@ class AssemblyTests(unittest.TestCase):
                 "class Display:\n"
                 "    def build(self):\n"
                 "        left = Panel()\n"
-                "        group = (left + left.copy().move(x=11)).group('HUB75Panels')\n"
-                "        return group + Frame().move(y=20)\n"
+                "        group = (left + left.copy(placement=Placement(x=11))).group('HUB75Panels')\n"
+                "        return group + Frame(placement=Placement(y=20))\n"
                 "Display()\n",
                 encoding="utf-8",
             )
@@ -249,17 +256,19 @@ class AssemblyTests(unittest.TestCase):
 
     def test_rotation_is_an_independent_occurrence_placement(self):
         from scpf.core import Box
-        from scpf.model_objects import ModelDefinition, ModelInstance
+        from scpf.model_objects import ModelDefinition, ModelInstance, Placement
 
         first = ModelInstance(ModelDefinition("Panel", (), Box(20, 10, 2)))
-        second = first.copy().move(x=30).rotate(axis=(0, 0, 1), degrees=180)
+        second = first.copy(placement=Placement(x=30, rotation=((0, 0, 1), 180)))
         self.assertIs(first.definition, second.definition)
         self.assertIsNone(first.placement.rotation)
         self.assertEqual(second.placement.position, (30, 0, 0))
         self.assertEqual(second.placement.rotation, ((0.0, 0.0, 1.0), 180.0))
         self.assertIsNone(second.attachment)
         self.assertEqual(second.copy().placement.rotation, second.placement.rotation)
-        self.assertEqual(second.move(x=10).placement.position, (40, 0, 0))
+        repositioned = second.copy(placement=Placement(x=40, rotation=second.placement.rotation))
+        self.assertEqual(repositioned.placement.position, (40, 0, 0))
+        self.assertEqual(repositioned.placement.rotation, second.placement.rotation)
 
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "rotation.py"
@@ -270,7 +279,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Display:\n"
                 "    def build(self):\n"
                 "        first = Panel()\n"
-                "        return first + first.copy().move(x=30).rotate(degrees=180)\n"
+                "        return first + first.copy(placement=Placement(x=30, rotation=(Z, 180)))\n"
                 "Display()\n",
                 encoding="utf-8",
             )
@@ -293,27 +302,15 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(rotated[0]["angle"], "180 deg")
         self.assertNotIn("matrix", rotated[0])
 
-    def test_named_axis_rotation_shorthand(self):
-        from scpf.core import Box, X, Y, Z
-        from scpf.model_objects import ModelDefinition, ModelInstance
+    def test_placement_accepts_named_axis_rotation(self):
+        from scpf.core import X, Y, Z
+        from scpf.model_objects import Placement
 
-        panel = ModelInstance(ModelDefinition("Panel", (), Box(20, 10, 2)))
-
-        self.assertEqual(
-            panel.rotate(X, 180).placement.rotation,
-            ((1.0, 0.0, 0.0), 180.0),
-        )
-        self.assertEqual(
-            panel.rotate(Y, 90).placement.rotation,
-            ((0.0, 1.0, 0.0), 90.0),
-        )
-        self.assertEqual(
-            panel.rotate(Z, -90).placement.rotation,
-            ((0.0, 0.0, 1.0), -90.0),
-        )
-
+        self.assertEqual(Placement(rotation=(X, 180)).rotation, ((1.0, 0.0, 0.0), 180.0))
+        self.assertEqual(Placement(rotation=(Y, 90)).rotation, ((0.0, 1.0, 0.0), 90.0))
+        self.assertEqual(Placement(rotation=(Z, -90)).rotation, ((0.0, 0.0, 1.0), -90.0))
         with self.assertRaisesRegex(ValueError, "X, Y or Z"):
-            panel.rotate("Q", 90)
+            Placement(rotation=("Q", 90))
 
     def test_first_grounded_occurrence_can_have_absolute_rotation(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -324,8 +321,8 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(20, 10, 2)\n"
                 "class Display:\n"
                 "    def build(self):\n"
-                "        first = Panel().move(x=-50).rotate(degrees=180)\n"
-                "        return first + first.copy().move(x=50).rotate(degrees=0)\n"
+                "        first = Panel(placement=Placement(x=-50, rotation=(Z, 180)))\n"
+                "        return first + first.copy(placement=Placement(x=0, rotation=(Z, 0)))\n"
                 "Display()\n", encoding="utf-8",
             )
             commands = run_script(path)["commands"]
@@ -353,7 +350,7 @@ class AssemblyTests(unittest.TestCase):
 
         Panel = component(LibraryPanel)
         first = Panel()
-        second = Panel().move(x=20)
+        second = Panel(placement=Placement(x=20))
         self.assertIsInstance(first, ModelInstance)
         self.assertIsInstance(second, ModelInstance)
         self.assertEqual(first.definition.key, second.definition.key)
@@ -361,7 +358,7 @@ class AssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "model class"):
             component(42)
 
-    def test_numeric_copies_receive_position_during_native_creation(self):
+    def test_numeric_copies_receive_placement_during_native_creation(self):
         """Concrete copy positions lower at occurrence.copy creation time."""
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "five.py"
@@ -371,11 +368,11 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(159.7, 319.71, 14.5)\n"
                 "class Screen:\n"
                 "    def build(self):\n"
-                "        first = Panel().move(z=160).rotate(axis=(1,0,0), degrees=90)\n"
-                "        return (first + first.copy().move(x=-320) +\n"
-                "                first.copy().move(x=-160) +\n"
-                "                first.copy().move(x=160) +\n"
-                "                first.copy().move(x=320))\n"
+                "        first = Panel(placement=Placement(z=160, rotation=((1,0,0), 90)))\n"
+                "        return (first + first.copy(placement=Placement(x=-320, z=160, rotation=((1,0,0), 90))) +\n"
+                "                first.copy(placement=Placement(x=-160, z=160, rotation=((1,0,0), 90))) +\n"
+                "                first.copy(placement=Placement(x=160, z=160, rotation=((1,0,0), 90))) +\n"
+                "                first.copy(placement=Placement(x=320, z=160, rotation=((1,0,0), 90))))\n"
                 "Screen()\n",
                 encoding="utf-8",
             )
@@ -403,10 +400,8 @@ class AssemblyTests(unittest.TestCase):
                             for c in placements))
 
     def test_rotation_rejects_undefined_and_nonfinite_axis_angle(self):
-        from scpf.core import Box
-        from scpf.model_objects import ModelDefinition, ModelInstance
+        from scpf.model_objects import Placement
 
-        panel = ModelInstance(ModelDefinition("Panel", (), Box(2, 2, 1)))
         for kwargs in (
             {"axis": (0, 0, 0), "degrees": 90},
             {"axis": (0, 1), "degrees": 90},
@@ -414,7 +409,7 @@ class AssemblyTests(unittest.TestCase):
             {"axis": (0, 0, 1), "degrees": float("inf")},
         ):
             with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
-                panel.rotate(**kwargs)
+                Placement(rotation=(kwargs["axis"], kwargs["degrees"]))
 
     def test_component_attach_lowers_in_plane_offset_as_planar_joint(self):
         from scpf.assembly import compile_assembly
@@ -460,7 +455,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Pair:\n"
                 "    def build(self):\n"
                 "        left = Block(width=30.0)\n"
-                "        right = Block(width=50.0).move(x=60.0)\n"
+                "        right = Block(width=50.0, placement=Placement(x=60.0))\n"
                 "        left + right\n"
                 "Pair()\n"
             )
@@ -505,7 +500,7 @@ class AssemblyTests(unittest.TestCase):
         LeftPart = component(Left)
         RightPart = component(Right)
         commands = compile_assembly(
-            LeftPart() + RightPart().move(x=20),
+            LeftPart() + RightPart(placement=Placement(x=20)),
             "Frame",
         )["commands"]
 
@@ -542,7 +537,7 @@ class AssemblyTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ModelError, "defined differently"):
             compile_assembly(
-                component(Left)() + component(Right)().move(x=20),
+                component(Left)() + component(Right)(placement=Placement(x=20)),
                 "Frame",
             )
 
@@ -631,7 +626,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Pair:\n"
                 "    def build(self):\n"
                 "        first = Block()\n"
-                "        return first + first.copy().move(x=50)\n"
+                "        return first + first.copy(placement=Placement(x=50))\n"
                 "Pair()\n",
                 encoding="utf-8",
             )
@@ -758,7 +753,7 @@ class AssemblyTests(unittest.TestCase):
         opening_width = Parameter("opening_width", 844.0)
 
         horizontal = StripObject(length=opening_width, width=12.0)
-        second = StripObject(length=opening_width, width=15.0).move(y=20)
+        second = StripObject(length=opening_width, width=15.0, placement=Placement(y=20))
 
         commands = compile_assembly(horizontal + second, "Frame")["commands"]
         parameter_names = [
@@ -853,7 +848,7 @@ class AssemblyTests(unittest.TestCase):
 
             def build(self):
                 self.assert_reference = self.wood_frame
-                marker = FrameObject().move(x=self.spacing)
+                marker = FrameObject(placement=Placement(x=self.spacing))
                 return self.wood_frame + marker
 
         brackets = Brackets(
@@ -888,7 +883,7 @@ class AssemblyTests(unittest.TestCase):
 
             def build(self):
                 left = PanelObject(width=self.width)
-                right = left.copy().move(x=self.pitch)
+                right = left.copy(placement=Placement(x=self.pitch))
                 return (left + right).group("Panels")
 
         PanelRowObject = assembly(PanelRow)
@@ -911,7 +906,7 @@ class AssemblyTests(unittest.TestCase):
         )
 
 
-    def test_symbolic_move_lowers_to_native_expression_move(self):
+    def test_symbolic_placement_lowers_to_native_expression_move(self):
         import warnings
 
         with tempfile.TemporaryDirectory() as directory:
@@ -924,7 +919,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Display:\n"
                 "    depth = 12.0\n"
                 "    def build(self):\n"
-                "        return Panel(depth=self.depth).move(y=half(self.depth))\n"
+                "        return Panel(depth=self.depth, placement=Placement(y=half(self.depth)))\n"
                 "Display()\n",
                 encoding="utf-8",
             )
@@ -954,7 +949,7 @@ class AssemblyTests(unittest.TestCase):
         ]
         self.assertEqual(names, ["depth"])
 
-    def test_symbolic_move_adds_placement_only_parameter(self):
+    def test_symbolic_placement_adds_placement_only_parameter(self):
         import warnings
 
         with tempfile.TemporaryDirectory() as directory:
@@ -966,7 +961,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Display:\n"
                 "    offset = 30.0\n"
                 "    def build(self):\n"
-                "        return Panel().move(x=self.offset)\n"
+                "        return Panel(placement=Placement(x=self.offset))\n"
                 "Display()\n",
                 encoding="utf-8",
             )
@@ -996,7 +991,7 @@ class AssemblyTests(unittest.TestCase):
             for command in document["commands"]
         ))
 
-    def test_symbolic_move_with_rotation_uses_one_native_expression_move(self):
+    def test_symbolic_placement_with_rotation_uses_one_native_expression_move(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "rotated_parametric_move.py"
             path.write_text(
@@ -1006,7 +1001,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Frame:\n"
                 "    height = 100.0\n"
                 "    def build(self):\n"
-                "        return Strip().rotate(Y, 90).move(z=half(self.height))\n"
+                "        return Strip(placement=Placement(z=half(self.height), rotation=(Y, 90)))\n"
                 "Frame()\n",
                 encoding="utf-8",
             )
@@ -1026,9 +1021,10 @@ class AssemblyTests(unittest.TestCase):
             for command in document["commands"]
         ))
 
-    def test_symbolic_parent_move_and_child_attach_keep_distinct_semantics(self):
+    def test_symbolic_parent_placement_and_child_attach_keep_distinct_semantics(self):
         from scpf.assembly import compile_assembly
         from scpf.core import Anchor, Box, Parameter
+        from scpf.model_objects import Placement
         from scpf.runner import component
 
         class Panel:
@@ -1037,7 +1033,7 @@ class AssemblyTests(unittest.TestCase):
 
         PanelObject = component(Panel)
         station = Parameter("station", 100.0)
-        parent = PanelObject().move(x=station)
+        parent = PanelObject(placement=Placement(x=station))
         child = PanelObject().attach(
             parent,
             parent=Anchor.RIGHT,
@@ -1266,7 +1262,7 @@ class AssemblyTests(unittest.TestCase):
                 return Box(20, 20, 10)
 
         left = Block(name="left")
-        right = Block(name="right").move(x=40)
+        right = Block(name="right", placement=Placement(x=40))
         topology = AnchorTopology(
             edge=(-10, 0, 5),
             on=(0, 0, 5),
@@ -1427,7 +1423,7 @@ class AssemblyTests(unittest.TestCase):
             def build(self):
                 return Box(20, 20, 10)
 
-        board = Board().rotate(Axis.Z, 90)
+        board = Board(placement=Placement(rotation=(Axis.Z, 90)))
         child = Board().attach(board, parent="edge_mount", child=Anchor.LEFT)
 
         with self.assertRaisesRegex(
@@ -1573,7 +1569,7 @@ class AssemblyTests(unittest.TestCase):
                 return Box(20, 20, 20)
 
         base = Block()
-        child = Block().rotate(Axis.Z, 90).attach(
+        child = Block(placement=Placement(rotation=(Axis.Z, 90))).attach(
             base,
             parent=Anchor.RIGHT,
             child=AnchorFrame(),
@@ -1746,7 +1742,7 @@ class AssemblyTests(unittest.TestCase):
 
         BlockObject = component(Block)
         base = BlockObject()
-        child = BlockObject().move(x=40).attach(
+        child = BlockObject(placement=Placement(x=40)).attach(
             base,
             as_built=True,
         )

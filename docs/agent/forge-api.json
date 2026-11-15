@@ -105,17 +105,10 @@
     },
     "Occurrence.copy": {
       "kind": "callable",
-      "summary": "Create another occurrence of the same reusable definition.",
+      "summary": "Create another occurrence of the same reusable definition. The copy inherits the source Placement unless placement= is supplied. Attachment state is occurrence-specific and is not inherited. name= optionally gives the new occurrence an explicit Forge object name.",
       "reference": "reference/Occurrence.copy/",
       "guide": "guide/assembly-basics/#collection",
-      "signature": "Occurrence.copy(self)"
-    },
-    "Occurrence.move": {
-      "kind": "callable",
-      "summary": "Translate an occurrence relative to its current Placement.",
-      "reference": "reference/Occurrence.move/",
-      "guide": "guide/assembly-basics/#collection",
-      "signature": "Occurrence.move(self, x=0, y=0, z=0)"
+      "signature": "Occurrence.copy(self, *, name=None, placement=None)"
     },
     "Occurrence.attach": {
       "kind": "callable",
@@ -450,16 +443,9 @@
       "reference": "reference/Anchor/",
       "guide": "guide/assembly-basics/#anchor-choice"
     },
-    "Occurrence.at": {
-      "kind": "callable",
-      "summary": "Set the absolute placement of this occurrence.",
-      "reference": "reference/Occurrence.at/",
-      "guide": "guide/assembly-basics/#collection",
-      "signature": "Occurrence.at(self, x=0, y=0, z=0)"
-    },
     "Placement": {
       "kind": "callable",
-      "summary": "Absolute occurrence placement before native CAD lowering.",
+      "summary": "Absolute pose of one occurrence in its parent coordinate frame. XYZ coordinates may be numbers, Parameters or Expressions. Rotation is one optional absolute axis-angle orientation. Placement is occurrence creation state, not a relative move action.",
       "reference": "reference/parameters-positioning/#Placement",
       "guide": "guide/model-objects/#parameter-intent",
       "signature": "Placement(x: object = 0, y: object = 0, z: object = 0, rotation: tuple[object, object] | None = None) -> None"

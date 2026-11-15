@@ -9,6 +9,41 @@ SCPF exposes CAD objects and relationships, not JSON commands, transports, or
 an independent geometry engine. SolidCraft creates and evaluates the actual
 geometry.
 
+## Modelling style: object-first assemblies, expression-first geometry
+
+Forge is deliberately **object-first at the component/assembly level** and
+**expression-first inside component geometry**.
+
+At assembly level, named Python objects represent meaningful physical
+occurrences:
+
+```python
+left = Board(
+    placement=Placement(x=-half(opening_width))
+)
+right = left.copy(
+    placement=Placement(x=half(opening_width))
+)
+bracket = CornerBracket().attach(left, ...)
+```
+
+The variables represent parts in the design, so later relationships refer to
+the actual Python occurrence object rather than a generated SolidCraft label.
+
+Inside one component, geometry remains a lightweight feature/expression model:
+
+```python
+class Board:
+    def build(self):
+        body = Box(self.width, self.depth, self.height)
+        holes = Hole(d=5, depth=Depth.THROUGH_ALL).pattern(...)
+        return body - holes
+```
+
+Do not turn every primitive or feature into an assembly object. Conversely, do
+not flatten physical assembly parts into an anonymous transform expression tree.
+This boundary is intentional and is part of the Forge API design.
+
 ## User-facing model
 
 A model does not need `@dataclass`. Numeric class fields are model parameters:
@@ -37,7 +72,7 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch supported by the selected target face. The local 2D sketch origin is the centre of that target face. |
 | profile inside a sketch | `sketch.add(profile, anchor=CENTER)` | Place the profile's selected 2D anchor on the sketch origin. CENTER is the default semantic centring operation; numeric offset is not a centring substitute. |
 | deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. Use only when the design actually calls for an offset. |
-| occurrence placement | `placement=Placement(...)`, `child.at(...)`, `child.move(...)` | Describe a reusable component occurrence placement. The compiler chooses native lowering from the final Placement; placement does not create a joint. |
+| occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Values may be numeric or parametric and do not create a joint. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
 ### `at()`
@@ -100,43 +135,51 @@ instead.
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
 
-### `Placement`, `at()` and `move()`
+### Occurrence `Placement`
 
-Reusable occurrences carry a Forge `Placement`.
+`Placement` is reserved occurrence metadata, separate from component model
+parameters:
 
 ```python
-left = Block(placement=Placement(x=-50))
-right = left.copy().at(x=50)
-assembly = left + right
+left = Board(
+    width=frame_wood_thickness,
+    placement=Placement(
+        x=-(half(opening_width) + half(frame_wood_thickness)),
+        z=opening_bottom,
+    ),
+)
+
+right = left.copy(
+    name="right",
+    placement=Placement(
+        x=half(opening_width) + half(frame_wood_thickness),
+        z=opening_bottom,
+    ),
+)
 ```
 
-`at(...)` sets an absolute occurrence position. `move(...)` applies a
-relative change to the existing Placement. Neither method prescribes a
-same-named SolidCraft command.
+`Placement(x=0, y=0, z=0, rotation=None)` stores the absolute pose in the
+parent coordinate frame. XYZ values may contain Parameters or Expressions.
+`half(value)` remains symbolic and lowers to ordinary native `value / 2`
+arithmetic.
 
-The compiler should use creation-time native placement when the final Placement
-can be represented there. For example, a concrete extra occurrence can lower
-directly through `occurrence.copy(..., translate=[...])` without a follow-up
-move.
+The component factory consumes `placement=` before building the reusable
+component definition, so placement never becomes a model parameter. There is no
+separate public `Position` object and no occurrence `.at()`, `.move()` or
+`.rotate()` for initial placement.
 
-Parameter-driven placement is a separate capability because SolidCraft 0.42
-allows expressions in `occurrence.move.translate` but not in
-`occurrence.copy.translate`. It therefore also requires reliable runtime
-occurrence identity.
+The compiler encodes Placement in native creation/copy commands where
+SolidCraft 0.42 allows it. A later native `occurrence.move` is only a backend
+fallback for capabilities that creation/copy cannot encode, such as symbolic
+copy translation or orientation. This does not change the constructor-time
+Forge semantics.
 
-The semantic boundary is deliberate:
+Placement must not create a `joint.create` as an implementation workaround.
+Attachments remain explicit relationships and Placement expressions reuse
+existing parameters instead of publishing helper parameters.
 
-- `Placement` / `.at(...)` / `.move(...)` describe where an occurrence is;
-- `.attach(...)` creates an explicit assembly relationship;
-- placement must not create a `joint.create` record merely as an
-  implementation workaround;
-- generated occurrence labels such as `Block:2` are not Forge-owned identity.
-
-Historical note: on 2026-11-14 Forge temporarily lowered symbolic placement to
-planar joints while working around an assumed SolidCraft 0.30.1 limitation.
-That was an implementation workaround, not an approved Forge API design
-decision. It is documented in the architecture history only and must not be
-used as precedent.
+The detailed decision, native command contracts and release qualification are
+recorded in [change 0001](changes/0001-position-api-design.md).
 
 ### `attach()`
 

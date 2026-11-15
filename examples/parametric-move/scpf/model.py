@@ -1,4 +1,4 @@
-"""Qualification: native parametric occurrence placement without joints."""
+"""Qualification: native parametric occurrence Placement without joints."""
 
 
 class Block:
@@ -11,8 +11,8 @@ class ParametricMove:
 
     def build(self):
         fixed = Block()
-        moved = Block().move(x=self.offset)
-        return fixed + moved
+        placed = Block(placement=Placement(x=self.offset))
+        return fixed + placed
 
 
 ParametricMove()

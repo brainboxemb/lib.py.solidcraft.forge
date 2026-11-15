@@ -1,17 +1,18 @@
-# Agent reference: PythonSCAD and pyBOSL2
+# Agent reference: PythonSCAD, pyBOSL2 and CadQuery
 
 Purpose: avoid repeated external documentation lookups while writing Forge
 qualification comparison models. Read only this file unless the needed
 operation is absent.
 
-This file is a **local working cache**, not the source of truth for either
-external project. If behaviour here conflicts with installed/upstream code,
+This file is a **local working cache**, not the source of truth for the
+external projects. If behaviour here conflicts with installed/upstream code,
 verify upstream and refresh this file.
 
 Snapshot used when this cache was written:
 
 - PythonSCAD: `pythonscad/pythonscad@0d1b8a0ce1a9b98b4b56b45bbfc928376638788b`
 - pyBOSL2: `pinkfish/pybosl2@d4279910c12435ed7224b3406616e495db1c96ec`
+- CadQuery: PyPI `cadquery==2.8.0`
 
 ## Selection rule
 
@@ -20,6 +21,10 @@ model.
 
 Use **pyBOSL2** when anchors, faces, orientation or attachment intent is the
 important comparison.
+
+Use **CadQuery** selectively when object Location, assembly hierarchy or
+constraint-vs-placement semantics are the useful comparison. It is not required
+for every case.
 
 Do not translate Forge syntax mechanically. Preserve modelling intent.
 
@@ -198,6 +203,51 @@ Extrusion:
 ```python
 solid = profile.linear_extrude(height=8)
 ```
+
+
+## CadQuery: subset used by qualification references
+
+Pinned comparison version:
+
+```text
+cadquery==2.8.0
+```
+
+CadQuery is used selectively per qualification case. The first required use is
+occurrence positioning because CadQuery separates assembly child
+`Location` from assembly constraints.
+
+Typical import:
+
+```python
+import cadquery as cq
+```
+
+Bottom-based block used by the Placement reference:
+
+```python
+block = cq.Solid.makeBox(
+    20,
+    20,
+    10,
+    cq.Vector(-10, -10, 0),
+)
+```
+
+Independent assembly locations:
+
+```python
+model = cq.Assembly()
+model.add(block, name="fixed", loc=cq.Location((0, 0, 0)))
+model.add(block, name="placed", loc=cq.Location((40, 0, 0)))
+```
+
+The qualification runner exports CadQuery Assembly references to STL and
+compares the resulting envelope with the same independent expected bounds.
+
+CadQuery Location is a comparison for visible occurrence pose. It does not
+prove SolidCraft saved-design parameter expressions, native occurrence identity
+or joint persistence; those remain SolidCraft-native qualification targets.
 
 ## Semantic limits of the comparison
 

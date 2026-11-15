@@ -12,6 +12,43 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 - Nothing yet.
 
+## [0.3.0] - 2026-11-15
+
+Replay-first placement cleanup and foundational API correction.
+
+### Added
+
+- Added public `Placement(x, y, z, rotation=...)` occurrence metadata for
+  absolute, optionally symbolic pose at component construction/copy time.
+- Concrete placement of additional occurrences lowers directly through
+  `occurrence.copy(..., translate=...)` where SolidCraft supports it.
+- Added per-case comparison-engine selection and a pinned CadQuery 2.8.0
+  assembly/location reference for parametric occurrence positioning.
+
+### Changed
+
+- Component constructors accept reserved `placement=Placement(...)` metadata;
+  it is consumed by Forge and never becomes a component model parameter.
+- `copy(placement=..., name=...)` creates a new occurrence with the declared
+  Placement while retaining the shared component definition.
+- Runtime result-handle execution is deferred to roadmap issue #168 instead of
+  becoming part of the normal replay compiler.
+
+### Removed
+
+- Removed occurrence `.move()`, `.rotate()` and `.at()` placement actions,
+  plus the redundant public `Position` wrapper. Initial occurrence pose is
+  constructor/copy metadata; backend `occurrence.move` remains a valid native
+  lowering fallback where SolidCraft 0.42 cannot encode placement at creation.
+- Removed the phased runtime-result-binding work from this release line; normal
+  Forge output remains replay-first.
+
+### Compatibility
+
+- SCPF package version: **0.3.0**
+- Qualified SolidCraft version: **0.42.0**
+- Python: **3.10+**
+
 ## [0.2.0] - 2026-11-15 — WITHDRAWN
 
 This release was published before Forge's foundational create/place/copy/attach

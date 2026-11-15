@@ -328,7 +328,7 @@ def compile_assembly(value, name):
 
         # Remaining placement work is only what creation-time placement
         # cannot express: the definition's first occurrence, symbolic position,
-        # or rotation. Public move()/at()/Placement semantics do not prescribe
+        # or rotation. Public at()/Placement semantics do not prescribe
         # this native command choice.
         for instance, native_name in occurrences:
             position = instance.placement.position

@@ -6,6 +6,8 @@ import unittest
 
 from qualification.cases import QUALIFICATION_CASES
 
+DEFAULT_IMPLEMENTATIONS = ("pythonscad", "pybosl2")
+
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -15,7 +17,7 @@ class ReferenceModelTests(unittest.TestCase):
         for case in QUALIFICATION_CASES:
             slug = case["slug"]
             with self.subTest(case=slug):
-                for reference in ("pythonscad", "pybosl2"):
+                for reference in case.get("reference_implementations", DEFAULT_IMPLEMENTATIONS):
                     path = (
                         ROOT / "examples" / slug / reference / "model.py"
                     )
@@ -41,7 +43,7 @@ class ReferenceModelTests(unittest.TestCase):
     def test_references_do_not_become_forge_api_sources(self):
         for case in QUALIFICATION_CASES:
             slug = case["slug"]
-            for reference in ("pythonscad", "pybosl2"):
+            for reference in case.get("reference_implementations", DEFAULT_IMPLEMENTATIONS):
                 source = (
                     ROOT / "examples" / slug / reference / "model.py"
                 ).read_text(encoding="utf-8")

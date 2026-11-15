@@ -28,7 +28,7 @@ class Marker:
 
 class CustomAnchor:
     def build(self):
-        arm = Arm().rotate(Axis.Z, 90)
+        arm = Arm(placement=Placement(rotation=(Axis.Z, 90)))
         marker = Marker().attach(
             arm,
             parent="tip",

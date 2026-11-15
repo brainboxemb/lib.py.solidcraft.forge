@@ -14,7 +14,6 @@ from .core import (
     Axis,
     Shape,
     _DirectionSelector,
-    _dim_add,
     _selector_anchor,
     half,
     midpoint,
@@ -370,19 +369,11 @@ def _normalize_rotation(axis, degrees):
 
 @dataclass(frozen=True)
 class Placement:
-    """Absolute occurrence placement before native CAD lowering.
+    """Absolute pose of one occurrence in its parent coordinate frame.
 
-    Use when:
-        Pass placement=Placement(...) to a reusable component to state where
-        that occurrence belongs in the assembly. Position may contain Forge
-        Parameter/Expression values. An optional rotation is an axis-angle pair,
-        for example rotation=(Y, 90).
-
-    Limits:
-        Placement describes occurrence state, not a relationship to another
-        occurrence. Use attach() for relationships. The compiler decides which
-        native SolidCraft commands implement the final placement; Placement
-        itself does not imply occurrence.move.
+    XYZ coordinates may be numbers, Parameters or Expressions. Rotation is one
+    optional absolute axis-angle orientation. Placement is occurrence creation
+    state, not a relative move action.
     """
 
     x: object = 0
@@ -393,7 +384,7 @@ class Placement:
     def __post_init__(self):
         concrete = tuple(pv(value) for value in self.position)
         if not all(isfinite(value) for value in concrete):
-            raise ValueError("placement position requires finite coordinates")
+            raise ValueError("placement requires finite coordinates")
         if self.rotation is not None:
             if (
                 not isinstance(self.rotation, (tuple, list))
@@ -411,32 +402,22 @@ class Placement:
 
     @property
     def position(self):
-        """Return the absolute XYZ occurrence position."""
+        """Return the absolute XYZ coordinates as a tuple."""
         return (self.x, self.y, self.z)
 
-    def at(self, x=0, y=0, z=0):
-        """Return an absolute placement at the supplied XYZ coordinates."""
-        return replace(self, x=x, y=y, z=z)
+    @property
+    def values(self):
+        """Return the absolute XYZ coordinates as a tuple."""
+        return self.position
 
-    def moved(self, x=0, y=0, z=0):
-        """Return a placement translated relative to its current position."""
-        values = (x, y, z)
-        concrete = tuple(pv(value) for value in values)
-        if not all(isfinite(value) for value in concrete):
-            raise ValueError("placement move requires finite coordinates")
-        return replace(
-            self,
-            x=_dim_add(self.x, x),
-            y=_dim_add(self.y, y),
-            z=_dim_add(self.z, z),
-        )
+    def __iter__(self):
+        return iter(self.position)
 
-    def rotated(self, axis=(0, 0, 1), degrees=None):
-        """Return a placement with one absolute axis-angle orientation."""
-        return replace(
-            self,
-            rotation=_normalize_rotation(axis, degrees),
-        )
+    def __len__(self):
+        return 3
+
+    def __getitem__(self, index):
+        return self.position[index]
 
 
 @dataclass(frozen=True)
@@ -467,90 +448,20 @@ class ModelInstance:
             raise ValueError("an occurrence cannot belong to multiple groups")
         return replace(self, group_name=name)
 
-    def copy(self):
+    def copy(self, *, name=None, placement=None):
         """Create another occurrence of the same reusable definition.
 
-        Use when:
-            Reuse the same physical component definition at another placement.
-
-        Limits:
-            copy() does not duplicate the component feature definition. The new
-            occurrence starts without the source attachment and explicit name.
+        The copy inherits the source Placement unless placement= is supplied.
+        Attachment state is occurrence-specific and is not inherited. name=
+        optionally gives the new occurrence an explicit Forge object name.
         """
-        return replace(self, attachment=None, name=None)
-
-    def at(self, x=0, y=0, z=0):
-        """Set the absolute placement of this occurrence.
-
-        Use when:
-            State the intended absolute XYZ location of a reusable occurrence.
-            Pass a Placement object directly to reuse an already defined
-            placement.
-
-        Limits:
-            at() changes placement only and clears an existing attachment.
-            It does not create a relationship or prescribe a native command.
-        """
-        if isinstance(x, Placement):
-            if y != 0 or z != 0:
-                raise ValueError(
-                    "at(Placement) does not accept coordinate y/z arguments"
-                )
-            placement = x
-        else:
-            placement = self.placement.at(x=x, y=y, z=z)
-        return replace(self, placement=placement, attachment=None)
-
-    def move(self, x=0, y=0, z=0):
-        """Translate an occurrence relative to its current Placement.
-
-        Use when:
-            Apply a deliberate relative offset to an existing occurrence
-            placement.
-
-        Limits:
-            move() updates Forge Placement data and clears an existing
-            attachment. It does not imply SolidCraft occurrence.move; the
-            compiler chooses the native lowering after the final assembly state
-            is known.
-        """
+        if placement is not None and not isinstance(placement, Placement):
+            raise TypeError("copy placement must be a Placement")
         return replace(
             self,
-            placement=self.placement.moved(x=x, y=y, z=z),
+            placement=self.placement if placement is None else placement,
             attachment=None,
-        )
-
-    def rotate(self, axis=(0, 0, 1), degrees=None):
-        """Set this occurrence's absolute local-axis orientation.
-
-        Use when:
-            Give an existing Placement one explicit axis-angle orientation.
-
-        Limits:
-            Rotation changes only occurrence placement and clears an existing
-            attachment. One absolute axis-angle orientation is supported; a
-            second rotate() replaces the first rather than composing Euler
-            turns.
-        """
-        axis_values = (
-            axis.value
-            if isinstance(axis, Axis)
-            else axis
-            if isinstance(axis, (tuple, list))
-            else ()
-        )
-        symbolic = tuple(
-            parameter.name
-            for parameter in parameters_in(*axis_values, degrees)
-        )
-        flattened = tuple(dict.fromkeys(
-            (*self.flattened_parameters, *symbolic)
-        ))
-        return replace(
-            self,
-            placement=self.placement.rotated(axis=axis, degrees=degrees),
-            attachment=None,
-            flattened_parameters=flattened,
+            name=name,
         )
 
     def attach(self, target, *, parent=Anchor.RIGHT, child=Anchor.LEFT,
@@ -644,7 +555,12 @@ class ModelInstance:
 
         return replace(
             self,
-            placement=self.placement.at(*translation),
+            placement=replace(
+                self.placement,
+                x=translation[0],
+                y=translation[1],
+                z=translation[2],
+            ),
             attachment=Attachment(
                 target=target,
                 parent=parent,

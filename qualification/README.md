@@ -64,8 +64,9 @@ that startup is the bottleneck.
 
 The same runner is available in GitHub Actions through
 `SCPF affected-case qualification` (manual workflow dispatch). That workflow
-also executes the selected PythonSCAD and pyBOSL2 references and stores their
-independently exported STL/render evidence.
+also executes the configured comparison references and stores their independently
+exported STL/render evidence. PythonSCAD and pyBOSL2 are the default references;
+individual cases may additionally opt into CadQuery.
 
 To run those comparison references locally after installing the pinned
 comparison libraries:
@@ -88,7 +89,8 @@ gate.
 
 ## Reference models
 
-Each case has:
+Every case has a Forge model plus the default PythonSCAD and pyBOSL2 comparison
+models:
 
 ```text
 examples/<case>/scpf/model.py
@@ -96,6 +98,10 @@ examples/<case>/pythonscad/model.py
 examples/<case>/pybosl2/model.py
 ```
 
-PythonSCAD and pyBOSL2 are comparison models, not Forge specifications. Start
-with `docs/agent/reference-libraries.md`; only consult upstream when that local
-cache does not cover the needed operation.
+A case may opt into an additional comparison implementation, currently
+`cadquery`, through `reference_implementations` in
+`qualification/cases.py`.
+
+Reference implementations are comparison models, not Forge specifications.
+Start with `docs/agent/reference-libraries.md`; only consult upstream when
+that local cache does not cover the needed operation.

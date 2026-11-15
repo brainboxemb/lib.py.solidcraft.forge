@@ -63,6 +63,12 @@ MUTATIONS = {
         "measurements": "measurements-offset-70.json",
         "label": "offset 40 -> 70 mm",
     },
+    "parametric-placement-pair": {
+        "command": "qualification/commands/parametric-placement-pair/change-spacing.json",
+        "save": "model-spacing-120.sc",
+        "measurements": "measurements-spacing-120.json",
+        "label": "spacing 80 -> 120 mm; pair follows -40/+40 -> -60/+60 mm",
+    },
     "parametric-attach": {
         "command": "qualification/commands/parametric-attach/change-gap.json",
         "save": "model-gap-30.sc",

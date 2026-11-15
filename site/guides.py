@@ -105,10 +105,10 @@ Python build setting from looking like a native editable CAD parameter.</p>
 <p>If a public lower-case parameter is consumed only as a concrete Python
 value—for example through <code>pv()</code>—Forge emits a
 <code>ModelParameterWarning</code>. The same warning is emitted when a
-parameter remains native in some geometry but is also flattened into a
-concrete component <code>move()</code> or rotation. Such a parameter is only
-partly associative: editing it in SolidCraft would update only part of the
-model. Either preserve the symbolic placement or rename an intentionally
+parameter remains native in some geometry but is also flattened into concrete
+occurrence placement. Such a parameter is only partly associative: editing it
+in SolidCraft would update only part of the model. Keep
+<code>Placement</code> coordinates symbolic or rename an intentionally
 build-time input with a leading underscore.</p>
 <h2 id="shared-parameters">Share one model parameter across child components</h2>
 <p>Passing a parent parameter into several component inputs keeps one native
@@ -139,14 +139,12 @@ class Block:
 
 BlockComponent = component(Block)
 first = BlockComponent(placement=Placement(x=-25))
-second = first.copy().at(x=25)
+second = first.copy(placement=Placement(x=25))
 assembly = first + second""") + """
 <p>The two occurrences share the same <code>Block</code> definition.
-<code>Placement</code> is occurrence state: it describes where a physical copy
-belongs without becoming part of the shared component definition.
-<code>at()</code> sets an absolute placement; <code>move()</code> applies a
-relative change to an existing placement. The compiler chooses the native
-SolidCraft lowering after the final placement is known.</p>
+<code>Placement</code> is occurrence creation metadata: XYZ is absolute in the
+parent coordinate frame and optional rotation adds orientation. The component
+definition never receives <code>placement</code> as a model parameter.</p>
 <h2 id="groups">Groups are actual native parent components</h2>
 """ + code("""blocks = (first + second).group("Blocks")""") + """
 <p>Grouping changes the browser hierarchy, not the geometry's orientation.
@@ -168,7 +166,7 @@ much easier once those three levels are kept separate.</p>
 <table><thead><tr><th>You mean…</th><th>Forge concept</th><th>SolidCraft result</th></tr></thead><tbody>
 <tr><td>Geometry inside one part</td><td><code>Shape</code></td><td>Native geometry/features in one definition</td></tr>
 <tr><td>One reusable physical part</td><td><code>@component</code> class</td><td>Reusable component definition</td></tr>
-<tr><td>Where/how one occurrence stands</td><td><code>Placement</code>, <code>at()</code>, <code>move()</code>, <code>rotate()</code></td><td>Occurrence placement</td></tr>
+<tr><td>Where/how one occurrence stands</td><td><code>placement=Placement(...)</code></td><td>Occurrence placement</td></tr>
 <tr><td>One placed copy of that part</td><td><code>Block()</code> / <code>copy()</code></td><td>Component occurrence</td></tr>
 <tr><td>Several parts collected together</td><td><code>a + b</code></td><td>Assembly containing occurrences</td></tr>
 <tr><td>One part depends on another</td><td><code>attach()</code></td><td>Native SolidCraft assembly relationship/joint</td></tr>
@@ -207,7 +205,7 @@ feature history.</p>
 
 <h2 id="collection">2. Put components in one assembly</h2>
 """ + code("""first = Block(placement=Placement(x=-30))
-second = first.copy().at(x=30)
+second = first.copy(placement=Placement(x=30))
 
 assembly = first + second""") + """
 <p>Here <code>first + second</code> means “these two component occurrences
@@ -215,11 +213,9 @@ belong to one assembly”. It does <strong>not</strong> Boolean-union their soli
 <div class="notice"><strong>Same operator, different level:</strong>
 <code>Shape + Shape</code> describes supported geometric union;
 <code>occurrence + occurrence</code> builds an assembly of physical parts.</div>
-<p><code>Placement</code> is enough when the position itself is the intended
-design rule. <code>at()</code> expresses an absolute location and
-<code>move()</code> a relative offset. Neither creates a mechanical
-relationship; use <code>attach()</code> when another occurrence owns the
-relationship.</p>
+<p><code>placement=Placement(...)</code> declares the pose when an occurrence
+is created or copied. It does not create a mechanical relationship; use
+<code>attach()</code> when another occurrence owns the relationship.</p>
 
 <h2 id="reusable-assembly">3. Use @assembly when the composition itself is reusable</h2>
 <p>You do not need <code>@assembly</code> merely because a script contains
@@ -305,7 +301,7 @@ browser unit. Do not create a group merely because two components touch.</p>
 <ol>
 <li>Will these features be manufactured as one physical item? Keep them in one component, even if the geometry is complex.</li>
 <li>Is something installed or manufactured separately? Give it its own component occurrence.</li>
-<li>Do you only need a deliberate position? Use <code>move()</code>/<code>rotate()</code>.</li>
+<li>Do you only need a deliberate occurrence pose? Supply <code>placement=Placement(...)</code> when creating or copying it.</li>
 <li>Should one separate part follow another semantically? Use <code>attach()</code> and the simplest suitable anchor.</li>
 <li>Is a standard face/corner insufficient? Define an <code>AnchorFrame</code> or topology-backed reference at the level that owns that meaning.</li>
 <li>Do several occurrences form a useful named subassembly/browser unit? Then use <code>group()</code>.</li>
@@ -396,11 +392,10 @@ change any of these coordinates.</p>
 
 body = Box(40, 20, 10)
 shifted = body.move(x=10, y=0, z=25)""") + """
-<p>For supported CSG shapes, <code>move()</code> translates the full CSG
-expression. A feature-based Plate body cannot always be freely moved
-using the same method. Component occurrences have their own placement
-<code>move()</code>, which adds the requested displacement.</p>
-""" + code("""from scpf import component
+<p>For supported CSG shapes, <code>move()</code> translates the local geometry
+expression. Occurrence placement is a different layer and is declared when the
+occurrence is created or copied.</p>
+""" + code("""from scpf import Placement, component
 
 class Panel:
     def build(self):
@@ -408,54 +403,40 @@ class Panel:
 
 PanelComponent = component(Panel)
 first = PanelComponent()
-right = first.copy().move(x=160)""") + """
-<h2 id="rotate">Rotate: axis and angle on a component occurrence</h2>
-<p>In the current implementation, <code>rotate()</code> belongs to a
-<strong>component occurrence</strong> and accepts an XYZ direction tuple and
-an angle in degrees. It rotates the placement about the component's local origin.
-The shared component definition is not modified.</p>
-""" + code("""from scpf import X, Y, Z
+right = first.copy(placement=Placement(x=160))""") + """
+<h2 id="rotate">Orientation is part of Placement</h2>
+<p>Occurrence orientation is declarative data in <code>Placement</code>, not a
+separate rotation action.</p>
+""" + code("""from scpf import Placement, X, Y, Z
 
-upside_down = first.copy().rotate(Z, 180)
-upright = first.copy().rotate(X, 90)
+upside_down = first.copy(
+    placement=Placement(rotation=(Z, 180))
+)
+upright = first.copy(
+    placement=Placement(rotation=(X, 90))
+)
 
-# Explicit XYZ tuple form remains valid:
-sideways = first.copy().rotate(axis=(0, 1, 0), degrees=90)""") + """
-<p>The first rotates about Z; the second rotates about X. A rotation
-around X can convert a face authored in XY into a vertical XZ face.
-The direction of the depth axis changes too.</p>
-<h2 id="absolute">Critical: rotate sets an orientation; it does not compose</h2>
-""" + code("""# NOT two successive rotations in current SCPF:
-panel = first.rotate(axis=(1, 0, 0), degrees=90)
-panel = panel.rotate(axis=(0, 1, 0), degrees=180)""") + """
-<p>The second call <strong>replaces</strong> the first occurrence rotation.
-It does not apply a second rotation on top of the first. A model that
-appears to lie flat after a second rotation can be caused by this rule.
-SCPF currently supports one absolute axis-angle orientation per occurrence,
-not chained Euler rotations.</p>
-<p>For a final orientation involving several conceptual turns, give SCPF
-<strong>one axis-angle orientation</strong>. SolidCraft performs the
-native rotation; SCPF does not build its own rotation matrices.
-Verify the saved native geometry to check which direction is up.</p>
-<h2 id="named-axes">Named axis rotation</h2>
-<p>The exported <code>X</code>, <code>Y</code> and <code>Z</code> tokens can
-be passed directly to occurrence rotation. Prefer
-<code>rotate(Y, 90)</code> when a principal-axis turn is all that is needed.
-The explicit <code>axis=(x,y,z), degrees=…</code> form remains available for
-arbitrary axis-angle placement.</p>
+sideways = first.copy(
+    placement=Placement(rotation=((0, 1, 0), 90))
+)""") + """
+<p>SCPF supports one absolute axis-angle orientation per occurrence.
+Orientation is part of the complete <code>Placement</code>; it is not a
+separate occurrence rotation action.</p>
 <h2 id="copies">Copies are independent placements</h2>
 <p>One <strong>component definition</strong> describes the shape and its
 editable features. Every <strong>occurrence</strong> says where one copy
 belongs in the assembly. Several occurrences reuse the same definition.</p>
-""" + code("""first = PanelComponent().move(z=160).rotate(axis=(1, 0, 0), degrees=90)
-second = first.copy().move(x=160)
+""" + code("""first = PanelComponent(
+    placement=Placement(z=160, rotation=(X, 90))
+)
+second = first.copy(
+    placement=Placement(x=160, z=160, rotation=(X, 90))
+)
 screen = first + second""") + """
-<p>In Python, <code>copy()</code> inherits the desired placement:
-<code>second</code> keeps the 90° rotation and adds 160 mm to X.
-In the generated command sequence, however, SCPF makes both native
-occurrences <strong>at the origin</strong> before moving either one.
-It then asks SolidCraft to place each one. This prevents a copy from
-accidentally inheriting an already-applied native rotation or offset.</p>
+<p><code>copy()</code> without a placement override inherits the source
+Placement. Supplying <code>placement=...</code> gives the new occurrence its
+complete declared pose. The compiler then chooses the smallest native
+creation/copy plus placement fallback needed by SolidCraft 0.42.</p>
 <h2 id="json">What SCPF actually sends to SolidCraft</h2>
 <p>The sequence below is deliberately simple: create one component,
 copy it once, then ask SolidCraft to place both occurrences. The
@@ -463,7 +444,10 @@ editable shape features are omitted here for clarity.</p>
 """ + code("""{
   "commands": [
     {"command":"component.create","params":{"name":"Panel"}},
-    {"command":"occurrence.copy","params":{"component":"Panel"}},
+    {"command":"occurrence.copy","params":{
+      "component":"Panel",
+      "translate":[160,0,160]
+    }},
     {"command":"occurrence.move","params":{
       "occurrence":"Panel:1",
       "translate":[0,0,160],
@@ -473,7 +457,7 @@ editable shape features are omitted here for clarity.</p>
     }},
     {"command":"occurrence.move","params":{
       "occurrence":"Panel:2",
-      "translate":[160,0,160],
+      "translate":[0,0,0],
       "axis":[1,0,0],
       "angle":"90 deg"
     }}
@@ -491,9 +475,9 @@ help verify the result visually. A camera change does not rotate
 the actual panel geometry.</p>
 <h2 id="limitations">Current support summary</h2>
 <table><thead><tr><th>Operation</th><th>Scope</th><th>Limit</th></tr></thead><tbody>
-<tr><td><code>move(x,y,z)</code></td><td>Occurrences, supported CSG shapes</td><td>Not arbitrary feature bodies</td></tr>
-<tr><td><code>rotate(X,90)</code> / explicit axis tuple</td><td>Component occurrences</td><td>Absolute single axis-angle</td></tr>
-<tr><td>Chained rotations</td><td>Not implemented</td><td>Second rotate replaces first</td></tr>
+<tr><td><code>Shape.move(x,y,z)</code></td><td>Supported CSG shapes</td><td>Local geometry transform</td></tr>
+<tr><td><code>placement=Placement(...)</code></td><td>Component occurrences</td><td>Absolute parent-frame pose at create/copy time</td></tr>
+<tr><td><code>rotation=(axis,degrees)</code></td><td>Placement</td><td>One absolute axis-angle orientation</td></tr>
 </tbody></table>""",
     },
     {
@@ -530,7 +514,7 @@ case = Box(80, 50, 30).shell(2, open=Faces.TOP)""") + """
 surface-selection vocabulary used by <code>feature.on(...)</code>.
 <a href="../../reference/Anchor/"><code>Anchor</code></a> is reserved for explicit component attachment in
 assemblies. See the source and regression tests for supported feature chains.</p>
-<h2 id="anchors">Position without hard-coded global offsets</h2>
+<h2 id="anchors">Feature placement without hard-coded global offsets</h2>
 """ + code("""from scpf import X, Y, Boss, Anchor
 
 boss = Boss(d=7, h=12, hole_d=2.5).attach(
@@ -563,7 +547,7 @@ class BeamPair:
 
     def build(self):
         left = Beam()
-        right = left.copy().move(x=self.spacing)
+        right = left.copy(placement=Placement(x=self.spacing))
         return (left + right).group("Beams")
 
 pair = BeamPair()""") + """
@@ -593,17 +577,15 @@ input, that existing dependency stays symbolic. For example,
 parent design's <code>corner_radius</code>; it does not create a separate
 <code>CornerBracket_inside_corner_radius</code> parameter.</p>
 <h2 id="placement">Occurrence placement</h2>
-<p><code>copy()</code> in Python retains the source's intended position
-and orientation. <code>move()</code> then adds the given displacement.
-For example, moving a copy by X=120 after its source already sits at X=50
-makes the copy's intended X position 170. This is normal Python-side behavior.
-When compiling, SCPF first creates all native occurrences at the origin and
-asks SolidCraft to position each one <em>once</em>. No previous native
-transform needs to be undone, and no inverse matrix is calculated.</p>
+<p><code>copy()</code> retains the source Placement when no override is
+supplied. <code>copy(placement=Placement(...))</code> creates the new occurrence
+with the supplied absolute pose in the parent coordinate frame. The compiler
+uses creation-time copy translation where SolidCraft can represent it and a
+native fallback only where required.</p>
 """ + code("""center = BeamComponent()
 array = center
 for x in (-240, -120, 120, 240):
-    array = array + center.copy().move(x=x)""") + """
+    array = array + center.copy(placement=Placement(x=x))""") + """
 <h2 id="attach">Component attachment</h2>
 """ + code("""right = BeamComponent().attach(
     left, parent=Anchor.RIGHT, child=Anchor.LEFT
