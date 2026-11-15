@@ -199,9 +199,10 @@ second = first.copy().move(x=60)
 
 assembly = first + second""") + """
 <p>Here <code>first + second</code> means “these two component occurrences
-belong to one assembly”. It does <strong>not</strong> Boolean-union their solids.
-This is deliberately different from <code>Shape + Shape</code>, where supported
-shape operands describe a geometric union.</p>
+belong to one assembly”. It does <strong>not</strong> Boolean-union their solids.</p>
+<div class="notice"><strong>Same operator, different level:</strong>
+<code>Shape + Shape</code> describes supported geometric union;
+<code>occurrence + occurrence</code> builds an assembly of physical parts.</div>
 <p><code>move()</code> is enough when the position itself is the intended design
 rule: “put this occurrence at this offset”. It does not by itself say that the
 second block is mechanically related to a face or corner of the first.</p>
