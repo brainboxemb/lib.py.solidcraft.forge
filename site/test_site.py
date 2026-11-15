@@ -31,6 +31,18 @@ def check(site: Path, sha: str, require_native: bool = False):
     from build import GUIDES
     guide_index = (site / "guide" / "index.html").read_text(encoding="utf-8")
     assert "API Guide" in home and "API Guide" in guide_index
+    reference_index = (site / "reference" / "index.html").read_text(encoding="utf-8")
+    assert "API Reference" in home and "API Reference" in reference_index
+    from api_reference import ENUM_REFERENCES, METHOD_REFERENCES, enum_members
+    for spec in ENUM_REFERENCES:
+        page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
+        for name, value in enum_members(spec):
+            assert f"{spec['slug']}.{name}" in page_text, (spec["slug"], name)
+            assert str(value) in page_text, (spec["slug"], value)
+    for spec in METHOD_REFERENCES:
+        page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
+        assert spec["signature"] in page_text, spec["slug"]
+        assert "Normative API contract" in page_text, spec["slug"]
     assert 'class="development-banner"' in home
     assert "Development version." in home
     assert "not a support guarantee" in home
@@ -40,6 +52,9 @@ def check(site: Path, sha: str, require_native: bool = False):
         assert chapter["title"] in page
         assert "guide-sidebar" in page and "guide-article" in page
         assert len(page) > 1400, chapter["slug"]
+    features = (site / "guide" / "features" / "index.html").read_text(encoding="utf-8")
+    assert 'href="../../reference/Faces/"' in features
+    assert (site / "source-api-contract.html").is_file()
     transformations = (site / "guide" / "transformations" / "index.html").read_text(encoding="utf-8")
     for term in ("rotate(", "occurrence.move", "does not compose", "rotate(Z, 180)"):
         assert term in transformations, term

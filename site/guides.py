@@ -352,7 +352,7 @@ hole = Hole(d=8, depth=Depth.THROUGH_ALL)
 plate = plate + hole.on(plate, face=Faces.TOP)""") + """
 <p>A <code>Hole</code> is a native hole feature: adding it to the shape
 means adding the operation that <em>removes</em> material.
-<code>Faces.TOP</code> selects its entry face. Simple feature placement
+<a href="../../reference/Faces/"><code>Faces.TOP</code></a> selects its entry face. Simple feature placement
 uses <code>on()</code>; assembly attachment uses explicit anchors.</p>
 <h2 id="fillet">Fillets and chamfers</h2>
 """ + code("""from scpf import Box, Edges
@@ -365,9 +365,9 @@ always be inferred reliably from a visual camera position.</p>
 <h2 id="shell">Shells</h2>
 """ + code("""from scpf import Box, Faces
 case = Box(80, 50, 30).shell(2, open=Faces.TOP)""") + """
-<p><code>Faces.TOP</code> chooses the face to open and is also the same
+<p><a href="../../reference/Faces/"><code>Faces.TOP</code></a> chooses the face to open and is also the same
 surface-selection vocabulary used by <code>feature.on(...)</code>.
-<code>Anchor</code> is reserved for explicit component attachment in
+<a href="../../reference/Anchor/"><code>Anchor</code></a> is reserved for explicit component attachment in
 assemblies. See the source and regression tests for supported feature chains.</p>
 <h2 id="anchors">Position without hard-coded global offsets</h2>
 """ + code("""from scpf import X, Y, Boss, Anchor
@@ -453,7 +453,7 @@ marker = Marker().attach(
     child=Anchor.BACK_TOP_RIGHT,
 )""") + """
 <p><code>attach()</code> is the public Forge relationship between reusable
-components. <code>Anchor</code> selects the attachment reference: a supported
+components. <a href="../../reference/Anchor/"><code>Anchor</code></a> selects the attachment reference: a supported
 face, or one of the eight rectangular corners such as
 <code>FRONT_TOP_RIGHT</code>. Corner anchors compile to native SolidCraft
 edge/corner origins, so they follow dimension changes in a saved design.</p>
@@ -509,7 +509,7 @@ fixed local correction and pass the result to <code>attach(offset=...)</code>.
 This is useful when an assembly datum follows a frame parameter such as wall
 thickness while the reusable part keeps a fixed mounting correction.</p>
 <h2 id="anchor-frame">AnchorFrame: point plus orientation</h2>
-<p>An <code>AnchorFrame</code> describes one local attachment coordinate frame.
+<p>An <a href="../../reference/Anchor/"><code>AnchorFrame</code></a> describes one local attachment coordinate frame.
 <code>origin</code> gives the local point; <code>z</code> gives the attachment
 normal and <code>x</code> fixes the rotation around that normal. Use it when a
 single point or rectangular <code>Anchor</code> is not enough to describe how
@@ -530,7 +530,7 @@ bracket = CornerBracket().attach(
 <p>There are two ownership patterns. If the datum is an intrinsic part of a
 reusable component, expose it with <code>anchors()</code> and refer to it by
 name. If the frame exists only because of a particular assembly or mounting
-choice, construct the <code>AnchorFrame</code> in that assembly and pass it
+choice, construct the <a href="../../reference/Anchor/"><code>AnchorFrame</code></a> in that assembly and pass it
 directly to <code>attach()</code>. This keeps application knowledge out of the
 generic component definition.</p>
 """ + code("""@component
@@ -548,12 +548,12 @@ class Sensor:
         return Box(24, 12, 8)
 
 sensor = Sensor().attach(panel, child="connector")""") + """
-<p>For an unrotated occurrence, Forge lowers an <code>AnchorFrame</code>
+<p>For an unrotated occurrence, Forge lowers an <a href="../../reference/Anchor/"><code>AnchorFrame</code></a>
 directly into the native <code>joint.create</code> reference as
 <code>point</code>, <code>z</code> and <code>x</code>; it does not create a
 persistent visible <code>joint.origin</code>. Named frames on explicitly
 rotated occurrences currently use the native origin fallback so SolidCraft
-owns the transform. A direct <code>AnchorFrame</code> on an explicitly rotated
+owns the transform. A direct <a href="../../reference/Anchor/"><code>AnchorFrame</code></a> on an explicitly rotated
 occurrence is not supported yet.</p>
 <h2 id="anchor-topology">AnchorTopology: follow an edge or corner</h2>
 <p><code>AnchorTopology</code> is a named component datum that stays attached to native SolidCraft topology. <code>edge</code> picks an edge, <code>on</code> selects its adjacent planar face and <code>corner</code> optionally chooses one endpoint. The coordinates are selection picks; SolidCraft keeps the selected edge, face and endpoint by topology name as the design changes.</p>

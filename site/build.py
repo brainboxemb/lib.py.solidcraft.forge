@@ -19,6 +19,7 @@ from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from guides import GUIDES
 from api_coverage import EXPORT_COVERAGE, CAPABILITY_COVERAGE
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
+from api_reference import ENUM_REFERENCES, METHOD_REFERENCES, enum_members
 
 sys.path.insert(0, str(ROOT))
 try:
@@ -597,6 +598,106 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     (guide_root / "index.html").write_text(
         page("API Guide", guide_index, stylesheet="../style.css",
              home="../", cheatsheet="../cheatsheet/"), encoding="utf-8"
+    )
+
+    # Complete public API lookup: exact enum members and signatures come from
+    # the implementation; semantic meaning links back to the normative API contract.
+    reference_root = out / "reference"
+    reference_root.mkdir(exist_ok=True)
+    reference_cards = []
+
+    for spec in ENUM_REFERENCES:
+        slug = spec["slug"]
+        dest = reference_root / slug
+        dest.mkdir(exist_ok=True)
+        rows = "".join(
+            "<tr>"
+            f"<td><code>{escape(slug)}.{escape(name)}</code></td>"
+            f"<td><code>{escape(str(value))}</code></td>"
+            "</tr>"
+            for name, value in enum_members(spec)
+        )
+        notes = "".join(f"<li>{escape(note)}</li>" for note in spec["notes"])
+        body = (
+            '<main class="wrap"><p class="crumb"><a href="../">← API Reference</a> / '
+            + escape(spec["title"]) + '</p>'
+            + '<section class="hero small"><p class="eyebrow">SCPF API reference</p>'
+            + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p></section>'
+            + '<section class="panel"><h2>Members</h2>'
+            + '<table class="api-table"><thead><tr><th>Name</th><th>Value</th></tr></thead>'
+            + f'<tbody>{rows}</tbody></table>'
+            + (f'<h2>Current notes</h2><ul>{notes}</ul>' if notes else "")
+            + '<p><a href="../../guide/">Usage guide →</a> · '
+              '<a href="../../source-api-contract.html">Normative API contract →</a></p>'
+            + '</section></main>'
+        )
+        (dest / "index.html").write_text(
+            page(spec["title"], body, stylesheet="../../style.css",
+                 home="../../", cheatsheet="../../cheatsheet/"),
+            encoding="utf-8",
+        )
+        reference_cards.append(
+            f'<article class="reference"><h2><a href="{escape(slug)}/">'
+            f'{escape(spec["title"])}</a></h2><p>{escape(spec["summary"])}</p></article>'
+        )
+
+    for spec in METHOD_REFERENCES:
+        slug = spec["slug"]
+        dest = reference_root / slug
+        dest.mkdir(exist_ok=True)
+        body = (
+            '<main class="wrap"><p class="crumb"><a href="../">← API Reference</a> / '
+            + escape(spec["title"]) + '</p>'
+            + '<section class="hero small"><p class="eyebrow">SCPF API reference</p>'
+            + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p></section>'
+            + '<section class="panel"><h2>Current Python signature</h2>'
+            + f'<pre><code>{escape(spec["signature"])}</code></pre>'
+            + '<h2>API contract</h2>'
+            + f'<p>{escape(spec["contract"])}</p>'
+            + '<p><a href="../../guide/">Usage guide →</a> · '
+              '<a href="../../source-api-contract.html">Normative API contract →</a></p>'
+            + '</section></main>'
+        )
+        (dest / "index.html").write_text(
+            page(spec["title"], body, stylesheet="../../style.css",
+                 home="../../", cheatsheet="../../cheatsheet/"),
+            encoding="utf-8",
+        )
+        reference_cards.append(
+            f'<article class="reference"><h2><a href="{escape(slug)}/">'
+            f'{escape(spec["title"])}</a></h2>'
+            f'<p>{escape(spec["summary"])}</p>'
+            f'<pre><code>{escape(spec["signature"])}</code></pre></article>'
+        )
+
+    contract_source = (ROOT / "docs" / "05-cad-api-design.md").read_text(encoding="utf-8")
+    (out / "source-api-contract.html").write_text(
+        page(
+            "Normative API contract",
+            '<main class="wrap"><p class="crumb"><a href="reference/">API Reference</a> / '
+            'Normative API contract</p><section class="hero small">'
+            '<p class="eyebrow">Source of truth</p><h1>Normative Forge API contract</h1>'
+            '<p>This is the source-maintained contract used by agents and reviewers.</p>'
+            '</section><section class="panel"><pre><code>'
+            + escape(contract_source) + '</code></pre></section></main>',
+            stylesheet="style.css", home="./", cheatsheet="cheatsheet/",
+        ),
+        encoding="utf-8",
+    )
+
+    reference_index = (
+        '<main class="wrap"><section class="hero small">'
+        '<p class="eyebrow">Complete lookup</p><h1>API Reference</h1>'
+        '<p>Exact public enum members and current Python signatures. '
+        'For concepts and examples use the API Guide; semantic meaning is defined by the '
+        '<a href="../source-api-contract.html">normative API contract</a>.</p>'
+        '</section><div class="reference-grid">'
+        + "".join(reference_cards) + '</div></main>'
+    )
+    (reference_root / "index.html").write_text(
+        page("API Reference", reference_index, stylesheet="../style.css",
+             home="../", cheatsheet="../cheatsheet/"),
+        encoding="utf-8",
     )
 
     # Qualification pages explain the full contract for each native fixture:

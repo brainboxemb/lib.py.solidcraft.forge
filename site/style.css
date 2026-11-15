@@ -129,3 +129,7 @@ background:linear-gradient(135deg,#f1f5fb,#e5eff8)}
 .concept-requirements li{margin:8px 0;line-height:1.6}
 .qualification-concept-diagram img{max-height:480px;padding:4px}
 @media(max-width:800px){.concept-steps,.json-explainer{grid-template-columns:1fr}}
+
+.api-table{width:100%;border-collapse:collapse;margin:18px 0}
+.api-table th,.api-table td{padding:10px 12px;border:1px solid var(--line);text-align:left}
+.api-table th{background:var(--soft)}
