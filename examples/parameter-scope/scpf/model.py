@@ -1,7 +1,5 @@
 """Parameter scope qualification: explicit component publication and inherited bindings."""
 
-from scpf import component
-
 
 @component(include=("width",))
 class Panel:
