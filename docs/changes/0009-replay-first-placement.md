@@ -61,9 +61,11 @@ placement. Display numbering is not Forge identity.
 
 This change does not repair joint/attachment addressing.
 
-An attachment may still need a seed pose and a later joint command. Those paths
-are handled by the next relationship change because they need a replay-safe
-occurrence reference for the relationship itself.
+An attachment may still need a seed pose and a later joint command. Both the
+child occurrence and the occurrence used as its attachment parent are therefore
+kept on the relationship path in this change. Those paths are handled by the
+next relationship change because they need a replay-safe occurrence reference
+for the relationship itself.
 
 Keeping that work separate avoids turning ordinary Placement into a joint or
 mixing two independent problems in one patch.
@@ -94,3 +96,20 @@ The focused tests must prove:
 - rotated ordinary copy Placement is rejected;
 - no ordinary Placement test accepts a generated `Component:N` selector.
 
+
+## Qualification changes
+
+The old native qualification cases `parametric-move`,
+`parametric-placement-pair` and `rotated-copy-placement` depended on the
+predicted-name `occurrence.move` fallback. They are removed from the native
+Q3-Q6 registry in this change.
+
+Focused Python/command tests remain and now require a clear `ModelError`.
+They can return to native qualification only after Forge has a replay-safe
+SolidCraft selector for those occurrence placements.
+
+Other qualification cases that used Placement only to spread unrelated bodies
+out for screenshots now keep that layout inside their fixed fixture geometry.
+Their actual qualification subject (parameter scope, grouping, imported
+assemblies, etc.) no longer depends on an unrelated unsupported occurrence
+placement.
