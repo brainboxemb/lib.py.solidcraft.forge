@@ -37,19 +37,16 @@ def check(
     from build import GUIDES
     guide_index = (site / "guide" / "index.html").read_text(encoding="utf-8")
     assert "API Guide" in home and "API Guide" in guide_index
+    assert 'class="guide-sidebar"' in guide_index
+    assert 'class="active" href="./">Overview</a>' in guide_index
+    assert "Start here" in guide_index
+
     reference_index = (site / "reference" / "index.html").read_text(encoding="utf-8")
     assert "API Reference" in home and "API Reference" in reference_index
-    for heading in (
-        "Browse by task",
-        "Selectors and vocabularies",
-        "Core types and detailed operations",
-    ):
+    assert 'class="reference-sidebar"' in reference_index
+    assert 'class="active" href="./">Overview</a>' in reference_index
+    for heading in ("Browse by task", "Selectors", "Core API"):
         assert heading in reference_index, heading
-    assert (
-        reference_index.index("Browse by task")
-        < reference_index.index("Selectors and vocabularies")
-        < reference_index.index("Core types and detailed operations")
-    )
     from api_reference import (
         ENUM_REFERENCES,
         GROUP_REFERENCES,
@@ -64,6 +61,8 @@ def check(
     for spec in ENUM_REFERENCES:
         page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
         assert spec["summary"] in page_text, spec["slug"]
+        assert "reference-sidebar" in page_text and "reference-article" in page_text
+        assert f'class="active" href="../{spec["slug"]}/"' in page_text
         for name, value in enum_members(spec):
             assert f"{spec['slug']}.{name}" in page_text, (spec["slug"], name)
             assert str(value) in page_text, (spec["slug"], value)
@@ -71,12 +70,16 @@ def check(
     assert "Anchor.UP" in anchor_page and "Anchor.DOWN" in anchor_page
     for spec in METHOD_REFERENCES:
         page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
+        assert "reference-sidebar" in page_text and "reference-article" in page_text
+        assert f'class="active" href="../{spec["slug"]}/"' in page_text
         assert html.escape(spec["signature"]) in page_text, spec["slug"]
         assert spec["summary"] in page_text, spec["slug"]
         assert "Cross-object API design rules" in page_text, spec["slug"]
 
     for spec in GROUP_REFERENCES:
         page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
+        assert "reference-sidebar" in page_text and "reference-article" in page_text
+        assert f'class="active" href="../{spec["slug"]}/"' in page_text
         assert spec["title"] in page_text and spec["summary"] in page_text
         for member in group_members(spec):
             assert f'id="{member["name"]}"' in page_text, (spec["slug"], member["name"])
@@ -116,6 +119,7 @@ def check(
         page = (site / "guide" / chapter["slug"] / "index.html").read_text(encoding="utf-8")
         assert chapter["title"] in page
         assert "guide-sidebar" in page and "guide-article" in page
+        assert f'class="active" href="../{chapter["slug"]}/"' in page
         assert len(page) > 1400, chapter["slug"]
     features = (site / "guide" / "features" / "index.html").read_text(encoding="utf-8")
     assert 'href="../../reference/Faces/"' in features
