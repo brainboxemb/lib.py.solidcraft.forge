@@ -7,18 +7,21 @@ source that answers the task:
 
 | Task | Read first |
 | --- | --- |
-| Public Forge API lookup/semantics | generated local reference / relevant code docstring |
+| Public Forge API lookup/semantics | `docs/agent/forge-api.json` |
 | Exact Forge names/signatures/enums | relevant code in `scpf/scpf/` |
 | Qualification rules | `docs/qualification/README.md` |
 | SolidCraft command/API lookup | `docs/agent/solidcraft.md` |
 | SolidCraft version upgrade | `docs/qualification/solidcraft-upgrade-protocol.md` |
 | PythonSCAD / pyBOSL2 qualification reference | `docs/agent/reference-libraries.md` |
 
-Only read additional files when the first source is insufficient. For SolidCraft,
-use the version-pinned local vendor snapshot or local CLI introspection before any
-website lookup. Only consult upstream/external PythonSCAD or pyBOSL2 documentation when the local agent
-reference does not cover the required operation or when intentionally refreshing
-that reference.
+Only read additional files when the first source is insufficient. The compact
+`docs/agent/forge-api.json` snapshot is generated from the same public Python
+objects/docstrings as the human API reference; do not edit it by hand. For a
+Forge symbol not covered there, read the relevant implementation/docstring next.
+For SolidCraft, use the version-pinned local vendor snapshot or local CLI
+introspection before any website lookup. Only consult upstream/external
+PythonSCAD or pyBOSL2 documentation when the local agent reference does not
+cover the required operation or when intentionally refreshing that reference.
 
 ## Public API source of truth
 
