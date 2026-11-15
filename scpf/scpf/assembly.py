@@ -227,6 +227,58 @@ def _relationship_replay_order(instances, component_name):
     return ordered
 
 
+_ATTACHMENT_INFERENCE_STAGE_MM = 1.0
+
+
+def _attachment_stage_direction(attachment):
+    """Return the parent-facing direction used to separate a copied child."""
+    parent = attachment.parent
+    if isinstance(parent, str):
+        parent = dict(attachment.target.definition.anchors)[parent]
+
+    if isinstance(parent, Anchor):
+        if parent in _CORNER_ANCHORS:
+            direction = _corner_normal(parent)
+        elif parent is Anchor.CENTER:
+            raise ModelError(
+                "copied CENTER attachment cannot be staged for replay-safe "
+                "occurrence inference"
+            )
+        else:
+            direction = parent.vector
+    elif isinstance(parent, AnchorFrame):
+        direction = parent.z
+    elif isinstance(parent, AnchorTopology):
+        if parent.z is None:
+            raise ModelError(
+                "copied AnchorTopology attachment needs an explicit z direction "
+                "for replay-safe occurrence inference"
+            )
+        direction = parent.z
+    else:
+        raise ModelError("attachment has no replay-safe staging direction")
+
+    values = tuple(float(pv(value)) for value in direction)
+    length = sum(value * value for value in values) ** 0.5
+    if length <= 0:
+        raise ModelError("attachment staging direction must be non-zero")
+    return tuple(value / length for value in values)
+
+
+def _relationship_copy_seed(instance):
+    """Return the temporary native seed pose for one relationship copy."""
+    position = [pv(value) for value in instance.placement.position]
+    attachment = instance.attachment
+    if attachment is None or attachment.as_built:
+        return position
+
+    direction = _attachment_stage_direction(attachment)
+    return [
+        position[i] + direction[i] * _ATTACHMENT_INFERENCE_STAGE_MM
+        for i in range(3)
+    ]
+
+
 def _occurrence_labels(assembly, names):
     """Build stable human labels without using SolidCraft browser numbering."""
     totals = {}
@@ -411,11 +463,7 @@ def compile_assembly(value, name):
             position = instance.placement.position
 
             if relationship_definition:
-                attachment = instance.attachment
-                if attachment is not None and not attachment.as_built:
-                    concrete_position = [pv(value) for value in position]
-                else:
-                    concrete_position = [pv(value) for value in position]
+                concrete_position = _relationship_copy_seed(instance)
                 if any(concrete_position):
                     params["translate"] = concrete_position
                 occurrence_refs[instance.occurrence_id] = None
