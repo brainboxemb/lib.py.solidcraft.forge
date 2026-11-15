@@ -17,34 +17,33 @@ class AssemblyTests(unittest.TestCase):
 
         self.assertEqual(
             [c["params"]["name"] for c in commands
-             if c["command"] == "parameters.add"],
-            [],
-        )
-        self.assertEqual(
-            [c["params"]["name"] for c in commands
              if c["command"] == "component.create"],
             ["Block"],
         )
         copies = [c for c in commands if c["command"] == "occurrence.copy"]
         self.assertEqual(len(copies), 1)
         self.assertEqual(copies[0]["params"]["component"], "Block")
-        self.assertEqual(copies[0]["params"]["translate"], [40.0, 0.0, 0.0])
-        placements = [c["params"] for c in commands if c["command"] == "occurrence.move"]
-        self.assertFalse(any(p["occurrence"] == "Block:2" for p in placements))
-        box = next(c for c in commands if c["command"] == "solid.box")
-        self.assertNotIn("Block_length", str(box["params"]))
-        self.assertNotIn("Block_width", str(box["params"]))
+        self.assertEqual(copies[0]["params"]["translate"], [41.0, 0.0, 0.0])
+        self.assertFalse(any(
+            c["command"] == "occurrence.move"
+            for c in commands
+        ))
 
-        joint = next(c for c in commands if c["command"] == "joint.create")
-        self.assertEqual(joint["params"]["type"], "rigid")
+        joint = next(c["params"] for c in commands
+                     if c["command"] == "joint.create")
+        self.assertEqual(joint["type"], "rigid")
         self.assertEqual(
-            joint["params"]["a"],
-            {"occurrence": "Block:1", "face": [20.0, 0.0, 5.0]},
+            joint["a"],
+            {"occurrence": "Block", "face": [20.0, 0.0, 5.0]},
         )
         self.assertEqual(
-            joint["params"]["b"],
-            {"occurrence": "Block:2", "face": [20.0, 0.0, 5.0]},
+            joint["b"],
+            {"face": [21.0, 0.0, 5.0]},
         )
+        self.assertFalse(any(
+            "Block:" in str(command["params"])
+            for command in commands
+        ))
 
     def test_component_placement_is_occurrence_data(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -1154,8 +1153,9 @@ class AssemblyTests(unittest.TestCase):
             ):
                 run_script(path)
 
-    def test_symbolic_parent_placement_and_child_attach_keep_distinct_semantics(self):
+    def test_symbolic_relationship_target_placement_is_rejected_replay_first(self):
         from scpf.assembly import compile_assembly
+        from scpf.compiler import ModelError
         from scpf.core import Anchor, Box, Parameter
         from scpf.model_objects import Placement
         from scpf.runner import component
@@ -1173,38 +1173,11 @@ class AssemblyTests(unittest.TestCase):
             child=Anchor.LEFT,
         )
 
-        commands = compile_assembly(parent + child, "Pair")["commands"]
-
-        self.assertFalse(any(
-            command["command"] == "joint.create"
-            and command["params"]["name"].startswith("Place ")
-            for command in commands
-        ))
-
-        parent_move = next(
-            command["params"]
-            for command in commands
-            if command["command"] == "occurrence.move"
-            and command["params"]["occurrence"] == "Panel:1"
-        )
-        self.assertEqual(parent_move["translate"][0], "station")
-        child_move = next(
-            command["params"]
-            for command in commands
-            if command["command"] == "occurrence.move"
-            and command["params"]["occurrence"] == "Panel:2"
-        )
-        self.assertTrue(
-            all(isinstance(value, (int, float)) for value in child_move["translate"])
-        )
-
-        attachment = next(
-            command["params"]
-            for command in commands
-            if command["command"] == "joint.create"
-            and command["params"]["name"].startswith("Attach Panel:2")
-        )
-        self.assertEqual(attachment["type"], "rigid")
+        with self.assertRaisesRegex(
+            ModelError,
+            "relationship lowering needs either an identity first occurrence",
+        ):
+            compile_assembly(parent + child, "Pair")
 
     def test_parent_parameter_binding_reuses_existing_name_without_child_duplicate(self):
         from scpf.assembly import compile_assembly
@@ -1255,46 +1228,17 @@ class AssemblyTests(unittest.TestCase):
             if command["command"] == "joint.create"
         ]
         self.assertEqual(len(joints), 2)
-        self.assertEqual(
-            joints[0]["a"],
-            {
-                "occurrence": "Board:1",
-                "edge": [20.0, 0.0, 10.0],
-                "on": [0.0, 0.0, 10.0],
-                "corner": [20.0, 0.0, 20.0],
-            },
-        )
-        self.assertEqual(
-            joints[1]["a"],
-            {
-                "occurrence": "Board:1",
-                "edge": [-20.0, 0.0, 10.0],
-                "on": [0.0, 0.0, 10.0],
-                "corner": [-20.0, 0.0, 20.0],
-            },
-        )
-        self.assertEqual(
-            [joint["b"]["occurrence"] for joint in joints],
-            ["Marker:1", "Marker:2"],
-        )
-        self.assertEqual(
-            joints[0]["b"],
-            {
-                "occurrence": "Marker:1",
-                "point": [20.0, 0.0, 20.0],
-                "z": [0.0, 1.0, 0.0],
-                "x": [-1.0, 0.0, 0.0],
-            },
-        )
-        self.assertEqual(
-            joints[1]["b"],
-            {
-                "occurrence": "Marker:2",
-                "point": [-20.0, 0.0, 20.0],
-                "z": [0.0, 1.0, 0.0],
-                "x": [0.0, 0.0, -1.0],
-            },
-        )
+        self.assertTrue(all(joint["a"]["occurrence"] == "Board" for joint in joints))
+        self.assertEqual(joints[0]["a"]["corner"], [20.0, 0.0, 20.0])
+        self.assertEqual(joints[1]["a"]["corner"], [-20.0, 0.0, 20.0])
+
+        self.assertEqual(joints[0]["b"]["occurrence"], "Marker")
+        self.assertNotIn("occurrence", joints[1]["b"])
+        self.assertFalse(any(
+            "Marker:" in str(command["params"])
+            or "Board:" in str(command["params"])
+            for command in commands
+        ))
 
     def test_anchor_frame_accepts_named_axis_directions(self):
         from scpf import Anchor, AnchorFrame
@@ -1706,10 +1650,9 @@ class AssemblyTests(unittest.TestCase):
         )
 
         with self.assertRaisesRegex(
-            ModelError, "direct AnchorFrame attachments.*rotated"
+            ModelError, "rotated relationship Placement is not replay-safe"
         ):
             compile_assembly(base + child, "RotatedDirectFrame")
-
 
     def test_generated_joint_glyphs_are_hidden_after_assembly_compile(self):
         from scpf.assembly import compile_assembly
@@ -1746,58 +1689,14 @@ class AssemblyTests(unittest.TestCase):
                 for command in no_joint_commands)
         )
 
-    def test_rotated_custom_anchor_materializes_before_rotation(self):
-        commands = run_script(
-            ROOT / "examples/custom-anchor/scpf/model.py"
-        )["commands"]
+    def test_rotated_custom_anchor_is_rejected_without_occurrence_move_fallback(self):
+        from scpf.compiler import ModelError
 
-        origins = [
-            command["params"]
-            for command in commands
-            if command["command"] == "joint.origin"
-        ]
-        self.assertEqual(
-            origins,
-            [
-                {
-                    "name": "Arm:1.tip",
-                    "occurrence": "Arm:1",
-                    "frame": {
-                        "origin": [20.0, 0.0, 5.0],
-                        "z": [1.0, 0.0, 0.0],
-                        "x": [0.0, 0.0, 1.0],
-                    },
-                },
-            ],
-        )
-
-        arm_origin_index = next(
-            i for i, command in enumerate(commands)
-            if command["command"] == "joint.origin"
-            and command["params"]["name"] == "Arm:1.tip"
-        )
-        arm_move_index = next(
-            i for i, command in enumerate(commands)
-            if command["command"] == "occurrence.move"
-            and command["params"]["occurrence"] == "Arm:1"
-        )
-        self.assertLess(arm_origin_index, arm_move_index)
-
-        joint = next(
-            command["params"]
-            for command in commands
-            if command["command"] == "joint.create"
-        )
-        self.assertEqual(joint["a"], "Arm:1.tip")
-        self.assertEqual(
-            joint["b"],
-            {
-                "occurrence": "Marker:1",
-                "point": [20.0, 0.0, 5.0],
-                "z": [-1.0, 0.0, 0.0],
-                "x": [0.0, 0.0, 1.0],
-            },
-        )
+        with self.assertRaisesRegex(
+            ModelError,
+            "rotated relationship Placement is not replay-safe",
+        ):
+            run_script(ROOT / "examples/custom-anchor/scpf/model.py")
 
     def test_composed_directions_are_valid_assembly_anchors(self):
         from scpf import Anchor, BOTTOM, FRONT, LEFT, TOP, Box
@@ -1861,8 +1760,9 @@ class AssemblyTests(unittest.TestCase):
             },
         )
 
-    def test_as_built_attach_keeps_current_occurrence_placement(self):
+    def test_as_built_copy_is_rejected_without_copy_selector(self):
         from scpf.assembly import compile_assembly
+        from scpf.compiler import ModelError
         from scpf.core import Box
         from scpf.runner import component
 
@@ -1877,28 +1777,11 @@ class AssemblyTests(unittest.TestCase):
             as_built=True,
         )
 
-        commands = compile_assembly(base + child, "AsBuiltAttach")["commands"]
-
-        copy = next(
-            command["params"]
-            for command in commands
-            if command["command"] == "occurrence.copy"
-        )
-        self.assertEqual(copy["translate"], [40.0, 0.0, 0.0])
-        self.assertFalse(any(
-            command["command"] == "occurrence.move"
-            and command["params"]["occurrence"] == "Block:2"
-            for command in commands
-        ))
-
-        joint = next(
-            command["params"]
-            for command in commands
-            if command["command"] == "joint.as_built"
-        )
-        self.assertEqual(joint["type"], "rigid")
-        self.assertEqual(joint["a"], "Block:1")
-        self.assertEqual(joint["b"], "Block:2")
+        with self.assertRaisesRegex(
+            ModelError,
+            "as-built attachment to a copied occurrence is not replay-safe",
+        ):
+            compile_assembly(base + child, "AsBuiltAttach")
 
     def test_attach_angle_is_emitted_as_native_joint_turn(self):
         from scpf.assembly import compile_assembly
