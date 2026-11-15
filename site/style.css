@@ -53,11 +53,14 @@ background:linear-gradient(135deg,#f1f5fb,#e5eff8)}
 color:var(--muted);border-top:1px solid var(--line)}
 
 /* Long-form library guide: readable text, sticky chapter navigation. */
-.guide-layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:34px;margin-top:28px}
-.guide-sidebar{align-self:start;position:sticky;top:20px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
-.guide-sidebar h2{font-size:1rem;margin:0 0 12px}
-.guide-sidebar a{display:block;padding:7px 0;font-size:.89rem}
-.guide-article{min-width:0;max-width:770px;padding-bottom:40px}
+.guide-layout,.reference-layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:34px;margin-top:28px}
+.guide-sidebar,.reference-sidebar{align-self:start;position:sticky;top:20px;max-height:calc(100vh - 40px);overflow-y:auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+.guide-sidebar h2,.reference-sidebar h2{font-size:1rem;margin:0 0 12px}
+.reference-sidebar h3{margin:16px 0 5px;padding-top:10px;border-top:1px solid var(--line);font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.guide-sidebar a,.reference-sidebar a{display:block;padding:6px 8px;margin:1px -8px;border-radius:6px;font-size:.88rem}
+.guide-sidebar a.active,.reference-sidebar a.active{background:var(--soft);color:var(--ink);font-weight:700}
+.guide-sidebar a:hover,.reference-sidebar a:hover{background:#edf4fc}
+.guide-article,.reference-article{min-width:0;max-width:820px;padding-bottom:40px}
 .guide-article h1{font-size:2.1rem;margin:5px 0 10px}
 .guide-article h2{margin:36px 0 12px;padding-top:8px;border-top:1px solid var(--line);font-size:1.4rem}
 .guide-article p{line-height:1.75}
@@ -83,7 +86,11 @@ color:var(--muted);border-top:1px solid var(--line)}
 .api-group-member{margin:14px 0}
 .api-group-member h2{margin-bottom:10px}
 .reference-members{line-height:1.9}
-@media(max-width:800px){.guide-layout{grid-template-columns:1fr}.guide-sidebar{position:static}.guide-article h1{font-size:1.8rem}}
+@media(max-width:800px){
+  .guide-layout,.reference-layout{grid-template-columns:1fr}
+  .guide-sidebar,.reference-sidebar{position:static;max-height:none}
+  .guide-article h1,.reference-article h1{font-size:1.8rem}
+}
 
 
 /* Qualification evidence: visual proof belongs on both the case card and sheet. */
