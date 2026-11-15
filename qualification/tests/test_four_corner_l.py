@@ -74,21 +74,20 @@ class FourCornerLCommandTests(unittest.TestCase):
             self.assertEqual(
                 joint["a"],
                 {
-                    "occurrence": "FrameBlock:1",
+                    "occurrence": "FrameBlock",
                     "point": [0.0, 0.0, 0.0],
                     "z": [0.0, 0.0, 1.0],
                     "x": [1.0, 0.0, 0.0],
                 },
             )
-            self.assertEqual(
-                joint["b"],
-                {
-                    "occurrence": f"LProfile:{index}",
-                    "point": [0.0, 0.0, 0.0],
-                    "z": [0.0, 0.0, -1.0],
-                    "x": [1.0, 0.0, 0.0],
-                },
-            )
+            self.assertEqual(joint["b"]["z"], [0.0, 0.0, -1.0])
+            self.assertEqual(joint["b"]["x"], [1.0, 0.0, 0.0])
+            if index == 1:
+                self.assertEqual(joint["b"]["occurrence"], "LProfile")
+                self.assertEqual(joint["b"]["point"], [0.0, 0.0, 0.0])
+            else:
+                self.assertNotIn("occurrence", joint["b"])
+                self.assertEqual(joint["b"]["point"], [0.0, 0.0, 1.0])
             self.assertEqual(
                 tuple(joint["values"][:2]),
                 expected_xy[index - 1],
