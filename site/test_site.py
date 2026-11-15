@@ -304,12 +304,21 @@ def check(
             "Public Forge API used",
             "Forge model represented by this fixture",
             "Reference implementations",
-            "PythonSCAD",
-            "pyBOSL2",
             "3. Generated SolidCraft relationship",
             "6. Evidence and references",
         ):
             assert heading in page_text, (slug, heading)
+        reference_labels = {
+            "pythonscad": "PythonSCAD",
+            "pybosl2": "pyBOSL2",
+            "cadquery": "CadQuery",
+        }
+        for implementation in case.get(
+            "reference_implementations",
+            ("pythonscad", "pybosl2"),
+        ):
+            label = reference_labels.get(implementation, implementation)
+            assert label in page_text, (slug, label)
         assert case["title"] in page_text
         setup_name = case.get("diagram", "setup.svg")
         setup_image = site / "qualification" / slug / setup_name
