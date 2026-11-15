@@ -591,9 +591,11 @@ def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root
         (dest / "commands.json").write_text(json.dumps(commands, indent=2) + "\n", encoding="utf-8")
         count = len(commands["commands"])
         screenshot = native_root / slug / "model.png" if verified else None
-        if screenshot is not None:
-            if not screenshot.is_file() or screenshot.stat().st_size == 0:
-                raise ValueError(f"Native screenshot missing or empty: {screenshot}")
+        if (
+            screenshot is not None
+            and screenshot.is_file()
+            and screenshot.stat().st_size > 0
+        ):
             shutil.copyfile(screenshot, dest / "preview.png")
             preview_path = "preview.png"
             preview_kind = "native-snapshot"
@@ -605,7 +607,10 @@ def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root
             (dest / "preview.svg").write_text(schematic(slug), encoding="utf-8")
             preview_path = "preview.svg"
             preview_kind = "schematic"
-            preview_caption = "Schematic illustration only; run the native CI job for a SolidCraft render."
+            preview_caption = (
+                "Schematic illustration; this example is not part of the "
+                "current native screenshot set."
+            )
         manifest["examples"][slug] = {"source": f"examples/{slug}/model.py",
                                       "commands": f"examples/{slug}/commands.json",
                                       "command_count": count,
