@@ -1,7 +1,7 @@
-# Forge compiler architecture and invariants
+# Forge compiler design
 
 Status: **draft — audit-controlled**  
-Applies to: SCPF / Forge semantic model and SolidCraft 0.42 adapter
+Applies to: SCPF component/occurrence handling and SolidCraft 0.42 commands
 
 This document defines how Forge should be structured after the foundational
 audit. It is deliberately stricter than "the current generated commands happen
@@ -21,17 +21,13 @@ The compiler must translate between those domains without making browser/UI
 side effects part of Forge semantics.
 
 ```text
-Forge public objects
+Forge components and occurrences
     ↓
-semantic model / IR
+check Placement, groups, attachments and parameters
     ↓
-validated relationships and dependencies
+generate SolidCraft 0.42 commands
     ↓
-SolidCraft 0.42 adapter
-    ↓
-native command plan
-    ↓
-SolidCraft document
+static replayable SolidCraft document
 ```
 
 There must be an explicit boundary between Forge identity and SolidCraft
@@ -65,18 +61,13 @@ Properties:
 - Placement belongs to occurrence identity;
 - user `name=` is a useful authored label, not the identity mechanism.
 
-### 2.3 Native reference
+### 2.3 Referring to a SolidCraft occurrence
 
-A **native reference** is the SolidCraft-side value required by commands to
-refer to one occurrence.
+Some SolidCraft commands need to point at an occurrence that already exists.
 
-The SolidCraft adapter owns the mapping:
-
-```text
-Forge OccurrenceId -> NativeOccurrenceRef
-```
-
-No other compiler layer may synthesize or guess that native reference.
+Forge may only use a reference form that is explicitly supported and qualified
+for replay by SolidCraft 0.42. Forge must never construct such a reference by
+guessing a generated browser name such as `Board:2`.
 
 ### 2.4 Display/browser name
 
@@ -84,17 +75,17 @@ A name displayed by SolidCraft, including generated forms such as
 `Component:1`, is presentation state unless the authoritative SolidCraft
 schema explicitly defines it as a stable programmable identifier.
 
-**Invariant ID-1**
+**Rule ID-1**
 
 > Forge must never predict a SolidCraft-generated occurrence name in order to
 > address an occurrence later.
 
-**Invariant ID-2**
+**Rule ID-2**
 
 > Changing SolidCraft browser numbering must not change which Forge objects are
 > moved, joined or inspected.
 
-**Invariant ID-3**
+**Rule ID-3**
 
 > One Forge occurrence identity may appear at most once in one assembly graph.
 > A second physical occurrence must be created with `.copy()`, which gets a
@@ -130,28 +121,28 @@ because its first occurrence happened to be placed first.
 
 `Placement` is declarative occurrence pose in the parent coordinate frame.
 
-**Invariant PL-1**
+**Rule PL-1**
 
 > Placement never creates a joint as an implementation workaround.
 
-**Invariant PL-2**
+**Rule PL-2**
 
 > Numeric and symbolic Placement describe the same semantic operation; only
-> native lowering differs.
+> SolidCraft command generation differs.
 
-**Invariant PL-3**
+**Rule PL-3**
 
 > Copying an occurrence with a new Placement creates a new occurrence identity
 > sharing the same reusable definition.
 
 Any SolidCraft-specific distinction between "implicit first occurrence",
-`occurrence.copy`, and `occurrence.move` belongs in the native adapter.
+`occurrence.copy`, and `occurrence.move` belongs in the SolidCraft command generator.
 
 ## 5. Relationships and joints
 
-`attach()` creates a semantic relationship between two Forge occurrences.
+`attach()` creates a attachment relationship between two Forge occurrences.
 
-The semantic relationship contains:
+The attachment relationship contains:
 
 - parent OccurrenceId;
 - child OccurrenceId;
@@ -161,17 +152,17 @@ The semantic relationship contains:
 
 It does **not** identify either side using a SolidCraft browser name.
 
-**Invariant JT-1**
+**Rule JT-1**
 
 > One Forge attachment lowers to the required native relationship command(s);
 > the relationship addresses native occurrences only through registered native
 > references.
 
-**Invariant JT-2**
+**Rule JT-2**
 
-> A seed pose used to help the native solver is not the semantic relationship.
+> A seed pose used to help the native solver is not the attachment relationship.
 
-**Invariant JT-3**
+**Rule JT-3**
 
 > Grouping or browser hierarchy must not silently add, remove or change the
 > attachment relationship.
@@ -183,9 +174,9 @@ Keep distinct:
 - standard `Anchor`;
 - direct `AnchorFrame`;
 - `AnchorTopology`;
-- authored semantic named anchors.
+- authored named anchors.
 
-A semantic named anchor is allowed because Forge owns that name. It must be
+A named anchor is allowed because Forge owns that name. It must be
 resolved to a definition-local reference before native occurrence addressing.
 
 This is unrelated to predicting SolidCraft-generated occurrence names.
@@ -194,7 +185,7 @@ This is unrelated to predicting SolidCraft-generated occurrence names.
 
 `.group("CornerBrackets")` means hierarchy/browser organisation.
 
-**Invariant GR-1**
+**Rule GR-1**
 
 > Grouping alone has no mechanical meaning.
 
@@ -210,7 +201,7 @@ the adapter may create one, but any required grounding must come from an
 independent mechanical/root policy, not from the fact that `.group()` was
 called.
 
-**Invariant GR-2**
+**Rule GR-2**
 
 > Re-grouping an existing semantic assembly must preserve the complete
 > occurrence relationship graph.
@@ -222,7 +213,7 @@ including attachment targets and assembly-owned anchors.
 
 Forge must not provide a partially correct transform path.
 
-**Invariant TR-1**
+**Rule TR-1**
 
 For each public combination of Placement rotation + attachment reference:
 
@@ -231,7 +222,7 @@ For each public combination of Placement rotation + attachment reference:
 
 Adding translation while ignoring rotation is not an acceptable fallback.
 
-The semantic compiler should not implement an independent CAD solver, but basic
+The Forge compiler should not implement an independent CAD solver, but basic
 coordinate-frame transformation needed to preserve authored occurrence intent
 belongs in the compiler/adapter boundary when SolidCraft requires explicit
 world picks.
@@ -240,94 +231,80 @@ world picks.
 
 Public parameters are dependency objects, not just numbers.
 
-**Invariant PA-1**
+**Rule PA-1**
 
 > Symbolic dependency is preserved until an operation explicitly requires a
 > concrete Python value.
 
 `pv()` marks such an explicit loss of symbolic dependency.
 
-**Invariant PA-2**
+**Rule PA-2**
 
 > Parameter publication and parameter dependency are separate concepts.
 
 A nested component may consume a parent Parameter without publishing a duplicate
 local parameter.
 
-**Invariant PA-3**
+**Rule PA-3**
 
 > Definition deduplication must include every build-affecting input.
 
 The audit must verify how reference fields participate before the final
 DefinitionId algorithm is chosen.
 
-**Invariant PA-4**
+**Rule PA-4**
 
 > User-authored strings and native name/enum fields are opaque data.
 > Parameter namespacing may rewrite only typed parameter expressions and
 > references, never arbitrary strings.
 
-## 9. Compiler stages
+## 9. Compiler steps
 
-Replace the current monolithic assembly lowering with explicit stages.
+`compile_assembly()` currently handles too many unrelated jobs in one
+function. Split those jobs into concrete steps.
 
-### Stage A — semantic collection
+### Step A — collect Forge objects
 
-Input: `ModelInstance` / `Assembly`
+Read the `ModelInstance` / `Assembly` and collect:
 
-Output conceptually:
+- component definitions;
+- occurrences;
+- `Placement` values;
+- groups;
+- attachments;
+- parameter dependencies.
 
-- DefinitionSpec objects;
-- OccurrenceSpec objects with OccurrenceId;
-- GroupSpec hierarchy;
-- AttachmentSpec relationships;
-- parameter dependency graph.
+No SolidCraft-generated occurrence names are created here.
 
-No SolidCraft-generated names exist at this stage.
+### Step B — validate the Forge model
 
-### Stage B — validation
+Before generating SolidCraft commands, check:
 
-Check semantic invariants before native commands:
+- every attachment target is actually present;
+- one occurrence object is not inserted twice;
+- grouping did not break an attachment reference;
+- two occurrences only share one component definition when their build inputs
+  really match;
+- unsupported rotated attachment cases fail explicitly;
+- parameter conflicts are reported.
 
-- all attachment targets exist;
-- occurrence names are unique where required for authored lookup;
-- group transformations preserve references;
-- definition-sharing is valid;
-- unsupported rotated attachment combinations are rejected;
-- parameter conflicts are explicit.
+### Step C — generate SolidCraft commands
 
-### Stage C — native capability planning
+Generate `component.create`, `occurrence.copy`, Placement, group and joint
+commands from the checked Forge model.
 
-Use the pinned SolidCraft 0.42 command schemas to determine how to:
+SolidCraft-specific workarounds belong here and must be tied to the exact
+SolidCraft version/case that requires them.
 
-- create definitions/components;
-- register native occurrence references;
-- create copies;
-- apply Placement;
-- author joint references;
-- represent hierarchy;
-- apply true mechanical grounding where required.
+### Step D — qualify the generated model
 
-This stage owns every SolidCraft-specific workaround.
+Check:
 
-### Stage D — native command emission
-
-Emit native JSON only after every semantic occurrence has a
-`NativeOccurrenceRef`.
-
-No command emitter may derive a native occurrence reference from
-`component_name + index`.
-
-### Stage E — qualification
-
-Prove:
-
-- command schema validity;
-- initial geometry;
-- saved-design parameter mutation;
-- occurrence relationship correctness;
-- hierarchy independent from mechanics;
-- replay equivalence where relevant.
+- the generated commands are valid for SolidCraft 0.42;
+- the initial geometry is correct;
+- saved parameter changes update what Forge claims is associative;
+- groups do not change mechanical relationships;
+- replay gives the same model.
 
 ## 10. First-occurrence behaviour
 
@@ -336,7 +313,7 @@ created.
 
 That is a native-engine fact, not a Forge semantic distinction.
 
-**Invariant NA-1**
+**Rule NA-1**
 
 > "first occurrence" may exist inside the SolidCraft adapter but never as the
 > identity of the semantic occurrence.
@@ -351,7 +328,7 @@ Forge currently has both:
 - normal package imports (`from scpf import ...`);
 - an implicit namespace injected by `run_script()`.
 
-**Invariant API-1**
+**Rule API-1**
 
 > A documented public symbol must have one meaning on both surfaces.
 
@@ -404,67 +381,49 @@ PythonSCAD, pyBOSL2 and CadQuery continue to express the same modelling intent
 idiomatically. They are geometry/modelling comparisons, not native identity
 authorities.
 
-## 13. Replay-first native occurrence policy
+## 13. Replay-first occurrence handling
 
-SolidCraft 0.42 can return numeric occurrence ids from `component.create` and
-`occurrence.copy`. That is useful native information, but it does **not**
-change the normal Forge product architecture.
+The normal Forge output is a static SolidCraft command document that can be
+replayed without Forge staying in the execution loop.
 
-Forge's normal output remains a static, independently replayable SolidCraft
-command document.
+### 13.1 Put Placement in create/copy where possible
 
-### 13.1 Placement first
+For ordinary positioning:
 
-Occurrence pose must be expressed as early as the SolidCraft command model
-allows:
+- use `component.create` placement fields for the first occurrence where
+  SolidCraft supports them;
+- use `occurrence.copy` placement fields for copies where SolidCraft supports
+  them;
+- do not create an occurrence at one location and then add a later
+  `occurrence.move` merely because the current compiler was written that way.
 
-- use `component.create` placement semantics for the first occurrence where
-  supported;
-- use `occurrence.copy` placement semantics for copies where supported;
-- do not create an occurrence at an arbitrary pose merely to move it later when
-  the create/copy command can express the intended Placement directly.
+### 13.2 Never guess SolidCraft occurrence names
 
-**Invariant EX-1**
+This is forbidden:
 
-> Normal Forge compilation is replay-first. Replaying the emitted document does
-> not require Forge to capture runtime results from an earlier execution.
+```python
+native_name = f"{component_name}:{index}"
+```
 
-### 13.2 No generated-name prediction
+Forge does not control SolidCraft's generated browser numbering.
 
-Forge may not synthesize selectors such as `Component:1` or `Component:2`
-from assumptions about SolidCraft browser numbering.
+### 13.3 If replay cannot address an occurrence safely, do not fake it
 
-**Invariant EX-2**
+Some later commands, especially joint-related commands, need to point at an
+already-created occurrence.
 
-> A native occurrence selector used by normal replay must come from an
-> explicitly qualified replay-safe SolidCraft mechanism. It may never be a
-> guessed generated display name.
+For each such command we need a replay-safe SolidCraft reference that has been
+qualified on 0.42.
 
-### 13.3 Capability boundary
+If we do not have one yet, that specific Forge capability is unsupported until
+we do. Do not solve it by:
 
-Some SolidCraft operations require addressing an already-created occurrence.
-If Forge does not yet have a replay-safe way to express that reference, the
-normal compiler must not invent one.
+- guessing `Component:1` / `Component:2`;
+- adding runtime `$ref` result binding to the normal compiler path;
+- adding a joint merely to avoid a Placement problem.
 
-**Invariant EX-3**
-
-> When a capability cannot be expressed reliably in the replay-first command
-> model, Forge rejects or marks that capability unsupported until a replay-safe
-> design is qualified.
-
-Runtime result handles, logical `$ref` bindings and phased Forge-managed
-execution have been explored historically. They are **not** the approved normal
-compiler/replay route and must not be introduced as an implicit fallback.
-
-If such a live/runtime capability is ever revisited, it is a separate explicit
-product/API decision, not a repair mechanism for ordinary Forge compilation.
-
-### 13.4 Native-id evidence
-
-The pinned SolidCraft 0.42 identity observations remain recorded in
-[`docs/vendor/solidcraft/0.42.0/occurrence-identity.md`](../vendor/solidcraft/0.42.0/occurrence-identity.md)
-as native-engine background. They must not be read as an instruction to turn
-normal Forge output into a runtime execution plan.
+Historical runtime-result-handle experiments remain useful background, but they
+are not the normal Forge architecture.
 
 ## 14. Migration strategy
 
@@ -472,16 +431,16 @@ Do not rewrite Forge in one large PR.
 
 Recommended implementation order after the audit:
 
-1. native 0.42 schema capture and identity experiment;
-2. introduce internal `OccurrenceId` / registration table without changing
-   public API;
-3. move current occurrence creation/copy/move lowering behind the native
-   adapter;
-4. remove all predicted `Component:N` addressing;
-5. repair grouping as hierarchy-only and remap the full relationship graph;
-6. normalize attachment/rotation handling;
-7. align script namespace with public exports;
-8. reclassify and rewrite tests;
+1. give each Forge occurrence a stable internal identity;
+2. lower ordinary Placement directly through `component.create` /
+   `occurrence.copy` where SolidCraft supports it;
+3. remove all guessed `Component:N` addressing;
+4. explicitly reject relationship cases that still lack a replay-safe
+   occurrence reference;
+5. repair grouping so it only changes hierarchy;
+6. fix attachment handling under rotation;
+7. align the implicit script namespace with the public package exports;
+8. rewrite tests that currently depend on SolidCraft browser numbering;
 9. re-run Q1-Q6 and downstream CAD qualification.
 
 Each step must be independently reviewable and reversible.
