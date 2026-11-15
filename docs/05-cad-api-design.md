@@ -37,7 +37,7 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch supported by the selected target face. The local 2D sketch origin is the centre of that target face. |
 | profile inside a sketch | `sketch.add(profile, anchor=CENTER)` | Place the profile's selected 2D anchor on the sketch origin. CENTER is the default semantic centring operation; numeric offset is not a centring substitute. |
 | deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. Use only when the design actually calls for an offset. |
-| occurrence placement | `placement=Placement(...)`, `child.at(...)`, `child.move(...)` | Describe a reusable component occurrence placement. The compiler chooses native lowering from the final Placement; placement does not create a joint. |
+| occurrence placement | `placement=Placement(...)`, `copy(placement=Placement(...))` | Describe the complete pose of a reusable component occurrence in its parent coordinate frame. Placement may be numeric or parametric and does not create a joint. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
 ### `at()`
@@ -100,43 +100,47 @@ instead.
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
 
-### `Placement`, `at()` and `move()`
+### `Placement`
 
-Reusable occurrences carry a Forge `Placement`.
+Reusable occurrences carry a declarative Forge `Placement`.
 
 ```python
 left = Block(placement=Placement(x=-50))
-right = left.copy().at(x=50)
+right = left.copy(placement=Placement(x=50))
 assembly = left + right
 ```
 
-`at(...)` sets an absolute occurrence position. `move(...)` applies a
-relative change to the existing Placement. Neither method prescribes a
-same-named SolidCraft command.
+Placement is the complete occurrence pose in its parent coordinate frame. It is
+not an action sequence. Position may be numeric or parameter/expression based;
+rotation is part of the same Placement.
 
-The compiler should use creation-time native placement when the final Placement
-can be represented there. For example, a concrete extra occurrence can lower
-directly through `occurrence.copy(..., translate=[...])` without a follow-up
-move.
+The public occurrence API therefore has no `.move()`, `.at()` or
+`.rotate()` convenience methods. A copy either preserves the source Placement
+or receives a replacement explicitly through
+`copy(placement=Placement(...))`.
 
-Parameter-driven placement is a separate capability because SolidCraft 0.42
-allows expressions in `occurrence.move.translate` but not in
-`occurrence.copy.translate`. It therefore also requires reliable runtime
-occurrence identity.
+The backend command name does not define the Forge semantic model. A parametric
+Placement may legitimately lower to native SolidCraft
+`occurrence.move.translate`, because SolidCraft 0.42 stores that expression
+associatively. PR #158 qualified saved-model mutation of this native behaviour.
+
+The compiler should use creation-time native placement where possible. For
+example, a concrete extra occurrence may lower directly through
+`occurrence.copy(..., translate=[...])`.
 
 The semantic boundary is deliberate:
 
-- `Placement` / `.at(...)` / `.move(...)` describe where an occurrence is;
+- `Placement` describes where/how one occurrence stands;
 - `.attach(...)` creates an explicit assembly relationship;
 - placement must not create a `joint.create` record merely as an
   implementation workaround;
-- generated occurrence labels such as `Block:2` are not Forge-owned identity.
+- expressions used by Placement reuse existing parameters rather than
+  publishing helper parameters.
 
 Historical note: on 2026-11-14 Forge temporarily lowered symbolic placement to
 planar joints while working around an assumed SolidCraft 0.30.1 limitation.
-That was an implementation workaround, not an approved Forge API design
-decision. It is documented in the architecture history only and must not be
-used as precedent.
+SolidCraft 0.42 native expressed occurrence placement replaced that workaround
+and is the qualified baseline.
 
 ### `attach()`
 
