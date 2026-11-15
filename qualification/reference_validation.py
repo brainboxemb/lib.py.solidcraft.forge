@@ -24,11 +24,11 @@ import trimesh
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from qualification.case_selection import format_selection_help, parse_case_selection
+from qualification.case_selection import CASE_BY_SLUG, format_selection_help, parse_case_selection
 from qualification.expectations import EXPECTED_BOUNDS
 
 
-IMPLEMENTATIONS = ("pythonscad", "pybosl2")
+DEFAULT_IMPLEMENTATIONS = ("pythonscad", "pybosl2")
 VIEWS = {
     "front": (0, -90),
     "right": (0, 0),
@@ -47,10 +47,32 @@ def load_reference(path: Path):
     namespace = runpy.run_path(str(path))
     if "model" not in namespace:
         raise RuntimeError(f"{path} must expose final geometry as model")
-    model = namespace["model"]
-    if not hasattr(model, "export"):
-        raise RuntimeError(f"{path} model has no export() method")
-    return model
+    return namespace["model"]
+
+
+def implementations_for(slug: str) -> tuple[str, ...]:
+    return tuple(
+        CASE_BY_SLUG[slug].get(
+            "reference_implementations",
+            DEFAULT_IMPLEMENTATIONS,
+        )
+    )
+
+
+def export_reference(model, implementation: str, stl: Path):
+    if implementation == "cadquery":
+        export = getattr(model, "export", None)
+        if not callable(export):
+            raise RuntimeError("CadQuery reference model must expose export()")
+        export(str(stl), exportType="STL")
+        return None
+
+    export = getattr(model, "export", None)
+    if not callable(export):
+        raise RuntimeError(
+            f"{implementation} reference model has no export() method"
+        )
+    return export(str(stl))
 
 
 def render_mesh(mesh: trimesh.Trimesh, path: Path, view: str) -> None:
@@ -92,7 +114,7 @@ def validate_one(slug: str, implementation: str, out: Path, tolerance: float) ->
     stl = target / "model.stl"
 
     model = load_reference(source)
-    exported = model.export(str(stl))
+    exported = export_reference(model, implementation, stl)
     if not stl.is_file() and exported is not None:
         candidate = Path(exported)
         if candidate.is_file():
@@ -157,7 +179,7 @@ def main() -> int:
     failures = []
     for slug in selected:
         results[slug] = {}
-        for implementation in IMPLEMENTATIONS:
+        for implementation in implementations_for(slug):
             print(f"reference {implementation}: {slug}")
             try:
                 result = validate_one(slug, implementation, args.out, args.tolerance)
