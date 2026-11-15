@@ -1,7 +1,7 @@
 """Reusable subassembly used by the @assembly qualification fixture."""
 
 from scpf.core import Box
-from scpf.model_objects import Position
+from scpf.model_objects import Placement
 from scpf.runner import assembly, component
 
 
@@ -14,6 +14,6 @@ class Post:
 @assembly
 class PostPair:
     def build(self):
-        left = Post(name="left").at(Position(x=-15))
-        right = left.copy().at(Position(x=15))
+        left = Post(name="left", placement=Placement(x=-15))
+        right = left.copy(name="right", placement=Placement(x=15))
         return left + right
