@@ -77,6 +77,19 @@ This keeps the two views complementary without creating a click maze:
 - **Reference:** complete lookup for `Faces` and `Shape.on()`, including the
   same generated facts and links back to worked usage.
 
+## Version-pinned external API data
+
+A version snapshot is not complete merely because it lists command names. For
+external engines such as SolidCraft, local version-pinned data must preserve
+enough command/schema semantics to answer routine implementation questions
+without reopening upstream source or a website. When runtime introspection is
+needed to fill a gap, cache the reusable result under the corresponding pinned
+version and record its provenance.
+
+This requirement is deliberately separate from Forge's own API source of truth:
+Forge API facts come from Forge code/docstrings; external-engine facts come from
+the pinned external snapshot/runtime.
+
 ## Agent documentation
 
 Agents use the same sources as humans. Do not maintain a second handwritten API
