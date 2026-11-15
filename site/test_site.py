@@ -49,6 +49,7 @@ def check(site: Path, sha: str, require_native: bool = False):
         ENUM_REFERENCES,
         GROUP_REFERENCES,
         METHOD_REFERENCES,
+        agent_manifest,
         api_manifest,
         enum_members,
         export_reference_targets,
@@ -93,7 +94,8 @@ def check(site: Path, sha: str, require_native: bool = False):
     local_agent_api = json.loads(
         (ROOT / "docs" / "agent" / "forge-api.json").read_text(encoding="utf-8")
     )
-    assert local_agent_api == api_manifest()
+    assert local_agent_api == agent_manifest()
+    assert set(scpf.__all__) <= set(local_agent_api["symbols"])
     assert 'class="development-banner"' in home
     assert "Development version." in home
     assert "not a support guarantee" in home
