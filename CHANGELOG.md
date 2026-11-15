@@ -12,6 +12,38 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 - Nothing yet.
 
+## [0.3.0] - 2026-11-15
+
+Replay-first placement cleanup and foundational API correction.
+
+### Added
+
+- Added explicit public `Placement` occurrence data for absolute X/Y/Z
+  positioning and optional axis-angle orientation.
+- Concrete placement of additional occurrences lowers directly through
+  `occurrence.copy(..., translate=...)` where SolidCraft supports it.
+
+### Changed
+
+- Placement is now the primary positioning contract for reusable components;
+  `.at()` remains an absolute-placement convenience.
+- Runtime result-handle execution is deferred to roadmap issue #168 instead of
+  becoming part of the normal replay compiler.
+
+### Removed
+
+- Removed the public relative `.move()` convenience and `Placement.moved()`.
+  Relative movement was ambiguous with backend `occurrence.move` semantics and
+  encouraged models whose final placement was harder to reason about.
+- Removed the phased runtime-result-binding work from this release line; normal
+  Forge output remains replay-first.
+
+### Compatibility
+
+- SCPF package version: **0.3.0**
+- Qualified SolidCraft version: **0.42.0**
+- Python: **3.10+**
+
 ## [0.2.0] - 2026-11-15 — WITHDRAWN
 
 This release was published before Forge's foundational create/place/copy/attach
