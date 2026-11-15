@@ -10,7 +10,10 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Added
 
-- Nothing yet.
+- Add serializable Forge execution-plan result bindings and phased live/replay
+  execution. Dependent commands can use logical `$ref` handles resolved from
+  actual SolidCraft command results; multi-phase execution is wrapped in a
+  checkpoint so the complete plan remains atomic.
 
 ## [0.2.0] - 2026-11-15 — WITHDRAWN
 
