@@ -1,3 +1,36 @@
+# CRITICAL FORGE PRODUCT CONSTRAINTS — READ BEFORE CODING
+
+**FORGE IS REPLAY-FIRST. THE NORMAL FORGE OUTPUT IS A STATIC, REPLAYABLE
+SOLIDCRAFT COMMAND DOCUMENT.**
+
+**DO NOT INTRODUCE RUNTIME RESULT HANDLES, `$ref` BINDINGS, PHASED EXECUTION,
+OR A FORGE-MANAGED LIVE EXECUTION PLAN AS THE NORMAL COMPILER PATH.**
+
+**DO NOT PREDICT SOLIDCRAFT-GENERATED OCCURRENCE NAMES SUCH AS
+`Component:1`, `Component:2`, ETC.**
+
+**PLACEMENT IS THE NORMAL WAY TO POSITION OCCURRENCES. LOWER PLACEMENT DIRECTLY
+IN `component.create` / `occurrence.copy` WHERE SOLIDCRAFT CAN EXPRESS IT.**
+
+**ANCHORS / ATTACHMENTS / JOINTS ARE ONLY FOR REAL SEMANTIC RELATIONSHIPS.
+NEVER ADD A JOINT OR ANCHOR FRAME MERELY TO MAKE ORDINARY PLACEMENT WORK.**
+
+**IF A REQUESTED CAPABILITY CANNOT CURRENTLY BE EXPRESSED RELIABLY IN THE
+REPLAY-FIRST MODEL, REJECT OR MARK THAT CAPABILITY UNSUPPORTED UNTIL A
+REPLAY-SAFE DESIGN EXISTS. DO NOT SILENTLY SOLVE IT BY ADDING RUNTIME
+RESULT-BINDING OR BY GUESSING SOLIDCRAFT NAMES.**
+
+Historical runtime-result-handle work (including PRs #166/#167) is design
+evidence only. It is **not** the approved normal Forge architecture.
+
+Before implementing any foundational compiler change:
+
+1. read these constraints first;
+2. read `docs/05-cad-api-design.md`;
+3. check the relevant current design/change record;
+4. if an implementation would violate any rule above, stop the implementation
+   and fix/clarify the design record first.
+
 # SCPF repository instructions
 
 ## Read the minimum context
