@@ -50,8 +50,8 @@ class AssemblyOwnedAnchorCommandTests(unittest.TestCase):
             joint["a"]["corner"],
             [20.0, -15.0, 20.0],
         )
-        self.assertEqual(joint["a"]["occurrence"], "Base:1")
-        self.assertEqual(joint["b"]["occurrence"], "Marker:1")
+        self.assertEqual(joint["a"]["occurrence"], "Base")
+        self.assertEqual(joint["b"]["occurrence"], "Marker")
 
 
 @unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
