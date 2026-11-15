@@ -627,8 +627,9 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             + f'<p class="crumb"><a href="../">← API Guide</a> / {escape(chapter["title"])}</p>'
             + f'<h1>{escape(chapter["title"])}</h1>'
             + f'<p class="guide-lead">{escape(chapter["summary"])}</p>'
+            + chapter["body"]
             + guide_api_summary(slug)
-            + chapter["body"] + '</article></main>'
+            + '</article></main>'
         )
         (dest / "index.html").write_text(
             page(chapter["title"], body, stylesheet="../../style.css",
