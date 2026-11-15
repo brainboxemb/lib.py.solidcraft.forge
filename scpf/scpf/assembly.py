@@ -168,10 +168,13 @@ def compile_assembly(value, name):
 
     # Named groups are actual empty native components, not just labels in
     # Python. Child component definitions are created under their parent.
-    # A group is a fixed local/browser container: placement belongs to its
-    # children, not to the group itself. Ground every group so independent
-    # grouped subassemblies keep the root coordinate frame in the native solver.
-    # Native "component.create(parent=...)" makes the browser expandable.
+    #
+    # Grouping is browser/hierarchy structure, not a mechanical constraint.
+    # Independent groups are grounded so their child Placement stays in the
+    # root coordinate frame. But if a grouped child attaches to an occurrence
+    # outside that group, the native group must remain free: grounding that
+    # parent frame over-constrains the external joint graph and prevents the
+    # attached children from following a moving target.
     group_names = list(dict.fromkeys(
         instance.group_name
         for instance in assembly.instances
@@ -179,12 +182,22 @@ def compile_assembly(value, name):
     ))
     if set(group_names) & set(names.values()):
         raise ModelError("assembly group name conflicts with a component name")
+
+    externally_attached_groups = {
+        instance.group_name
+        for instance in assembly.instances
+        if (
+            instance.group_name is not None
+            and instance.attachment is not None
+            and instance.attachment.target.group_name != instance.group_name
+        )
+    }
     for group_name in group_names:
         commands.append(_command(
             "component.create",
             name=group_name,
             activate=False,
-            grounded=True,
+            grounded=group_name not in externally_attached_groups,
         ))
 
     by_definition = {}
