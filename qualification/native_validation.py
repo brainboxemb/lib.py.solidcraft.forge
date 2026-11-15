@@ -17,6 +17,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from qualification.case_selection import parse_case_selection
 from qualification.expectations import EXPECTED_BOUNDS, EXPECTED_MUTATION_BOUNDS
 
 
@@ -845,13 +846,20 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--native-root", type=Path, required=True)
     parser.add_argument("--qualification-dir", type=Path, required=True)
+    parser.add_argument(
+        "--cases",
+        default="all",
+        help="comma/space separated case slugs, group:<name>, or all",
+    )
     args = parser.parse_args()
 
+    selected = parse_case_selection(args.cases)
     args.qualification_dir.mkdir(parents=True, exist_ok=True)
     rows = ["case\tq4\tq5\n"]
     summary = {}
 
-    for case, validator in VALIDATORS.items():
+    for case in selected:
+        validator = VALIDATORS[case]
         result = validator(args.native_root / case).result()
         summary[case] = result
         case_dir = args.native_root / case
