@@ -564,6 +564,28 @@
           "changed_pixel_fraction_threshold": 0.08
         }
       }
+    },
+    "parametric-placement-pair": {
+      "case": "parametric-placement-pair",
+      "approval": "approved",
+      "source_commit": "40891861567b1315eea08de59b7d2856d24d0a69",
+      "views": {
+        "front": {
+          "pixels_zlib_base64": "eNrt0MtugkAYhuH7vwc2OsBG41ZM9CJ6bj0w84+Wg6324A1UBWEMfxi6IM3X8Gzn5WMyh0O7vsF9gfsE9wFuD24H7h3cG7gtuBRc0qkVg4vAvYLb/IXf/N7SrjnqSJ5pPihsdNadvlg3o9OZ47uZvm/b9/t56juzVDNrFZQEYjTMDIS2EIM8HYkgId0AJZNy37XVbrk/4fapQsXG/V2yMPaDWFEDKh4b72OrjfcZc/uqQkZTxxOZnscEJvJ6eeo500iqZpaF0JaGZcueS8blbqSIPb9qSRWPIP+hsFNrBW4JbgFu3rKXTq1ncE/gHsE9gLvv1LoDdwvupmU/wW2xqg==",
+          "mean_abs_threshold": 6,
+          "changed_pixel_fraction_threshold": 0.08
+        },
+        "right": {
+          "pixels_zlib_base64": "eNrt0UkOgjAYhuH7XwE2AhtZQAg3cZ7QDkqL88AFNJAgq6aYkvglffZ9//5tWfbrBe4J7gHuDu4G7gruAu4M7gTuCK6wlCQ4AS4Hd/gfP11qr42TBt8bx4vU9QcV300L7QlcE5NREA4rYRBJxg1jMv72Y/0+00RFuy8oM4yK9vvo96kmkieOV/+v5yQ5ocaRrNGhTrTRz671xqzDKXQ7S2kLLgO3Abfu2cpSWoJbgJuDm4GbWkoTcGNwo569AS6QwKY=",
+          "mean_abs_threshold": 6,
+          "changed_pixel_fraction_threshold": 0.08
+        },
+        "iso": {
+          "pixels_zlib_base64": "eNrt1V1P01AYwPGPagwkRtfB1vVlsHUoV1wIRsQEKPIyIWu3s8EFMRp0EZAoBiM6Ubp2a09fT7euoHwBh96uW1K6i5Pwu2rSk/95btrn6mq4/mDuN+YuMXeBOR9zHcx5mGtjroU5tz+EkDs8CHW/QBfdLBHIcTr+KThu+46Douc4nn8G+Jcrha9eJ/obHNeXdvhNUARbfLHWadmhx+zJbsNdPg+KgigWweZyWfFsJ0K292U6v31d7xLE7cKjqm+FK/Vk+vux3EKpLAiiIIDyYm4UXJp2dMzOIZUhs4sACKXKCheniJ2LcH2rJ8M7SHHcBJnjK2sP40k2Tez4hhUdo1N9kMtmOJZixxMsw0yMli7C9c3ebHkpRXHZLHePYhh2nJitOWaUDNs7mScZjiPodDI286GNjJChINBtHT1OpMeSsel3qKXrRtR06KLqzJ3sK6utw/CVPiBs6dWGp2v6sGi6a/Stw0EFOIDW96Xh6BocFk1H9YMmGjBCWKrmNPdW+Y19aHefo6aqtvZ+bVUEwkr+yLBUNfhgCJpqGgf5FwLo/rtBgd/6ZOlquFJvTeNkbUMoif+VCuv5GmxG2G+gwv0FsSwK/7ZPpTA38tppBIwShmJXSDo9X7y+oSLMkuNjby2lGR3FLienJlOTz0uV4lMqTqfjUffFxFTmev88YeMUS0/E3gT1G2HIxh5JZbv7Jz2SYmmWJlIfodKIkAJPl6nu/skQNMsQ5PqZFpRXwpFV8/gZSXMEE08snVpNWYmYXNf0wzny7tj8Z1OVgvNyaHUJwr25Q0OV6vJwSHXN1AbU6zcinUuDTtzq6xxzvzD3E3NnmPtxq68a5r5j7tuQ/QUvmm9L",
+          "mean_abs_threshold": 6,
+          "changed_pixel_fraction_threshold": 0.08
+        }
+      }
     }
   }
 }
