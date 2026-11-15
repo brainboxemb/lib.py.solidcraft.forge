@@ -9,4 +9,4 @@ from pybosl2 import cuboid
 panel = cuboid([10, 2, 20]).up(10)
 panels = panel | panel.right(11)
 frame = cuboid([35, 10, 40]).up(20).back(20)
-(panels | frame).show()
+model = panels | frame
