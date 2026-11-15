@@ -16,8 +16,10 @@ source that answers the task:
 
 Only read additional files when the first source is insufficient. The compact
 `docs/agent/forge-api.json` snapshot is generated from the same public Python
-objects/docstrings as the human API reference; do not edit it by hand. For a
-Forge symbol not covered there, read the relevant implementation/docstring next.
+objects/docstrings as the human API reference. It is intentionally a first-read
+index rather than a full manual: use its exact signature/value and short summary,
+then read the linked local guide or relevant implementation/docstring only when
+more semantics are needed. Do not edit the snapshot by hand.
 For SolidCraft, use the version-pinned local vendor snapshot or local CLI
 introspection before any website lookup. Only consult upstream/external
 PythonSCAD or pyBOSL2 documentation when the local agent reference does not
