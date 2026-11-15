@@ -9,6 +9,37 @@ SCPF exposes CAD objects and relationships, not JSON commands, transports, or
 an independent geometry engine. SolidCraft creates and evaluates the actual
 geometry.
 
+## Modelling style: object-first assemblies, expression-first geometry
+
+Forge is deliberately **object-first at the component/assembly level** and
+**expression-first inside component geometry**.
+
+At assembly level, named Python objects represent meaningful physical
+occurrences:
+
+```python
+left = Board().at(Position(x=-half(opening_width)))
+right = Board().at(Position(x=half(opening_width)))
+bracket = CornerBracket().attach(left, ...)
+```
+
+The variables represent parts in the design, so later relationships refer to
+the actual Python occurrence object rather than a generated SolidCraft label.
+
+Inside one component, geometry remains a lightweight feature/expression model:
+
+```python
+class Board:
+    def build(self):
+        body = Box(self.width, self.depth, self.height)
+        holes = Hole(d=5, depth=Depth.THROUGH_ALL).pattern(...)
+        return body - holes
+```
+
+Do not turn every primitive or feature into an assembly object. Conversely, do
+not flatten physical assembly parts into an anonymous transform expression tree.
+This boundary is intentional and is part of the Forge API design.
+
 ## User-facing model
 
 A model does not need `@dataclass`. Numeric class fields are model parameters:
