@@ -402,13 +402,17 @@ def _model_factory(cls):
 
 
 def component(cls):
-    """Declare a reusable component with implicit editable public parameters.
+    """Declare one reusable physical component definition.
 
-    Public lower-case numeric fields become component-local editable native
-    parameters automatically. Passing a parent Parameter/Expression into a
-    component input preserves that existing dependency and does not create a
-    duplicate child parameter. Private underscore-prefixed defaults remain
-    Forge/build-time inputs.
+    Use when:
+        Decorate a model class when its build() result represents one reusable
+        physical part. Calling the decorated class creates an occurrence of
+        that shared definition.
+
+    Limits:
+        build() must produce one Shape when the class is reused as a component.
+        Public lower-case numeric fields become editable native parameters;
+        underscore-prefixed inputs remain Forge/build-time inputs.
     """
     if not isinstance(cls, type) or not callable(getattr(cls, "build", None)):
         raise TypeError("component() expects a model class with build()")
@@ -433,7 +437,17 @@ def _assembly_factory(cls):
 
 
 def assembly(cls):
-    """Declare an imported class whose build() returns an SCPF assembly."""
+    """Declare a reusable class that composes component occurrences.
+
+    Use when:
+        Decorate a class when the class itself represents a reusable assembly
+        or subassembly built from component occurrences and their relationships.
+
+    Limits:
+        build() must return a component occurrence or Assembly. The decorator
+        does not itself create grouping or attachment relationships; those come
+        from the objects returned by build().
+    """
     if not isinstance(cls, type) or not callable(getattr(cls, "build", None)):
         raise TypeError("assembly() expects a model class with build()")
     return _assembly_factory(cls)
