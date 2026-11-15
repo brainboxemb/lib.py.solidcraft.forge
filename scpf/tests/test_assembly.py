@@ -124,6 +124,74 @@ class AssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "Placement"):
             original.copy(placement=(40, 0, 3))
 
+    def test_forge_occurrence_id_survives_group_and_attach_but_not_copy(self):
+        from scpf import Box, component
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        parent = Panel()
+        child = Panel()
+
+        grouped = parent.group("Panels")
+        attached = child.attach(parent)
+        copied = parent.copy()
+
+        self.assertEqual(grouped.occurrence_id, parent.occurrence_id)
+        self.assertEqual(attached.occurrence_id, child.occurrence_id)
+        self.assertEqual(
+            attached.attachment.target.occurrence_id,
+            parent.occurrence_id,
+        )
+        self.assertNotEqual(copied.occurrence_id, parent.occurrence_id)
+
+    def test_same_forge_occurrence_cannot_be_added_twice(self):
+        from scpf import Box, component
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        panel = Panel()
+        with self.assertRaisesRegex(ValueError, "same Forge occurrence"):
+            panel + panel
+
+    def test_grouped_attachment_resolves_by_forge_occurrence_id(self):
+        from scpf import Anchor, Box, component
+        from scpf.assembly import compile_assembly
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        parent = Panel()
+        child = Panel().attach(
+            parent,
+            parent=Anchor.RIGHT,
+            child=Anchor.LEFT,
+        )
+        grouped = (parent + child).group("Pair")
+
+        self.assertIsNot(
+            grouped.instances[1].attachment.target,
+            grouped.instances[0],
+        )
+        self.assertEqual(
+            grouped.instances[1].attachment.target.occurrence_id,
+            grouped.instances[0].occurrence_id,
+        )
+
+        commands = compile_assembly(grouped, "GroupedPair")["commands"]
+        joints = [
+            command for command in commands
+            if command["command"] == "joint.create"
+        ]
+        self.assertEqual(len(joints), 1)
+
     def test_copies_use_declared_native_placements(self):
         """Copied occurrences compile from their declared final Placement."""
         with tempfile.TemporaryDirectory() as directory:
