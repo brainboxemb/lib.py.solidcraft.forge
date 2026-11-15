@@ -13,7 +13,7 @@ source that answers the task:
 | SolidCraft command/API lookup | `docs/agent/solidcraft.md` |
 | SolidCraft version upgrade | `docs/qualification/solidcraft-upgrade-protocol.md` |
 | SCPF version/release work | `docs/10-release-process.md` |
-| PythonSCAD / pyBOSL2 qualification reference | `docs/agent/reference-libraries.md` |
+| PythonSCAD / pyBOSL2 / CadQuery qualification reference | `docs/agent/reference-libraries.md` |
 
 Only read additional files when the first source is insufficient. The compact
 `docs/agent/forge-api.json` snapshot is generated from the same public Python
@@ -23,8 +23,8 @@ then read the linked local guide or relevant implementation/docstring only when
 more semantics are needed. Do not edit the snapshot by hand.
 For SolidCraft, use the version-pinned local vendor snapshot or local CLI
 introspection before any website lookup. Only consult upstream/external
-PythonSCAD or pyBOSL2 documentation when the local agent reference does not
-cover the required operation or when intentionally refreshing that reference.
+PythonSCAD, pyBOSL2 or CadQuery documentation when the local agent reference
+does not cover the required operation or when intentionally refreshing that reference.
 
 ## Public API source of truth
 
@@ -62,9 +62,10 @@ Every qualification case contains:
 - `examples/<case>/scpf/model.py`
 - `examples/<case>/pythonscad/model.py`
 - `examples/<case>/pybosl2/model.py`
+- `examples/<case>/cadquery/model.py`
 
-PythonSCAD and pyBOSL2 express the same modelling intent for comparison. They
-are not alternative Forge specifications. Use
+PythonSCAD, pyBOSL2 and CadQuery express the same modelling intent from
+different library viewpoints. They are not alternative Forge specifications. Use
 `docs/agent/reference-libraries.md` before looking upstream.
 
 When another library lacks a SolidCraft-style associative relationship, compare
@@ -84,7 +85,7 @@ Keep the edit-check loop short:
   main-branch qualification.
 
 When changing a qualification model, update its regression/native checks and
-both reference implementations.
+all required reference implementations.
 
 
 ## Release discipline
