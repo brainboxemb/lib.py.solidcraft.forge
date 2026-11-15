@@ -162,6 +162,22 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "rotated-copy-placement",
+        "group": "components",
+        "title": "Rotated copied occurrence Placement",
+        "intent": "Verify that one copied Placement containing numeric XYZ plus rotation reaches that final pose without rotating an already-applied copy translation.",
+        "forge_api": "first.copy(placement=Placement(x=30, z=40, rotation=(X, 90)))",
+        "forge_model": "Two Panel occurrences share one definition. The copy owns one complete absolute Placement with translation and orientation.",
+        "lowering": "occurrence.copy creates the copy at identity; one occurrence.move carries translate=[30,0,40], axis=X and angle=90 deg together.",
+        "native_expectation": "The fixed 20 x 10 x 2 mm Panel remains at [-10,-5,0]..[10,5,2]. The rotated copy ends at [20,-2,35]..[40,0,45].",
+        "mutation": "Not required; this case isolates transform-order correctness for one complete numeric copied Placement.",
+        "reference_implementations": ("cadquery",),
+        "references": [
+            ("SolidCraft", "occurrence.move is a relative rigid transform, so Forge must not pre-translate the copy and then rotate that translated transform."),
+            ("CadQuery", "Assembly Location provides an independent final-pose reference for one translated and axis-angle rotated child."),
+        ],
+    },
+    {
         "slug": "group-hierarchy",
         "group": "components",
         "title": "Named native subassembly group",
