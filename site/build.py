@@ -480,7 +480,7 @@ def render_template(name, **values):
     return Template(text(template_path)).substitute(values)
 
 
-def build(out, sha, native_root=None, diagram_root=None):
+def build(out, sha, native_root=None, diagram_root=None, reference_root=None):
     """Compile the public examples and attach verified native screenshots if available.
 
     A .png is accepted only when the native verification file identifies the
@@ -499,6 +499,17 @@ def build(out, sha, native_root=None, diagram_root=None):
                     and metadata.get("solidcraft_version") == TESTED_SOLIDCRAFT_VERSION)
         if not verified:
             raise ValueError("Native screenshots do not match this source commit")
+
+    reference_verified = False
+    reference_summary = {}
+    if reference_root is not None:
+        summary_file = reference_root / "summary.json"
+        if not summary_file.is_file():
+            raise ValueError("Reference directory is missing summary.json")
+        reference_summary = json.loads(summary_file.read_text(encoding="utf-8"))
+        reference_verified = reference_summary.get("source_commit") == sha
+        if not reference_verified:
+            raise ValueError("Reference renders do not match this source commit")
 
     out.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / "site" / "style.css", out / "style.css")
@@ -933,6 +944,59 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 encoding="utf-8",
             )
 
+        reference_evidence_html = (
+            '<div class="notice">Executable reference renders were not supplied '
+            'to this site build. The source comparisons remain available.</div>'
+        )
+        reference_evidence_files = []
+        if reference_verified:
+            cards = []
+            for reference_name in ("pythonscad", "pybosl2"):
+                result_path = reference_root / slug / reference_name / "result.json"
+                if not result_path.is_file():
+                    raise ValueError(f"Reference result missing: {result_path}")
+                result = json.loads(result_path.read_text(encoding="utf-8"))
+                if result.get("status") != "pass":
+                    raise ValueError(
+                        f"Reference result is not PASS: {slug}/{reference_name}"
+                    )
+                dest = case_dir / f"reference-{reference_name}"
+                dest.mkdir(exist_ok=True)
+                source_dir = result_path.parent
+                for name in (
+                    "result.json",
+                    "model.stl",
+                    "model-front.png",
+                    "model-right.png",
+                    "model-iso.png",
+                ):
+                    source_file = source_dir / name
+                    if not source_file.is_file() or source_file.stat().st_size == 0:
+                        raise ValueError(
+                            f"Reference evidence missing or empty: {source_file}"
+                        )
+                    shutil.copyfile(source_file, dest / name)
+                    reference_evidence_files.append(
+                        f"reference-{reference_name}/{name}"
+                    )
+                label = "PythonSCAD" if reference_name == "pythonscad" else "pyBOSL2"
+                cards.append(
+                    '<figure class="qualification-reference-preview">'
+                    f'<a href="reference-{reference_name}/model-iso.png" '
+                    'class="qualification-image-link" target="_blank" rel="noopener">'
+                    f'<img src="reference-{reference_name}/model-iso.png" '
+                    f'alt="{escape(case["title"])} {label} reference render">'
+                    '</a>'
+                    f'<figcaption><strong>{label}</strong> · independently exported STL · '
+                    f'max bounds delta {escape(result.get("max_delta_mm"))} mm</figcaption>'
+                    '</figure>'
+                )
+            reference_evidence_html = (
+                '<div class="twocol qualification-reference-renders">'
+                + "".join(cards)
+                + '</div>'
+            )
+
         diagram_html = ""
         diagram_name = case.get("diagram")
         plan_name = None
@@ -1113,6 +1177,10 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 f'<li><a href="{escape(name)}">Native snapshot: {escape(name)}</a></li>'
                 for name in native_images
             )
+        evidence_items.extend(
+            f'<li><a href="{escape(name)}">Reference evidence: {escape(name)}</a></li>'
+            for name in reference_evidence_files
+        )
 
         case_body = render_template(
             "case.html",
@@ -1138,6 +1206,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             source=escape(source),
             pythonscad_source=escape(reference_sources["pythonscad"]),
             pybosl2_source=escape(reference_sources["pybosl2"]),
+            reference_evidence=reference_evidence_html,
         )
         (case_dir / "index.html").write_text(
             page(
@@ -1161,6 +1230,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             ],
             "native_evidence": native_files,
             "native_images": native_images,
+            "reference_evidence": reference_evidence_files,
             "qualification_status": (
                 qualification_result.get("status") if qualification_result else None
             ),
@@ -1502,6 +1572,13 @@ if __name__ == "__main__":
     parser.add_argument("--source-sha", required=True)
     parser.add_argument("--native", type=Path, help="Source-matched native screenshot directory")
     parser.add_argument("--diagram-root", type=Path, help="Generated qualification setup diagrams")
+    parser.add_argument("--references", type=Path, help="Source-matched PythonSCAD/pyBOSL2 evidence")
     options = parser.parse_args()
-    build(options.out, options.source_sha, native_root=options.native, diagram_root=options.diagram_root)
+    build(
+        options.out,
+        options.source_sha,
+        native_root=options.native,
+        diagram_root=options.diagram_root,
+        reference_root=options.references,
+    )
     print(f"Built independent SCPF library site: {options.out}")
