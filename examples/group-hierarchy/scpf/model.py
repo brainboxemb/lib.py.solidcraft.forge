@@ -14,8 +14,8 @@ class Frame:
 class GroupHierarchy:
     def build(self):
         left = Panel()
-        panels = (left + left.copy().move(x=11)).group("PanelGroup")
-        frame = Frame().move(y=20)
+        panels = (left + left.copy().at(x=11)).group("PanelGroup")
+        frame = Frame().at(y=20)
         return panels + frame
 
 
