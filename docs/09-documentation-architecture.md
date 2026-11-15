@@ -91,11 +91,14 @@ The preferred lookup order is:
 4. external documentation only when the local version-pinned sources are
    insufficient.
 
-The machine-readable index is generated output and must not be edited by hand.
+The local machine-readable index is deliberately compact: it contains routing,
+current signatures/enum values and a short summary, while detailed use/limit
+prose stays in the docstrings and full website reference. It is generated
+output and must not be edited by hand.
 After changing public API objects/docstrings, regenerate the local snapshot with:
 
 ```text
-python site/api_reference.py > docs/agent/forge-api.json
+python site/api_reference.py --agent > docs/agent/forge-api.json
 ```
 
 The site test compares that committed snapshot with the live generator output,
