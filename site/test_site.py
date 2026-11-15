@@ -340,6 +340,15 @@ def check(
         ):
             assert placeholder not in page_text, (slug, placeholder)
         assert (site / "qualification" / slug / "model.py").is_file()
+        placement_source = ROOT / "examples" / slug / "placement" / "model.py"
+        if placement_source.is_file():
+            assert (
+                site / "qualification" / slug / "placement-baseline.py"
+            ).is_file()
+            assert 'href="placement-baseline.py"' in page_text
+            assert qualification_manifest["cases"][slug]["diagnostic_sources"] == [
+                "placement-baseline.py"
+            ]
         reference_names = reference_implementations_for(case)
         for implementation in reference_names:
             source_name = f"reference-{implementation}.py"
