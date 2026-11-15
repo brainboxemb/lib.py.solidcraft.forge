@@ -433,51 +433,54 @@ def compile_assembly(value, name):
         attachment = instance.attachment
         if attachment is None:
             continue
-        child_occurrence = occurrence_names.get(instance.occurrence_id)
-        parent_occurrence = occurrence_names.get(attachment.target.occurrence_id)
-        if child_occurrence is None or parent_occurrence is None:
+
+        child_id = instance.occurrence_id
+        parent_id = attachment.target.occurrence_id
+        if (
+            child_id not in occurrence_refs
+            or parent_id not in occurrence_refs
+            or child_id not in native_seed_positions
+            or parent_id not in native_seed_positions
+        ):
             raise ModelError("component attach target must be part of the assembly")
 
+        child_occurrence = occurrence_refs[child_id]
+        parent_occurrence = occurrence_refs[parent_id]
+        child_label = occurrence_labels[child_id]
+        parent_label = occurrence_labels[parent_id]
+        joint_name = f"Attach {child_label} to {parent_label}"
+
         if attachment.as_built:
+            if child_occurrence is None or parent_occurrence is None:
+                raise ModelError(
+                    "as-built attachment to a copied occurrence is not "
+                    "replay-safe in SolidCraft 0.42"
+                )
             commands.append(_command(
                 "joint.as_built",
                 type="rigid",
-                name=f"Attach {child_occurrence} to {parent_occurrence}",
+                name=joint_name,
                 a=parent_occurrence,
                 b=child_occurrence,
             ))
             continue
 
-        def custom_anchor_reference(model, anchor, occurrence):
+        def custom_anchor_reference(model, anchor, occurrence, position):
             if isinstance(anchor, (AnchorFrame, AnchorTopology)):
-                if model.placement.rotation is not None:
-                    kind = type(anchor).__name__
-                    raise ModelError(
-                        f"direct {kind} attachments on explicitly rotated "
-                        "occurrences are not supported yet"
-                    )
                 custom = anchor
             else:
                 custom = dict(model.definition.anchors)[anchor]
-                if model.placement.rotation is not None:
-                    if isinstance(custom, AnchorTopology):
-                        raise ModelError(
-                            "AnchorTopology on explicitly rotated occurrences "
-                            "is not supported yet"
-                        )
-                    return custom_origin_names[(model.occurrence_id, anchor)]
 
             if isinstance(custom, AnchorTopology):
                 def world(point):
                     if point is None:
                         return None
                     return [
-                        point[i] + model.placement.position[i]
+                        point[i] + position[i]
                         for i in range(3)
                     ]
 
                 reference = {
-                    "occurrence": occurrence,
                     "edge": world(custom.edge),
                     "on": world(custom.on),
                 }
@@ -487,30 +490,38 @@ def compile_assembly(value, name):
                     reference["z"] = list(custom.z)
                 if custom.x is not None:
                     reference["x"] = list(custom.x)
-                return reference
+            else:
+                reference = {
+                    "point": [
+                        custom.origin[i] + position[i]
+                        for i in range(3)
+                    ],
+                    "z": list(custom.z),
+                    "x": list(custom.x),
+                }
 
-            return {
-                "occurrence": occurrence,
-                "point": [
-                    custom.origin[i] + model.placement.position[i]
-                    for i in range(3)
-                ],
-                "z": list(custom.z),
-                "x": list(custom.x),
-            }
+            if occurrence is not None:
+                reference["occurrence"] = occurrence
+            return reference
+
+        parent_position = native_seed_positions[parent_id]
+        child_position = native_seed_positions[child_id]
 
         if isinstance(attachment.parent, Anchor):
             parent_origin = _anchor_origin(
                 attachment.target,
                 attachment.parent,
                 parent_occurrence,
+                position=parent_position,
             )
         else:
             parent_origin = custom_anchor_reference(
                 attachment.target,
                 attachment.parent,
                 parent_occurrence,
+                parent_position,
             )
+
         explicit_corner_pair = (
             isinstance(attachment.parent, Anchor)
             and isinstance(attachment.child, Anchor)
@@ -520,26 +531,30 @@ def compile_assembly(value, name):
         if explicit_corner_pair:
             child_point = _anchor_local_point(instance, attachment.child)
             child_origin = {
-                "occurrence": child_occurrence,
                 "point": [
-                    child_point[i] + instance.placement.position[i]
+                    child_point[i] + child_position[i]
                     for i in range(3)
                 ],
                 "z": list(_corner_normal(attachment.child)),
                 "x": list(_corner_native_x(attachment.parent)),
             }
+            if child_occurrence is not None:
+                child_origin["occurrence"] = child_occurrence
         elif isinstance(attachment.child, Anchor):
             child_origin = _anchor_origin(
                 instance,
                 attachment.child,
                 child_occurrence,
+                position=child_position,
             )
         else:
             child_origin = custom_anchor_reference(
                 instance,
                 attachment.child,
                 child_occurrence,
+                child_position,
             )
+
         for parameter in parameters_in(
             attachment.gap,
             *attachment.offset,
@@ -564,7 +579,7 @@ def compile_assembly(value, name):
 
         params = {
             "type": "planar" if has_planar_offset else "rigid",
-            "name": f"Attach {child_occurrence} to {parent_occurrence}",
+            "name": joint_name,
             "a": parent_origin,
             "b": child_origin,
         }
@@ -581,15 +596,10 @@ def compile_assembly(value, name):
                 isinstance(attachment.parent, AnchorFrame)
                 and isinstance(attachment.child, AnchorFrame)
             ):
-                # Both sides already define complete local frames. Prevent
-                # SolidCraft from choosing its automatic optional half-turn;
-                # the authored X directions are the intended clocking.
                 params["angle"] = 0.0
         elif attachment.angle is not None:
             params["angle"] = attachment.angle
         elif isinstance(attachment.child, AnchorFrame):
-            # An explicit child frame already defines its complete clocking.
-            # Prevent SolidCraft from choosing an optional automatic half-turn.
             params["angle"] = 0.0
         commands.append(_command("joint.create", **params))
 
