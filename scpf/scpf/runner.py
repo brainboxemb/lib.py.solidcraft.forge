@@ -156,14 +156,21 @@ def _plain_reference_fields(cls):
     return list(fields.items())
 
 
-def _parameter_input(value, name, *, build_only=False):
-    """Bind one input while preserving implicit parameter intent.
+def _parameter_input(
+    value,
+    name,
+    *,
+    expose_local=True,
+    alias=None,
+    build_only=False,
+):
+    """Bind one input while preserving explicit parameter publication intent.
 
-    Public numeric inputs become editable native parameters. Private
-    underscore-prefixed numeric inputs stay concrete Forge/build inputs.
-    Passing an existing Parameter/Expression into either kind preserves the
-    inherited symbolic dependency instead of creating a duplicate child
-    parameter.
+    Parent Parameter/Expression inputs always stay symbolic. Plain numeric
+    child-component defaults become editable local CAD parameters only when
+    explicitly exposed through component(include=...). Root-model fields call
+    this path with expose_local=True. Private underscore inputs remain
+    Forge/build-time inputs.
     """
     if isinstance(value, bool):
         raise TypeError(f"{name} must be a numeric model parameter")
@@ -177,17 +184,37 @@ def _parameter_input(value, name, *, build_only=False):
             return concrete, concrete, (), None, True
         raise TypeError(f"{name} must be a numeric Forge/build parameter")
 
+    # An explicit parent dependency wins over component-local publication or
+    # aliases. The child keeps using the parent's native parameter/expression.
     if isinstance(value, (Parameter, Expression)):
         external = tuple((p.name, p.value) for p in parameters_in(value))
         return pv(value), value, external, (name, command_value(value)), False
 
     if isinstance(value, (int, float)):
         concrete = float(value)
-        return concrete, Parameter(name, concrete), (), None, False
+        if alias is not None:
+            parameter = Parameter(alias, concrete)
+            return (
+                concrete,
+                parameter,
+                ((alias, concrete),),
+                (name, alias),
+                False,
+            )
+        if expose_local:
+            return concrete, Parameter(name, concrete), (), None, False
+        return concrete, concrete, (), None, True
 
     raise TypeError(f"{name} must be a numeric model parameter")
 
-def _plain_model_data(cls, *args, **kwargs):
+
+def _plain_model_data(
+    cls,
+    *args,
+    _include=None,
+    _aliases=None,
+    **kwargs,
+):
     """Instantiate a plain model and classify public vs fixed inputs."""
     fields = _plain_model_fields(cls)
     references = _plain_reference_fields(cls)
@@ -229,15 +256,24 @@ def _plain_model_data(cls, *args, **kwargs):
     for name in reference_names:
         object.__setattr__(instance, name, reference_values[name])
 
+    aliases = {} if _aliases is None else dict(_aliases)
     concrete = []
     fixed = []
     external = {}
     bindings = []
     for name in names:
         build_only = name.startswith("_")
+        alias = aliases.get(name)
+        expose_local = (
+            not build_only
+            and alias is None
+            and (_include is None or name in _include)
+        )
         value, symbolic, inherited, binding, is_fixed = _parameter_input(
             values[name],
             name,
+            expose_local=expose_local,
+            alias=alias,
             build_only=build_only,
         )
         if binding is None:
@@ -254,6 +290,7 @@ def _plain_model_data(cls, *args, **kwargs):
                         f"conflicting inherited parameter {parameter_name!r}"
                     )
         object.__setattr__(instance, name, symbolic)
+
     return (
         instance,
         tuple(concrete),
@@ -268,12 +305,25 @@ def _plain_model_instance(cls, *args, **kwargs):
     return _plain_model_data(cls, *args, **kwargs)[0]
 
 
-def _parameterized_instance(cls, *args, **kwargs):
+def _parameterized_instance(
+    cls,
+    *args,
+    _include=None,
+    _aliases=None,
+    **kwargs,
+):
     """Construct one model object and classify its reusable inputs."""
     if not is_dataclass(cls):
-        return _plain_model_data(cls, *args, **kwargs)
+        return _plain_model_data(
+            cls,
+            *args,
+            _include=_include,
+            _aliases=_aliases,
+            **kwargs,
+        )
 
     instance = cls(*args, **kwargs)
+    aliases = {} if _aliases is None else dict(_aliases)
     signature = inspect.signature(cls)
     bound = signature.bind(*args, **kwargs)
     bound.apply_defaults()
@@ -286,9 +336,17 @@ def _parameterized_instance(cls, *args, **kwargs):
             continue
         if isinstance(value, (int, float, Parameter, Expression)) and not isinstance(value, bool):
             build_only = name.startswith("_")
+            alias = aliases.get(name)
+            expose_local = (
+                not build_only
+                and alias is None
+                and (_include is None or name in _include)
+            )
             number, symbolic, inherited, binding, is_fixed = _parameter_input(
                 value,
                 name,
+                expose_local=expose_local,
+                alias=alias,
                 build_only=build_only,
             )
             if binding is None:
@@ -312,6 +370,7 @@ def _parameterized_instance(cls, *args, **kwargs):
         tuple(external.items()),
         tuple(bindings),
     )
+
 
 
 def _component_anchor_frames(instance):
