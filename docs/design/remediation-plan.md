@@ -24,22 +24,21 @@ Exit condition:
 - occurrence identity/replay design is normative;
 - no implementation relies on `Component:N` as an accepted fallback.
 
-## Phase 1 — First-class DefinitionId and OccurrenceId semantics
+## Phase 1 — Give every Forge occurrence a stable internal identity
 
-Purpose: remove accidental identity from Python `id()`, display names and list
-position before touching native occurrence addressing.
+Purpose: stop using Python `id()`, list position and SolidCraft browser names to decide which Forge occurrence an attachment or Placement belongs to.
 
 Deliver:
 
-- explicit internal DefinitionId and OccurrenceId;
-- `copy()` creates a new OccurrenceId while sharing DefinitionId;
+- explicit internal component-definition id and occurrence id;
+- `copy()` creates a new occurrence id while sharing component-definition id;
 - one occurrence identity may appear only once in an assembly graph;
 - attachments/group transformations preserve occurrence references;
 - definition identity includes every build-affecting input.
 
 Qualification:
 
-- semantic tests only; no SolidCraft-generated names;
+- Forge-object tests only; no SolidCraft-generated names;
 - duplicate occurrence rejection;
 - copy identity;
 - attachment graph survives grouping/immutable replacement.
@@ -48,7 +47,7 @@ Exit condition:
 
 > The complete Forge assembly graph is unambiguous before native lowering.
 
-## Phase 2 — Replay-first Placement lowering and native capability boundary
+## Phase 2 — Replay-first Placement lowering and SolidCraft command limits
 
 Purpose: remove avoidable post-create occurrence targeting while preserving
 static replay.
@@ -83,7 +82,7 @@ Exit condition:
 > Normal Placement no longer depends on guessed SolidCraft names or a later
 > identity-resolving move.
 
-## Phase 3 — Replay-safe relationship lowering
+## Phase 3 — Replay-safe joint/attachment command generation
 
 Purpose: keep joints/attachments only for genuine relationships.
 
@@ -91,7 +90,7 @@ Deliver:
 
 - enumerate attachment/joint paths that need native occurrence references;
 - use only replay-safe qualified selectors;
-- keep relationship semantics separate from seed Placement;
+- keep attachment meaning separate from seed Placement;
 - reject unsupported relationship cases instead of guessing names or adding
   runtime result binding;
 - preserve ordinary Placement as the preferred tool when no relationship is
@@ -145,7 +144,7 @@ Deliver:
 - dataclass fixed non-numeric inputs are represented;
 - unsafe/unserializable build inputs force explicit identity/separate
   definitions;
-- unique compiler namespace comes from DefinitionId;
+- unique compiler namespace comes from component-definition id;
 - remove lossy human-name slug as uniqueness mechanism.
 
 Qualification:
@@ -162,7 +161,7 @@ Purpose: stop inferring parameter semantics from arbitrary strings.
 
 Deliver:
 
-- typed expression/reference values in compiler IR;
+- typed parameter expressions in the compiler;
 - parameter namespacing rewrites only expression nodes;
 - literal text, material names, feature names and enum strings remain opaque;
 - dependency graph records actual emitted native dependencies;
@@ -205,7 +204,7 @@ Purpose: align implementation with normative design.
 Deliver:
 
 - implement `sketch.add(profile, anchor=CENTER)`;
-- make semantic centring the default as documented;
+- make centering defined by the Forge sketch API the default as documented;
 - reserve `offset=(u,v)` for actual design displacement;
 - migrate tests/examples away from `(-width/2,-height/2)` centring hacks;
 - signed-extrusion design remains separate change 0006.
@@ -226,7 +225,7 @@ Deliver:
   `TESTED_SOLIDCRAFT_VERSION`;
 - add Q5 wherever public behaviour claims associativity;
 - requalify/remove old 0.30.1 workarounds;
-- classify tests by semantic/native-adapter/native-qualification layer;
+- classify tests by Forge-object/SolidCraft-command/native-qualification layer;
 - add architecture blockers to release validation.
 
 Release gate:
