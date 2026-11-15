@@ -35,7 +35,7 @@ Relevant concepts used by Forge comparisons:
 
 ```python
 cube([x, y, z], center=True)
-cube([x, y, z], center="00+")  # centered X/Y, grows from Z=0 in +Z
+cube([x, y, z], center="00-")  # centered X/Y, grows from Z=0 in +Z
 sphere(r=radius)
 cylinder(d=diameter, h=height, center=True)
 
@@ -50,6 +50,12 @@ profile.linear_extrude(height=h)
 shape.export("model.stl")
 show(shape)
 ```
+
+PythonSCAD's three-character cube center code is ordered X/Y/Z. Runtime
+verification against 1.1.2 shows the sign is a placement-side symbol rather
+than an intuitive growth-direction sign: `"-"` places the datum on the
+negative/min side so geometry grows toward the positive axis; `"+"` does the
+opposite. Therefore `"00-"` matches Forge's default bottom-centred box.
 
 Prefer explicit transforms in references when that makes the geometry obvious.
 Do not claim that a PythonSCAD transform is equivalent to a persisted
