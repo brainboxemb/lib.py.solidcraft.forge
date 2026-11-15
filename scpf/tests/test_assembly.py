@@ -1175,7 +1175,7 @@ class AssemblyTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ModelError,
-            "relationship lowering needs either an identity first occurrence",
+            "symbolic Placement of a relationship target",
         ):
             compile_assembly(parent + child, "Pair")
 
@@ -1307,7 +1307,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joints[0]["a"],
             {
-                "occurrence": "Base:1",
+                "occurrence": "Base",
                 "point": [0.0, 0.0, 0.0],
                 "z": [0.0, 0.0, 1.0],
                 "x": [1.0, 0.0, 0.0],
@@ -1316,7 +1316,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joints[0]["b"],
             {
-                "occurrence": "Bracket:1",
+                "occurrence": "Bracket",
                 "point": [0.0, 0.0, 0.0],
                 "z": [0.0, 0.0, 1.0],
                 "x": [1.0, 0.0, 0.0],
@@ -1324,6 +1324,12 @@ class AssemblyTests(unittest.TestCase):
         )
         self.assertEqual(joints[1]["a"]["z"], [0.0, 0.0, -1.0])
         self.assertEqual(joints[1]["b"]["z"], [0.0, 0.0, -1.0])
+        self.assertNotIn("occurrence", joints[1]["b"])
+        self.assertFalse(any(
+            "Bracket:" in str(command["params"])
+            or "Base:" in str(command["params"])
+            for command in commands
+        ))
 
     def test_assembly_can_own_named_attachment_anchor(self):
         from scpf.assembly import compile_assembly
@@ -1367,7 +1373,7 @@ class AssemblyTests(unittest.TestCase):
             for command in commands
             if command["command"] == "joint.create"
         )
-        self.assertEqual(joint["a"]["occurrence"], "Block:1")
+        self.assertEqual(joint["a"]["occurrence"], "Block")
         self.assertEqual(joint["a"]["edge"], [-10.0, 0.0, 5.0])
         self.assertEqual(joint["a"]["corner"], [-10.0, 0.0, 10.0])
 
@@ -1438,7 +1444,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["a"],
             {
-                "occurrence": "Board:1",
+                "occurrence": "Board",
                 "edge": [-20.0, 0.0, 5.0],
                 "on": [-20.0, 10.0, 10.0],
                 "corner": [-20.0, 0.0, 5.0],
@@ -1501,7 +1507,7 @@ class AssemblyTests(unittest.TestCase):
         child = Board().attach(board, parent="edge_mount", child=Anchor.LEFT)
 
         with self.assertRaisesRegex(
-            ModelError, "AnchorTopology.*rotated"
+            ModelError, "rotated relationship Placement is not replay-safe"
         ):
             compile_assembly(board + child, "RotatedTopologyAnchor")
 
@@ -1624,8 +1630,8 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["b"],
             {
-                "occurrence": "Bracket:1",
-                "point": [20.0, -20.0, 40.0],
+                "occurrence": "Bracket",
+                "point": [0.0, 0.0, -5.0],
                 "z": [0.0, 1.0, 0.0],
                 "x": [0.0, 0.0, -1.0],
             },
@@ -1744,7 +1750,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["a"],
             {
-                "occurrence": "Base:1",
+                "occurrence": "Base",
                 "edge": [20.0, -15.0, 10.0],
                 "on": [0.0, -15.0, 10.0],
                 "corner": [20.0, -15.0, 20.0],
@@ -1753,8 +1759,8 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["b"],
             {
-                "occurrence": "Marker:1",
-                "point": [20.0, -15.0, 20.0],
+                "occurrence": "Marker",
+                "point": [5.0, 5.0, 10.0],
                 "z": [0.0, 1.0, 0.0],
                 "x": [-1.0, 0.0, 0.0],
             },
