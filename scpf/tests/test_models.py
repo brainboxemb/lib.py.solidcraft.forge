@@ -122,6 +122,21 @@ class SCPFExamples(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "same axis"):
             _ = LEFT + RIGHT
 
+    def test_cardinal_offset_helpers_preserve_symbolic_dimensions(self):
+        from scpf import back, down, front, left, right, up
+        from scpf.core import Parameter, command_value
+
+        distance = Parameter("distance", 12)
+
+        self.assertEqual(up(5), (0, 0, 5))
+        self.assertEqual(down(5), (0, 0, -5))
+        self.assertEqual(left(5), (-5, 0, 0))
+        self.assertEqual(right(5), (5, 0, 0))
+        self.assertEqual(front(5), (0, -5, 0))
+        self.assertEqual(back(5), (0, 5, 0))
+        self.assertEqual(command_value(down(distance)[2]), "-(distance)")
+        self.assertEqual(command_value(right(distance)[0]), "distance")
+
     def test_half_and_midpoint_preserve_symbolic_dimensions(self):
         from scpf import half, midpoint
         from scpf.core import Parameter, command_value
@@ -146,7 +161,8 @@ class SCPFExamples(unittest.TestCase):
                 "    width = 80.0\n"
                 "    def build(self):\n"
                 "        center = midpoint(0, self.width)\n"
-                "        return Box(half(self.width), 10, 5).move(x=center)\n"
+                "        offset = down(half(self.width))\n"
+                "        return Box(half(self.width), 10, 5).move(x=center, z=offset[2])\n"
                 "HalfBox()\n",
                 encoding="utf-8",
             )

@@ -437,6 +437,49 @@ class Expression:
         return Expression(-self.value, f"-({self.expression})", self.parameters)
 
 
+def _scaled_direction(direction, distance):
+    """Return one cardinal direction scaled by a CAD dimension."""
+    vector = _direction_selector(direction).vector
+    return tuple(
+        0
+        if component == 0
+        else distance
+        if component > 0
+        else -distance
+        for component in vector
+    )
+
+
+def up(distance):
+    """Return an XYZ offset in the +Z direction."""
+    return _scaled_direction(Anchor.TOP, distance)
+
+
+def down(distance):
+    """Return an XYZ offset in the -Z direction."""
+    return _scaled_direction(Anchor.BOTTOM, distance)
+
+
+def left(distance):
+    """Return an XYZ offset in the -X direction."""
+    return _scaled_direction(Anchor.LEFT, distance)
+
+
+def right(distance):
+    """Return an XYZ offset in the +X direction."""
+    return _scaled_direction(Anchor.RIGHT, distance)
+
+
+def front(distance):
+    """Return an XYZ offset in the -Y direction."""
+    return _scaled_direction(Anchor.FRONT, distance)
+
+
+def back(distance):
+    """Return an XYZ offset in the +Y direction."""
+    return _scaled_direction(Anchor.BACK, distance)
+
+
 def half(value):
     """Return half of a numeric or symbolic CAD dimension."""
     return value / 2
