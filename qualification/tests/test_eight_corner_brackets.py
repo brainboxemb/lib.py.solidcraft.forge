@@ -88,10 +88,9 @@ class EightCornerBracketsCommandTests(unittest.TestCase):
                 self.assertEqual(joint["b"]["point"], [0.0, 0.0, 0.0])
             else:
                 self.assertNotIn("occurrence", joint["b"])
-                distance = float(index * 1000)
                 self.assertEqual(
                     joint["b"]["point"],
-                    [distance, -distance, distance],
+                    [0.0, 0.0, float(index)],
                 )
 
         # Every corner is a bottom/top pair. The bottom member has no normal
