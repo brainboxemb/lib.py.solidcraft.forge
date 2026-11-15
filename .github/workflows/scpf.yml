@@ -153,8 +153,8 @@ jobs:
           native_models="$(python -c 'from qualification.cases import QUALIFICATION_CASES; print(" ".join(case["slug"] for case in QUALIFICATION_CASES))')"
           for model in $native_models; do
             mkdir -p "output/native/$model"
-            solidcraft-cli run "output/$model.json" \
-              --param-check strict --results \
+            python -m scpf.headless "output/$model.json" \
+              --param-check strict \
               --json-out "output/native/$model/results.json" \
               --save "output/native/$model/model.sc" \
               --out "output/native/$model/model.step"
@@ -275,9 +275,10 @@ jobs:
             --json-out output/native/eight-corner-brackets/measurements-size-160x120x90.json
 
           # Parameter-scope native evidence and saved-design mutation.
-          solidcraft-cli run output/parameter-scope.json \
+          python -m scpf.headless output/parameter-scope.json \
             --param-check strict \
-            --save output/native/parameter-scope/model.json
+            --save output/native/parameter-scope/model.sc \
+            --json-out output/native/parameter-scope/results.json
 
           solidcraft-cli run qualification/commands/parameter-scope/export-parameters.json \
             --in output/native/parameter-scope/model.sc \

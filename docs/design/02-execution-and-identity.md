@@ -1,6 +1,6 @@
 # SolidCraft execution and occurrence identity
 
-Status: **design in progress; blocks release**
+Status: **implemented identity model; native qualification still blocks release**
 
 This document records the SolidCraft 0.42 capabilities relevant to reusable
 occurrence placement and the resulting Forge compiler constraints.
@@ -74,14 +74,9 @@ foundation of dependent commands.
 
 ## 3. Current static-batch limitation
 
-Current Forge `--connect` compiles the entire model to one native
-`commands[]` list and sends it through one SolidCraft `engine.batch`.
-
-Current replay does the same.
-
-SolidCraft 0.42 `engine.batch` returns a `results[]` entry for every completed
-step. Forge's current `live.py` only checks `completed` / `failed` and does
-not retain those step results.
+Forge still serializes native commands, but identity-dependent documents also
+carry Forge-owned logical result bindings. Live and replay execute those plans
+in phases and retain SolidCraft's per-step `engine.batch.results[]`.
 
 A static batch has no verified in-batch Forge-level variable binding such as:
 
@@ -93,13 +88,14 @@ occurrence.move occurrence=@right
 No SolidCraft 0.42 mechanism has been verified that substitutes a result from
 step N into the parameters of step N+1 inside the same batch.
 
-Therefore commands that depend on a newly created id require an execution
-barrier: run the creation phase, read the returned `results[]`, bind logical
-Forge handles to the returned ids/paths, then execute the dependent phase.
+Commands that depend on a newly created id therefore use an execution barrier:
+the creation phase runs first, Forge reads `results[]`, binds logical handles
+to returned ids/paths, and only then executes the dependent phase.
 
 ## 4. Required Forge execution model
 
-Forge should compile to a semantic plan with logical occurrence handles.
+Forge compiles identity-dependent assemblies to a semantic execution document
+with logical occurrence handles.
 
 Conceptually:
 
@@ -126,7 +122,10 @@ batch B: dependent placement / anchors / attachments
 Replay must perform the same handle-resolution phases from the Forge semantic
 plan, not replace handles with predicted display labels.
 
-The precise serialized plan format is still to be designed and qualified.
+The serialized form uses `{"$ref":"occurrence:N"}` in command parameters and
+top-level `bindings` that capture fields from earlier command results. The
+same representation is used by live execution, replay and headless native
+qualification.
 
 ## 5. Creation-time placement rule
 

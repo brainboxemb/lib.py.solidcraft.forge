@@ -143,15 +143,22 @@ A document without runtime references remains a normal single SolidCraft
 engine.batch. Existing raw command/replay workflows therefore keep the current
 path until the compiler actually needs result binding.
 
-## 8. Compiler migration
+## 8. Compiler integration
 
-The executor design landing does not by itself change assembly identity.
+The assembly compiler now:
 
-The compiler migration is a separate step:
+1. assigns Forge logical handles `occurrence:0`, `occurrence:1`, ... in
+   authored assembly order;
+2. binds `component.create` / `occurrence.copy` result fields to those
+   handles;
+3. emits `$ref` values for later move, custom-origin and attachment selectors;
+4. retains generated labels only for Forge-authored human-readable names such
+   as joint labels, never as occurrence selectors;
+5. emits only bindings that are actually referenced.
 
-1. assign Forge logical handles to occurrences;
-2. bind component.create / occurrence.copy results to those handles;
-3. use $ref for every later command that targets that occurrence;
-4. remove generated-label identity from compiler parameters;
-5. qualify live execution, saved design and replay;
-6. only then claim the identity problem solved.
+Live, replay and headless qualification all resolve the same document format.
+
+This closes the compiler identity mechanism, but not the entire release gate.
+Native foundational qualification must still prove create/place/copy/rotate,
+parameter mutation, attachments, repeated-parent graphs and replay behavior
+against the pinned SolidCraft version.

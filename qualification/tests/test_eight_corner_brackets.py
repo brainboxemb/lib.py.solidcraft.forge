@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import unittest
 
+from scpf.plan import result_ref
 from scpf.runner import run_script
 
 
@@ -80,9 +81,13 @@ class EightCornerBracketsCommandTests(unittest.TestCase):
                 expected_xy[index - 1],
             )
             self.assertEqual(joint["values"][2], expected_angles[index - 1])
-            self.assertEqual(joint["a"]["occurrence"], "FrameBlock:1")
+            self.assertEqual(
+                joint["a"]["occurrence"], result_ref("occurrence:0")
+            )
             self.assertEqual(joint["a"]["z"], [0.0, 0.0, 1.0])
-            self.assertEqual(joint["b"]["occurrence"], f"LProfile:{index}")
+            self.assertEqual(
+                joint["b"]["occurrence"], result_ref(f"occurrence:{index}")
+            )
             self.assertEqual(joint["b"]["z"], [0.0, 0.0, -1.0])
 
         # Every corner is a bottom/top pair. The bottom member has no normal

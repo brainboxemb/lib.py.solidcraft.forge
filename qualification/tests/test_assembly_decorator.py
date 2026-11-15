@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import unittest
 
+from scpf.plan import result_ref
 from scpf.runner import run_script
 
 
@@ -43,7 +44,7 @@ class AssemblyDecoratorCommandTests(unittest.TestCase):
         self.assertEqual(
             [(row["occurrence"], row["translate"]) for row in moves],
             [
-                ("Post:1", [-15.0, 0.0, 0.0]),
+                (result_ref("occurrence:0"), [-15.0, 0.0, 0.0]),
             ],
         )
 

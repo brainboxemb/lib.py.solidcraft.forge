@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import unittest
 
+from scpf.plan import result_ref
 from scpf.runner import run_script
 
 
@@ -82,7 +83,7 @@ class EightFlightcaseCornersCommandTests(unittest.TestCase):
             self.assertEqual(
                 joint["a"],
                 {
-                    "occurrence": "CaseBlock:1",
+                    "occurrence": result_ref("occurrence:0"),
                     "point": [0.0, 0.0, 0.0],
                     "z": [0.0, 0.0, 1.0],
                     "x": [1.0, 0.0, 0.0],
@@ -95,7 +96,7 @@ class EightFlightcaseCornersCommandTests(unittest.TestCase):
             self.assertEqual(joint["values"][2], 0.0)
             self.assertEqual(
                 joint["b"]["occurrence"],
-                f"FlightcaseCorner:{index}",
+                result_ref(f"occurrence:{index}"),
             )
             z, x = expected_child_frames[index - 1]
             self.assertEqual(joint["b"]["z"], z)

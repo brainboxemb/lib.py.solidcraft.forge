@@ -13,6 +13,7 @@ from .model_objects import (
     _corner_normal,
 )
 from .compiler import compile_model
+from .plan import references_in, result_ref
 
 
 _IDENTIFIER = re.compile(r"\b[A-Za-z_][A-Za-z0-9_]*\b")
@@ -124,7 +125,13 @@ def compile_assembly(value, name):
     assembly = _as_assembly(value)
     names = _definition_names(assembly)
     commands = []
-    occurrence_names = {}
+    bindings = {}
+    occurrence_refs = {}
+    occurrence_labels = {}
+    occurrence_handles = {
+        id(instance): f"occurrence:{index}"
+        for index, instance in enumerate(assembly.instances)
+    }
     custom_origin_names = {}
     inherited_parameters = {}
     shared_materials = {}
@@ -256,7 +263,13 @@ def compile_assembly(value, name):
         }
         if parent_name is not None:
             create_params["parent"] = parent_name
+        create_index = len(commands)
         commands.append(_command("component.create", **create_params))
+        first_handle = occurrence_handles[id(instances[0])]
+        bindings[first_handle] = {
+            "command": create_index,
+            "field": "occurrence",
+        }
         for command in geometry_commands:
             if command["command"] == "material.create":
                 material_name = command["params"]["name"]
@@ -274,19 +287,19 @@ def compile_assembly(value, name):
         commands.append(_command("component.activate", component="root"))
 
         # Copies are created while the definition's first occurrence is still
-        # at native identity. A concrete Placement can therefore be supplied
-        # directly to occurrence.copy without first predicting the new
-        # occurrence name and moving it afterwards.
-        #
-        # Parameter-driven placement and rotation still need a later native
-        # operation; those are separate capabilities and are deliberately not
-        # disguised as creation-time placement.
+        # at native identity. Concrete Placement is supplied directly to
+        # occurrence.copy where possible. Every native-created occurrence is
+        # also bound to a Forge-owned logical handle; later commands target
+        # that handle through $ref, never a predicted SolidCraft display name.
         occurrences = []
         copy_positioned = set()
         for index, instance in enumerate(instances, start=1):
-            native_name = f"{component_name}:{index}"
-            occurrence_names[id(instance)] = native_name
-            occurrences.append((instance, native_name))
+            label = f"{component_name}:{index}"
+            handle = occurrence_handles[id(instance)]
+            occurrence = result_ref(handle)
+            occurrence_refs[id(instance)] = occurrence
+            occurrence_labels[id(instance)] = label
+            occurrences.append((instance, occurrence, label))
             if index > 1:
                 position = instance.placement.position
                 symbolic_position = bool(parameters_in(*position))
@@ -296,18 +309,23 @@ def compile_assembly(value, name):
                     if any(concrete_position):
                         params["translate"] = concrete_position
                     copy_positioned.add(id(instance))
+                copy_index = len(commands)
                 commands.append(_command("occurrence.copy", **params))
+                bindings[handle] = {
+                    "command": copy_index,
+                    "field": "occurrence",
+                }
 
         # Only explicitly rotated custom anchors need a persistent native
         # joint.origin. Author those while occurrences are still at identity;
         # SolidCraft then owns the local-to-world transform when the occurrence
         # is rotated. Unrotated AnchorFrames are inlined later in joint.create.
-        for instance, native_name in occurrences:
+        for instance, occurrence, label in occurrences:
             for anchor_name, frame in instance.definition.anchors:
                 anchor_key = (id(instance), anchor_name)
                 if anchor_key not in required_custom_origins:
                     continue
-                origin_name = f"{native_name}.{anchor_name}"
+                origin_name = f"{label}.{anchor_name}"
                 custom_origin_names[anchor_key] = origin_name
                 frame_origin = list(frame.origin)
                 if id(instance) in copy_positioned:
@@ -318,7 +336,7 @@ def compile_assembly(value, name):
                 commands.append(_command(
                     "joint.origin",
                     name=origin_name,
-                    occurrence=native_name,
+                    occurrence=occurrence,
                     frame={
                         "origin": frame_origin,
                         "z": list(frame.z),
@@ -330,7 +348,7 @@ def compile_assembly(value, name):
         # cannot express: the definition's first occurrence, symbolic position,
         # or rotation. Public move()/at()/Placement semantics do not prescribe
         # this native command choice.
-        for instance, native_name in occurrences:
+        for instance, occurrence, _ in occurrences:
             position = instance.placement.position
             rotation = instance.placement.rotation
             positioned_at_copy = id(instance) in copy_positioned
@@ -364,7 +382,7 @@ def compile_assembly(value, name):
                 translate = [pv(value) for value in position]
 
             params = {
-                "occurrence": native_name,
+                "occurrence": occurrence,
                 "translate": translate,
             }
             if rotation is not None:
@@ -382,16 +400,23 @@ def compile_assembly(value, name):
         attachment = instance.attachment
         if attachment is None:
             continue
-        child_occurrence = occurrence_names.get(id(instance))
-        parent_occurrence = occurrence_names.get(id(attachment.target))
-        if child_occurrence is None or parent_occurrence is None:
+        child_occurrence = occurrence_refs.get(id(instance))
+        parent_occurrence = occurrence_refs.get(id(attachment.target))
+        child_label = occurrence_labels.get(id(instance))
+        parent_label = occurrence_labels.get(id(attachment.target))
+        if (
+            child_occurrence is None
+            or parent_occurrence is None
+            or child_label is None
+            or parent_label is None
+        ):
             raise ModelError("component attach target must be part of the assembly")
 
         if attachment.as_built:
             commands.append(_command(
                 "joint.as_built",
                 type="rigid",
-                name=f"Attach {child_occurrence} to {parent_occurrence}",
+                name=f"Attach {child_label} to {parent_label}",
                 a=parent_occurrence,
                 b=child_occurrence,
             ))
@@ -513,7 +538,7 @@ def compile_assembly(value, name):
 
         params = {
             "type": "planar" if has_planar_offset else "rigid",
-            "name": f"Attach {child_occurrence} to {parent_occurrence}",
+            "name": f"Attach {child_label} to {parent_label}",
             "a": parent_origin,
             "b": child_origin,
         }
@@ -558,4 +583,15 @@ def compile_assembly(value, name):
 
     if not commands:
         raise ModelError(f"{name} contains no component instances")
-    return {"commands": commands}
+
+    used_bindings = set()
+    for command in commands:
+        used_bindings.update(references_in(command.get("params", {})))
+
+    document = {"commands": commands}
+    if used_bindings:
+        document["bindings"] = {
+            binding: bindings[binding]
+            for binding in sorted(used_bindings)
+        }
+    return document

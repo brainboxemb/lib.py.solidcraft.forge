@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import unittest
 
+from scpf.plan import result_ref
 from scpf.runner import run_script
 
 
@@ -29,7 +30,7 @@ class AsBuiltAttachCommandTests(unittest.TestCase):
             row["params"]
             for row in commands
             if row["command"] == "occurrence.move"
-            and row["params"]["occurrence"] == "Marker:1"
+            and row["params"]["occurrence"] == result_ref("occurrence:1")
         ]
         self.assertEqual(len(moves), 1)
         self.assertEqual(moves[0]["translate"], [50.0, 20.0, 15.0])
@@ -47,8 +48,8 @@ class AsBuiltAttachCommandTests(unittest.TestCase):
             {
                 "type": "rigid",
                 "name": "Attach Marker:1 to Base:1",
-                "a": "Base:1",
-                "b": "Marker:1",
+                "a": result_ref("occurrence:0"),
+                "b": result_ref("occurrence:1"),
             },
         )
         self.assertFalse(any(

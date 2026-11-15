@@ -11,7 +11,7 @@ from pathlib import Path
 import socket
 import sys
 
-from .plan import binding_specs, references_in, resolve_references, validate_document
+from .plan import ExecutionState, validate_document
 
 
 class LiveError(RuntimeError):
@@ -214,36 +214,26 @@ def _execute_command(command, params, *, connect="auto", directory=None, timeout
     )
 
 
-def _document_references(document):
-    result = set()
-    for command in document["commands"]:
-        result.update(references_in(command.get("params", {})))
-    return result
-
-
 def send_document(document, *, connect="auto", directory=None, timeout=3610):
     """Execute one raw command document or a Forge result-binding plan.
 
     Documents without runtime references keep the existing single atomic
-    engine.batch path. A document with references is split only at dependency
-    barriers. SolidCraft's per-step batch results bind Forge logical handles
-    between phases.
+    engine.batch path. Documents with references use ExecutionState to split
+    only at dependency barriers and bind actual SolidCraft result ids between
+    phases.
 
     A native edit.checkpoint wraps all phases so failure restores the design to
     its pre-plan state. Successful execution drops the checkpoint without
     restoring it.
     """
     try:
-        validate_document(document)
-        bindings = binding_specs(document)
+        state = ExecutionState(document)
     except ValueError as exc:
         raise LiveError(str(exc)) from exc
 
-    commands = document["commands"]
-    referenced = _document_references(document)
-    if not referenced:
+    if not state.has_references:
         return send_commands(
-            commands,
+            state.commands,
             connect=connect,
             directory=directory,
             timeout=timeout,
@@ -265,79 +255,22 @@ def send_document(document, *, connect="auto", directory=None, timeout=3610):
         )
     checkpoint = checkpoint_result["checkpoint"]
 
-    captures = {}
-    for name, (command_index, field) in bindings.items():
-        captures.setdefault(command_index, []).append((name, field))
-
-    resolved = {}
-    combined_results = [None] * len(commands)
-    phases = 0
-    cursor = 0
-
     try:
-        while cursor < len(commands):
-            phase_start = cursor
-            phase = []
-
-            while cursor < len(commands):
-                command = commands[cursor]
-                missing = (
-                    references_in(command.get("params", {}))
-                    - resolved.keys()
-                )
-                if missing:
-                    if phase:
-                        break
-                    missing_text = ", ".join(sorted(missing))
-                    raise LiveError(
-                        f"command {cursor} needs unresolved execution-plan "
-                        f"binding(s): {missing_text}"
-                    )
-                phase.append({
-                    "command": command["command"],
-                    "params": resolve_references(
-                        command.get("params", {}),
-                        resolved,
-                    ),
-                })
-                cursor += 1
-
+        while not state.done:
+            try:
+                phase = state.next_phase()
+            except ValueError as exc:
+                raise LiveError(str(exc)) from exc
             result = send_commands(
                 phase,
                 connect=connect,
                 directory=directory,
                 timeout=timeout,
             )
-            phases += 1
-            phase_results = result.get("results")
-            needs_results = any(
-                index in captures
-                for index in range(phase_start, cursor)
-            )
-            if needs_results and (
-                not isinstance(phase_results, list)
-                or len(phase_results) != len(phase)
-            ):
-                raise LiveError(
-                    "SolidCraft batch did not return one result per command "
-                    "required by execution-plan bindings"
-                )
-
-            for local_index, global_index in enumerate(
-                range(phase_start, cursor)
-            ):
-                if isinstance(phase_results, list) and local_index < len(
-                    phase_results
-                ):
-                    combined_results[global_index] = phase_results[local_index]
-                for name, field in captures.get(global_index, ()):
-                    row = combined_results[global_index]
-                    if not isinstance(row, dict) or field not in row:
-                        raise LiveError(
-                            f"command {global_index} did not return field "
-                            f"{field!r} required for binding {name!r}"
-                        )
-                    resolved[name] = row[field]
+            try:
+                state.record_results(result.get("results"))
+            except ValueError as exc:
+                raise LiveError(str(exc)) from exc
     except LiveError as original:
         try:
             _execute_command(
@@ -368,9 +301,5 @@ def send_document(document, *, connect="auto", directory=None, timeout=3610):
             f"forgotten: {cleanup_error}. The design changes were applied."
         ) from cleanup_error
 
-    return {
-        "completed": len(commands),
-        "results": combined_results,
-        "bindings": resolved,
-        "phases": phases,
-    }
+    return state.summary()
+

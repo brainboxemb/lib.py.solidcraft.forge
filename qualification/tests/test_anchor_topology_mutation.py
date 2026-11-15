@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import unittest
 
+from scpf.plan import result_ref
 from scpf.runner import run_script
 
 
@@ -43,7 +44,7 @@ class AnchorTopologyMutationCommandTests(unittest.TestCase):
         self.assertEqual(
             joint["a"],
             {
-                "occurrence": "Board:1",
+                "occurrence": result_ref("occurrence:0"),
                 "edge": [-20.0, -10.0, 10.0],
                 "on": [0.0, -10.0, 10.0],
                 "corner": [-20.0, -10.0, 20.0],
@@ -51,7 +52,9 @@ class AnchorTopologyMutationCommandTests(unittest.TestCase):
                 "x": [0.0, 0.0, -1.0],
             },
         )
-        self.assertEqual(joint["b"]["occurrence"], "Marker:1")
+        self.assertEqual(
+            joint["b"]["occurrence"], result_ref("occurrence:1")
+        )
         # attach() pre-positions the child occurrence on the selected
         # parent corner. The child's local AnchorFrame origin is therefore
         # already expressed at that world pick in the native joint command.

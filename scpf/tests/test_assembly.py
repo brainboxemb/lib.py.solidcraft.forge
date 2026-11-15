@@ -3,6 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
+from scpf.plan import result_ref
 from scpf.runner import run_script
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -29,7 +30,10 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(copies[0]["params"]["component"], "Block")
         self.assertEqual(copies[0]["params"]["translate"], [40.0, 0.0, 0.0])
         placements = [c["params"] for c in commands if c["command"] == "occurrence.move"]
-        self.assertFalse(any(p["occurrence"] == "Block:2" for p in placements))
+        self.assertFalse(any(
+            p["occurrence"] == result_ref("occurrence:1")
+            for p in placements
+        ))
         box = next(c for c in commands if c["command"] == "solid.box")
         self.assertIn("Block_length", str(box["params"]))
         self.assertIn("Block_width", str(box["params"]))
@@ -38,11 +42,54 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(joint["params"]["type"], "rigid")
         self.assertEqual(
             joint["params"]["a"],
-            {"occurrence": "Block:1", "face": [20.0, 0.0, 5.0]},
+            {
+                "occurrence": result_ref("occurrence:0"),
+                "face": [20.0, 0.0, 5.0],
+            },
         )
         self.assertEqual(
             joint["params"]["b"],
-            {"occurrence": "Block:2", "face": [20.0, 0.0, 5.0]},
+            {
+                "occurrence": result_ref("occurrence:1"),
+                "face": [20.0, 0.0, 5.0],
+            },
+        )
+
+    def test_occurrence_selectors_never_use_generated_display_labels(self):
+        document = run_script(
+            ROOT / "examples/components/scpf/model.py"
+        )
+
+        def inspect(value, *, key=None):
+            if key == "occurrence":
+                yield value
+                return
+            if isinstance(value, dict):
+                for child_key, child in value.items():
+                    yield from inspect(child, key=child_key)
+            elif isinstance(value, list):
+                for child in value:
+                    yield from inspect(child, key=key)
+
+        selectors = [
+            selector
+            for command in document["commands"]
+            for selector in inspect(command.get("params", {}))
+        ]
+        self.assertTrue(selectors)
+        self.assertTrue(
+            all(
+                isinstance(selector, dict)
+                and set(selector) == {"$ref"}
+                for selector in selectors
+            )
+        )
+        self.assertFalse(
+            any(
+                isinstance(selector, str)
+                and ":" in selector
+                for selector in selectors
+            )
         )
 
     def test_component_placement_keyword_is_occurrence_data(self):
@@ -78,13 +125,11 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(copy["translate"], [30.0, 0.0, 0.0])
         self.assertFalse(any(
             command["command"] == "occurrence.move"
-            and command["params"]["occurrence"] == "Panel:2"
+            and command["params"]["occurrence"] == result_ref("occurrence:1")
             for command in commands
         ))
 
-    def test_root_component_placement_is_explicit_capability_gap(self):
-        from scpf.compiler import ModelError
-
+    def test_root_component_placement_binds_created_occurrence(self):
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "root_placement.py"
             script.write_text(
@@ -94,11 +139,27 @@ class AssemblyTests(unittest.TestCase):
                 "Block(placement=Placement(x=50))\n",
                 encoding="utf-8",
             )
-            with self.assertRaisesRegex(
-                ModelError,
-                "identity-aware occurrence executor",
-            ):
-                run_script(script)
+            document = run_script(script)
+
+        self.assertIn("bindings", document)
+        binding = document["bindings"]["occurrence:0"]
+        create_index = next(
+            index
+            for index, command in enumerate(document["commands"])
+            if command["command"] == "component.create"
+        )
+        self.assertEqual(
+            binding,
+            {"command": create_index, "field": "occurrence"},
+        )
+        move = next(
+            command["params"]
+            for command in document["commands"]
+            if command["command"] == "occurrence.move"
+        )
+        self.assertEqual(move["occurrence"], result_ref("occurrence:0"))
+        self.assertEqual(move["translate"], [50.0, 0.0, 0.0])
+        self.assertTrue(move["move_grounded"])
 
     def test_at_is_absolute_and_move_is_relative_placement(self):
         from scpf import Box, Placement, component
@@ -139,7 +200,10 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(copy["component"], "SideWall")
         self.assertEqual(copy["translate"], [429.5, 25.0, 0.0])
         moves = [c["params"] for c in commands if c["command"] == "occurrence.move"]
-        self.assertEqual([m["occurrence"] for m in moves], ["SideWall:1"])
+        self.assertEqual(
+            [m["occurrence"] for m in moves],
+            [result_ref("occurrence:0")],
+        )
         self.assertEqual(moves[0]["translate"], [-429.5, 25.0, 0.0])
 
     def test_copy_resets_inherited_rotation_when_target_is_unrotated(self):
@@ -280,7 +344,10 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(len([c for c in commands if c["command"] == "occurrence.copy"]), 1)
         rotated = [c["params"] for c in commands if c["command"] == "occurrence.move"]
         self.assertEqual(len(rotated), 1)
-        self.assertEqual(rotated[0]["occurrence"], "Panel:2")
+        self.assertEqual(
+            rotated[0]["occurrence"],
+            result_ref("occurrence:1"),
+        )
         self.assertNotIn("to", rotated[0])
         copy = next(
             command["params"]
@@ -331,7 +398,10 @@ class AssemblyTests(unittest.TestCase):
             commands = run_script(path)["commands"]
         placements = [c["params"] for c in commands if c["command"] == "occurrence.move"]
         self.assertEqual(len(placements), 2)
-        self.assertEqual(placements[0]["occurrence"], "Panel:1")
+        self.assertEqual(
+            placements[0]["occurrence"],
+            result_ref("occurrence:0"),
+        )
         self.assertTrue(placements[0]["move_grounded"])
         self.assertEqual(placements[0]["translate"], [-50.0, 0.0, 0.0])
         self.assertEqual(placements[1]["translate"], [0.0, 0.0, 0.0])
@@ -1056,14 +1126,14 @@ class AssemblyTests(unittest.TestCase):
             command["params"]
             for command in commands
             if command["command"] == "occurrence.move"
-            and command["params"]["occurrence"] == "Panel:1"
+            and command["params"]["occurrence"] == result_ref("occurrence:0")
         )
         self.assertEqual(parent_move["translate"][0], "station")
         child_move = next(
             command["params"]
             for command in commands
             if command["command"] == "occurrence.move"
-            and command["params"]["occurrence"] == "Panel:2"
+            and command["params"]["occurrence"] == result_ref("occurrence:1")
         )
         self.assertTrue(
             all(isinstance(value, (int, float)) for value in child_move["translate"])
@@ -1132,7 +1202,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joints[0]["a"],
             {
-                "occurrence": "Board:1",
+                "occurrence": result_ref("occurrence:0"),
                 "edge": [20.0, 0.0, 10.0],
                 "on": [0.0, 0.0, 10.0],
                 "corner": [20.0, 0.0, 20.0],
@@ -1141,7 +1211,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joints[1]["a"],
             {
-                "occurrence": "Board:1",
+                "occurrence": result_ref("occurrence:0"),
                 "edge": [-20.0, 0.0, 10.0],
                 "on": [0.0, 0.0, 10.0],
                 "corner": [-20.0, 0.0, 20.0],
@@ -1149,12 +1219,15 @@ class AssemblyTests(unittest.TestCase):
         )
         self.assertEqual(
             [joint["b"]["occurrence"] for joint in joints],
-            ["Marker:1", "Marker:2"],
+            [
+                result_ref("occurrence:1"),
+                result_ref("occurrence:2"),
+            ],
         )
         self.assertEqual(
             joints[0]["b"],
             {
-                "occurrence": "Marker:1",
+                "occurrence": result_ref("occurrence:1"),
                 "point": [20.0, 0.0, 20.0],
                 "z": [0.0, 1.0, 0.0],
                 "x": [-1.0, 0.0, 0.0],
@@ -1163,7 +1236,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joints[1]["b"],
             {
-                "occurrence": "Marker:2",
+                "occurrence": result_ref("occurrence:2"),
                 "point": [-20.0, 0.0, 20.0],
                 "z": [0.0, 1.0, 0.0],
                 "x": [0.0, 0.0, -1.0],
@@ -1237,7 +1310,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joints[0]["a"],
             {
-                "occurrence": "Base:1",
+                "occurrence": result_ref("occurrence:0"),
                 "point": [0.0, 0.0, 0.0],
                 "z": [0.0, 0.0, 1.0],
                 "x": [1.0, 0.0, 0.0],
@@ -1246,7 +1319,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joints[0]["b"],
             {
-                "occurrence": "Bracket:1",
+                "occurrence": result_ref("occurrence:1"),
                 "point": [0.0, 0.0, 0.0],
                 "z": [0.0, 0.0, 1.0],
                 "x": [1.0, 0.0, 0.0],
@@ -1297,7 +1370,7 @@ class AssemblyTests(unittest.TestCase):
             for command in commands
             if command["command"] == "joint.create"
         )
-        self.assertEqual(joint["a"]["occurrence"], "Block:1")
+        self.assertEqual(joint["a"]["occurrence"], result_ref("occurrence:0"))
         self.assertEqual(joint["a"]["edge"], [-10.0, 0.0, 5.0])
         self.assertEqual(joint["a"]["corner"], [-10.0, 0.0, 10.0])
 
@@ -1368,7 +1441,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["a"],
             {
-                "occurrence": "Board:1",
+                "occurrence": result_ref("occurrence:0"),
                 "edge": [-20.0, 0.0, 5.0],
                 "on": [-20.0, 10.0, 10.0],
                 "corner": [-20.0, 0.0, 5.0],
@@ -1554,7 +1627,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["b"],
             {
-                "occurrence": "Bracket:1",
+                "occurrence": result_ref("occurrence:1"),
                 "point": [20.0, -20.0, 40.0],
                 "z": [0.0, 1.0, 0.0],
                 "x": [0.0, 0.0, -1.0],
@@ -1635,7 +1708,7 @@ class AssemblyTests(unittest.TestCase):
             [
                 {
                     "name": "Arm:1.tip",
-                    "occurrence": "Arm:1",
+                    "occurrence": result_ref("occurrence:0"),
                     "frame": {
                         "origin": [20.0, 0.0, 5.0],
                         "z": [1.0, 0.0, 0.0],
@@ -1653,7 +1726,7 @@ class AssemblyTests(unittest.TestCase):
         arm_move_index = next(
             i for i, command in enumerate(commands)
             if command["command"] == "occurrence.move"
-            and command["params"]["occurrence"] == "Arm:1"
+            and command["params"]["occurrence"] == result_ref("occurrence:0")
         )
         self.assertLess(arm_origin_index, arm_move_index)
 
@@ -1666,7 +1739,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["b"],
             {
-                "occurrence": "Marker:1",
+                "occurrence": result_ref("occurrence:1"),
                 "point": [20.0, 0.0, 5.0],
                 "z": [-1.0, 0.0, 0.0],
                 "x": [0.0, 0.0, 1.0],
@@ -1719,7 +1792,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["a"],
             {
-                "occurrence": "Base:1",
+                "occurrence": result_ref("occurrence:0"),
                 "edge": [20.0, -15.0, 10.0],
                 "on": [0.0, -15.0, 10.0],
                 "corner": [20.0, -15.0, 20.0],
@@ -1728,7 +1801,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["b"],
             {
-                "occurrence": "Marker:1",
+                "occurrence": result_ref("occurrence:1"),
                 "point": [20.0, -15.0, 20.0],
                 "z": [0.0, 1.0, 0.0],
                 "x": [-1.0, 0.0, 0.0],
@@ -1761,7 +1834,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(copy["translate"], [40.0, 0.0, 0.0])
         self.assertFalse(any(
             command["command"] == "occurrence.move"
-            and command["params"]["occurrence"] == "Block:2"
+            and command["params"]["occurrence"] == result_ref("occurrence:1")
             for command in commands
         ))
 
@@ -1771,8 +1844,8 @@ class AssemblyTests(unittest.TestCase):
             if command["command"] == "joint.as_built"
         )
         self.assertEqual(joint["type"], "rigid")
-        self.assertEqual(joint["a"], "Block:1")
-        self.assertEqual(joint["b"], "Block:2")
+        self.assertEqual(joint["a"], result_ref("occurrence:0"))
+        self.assertEqual(joint["b"], result_ref("occurrence:1"))
 
     def test_attach_angle_is_emitted_as_native_joint_turn(self):
         from scpf.assembly import compile_assembly

@@ -15,6 +15,16 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
   actual SolidCraft command results; multi-phase execution is wrapped in a
   checkpoint so the complete plan remains atomic.
 
+### Changed
+
+- Compile reusable occurrences with Forge-owned logical handles instead of
+  predicting SolidCraft display labels such as `Board:2`. Result bindings now
+  resolve the actual occurrence ids returned by `component.create` and
+  `occurrence.copy` for live, replay and headless native execution.
+- Execute generated native qualification plans through the same phased result
+  resolver used by live/replay, while ordinary SolidCraft inspection and
+  mutation JSON remains raw native command input.
+
 ## [0.2.0] - 2026-11-15 — WITHDRAWN
 
 This release was published before Forge's foundational create/place/copy/attach

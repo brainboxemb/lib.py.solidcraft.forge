@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import unittest
 
+from scpf.plan import result_ref
 from scpf.runner import run_script
 
 
@@ -74,7 +75,7 @@ class FourCornerLCommandTests(unittest.TestCase):
             self.assertEqual(
                 joint["a"],
                 {
-                    "occurrence": "FrameBlock:1",
+                    "occurrence": result_ref("occurrence:0"),
                     "point": [0.0, 0.0, 0.0],
                     "z": [0.0, 0.0, 1.0],
                     "x": [1.0, 0.0, 0.0],
@@ -83,7 +84,7 @@ class FourCornerLCommandTests(unittest.TestCase):
             self.assertEqual(
                 joint["b"],
                 {
-                    "occurrence": f"LProfile:{index}",
+                    "occurrence": result_ref(f"occurrence:{index}"),
                     "point": [0.0, 0.0, 0.0],
                     "z": [0.0, 0.0, -1.0],
                     "x": [1.0, 0.0, 0.0],

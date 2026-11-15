@@ -139,3 +139,119 @@ def binding_specs(document):
         name: (spec["command"], spec["field"])
         for name, spec in document.get("bindings", {}).items()
     }
+
+
+
+class ExecutionState:
+    """Resolve one validated execution document phase by phase."""
+
+    def __init__(self, document):
+        validate_document(document)
+        self.commands = document["commands"]
+        self.bindings = binding_specs(document)
+        self.captures = {}
+        for name, (command_index, field) in self.bindings.items():
+            self.captures.setdefault(command_index, []).append((name, field))
+        self.resolved = {}
+        self.results = [None] * len(self.commands)
+        self.cursor = 0
+        self.phases = 0
+        self._pending = None
+        self.has_references = any(
+            references_in(command.get("params", {}))
+            for command in self.commands
+        )
+
+    @property
+    def done(self):
+        return self.cursor >= len(self.commands) and self._pending is None
+
+    @property
+    def pending_is_final(self):
+        return (
+            self._pending is not None
+            and self._pending[1] == len(self.commands)
+        )
+
+    def next_phase(self):
+        """Return the largest next command batch whose references are resolved."""
+        if self._pending is not None:
+            raise RuntimeError("execution phase results have not been recorded")
+        if self.cursor >= len(self.commands):
+            return None
+
+        start = self.cursor
+        phase = []
+        while self.cursor < len(self.commands):
+            command = self.commands[self.cursor]
+            missing = (
+                references_in(command.get("params", {}))
+                - self.resolved.keys()
+            )
+            if missing:
+                if phase:
+                    break
+                missing_text = ", ".join(sorted(missing))
+                raise ValueError(
+                    f"command {self.cursor} needs unresolved execution-plan "
+                    f"binding(s): {missing_text}"
+                )
+            phase.append({
+                "command": command["command"],
+                "params": resolve_references(
+                    command.get("params", {}),
+                    self.resolved,
+                ),
+            })
+            self.cursor += 1
+
+        self._pending = (start, self.cursor)
+        return phase
+
+    def record_results(self, phase_results):
+        """Record native results for the pending phase and capture bindings."""
+        if self._pending is None:
+            raise RuntimeError("no execution phase is awaiting results")
+        start, end = self._pending
+        length = end - start
+        needs_results = any(
+            index in self.captures
+            for index in range(start, end)
+        )
+        if needs_results and (
+            not isinstance(phase_results, list)
+            or len(phase_results) != length
+        ):
+            raise ValueError(
+                "SolidCraft batch did not return one result per command "
+                "required by execution-plan bindings"
+            )
+
+        for local_index, global_index in enumerate(range(start, end)):
+            if (
+                isinstance(phase_results, list)
+                and local_index < len(phase_results)
+            ):
+                self.results[global_index] = phase_results[local_index]
+            for name, field in self.captures.get(global_index, ()):
+                row = self.results[global_index]
+                if not isinstance(row, dict) or field not in row:
+                    raise ValueError(
+                        f"command {global_index} did not return field "
+                        f"{field!r} required for binding {name!r}"
+                    )
+                self.resolved[name] = row[field]
+
+        self._pending = None
+        self.phases += 1
+
+    def summary(self):
+        """Return combined results in the shape expected by Forge callers."""
+        if not self.done:
+            raise RuntimeError("execution plan has not completed")
+        return {
+            "completed": len(self.commands),
+            "results": self.results,
+            "bindings": dict(self.resolved),
+            "phases": self.phases,
+        }

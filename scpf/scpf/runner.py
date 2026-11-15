@@ -669,31 +669,62 @@ def run_script(path: str | Path) -> dict:
                 keyword.arg == "placement"
                 for keyword in last.value.keywords
             )
-            if root_has_placement:
-                raise ModelError(
-                    "root component placement requires the identity-aware "
-                    "occurrence executor; this foundational capability is not "
-                    "qualified yet"
-                )
-            # A reusable @component source remains directly runnable as a
-            # standalone design. Compile its original model class as the root
-            # shape, while imported/nested uses keep the component factory.
+            # A reusable component without explicit occurrence placement remains
+            # directly runnable as a standalone Shape design. Once placement is
+            # part of the root intent, compile it as a real reusable occurrence
+            # so component.create can bind the SolidCraft occurrence id and the
+            # later placement command can reference that runtime result.
             root_class = (
                 root_object if root_is_class else root_component_class
             )
-            constructor = ast.Call(
-                func=ast.Name(id="_scpf_design_object", ctx=ast.Load()),
-                args=[ast.Name(id="_scpf_root_class", ctx=ast.Load()), *last.value.args],
-                keywords=last.value.keywords,
-            )
-            context["_scpf_design_object"] = _design_object
-            context["_scpf_root_class"] = root_class
-            ast.fix_missing_locations(constructor)
-            built = eval(
-                compile(ast.Expression(body=constructor), str(path), "eval"),
-                context,
-            )
-            result = built.result
+            if root_has_placement:
+                constructor = ast.Call(
+                    func=ast.Name(
+                        id="_scpf_reusable_root",
+                        ctx=ast.Load(),
+                    ),
+                    args=[
+                        ast.Name(id="_scpf_root_class", ctx=ast.Load()),
+                        *last.value.args,
+                    ],
+                    keywords=last.value.keywords,
+                )
+                context["_scpf_reusable_root"] = _reusable_model_object
+                context["_scpf_root_class"] = root_class
+                ast.fix_missing_locations(constructor)
+                result = eval(
+                    compile(
+                        ast.Expression(body=constructor),
+                        str(path),
+                        "eval",
+                    ),
+                    context,
+                )
+                built = _BuiltDesign(
+                    result=result,
+                    parameters=result.definition.parameters,
+                )
+            else:
+                constructor = ast.Call(
+                    func=ast.Name(id="_scpf_design_object", ctx=ast.Load()),
+                    args=[
+                        ast.Name(id="_scpf_root_class", ctx=ast.Load()),
+                        *last.value.args,
+                    ],
+                    keywords=last.value.keywords,
+                )
+                context["_scpf_design_object"] = _design_object
+                context["_scpf_root_class"] = root_class
+                ast.fix_missing_locations(constructor)
+                built = eval(
+                    compile(
+                        ast.Expression(body=constructor),
+                        str(path),
+                        "eval",
+                    ),
+                    context,
+                )
+                result = built.result
         elif root_is_assembly:
             result = eval(
                 compile(ast.Expression(body=last.value), str(path), "eval"),

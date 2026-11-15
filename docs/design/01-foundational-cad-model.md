@@ -112,10 +112,13 @@ Block(placement=Placement(x=50))
 
 Expected: the final occurrence is at X=50 without introducing a relationship.
 
-**Current status: capability gap.** SolidCraft `component.create` returns the
-first occurrence id but does not accept placement. Until the identity-aware
-executor can bind that returned id into a later native placement operation,
-Forge must reject this case explicitly. It must not predict `Block:1`.
+**Implementation status:** Forge now compiles the root as a reusable occurrence,
+binds the `component.create` result to a Forge logical occurrence handle, and
+uses that runtime id for the later native placement operation. The compiler does
+not predict `Block:1`.
+
+This use case still requires dedicated native qualification before a new public
+release is accepted as a downstream CAD baseline.
 
 ### U3 — one definition, two numeric occurrences
 
@@ -176,9 +179,10 @@ attached child. Saved-design parameter mutation must keep both graphs correct.
 
 ### U9 — replay
 
-A model that requires a runtime-created occurrence id must replay through a
-Forge execution representation that can bind that runtime identity. A replay
-format must never guess a display label such as `Board:2`.
+A model that requires a runtime-created occurrence id replays through the Forge
+execution document. Logical `$ref` handles are rebound to fresh SolidCraft ids
+during replay. A replay file must never freeze or guess a display label such as
+`Board:2`.
 
 ## 4. Invariants
 

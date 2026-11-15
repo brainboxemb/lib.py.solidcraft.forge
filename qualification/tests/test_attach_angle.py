@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import unittest
 
+from scpf.plan import result_ref
 from scpf.runner import run_script
 
 
@@ -24,8 +25,12 @@ class AttachAngleCommandTests(unittest.TestCase):
         self.assertEqual(len(joints), 1)
         self.assertEqual(joints[0]["type"], "rigid")
         self.assertEqual(joints[0]["angle"], 90)
-        self.assertEqual(joints[0]["a"]["occurrence"], "Base:1")
-        self.assertEqual(joints[0]["b"]["occurrence"], "Arm:1")
+        self.assertEqual(
+            joints[0]["a"]["occurrence"], result_ref("occurrence:0")
+        )
+        self.assertEqual(
+            joints[0]["b"]["occurrence"], result_ref("occurrence:1")
+        )
 
 
 @unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")

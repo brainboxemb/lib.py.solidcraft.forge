@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import unittest
 
+from scpf.plan import result_ref
 from scpf.runner import run_script
 
 
@@ -50,8 +51,12 @@ class AssemblyOwnedAnchorCommandTests(unittest.TestCase):
             joint["a"]["corner"],
             [20.0, -15.0, 20.0],
         )
-        self.assertEqual(joint["a"]["occurrence"], "Base:1")
-        self.assertEqual(joint["b"]["occurrence"], "Marker:1")
+        self.assertEqual(
+            joint["a"]["occurrence"], result_ref("occurrence:0")
+        )
+        self.assertEqual(
+            joint["b"]["occurrence"], result_ref("occurrence:2")
+        )
 
 
 @unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
