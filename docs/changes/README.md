@@ -23,3 +23,5 @@ Current records:
 - [0002-copy-placement-with-rotation.md](0002-copy-placement-with-rotation.md) — correct native lowering when a copied occurrence combines XYZ Placement with rotation.
 - [0003-explicit-component-parameter-publication.md](0003-explicit-component-parameter-publication.md) — restore the original explicit `include=` contract for publishing reusable child-component defaults; parent symbolic bindings remain shared.
 - [0004-three-reference-implementations.md](0004-three-reference-implementations.md) — require PythonSCAD, pyBOSL2 and CadQuery reference output for qualification cases unless an explicit technical exception is recorded.
+
+- [0008-stable-forge-occurrence-id.md](0008-stable-forge-occurrence-id.md) — stop using Python object ids to track Forge occurrences; copy gets a new id while group/attach keep the existing one.
