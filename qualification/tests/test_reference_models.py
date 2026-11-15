@@ -5,7 +5,8 @@ from pathlib import Path
 import unittest
 
 from qualification.cases import QUALIFICATION_CASES
-from qualification.reference_validation import DEFAULT_IMPLEMENTATIONS
+
+DEFAULT_IMPLEMENTATIONS = ("pythonscad", "pybosl2")
 
 
 ROOT = Path(__file__).resolve().parents[2]
