@@ -76,7 +76,8 @@ jobs:
           unset PYTHONPATH
           cd "$RUNNER_TEMP"
           python -m unittest discover \
-            -s "$GITHUB_WORKSPACE/qualification/tests" -v
+            -s "$GITHUB_WORKSPACE/qualification/tests" \
+            -t "$GITHUB_WORKSPACE" -v
 
       - name: Compile qualification tooling
         shell: bash
