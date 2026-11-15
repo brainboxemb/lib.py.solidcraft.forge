@@ -244,9 +244,21 @@ suspicious. Forge emits `ModelParameterWarning` instead of silently pretending
 the design is still associative. Use `pv()` only where Python genuinely needs
 a concrete number.
 
-Reusable component parameters follow the same naming rule. When several parts
-must share one model parameter, pass the parent parameter or expression
-directly:
+Reusable child-component defaults are fixed unless explicitly published with
+`component(..., include=...)`. For example:
+
+```python
+Bracket = component(
+    CornerBracket,
+    include=("inside_corner_radius",),
+)
+```
+
+`include="*"` explicitly publishes all public child defaults. A mapping may
+publish one selected child default under a chosen shared model name.
+
+When several parts must share one parent parameter, pass the parent Parameter
+or Expression directly:
 
 ```python
 bottom = BottomBoard(corner_radius=self.corner_radius)
@@ -254,7 +266,9 @@ roof = RoofBoard(corner_radius=self.corner_radius)
 bracket = Bracket(inside_corner_radius=self.corner_radius)
 ```
 
-Forge must preserve that dependency instead of creating unrelated child values.
+Forge must preserve that existing dependency instead of creating unrelated or
+duplicated child parameters. This contract is recorded in
+[change 0003](changes/0003-explicit-component-parameter-publication.md).
 
 ## Features and operations
 
