@@ -13,5 +13,3 @@ profile = l_profile()
 model = frame
 for x, y, angle in [(-60, -40, 0), (60, -40, 90), (60, 40, 180), (-60, 40, 270)]:
     model = model | profile.rotate(angle, [0, 0, 1]).translate([x, y, 30])
-
-model.show()
