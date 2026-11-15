@@ -1,4 +1,4 @@
-"""Qualification tests for explicit component publication and inherited bindings."""
+"""Qualification tests for change 0003: explicit child publication and inherited bindings."""
 import json
 import os
 from pathlib import Path
