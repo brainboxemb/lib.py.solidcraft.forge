@@ -81,12 +81,14 @@ class Hub75AnchorFrameDiagnosticTests(unittest.TestCase):
         self.assertFalse(anchor_group["grounded"])
         self.assertTrue(placement_group["grounded"])
 
-    def test_attached_child_seed_placement_remains_symbolic(self):
-        """The diagnosed command-level regression must stay fixed.
+    def test_attached_child_seed_remains_numeric_solver_seed(self):
+        """Do not confuse seed lowering with the AnchorFrame regression.
 
-        An attachment may need a seed pose for the native solver, but adding the
-        semantic joint must not flatten parameter dependencies already present
-        in that occurrence Placement.
+        Historical Forge 79b2be2 already emitted concrete occurrence.move
+        seeds for attached children while the same HUB75 A/B AnchorFrames
+        qualified natively. The semantic relationship is owned by the eight
+        rigid joints; only the explicit Placement baseline keeps its child
+        positions parameter-driven.
         """
 
         anchor_moves = [
@@ -102,16 +104,9 @@ class Hub75AnchorFrameDiagnosticTests(unittest.TestCase):
 
         self.assertEqual(len(anchor_moves), 8)
         self.assertEqual(len(baseline_moves), 8)
-
         self.assertTrue(
             all(
-                "opening_width" in str(row["translate"])
-                for row in anchor_moves
-            )
-        )
-        self.assertTrue(
-            all(
-                any(isinstance(value, str) for value in row["translate"])
+                all(isinstance(value, (int, float)) for value in row["translate"])
                 for row in anchor_moves
             )
         )
@@ -121,7 +116,6 @@ class Hub75AnchorFrameDiagnosticTests(unittest.TestCase):
                 for row in baseline_moves
             )
         )
-
         self.assertEqual(len(of(commands("scpf"), "joint.create")), 8)
         self.assertEqual(len(of(commands("placement"), "joint.create")), 0)
 
