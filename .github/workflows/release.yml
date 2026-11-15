@@ -1,0 +1,94 @@
+name: Publish SCPF release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Semantic version without v, for example 0.2.0"
+        required: true
+        type: string
+      target_sha:
+        description: "Full 40-character current main commit to release"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate release metadata
+        env:
+          VERSION: \${{ inputs.version }}
+          TARGET_SHA: \${{ inputs.target_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main --tags
+          python scripts/release/validate_release.py \
+            --version "$VERSION" \
+            --target-sha "$TARGET_SHA" \
+            --notes-out release-notes.md
+
+      - name: Require full qualification on target commit
+        env:
+          GH_TOKEN: \${{ github.token }}
+          TARGET_SHA: \${{ inputs.target_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          qualified="$(gh api --method GET "repos/$GITHUB_REPOSITORY/actions/runs" \
+            -f head_sha="$TARGET_SHA" \
+            -f per_page=100 \
+            --jq '[.workflow_runs[] | select(.name == "SCPF Python package qualification" and .conclusion == "success")] | length')"
+          if [ "$qualified" -lt 1 ]; then
+            echo "No successful full SCPF qualification for $TARGET_SHA" >&2
+            exit 1
+          fi
+
+      - name: Create annotated tag and GitHub Release
+        env:
+          GH_TOKEN: \${{ github.token }}
+          VERSION: \${{ inputs.version }}
+          TARGET_SHA: \${{ inputs.target_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="v$VERSION"
+          git fetch origin --tags
+
+          if git show-ref --verify --quiet "refs/tags/$tag"; then
+            existing="$(git rev-list -n 1 "$tag")"
+            if [ "$existing" != "$TARGET_SHA" ]; then
+              echo "$tag already points to $existing, not $TARGET_SHA" >&2
+              exit 1
+            fi
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "$tag" "$TARGET_SHA" -m "SCPF $tag"
+            git push origin "$tag"
+          fi
+
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "$tag is already published and points to the requested commit"
+            exit 0
+          fi
+
+          gh release create "$tag" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --title "SCPF $tag" \
+            --notes-file release-notes.md
