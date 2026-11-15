@@ -21,4 +21,4 @@ profile = square(
 ).offset(r=radius)
 pad = profile.linear_extrude(height=pad_height).up(base_height)
 
-show(base | pad)
+model = base | pad
