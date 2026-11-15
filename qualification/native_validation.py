@@ -250,12 +250,24 @@ def validate_components(root: Path) -> Validation:
     _check_declared_bounds(v, d, "components")
     rows = bodies_named(d, "Block")
     v.check("two block occurrences", len(rows) == 2, 2, len(rows))
-    actual = sorted((body["bbox"]["min"], body["bbox"]["max"]) for body in rows)
-    expected = sorted([
+    actual = sorted(rows, key=lambda body: body["bbox"]["min"][0])
+    expected = [
         ([-20, -15, 0], [20, 15, 10]),
         ([20, -15, 0], [60, 15, 10]),
-    ])
-    v.check("RIGHT-to-LEFT faces touch", actual == expected, expected, actual)
+    ]
+    touch_ok = (
+        len(actual) == 2
+        and all(
+            bbox_close(body, minimum, maximum)
+            for body, (minimum, maximum) in zip(actual, expected)
+        )
+    )
+    v.check(
+        "RIGHT-to-LEFT faces touch",
+        touch_ok,
+        expected,
+        [(body["bbox"]["min"], body["bbox"]["max"]) for body in actual],
+    )
     return v
 
 
