@@ -1,0 +1,90 @@
+name: Publish SCPF release
+
+on:
+  workflow_run:
+    workflows:
+      - "SCPF Python package qualification"
+    types:
+      - completed
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: \${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Read release candidate version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(python -c 'import tomllib; print(tomllib.load(open("scpf/pyproject.toml","rb"))["project"]["version"])')"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "TARGET_SHA=\${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_ENV"
+
+      - name: Skip versions that are already released
+        id: existing
+        env:
+          GH_TOKEN: \${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="v$VERSION"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "released=true" >> "$GITHUB_OUTPUT"
+            echo "$tag already exists; no new release is needed"
+          else
+            echo "released=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate release metadata
+        if: steps.existing.outputs.released != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main --tags
+          python scripts/release/validate_release.py \
+            --version "$VERSION" \
+            --target-sha "$TARGET_SHA" \
+            --notes-out release-notes.md
+
+      - name: Create annotated tag and GitHub Release
+        if: steps.existing.outputs.released != 'true'
+        env:
+          GH_TOKEN: \${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="v$VERSION"
+          git fetch origin --tags
+
+          if git show-ref --verify --quiet "refs/tags/$tag"; then
+            existing="$(git rev-list -n 1 "$tag")"
+            if [ "$existing" != "$TARGET_SHA" ]; then
+              echo "$tag already points to $existing, not $TARGET_SHA" >&2
+              exit 1
+            fi
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "$tag" "$TARGET_SHA" -m "SCPF $tag"
+            git push origin "$tag"
+          fi
+
+          gh release create "$tag" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --title "SCPF $tag" \
+            --notes-file release-notes.md
