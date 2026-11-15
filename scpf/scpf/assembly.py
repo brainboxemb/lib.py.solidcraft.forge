@@ -227,67 +227,17 @@ def _relationship_replay_order(instances, component_name):
     return ordered
 
 
-_ATTACHMENT_INFERENCE_STAGE_MM = 1.0
+_ATTACHMENT_PARKING_STEP_MM = 1000.0
 
 
-def _attachment_stage_direction(attachment):
-    """Return the parent-facing direction used to separate a copied child."""
-    parent = attachment.parent
-
-    if isinstance(parent, Anchor):
-        if parent in _CORNER_ANCHORS:
-            direction = _corner_normal(parent)
-        elif parent is Anchor.CENTER:
-            raise ModelError(
-                "copied CENTER attachment cannot be staged for replay-safe "
-                "occurrence inference"
-            )
-        else:
-            direction = parent.vector
-    elif isinstance(parent, str):
-        parent = dict(attachment.target.definition.anchors)[parent]
-        if isinstance(parent, AnchorFrame):
-            direction = parent.z
-        elif isinstance(parent, AnchorTopology):
-            if parent.z is None:
-                raise ModelError(
-                    "copied named AnchorTopology attachment needs an explicit "
-                    "z direction for replay-safe occurrence inference"
-                )
-            direction = parent.z
-        else:
-            raise ModelError("named attachment has no replay-safe staging direction")
-    elif isinstance(parent, AnchorFrame):
-        direction = parent.z
-    elif isinstance(parent, AnchorTopology):
-        if parent.z is None:
-            raise ModelError(
-                "copied AnchorTopology attachment needs an explicit z direction "
-                "for replay-safe occurrence inference"
-            )
-        direction = parent.z
-    else:
-        raise ModelError("attachment has no replay-safe staging direction")
-
-    values = tuple(float(pv(value)) for value in direction)
-    length = sum(value * value for value in values) ** 0.5
-    if length <= 0:
-        raise ModelError("attachment staging direction must be non-zero")
-    return tuple(value / length for value in values)
-
-
-def _relationship_copy_seed(instance):
-    """Return the temporary native seed pose for one relationship copy."""
-    position = [pv(value) for value in instance.placement.position]
+def _relationship_copy_seed(instance, parking_slot):
+    """Return a unique temporary native seed pose for one relationship copy."""
     attachment = instance.attachment
     if attachment is None or attachment.as_built:
-        return position
+        return [pv(value) for value in instance.placement.position]
 
-    direction = _attachment_stage_direction(attachment)
-    return [
-        position[i] + direction[i] * _ATTACHMENT_INFERENCE_STAGE_MM
-        for i in range(3)
-    ]
+    distance = _ATTACHMENT_PARKING_STEP_MM * parking_slot
+    return [distance, -distance, distance]
 
 
 def _occurrence_labels(assembly, names):
@@ -346,6 +296,8 @@ def compile_assembly(value, name):
         ))
 
     relationship_occurrence_ids = set()
+    attachment_parking_slots = {}
+    next_parking_slot = 1
     for instance in assembly.instances:
         attachment = instance.attachment
         if attachment is None:
@@ -357,6 +309,9 @@ def compile_assembly(value, name):
             )
         relationship_occurrence_ids.add(instance.occurrence_id)
         relationship_occurrence_ids.add(attachment.target.occurrence_id)
+        if not attachment.as_built:
+            attachment_parking_slots[instance.occurrence_id] = next_parking_slot
+            next_parking_slot += 1
 
     by_definition = {}
     for instance in assembly.instances:
@@ -474,7 +429,10 @@ def compile_assembly(value, name):
             position = instance.placement.position
 
             if relationship_definition:
-                concrete_position = _relationship_copy_seed(instance)
+                concrete_position = _relationship_copy_seed(
+                    instance,
+                    attachment_parking_slots.get(instance.occurrence_id, 0),
+                )
                 if any(concrete_position):
                     params["translate"] = concrete_position
                 occurrence_refs[instance.occurrence_id] = None
