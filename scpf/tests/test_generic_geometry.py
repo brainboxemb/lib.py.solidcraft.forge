@@ -155,8 +155,8 @@ class GenericGeometryAPI(unittest.TestCase):
         duplicate = original.copy().at(Position(x=24))
         self.assertIsNot(original, duplicate)
         self.assertIs(original.definition, duplicate.definition)
-        self.assertEqual(original.placement.position, (0, 0, 0))
-        self.assertEqual(duplicate.placement.position, (24, 0, 0))
+        self.assertEqual(original.placement.position.values, (0, 0, 0))
+        self.assertEqual(duplicate.placement.position.values, (24, 0, 0))
         self.assertIsNone(duplicate.attachment)
 
     def test_taper_rejects_invalid_dimensions(self):
