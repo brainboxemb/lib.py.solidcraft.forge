@@ -206,7 +206,30 @@ shape operands describe a geometric union.</p>
 rule: “put this occurrence at this offset”. It does not by itself say that the
 second block is mechanically related to a face or corner of the first.</p>
 
-<h2 id="relationship">3. Use attach() when the relationship is the intent</h2>
+<h2 id="reusable-assembly">3. Use @assembly when the composition itself is reusable</h2>
+<p>You do not need <code>@assembly</code> merely because a script contains
+several components. Use it when the <em>composition itself</em> is a reusable
+model object that you want to import or instantiate as a subassembly.</p>
+""" + code("""from scpf import Anchor, assembly
+
+@assembly
+class BlockPair:
+    def build(self):
+        left = Block()
+        right = Block().attach(
+            left,
+            parent=Anchor.RIGHT,
+            child=Anchor.LEFT,
+        )
+        return left + right
+
+pair = BlockPair()""") + """
+<p>The component definitions remain the physical parts. <code>BlockPair</code>
+describes how those occurrences are composed. This is different from
+<code>group()</code>: an assembly expresses the model composition; grouping
+controls the native nested hierarchy/browser unit.</p>
+
+<h2 id="relationship">4. Use attach() when the relationship is the intent</h2>
 <p>If the real rule is “the left side of this part belongs on the right side of
 that part”, encode that relationship instead of calculating a replacement XYZ
 coordinate yourself.</p>
@@ -228,7 +251,7 @@ for a hard-coded XYZ point.</p>
 relationship or semantic mounting reference</strong>. Do not add anchors to every
 component pre-emptively.</p>
 
-<h2 id="anchor-choice">4. Which kind of anchor?</h2>
+<h2 id="anchor-choice">5. Which kind of anchor?</h2>
 <table><thead><tr><th>Situation</th><th>Use</th></tr></thead><tbody>
 <tr><td>Normal rectangular face/corner is enough</td><td><code>Anchor.LEFT</code>, <code>Anchor.FRONT_TOP_RIGHT</code>, etc.</td></tr>
 <tr><td>The reusable part owns a special mounting point and orientation</td><td>Named <code>AnchorFrame</code> returned by the component's <code>anchors()</code></td></tr>
@@ -239,7 +262,7 @@ component pre-emptively.</p>
 <code>AnchorFrame</code> or <code>AnchorTopology</code> only when a face/corner
 reference cannot express the actual mounting intent.</p>
 
-<h2 id="solidcraft-relations">5. Let SolidCraft own the native relationship</h2>
+<h2 id="solidcraft-relations">6. Let SolidCraft own the native relationship</h2>
 <p>Forge describes the relationship; SolidCraft owns the resulting native
 geometry, occurrence hierarchy and joint data. Forge is not intended to grow a
 second general mating solver. That is also why a meaningful
@@ -250,7 +273,7 @@ coordinate corrections.</p>
 is the relative turn around the attachment normal. These are relationship
 values, not a replacement global XYZ transform.</p>
 
-<h2 id="group">6. A group is organisation, not a relationship</h2>
+<h2 id="group">7. A group is organisation, not a relationship</h2>
 """ + code("""frame = (left + right).group("Frame")""") + """
 <p><code>group("Frame")</code> creates a real nested native component so the
 occurrences appear together in the SolidCraft browser hierarchy. Grouping does
