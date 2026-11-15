@@ -10,11 +10,13 @@ source that answers the task:
 | Public Forge API semantics | `docs/05-cad-api-design.md` |
 | Exact Forge names/signatures/enums | relevant code in `scpf/scpf/` |
 | Qualification rules | `docs/qualification/README.md` |
+| SolidCraft command/API lookup | `docs/agent/solidcraft.md` |
 | SolidCraft version upgrade | `docs/qualification/solidcraft-upgrade-protocol.md` |
 | PythonSCAD / pyBOSL2 qualification reference | `docs/agent/reference-libraries.md` |
 
-Only read additional files when the first source is insufficient. Only consult
-upstream/external PythonSCAD or pyBOSL2 documentation when the local agent
+Only read additional files when the first source is insufficient. For SolidCraft,
+use the version-pinned local vendor snapshot or local CLI introspection before any
+website lookup. Only consult upstream/external PythonSCAD or pyBOSL2 documentation when the local agent
 reference does not cover the required operation or when intentionally refreshing
 that reference.
 
