@@ -8,9 +8,19 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Changed
+
+- Ordinary occurrence Placement is now limited to replay-safe SolidCraft 0.42
+  lowering: one identity occurrence per reusable definition and concrete,
+  unrotated copies through `occurrence.copy(..., translate=...)`.
+- Forge rejects ordinary Placement that would require a later
+  `occurrence.move` addressed through a predicted SolidCraft `Component:N`
+  name.
+
 ### Added
 
-- Nothing yet.
+- Stable internal Forge occurrence ids are now used to track physical
+  occurrences across copy/group/attach transformations.
 
 ## [0.3.2] - 2026-11-15
 
