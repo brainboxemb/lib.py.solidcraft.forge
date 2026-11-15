@@ -9,4 +9,4 @@ from pythonscad import *
 board = cube([40, 12, 20], center=True).translate([0, 6, 10])
 right_marker = cube([10, 10, 10], center=True).translate([15, -5, 15])
 left_marker = cube([10, 10, 10], center=True).translate([-15, -5, 15])
-show(board | right_marker | left_marker)
+model = board | right_marker | left_marker
