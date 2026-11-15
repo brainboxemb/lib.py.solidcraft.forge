@@ -48,10 +48,6 @@ EXPECTED_BOUNDS = {
         {"label": "Base", "min": [-20, -15, 0], "max": [20, 15, 10]},
         {"label": "Marker", "min": [45, 5, 15], "max": [55, 35, 23]},
     ],
-    "parametric-move": [
-        {"label": "fixed Block", "min": [-10, -10, 0], "max": [10, 10, 10]},
-        {"label": "moved Block", "min": [60, -10, 0], "max": [80, 10, 10]},
-    ],
     "parametric-attach": [
         {"label": "Base", "min": [-20, -15, 0], "max": [20, 15, 10]},
         {"label": "Block", "min": [30, -10, 0], "max": [50, 10, 10]},
@@ -133,6 +129,10 @@ EXPECTED_BOUNDS = {
 
 
 EXPECTED_MUTATION_BOUNDS = {
+    "parametric-move": [
+        {"label": "fixed Block", "min": [-10, -10, 0], "max": [10, 10, 10]},
+        {"label": "moved Block", "min": [60, -10, 0], "max": [80, 10, 10]},
+    ],
     "assembly-owned-anchor": [
         {"label": "Base", "min": [-40, -15, 0], "max": [40, 15, 40]},
         {"label": "Companion", "min": [65, -5, 0], "max": [75, 5, 10]},
