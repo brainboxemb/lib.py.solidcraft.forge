@@ -152,7 +152,7 @@ def compile_assembly(value, name):
                     "is not supported yet"
                 )
             required_custom_origins.add(
-                (id(attachment.target), attachment.parent)
+                (attachment.target.occurrence_id, attachment.parent)
             )
         if (
             isinstance(attachment.child, str)
@@ -164,7 +164,7 @@ def compile_assembly(value, name):
                     "AnchorTopology on explicitly rotated occurrences "
                     "is not supported yet"
                 )
-            required_custom_origins.add((id(instance), attachment.child))
+            required_custom_origins.add((instance.occurrence_id, attachment.child))
 
     # Named groups are actual empty native components, not just labels in
     # Python. Child component definitions are created under their parent.
@@ -287,7 +287,7 @@ def compile_assembly(value, name):
         copy_positioned = set()
         for index, instance in enumerate(instances, start=1):
             native_name = f"{component_name}:{index}"
-            occurrence_names[id(instance)] = native_name
+            occurrence_names[instance.occurrence_id] = native_name
             occurrences.append((instance, native_name))
             if index > 1:
                 position = instance.placement.position
@@ -300,7 +300,7 @@ def compile_assembly(value, name):
                     concrete_position = [pv(value) for value in position]
                     if any(concrete_position):
                         params["translate"] = concrete_position
-                    copy_positioned.add(id(instance))
+                    copy_positioned.add(instance.occurrence_id)
                 commands.append(_command("occurrence.copy", **params))
 
         # Only explicitly rotated custom anchors need a persistent native
@@ -309,13 +309,13 @@ def compile_assembly(value, name):
         # is rotated. Unrotated AnchorFrames are inlined later in joint.create.
         for instance, native_name in occurrences:
             for anchor_name, frame in instance.definition.anchors:
-                anchor_key = (id(instance), anchor_name)
+                anchor_key = (instance.occurrence_id, anchor_name)
                 if anchor_key not in required_custom_origins:
                     continue
                 origin_name = f"{native_name}.{anchor_name}"
                 custom_origin_names[anchor_key] = origin_name
                 frame_origin = list(frame.origin)
-                if id(instance) in copy_positioned:
+                if instance.occurrence_id in copy_positioned:
                     frame_origin = [
                         frame.origin[i] + pv(instance.placement.position[i])
                         for i in range(3)
@@ -338,7 +338,7 @@ def compile_assembly(value, name):
         for instance, native_name in occurrences:
             position = instance.placement.position
             rotation = instance.placement.rotation
-            positioned_at_copy = id(instance) in copy_positioned
+            positioned_at_copy = instance.occurrence_id in copy_positioned
             symbolic_position = bool(parameters_in(*position))
             expressed_move = (
                 symbolic_position and instance.attachment is None
@@ -387,8 +387,8 @@ def compile_assembly(value, name):
         attachment = instance.attachment
         if attachment is None:
             continue
-        child_occurrence = occurrence_names.get(id(instance))
-        parent_occurrence = occurrence_names.get(id(attachment.target))
+        child_occurrence = occurrence_names.get(instance.occurrence_id)
+        parent_occurrence = occurrence_names.get(attachment.target.occurrence_id)
         if child_occurrence is None or parent_occurrence is None:
             raise ModelError("component attach target must be part of the assembly")
 
@@ -419,7 +419,7 @@ def compile_assembly(value, name):
                             "AnchorTopology on explicitly rotated occurrences "
                             "is not supported yet"
                         )
-                    return custom_origin_names[(id(model), anchor)]
+                    return custom_origin_names[(model.occurrence_id, anchor)]
 
             if isinstance(custom, AnchorTopology):
                 def world(point):
