@@ -34,6 +34,17 @@ def check(site: Path, sha: str, require_native: bool = False):
     assert "API Guide" in home and "API Guide" in guide_index
     reference_index = (site / "reference" / "index.html").read_text(encoding="utf-8")
     assert "API Reference" in home and "API Reference" in reference_index
+    for heading in (
+        "Browse by task",
+        "Selectors and vocabularies",
+        "Core types and detailed operations",
+    ):
+        assert heading in reference_index, heading
+    assert (
+        reference_index.index("Browse by task")
+        < reference_index.index("Selectors and vocabularies")
+        < reference_index.index("Core types and detailed operations")
+    )
     from api_reference import (
         ENUM_REFERENCES,
         GROUP_REFERENCES,
