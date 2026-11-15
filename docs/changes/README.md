@@ -25,3 +25,4 @@ Current records:
 - [0004-three-reference-implementations.md](0004-three-reference-implementations.md) — require PythonSCAD, pyBOSL2 and CadQuery reference output for qualification cases unless an explicit technical exception is recorded.
 
 - [0008-stable-forge-occurrence-id.md](0008-stable-forge-occurrence-id.md) — stop using Python object ids to track Forge occurrences; copy gets a new id while group/attach keep the existing one.
+- [0009-replay-first-placement.md](0009-replay-first-placement.md) — keep ordinary Placement replay-first: identity first occurrence, numeric unrotated copies, and reject cases that would need guessed occurrence names.
