@@ -77,8 +77,10 @@ def check(site: Path, sha: str, require_native: bool = False):
         (site / "reference" / "api.json").read_text(encoding="utf-8")
     )
     assert generated_api == api_manifest()
-    # The committed agent snapshot is refreshed from this generated manifest
-    # immediately after the schema-2 preview has been published.
+    local_agent_api = json.loads(
+        (ROOT / "docs" / "agent" / "forge-api.json").read_text(encoding="utf-8")
+    )
+    assert local_agent_api == api_manifest()
     assert 'class="development-banner"' in home
     assert "Development version." in home
     assert "not a support guarantee" in home
