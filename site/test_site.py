@@ -10,6 +10,7 @@ from build import EXAMPLES, QUALIFICATION_CASES, QUALIFICATION_GROUPS
 from api_coverage import EXPORT_COVERAGE, CAPABILITY_COVERAGE
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 import scpf
+from scpf.version import TESTED_SOLIDCRAFT_VERSION
 
 
 def check(site: Path, sha: str, require_native: bool = False):
@@ -153,7 +154,7 @@ def check(site: Path, sha: str, require_native: bool = False):
     assert "Q1" in qualification_index and "Q6" in qualification_index
     assert 'class="reference-grid qualification-grid"' in qualification_index
     assert qualification_manifest["library_commit"] == sha
-    assert qualification_manifest["solidcraft_version"] == "0.30.1"
+    assert qualification_manifest["solidcraft_version"] == TESTED_SOLIDCRAFT_VERSION
     assert set(qualification_manifest["cases"]) == {
         case["slug"] for case in QUALIFICATION_CASES
     }
@@ -221,10 +222,10 @@ def check(site: Path, sha: str, require_native: bool = False):
             assert f">{badge}</span>" in page_text, slug
 
             assert structured_result["source_commit"] == sha, slug
-            assert structured_result["solidcraft_version"] == "0.30.1", slug
+            assert structured_result["solidcraft_version"] == TESTED_SOLIDCRAFT_VERSION, slug
             assert manifest_case["levels"] == structured_result["levels"], slug
             assert "Native runtime:" in page_text, slug
-            assert "SolidCraft 0.30.1" in page_text, slug
+            assert f"SolidCraft {TESTED_SOLIDCRAFT_VERSION}" in page_text, slug
 
             image = site / "qualification" / slug / "model.png"
             assert image.is_file() and image.stat().st_size > 0, slug
@@ -309,7 +310,7 @@ def check(site: Path, sha: str, require_native: bool = False):
         if info["preview_kind"] == "native-snapshot":
             assert image.suffix == ".png"
             assert image.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
-            assert "Native SolidCraft 0.30.1 render" in page
+            assert f"Native SolidCraft {TESTED_SOLIDCRAFT_VERSION} render" in page
         else:
             assert image.suffix == ".svg"
             assert "Schematic illustration only" in page
