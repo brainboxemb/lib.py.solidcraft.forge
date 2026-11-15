@@ -35,6 +35,7 @@ Relevant concepts used by Forge comparisons:
 
 ```python
 cube([x, y, z], center=True)
+cube([x, y, z], center="00+")  # centered X/Y, grows from Z=0 in +Z
 sphere(r=radius)
 cylinder(d=diameter, h=height, center=True)
 
@@ -46,6 +47,7 @@ shape.translate([x, y, z])
 shape.rotate([rx, ry, rz])
 
 profile.linear_extrude(height=h)
+shape.export("model.stl")
 show(shape)
 ```
 
@@ -68,6 +70,7 @@ from pybosl2 import Anchor, cuboid, cyl, sphere, rect, circle
 
 ```python
 cuboid([x, y, z])
+cuboid([x, y, z], anchor=Anchor.BOTTOM)
 cyl(diameter=d, height=h)
 sphere(radius=r)
 ```
@@ -156,7 +159,8 @@ parent.attach(
 ```
 
 Attachments are deferred; use `.realize()` when one combined measurable solid
-is required.
+is required. Any resulting 3D shape can be exported directly with
+`shape.export("model.stl")`.
 
 ```python
 model = parent.attach(Anchor.RIGHT, child, child_anchor=Anchor.LEFT).realize()
