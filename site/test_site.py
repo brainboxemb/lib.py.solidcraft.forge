@@ -33,16 +33,27 @@ def check(site: Path, sha: str, require_native: bool = False):
     assert "API Guide" in home and "API Guide" in guide_index
     reference_index = (site / "reference" / "index.html").read_text(encoding="utf-8")
     assert "API Reference" in home and "API Reference" in reference_index
-    from api_reference import ENUM_REFERENCES, METHOD_REFERENCES, enum_members
+    from api_reference import (
+        ENUM_REFERENCES,
+        METHOD_REFERENCES,
+        api_manifest,
+        enum_members,
+    )
     for spec in ENUM_REFERENCES:
         page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
+        assert spec["summary"] in page_text, spec["slug"]
         for name, value in enum_members(spec):
             assert f"{spec['slug']}.{name}" in page_text, (spec["slug"], name)
             assert str(value) in page_text, (spec["slug"], value)
     for spec in METHOD_REFERENCES:
         page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
         assert spec["signature"] in page_text, spec["slug"]
-        assert "Normative API contract" in page_text, spec["slug"]
+        assert spec["summary"] in page_text, spec["slug"]
+        assert "Cross-object API design rules" in page_text, spec["slug"]
+    generated_api = json.loads(
+        (site / "reference" / "api.json").read_text(encoding="utf-8")
+    )
+    assert generated_api == api_manifest()
     assert 'class="development-banner"' in home
     assert "Development version." in home
     assert "not a support guarantee" in home
@@ -54,7 +65,30 @@ def check(site: Path, sha: str, require_native: bool = False):
         assert len(page) > 1400, chapter["slug"]
     features = (site / "guide" / "features" / "index.html").read_text(encoding="utf-8")
     assert 'href="../../reference/Faces/"' in features
-    assert (site / "source-api-contract.html").is_file()
+    assert "API on this page" in features
+    for face_name in ("TOP", "BOTTOM", "LEFT", "RIGHT", "FRONT", "BACK"):
+        assert f"Faces.{face_name}" in features, face_name
+    assert "Shape.on(self, target" in features
+    assert (site / "api-design-contract.html").is_file()
+
+    assembly_basics = (
+        site / "guide" / "assembly-basics" / "index.html"
+    ).read_text(encoding="utf-8")
+    for term in (
+        "From one component to an assembly",
+        "one physical reusable part",
+        "Shape + Shape",
+        "ComponentOccurrence + ComponentOccurrence",
+        "Use @assembly when the composition itself is reusable",
+        "Use attach() when the relationship is the intent",
+        "A group is organisation, not a relationship",
+        "SolidCraft own the native relationship",
+        "API on this page",
+        "Anchor.TOP",
+        "Occurrence.attach",
+        "Assembly.group",
+    ):
+        assert term in assembly_basics, term
     transformations = (site / "guide" / "transformations" / "index.html").read_text(encoding="utf-8")
     for term in ("rotate(", "occurrence.move", "does not compose", "rotate(Z, 180)"):
         assert term in transformations, term
