@@ -12,7 +12,44 @@ REFERENCE_URLS = {
     "BOSL2": "https://github.com/BelfrySCAD/BOSL2/wiki/Tutorial-Attachment-Overview",
     "OpenSCAD": "https://openscad.org/documentation.html",
     "PythonSCAD": "https://github.com/pythonscad/pythonscad",
+    "CadQuery": "https://cadquery.readthedocs.io/",
 }
+
+DEFAULT_REFERENCE_IMPLEMENTATIONS = ("pythonscad", "pybosl2", "cadquery")
+REFERENCE_IMPLEMENTATION_LABELS = {
+    "pythonscad": "PythonSCAD",
+    "pybosl2": "pyBOSL2",
+    "cadquery": "CadQuery",
+}
+
+
+def reference_implementations_for(case: dict) -> tuple[str, ...]:
+    """Return required references after explicit technical exceptions."""
+
+    if "reference_implementations" in case:
+        raise ValueError(
+            f"{case['slug']}: reference_implementations is obsolete; "
+            "use reference_exceptions only for documented technical exceptions"
+        )
+
+    exceptions = case.get("reference_exceptions", {})
+    unknown = set(exceptions) - set(DEFAULT_REFERENCE_IMPLEMENTATIONS)
+    if unknown:
+        raise ValueError(
+            f"{case['slug']}: unknown reference exceptions: "
+            + ", ".join(sorted(unknown))
+        )
+    for name, reason in exceptions.items():
+        if not isinstance(reason, str) or not reason.strip():
+            raise ValueError(
+                f"{case['slug']}: reference exception {name!r} needs a reason"
+            )
+
+    return tuple(
+        name
+        for name in DEFAULT_REFERENCE_IMPLEMENTATIONS
+        if name not in exceptions
+    )
 
 
 QUALIFICATION_LEVELS = [
@@ -136,7 +173,6 @@ QUALIFICATION_CASES = [
         "lowering": "parameters.add(offset), one reusable Block definition, occurrence.copy, then occurrence.move(translate=['offset', 0, 0]); no joint.create is emitted for placement.",
         "native_expectation": "Two 20 x 20 x 10 mm blocks sit at X=0 and X=40 mm. SolidCraft stores the second occurrence as an expressed move and joint.inspect reports no joints.",
         "mutation": "Change offset from 40 to 70 mm in the saved design; without rerunning Python the second occurrence must move another 30 mm while the first remains fixed.",
-        "reference_implementations": ("pythonscad", "pybosl2", "cadquery"),
         "references": [
             ("SolidCraft", "SolidCraft 0.42.0 occurrence.move accepts length expressions and keeps them as expressed_moves that follow parameter changes."),
             ("CadQuery", "Assembly child Location is an independent occurrence placement concept, separate from assembly constraints."),
