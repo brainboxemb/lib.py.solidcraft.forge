@@ -33,7 +33,8 @@ class ParentDerivedChildSize:
             width=half(self.base_width),
             depth=half(self.base_depth),
             name="child",
-        ).at(z=20)
+            placement=Placement(z=20),
+        )
 
         return parent + child
 
