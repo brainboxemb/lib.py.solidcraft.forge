@@ -476,6 +476,16 @@ need is now confirmed by the 0.42 schema.
 > A static/raw-native export may be offered only when the compiler proves the
 > plan has no unresolved runtime identity dependency.
 
+**Invariant EX-4**
+
+> Phased result-binding execution must preserve whole-model atomicity. Before
+> the first phase Forge creates an outer native checkpoint; any later command,
+> binding or transport failure restores that checkpoint. The temporary
+> checkpoint is forgotten only after the complete plan succeeds.
+
+Historical PR #166 already implemented and unit-tested this checkpoint pattern;
+the replacement executor should reuse the proven contract, not weaken it.
+
 ## 14. Migration strategy
 
 Do not rewrite Forge in one large PR.
