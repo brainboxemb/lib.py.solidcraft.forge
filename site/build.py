@@ -1307,6 +1307,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 "change-*.json",
                 "parameters*.json",
                 "joint-*.json",
+                "commands-*.json",
                 "model.json",
                 "model*.sc",
                 "model*.step",
