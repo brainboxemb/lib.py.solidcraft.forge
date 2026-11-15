@@ -25,16 +25,17 @@ Replay-first placement cleanup and foundational API correction.
 
 ### Changed
 
-- Placement is now the primary positioning contract for reusable components;
-  `.at()` remains an absolute-placement convenience.
+- Placement is now the sole public positioning contract for reusable component
+  occurrences. `copy(placement=Placement(...))` declares a copied occurrence's
+  pose without exposing occurrence movement actions.
 - Runtime result-handle execution is deferred to roadmap issue #168 instead of
   becoming part of the normal replay compiler.
 
 ### Removed
 
-- Removed the public relative `.move()` convenience and `Placement.moved()`.
-  Relative movement was ambiguous with backend `occurrence.move` semantics and
-  encouraged models whose final placement was harder to reason about.
+- Removed occurrence `.move()`, `.at()` and `.rotate()` conveniences. Placement
+  is declarative occurrence state; backend `occurrence.move` remains a valid
+  native lowering mechanism for associative parametric Placement.
 - Removed the phased runtime-result-binding work from this release line; normal
   Forge output remains replay-first.
 
