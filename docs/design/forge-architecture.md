@@ -353,7 +353,7 @@ Assert:
 
 They do not mention `Component:1`.
 
-### Native adapter contract tests
+### Generated SolidCraft command tests
 
 Assert:
 
