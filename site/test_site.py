@@ -163,14 +163,13 @@ def check(
         assert term in assembly_basics, term
     transformations = (site / "guide" / "transformations" / "index.html").read_text(encoding="utf-8")
     for term in (
-        "Position",
         "Placement",
         "occurrence.move",
-        "at(Position",
+        "placement=Placement",
         "rotation=(Z, 180)",
     ):
         assert term in transformations, term
-    for removed in ("copy().move(", "copy().rotate("):
+    for removed in ("copy().move(", "copy().rotate(", "copy().at(", "Position"):
         assert removed not in transformations, removed
     components = (site / "guide" / "components" / "index.html").read_text(encoding="utf-8")
     for term in (
