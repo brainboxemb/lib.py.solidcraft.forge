@@ -18,4 +18,3 @@ model = (
     | panel(shared_width).right(340)
     | panel(shared_width / 2).right(460)
 )
-show(model)
