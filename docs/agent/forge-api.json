@@ -94,7 +94,7 @@
       "summary": "Declare one reusable physical component definition.",
       "reference": "reference/component/",
       "guide": "guide/assembly-basics/#simple-component",
-      "signature": "component(cls)"
+      "signature": "component(cls=None, *, include=())"
     },
     "assembly": {
       "kind": "callable",

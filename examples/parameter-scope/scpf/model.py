@@ -1,13 +1,14 @@
-"""Parameter scope qualification: implicit component parameters and inherited bindings."""
+"""Parameter scope qualification: explicit component publication and inherited bindings."""
 
 
+@component(include=("width",))
 class Panel:
     width = 40.0
-    DEPTH = 20.0
+    depth = 20.0
     HEIGHT = 10.0
 
     def build(self):
-        return Box(self.width, self.DEPTH, self.HEIGHT)
+        return Box(self.width, self.depth, self.HEIGHT)
 
 
 class ParameterScope:

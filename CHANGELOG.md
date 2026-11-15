@@ -12,6 +12,34 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 - Nothing yet.
 
+## [0.3.2] - 2026-11-15
+
+Restore the explicit reusable-component parameter publication contract from the
+original Forge component API.
+
+### Fixed
+
+- Reusable child-component defaults are fixed by default again instead of
+  automatically polluting the top-level SolidCraft parameter list.
+- Restored `component(..., include=(...))`, `include="*"` and explicit alias
+  mappings for deliberate child-default publication.
+- Parent Parameter/Expression inputs continue to reuse the existing parent
+  dependency regardless of child publication settings.
+- Strengthened parameter-scope qualification with an unincluded lower-case child
+  default that must remain fixed in native SolidCraft output.
+
+### Documentation
+
+- Added change 0003 with the original source commit, the later conflicting
+  implementation change, and the process failure that allowed current
+  implementation/tests/docs to be mistaken for the normative API decision.
+
+### Compatibility
+
+- SCPF package version: **0.3.2**
+- Qualified SolidCraft version: **0.42.0**
+- Python: **3.10+**
+
 ## [0.3.1] - 2026-11-15
 
 Correct native lowering for copied occurrences that combine translation and

@@ -1,4 +1,4 @@
-"""Qualification tests for implicit component parameter semantics."""
+"""Qualification tests for change 0003: explicit child publication and inherited bindings."""
 import json
 import os
 from pathlib import Path
@@ -41,6 +41,12 @@ class ParameterScopeCommandTests(unittest.TestCase):
         self.assertIn("Panel_2_width", lengths)
         self.assertIn("shared_width", lengths)
         self.assertIn("shared_width / 2", lengths)
+
+        self.assertFalse(any(
+            row["name"].startswith("Panel") and row["name"].endswith("_depth")
+            for row in params
+        ))
+        self.assertTrue(all(row["width"] == 20.0 for row in boxes))
 
         creates = [
             row["params"]["name"]

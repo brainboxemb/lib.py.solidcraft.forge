@@ -66,10 +66,10 @@ bracket = Bracket(
 )
 ```
 
-The naming contract is the same everywhere: public `lower_case` values are
-editable, `_private_lower_case` values are Forge/build-time inputs, and
-`UPPER_CASE` values are fixed constants. There is no separate component
-parameter publication switch.
+Root-model public `lower_case` values are editable model parameters.
+Reusable child-component defaults stay fixed unless explicitly published with
+`component(..., include=...)`. Passing a parent Parameter or Expression into
+a child input always preserves and reuses that parent dependency.
 
 ## CAD projects live in another repository
 
