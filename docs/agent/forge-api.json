@@ -87,7 +87,7 @@
       "summary": "Represent Forge geometry/feature intent before SolidCraft executes it.",
       "reference": "reference/Shape/",
       "guide": "guide/model-objects/#shape",
-      "signature": "Shape(kind: str, data: Any, history: Any = None) -> None"
+      "signature": "Shape(kind: str, data: Any) -> None"
     },
     "component": {
       "kind": "callable",
@@ -389,22 +389,6 @@
       "reference": "reference/attachment-references/#AnchorTopology",
       "guide": "guide/assembly-basics/#anchor-choice",
       "signature": "AnchorTopology(edge: tuple[float, float, float], on: tuple[float, float, float], corner: tuple[float, float, float] | None = None, z: tuple[float, float, float] | None = None, x: tuple[float, float, float] | None = None) -> None"
-    },
-    "History": {
-      "kind": "enum",
-      "summary": "Choose how supported semantic features are lowered to native history.",
-      "reference": "reference/history-control/#History",
-      "members": {
-        "AUTO": "auto",
-        "NATIVE": "native",
-        "SKETCH": "sketch"
-      }
-    },
-    "behavior": {
-      "kind": "callable",
-      "summary": "Temporarily select a History policy for objects created in the scope.",
-      "reference": "reference/history-control/#behavior",
-      "signature": "behavior(*, history=<History.AUTO: 'auto'>)"
     },
     "compile_model": {
       "kind": "callable",

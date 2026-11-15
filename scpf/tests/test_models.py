@@ -176,7 +176,11 @@ class SCPFExamples(unittest.TestCase):
 
     def test_removed_aliases_are_not_exposed(self):
         import scpf
-        for name in ("Rectangle", "Circle", "Polygon", "Cube", "Box3D", "Cylinder3D", "Sphere3D"):
+        for name in (
+            "Rectangle", "Circle", "Polygon", "Cube",
+            "Box3D", "Cylinder3D", "Sphere3D",
+            "History", "behavior",
+        ):
             self.assertFalse(hasattr(scpf, name), name)
 
     def test_attached_hole_pattern_builds_one_sketch_cut(self):
@@ -593,43 +597,6 @@ class SCPFExamples(unittest.TestCase):
         with self.assertRaises(ModelError):
             compile_model(body + boss, "Enclosure")
 
-    def test_history_policy_can_lower_boss_to_sketches(self):
-        commands = run_script(
-            ROOT / "examples/history-policy/scpf/model.py"
-        )["commands"]
-        feature_commands = [
-            c for c in commands if c["command"] != "parameters.add"
-        ]
-        self.assertEqual(
-            [c["command"] for c in feature_commands],
-            [
-                "solid.box",
-                "plastic.boss",
-                "plastic.boss",
-                "sketch.create",
-                "sketch.circle.center",
-                "sketch.finish",
-                "solid.extrude",
-                "sketch.create",
-                "sketch.circle.center",
-                "sketch.finish",
-                "solid.extrude",
-                "sketch.create",
-                "sketch.circle.center",
-                "sketch.finish",
-                "solid.extrude",
-            ],
-        )
-        self.assertEqual(
-            [c["params"].get("name") for c in feature_commands
-             if c["command"] == "sketch.create"],
-            [
-                "Boss",
-                "Boss hole",
-                "Explicit pad",
-            ],
-        )
-
     def test_rounded_rectangle_sketch_compiles_to_true_native_arcs(self):
         from scpf.core import Box, RoundedRectangle2D, Direction
         from scpf.explicit_sketch import Sketch
@@ -704,17 +671,6 @@ class SCPFExamples(unittest.TestCase):
                 sketch.extrude(5)
 
         self.assertEqual(sketch.extrude(5).kind, "explicit_sketch_extrusion")
-
-    def test_history_policy_scope_does_not_leak(self):
-        from scpf.core import Boss
-        from scpf.history import History, behavior
-
-        with behavior(history=History.SKETCH):
-            inside = Boss(d=12, h=10)
-        outside = Boss(d=12, h=10)
-
-        self.assertIs(inside.history, History.SKETCH)
-        self.assertIsNone(outside.history)
 
     def test_circle_profile_extrudes_with_explicit_sketch(self):
         from scpf.compiler import compile_model
