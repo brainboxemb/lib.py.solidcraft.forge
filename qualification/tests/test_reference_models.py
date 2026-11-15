@@ -1,5 +1,6 @@
 """Qualification references must exist for every case and remain valid Python."""
 
+import ast
 from pathlib import Path
 import unittest
 
@@ -22,6 +23,20 @@ class ReferenceModelTests(unittest.TestCase):
                     source = path.read_text(encoding="utf-8")
                     compile(source, str(path), "exec")
                     self.assertTrue(source.strip(), path)
+                    tree = ast.parse(source, filename=str(path))
+                    self.assertTrue(ast.get_docstring(tree), path)
+                    self.assertTrue(
+                        any(
+                            isinstance(node, ast.Assign)
+                            and any(
+                                isinstance(target, ast.Name)
+                                and target.id == "model"
+                                for target in node.targets
+                            )
+                            for node in ast.walk(tree)
+                        ),
+                        f"{path} must expose final geometry as model",
+                    )
 
     def test_references_do_not_become_forge_api_sources(self):
         for case in QUALIFICATION_CASES:
