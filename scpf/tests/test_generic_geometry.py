@@ -149,10 +149,10 @@ class GenericGeometryAPI(unittest.TestCase):
 
     def test_copy_creates_a_second_occurrence_of_one_definition(self):
         from scpf.core import Box
-        from scpf.model_objects import ModelDefinition, ModelInstance
+        from scpf.model_objects import ModelDefinition, ModelInstance, Placement
 
         original = ModelInstance(ModelDefinition("Panel", (), Box(20, 10, 2)))
-        duplicate = original.copy().at(x=24)
+        duplicate = original.copy(placement=Placement(x=24))
         self.assertIsNot(original, duplicate)
         self.assertIs(original.definition, duplicate.definition)
         self.assertEqual(original.placement.position, (0, 0, 0))
