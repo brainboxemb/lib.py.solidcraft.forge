@@ -318,8 +318,9 @@ That is a native-engine fact, not a Forge semantic distinction.
 > "first occurrence" may exist inside the SolidCraft adapter but never as the
 > identity of the semantic occurrence.
 
-The adapter may choose which Forge occurrence is bound to that native implicit
-occurrence, but the binding must be explicit in its registration table.
+The SolidCraft command generator may choose which Forge occurrence uses that
+implicit native occurrence. That choice must be deliberate and based on the
+Forge occurrence id; Python list position is not semantic identity.
 
 ## 11. Public script surface
 
@@ -388,14 +389,17 @@ replayed without Forge staying in the execution loop.
 
 ### 13.1 Put Placement in create/copy where possible
 
-For ordinary positioning:
+For ordinary positioning on SolidCraft 0.42:
 
-- use `component.create` placement fields for the first occurrence where
-  SolidCraft supports them;
-- use `occurrence.copy` placement fields for copies where SolidCraft supports
-  them;
+- `component.create` has no pose input, so one Forge occurrence of a reusable
+  definition must be at identity and may use SolidCraft's implicit first
+  occurrence;
+- concrete unrotated copies use
+  `occurrence.copy(..., translate=...)`;
+- symbolic or rotated ordinary Placement that would require a later occurrence
+  selector is rejected;
 - do not create an occurrence at one location and then add a later
-  `occurrence.move` merely because the current compiler was written that way.
+  `occurrence.move` addressed through a predicted browser name.
 
 ### 13.2 Never guess SolidCraft occurrence names
 
