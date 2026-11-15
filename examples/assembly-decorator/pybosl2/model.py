@@ -4,4 +4,4 @@ from pybosl2 import cuboid
 
 post = cuboid([10, 10, 20]).up(10)
 pair = post.left(15) | post.right(15)
-pair.show()
+model = pair
