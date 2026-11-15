@@ -368,31 +368,52 @@ def _normalize_rotation(axis, degrees):
 
 
 @dataclass(frozen=True)
-class Placement:
-    """Absolute occurrence placement before native CAD lowering.
+class Position:
+    """Absolute XYZ position in an occurrence's parent coordinate frame.
 
-    Use when:
-        Pass placement=Placement(...) to a reusable component to state where
-        that occurrence belongs in the assembly. Position may contain Forge
-        Parameter/Expression values. An optional rotation is an axis-angle pair,
-        for example rotation=(Y, 90).
-
-    Limits:
-        Placement describes occurrence state, not a relationship to another
-        occurrence. Use attach() for relationships. The compiler decides which
-        native SolidCraft commands implement the final placement; Placement
-        itself does not imply occurrence.move.
+    Coordinates may be numbers, Parameters or Expressions. Position is data;
+    it does not mean "move by" and does not prescribe a SolidCraft command.
     """
 
     x: object = 0
     y: object = 0
     z: object = 0
+
+    def __post_init__(self):
+        concrete = tuple(pv(value) for value in self)
+        if not all(isfinite(value) for value in concrete):
+            raise ValueError("position requires finite coordinates")
+
+    def __iter__(self):
+        return iter((self.x, self.y, self.z))
+
+    def __len__(self):
+        return 3
+
+    def __getitem__(self, index):
+        return (self.x, self.y, self.z)[index]
+
+    @property
+    def values(self):
+        """Return the XYZ coordinates as a tuple."""
+        return (self.x, self.y, self.z)
+
+
+@dataclass(frozen=True)
+class Placement:
+    """Complete declarative pose of one occurrence.
+
+    Position is absolute in the parent coordinate frame and may remain
+    parametric in the saved SolidCraft design. Rotation is one absolute
+    axis-angle orientation. Placement is occurrence state, not an action.
+    """
+
+    position: Position = Position()
     rotation: tuple[object, object] | None = None
 
     def __post_init__(self):
-        concrete = tuple(pv(value) for value in self.position)
-        if not all(isfinite(value) for value in concrete):
-            raise ValueError("placement position requires finite coordinates")
+        if not isinstance(self.position, Position):
+            raise TypeError("placement position must be a Position")
         if self.rotation is not None:
             if (
                 not isinstance(self.rotation, (tuple, list))
@@ -407,11 +428,6 @@ class Placement:
                 "rotation",
                 _normalize_rotation(axis, degrees),
             )
-
-    @property
-    def position(self):
-        """Return the absolute XYZ occurrence position."""
-        return (self.x, self.y, self.z)
 
 
 @dataclass(frozen=True)
@@ -442,29 +458,33 @@ class ModelInstance:
             raise ValueError("an occurrence cannot belong to multiple groups")
         return replace(self, group_name=name)
 
-    def copy(self, *, placement=None):
+    def copy(self):
         """Create another occurrence of the same reusable definition.
 
-        Use when:
-            Reuse the same physical component definition. Pass
-            placement=Placement(...) when the new occurrence needs a different
-            declared pose.
-
-        Limits:
-            copy() does not duplicate the component feature definition. With no
-            placement argument the source Placement is preserved. The new
-            occurrence starts without the source attachment and explicit name.
+        The new occurrence initially preserves the source Placement. Use
+        .at(Position(...)) to replace only its position or .at(Placement(...))
+        to replace the complete pose.
         """
-        if placement is None:
-            placement = self.placement
-        elif not isinstance(placement, Placement):
-            raise TypeError("copy placement must be a Placement")
         return replace(
             self,
-            placement=placement,
             attachment=None,
             name=None,
         )
+
+    def at(self, target):
+        """Declare the absolute Position or complete Placement of this occurrence.
+
+        at(Position(...)) replaces only XYZ and preserves the current
+        orientation. at(Placement(...)) replaces the complete occurrence pose.
+        Neither form is a relative move or an assembly relationship.
+        """
+        if isinstance(target, Position):
+            placement = replace(self.placement, position=target)
+        elif isinstance(target, Placement):
+            placement = target
+        else:
+            raise TypeError("occurrence at() requires Position or Placement")
+        return replace(self, placement=placement, attachment=None)
 
     def attach(self, target, *, parent=Anchor.RIGHT, child=Anchor.LEFT,
                offset=(0, 0), gap=0, angle=None, as_built=False):
