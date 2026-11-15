@@ -9,13 +9,15 @@ import json
 import zlib
 from io import BytesIO
 from pathlib import Path
+import sys
 
 from PIL import Image, ImageChops, ImageDraw
 
-from qualification.case_selection import parse_case_selection
-
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from qualification.case_selection import parse_case_selection
 BASELINES = ROOT / "qualification" / "visual_baselines.json"
 VIEWS = ("front", "right", "iso")
 REFERENCE_SIZE = (96, 72)
