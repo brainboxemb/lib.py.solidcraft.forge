@@ -308,6 +308,11 @@ def _anchor_origin(instance, anchor, occurrence):
             "edge": world(edge),
             "on": world(on),
             "corner": world(corner),
+            # SolidCraft 0.42 uses the existing pose to choose the remaining
+            # clocking when a joint origin leaves x implicit. Make the standard
+            # corner frame explicit so AnchorFrame children solve identically
+            # on left/right and top/bottom corners.
+            "x": list(_corner_native_x(anchor)),
         }
     return {
         "occurrence": occurrence,
