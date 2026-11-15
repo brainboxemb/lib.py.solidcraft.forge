@@ -4,7 +4,7 @@
 class SideBoard:
     width = 12.0
     depth = 60.0
-    height = 104.0
+    height = 80.0
 
     def build(self):
         return Box(
@@ -53,21 +53,23 @@ class Hub75LikeAnchorFrame:
     bracket_depth = 24.0
 
     def build(self):
-        outer_height = self.opening_height + 2 * self.wall_thickness
+        side_center_x = half(self.opening_width) + half(self.wall_thickness)
 
         left_board = SideBoard(
             width=self.wall_thickness,
             depth=self.cabinet_depth,
-            height=outer_height,
+            height=self.opening_height,
             name="left_board",
             placement=Placement(
-                x=-half(self.opening_width) - self.wall_thickness,
+                x=-side_center_x,
+                z=self.wall_thickness,
             ),
         )
         right_board = left_board.copy(
             name="right_board",
             placement=Placement(
-                x=half(self.opening_width),
+                x=side_center_x,
+                z=self.wall_thickness,
             ),
         )
 
