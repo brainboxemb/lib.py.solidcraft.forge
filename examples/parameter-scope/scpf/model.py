@@ -12,7 +12,10 @@ class Panel:
         # _x is fixed fixture layout, not a public occurrence-placement
         # dependency. Keeping it in the body preserves the existing visual
         # qualification while this case stays focused on parameter scope.
-        return Box(self.width, self.depth, self.HEIGHT).move(\n            x=self._x,\n            z=self.HEIGHT / 2,\n        )
+        return Box(self.width, self.depth, self.HEIGHT).move(
+            x=self._x,
+            z=self.HEIGHT / 2,
+        )
 
 
 class ParameterScope:
