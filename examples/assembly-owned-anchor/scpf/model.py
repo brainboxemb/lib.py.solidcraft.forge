@@ -16,7 +16,7 @@ class Companion:
     def build(self):
         # Position is not part of this qualification. Keep its old visible
         # location inside this unique component definition.
-        return Box(self.SIZE, self.SIZE, self.SIZE).move(x=70)
+        return Box(self.SIZE, self.SIZE, self.SIZE).move(x=70, z=self.SIZE / 2)
 
 
 class Marker:
