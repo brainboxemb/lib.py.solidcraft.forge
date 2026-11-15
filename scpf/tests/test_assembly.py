@@ -69,7 +69,7 @@ class AssemblyTests(unittest.TestCase):
             for command in commands
             if command["command"] == "parameters.add"
         ]
-        self.assertEqual(parameters, ["Panel_width"])
+        self.assertEqual(parameters, [])
 
         copy = next(
             command["params"]
