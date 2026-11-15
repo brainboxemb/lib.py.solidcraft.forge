@@ -1,6 +1,7 @@
 # 0004 — Three reference implementations per qualification case
 
-Status: **active qualification policy**  
+Status: **tracked design change**  
+Tracking issue: **#174**  
 Applies to: Forge qualification cases and published comparison output
 
 ## 1. Decision
