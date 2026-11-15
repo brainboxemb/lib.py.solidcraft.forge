@@ -45,7 +45,12 @@ def check(
     assert "API Reference" in home and "API Reference" in reference_index
     assert 'class="reference-sidebar"' in reference_index
     assert 'class="active" href="./">Overview</a>' in reference_index
-    for heading in ("Browse by task", "Selectors", "Core API"):
+    for heading in (
+        "Browse by task",
+        "Selectors",
+        "Components &amp; assemblies",
+        "Shape &amp; sketch",
+    ):
         assert heading in reference_index, heading
     from api_reference import (
         ENUM_REFERENCES,
@@ -82,6 +87,10 @@ def check(
         assert f'class="active" href="../{spec["slug"]}/"' in page_text
         assert spec["title"] in page_text and spec["summary"] in page_text
         for member in group_members(spec):
+            assert f'href="#{member["name"]}"' in page_text, (
+                spec["slug"],
+                member["name"],
+            )
             assert f'id="{member["name"]}"' in page_text, (spec["slug"], member["name"])
             assert member["summary"] in page_text, (spec["slug"], member["name"])
             if member["kind"] == "callable" and member.get("signature"):
