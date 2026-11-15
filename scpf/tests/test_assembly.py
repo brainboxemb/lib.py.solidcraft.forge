@@ -192,6 +192,116 @@ class AssemblyTests(unittest.TestCase):
         ]
         self.assertEqual(len(joints), 1)
 
+    def test_replay_first_ordinary_placement_uses_copy_translate_only(self):
+        from scpf import Box, Placement, component
+        from scpf.assembly import compile_assembly
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        first = Panel()
+        second = first.copy(placement=Placement(x=30))
+        commands = compile_assembly(first + second, "Panels")["commands"]
+
+        copies = [
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.copy"
+        ]
+        self.assertEqual(copies, [{"component": "Panel", "translate": [30, 0, 0]}])
+        self.assertFalse(any(
+            command["command"] == "occurrence.move"
+            for command in commands
+        ))
+        self.assertFalse(any(
+            "Panel:" in str(command["params"])
+            for command in commands
+        ))
+
+    def test_replay_first_can_bind_later_identity_occurrence_as_native_first(self):
+        from scpf import Box, Placement, component
+        from scpf.assembly import compile_assembly
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        moved = Panel(placement=Placement(x=30))
+        identity = moved.copy(placement=Placement())
+        commands = compile_assembly(moved + identity, "Panels")["commands"]
+
+        copy = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.copy"
+        )
+        self.assertEqual(copy["translate"], [30, 0, 0])
+        self.assertFalse(any(
+            command["command"] == "occurrence.move"
+            for command in commands
+        ))
+
+    def test_replay_first_rejects_definition_without_identity_occurrence(self):
+        from scpf import Box, Placement, component
+        from scpf.assembly import compile_assembly
+        from scpf.compiler import ModelError
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        left = Panel(placement=Placement(x=-30))
+        right = left.copy(placement=Placement(x=30))
+        with self.assertRaisesRegex(
+            ModelError,
+            "requires one occurrence at identity",
+        ):
+            compile_assembly(left + right, "Panels")
+
+    def test_replay_first_rejects_symbolic_ordinary_copy_placement(self):
+        from scpf import Box, Parameter, Placement, component
+        from scpf.assembly import compile_assembly
+        from scpf.compiler import ModelError
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        first = Panel()
+        second = first.copy(
+            placement=Placement(x=Parameter("offset", 30)),
+        )
+        with self.assertRaisesRegex(
+            ModelError,
+            "symbolic copied Placement is not replay-safe",
+        ):
+            compile_assembly(first + second, "Panels")
+
+    def test_replay_first_rejects_rotated_ordinary_copy_placement(self):
+        from scpf import Box, Placement, Z, component
+        from scpf.assembly import compile_assembly
+        from scpf.compiler import ModelError
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        first = Panel()
+        second = first.copy(
+            placement=Placement(x=30, rotation=(Z, 180)),
+        )
+        with self.assertRaisesRegex(
+            ModelError,
+            "rotated copied Placement is not replay-safe",
+        ):
+            compile_assembly(first + second, "Panels")
+
     def test_copies_use_declared_native_placements(self):
         """Copied occurrences compile from their declared final Placement."""
         with tempfile.TemporaryDirectory() as directory:
