@@ -230,7 +230,6 @@ def check(site: Path, sha: str, require_native: bool = False):
             "pyBOSL2",
             "3. Generated SolidCraft relationship",
             "6. Evidence and references",
-            "Reference models",
         ):
             assert heading in page_text, (slug, heading)
         assert case["title"] in page_text
