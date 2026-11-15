@@ -802,10 +802,39 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     def reference_sidebar(*, active=None, prefix=""):
         def nav_link(slug, title):
             cls = ' class="active"' if slug == active else ""
-            return (
+            link = (
                 f'<a{cls} href="{escape(prefix + slug + "/")}">'
                 f'{escape(title)}</a>'
             )
+            if slug == active:
+                group = next(
+                    (spec for spec in GROUP_REFERENCES if spec["slug"] == slug),
+                    None,
+                )
+                if group is not None:
+                    link += (
+                        '<div class="reference-subnav">'
+                        + "".join(
+                            f'<a href="#{escape(member["name"])}">'
+                            f'{escape(member["name"])}</a>'
+                            for member in group_members(group)
+                        )
+                        + '</div>'
+                    )
+            return link
+
+        component_methods = [
+            spec for spec in METHOD_REFERENCES
+            if (
+                spec["slug"] in {"component", "assembly"}
+                or spec["slug"].startswith("Occurrence.")
+                or spec["slug"].startswith("Assembly.")
+            )
+        ]
+        shape_methods = [
+            spec for spec in METHOD_REFERENCES
+            if spec not in component_methods
+        ]
 
         overview_cls = ' class="active"' if active == "overview" else ""
         return (
@@ -822,10 +851,15 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 nav_link(spec["slug"], spec["title"])
                 for spec in ENUM_REFERENCES
             )
-            + '<h3>Core API</h3>'
+            + '<h3>Components &amp; assemblies</h3>'
             + "".join(
                 nav_link(spec["slug"], spec["title"])
-                for spec in METHOD_REFERENCES
+                for spec in component_methods
+            )
+            + '<h3>Shape &amp; sketch</h3>'
+            + "".join(
+                nav_link(spec["slug"], spec["title"])
+                for spec in shape_methods
             )
             + '</aside>'
         )
