@@ -333,6 +333,66 @@ def validate_parametric_move(root: Path) -> Validation:
     return v
 
 
+def validate_parametric_placement_pair(root: Path) -> Validation:
+    v = Validation("parametric-placement-pair")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "parametric-placement-pair")
+
+    rows = bodies_named(d, "Block")
+    actual = sorted(
+        (body["bbox"]["min"], body["bbox"]["max"])
+        for body in rows
+    )
+    expected = sorted([
+        ([-50, -10, 0], [-30, 10, 10]),
+        ([30, -10, 0], [50, 10, 10]),
+    ])
+    v.check(
+        "two symmetrically placed block occurrences",
+        actual == expected,
+        expected,
+        actual,
+    )
+
+    joint_results = load(root / "joint-inspect.json")
+    joint_payload = (
+        joint_results[0]
+        if isinstance(joint_results, list) and joint_results
+        else joint_results
+    )
+    joints = (
+        joint_payload.get("joints", [])
+        if isinstance(joint_payload, dict)
+        else None
+    )
+    v.check("placement creates no native joints", joints == [], [], joints)
+
+    m = load(root / "measurements-spacing-120.json")
+    _check_declared_bounds(
+        v,
+        m,
+        "parametric-placement-pair",
+        level="q5",
+        mutation=True,
+    )
+    moved = sorted(
+        (body["bbox"]["min"], body["bbox"]["max"])
+        for body in bodies_named(m, "Block")
+    )
+    expected_moved = sorted([
+        ([-70, -10, 0], [-50, 10, 10]),
+        ([50, -10, 0], [70, 10, 10]),
+    ])
+    v.check(
+        "saved symmetric expressed placements follow spacing mutation",
+        moved == expected_moved,
+        expected_moved,
+        moved,
+        "q5",
+    )
+    return v
+
+
 def validate_group_hierarchy(root: Path) -> Validation:
     v = Validation("group-hierarchy")
     d = load(root / "measurements.json")
@@ -828,6 +888,7 @@ VALIDATORS = {
     "components": validate_components,
     "assembly-decorator": validate_assembly_decorator,
     "parametric-move": validate_parametric_move,
+    "parametric-placement-pair": validate_parametric_placement_pair,
     "group-hierarchy": validate_group_hierarchy,
     "attach-angle": validate_attach_angle,
     "as-built-attach": validate_as_built_attach,
