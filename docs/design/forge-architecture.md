@@ -154,9 +154,19 @@ It does **not** identify either side using a SolidCraft browser name.
 
 **Rule JT-1**
 
-> One Forge attachment lowers to the required native relationship command(s);
-> the relationship addresses native occurrences only through registered native
-> references.
+> One Forge attachment lowers to the required SolidCraft relationship
+> command(s) without predicting generated occurrence names.
+
+For SolidCraft 0.42 the qualified replay-safe rules are concrete:
+
+- the component name may select that component's first occurrence in
+  `joint.create`, `joint.origin` and `joint.as_built`;
+- a copied side of `joint.create` may omit `occurrence` when Forge supplies
+  an unambiguous world topology/point pick;
+- copied attached children use distinct temporary parking poses so their picks
+  remain unambiguous before the joint solves;
+- if a relationship still needs a copied occurrence selector that SolidCraft
+  cannot infer, Forge rejects that case.
 
 **Rule JT-2**
 
@@ -419,8 +429,13 @@ already-created occurrence.
 For each such command we need a replay-safe SolidCraft reference that has been
 qualified on 0.42.
 
-If we do not have one yet, that specific Forge capability is unsupported until
-we do. Do not solve it by:
+For attachment lowering, change 0010 qualifies the first-occurrence component
+name and copied `joint.create` world-pick inference. Other commands do not
+inherit that capability automatically: for example, SolidCraft 0.42 rejects a
+component name passed as `occurrence.move.occurrence`.
+
+If a remaining case has no replay-safe selector, that Forge capability is
+unsupported until one is qualified. Do not solve it by:
 
 - guessing `Component:1` / `Component:2`;
 - adding runtime `$ref` result binding to the normal compiler path;
