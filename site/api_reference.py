@@ -117,8 +117,8 @@ def public_member(name):
     }
     if kind == "enum":
         result["members"] = [
-            {"name": member.name, "value": member.value}
-            for member in obj
+            {"name": name, "value": member.value}
+            for name, member in obj.__members__.items()
         ]
     elif kind == "callable":
         result["signature"] = _signature(obj, name)
@@ -298,7 +298,10 @@ GROUP_REFERENCES = (
 
 def enum_members(spec):
     """Return exact public member names/values from the implementation."""
-    return [(member.name, member.value) for member in spec["object"]]
+    return [
+        (name, member.value)
+        for name, member in spec["object"].__members__.items()
+    ]
 
 
 def group_members(spec):
