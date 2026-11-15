@@ -13,6 +13,6 @@ class Post:
 @assembly
 class PostPair:
     def build(self):
-        left = Post(name="left").move(x=-15)
-        right = left.copy().move(x=30)
+        left = Post(name="left").at(x=-15)
+        right = left.copy().at(x=15)
         return left + right
