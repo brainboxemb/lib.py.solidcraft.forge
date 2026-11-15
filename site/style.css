@@ -60,6 +60,9 @@ color:var(--muted);border-top:1px solid var(--line)}
 .guide-sidebar a,.reference-sidebar a{display:block;padding:6px 8px;margin:1px -8px;border-radius:6px;font-size:.88rem}
 .guide-sidebar a.active,.reference-sidebar a.active{background:var(--soft);color:var(--ink);font-weight:700}
 .guide-sidebar a:hover,.reference-sidebar a:hover{background:#edf4fc}
+.reference-subnav{margin:2px 0 8px 9px;padding-left:8px;border-left:2px solid var(--line)}
+.reference-subnav a{padding:4px 6px;margin:0 -6px;font-size:.8rem;color:var(--muted)}
+.reference-subnav a:hover{color:var(--blue)}
 .guide-article,.reference-article{min-width:0;max-width:820px;padding-bottom:40px}
 .guide-article h1{font-size:2.1rem;margin:5px 0 10px}
 .guide-article h2{margin:36px 0 12px;padding-top:8px;border-top:1px solid var(--line);font-size:1.4rem}
