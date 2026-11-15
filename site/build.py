@@ -1083,6 +1083,28 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         source = text(source_path)
         (case_dir / "model.py").write_text(source, encoding="utf-8")
 
+        diagnostic_sources = []
+        placement_baseline = (
+            ROOT / "examples" / slug / "placement" / "model.py"
+        )
+        if placement_baseline.is_file():
+            placement_source = text(placement_baseline)
+            try:
+                compile(
+                    placement_source,
+                    str(placement_baseline),
+                    "exec",
+                )
+            except SyntaxError as exc:
+                raise ValueError(
+                    f"Invalid Placement baseline syntax: {placement_baseline}"
+                ) from exc
+            (case_dir / "placement-baseline.py").write_text(
+                placement_source,
+                encoding="utf-8",
+            )
+            diagnostic_sources.append("placement-baseline.py")
+
         reference_names = reference_implementations_for(case)
         reference_exceptions = case.get("reference_exceptions", {})
         reference_sources = {}
@@ -1368,6 +1390,10 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             '<li><a href="commands.json">Generated command JSON</a></li>'
         )
         evidence_items.extend(
+            f'<li><a href="{escape(name)}">Diagnostic source: {escape(name)}</a></li>'
+            for name in diagnostic_sources
+        )
+        evidence_items.extend(
             f'<li><a href="{escape(name)}">{escape(name)}</a></li>'
             for name in native_files
         )
@@ -1426,6 +1452,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 f"reference-{reference_name}.py"
                 for reference_name in reference_names
             ],
+            "diagnostic_sources": diagnostic_sources,
             "reference_exceptions": reference_exceptions,
             "native_evidence": native_files,
             "native_images": native_images,
