@@ -273,6 +273,11 @@ coordinate corrections.</p>
 <code>gap</code> is normal distance between references, and <code>angle</code>
 is the relative turn around the attachment normal. These are relationship
 values, not a replacement global XYZ transform.</p>
+<p>There are two useful attachment modes. Normal <code>attach()</code> uses the
+chosen references to determine the relationship and placement. Use
+<code>attach(..., as_built=True)</code> when both occurrences are already in the
+intended pose and SolidCraft should record that existing pose as a fixed
+assembly relationship instead of repositioning them.</p>
 
 <h2 id="group">7. A group is organisation, not a relationship</h2>
 """ + code("""frame = (left + right).group("Frame")""") + """
