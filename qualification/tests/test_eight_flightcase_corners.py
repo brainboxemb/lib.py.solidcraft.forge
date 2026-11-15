@@ -82,7 +82,7 @@ class EightFlightcaseCornersCommandTests(unittest.TestCase):
             self.assertEqual(
                 joint["a"],
                 {
-                    "occurrence": "CaseBlock:1",
+                    "occurrence": "CaseBlock",
                     "point": [0.0, 0.0, 0.0],
                     "z": [0.0, 0.0, 1.0],
                     "x": [1.0, 0.0, 0.0],
@@ -93,10 +93,15 @@ class EightFlightcaseCornersCommandTests(unittest.TestCase):
                 expected_xy[index - 1],
             )
             self.assertEqual(joint["values"][2], 0.0)
-            self.assertEqual(
-                joint["b"]["occurrence"],
-                f"FlightcaseCorner:{index}",
-            )
+            if index == 1:
+                self.assertEqual(
+                    joint["b"]["occurrence"],
+                    "FlightcaseCorner",
+                )
+                self.assertEqual(joint["b"]["point"], [0.0, 0.0, 0.0])
+            else:
+                self.assertNotIn("occurrence", joint["b"])
+                self.assertEqual(joint["b"]["point"], [0.0, 0.0, 1.0])
             z, x = expected_child_frames[index - 1]
             self.assertEqual(joint["b"]["z"], z)
             self.assertEqual(joint["b"]["x"], x)
