@@ -6,25 +6,35 @@ class Panel:
     width = 40.0
     depth = 20.0
     HEIGHT = 10.0
+    _x = 0.0
 
     def build(self):
-        return Box(self.width, self.depth, self.HEIGHT)
+        # _x is fixed fixture layout, not a public occurrence-placement
+        # dependency. Keeping it in the body preserves the existing visual
+        # qualification while this case stays focused on parameter scope.
+        return Box(self.width, self.depth, self.HEIGHT).move(
+            x=self._x,
+            z=self.HEIGHT / 2,
+        )
 
 
 class ParameterScope:
     shared_width = 80.0
 
     def build(self):
-        local = Panel(name="local", placement=Placement(x=0))
-        override = Panel(width=60.0, name="override", placement=Placement(x=100))
+        local = Panel(name="local", _x=0)
+        override = Panel(width=60.0, name="override", _x=100)
 
-        shared_a = Panel(width=self.shared_width, name="shared_a", placement=Placement(x=220))
-        shared_b = Panel(width=self.shared_width, name="shared_b", placement=Placement(x=340))
+        shared_a = Panel(width=self.shared_width, name="shared_a", _x=220)
+        shared_b = shared_a.copy(
+            name="shared_b",
+            placement=Placement(x=120),
+        )
 
         derived = Panel(
             width=half(self.shared_width),
             name="derived",
-            placement=Placement(x=460),
+            _x=460,
         )
 
         return local + override + shared_a + shared_b + derived
