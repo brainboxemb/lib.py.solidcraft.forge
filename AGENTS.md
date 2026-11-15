@@ -1,78 +1,76 @@
 # SCPF repository instructions
 
-Python SCPF is the only supported scripting frontend. SolidCraft remains the
-only engine for BRep geometry and native feature history. Forge describes CAD
-intent and lowers that intent to SolidCraft commands; it must not grow a second
-geometry or mating engine.
+## Read the minimum context
+
+Do not browse external documentation by default. Start with the smallest local
+source that answers the task:
+
+| Task | Read first |
+| --- | --- |
+| Public Forge API semantics | `docs/05-cad-api-design.md` |
+| Exact Forge names/signatures/enums | relevant code in `scpf/scpf/` |
+| Qualification rules | `docs/qualification/README.md` |
+| SolidCraft version upgrade | `docs/qualification/solidcraft-upgrade-protocol.md` |
+| PythonSCAD / pyBOSL2 qualification reference | `docs/agent/reference-libraries.md` |
+
+Only read additional files when the first source is insufficient. Only consult
+upstream/external PythonSCAD or pyBOSL2 documentation when the local agent
+reference does not cover the required operation or when intentionally refreshing
+that reference.
 
 ## Public API source of truth
 
-The normative public Forge API contract is:
+The normative public Forge API contract is `docs/05-cad-api-design.md`.
+Compiler code, qualification fixtures, README/site examples and downstream CAD
+models do not redefine it.
 
-`docs/05-cad-api-design.md`
+If implementation and the API contract disagree, treat that as an
+implementation bug or unresolved API decision. Never make a qualification pass
+by adding a copied numeric offset when the API should express the relationship
+semantically.
 
-Read that document before changing a public model expression, placement rule,
-anchor rule, Sketch rule or parameter rule.
-
-Do **not** infer public API semantics from:
-- the current compiler implementation;
-- an existing qualification fixture;
-- README or website examples;
-- generated command JSON;
-- downstream CAD models;
-- a numerical workaround that happens to render correctly.
-
-If implementation and the normative API contract disagree, treat that as an
-implementation bug or an unresolved API decision. Never make a qualification
-fixture pass by adding a copied numeric offset when the API is supposed to
-express the relationship semantically.
-
-## Change procedure
-
-For a public API or lowering change:
+## Public API change procedure
 
 1. Read `docs/05-cad-api-design.md`.
-2. Decide whether the requested behaviour is already part of the contract.
-3. If it is already specified, fix the implementation and add a focused
-   regression test.
-4. If it is not specified, update the normative API contract first.
-5. Update the smallest qualification fixture that proves the behaviour.
-6. Update generated/derived documentation and examples.
-7. Run Q1/Q2 first; run only affected native cases while iterating.
-8. Run the complete native qualification before promotion/release.
+2. Decide whether the behaviour is already specified.
+3. If specified: fix implementation + focused regression.
+4. If not specified: update the API contract first.
+5. Update the smallest proving qualification fixture.
+6. Update derived user documentation/examples.
+7. Run Q1/Q2 first and only affected native cases while iterating.
+8. Run full Q1-Q6 before promotion/release.
 
-Keep model objects and CAD feature intent separate from SolidCraft command JSON
-and transport. The adapter may translate one high-level feature into multiple
-native commands.
+Forge describes CAD intent and lowers it to SolidCraft commands. SolidCraft is
+the BRep/feature-history engine; do not add a competing geometry or mating
+engine to Forge.
 
 ## Qualification references
 
-Every qualification case must carry two readable comparison implementations:
+Every qualification case contains:
 
+- `examples/<case>/scpf/model.py`
 - `examples/<case>/pythonscad/model.py`
 - `examples/<case>/pybosl2/model.py`
 
-They express the same modelling intent as the Forge fixture. They are reference
-models, not alternative Forge specifications. When another library cannot
-represent an associative SolidCraft relation, keep the reference geometry
-simple and state that limitation in the source instead of inventing equivalent
-semantics.
+PythonSCAD and pyBOSL2 express the same modelling intent for comparison. They
+are not alternative Forge specifications. Use
+`docs/agent/reference-libraries.md` before looking upstream.
 
-Do not require classic OpenSCAD/BOSL2 `.scad` files when PythonSCAD and
-pyBOSL2 already make the comparison clear.
+When another library lacks a SolidCraft-style associative relationship, compare
+the visible geometry and state the semantic limitation in a short source
+comment. Do not fake associativity with unexplained coordinates.
 
 ## Qualification performance
 
-A normal model edit should have a short edit-check loop.
+Keep the edit-check loop short:
 
-- Q1/Q2 must remain fast and independent of SolidCraft.
-- Native qualification should support selecting one or more cases.
-- Measure build/eval/snapshot/mutation time per case before optimizing startup.
-- Do not restart expensive tools unnecessarily when a supported persistent
-  session can safely execute the same independent cases.
-- Full Q1-Q6 across all cases remains mandatory for a SolidCraft version
-  promotion and for the final main-branch qualification.
+- Q1/Q2 require no SolidCraft.
+- Native qualification must support selected cases.
+- Time compile/build/eval/snapshot/mutation steps before optimizing startup.
+- Reuse a supported persistent native process only when measured useful and
+  case isolation remains reliable.
+- Full Q1-Q6 is mandatory for SolidCraft-version promotion and final
+  main-branch qualification.
 
-When changing example models, update Python regressions, generated command
-fixtures where applicable, native qualification checks and both reference
-implementations. Do not reintroduce the retired SCRF Rust scripting layer.
+When changing a qualification model, update its regression/native checks and
+both reference implementations.
