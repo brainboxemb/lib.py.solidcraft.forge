@@ -22,12 +22,14 @@ class Marker:
 class AsBuiltAttach:
     def build(self):
         base = Base()
-        marker = (
-            Marker()
-            .at(x=50, y=20, z=15)
-            .rotate(axis=(0, 0, 1), degrees=90)
-            .attach(base, as_built=True)
-        )
+        marker = Marker(
+            placement=Placement(
+                x=50,
+                y=20,
+                z=15,
+                rotation=((0, 0, 1), 90),
+            )
+        ).attach(base, as_built=True)
         return base + marker
 
 
