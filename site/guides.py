@@ -174,24 +174,34 @@ much easier once those three levels are kept separate.</p>
 <tr><td>Browser/subassembly organisation</td><td><code>group()</code></td><td>Nested native component</td></tr>
 </tbody></table>
 
-<h2 id="simple-component">1. Make a simple component</h2>
-<p>If something is one physical reusable part, make one component definition.
-Its <code>build()</code> returns the geometry of that part. You do not need an
-anchor merely because the part is a component.</p>
-""" + code("""from scpf import Box, component
+<h2 id="simple-component">1. A component means one physical part</h2>
+<p>A component is <strong>not</strong> limited to one primitive. It is the
+definition of one physical manufactured item. Its <code>build()</code> may
+contain several primitives, sketches, holes, bosses, fillets and other features
+as long as they together describe that one part.</p>
+""" + code("""from scpf import Box, Cylinder, component
 
 @component
-class Block:
-    length = 40.0
-    width = 20.0
-    height = 10.0
+class MountingPlate:
+    width = 80.0
+    depth = 50.0
+    thickness = 5.0
 
     def build(self):
-        return Box(self.length, self.width, self.height)""") + """
-<p><code>Block</code> is the definition. Calling <code>Block()</code> creates
-an occurrence of that definition. Calling <code>copy()</code> creates another
-occurrence of the same definition; it does not copy the complete feature
-history into a new definition.</p>
+        plate = Box(self.width, self.depth, self.thickness)
+        boss = Cylinder(d=16, h=12).at(0, 0, self.thickness)
+        return plate + boss""") + """
+<p>The plate and cylindrical boss are geometry/features inside
+<strong>one component</strong>. They do not need an assembly joint because
+they are not separate physical parts.</p>
+<div class="notice"><strong>Physical-part test:</strong> if the boss is machined,
+printed or moulded as part of the plate, keep it inside one component. If it is
+actually a separate brass insert pressed into the plate, make a second component
+and relate the two occurrences in an assembly.</div>
+<p><code>MountingPlate</code> is the reusable definition. Calling
+<code>MountingPlate()</code> creates one occurrence; <code>copy()</code>
+creates another occurrence of the same definition without duplicating the
+feature history.</p>
 
 <h2 id="collection">2. Put components in one assembly</h2>
 """ + code("""first = Block()
@@ -289,10 +299,10 @@ browser unit. Do not create a group merely because two components touch.</p>
 
 <h2 id="decision">A practical decision sequence</h2>
 <ol>
-<li>Is this geometry part of one physical manufactured item? Keep it inside one component definition.</li>
-<li>Is it another physical item? Make another component occurrence.</li>
+<li>Will these features be manufactured as one physical item? Keep them in one component, even if the geometry is complex.</li>
+<li>Is something installed or manufactured separately? Give it its own component occurrence.</li>
 <li>Do you only need a deliberate position? Use <code>move()</code>/<code>rotate()</code>.</li>
-<li>Should its placement follow another part semantically? Use <code>attach()</code> and the simplest suitable anchor.</li>
+<li>Should one separate part follow another semantically? Use <code>attach()</code> and the simplest suitable anchor.</li>
 <li>Is a standard face/corner insufficient? Define an <code>AnchorFrame</code> or topology-backed reference at the level that owns that meaning.</li>
 <li>Do several occurrences form a useful named subassembly/browser unit? Then use <code>group()</code>.</li>
 </ol>
@@ -465,11 +475,11 @@ editable shape features are omitted here for clarity.</p>
     }}
   ]
 }""") + """
-<p>SolidCraft 0.30.1 understands the native <code>translate</code>,
+<p>SolidCraft 0.42.0 understands the native <code>translate</code>,
 <code>axis</code> and <code>angle</code> parameters. SCPF does
-<strong>not</strong> calculate transformation matrices. The newer
-<code>to</code> placement field is not supported by 0.30.1; using it
-previously left a panel flat without reporting an error.</p>
+<strong>not</strong> calculate transformation matrices. Forge uses the qualified 0.42.0 occurrence-placement contract directly; it
+does not invent transformation matrices or depend on an unqualified placement
+field.</p>
 <p>Passing a command-plan test is not enough to prove the CAD is right.
 The CAD project's native tests also inspect the rotations and
 positions saved in SolidCraft's own design, and front/rear screenshots
@@ -553,9 +563,10 @@ class BeamPair:
         return (left + right).group("Beams")
 
 pair = BeamPair()""") + """
-<p><code>@component</code> marks a reusable physical part whose
-<code>build()</code> returns one Shape. <code>@assembly</code> marks a class
-whose <code>build()</code> composes component occurrences. Both decorators
+<p><code>@component</code> marks one reusable physical part. Its
+<code>build()</code> returns the complete geometry/feature tree for that part;
+that tree may be made from many primitives and features. <code>@assembly</code>
+marks a class whose <code>build()</code> composes separate component occurrences. Both decorators
 return callable model objects, so normal model code stays readable as
 <code>Beam()</code> and <code>BeamPair()</code>.</p>
 <p>SolidCraft receives one reusable definition and multiple occurrences.
