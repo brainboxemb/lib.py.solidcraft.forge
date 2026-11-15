@@ -22,7 +22,6 @@ from .compiler import compile_model
 from .core import Expression, Parameter, Shape, command_value, parameters_in, pv
 from .assembly import compile_assembly
 from .model_objects import Assembly, ModelDefinition, ModelInstance
-from .history import History, behavior
 from .explicit_sketch import Sketch
 
 
@@ -610,8 +609,6 @@ def run_script(path: str | Path) -> dict:
         "X": core.X,
         "Y": core.Y,
         "Z": core.Z,
-        "History": History,
-        "behavior": behavior,
         "Sketch": Sketch,
     }
     if isinstance(definition, ast.FunctionDef):

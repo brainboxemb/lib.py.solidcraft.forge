@@ -274,12 +274,6 @@ GROUP_REFERENCES = (
         guide_anchor="anchor-choice",
     ),
     _group(
-        "history-control",
-        "History controls",
-        ("History", "behavior"),
-        summary="Control supported feature-history lowering without changing geometry intent.",
-    ),
-    _group(
         "execution-api",
         "Compiler and runner API",
         ("compile_model", "run_script"),

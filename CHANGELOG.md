@@ -8,9 +8,11 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
-### Added
+### Removed
 
-- Nothing yet.
+- Removed the experimental `History` enum and `behavior()` scope. Forge now
+  uses native feature lowering by default; authored sketch history is expressed
+  explicitly with `Sketch`.
 
 ## [0.1.1] - 2026-11-15
 

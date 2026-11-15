@@ -785,7 +785,6 @@ class Shape:
 
     kind: str
     data: Any
-    history: Any = None
 
     def __and__(self, other):
         return Shape("intersection", (self, _shape(other)))
@@ -1053,7 +1052,6 @@ class Shape:
         return Shape(
             "anchored",
             (self, target, parent_anchor, child_anchor, tuple(offset)),
-            self.history,
         )
 
 def _shape(value):
@@ -1306,19 +1304,17 @@ def Boss(*, d, h, hole_d=None, direction=None):
         supported face.
 
     Limits:
-        Optional direction is an XYZ triple. The active History policy can
-        affect how the boss is lowered.
+        Optional direction is an XYZ triple. Boss intent lowers through the
+        native plastic.boss feature path; use Sketch explicitly when sketch
+        history is part of the design intent.
     """
     if direction is not None:
         direction = tuple(direction)
         if len(direction) != 3:
             raise ValueError("Boss direction must be a 3D direction")
-    from .history import History, active_history
-    history = active_history()
     return Shape(
         "boss",
         (d, h, hole_d, direction),
-        None if history is History.AUTO else history,
     )
 
 
