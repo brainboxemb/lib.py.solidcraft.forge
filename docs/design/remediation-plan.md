@@ -26,6 +26,8 @@ Exit condition:
 
 ## Phase 1 — Give every Forge occurrence a stable internal identity
 
+Implemented by [change 0008](../changes/0008-stable-forge-occurrence-id.md).
+
 Purpose: stop using Python `id()`, list position and SolidCraft browser names to decide which Forge occurrence an attachment or Placement belongs to.
 
 Deliver:
@@ -48,6 +50,14 @@ Exit condition:
 > The complete Forge assembly graph is unambiguous before native lowering.
 
 ## Phase 2 — Replay-first Placement lowering and SolidCraft command limits
+
+Implemented by [change 0009](../changes/0009-replay-first-placement.md).
+
+SolidCraft 0.42 has no pose input on `component.create`, and
+`occurrence.copy.translate` is numeric-only with no rotation input. The
+qualified replay-first subset is therefore one identity first occurrence plus
+concrete unrotated copies. Ordinary symbolic/rotated Placement that would need a
+later occurrence selector is rejected until a replay-safe selector exists.
 
 Purpose: remove avoidable post-create occurrence targeting while preserving
 static replay.
