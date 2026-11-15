@@ -950,7 +950,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         )
         reference_evidence_files = []
         if reference_verified:
-            cards = []
+            reference_render_cards = []
             for reference_name in ("pythonscad", "pybosl2"):
                 result_path = (
                     reference_evidence_root / slug / reference_name / "result.json"
@@ -982,7 +982,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                         f"reference-{reference_name}/{name}"
                     )
                 label = "PythonSCAD" if reference_name == "pythonscad" else "pyBOSL2"
-                cards.append(
+                reference_render_cards.append(
                     '<figure class="qualification-reference-preview">'
                     f'<a href="reference-{reference_name}/model-iso.png" '
                     'class="qualification-image-link" target="_blank" rel="noopener">'
@@ -995,7 +995,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 )
             reference_evidence_html = (
                 '<div class="twocol qualification-reference-renders">'
-                + "".join(cards)
+                + "".join(reference_render_cards)
                 + '</div>'
             )
 
