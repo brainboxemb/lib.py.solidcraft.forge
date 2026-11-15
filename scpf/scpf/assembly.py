@@ -119,6 +119,52 @@ def _definition_names(assembly):
     return names
 
 
+def _identity_placement(instance):
+    """Return whether one occurrence can be SolidCraft's implicit first placement."""
+    position = instance.placement.position
+    return (
+        instance.placement.rotation is None
+        and not parameters_in(*position)
+        and not any(pv(value) != 0 for value in position)
+    )
+
+
+def _ordinary_replay_order(instances, component_name):
+    """Order ordinary occurrences so static replay needs no later occurrence move."""
+    if not all(instance.attachment is None for instance in instances):
+        return list(instances), False
+
+    first = next(
+        (instance for instance in instances if _identity_placement(instance)),
+        None,
+    )
+    if first is None:
+        raise ModelError(
+            f"{component_name}: replay-first Placement requires one occurrence "
+            "at identity because SolidCraft component.create cannot place its "
+            "first occurrence"
+        )
+
+    ordered = [first] + [
+        instance
+        for instance in instances
+        if instance.occurrence_id != first.occurrence_id
+    ]
+    for instance in ordered[1:]:
+        position = instance.placement.position
+        if parameters_in(*position):
+            raise ModelError(
+                f"{component_name}: symbolic copied Placement is not replay-safe "
+                "in SolidCraft 0.42; occurrence.copy translate is numeric-only"
+            )
+        if instance.placement.rotation is not None:
+            raise ModelError(
+                f"{component_name}: rotated copied Placement is not replay-safe "
+                "in SolidCraft 0.42; occurrence.copy has no rotation input"
+            )
+    return ordered, True
+
+
 def compile_assembly(value, name):
     """Compile a root assembly into reusable components and occurrences."""
     assembly = _as_assembly(value)
@@ -192,8 +238,12 @@ def compile_assembly(value, name):
         by_definition.setdefault(instance.definition.key, []).append(instance)
 
     for key, instances in by_definition.items():
-        definition = instances[0].definition
         component_name = names[key]
+        instances, ordinary_replay_placement = _ordinary_replay_order(
+            instances,
+            component_name,
+        )
+        definition = instances[0].definition
         parent_names = {instance.group_name for instance in instances}
         if len(parent_names) != 1:
             raise ModelError(
@@ -244,10 +294,15 @@ def compile_assembly(value, name):
                     continue
             commands.append(command)
         first_is_root = (
-            instances[0] is assembly.instances[0] and parent_name is None
+            parent_name is None
+            and any(
+                instance.occurrence_id == assembly.instances[0].occurrence_id
+                for instance in instances
+            )
         )
         first_has_symbolic_move = (
-            instances[0].attachment is None
+            not ordinary_replay_placement
+            and instances[0].attachment is None
             and bool(parameters_in(*instances[0].placement.position))
         )
         create_params = {
@@ -273,21 +328,24 @@ def compile_assembly(value, name):
             commands.append(command)
         commands.append(_command("component.activate", component="root"))
 
-        # Copies are created while the definition's first occurrence is still
-        # at native identity. A concrete, unrotated Placement can therefore be
-        # supplied directly to occurrence.copy without a later move.
+        # Ordinary replay-first Placement uses the implicit first occurrence
+        # only at identity. Concrete unrotated copies are placed directly by
+        # occurrence.copy. Symbolic/rotated ordinary copies were rejected above
+        # because they would need a later occurrence selector.
         #
-        # Do not pre-translate a rotated copy. SolidCraft 0.42 applies the
-        # later occurrence rotation to an already-copied translation, which
-        # changes the declared parent-frame position. Rotated copies are made
-        # at identity and receive translation + rotation together below.
-        #
-        # Parameter-driven placement likewise needs a later native operation.
+        # Attachment paths are handled separately for now. They may still need
+        # a seed move plus a native joint and are repaired in the relationship
+        # change after this one.
         occurrences = []
         copy_positioned = set()
         for index, instance in enumerate(instances, start=1):
-            native_name = f"{component_name}:{index}"
-            occurrence_names[instance.occurrence_id] = native_name
+            native_name = (
+                None
+                if ordinary_replay_placement
+                else f"{component_name}:{index}"
+            )
+            if native_name is not None:
+                occurrence_names[instance.occurrence_id] = native_name
             occurrences.append((instance, native_name))
             if index > 1:
                 position = instance.placement.position
@@ -331,10 +389,13 @@ def compile_assembly(value, name):
                     },
                 ))
 
-        # Remaining placement work is only what creation-time placement
-        # cannot safely express: the definition's first occurrence, symbolic
-        # position, or any Placement that includes rotation. Public Placement
-        # semantics do not prescribe this native command choice.
+        # Ordinary Placement is complete after create/copy. Do not add a
+        # later occurrence.move that would need a guessed SolidCraft name.
+        if ordinary_replay_placement:
+            continue
+
+        # Attachment paths retain the old seed-placement lowering until their
+        # replay-safe occurrence addressing is repaired separately.
         for instance, native_name in occurrences:
             position = instance.placement.position
             rotation = instance.placement.rotation
