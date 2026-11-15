@@ -105,10 +105,10 @@ Python build setting from looking like a native editable CAD parameter.</p>
 <p>If a public lower-case parameter is consumed only as a concrete Python
 value—for example through <code>pv()</code>—Forge emits a
 <code>ModelParameterWarning</code>. The same warning is emitted when a
-parameter remains native in some geometry but is also flattened into a
-concrete component <code>move()</code> or rotation. Such a parameter is only
-partly associative: editing it in SolidCraft would update only part of the
-model. Either preserve the symbolic placement or rename an intentionally
+parameter remains native in some geometry but is also flattened into concrete
+occurrence placement. Such a parameter is only partly associative: editing it
+in SolidCraft would update only part of the model. Keep
+<code>Placement</code> coordinates symbolic or rename an intentionally
 build-time input with a leading underscore.</p>
 <h2 id="shared-parameters">Share one model parameter across child components</h2>
 <p>Passing a parent parameter into several component inputs keeps one native
@@ -514,7 +514,7 @@ case = Box(80, 50, 30).shell(2, open=Faces.TOP)""") + """
 surface-selection vocabulary used by <code>feature.on(...)</code>.
 <a href="../../reference/Anchor/"><code>Anchor</code></a> is reserved for explicit component attachment in
 assemblies. See the source and regression tests for supported feature chains.</p>
-<h2 id="anchors">Position without hard-coded global offsets</h2>
+<h2 id="anchors">Feature placement without hard-coded global offsets</h2>
 """ + code("""from scpf import X, Y, Boss, Anchor
 
 boss = Boss(d=7, h=12, hole_d=2.5).attach(
