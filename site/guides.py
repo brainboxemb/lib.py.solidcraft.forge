@@ -131,22 +131,21 @@ parameter. No extra publication or alias declaration is needed.</p>
 (<code>Box</code>, <code>Hole</code>, an extrusion). A <strong>component
 occurrence</strong> is one placed instance of a shared, editable model definition.
 Do not confuse a new occurrence with a new feature history.</p>
-""" + code("""from scpf import Box, Placement, component
+""" + code("""from scpf import Box, Position, component
 
 class Block:
     def build(self):
         return Box(40, 20, 10)
 
 BlockComponent = component(Block)
-first = BlockComponent(placement=Placement(x=-25))
-second = first.copy().at(x=25)
+first = BlockComponent().at(Position(x=-25))
+second = first.copy().at(Position(x=25))
 assembly = first + second""") + """
 <p>The two occurrences share the same <code>Block</code> definition.
-<code>Placement</code> is occurrence state: it describes where a physical copy
-belongs without becoming part of the shared component definition.
-<code>at()</code> sets an absolute placement; <code>move()</code> applies a
-relative change to an existing placement. The compiler chooses the native
-SolidCraft lowering after the final placement is known.</p>
+<code>Position</code> is absolute XYZ occurrence data in the parent coordinate
+frame. <code>at(Position(...))</code> declares that position; it is not a
+relative move. A full <code>Placement</code> adds orientation. The compiler
+chooses the native SolidCraft lowering after the declared pose is known.</p>
 <h2 id="groups">Groups are actual native parent components</h2>
 """ + code("""blocks = (first + second).group("Blocks")""") + """
 <p>Grouping changes the browser hierarchy, not the geometry's orientation.
@@ -168,7 +167,7 @@ much easier once those three levels are kept separate.</p>
 <table><thead><tr><th>You mean…</th><th>Forge concept</th><th>SolidCraft result</th></tr></thead><tbody>
 <tr><td>Geometry inside one part</td><td><code>Shape</code></td><td>Native geometry/features in one definition</td></tr>
 <tr><td>One reusable physical part</td><td><code>@component</code> class</td><td>Reusable component definition</td></tr>
-<tr><td>Where/how one occurrence stands</td><td><code>Placement</code>, <code>at()</code>, <code>move()</code>, <code>rotate()</code></td><td>Occurrence placement</td></tr>
+<tr><td>Where/how one occurrence stands</td><td><code>Position</code>, <code>Placement</code>, <code>at()</code></td><td>Occurrence placement</td></tr>
 <tr><td>One placed copy of that part</td><td><code>Block()</code> / <code>copy()</code></td><td>Component occurrence</td></tr>
 <tr><td>Several parts collected together</td><td><code>a + b</code></td><td>Assembly containing occurrences</td></tr>
 <tr><td>One part depends on another</td><td><code>attach()</code></td><td>Native SolidCraft assembly relationship/joint</td></tr>
@@ -206,8 +205,8 @@ creates another occurrence of the same definition without duplicating the
 feature history.</p>
 
 <h2 id="collection">2. Put components in one assembly</h2>
-""" + code("""first = Block(placement=Placement(x=-30))
-second = first.copy().at(x=30)
+""" + code("""first = Block().at(Position(x=-30))
+second = first.copy().at(Position(x=30))
 
 assembly = first + second""") + """
 <p>Here <code>first + second</code> means “these two component occurrences
@@ -215,11 +214,10 @@ belong to one assembly”. It does <strong>not</strong> Boolean-union their soli
 <div class="notice"><strong>Same operator, different level:</strong>
 <code>Shape + Shape</code> describes supported geometric union;
 <code>occurrence + occurrence</code> builds an assembly of physical parts.</div>
-<p><code>Placement</code> is enough when the position itself is the intended
-design rule. <code>at()</code> expresses an absolute location and
-<code>move()</code> a relative offset. Neither creates a mechanical
-relationship; use <code>attach()</code> when another occurrence owns the
-relationship.</p>
+<p><code>at(Position(...))</code> declares an absolute XYZ position in the
+parent coordinate frame. <code>at(Placement(...))</code> declares the full pose,
+including orientation. Neither creates a mechanical relationship; use
+<code>attach()</code> when another occurrence owns that relationship.</p>
 
 <h2 id="reusable-assembly">3. Use @assembly when the composition itself is reusable</h2>
 <p>You do not need <code>@assembly</code> merely because a script contains
@@ -408,50 +406,38 @@ class Panel:
 
 PanelComponent = component(Panel)
 first = PanelComponent()
-right = first.copy().move(x=160)""") + """
-<h2 id="rotate">Rotate: axis and angle on a component occurrence</h2>
-<p>In the current implementation, <code>rotate()</code> belongs to a
-<strong>component occurrence</strong> and accepts an XYZ direction tuple and
-an angle in degrees. It rotates the placement about the component's local origin.
-The shared component definition is not modified.</p>
-""" + code("""from scpf import X, Y, Z
+right = first.copy().at(Position(x=160))""") + """
+<h2 id="rotate">Orientation is part of Placement</h2>
+<p>Occurrence orientation is declarative data in <code>Placement</code>, not a
+separate rotation action.</p>
+""" + code("""from scpf import Placement, Position, X, Y, Z
 
-upside_down = first.copy().rotate(Z, 180)
-upright = first.copy().rotate(X, 90)
+upside_down = first.copy().at(
+    Placement(position=Position(), rotation=(Z, 180))
+)
+upright = first.copy().at(
+    Placement(position=Position(), rotation=(X, 90))
+)
 
-# Explicit XYZ tuple form remains valid:
-sideways = first.copy().rotate(axis=(0, 1, 0), degrees=90)""") + """
-<p>The first rotates about Z; the second rotates about X. A rotation
-around X can convert a face authored in XY into a vertical XZ face.
-The direction of the depth axis changes too.</p>
-<h2 id="absolute">Critical: rotate sets an orientation; it does not compose</h2>
-""" + code("""# NOT two successive rotations in current SCPF:
-panel = first.rotate(axis=(1, 0, 0), degrees=90)
-panel = panel.rotate(axis=(0, 1, 0), degrees=180)""") + """
-<p>The second call <strong>replaces</strong> the first occurrence rotation.
-It does not apply a second rotation on top of the first. A model that
-appears to lie flat after a second rotation can be caused by this rule.
-SCPF currently supports one absolute axis-angle orientation per occurrence,
-not chained Euler rotations.</p>
-<p>For a final orientation involving several conceptual turns, give SCPF
-<strong>one axis-angle orientation</strong>. SolidCraft performs the
-native rotation; SCPF does not build its own rotation matrices.
-Verify the saved native geometry to check which direction is up.</p>
-<h2 id="named-axes">Named axis rotation</h2>
-<p>The exported <code>X</code>, <code>Y</code> and <code>Z</code> tokens can
-be passed directly to occurrence rotation. Prefer
-<code>rotate(Y, 90)</code> when a principal-axis turn is all that is needed.
-The explicit <code>axis=(x,y,z), degrees=…</code> form remains available for
-arbitrary axis-angle placement.</p>
+sideways = first.copy().at(
+    Placement(position=Position(), rotation=((0, 1, 0), 90))
+)""") + """
+<p>SCPF supports one absolute axis-angle orientation per occurrence. Use
+<code>at(Placement(...))</code> when both position and orientation must be
+declared together. A later <code>at(Position(...))</code> changes only XYZ and
+preserves that orientation.</p>
 <h2 id="copies">Copies are independent placements</h2>
 <p>One <strong>component definition</strong> describes the shape and its
 editable features. Every <strong>occurrence</strong> says where one copy
 belongs in the assembly. Several occurrences reuse the same definition.</p>
-""" + code("""first = PanelComponent().move(z=160).rotate(axis=(1, 0, 0), degrees=90)
-second = first.copy().move(x=160)
+""" + code("""first = PanelComponent().at(
+    Placement(position=Position(z=160), rotation=(X, 90))
+)
+second = first.copy().at(Position(x=160, z=160))
 screen = first + second""") + """
 <p>In Python, <code>copy()</code> inherits the desired placement:
-<code>second</code> keeps the 90° rotation and adds 160 mm to X.
+<code>second</code> keeps the 90° rotation and receives the absolute Position
+X=160, Z=160.
 In the generated command sequence, however, SCPF makes both native
 occurrences <strong>at the origin</strong> before moving either one.
 It then asks SolidCraft to place each one. This prevents a copy from
@@ -563,7 +549,7 @@ class BeamPair:
 
     def build(self):
         left = Beam()
-        right = left.copy().move(x=self.spacing)
+        right = left.copy().at(Position(x=self.spacing))
         return (left + right).group("Beams")
 
 pair = BeamPair()""") + """
@@ -593,17 +579,15 @@ input, that existing dependency stays symbolic. For example,
 parent design's <code>corner_radius</code>; it does not create a separate
 <code>CornerBracket_inside_corner_radius</code> parameter.</p>
 <h2 id="placement">Occurrence placement</h2>
-<p><code>copy()</code> in Python retains the source's intended position
-and orientation. <code>move()</code> then adds the given displacement.
-For example, moving a copy by X=120 after its source already sits at X=50
-makes the copy's intended X position 170. This is normal Python-side behavior.
-When compiling, SCPF first creates all native occurrences at the origin and
-asks SolidCraft to position each one <em>once</em>. No previous native
-transform needs to be undone, and no inverse matrix is calculated.</p>
+<p><code>copy()</code> retains the source Placement. A following
+<code>at(Position(...))</code> replaces only XYZ while preserving orientation.
+The Position is absolute in the parent coordinate frame; it is never added to
+the source position. The compiler chooses creation-time copy translation or a
+native expressed occurrence placement as appropriate.</p>
 """ + code("""center = BeamComponent()
 array = center
 for x in (-240, -120, 120, 240):
-    array = array + center.copy().move(x=x)""") + """
+    array = array + center.copy().at(Position(x=x))""") + """
 <h2 id="attach">Component attachment</h2>
 """ + code("""right = BeamComponent().attach(
     left, parent=Anchor.RIGHT, child=Anchor.LEFT
