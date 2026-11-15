@@ -816,6 +816,21 @@ def validate_hub75_anchorframe_regression(root: Path) -> Validation:
         },
         "q5",
     )
+
+    comparison = load(root / "measurements-placement-comparison.json")
+    v.check(
+        "AnchorFrame matches explicit Placement baseline initially",
+        comparison.get("initial", {}).get("status") == "pass",
+        "pass",
+        comparison.get("initial", {}).get("status"),
+    )
+    v.check(
+        "AnchorFrame matches explicit Placement baseline after saved-design mutation",
+        comparison.get("mutated", {}).get("status") == "pass",
+        "pass",
+        comparison.get("mutated", {}).get("status"),
+        "q5",
+    )
     return v
 
 
