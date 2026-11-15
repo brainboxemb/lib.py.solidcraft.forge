@@ -1,7 +1,10 @@
-"""pyBOSL2 reference: a centered Ø20 2D profile extruded in negative Z."""
+"""pyBOSL2 reference: use native anchor semantics for a downward cylinder."""
 
-from pybosl2 import circle
+from pybosl2 import Anchor, cyl
 
-profile = circle(diameter=20)
-solid = profile.linear_extrude(height=30).down(30)
-model = solid
+
+model = cyl(
+    diameter=20,
+    height=30,
+    anchor=Anchor.TOP,
+)
