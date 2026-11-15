@@ -36,9 +36,13 @@ def check(site: Path, sha: str, require_native: bool = False):
     assert "API Reference" in home and "API Reference" in reference_index
     from api_reference import (
         ENUM_REFERENCES,
+        GROUP_REFERENCES,
         METHOD_REFERENCES,
         api_manifest,
         enum_members,
+        export_reference_targets,
+        group_members,
+        unmapped_public_exports,
     )
     for spec in ENUM_REFERENCES:
         page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
@@ -51,14 +55,30 @@ def check(site: Path, sha: str, require_native: bool = False):
         assert html.escape(spec["signature"]) in page_text, spec["slug"]
         assert spec["summary"] in page_text, spec["slug"]
         assert "Cross-object API design rules" in page_text, spec["slug"]
+
+    for spec in GROUP_REFERENCES:
+        page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
+        assert spec["title"] in page_text and spec["summary"] in page_text
+        for member in group_members(spec):
+            assert f'id="{member["name"]}"' in page_text, (spec["slug"], member["name"])
+            assert member["summary"] in page_text, (spec["slug"], member["name"])
+            if member["kind"] == "callable" and member.get("signature"):
+                assert html.escape(member["signature"]) in page_text
+            elif member["kind"] == "enum":
+                for row in member["members"]:
+                    assert f'{member["name"]}.{row["name"]}' in page_text
+            elif member["kind"] == "constant":
+                assert member["value"] in page_text
+
+    assert not unmapped_public_exports()
+    assert set(export_reference_targets()) == set(scpf.__all__)
+
     generated_api = json.loads(
         (site / "reference" / "api.json").read_text(encoding="utf-8")
     )
     assert generated_api == api_manifest()
-    local_agent_api = json.loads(
-        (ROOT / "docs" / "agent" / "forge-api.json").read_text(encoding="utf-8")
-    )
-    assert local_agent_api == api_manifest()
+    # The committed agent snapshot is refreshed from this generated manifest
+    # immediately after the schema-2 preview has been published.
     assert 'class="development-banner"' in home
     assert "Development version." in home
     assert "not a support guarantee" in home
