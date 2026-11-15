@@ -404,87 +404,67 @@ PythonSCAD, pyBOSL2 and CadQuery continue to express the same modelling intent
 idiomatically. They are geometry/modelling comparisons, not native identity
 authorities.
 
-## 13. Native SolidCraft 0.42 identity contract
+## 13. Replay-first native occurrence policy
 
-The pinned 0.42 runtime has now been introspected directly. The relevant
-contract is recorded in
-[`docs/vendor/solidcraft/0.42.0/occurrence-identity.md`](../vendor/solidcraft/0.42.0/occurrence-identity.md).
+SolidCraft 0.42 can return numeric occurrence ids from `component.create` and
+`occurrence.copy`. That is useful native information, but it does **not**
+change the normal Forge product architecture.
 
-The important facts are:
+Forge's normal output remains a static, independently replayable SolidCraft
+command document.
 
-- `component.create` returns `result.occurrence` as a numeric occurrence id;
-- `occurrence.copy` returns the new numeric occurrence id;
-- `occurrence.move`, joint/origin commands and component inspection accept
-  native occurrence ids;
-- `occurrence.copy` does not provide a field for Forge to prescribe the id of
-  the occurrence that will be created.
+### 13.1 Placement first
 
-Therefore Forge must obtain runtime identity from SolidCraft. Browser labels are
-not a substitute.
+Occurrence pose must be expressed as early as the SolidCraft command model
+allows:
 
-### 13.1 Static native command document
-
-A raw independently replayable SolidCraft command list remains valid when no
-later command needs the identity of an occurrence created earlier in that same
-document.
-
-Examples include a copy whose complete numeric translation is supplied directly
-to `occurrence.copy` and which is never subsequently referenced.
-
-### 13.2 Identity-dependent execution document
-
-When a later operation needs a just-created occurrence, Forge must keep a
-logical reference in the serialized document and bind it to the actual native
-id returned at execution time.
-
-Conceptually:
-
-```text
-Forge OccurrenceId
-    -> logical execution reference
-    -> component.create / occurrence.copy
-    -> SolidCraft result.occurrence
-    -> NativeOccurrenceRef
-    -> later move / joint / origin
-```
-
-This is required for:
-
-- first-occurrence Placement that needs a later `occurrence.move`;
-- copied symbolic Placement that needs a later move;
-- copied rotation/orientation;
-- attachments/joints involving created occurrences;
-- custom joint origins on created occurrences;
-- any later inspection/action targeting the occurrence.
-
-Historical PRs #166/#167 implemented one version of this result-binding model.
-Their code is evidence, not an automatic merge source, but the architectural
-need is now confirmed by the 0.42 schema.
+- use `component.create` placement semantics for the first occurrence where
+  supported;
+- use `occurrence.copy` placement semantics for copies where supported;
+- do not create an occurrence at an arbitrary pose merely to move it later when
+  the create/copy command can express the intended Placement directly.
 
 **Invariant EX-1**
 
-> Identity-dependent Forge output is a Forge execution document, not a raw
-> SolidCraft command list pretending generated browser labels are stable ids.
+> Normal Forge compilation is replay-first. Replaying the emitted document does
+> not require Forge to capture runtime results from an earlier execution.
+
+### 13.2 No generated-name prediction
+
+Forge may not synthesize selectors such as `Component:1` or `Component:2`
+from assumptions about SolidCraft browser numbering.
 
 **Invariant EX-2**
 
-> Replay resolves logical occurrence references again against the new
-> execution. It never stores native ids from an earlier design.
+> A native occurrence selector used by normal replay must come from an
+> explicitly qualified replay-safe SolidCraft mechanism. It may never be a
+> guessed generated display name.
+
+### 13.3 Capability boundary
+
+Some SolidCraft operations require addressing an already-created occurrence.
+If Forge does not yet have a replay-safe way to express that reference, the
+normal compiler must not invent one.
 
 **Invariant EX-3**
 
-> A static/raw-native export may be offered only when the compiler proves the
-> plan has no unresolved runtime identity dependency.
+> When a capability cannot be expressed reliably in the replay-first command
+> model, Forge rejects or marks that capability unsupported until a replay-safe
+> design is qualified.
 
-**Invariant EX-4**
+Runtime result handles, logical `$ref` bindings and phased Forge-managed
+execution have been explored historically. They are **not** the approved normal
+compiler/replay route and must not be introduced as an implicit fallback.
 
-> Phased result-binding execution must preserve whole-model atomicity. Before
-> the first phase Forge creates an outer native checkpoint; any later command,
-> binding or transport failure restores that checkpoint. The temporary
-> checkpoint is forgotten only after the complete plan succeeds.
+If such a live/runtime capability is ever revisited, it is a separate explicit
+product/API decision, not a repair mechanism for ordinary Forge compilation.
 
-Historical PR #166 already implemented and unit-tested this checkpoint pattern;
-the replacement executor should reuse the proven contract, not weaken it.
+### 13.4 Native-id evidence
+
+The pinned SolidCraft 0.42 identity observations remain recorded in
+[`docs/vendor/solidcraft/0.42.0/occurrence-identity.md`](../vendor/solidcraft/0.42.0/occurrence-identity.md)
+as native-engine background. They must not be read as an instruction to turn
+normal Forge output into a runtime execution plan.
 
 ## 14. Migration strategy
 
