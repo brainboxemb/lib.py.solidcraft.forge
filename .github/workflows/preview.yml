@@ -11,6 +11,7 @@ on:
       - "README.md"
       - ".github/workflows/preview.yml"
       - ".github/workflows/scpf.yml"
+      - ".github/workflows/scpf-affected.yml"
 
 permissions:
   contents: write
@@ -79,6 +80,20 @@ jobs:
             -s "$GITHUB_WORKSPACE/qualification/tests" \
             -t "$GITHUB_WORKSPACE" -v
 
+      - name: Install pinned comparison libraries
+        run: |
+          python -m pip install \
+            "pythonscad==1.1.2" \
+            "git+https://github.com/pinkfish/pybosl2@d4279910c12435ed7224b3406616e495db1c96ec" \
+            "trimesh>=4,<5" \
+            "matplotlib>=3.8,<4"
+
+      - name: Execute and render reference smoke case
+        run: |
+          python qualification/reference_validation.py \
+            --cases simple-box \
+            --out output/reference-smoke
+
       - name: Compile qualification tooling
         shell: bash
         run: |
@@ -87,6 +102,10 @@ jobs:
             qualification/camera.py \
             qualification/goal_overlay.py \
             qualification/native_validation.py \
+            qualification/reference_validation.py \
+            qualification/run_affected.py \
+            qualification/case_selection.py \
+            qualification/native_cases.py \
             qualification/results.py \
             qualification/report.py \
             qualification/visual_validation.py
