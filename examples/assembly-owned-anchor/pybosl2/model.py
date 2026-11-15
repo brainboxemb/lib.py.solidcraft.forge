@@ -9,4 +9,4 @@ from pybosl2 import cuboid
 base = cuboid([40, 30, 20]).up(10)
 companion = cuboid([10, 10, 10]).translate([70, 0, 5])
 marker = cuboid([10, 10, 10]).translate([15, -20, 15])
-(base | companion | marker).show()
+model = base | companion | marker
