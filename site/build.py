@@ -8,6 +8,7 @@ import argparse
 import html
 import json
 from pathlib import Path
+import re
 import shutil
 from string import Template
 import sys
@@ -641,12 +642,32 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     guide_root = out / "guide"
     guide_root.mkdir(exist_ok=True)
     def guide_sidebar(*, active=None, prefix=""):
+        active_chapter = next(
+            (chapter for chapter in GUIDES if chapter["slug"] == active),
+            None,
+        )
+
         def nav_link(slug, title):
             cls = ' class="active"' if slug == active else ""
-            return (
+            link = (
                 f'<a{cls} href="{escape(prefix + slug + "/")}">'
                 f'{escape(title)}</a>'
             )
+            if slug == active and active_chapter is not None:
+                headings = re.findall(
+                    r'<h2 id="([^"]+)">([^<]+)</h2>',
+                    active_chapter["body"],
+                )
+                if headings:
+                    link += (
+                        '<div class="guide-subnav">'
+                        + "".join(
+                            f'<a href="#{escape(anchor)}">{escape(title)}</a>'
+                            for anchor, title in headings
+                        )
+                        + '</div>'
+                    )
+            return link
 
         overview_cls = ' class="active"' if active == "overview" else ""
         return (
