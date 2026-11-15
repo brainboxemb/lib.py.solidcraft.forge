@@ -336,6 +336,7 @@ def check(
             "$gallery",
             "$results",
             "$source",
+            "$reference_rows",
         ):
             assert placeholder not in page_text, (slug, placeholder)
         assert (site / "qualification" / slug / "model.py").is_file()
@@ -346,12 +347,8 @@ def check(
             assert f'href="{source_name}"' in page_text
             assert REFERENCE_IMPLEMENTATION_LABELS[implementation] in page_text
         assert "Rendered comparison" in page_text
-        reference_code_pos = min(
-            page_text.index(f'href="reference-{implementation}.py"')
-            for implementation in reference_names
-        )
-        reference_render_pos = page_text.index("Rendered comparison")
-        assert reference_code_pos < reference_render_pos, slug
+        assert "qualification-reference-list" in page_text
+        assert page_text.count("qualification-reference-row") == len(reference_names)
         assert (site / "qualification" / slug / "commands.json").is_file()
         if require_references:
             manifest_case = qualification_manifest["cases"][slug]
