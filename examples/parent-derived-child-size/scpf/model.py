@@ -14,9 +14,10 @@ class DerivedChild:
     width = 60.0
     depth = 40.0
     HEIGHT = 6.0
+    Z_BOTTOM = 20.0
 
     def build(self):
-        return Box(self.width, self.depth, self.HEIGHT)
+        return Box(self.width, self.depth, self.HEIGHT).move(z=self.Z_BOTTOM)
 
 
 class ParentDerivedChildSize:
@@ -33,7 +34,6 @@ class ParentDerivedChildSize:
             width=half(self.base_width),
             depth=half(self.base_depth),
             name="child",
-            placement=Placement(z=20),
         )
 
         return parent + child

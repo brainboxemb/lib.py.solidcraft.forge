@@ -14,7 +14,9 @@ class Companion:
     SIZE = 10.0
 
     def build(self):
-        return Box(self.SIZE, self.SIZE, self.SIZE)
+        # Position is not part of this qualification. Keep its old visible
+        # location inside this unique component definition.
+        return Box(self.SIZE, self.SIZE, self.SIZE).move(x=70)
 
 
 class Marker:
@@ -32,7 +34,7 @@ class AssemblyOwnedAnchor:
             height=self.base_height,
             name="base",
         )
-        companion = Companion(name="companion", placement=Placement(x=70))
+        companion = Companion(name="companion")
 
         frame = (base + companion).with_anchor(
             "inspection_corner",

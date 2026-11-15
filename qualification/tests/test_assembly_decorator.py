@@ -32,20 +32,13 @@ class AssemblyDecoratorCommandTests(unittest.TestCase):
         ]
         self.assertEqual(
             copies,
-            [{"component": "Post", "translate": [15.0, 0.0, 0.0]}],
+            [{"component": "Post", "translate": [30.0, 0.0, 0.0]}],
         )
 
-        moves = [
-            row["params"]
+        self.assertFalse(any(
+            row["command"] == "occurrence.move"
             for row in commands
-            if row["command"] == "occurrence.move"
-        ]
-        self.assertEqual(
-            [(row["occurrence"], row["translate"]) for row in moves],
-            [
-                ("Post:1", [-15.0, 0.0, 0.0]),
-            ],
-        )
+        ))
 
 
 @unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")

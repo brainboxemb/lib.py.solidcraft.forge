@@ -56,7 +56,7 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(self.width, 10, 2)\n"
                 "class Display:\n"
                 "    def build(self):\n"
-                "        left = Panel(placement=Placement(x=-30))\n"
+                "        left = Panel()\n"
                 "        right = left.copy(placement=Placement(x=30))\n"
                 "        return left + right\n"
                 "Display()\n",
@@ -70,7 +70,6 @@ class AssemblyTests(unittest.TestCase):
             if command["command"] == "parameters.add"
         ]
         self.assertEqual(parameters, [])
-
         copy = next(
             command["params"]
             for command in commands
@@ -79,9 +78,9 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(copy["translate"], [30.0, 0.0, 0.0])
         self.assertFalse(any(
             command["command"] == "occurrence.move"
-            and command["params"]["occurrence"] == "Panel:2"
             for command in commands
         ))
+        self.assertFalse(any("Panel:" in str(command) for command in commands))
 
     def test_occurrence_placement_is_declared_at_construction(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -192,8 +191,118 @@ class AssemblyTests(unittest.TestCase):
         ]
         self.assertEqual(len(joints), 1)
 
+    def test_replay_first_ordinary_placement_uses_copy_translate_only(self):
+        from scpf import Box, Placement, component
+        from scpf.assembly import compile_assembly
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        first = Panel()
+        second = first.copy(placement=Placement(x=30))
+        commands = compile_assembly(first + second, "Panels")["commands"]
+
+        copies = [
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.copy"
+        ]
+        self.assertEqual(copies, [{"component": "Panel", "translate": [30, 0, 0]}])
+        self.assertFalse(any(
+            command["command"] == "occurrence.move"
+            for command in commands
+        ))
+        self.assertFalse(any(
+            "Panel:" in str(command["params"])
+            for command in commands
+        ))
+
+    def test_replay_first_can_bind_later_identity_occurrence_as_native_first(self):
+        from scpf import Box, Placement, component
+        from scpf.assembly import compile_assembly
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        moved = Panel(placement=Placement(x=30))
+        identity = moved.copy(placement=Placement())
+        commands = compile_assembly(moved + identity, "Panels")["commands"]
+
+        copy = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.copy"
+        )
+        self.assertEqual(copy["translate"], [30, 0, 0])
+        self.assertFalse(any(
+            command["command"] == "occurrence.move"
+            for command in commands
+        ))
+
+    def test_replay_first_rejects_definition_without_identity_occurrence(self):
+        from scpf import Box, Placement, component
+        from scpf.assembly import compile_assembly
+        from scpf.compiler import ModelError
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        left = Panel(placement=Placement(x=-30))
+        right = left.copy(placement=Placement(x=30))
+        with self.assertRaisesRegex(
+            ModelError,
+            "requires one occurrence at identity",
+        ):
+            compile_assembly(left + right, "Panels")
+
+    def test_replay_first_rejects_symbolic_ordinary_copy_placement(self):
+        from scpf import Box, Parameter, Placement, component
+        from scpf.assembly import compile_assembly
+        from scpf.compiler import ModelError
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        first = Panel()
+        second = first.copy(
+            placement=Placement(x=Parameter("offset", 30)),
+        )
+        with self.assertRaisesRegex(
+            ModelError,
+            "symbolic copied Placement is not replay-safe",
+        ):
+            compile_assembly(first + second, "Panels")
+
+    def test_replay_first_rejects_rotated_ordinary_copy_placement(self):
+        from scpf import Box, Placement, Z, component
+        from scpf.assembly import compile_assembly
+        from scpf.compiler import ModelError
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        first = Panel()
+        second = first.copy(
+            placement=Placement(x=30, rotation=(Z, 180)),
+        )
+        with self.assertRaisesRegex(
+            ModelError,
+            "rotated copied Placement is not replay-safe",
+        ):
+            compile_assembly(first + second, "Panels")
+
     def test_copies_use_declared_native_placements(self):
-        """Copied occurrences compile from their declared final Placement."""
+        """Concrete unrotated copies carry their final Placement in copy."""
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "sidewalls.py"
             script.write_text(
@@ -202,7 +311,7 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(15, 100, 362)\n"
                 "class Cabinet:\n"
                 "    def build(self):\n"
-                "        left = SideWall(placement=Placement(x=-429.5, y=25))\n"
+                "        left = SideWall()\n"
                 "        right = left.copy(placement=Placement(x=429.5, y=25))\n"
                 "        return (left + right).group('WoodBoxFrame')\n"
                 "Cabinet()\n",
@@ -213,11 +322,14 @@ class AssemblyTests(unittest.TestCase):
                     if c["command"] == "occurrence.copy")
         self.assertEqual(copy["component"], "SideWall")
         self.assertEqual(copy["translate"], [429.5, 25.0, 0.0])
-        moves = [c["params"] for c in commands if c["command"] == "occurrence.move"]
-        self.assertEqual([m["occurrence"] for m in moves], ["SideWall:1"])
-        self.assertEqual(moves[0]["translate"], [-429.5, 25.0, 0.0])
+        self.assertFalse(any(
+            c["command"] == "occurrence.move"
+            for c in commands
+        ))
 
-    def test_rotated_copy_receives_full_pose_after_neutral_copy(self):
+    def test_rotated_copy_is_rejected_without_replay_safe_selector(self):
+        from scpf.compiler import ModelError
+
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "rotated_source.py"
             script.write_text(
@@ -226,25 +338,17 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(20, 10, 2)\n"
                 "class Cabinet:\n"
                 "    def build(self):\n"
-                "        first = Panel(placement=Placement(x=-40, rotation=(Z, 180)))\n"
-                "        right = first.copy(placement=Placement(x=40, rotation=(Z, 0)))\n"
+                "        first = Panel()\n"
+                "        right = first.copy(placement=Placement(x=40, rotation=(Z, 180)))\n"
                 "        return first + right\n"
                 "Cabinet()\n",
                 encoding="utf-8",
             )
-            commands = run_script(script)["commands"]
-        copy = next(c["params"] for c in commands
-                    if c["command"] == "occurrence.copy")
-        self.assertNotIn("translate", copy)
-        commands_after_component = [c for c in commands
-                                    if c["command"] in ("occurrence.copy", "occurrence.move")]
-        self.assertEqual([c["command"] for c in commands_after_component],
-                         ["occurrence.copy", "occurrence.move", "occurrence.move"])
-        moves = [c["params"] for c in commands_after_component[1:]]
-        self.assertEqual([m["translate"] for m in moves],
-                         [[-40.0, 0.0, 0.0], [40.0, 0.0, 0.0]])
-        self.assertEqual([m["angle"] for m in moves], ["180 deg", "0 deg"])
-        self.assertTrue(all("matrix" not in m and "to" not in m for m in moves))
+            with self.assertRaisesRegex(
+                ModelError,
+                "rotated copied Placement is not replay-safe",
+            ):
+                run_script(script)
 
     def test_named_group_creates_real_nested_native_component(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -260,7 +364,7 @@ class AssemblyTests(unittest.TestCase):
                 "    def build(self):\n"
                 "        left = Panel()\n"
                 "        group = (left + left.copy(placement=Placement(x=11))).group('HUB75Panels')\n"
-                "        return group + Frame(placement=Placement(y=20))\n"
+                "        return group + Frame()\n"
                 "Display()\n",
                 encoding="utf-8",
             )
@@ -322,9 +426,11 @@ class AssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(ModelError, "conflicts"):
             compile_assembly(panel.group("Panel"), "Display")
 
-    def test_rotation_is_an_independent_occurrence_placement(self):
+    def test_rotation_remains_occurrence_data_but_is_not_replay_safe_yet(self):
         from scpf.core import Box
         from scpf.model_objects import ModelDefinition, ModelInstance, Placement
+        from scpf.assembly import compile_assembly
+        from scpf.compiler import ModelError
 
         first = ModelInstance(ModelDefinition("Panel", (), Box(20, 10, 2)))
         second = first.copy(placement=Placement(x=30, rotation=((0, 0, 1), 180)))
@@ -334,41 +440,12 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(second.placement.rotation, ((0.0, 0.0, 1.0), 180.0))
         self.assertIsNone(second.attachment)
         self.assertEqual(second.copy().placement.rotation, second.placement.rotation)
-        repositioned = second.copy(placement=Placement(x=40, rotation=second.placement.rotation))
-        self.assertEqual(repositioned.placement.position, (40, 0, 0))
-        self.assertEqual(repositioned.placement.rotation, second.placement.rotation)
 
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "rotation.py"
-            path.write_text(
-                "class Panel:\n"
-                "    def build(self):\n"
-                "        return Box(20, 10, 2)\n"
-                "class Display:\n"
-                "    def build(self):\n"
-                "        first = Panel()\n"
-                "        return first + first.copy(placement=Placement(x=30, rotation=(Z, 180)))\n"
-                "Display()\n",
-                encoding="utf-8",
-            )
-            commands = run_script(path)["commands"]
-
-        self.assertEqual(len([c for c in commands if c["command"] == "component.create"]), 1)
-        self.assertEqual(len([c for c in commands if c["command"] == "occurrence.copy"]), 1)
-        rotated = [c["params"] for c in commands if c["command"] == "occurrence.move"]
-        self.assertEqual(len(rotated), 1)
-        self.assertEqual(rotated[0]["occurrence"], "Panel:2")
-        self.assertNotIn("to", rotated[0])
-        copy = next(
-            command["params"]
-            for command in commands
-            if command["command"] == "occurrence.copy"
-        )
-        self.assertNotIn("translate", copy)
-        self.assertEqual(rotated[0]["translate"], [30.0, 0.0, 0.0])
-        self.assertEqual(rotated[0]["axis"], [0.0, 0.0, 1.0])
-        self.assertEqual(rotated[0]["angle"], "180 deg")
-        self.assertNotIn("matrix", rotated[0])
+        with self.assertRaisesRegex(
+            ModelError,
+            "rotated copied Placement is not replay-safe",
+        ):
+            compile_assembly(first + second, "Display")
 
     def test_placement_accepts_named_axis_rotation(self):
         from scpf.core import X, Y, Z
@@ -380,7 +457,9 @@ class AssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "X, Y or Z"):
             Placement(rotation=("Q", 90))
 
-    def test_first_grounded_occurrence_can_have_absolute_rotation(self):
+    def test_first_grounded_occurrence_rotation_is_rejected_replay_first(self):
+        from scpf.compiler import ModelError
+
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "root_rotation.py"
             path.write_text(
@@ -390,17 +469,14 @@ class AssemblyTests(unittest.TestCase):
                 "class Display:\n"
                 "    def build(self):\n"
                 "        first = Panel(placement=Placement(x=-50, rotation=(Z, 180)))\n"
-                "        return first + first.copy(placement=Placement(x=0, rotation=(Z, 0)))\n"
+                "        return first + first.copy(placement=Placement())\n"
                 "Display()\n", encoding="utf-8",
             )
-            commands = run_script(path)["commands"]
-        placements = [c["params"] for c in commands if c["command"] == "occurrence.move"]
-        self.assertEqual(len(placements), 2)
-        self.assertEqual(placements[0]["occurrence"], "Panel:1")
-        self.assertTrue(placements[0]["move_grounded"])
-        self.assertEqual(placements[0]["translate"], [-50.0, 0.0, 0.0])
-        self.assertEqual(placements[1]["translate"], [0.0, 0.0, 0.0])
-        self.assertEqual([m["angle"] for m in placements], ["180 deg", "0 deg"])
+            with self.assertRaisesRegex(
+                ModelError,
+                "rotated copied Placement is not replay-safe",
+            ):
+                run_script(path)
 
     def test_explicit_imported_component_factory(self):
         # The library's scpf/ source folder is a namespace root when the
@@ -426,8 +502,9 @@ class AssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "model class"):
             component(42)
 
-    def test_rotated_hub75_copies_receive_complete_native_placement(self):
-        """Rotated copies keep XYZ and orientation in one native move."""
+    def test_rotated_hub75_copies_require_replay_safe_selector(self):
+        from scpf.compiler import ModelError
+
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "five.py"
             script.write_text(
@@ -436,7 +513,7 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(159.7, 319.71, 14.5)\n"
                 "class Screen:\n"
                 "    def build(self):\n"
-                "        first = Panel(placement=Placement(z=160, rotation=((1,0,0), 90)))\n"
+                "        first = Panel()\n"
                 "        return (first + first.copy(placement=Placement(x=-320, z=160, rotation=((1,0,0), 90))) +\n"
                 "                first.copy(placement=Placement(x=-160, z=160, rotation=((1,0,0), 90))) +\n"
                 "                first.copy(placement=Placement(x=160, z=160, rotation=((1,0,0), 90))) +\n"
@@ -444,26 +521,11 @@ class AssemblyTests(unittest.TestCase):
                 "Screen()\n",
                 encoding="utf-8",
             )
-            commands = run_script(script)["commands"]
-        placements = [c for c in commands if c["command"] in (
-            "occurrence.copy", "occurrence.move")]
-        self.assertEqual([c["command"] for c in placements],
-                         ["occurrence.copy"] * 4 + ["occurrence.move"] * 5)
-        self.assertTrue(
-            all("translate" not in c["params"] for c in placements[:4])
-        )
-        self.assertEqual(
-            [c["params"]["translate"] for c in placements[4:]],
-            [[0.0, 0.0, 160.0], [-320.0, 0.0, 160.0],
-             [-160.0, 0.0, 160.0], [160.0, 0.0, 160.0],
-             [320.0, 0.0, 160.0]],
-        )
-        self.assertTrue(all(c["params"]["axis"] == [1.,0.,0.]
-                            and c["params"]["angle"] == "90 deg"
-                            for c in placements[4:]))
-        self.assertTrue(all("matrix" not in c["params"]
-                            and "to" not in c["params"]
-                            for c in placements))
+            with self.assertRaisesRegex(
+                ModelError,
+                "rotated copied Placement is not replay-safe",
+            ):
+                run_script(script)
 
     def test_rotation_rejects_undefined_and_nonfinite_axis_angle(self):
         from scpf.model_objects import Placement
@@ -521,7 +583,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Pair:\n"
                 "    def build(self):\n"
                 "        left = Block(width=30.0)\n"
-                "        right = Block(width=50.0, placement=Placement(x=60.0))\n"
+                "        right = Block(width=50.0)\n"
                 "        left + right\n"
                 "Pair()\n"
             )
@@ -538,7 +600,6 @@ class AssemblyTests(unittest.TestCase):
             if c["command"] == "parameters.add"
         ]
         self.assertEqual(parameter_names, [])
-
 
     def test_identical_material_is_created_once_across_components(self):
         from scpf.assembly import compile_assembly
@@ -560,7 +621,7 @@ class AssemblyTests(unittest.TestCase):
         LeftPart = component(Left)
         RightPart = component(Right)
         commands = compile_assembly(
-            LeftPart() + RightPart(placement=Placement(x=20)),
+            LeftPart() + RightPart(),
             "Frame",
         )["commands"]
 
@@ -597,7 +658,7 @@ class AssemblyTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ModelError, "defined differently"):
             compile_assembly(
-                component(Left)() + component(Right)(placement=Placement(x=20)),
+                component(Left)() + component(Right)(),
                 "Frame",
             )
 
@@ -871,7 +932,7 @@ class AssemblyTests(unittest.TestCase):
         opening_width = Parameter("opening_width", 844.0)
 
         horizontal = StripObject(length=opening_width, width=12.0)
-        second = StripObject(length=opening_width, width=15.0, placement=Placement(y=20))
+        second = StripObject(length=opening_width, width=15.0)
 
         commands = compile_assembly(horizontal + second, "Frame")["commands"]
         parameter_names = [
@@ -1024,51 +1085,31 @@ class AssemblyTests(unittest.TestCase):
         )
 
 
-    def test_symbolic_placement_lowers_to_native_expression_move(self):
-        import warnings
+    def test_symbolic_ordinary_placement_does_not_fall_back_to_expression_move(self):
+        from scpf.compiler import ModelError
 
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "parametric_move.py"
             path.write_text(
                 "class Panel:\n"
-                "    depth = 12.0\n"
                 "    def build(self):\n"
-                "        return Box(40, self.depth, 20)\n"
+                "        return Box(40, 12, 20)\n"
                 "class Display:\n"
                 "    depth = 12.0\n"
                 "    def build(self):\n"
-                "        return Panel(depth=self.depth, placement=Placement(y=half(self.depth)))\n"
+                "        first = Panel()\n"
+                "        return first + first.copy(placement=Placement(y=half(self.depth)))\n"
                 "Display()\n",
                 encoding="utf-8",
             )
-            with warnings.catch_warnings(record=True) as caught:
-                warnings.simplefilter("always")
-                document = run_script(path)
+            with self.assertRaisesRegex(
+                ModelError,
+                "symbolic copied Placement is not replay-safe",
+            ):
+                run_script(path)
 
-        self.assertFalse([
-            item for item in caught
-            if "parameter 'depth'" in str(item.message)
-        ])
-        moves = [
-            command["params"]
-            for command in document["commands"]
-            if command["command"] == "occurrence.move"
-        ]
-        self.assertEqual(len(moves), 1)
-        self.assertEqual(moves[0]["translate"][1], "depth / 2")
-        self.assertFalse(any(
-            command["command"] == "joint.create"
-            for command in document["commands"]
-        ))
-        names = [
-            command["params"]["name"]
-            for command in document["commands"]
-            if command["command"] == "parameters.add"
-        ]
-        self.assertEqual(names, ["depth"])
-
-    def test_symbolic_placement_adds_placement_only_parameter(self):
-        import warnings
+    def test_symbolic_ordinary_copy_placement_is_rejected_before_lowering(self):
+        from scpf.compiler import ModelError
 
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "placement_only.py"
@@ -1079,37 +1120,20 @@ class AssemblyTests(unittest.TestCase):
                 "class Display:\n"
                 "    offset = 30.0\n"
                 "    def build(self):\n"
-                "        return Panel(placement=Placement(x=self.offset))\n"
+                "        first = Panel()\n"
+                "        return first + first.copy(placement=Placement(x=self.offset))\n"
                 "Display()\n",
                 encoding="utf-8",
             )
-            with warnings.catch_warnings(record=True) as caught:
-                warnings.simplefilter("always")
-                document = run_script(path)
+            with self.assertRaisesRegex(
+                ModelError,
+                "symbolic copied Placement is not replay-safe",
+            ):
+                run_script(path)
 
-        self.assertFalse([
-            item for item in caught
-            if "parameter 'offset'" in str(item.message)
-        ])
-        parameter = next(
-            command["params"]
-            for command in document["commands"]
-            if command["command"] == "parameters.add"
-            and command["params"]["name"] == "offset"
-        )
-        self.assertEqual(parameter["expression"], "30 mm")
-        move = next(
-            command["params"]
-            for command in document["commands"]
-            if command["command"] == "occurrence.move"
-        )
-        self.assertEqual(move["translate"][0], "offset")
-        self.assertFalse(any(
-            command["command"] == "joint.create"
-            for command in document["commands"]
-        ))
+    def test_symbolic_copy_with_rotation_does_not_use_native_move_fallback(self):
+        from scpf.compiler import ModelError
 
-    def test_symbolic_placement_with_rotation_uses_one_native_expression_move(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "rotated_parametric_move.py"
             path.write_text(
@@ -1119,25 +1143,16 @@ class AssemblyTests(unittest.TestCase):
                 "class Frame:\n"
                 "    height = 100.0\n"
                 "    def build(self):\n"
-                "        return Strip(placement=Placement(z=half(self.height), rotation=(Y, 90)))\n"
+                "        first = Strip()\n"
+                "        return first + first.copy(placement=Placement(z=half(self.height), rotation=(Y, 90)))\n"
                 "Frame()\n",
                 encoding="utf-8",
             )
-            document = run_script(path)
-
-        moves = [
-            command["params"]
-            for command in document["commands"]
-            if command["command"] == "occurrence.move"
-        ]
-        self.assertEqual(len(moves), 1)
-        self.assertEqual(moves[0]["translate"][2], "height / 2")
-        self.assertEqual(moves[0]["axis"], [0.0, 1.0, 0.0])
-        self.assertEqual(moves[0]["angle"], "90 deg")
-        self.assertFalse(any(
-            command["command"] == "joint.create"
-            for command in document["commands"]
-        ))
+            with self.assertRaisesRegex(
+                ModelError,
+                "symbolic copied Placement is not replay-safe",
+            ):
+                run_script(path)
 
     def test_symbolic_parent_placement_and_child_attach_keep_distinct_semantics(self):
         from scpf.assembly import compile_assembly

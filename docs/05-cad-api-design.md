@@ -18,11 +18,9 @@ At assembly level, named Python objects represent meaningful physical
 occurrences:
 
 ```python
-left = Board(
-    placement=Placement(x=-half(opening_width))
-)
+left = Board()
 right = left.copy(
-    placement=Placement(x=half(opening_width))
+    placement=Placement(x=160)
 )
 bracket = CornerBracket().attach(left, ...)
 ```
@@ -72,7 +70,7 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch supported by the selected target face. The local 2D sketch origin is the centre of that target face. |
 | profile inside a sketch | `sketch.add(profile, anchor=CENTER)` | Place the profile's selected 2D anchor on the sketch origin. CENTER is the default semantic centring operation; numeric offset is not a centring substitute. |
 | deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. Use only when the design actually calls for an offset. |
-| occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Values may be numeric or parametric and do not create a joint. |
+| occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Placement itself does not create a joint; the replay-first SolidCraft 0.42 backend currently supports an identity first occurrence plus concrete unrotated copies and rejects ordinary cases that need a later occurrence selector. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
 ### `at()`
@@ -143,42 +141,43 @@ parameters:
 ```python
 left = Board(
     width=frame_wood_thickness,
-    placement=Placement(
-        x=-(half(opening_width) + half(frame_wood_thickness)),
-        z=opening_bottom,
-    ),
 )
 
 right = left.copy(
     name="right",
     placement=Placement(
-        x=half(opening_width) + half(frame_wood_thickness),
-        z=opening_bottom,
+        x=160,
     ),
 )
 ```
 
 `Placement(x=0, y=0, z=0, rotation=None)` stores the absolute pose in the
-parent coordinate frame. XYZ values may contain Parameters or Expressions.
-`half(value)` remains symbolic and lowers to ordinary native `value / 2`
-arithmetic.
+parent coordinate frame. The value object can contain Parameters or
+Expressions, but ordinary replay-first SolidCraft 0.42 lowering currently
+rejects symbolic occurrence Placement when it would require a later
+`occurrence.move`. `half(value)` remains symbolic for capabilities whose
+native command accepts expressions.
 
 The component factory consumes `placement=` before building the reusable
 component definition, so placement never becomes a model parameter. There is no
 separate public `Position` object and no occurrence `.at()`, `.move()` or
 `.rotate()` for initial placement.
 
-The compiler encodes Placement in native creation/copy commands where
-SolidCraft 0.42 can do so without changing the declared pose. A concrete
-unrotated copy may use `occurrence.copy(..., translate=...)`. A copy with
-orientation is created at native identity and receives translation plus
-rotation together in `occurrence.move`; otherwise SolidCraft would rotate the
-pre-applied copy translation. Symbolic copy translation likewise uses the
-native move fallback. These lowering choices do not change the
-constructor-time Forge semantics.
+The compiler keeps ordinary Placement replay-first. SolidCraft 0.42
+`component.create` has no pose input, so one occurrence of a reusable
+definition must currently be at identity and is used as SolidCraft's implicit
+first occurrence. Additional concrete, unrotated placements lower directly to
+`occurrence.copy(..., translate=...)`.
 
-The rotated-copy correction is recorded in
-[change 0002](changes/0002-copy-placement-with-rotation.md).
+Forge does not use a later `occurrence.move` when doing so would require
+guessing a SolidCraft-generated occurrence name. Ordinary symbolic copy
+Placement, copied rotation, or a reusable definition with no identity
+occurrence is therefore rejected until SolidCraft has a qualified replay-safe
+selector for that case.
+
+This backend support correction is recorded in
+[change 0009](changes/0009-replay-first-placement.md). Change 0002 remains
+historical evidence for the earlier rotated-copy fallback.
 
 Placement must not create a `joint.create` as an implementation workaround.
 Attachments remain explicit relationships and Placement expressions reuse
