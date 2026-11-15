@@ -303,6 +303,13 @@ jobs:
           solidcraft-cli eval output/native/parametric-move/model-offset-70.sc \
             --json-out output/native/parametric-move/measurements-offset-70.json
 
+          solidcraft-cli run qualification/commands/parametric-placement-pair/change-spacing.json \
+            --in output/native/parametric-placement-pair/model.sc \
+            --param-check strict \
+            --save output/native/parametric-placement-pair/model-spacing-120.sc
+          solidcraft-cli eval output/native/parametric-placement-pair/model-spacing-120.sc \
+            --json-out output/native/parametric-placement-pair/measurements-spacing-120.json
+
           cat > output/native/parametric-attach/change-gap.json <<'JSON'
           {"commands":[
             {"command":"parameters.change","params":{
@@ -388,6 +395,7 @@ jobs:
           printf "eight-flightcase-corners\tcase 120x80x60 -> 160x120x90 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "eight-corner-brackets\tframe 120x80x60 -> 160x120x90 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-move\toffset 40 -> 70 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
+          printf "parametric-placement-pair\tspacing 80 -> 120 mm; pair -40/+40 -> -60/+60 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-attach\tgap 10 -> 30 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-offset\tshift 5 -> 10 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-anchor\tbase_width 40 -> 80 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
