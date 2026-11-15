@@ -2,6 +2,10 @@
 
 
 class SideBoard:
+    width = 12.0
+    depth = 60.0
+    height = 104.0
+
     def build(self):
         return Box(
             self.width,
