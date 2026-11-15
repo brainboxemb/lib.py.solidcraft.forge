@@ -11,7 +11,7 @@ class ParametricMove:
 
     def build(self):
         fixed = Block()
-        placed = Block(placement=Placement(x=self.offset))
+        placed = Block().at(Position(x=self.offset))
         return fixed + placed
 
 
