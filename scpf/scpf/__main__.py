@@ -3,19 +3,26 @@ import argparse
 import json
 from pathlib import Path
 
-from .live import LiveError, new_design, send_document
-from .plan import validate_document
+from .live import LiveError, new_design, send_commands
 from .runner import run_script
 from .version import check_cli_version
 
 
 def read_command_file(path):
-    """Load an existing SCPF command/execution document without translating it."""
+    """Load an existing SolidCraft command document without translating it."""
     try:
         document = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        raise ValueError(f"Cannot read SCPF JSON {path}: {exc}") from exc
-    return validate_document(document)
+        raise ValueError(f"Cannot read SolidCraft JSON {path}: {exc}") from exc
+    if not isinstance(document, dict) or not isinstance(document.get("commands"), list):
+        raise ValueError("SolidCraft JSON must contain a 'commands' array")
+    if not document["commands"]:
+        raise ValueError("SolidCraft JSON has no commands")
+    for index, item in enumerate(document["commands"]):
+        if (not isinstance(item, dict) or not isinstance(item.get("command"), str)
+                or not isinstance(item.get("params", {}), dict)):
+            raise ValueError(f"Invalid SolidCraft command at index {index}")
+    return document
 
 
 def main(argv=None):
@@ -26,7 +33,7 @@ def main(argv=None):
     )
     parser.add_argument("replay_file", nargs="?", type=Path)
     output = parser.add_mutually_exclusive_group()
-    output.add_argument("--out", type=Path, help="Write compiled SCPF execution JSON")
+    output.add_argument("--out", type=Path, help="Write compiled SolidCraft command JSON")
     output.add_argument(
         "--connect", nargs="?", const="auto", metavar="PORT",
         help="Send commands to open SolidCraft; optional 127.0.0.1:PORT",
@@ -76,9 +83,8 @@ def main(argv=None):
         if args.new:
             fresh = new_design(connect=args.connect or "auto")
             print(f"Live SolidCraft: new empty design {fresh['name']!r}")
-        result = send_document(
-            document,
-            connect=args.connect or "auto",
+        result = send_commands(
+            document["commands"], connect=args.connect or "auto"
         )
     except LiveError as exc:
         parser.exit(1, f"SCPF live: {exc}\n")
