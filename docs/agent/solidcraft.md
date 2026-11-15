@@ -64,16 +64,31 @@ solid.sphere
 This list is a quick routing index, not a second command specification. The
 exact runtime contract belongs to SolidCraft 0.42.0.
 
+## Local-data requirement
+
+The version-pinned local data must be sufficient for ordinary command lookup,
+not just command discovery. For Forge-relevant commands it should preserve the
+parameter names, alternatives, defaults and placement semantics needed to answer
+normal modelling questions without opening upstream source or a website.
+
+For example, SolidCraft 0.42 `solid.box` accepts `length`, `width` and
+`height`, plus either `corner:[x,y,z]` or `center:[x,y,z]`. A box authored
+with `center` remains centre-placed when its dimensions change; `corner`
+keeps the corner datum instead. This is native SolidCraft placement semantics,
+not a Forge translation convention.
+
 ## Minimal lookup order
 
-1. Need to know whether a command exists?
-   Check the list above.
+1. Need to know whether a command exists or its common Forge-relevant semantics?
+   Check this file first.
 2. Need another SolidCraft command?
    Search `docs/vendor/solidcraft/0.42.0/commands.md` locally.
-3. Need exact parameters or JSON schema?
+3. Need exact parameters or JSON schema not cached locally yet?
    Query the pinned local CLI:
    `solidcraft-cli exec engine.describe '{"command":"<id>"}'`.
-4. Only use upstream/web documentation if the pinned local snapshot/runtime
+   When that information is useful for repeated Forge work, add it to the
+   version-pinned local cache so the next lookup does not require introspection.
+4. Only use upstream/web documentation when the pinned local snapshot/runtime
    cannot answer the question.
 
 Do not fetch the SolidCraft website for ordinary compiler/qualification work.
