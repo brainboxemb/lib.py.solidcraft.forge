@@ -168,17 +168,21 @@ component definition, so placement never becomes a model parameter. There is no
 separate public `Position` object and no occurrence `.at()`, `.move()` or
 `.rotate()` for initial placement.
 
-The compiler encodes Placement in native creation/copy commands where
-SolidCraft 0.42 can do so without changing the declared pose. A concrete
-unrotated copy may use `occurrence.copy(..., translate=...)`. A copy with
-orientation is created at native identity and receives translation plus
-rotation together in `occurrence.move`; otherwise SolidCraft would rotate the
-pre-applied copy translation. Symbolic copy translation likewise uses the
-native move fallback. These lowering choices do not change the
-constructor-time Forge semantics.
+The compiler keeps ordinary Placement replay-first. SolidCraft 0.42
+`component.create` has no pose input, so one occurrence of a reusable
+definition must currently be at identity and is used as SolidCraft's implicit
+first occurrence. Additional concrete, unrotated placements lower directly to
+`occurrence.copy(..., translate=...)`.
 
-The rotated-copy correction is recorded in
-[change 0002](changes/0002-copy-placement-with-rotation.md).
+Forge does not use a later `occurrence.move` when doing so would require
+guessing a SolidCraft-generated occurrence name. Ordinary symbolic copy
+Placement, copied rotation, or a reusable definition with no identity
+occurrence is therefore rejected until SolidCraft has a qualified replay-safe
+selector for that case.
+
+This backend support correction is recorded in
+[change 0009](changes/0009-replay-first-placement.md). Change 0002 remains
+historical evidence for the earlier rotated-copy fallback.
 
 Placement must not create a `joint.create` as an implementation workaround.
 Attachments remain explicit relationships and Placement expressions reuse
