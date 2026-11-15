@@ -8,4 +8,4 @@ from pythonscad import *
 
 arm = cube([10, 40, 10], center=True).up(5)
 marker = cube([10, 10, 10], center=True).translate([0, 20, 5])
-show(arm | marker)
+model = arm | marker
