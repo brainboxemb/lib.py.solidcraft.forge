@@ -168,52 +168,98 @@ def _ordinary_replay_order(instances, component_name, relationship_occurrence_id
     return ordered, True
 
 
+def _relationship_replay_order(instances, component_name):
+    """Choose the implicit first occurrence for a relationship definition."""
+    for instance in instances:
+        if instance.placement.rotation is not None:
+            raise ModelError(
+                f"{component_name}: rotated relationship Placement is not "
+                "replay-safe in SolidCraft 0.42"
+            )
+
+    first = next(
+        (instance for instance in instances if _identity_placement(instance)),
+        None,
+    )
+    if first is None:
+        first = next(
+            (
+                instance
+                for instance in instances
+                if instance.attachment is not None
+                and not instance.attachment.as_built
+            ),
+            None,
+        )
+    if first is None:
+        raise ModelError(
+            f"{component_name}: relationship lowering needs either an identity "
+            "first occurrence or a non-as-built attached occurrence"
+        )
+
+    ordered = [first] + [
+        instance
+        for instance in instances
+        if instance.occurrence_id != first.occurrence_id
+    ]
+
+    for index, instance in enumerate(ordered):
+        attachment = instance.attachment
+        if index == 0:
+            if attachment is None or attachment.as_built:
+                if not _identity_placement(instance):
+                    raise ModelError(
+                        f"{component_name}: first relationship occurrence "
+                        "cannot keep non-identity Placement in replay-first mode"
+                    )
+            continue
+
+        if attachment is not None and not attachment.as_built:
+            continue
+
+        position = instance.placement.position
+        if parameters_in(*position):
+            raise ModelError(
+                f"{component_name}: symbolic Placement of a relationship target "
+                "or as-built occurrence is not replay-safe in SolidCraft 0.42"
+            )
+
+    return ordered
+
+
+def _occurrence_labels(assembly, names):
+    """Build stable human labels without using SolidCraft browser numbering."""
+    totals = {}
+    for instance in assembly.instances:
+        key = instance.definition.key
+        totals[key] = totals.get(key, 0) + 1
+
+    seen = {}
+    labels = {}
+    for instance in assembly.instances:
+        key = instance.definition.key
+        seen[key] = seen.get(key, 0) + 1
+        component_name = names[key]
+        if instance.name is not None:
+            label = instance.name
+        elif totals[key] == 1:
+            label = component_name
+        else:
+            label = f"{component_name} occurrence {seen[key]}"
+        labels[instance.occurrence_id] = label
+    return labels
+
+
 def compile_assembly(value, name):
     """Compile a root assembly into reusable components and occurrences."""
     assembly = _as_assembly(value)
     names = _definition_names(assembly)
     commands = []
-    occurrence_names = {}
-    custom_origin_names = {}
+    occurrence_refs = {}
+    native_seed_positions = {}
+    occurrence_labels = _occurrence_labels(assembly, names)
     inherited_parameters = {}
     shared_materials = {}
-
-    # Unrotated named AnchorFrames can be supplied directly to joint.create
-    # as an inline occurrence/point/z/x reference. That avoids creating a
-    # persistent native joint.origin (and its visible RGB axes). Keep the
-    # existing native-origin route only for explicitly rotated occurrences,
-    # where SolidCraft can own the local-to-world transform.
-    required_custom_origins = set()
-    for instance in assembly.instances:
-        attachment = instance.attachment
-        if attachment is None or attachment.as_built:
-            continue
-        if (
-            isinstance(attachment.parent, str)
-            and attachment.target.placement.rotation is not None
-        ):
-            parent_anchor = dict(attachment.target.definition.anchors)[
-                attachment.parent
-            ]
-            if isinstance(parent_anchor, AnchorTopology):
-                raise ModelError(
-                    "AnchorTopology on explicitly rotated occurrences "
-                    "is not supported yet"
-                )
-            required_custom_origins.add(
-                (attachment.target.occurrence_id, attachment.parent)
-            )
-        if (
-            isinstance(attachment.child, str)
-            and instance.placement.rotation is not None
-        ):
-            child_anchor = dict(instance.definition.anchors)[attachment.child]
-            if isinstance(child_anchor, AnchorTopology):
-                raise ModelError(
-                    "AnchorTopology on explicitly rotated occurrences "
-                    "is not supported yet"
-                )
-            required_custom_origins.add((instance.occurrence_id, attachment.child))
 
     # Named groups are actual empty native components, not just labels in
     # Python. Child component definitions are created under their parent.
@@ -241,6 +287,11 @@ def compile_assembly(value, name):
         attachment = instance.attachment
         if attachment is None:
             continue
+        if attachment.target.attachment is not None:
+            raise ModelError(
+                "chained attachments are not replay-safe yet; attach children "
+                "to an occurrence that is not itself attached"
+            )
         relationship_occurrence_ids.add(instance.occurrence_id)
         relationship_occurrence_ids.add(attachment.target.occurrence_id)
 
@@ -250,11 +301,19 @@ def compile_assembly(value, name):
 
     for key, instances in by_definition.items():
         component_name = names[key]
-        instances, ordinary_replay_placement = _ordinary_replay_order(
-            instances,
-            component_name,
-            relationship_occurrence_ids,
+        relationship_definition = any(
+            instance.occurrence_id in relationship_occurrence_ids
+            for instance in instances
         )
+        if relationship_definition:
+            instances = _relationship_replay_order(instances, component_name)
+            ordinary_replay_placement = False
+        else:
+            instances, ordinary_replay_placement = _ordinary_replay_order(
+                instances,
+                component_name,
+                relationship_occurrence_ids,
+            )
         definition = instances[0].definition
         parent_names = {instance.group_name for instance in instances}
         if len(parent_names) != 1:
