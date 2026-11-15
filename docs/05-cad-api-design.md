@@ -37,7 +37,7 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch supported by the selected target face. The local 2D sketch origin is the centre of that target face. |
 | profile inside a sketch | `sketch.add(profile, anchor=CENTER)` | Place the profile's selected 2D anchor on the sketch origin. CENTER is the default semantic centring operation; numeric offset is not a centring substitute. |
 | deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. Use only when the design actually calls for an offset. |
-| occurrence placement | `child.move(x=..., y=..., z=...)` | Place a reusable component occurrence. Numeric and symbolic coordinates lower to native `occurrence.move`; placement does not create a joint. |
+| occurrence placement | `placement=Placement(...)`, `child.at(...)`, `child.move(...)` | Describe a reusable component occurrence placement. The compiler chooses native lowering from the final Placement; placement does not create a joint. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
 ### `at()`
@@ -100,44 +100,43 @@ instead.
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
 
-### `move()`
+### `Placement`, `at()` and `move()`
 
-`move()` on a reusable component occurrence is placement, not an assembly
-relationship. This distinction is part of the Forge API contract.
+Reusable occurrences carry a Forge `Placement`.
 
 ```python
-left = Block()
-right = Block().move(x=self.offset)
+left = Block(placement=Placement(x=-50))
+right = left.copy().at(x=50)
 assembly = left + right
 ```
 
-For SolidCraft 0.42.0, Forge lowers both numeric and symbolic occurrence
-placement directly to `occurrence.move`. A symbolic translation is emitted as
-a native length expression, for example:
+`at(...)` sets an absolute occurrence position. `move(...)` applies a
+relative change to the existing Placement. Neither method prescribes a
+same-named SolidCraft command.
 
-```json
-{"command":"occurrence.move","params":{
-  "occurrence":"Block:2",
-  "translate":["offset",0,0]
-}}
-```
+The compiler should use creation-time native placement when the final Placement
+can be represented there. For example, a concrete extra occurrence can lower
+directly through `occurrence.copy(..., translate=[...])` without a follow-up
+move.
 
-SolidCraft stores such translations as expressed occurrence moves and evaluates
-them again when their parameters change. Therefore a saved design remains
-associative without Forge creating a hidden planar joint.
+Parameter-driven placement is a separate capability because SolidCraft 0.42
+allows expressions in `occurrence.move.translate` but not in
+`occurrence.copy.translate`. It therefore also requires reliable runtime
+occurrence identity.
 
 The semantic boundary is deliberate:
 
-- `.move(...)` changes where an occurrence is placed;
+- `Placement` / `.at(...)` / `.move(...)` describe where an occurrence is;
 - `.attach(...)` creates an explicit assembly relationship;
-- Forge must not create visible `joint.create` records merely to implement a
-  symbolic `.move(...)`;
-- if a moved occurrence is subsequently attached, its move is only a seed pose
-  for the joint solver; the explicit attachment owns the relationship.
+- placement must not create a `joint.create` record merely as an
+  implementation workaround;
+- generated occurrence labels such as `Block:2` are not Forge-owned identity.
 
-This rule replaces the older workaround for SolidCraft 0.30.1, where symbolic
-`occurrence.move` translations were not available and Forge used a planar
-placement joint to preserve associativity.
+Historical note: on 2026-11-14 Forge temporarily lowered symbolic placement to
+planar joints while working around an assumed SolidCraft 0.30.1 limitation.
+That was an implementation workaround, not an approved Forge API design
+decision. It is documented in the architecture history only and must not be
+used as precedent.
 
 ### `attach()`
 

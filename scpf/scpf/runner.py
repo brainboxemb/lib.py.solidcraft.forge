@@ -18,10 +18,10 @@ import sys
 import warnings
 
 from . import core
-from .compiler import compile_model
+from .compiler import ModelError, compile_model
 from .core import Expression, Parameter, Shape, command_value, parameters_in, pv
 from .assembly import compile_assembly
-from .model_objects import Assembly, ModelDefinition, ModelInstance
+from .model_objects import Assembly, ModelDefinition, ModelInstance, Placement
 from .explicit_sketch import Sketch
 
 
@@ -369,6 +369,11 @@ def _design_object(cls, *args, **kwargs):
 def _reusable_model_object(cls, *args, **kwargs):
     """Build a nested user model as a reusable component definition."""
     object_name = kwargs.pop("name", None)
+    placement = kwargs.pop("placement", None)
+    if placement is None:
+        placement = Placement()
+    elif not isinstance(placement, Placement):
+        raise TypeError("component placement must be a Placement")
     if object_name is not None:
         if (
             not isinstance(object_name, str)
@@ -396,6 +401,7 @@ def _reusable_model_object(cls, *args, **kwargs):
             input_bindings=bindings,
             anchors=anchors,
         ),
+        placement=placement,
         name=object_name,
     )
 
@@ -597,6 +603,7 @@ def run_script(path: str | Path) -> dict:
         "AnchorTopology": core.AnchorTopology,
         "Axis": core.Axis,
         "Shape": core.Shape,
+        "Placement": Placement,
         "up": core.up,
         "down": core.down,
         "left": core.left,
@@ -658,6 +665,16 @@ def run_script(path: str | Path) -> dict:
                 compile(ast.Expression(body=last.value), str(path), "eval"), context
             )
         elif root_is_class or root_is_component:
+            root_has_placement = any(
+                keyword.arg == "placement"
+                for keyword in last.value.keywords
+            )
+            if root_has_placement:
+                raise ModelError(
+                    "root component placement requires the identity-aware "
+                    "occurrence executor; this foundational capability is not "
+                    "qualified yet"
+                )
             # A reusable @component source remains directly runnable as a
             # standalone design. Compile its original model class as the root
             # shape, while imported/nested uses keep the component factory.

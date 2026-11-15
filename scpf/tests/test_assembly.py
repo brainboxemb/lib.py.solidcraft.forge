@@ -27,10 +27,9 @@ class AssemblyTests(unittest.TestCase):
         copies = [c for c in commands if c["command"] == "occurrence.copy"]
         self.assertEqual(len(copies), 1)
         self.assertEqual(copies[0]["params"]["component"], "Block")
-        self.assertNotIn("translate", copies[0]["params"])
+        self.assertEqual(copies[0]["params"]["translate"], [40.0, 0.0, 0.0])
         placements = [c["params"] for c in commands if c["command"] == "occurrence.move"]
-        self.assertEqual(placements[-1]["occurrence"], "Block:2")
-        self.assertEqual(placements[-1]["translate"], [40.0, 0.0, 0.0])
+        self.assertFalse(any(p["occurrence"] == "Block:2" for p in placements))
         box = next(c for c in commands if c["command"] == "solid.box")
         self.assertIn("Block_length", str(box["params"]))
         self.assertIn("Block_width", str(box["params"]))
@@ -45,6 +44,78 @@ class AssemblyTests(unittest.TestCase):
             joint["params"]["b"],
             {"occurrence": "Block:2", "face": [20.0, 0.0, 5.0]},
         )
+
+    def test_component_placement_keyword_is_occurrence_data(self):
+        with tempfile.TemporaryDirectory() as directory:
+            script = Path(directory) / "placement_keyword.py"
+            script.write_text(
+                "class Panel:\n"
+                "    width = 20.0\n"
+                "    def build(self):\n"
+                "        return Box(self.width, 10, 2)\n"
+                "class Display:\n"
+                "    def build(self):\n"
+                "        left = Panel(placement=Placement(x=-30))\n"
+                "        right = left.copy().at(x=30)\n"
+                "        return left + right\n"
+                "Display()\n",
+                encoding="utf-8",
+            )
+            commands = run_script(script)["commands"]
+
+        parameters = [
+            command["params"]["name"]
+            for command in commands
+            if command["command"] == "parameters.add"
+        ]
+        self.assertEqual(parameters, ["Panel_width"])
+
+        copy = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.copy"
+        )
+        self.assertEqual(copy["translate"], [30.0, 0.0, 0.0])
+        self.assertFalse(any(
+            command["command"] == "occurrence.move"
+            and command["params"]["occurrence"] == "Panel:2"
+            for command in commands
+        ))
+
+    def test_root_component_placement_is_explicit_capability_gap(self):
+        from scpf.compiler import ModelError
+
+        with tempfile.TemporaryDirectory() as directory:
+            script = Path(directory) / "root_placement.py"
+            script.write_text(
+                "class Block:\n"
+                "    def build(self):\n"
+                "        return Box(20, 10, 2)\n"
+                "Block(placement=Placement(x=50))\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(
+                ModelError,
+                "identity-aware occurrence executor",
+            ):
+                run_script(script)
+
+    def test_at_is_absolute_and_move_is_relative_placement(self):
+        from scpf import Box, Placement, component
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        original = Panel(placement=Placement(x=10, y=5))
+        absolute = original.at(x=40, y=0, z=3)
+        relative = absolute.move(x=2, z=7)
+
+        self.assertEqual(original.placement.position, (10, 5, 0))
+        self.assertEqual(absolute.placement.position, (40, 0, 3))
+        self.assertEqual(relative.placement.position, (42, 0, 10))
+        self.assertIsNone(relative.attachment)
 
     def test_copies_of_placed_occurrences_use_relative_native_offsets(self):
         """A copied occurrence inherits its source transform."""
@@ -66,11 +137,10 @@ class AssemblyTests(unittest.TestCase):
         copy = next(c["params"] for c in commands
                     if c["command"] == "occurrence.copy")
         self.assertEqual(copy["component"], "SideWall")
-        self.assertNotIn("translate", copy)
+        self.assertEqual(copy["translate"], [429.5, 25.0, 0.0])
         moves = [c["params"] for c in commands if c["command"] == "occurrence.move"]
-        self.assertEqual([m["occurrence"] for m in moves], ["SideWall:1", "SideWall:2"])
+        self.assertEqual([m["occurrence"] for m in moves], ["SideWall:1"])
         self.assertEqual(moves[0]["translate"], [-429.5, 25.0, 0.0])
-        self.assertEqual(moves[1]["translate"], [429.5, 25.0, 0.0])
 
     def test_copy_resets_inherited_rotation_when_target_is_unrotated(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -90,14 +160,14 @@ class AssemblyTests(unittest.TestCase):
             commands = run_script(script)["commands"]
         copy = next(c["params"] for c in commands
                     if c["command"] == "occurrence.copy")
-        self.assertNotIn("translate", copy)
+        self.assertEqual(copy["translate"], [40.0, 0.0, 0.0])
         commands_after_component = [c for c in commands
                                     if c["command"] in ("occurrence.copy", "occurrence.move")]
         self.assertEqual([c["command"] for c in commands_after_component],
                          ["occurrence.copy", "occurrence.move", "occurrence.move"])
         moves = [c["params"] for c in commands_after_component[1:]]
         self.assertEqual([m["translate"] for m in moves],
-                         [[-40.0, 0.0, 0.0], [40.0, 0.0, 0.0]])
+                         [[-40.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         self.assertEqual([m["angle"] for m in moves], ["180 deg", "0 deg"])
         self.assertTrue(all("matrix" not in m and "to" not in m for m in moves))
 
@@ -184,12 +254,12 @@ class AssemblyTests(unittest.TestCase):
         first = ModelInstance(ModelDefinition("Panel", (), Box(20, 10, 2)))
         second = first.copy().move(x=30).rotate(axis=(0, 0, 1), degrees=180)
         self.assertIs(first.definition, second.definition)
-        self.assertIsNone(first.rotation)
-        self.assertEqual(second.translation, (30, 0, 0))
-        self.assertEqual(second.rotation, ((0.0, 0.0, 1.0), 180.0))
+        self.assertIsNone(first.placement.rotation)
+        self.assertEqual(second.placement.position, (30, 0, 0))
+        self.assertEqual(second.placement.rotation, ((0.0, 0.0, 1.0), 180.0))
         self.assertIsNone(second.attachment)
-        self.assertEqual(second.copy().rotation, second.rotation)
-        self.assertEqual(second.move(x=10).translation, (40, 0, 0))
+        self.assertEqual(second.copy().placement.rotation, second.placement.rotation)
+        self.assertEqual(second.move(x=10).placement.position, (40, 0, 0))
 
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "rotation.py"
@@ -212,7 +282,13 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(len(rotated), 1)
         self.assertEqual(rotated[0]["occurrence"], "Panel:2")
         self.assertNotIn("to", rotated[0])
-        self.assertEqual(rotated[0]["translate"], [30.0, 0.0, 0.0])
+        copy = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.copy"
+        )
+        self.assertEqual(copy["translate"], [30.0, 0.0, 0.0])
+        self.assertEqual(rotated[0]["translate"], [0.0, 0.0, 0.0])
         self.assertEqual(rotated[0]["axis"], [0.0, 0.0, 1.0])
         self.assertEqual(rotated[0]["angle"], "180 deg")
         self.assertNotIn("matrix", rotated[0])
@@ -224,15 +300,15 @@ class AssemblyTests(unittest.TestCase):
         panel = ModelInstance(ModelDefinition("Panel", (), Box(20, 10, 2)))
 
         self.assertEqual(
-            panel.rotate(X, 180).rotation,
+            panel.rotate(X, 180).placement.rotation,
             ((1.0, 0.0, 0.0), 180.0),
         )
         self.assertEqual(
-            panel.rotate(Y, 90).rotation,
+            panel.rotate(Y, 90).placement.rotation,
             ((0.0, 1.0, 0.0), 90.0),
         )
         self.assertEqual(
-            panel.rotate(Z, -90).rotation,
+            panel.rotate(Z, -90).placement.rotation,
             ((0.0, 0.0, 1.0), -90.0),
         )
 
@@ -281,12 +357,12 @@ class AssemblyTests(unittest.TestCase):
         self.assertIsInstance(first, ModelInstance)
         self.assertIsInstance(second, ModelInstance)
         self.assertEqual(first.definition.key, second.definition.key)
-        self.assertEqual(second.translation, (20, 0, 0))
+        self.assertEqual(second.placement.position, (20, 0, 0))
         with self.assertRaisesRegex(TypeError, "model class"):
             component(42)
 
-    def test_copies_start_at_origin_before_any_native_placement(self):
-        """Five copies: only native SolidCraft operations, no matrix algebra."""
+    def test_numeric_copies_receive_position_during_native_creation(self):
+        """Concrete copy positions lower at occurrence.copy creation time."""
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "five.py"
             script.write_text(
@@ -308,12 +384,17 @@ class AssemblyTests(unittest.TestCase):
             "occurrence.copy", "occurrence.move")]
         self.assertEqual([c["command"] for c in placements],
                          ["occurrence.copy"] * 4 + ["occurrence.move"] * 5)
-        self.assertTrue(all(c["params"] == {"component": "Panel"}
-                            for c in placements[:4]))
-        self.assertEqual([c["params"]["translate"] for c in placements[4:]],
-                         [[0.0, 0.0, 160.0], [-320.0, 0.0, 160.0],
-                          [-160.0, 0.0, 160.0], [160.0, 0.0, 160.0],
-                          [320.0, 0.0, 160.0]])
+        self.assertEqual(
+            [c["params"]["translate"] for c in placements[:4]],
+            [[-320.0, 0.0, 160.0], [-160.0, 0.0, 160.0],
+             [160.0, 0.0, 160.0], [320.0, 0.0, 160.0]],
+        )
+        self.assertEqual(
+            [c["params"]["translate"] for c in placements[4:]],
+            [[0.0, 0.0, 160.0], [0.0, 0.0, 0.0],
+             [0.0, 0.0, 0.0], [0.0, 0.0, 0.0],
+             [0.0, 0.0, 0.0]],
+        )
         self.assertTrue(all(c["params"]["axis"] == [1.,0.,0.]
                             and c["params"]["angle"] == "90 deg"
                             for c in placements[4:]))
@@ -783,8 +864,8 @@ class AssemblyTests(unittest.TestCase):
         self.assertIsInstance(brackets, Assembly)
         self.assertEqual(len(brackets.instances), 2)
         self.assertIs(brackets.instances[0], frame)
-        self.assertEqual(brackets.instances[1].translation[0].name, "spacing")
-        self.assertEqual(brackets.instances[1].translation[1:], (0, 0))
+        self.assertEqual(brackets.instances[1].placement.position[0].name, "spacing")
+        self.assertEqual(brackets.instances[1].placement.position[1:], (0, 0))
 
     def test_imported_assembly_class_uses_object_syntax(self):
         from scpf.core import Box, Parameter
@@ -818,8 +899,8 @@ class AssemblyTests(unittest.TestCase):
 
         self.assertIsInstance(row, Assembly)
         self.assertEqual(len(row.instances), 2)
-        self.assertEqual(row.instances[1].translation[0].name, "panel_pitch")
-        self.assertEqual(row.instances[1].translation[1:], (0, 0))
+        self.assertEqual(row.instances[1].placement.position[0].name, "panel_pitch")
+        self.assertEqual(row.instances[1].placement.position[1:], (0, 0))
         self.assertNotIn(
             "width",
             dict(row.instances[0].definition.parameters),
@@ -1672,13 +1753,17 @@ class AssemblyTests(unittest.TestCase):
 
         commands = compile_assembly(base + child, "AsBuiltAttach")["commands"]
 
-        move = next(
+        copy = next(
             command["params"]
             for command in commands
-            if command["command"] == "occurrence.move"
-            and command["params"]["occurrence"] == "Block:2"
+            if command["command"] == "occurrence.copy"
         )
-        self.assertEqual(move["translate"], [40.0, 0.0, 0.0])
+        self.assertEqual(copy["translate"], [40.0, 0.0, 0.0])
+        self.assertFalse(any(
+            command["command"] == "occurrence.move"
+            and command["params"]["occurrence"] == "Block:2"
+            for command in commands
+        ))
 
         joint = next(
             command["params"]
@@ -1741,7 +1826,7 @@ class AssemblyTests(unittest.TestCase):
             gap=gap,
         )
 
-        self.assertEqual(child.translation, (10.0, -2.0, 15.0))
+        self.assertEqual(child.placement.position, (10.0, -2.0, 15.0))
         self.assertIs(child.attachment.gap, gap)
         self.assertEqual(child.attachment.offset, (10, -2))
 
@@ -1759,7 +1844,7 @@ class AssemblyTests(unittest.TestCase):
             child=Anchor.LEFT,
             offset=(0, -wood + 12),
         )
-        self.assertEqual(right.translation, (40.0, 0.0, -6.0))
+        self.assertEqual(right.placement.position, (40.0, 0.0, -6.0))
 
         commands = compile_assembly(left + right, "ParametricOffset")["commands"]
         parameter = next(

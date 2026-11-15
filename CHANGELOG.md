@@ -12,7 +12,12 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 - Nothing yet.
 
-## [0.2.0] - 2026-11-15
+## [0.2.0] - 2026-11-15 — WITHDRAWN
+
+This release was published before Forge's foundational create/place/copy/attach
+model, occurrence identity strategy and replay contract were fully designed and
+qualified. It is retained in Git history but must not be used as a downstream
+CAD baseline.
 
 Breaking API cleanup plus native occurrence-placement correction.
 

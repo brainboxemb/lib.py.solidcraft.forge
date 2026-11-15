@@ -141,7 +141,7 @@ def compile_assembly(value, name):
             continue
         if (
             isinstance(attachment.parent, str)
-            and attachment.target.rotation is not None
+            and attachment.target.placement.rotation is not None
         ):
             parent_anchor = dict(attachment.target.definition.anchors)[
                 attachment.parent
@@ -156,7 +156,7 @@ def compile_assembly(value, name):
             )
         if (
             isinstance(attachment.child, str)
-            and instance.rotation is not None
+            and instance.placement.rotation is not None
         ):
             child_anchor = dict(instance.definition.anchors)[attachment.child]
             if isinstance(child_anchor, AnchorTopology):
@@ -248,7 +248,7 @@ def compile_assembly(value, name):
         )
         first_has_symbolic_move = (
             instances[0].attachment is None
-            and bool(parameters_in(*instances[0].translation))
+            and bool(parameters_in(*instances[0].placement.position))
         )
         create_params = {
             "name": component_name,
@@ -273,20 +273,30 @@ def compile_assembly(value, name):
             commands.append(command)
         commands.append(_command("component.activate", component="root"))
 
-        # Start every occurrence at the component's native origin and
-        # orientation. Copies are created BEFORE we move the first one.
-        # This avoids inheriting a moved/rotated source placement, and
-        # avoids any manual matrix, inverse or rotation composition.
+        # Copies are created while the definition's first occurrence is still
+        # at native identity. A concrete Placement can therefore be supplied
+        # directly to occurrence.copy without first predicting the new
+        # occurrence name and moving it afterwards.
+        #
+        # Parameter-driven placement and rotation still need a later native
+        # operation; those are separate capabilities and are deliberately not
+        # disguised as creation-time placement.
         occurrences = []
+        copy_positioned = set()
         for index, instance in enumerate(instances, start=1):
             native_name = f"{component_name}:{index}"
             occurrence_names[id(instance)] = native_name
             occurrences.append((instance, native_name))
             if index > 1:
-                commands.append(_command(
-                    "occurrence.copy",
-                    component=component_name,
-                ))
+                position = instance.placement.position
+                symbolic_position = bool(parameters_in(*position))
+                params = {"component": component_name}
+                if not symbolic_position:
+                    concrete_position = [pv(value) for value in position]
+                    if any(concrete_position):
+                        params["translate"] = concrete_position
+                    copy_positioned.add(id(instance))
+                commands.append(_command("occurrence.copy", **params))
 
         # Only explicitly rotated custom anchors need a persistent native
         # joint.origin. Author those while occurrences are still at identity;
@@ -299,34 +309,42 @@ def compile_assembly(value, name):
                     continue
                 origin_name = f"{native_name}.{anchor_name}"
                 custom_origin_names[anchor_key] = origin_name
+                frame_origin = list(frame.origin)
+                if id(instance) in copy_positioned:
+                    frame_origin = [
+                        frame.origin[i] + pv(instance.placement.position[i])
+                        for i in range(3)
+                    ]
                 commands.append(_command(
                     "joint.origin",
                     name=origin_name,
                     occurrence=native_name,
                     frame={
-                        "origin": list(frame.origin),
+                        "origin": frame_origin,
                         "z": list(frame.z),
                         "x": list(frame.x),
                     },
                 ))
 
-        # SolidCraft 0.42.0 accepts length expressions directly in
-        # occurrence.move.translate and keeps them as expressed_moves. That is
-        # the native representation of a parametric occurrence placement:
-        # move() places an occurrence; it does not create an assembly joint.
-        #
-        # An occurrence that will be attached still receives only a numeric
-        # seed pose. The explicit Attachment below owns the relationship and
-        # the native joint solver owns its final placement.
+        # Remaining placement work is only what creation-time placement
+        # cannot express: the definition's first occurrence, symbolic position,
+        # or rotation. Public move()/at()/Placement semantics do not prescribe
+        # this native command choice.
         for instance, native_name in occurrences:
-            symbolic_move = bool(parameters_in(*instance.translation))
+            position = instance.placement.position
+            rotation = instance.placement.rotation
+            positioned_at_copy = id(instance) in copy_positioned
+            symbolic_position = bool(parameters_in(*position))
             expressed_move = (
-                symbolic_move and instance.attachment is None
+                symbolic_position and instance.attachment is None
             )
-            if instance.rotation is None and not any(instance.translation):
+
+            if rotation is None and positioned_at_copy:
+                continue
+            if rotation is None and not any(position):
                 continue
 
-            for parameter in parameters_in(*instance.translation):
+            for parameter in parameters_in(*position):
                 if not any(
                     command["command"] == "parameters.add"
                     and command["params"]["name"] == parameter.name
@@ -338,16 +356,19 @@ def compile_assembly(value, name):
                         expression=f"{parameter.value:g} mm",
                     ))
 
+            if positioned_at_copy:
+                translate = [0.0, 0.0, 0.0]
+            elif expressed_move:
+                translate = list(position)
+            else:
+                translate = [pv(value) for value in position]
+
             params = {
                 "occurrence": native_name,
-                "translate": (
-                    list(instance.translation)
-                    if expressed_move
-                    else [pv(value) for value in instance.translation]
-                ),
+                "translate": translate,
             }
-            if instance.rotation is not None:
-                axis, degrees = instance.rotation
+            if rotation is not None:
+                axis, degrees = rotation
                 params.update(axis=list(axis), angle=f"{degrees:g} deg")
             if (
                 instance is assembly.instances[0]
@@ -378,7 +399,7 @@ def compile_assembly(value, name):
 
         def custom_anchor_reference(model, anchor, occurrence):
             if isinstance(anchor, (AnchorFrame, AnchorTopology)):
-                if model.rotation is not None:
+                if model.placement.rotation is not None:
                     kind = type(anchor).__name__
                     raise ModelError(
                         f"direct {kind} attachments on explicitly rotated "
@@ -387,7 +408,7 @@ def compile_assembly(value, name):
                 custom = anchor
             else:
                 custom = dict(model.definition.anchors)[anchor]
-                if model.rotation is not None:
+                if model.placement.rotation is not None:
                     if isinstance(custom, AnchorTopology):
                         raise ModelError(
                             "AnchorTopology on explicitly rotated occurrences "
@@ -400,7 +421,7 @@ def compile_assembly(value, name):
                     if point is None:
                         return None
                     return [
-                        point[i] + model.translation[i]
+                        point[i] + model.placement.position[i]
                         for i in range(3)
                     ]
 
@@ -420,7 +441,7 @@ def compile_assembly(value, name):
             return {
                 "occurrence": occurrence,
                 "point": [
-                    custom.origin[i] + model.translation[i]
+                    custom.origin[i] + model.placement.position[i]
                     for i in range(3)
                 ],
                 "z": list(custom.z),
@@ -450,7 +471,7 @@ def compile_assembly(value, name):
             child_origin = {
                 "occurrence": child_occurrence,
                 "point": [
-                    child_point[i] + instance.translation[i]
+                    child_point[i] + instance.placement.position[i]
                     for i in range(3)
                 ],
                 "z": list(_corner_normal(attachment.child)),

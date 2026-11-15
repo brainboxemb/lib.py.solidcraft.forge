@@ -16,6 +16,7 @@ from scpf import (
     Direction,
     Edges,
     Faces,
+    Placement,
     Shape,
     Sketch,
     assembly,
@@ -170,6 +171,13 @@ METHOD_REFERENCES = (
         guide_anchor="collection",
     ),
     _method(
+        "Occurrence.at",
+        "Occurrence.at()",
+        ModelInstance.at,
+        guide="assembly-basics",
+        guide_anchor="collection",
+    ),
+    _method(
         "Occurrence.move",
         "Occurrence.move()",
         ModelInstance.move,
@@ -257,7 +265,7 @@ GROUP_REFERENCES = (
         "parameters-positioning",
         "Parameters and positioning helpers",
         (
-            "Parameter", "X", "Y", "Z",
+            "Parameter", "Placement", "X", "Y", "Z",
             "up", "down", "left", "right", "front", "back",
             "half", "midpoint", "pv",
         ),
