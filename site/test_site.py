@@ -308,6 +308,10 @@ def check(
         assert (site / "qualification" / slug / "reference-pybosl2.py").is_file()
         assert 'href="reference-pythonscad.py"' in page_text
         assert 'href="reference-pybosl2.py"' in page_text
+        assert "Rendered comparison" in page_text
+        reference_code_pos = page_text.index('href="reference-pythonscad.py"')
+        reference_render_pos = page_text.index("Rendered comparison")
+        assert reference_code_pos < reference_render_pos, slug
         assert (site / "qualification" / slug / "commands.json").is_file()
         if require_references:
             manifest_case = qualification_manifest["cases"][slug]
