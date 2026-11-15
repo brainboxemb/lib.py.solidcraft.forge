@@ -555,13 +555,16 @@ def _model_factory(cls, include=()):
 def component(cls=None, *, include=()):
     """Declare one reusable physical component definition.
 
-    Reusable component defaults stay fixed unless explicitly published with
-    include=. Parent Parameter/Expression inputs always remain symbolic and
-    reuse the existing parent dependency.
+    Use when:
+        Decorate a model class whose build() result represents one reusable
+        physical part. Child defaults stay fixed unless explicitly published
+        with include=. Parent Parameter/Expression inputs remain symbolic.
 
-    include=("radius",) publishes selected component-local defaults,
-    include="*" publishes all public defaults, and a mapping can publish one
-    child default under a chosen shared model parameter name.
+    Limits:
+        build() must produce one Shape when reused as a component.
+        include=("radius",) publishes selected defaults, include="*" publishes
+        all public defaults, and a mapping publishes a selected child default
+        under a chosen shared model parameter name.
     """
     def decorate(model_cls):
         if not isinstance(model_cls, type) or not callable(
