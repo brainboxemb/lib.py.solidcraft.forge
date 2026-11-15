@@ -9,7 +9,7 @@ source that answers the task:
 | --- | --- |
 | Public Forge API lookup/semantics | `docs/agent/forge-api.json` |
 | Exact Forge names/signatures/enums | relevant code in `scpf/scpf/` |
-| Qualification rules | `docs/qualification/README.md` |
+| Qualification rules | `qualification/README.md` |
 | SolidCraft command/API lookup | `docs/agent/solidcraft.md` |
 | SolidCraft version upgrade | `docs/qualification/solidcraft-upgrade-protocol.md` |
 | PythonSCAD / pyBOSL2 qualification reference | `docs/agent/reference-libraries.md` |
