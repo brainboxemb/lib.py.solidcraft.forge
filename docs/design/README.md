@@ -13,3 +13,24 @@ General cross-cutting public API rules remain in
 
 For the SCPF 0.3.0 occurrence-placement redesign, use
 [`0001-position-api-design.md`](../changes/0001-position-api-design.md).
+
+
+## Foundational audit
+
+The current compiler/object-model audit is recorded in
+[the 2026-11 foundational audit](audit-2026-11.md).
+
+The target compiler boundaries and invariants are defined in
+[Forge compiler architecture and invariants](forge-architecture.md).
+
+The audit is intentionally performed against `main`; exploratory PRs are
+evidence only and are not implementation sources.
+
+
+The dependency-ordered implementation sequence is in
+[the foundational remediation plan](remediation-plan.md). Product changes must
+follow that order unless this architecture is deliberately revised.
+
+
+The verification layers and migration of current tests are defined in
+[Forge test and qualification architecture](test-architecture.md).
