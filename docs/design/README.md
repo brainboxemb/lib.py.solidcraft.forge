@@ -1,40 +1,15 @@
 # Forge CAD design
 
-This directory contains the architecture and design decisions that must exist
-before Forge compiler changes are implemented.
+Normative design changes are recorded chronologically in
+[`docs/changes/`](../changes/README.md).
 
-The public API documentation explains *how a model is written*. These design
-documents explain *what Forge means*, *which SolidCraft capability implements
-that meaning*, and *which invariants the compiler must preserve*.
+The numbered change records contain the use case, public API decision, native
+SolidCraft command contract, lowering rules and required qualification evidence.
+A later design change must add a new numbered record instead of rewriting an
+older decision.
 
-## Documents
+General cross-cutting public API rules remain in
+[`docs/05-cad-api-design.md`](../05-cad-api-design.md).
 
-1. [Foundational CAD model](01-foundational-cad-model.md)
-   - component definition;
-   - occurrence placement;
-   - attachment relationships;
-   - the basic create/place/copy/attach use cases;
-   - public Placement semantics.
-
-2. [SolidCraft execution and occurrence identity](02-execution-and-identity.md)
-   - native SolidCraft 0.42 capabilities;
-   - runtime occurrence ids and paths;
-   - static replay limitations;
-   - lowering rules and forbidden fallbacks.
-
-## Change rule
-
-A compiler change that introduces a new CAD representation or fallback must be
-designed here first. The required order is:
-
-1. state the CAD use case;
-2. identify the native SolidCraft capability and its limitations;
-3. compare alternatives;
-4. record the selected design and rejected alternatives;
-5. define qualification evidence;
-6. implement;
-7. release only after the foundational qualification is green.
-
-An implementation problem is not permission to silently substitute another CAD
-concept. In particular, placement must never become a joint merely because the
-native placement path is inconvenient.
+For the SCPF 0.3.0 occurrence-placement redesign, use
+[`0001-position-api-design.md`](../changes/0001-position-api-design.md).
