@@ -148,6 +148,7 @@ def main() -> int:
     )
     parser.add_argument("--cases", default="all")
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--source-sha", required=True)
     parser.add_argument("--tolerance", type=float, default=0.5)
     args = parser.parse_args()
 
@@ -176,7 +177,10 @@ def main() -> int:
 
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "summary.json").write_text(
-        json.dumps({"schema": 1, "results": results}, indent=2) + "\n",
+        json.dumps(
+            {"schema": 1, "source_commit": args.source_sha, "results": results},
+            indent=2,
+        ) + "\n",
         encoding="utf-8",
     )
     if failures:
