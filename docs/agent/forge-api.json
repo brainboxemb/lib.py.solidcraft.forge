@@ -105,10 +105,10 @@
     },
     "Occurrence.copy": {
       "kind": "callable",
-      "summary": "Create another occurrence of the same reusable definition. The new occurrence initially preserves the source Placement. Use .at(Position(...)) to replace only its position or .at(Placement(...)) to replace the complete pose.",
+      "summary": "Create another occurrence of the same reusable definition. The copy inherits the source Placement unless placement= is supplied. Attachment state is occurrence-specific and is not inherited. name= optionally gives the new occurrence an explicit Forge object name.",
       "reference": "reference/Occurrence.copy/",
       "guide": "guide/assembly-basics/#collection",
-      "signature": "Occurrence.copy(self)"
+      "signature": "Occurrence.copy(self, *, name=None, placement=None)"
     },
     "Occurrence.attach": {
       "kind": "callable",
@@ -443,26 +443,12 @@
       "reference": "reference/Anchor/",
       "guide": "guide/assembly-basics/#anchor-choice"
     },
-    "Occurrence.at": {
-      "kind": "callable",
-      "summary": "Declare the absolute Position or complete Placement of this occurrence. at(Position(...)) replaces only XYZ and preserves the current orientation. at(Placement(...)) replaces the complete occurrence pose. Neither form is a relative move or an assembly relationship.",
-      "reference": "reference/Occurrence.at/",
-      "guide": "guide/assembly-basics/#collection",
-      "signature": "Occurrence.at(self, target)"
-    },
     "Placement": {
       "kind": "callable",
-      "summary": "Complete declarative pose of one occurrence. Position is absolute in the parent coordinate frame and may remain parametric in the saved SolidCraft design. Rotation is one absolute axis-angle orientation. Placement is occurrence state, not an action.",
+      "summary": "Absolute pose of one occurrence in its parent coordinate frame. XYZ coordinates may be numbers, Parameters or Expressions. Rotation is one optional absolute axis-angle orientation. Placement is occurrence creation state, not a relative move action.",
       "reference": "reference/parameters-positioning/#Placement",
       "guide": "guide/model-objects/#parameter-intent",
-      "signature": "Placement(position: scpf.model_objects.Position = Position(x=0, y=0, z=0), rotation: tuple[object, object] | None = None) -> None"
-    },
-    "Position": {
-      "kind": "callable",
-      "summary": "Absolute XYZ position in an occurrence's parent coordinate frame. Coordinates may be numbers, Parameters or Expressions. Position is data; it does not mean \"move by\" and does not prescribe a SolidCraft command.",
-      "reference": "reference/parameters-positioning/#Position",
-      "guide": "guide/model-objects/#parameter-intent",
-      "signature": "Position(x: object = 0, y: object = 0, z: object = 0) -> None"
+      "signature": "Placement(x: object = 0, y: object = 0, z: object = 0, rotation: tuple[object, object] | None = None) -> None"
     }
   }
 }
