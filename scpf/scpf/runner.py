@@ -21,7 +21,7 @@ from . import core
 from .compiler import ModelError, compile_model
 from .core import Expression, Parameter, Shape, command_value, parameters_in, pv
 from .assembly import compile_assembly
-from .model_objects import Assembly, ModelDefinition, ModelInstance, Placement
+from .model_objects import Assembly, ModelDefinition, ModelInstance, Placement, Position
 from .explicit_sketch import Sketch
 
 
@@ -369,11 +369,6 @@ def _design_object(cls, *args, **kwargs):
 def _reusable_model_object(cls, *args, **kwargs):
     """Build a nested user model as a reusable component definition."""
     object_name = kwargs.pop("name", None)
-    placement = kwargs.pop("placement", None)
-    if placement is None:
-        placement = Placement()
-    elif not isinstance(placement, Placement):
-        raise TypeError("component placement must be a Placement")
     if object_name is not None:
         if (
             not isinstance(object_name, str)
@@ -401,7 +396,6 @@ def _reusable_model_object(cls, *args, **kwargs):
             input_bindings=bindings,
             anchors=anchors,
         ),
-        placement=placement,
         name=object_name,
     )
 
@@ -603,6 +597,7 @@ def run_script(path: str | Path) -> dict:
         "AnchorTopology": core.AnchorTopology,
         "Axis": core.Axis,
         "Shape": core.Shape,
+        "Position": Position,
         "Placement": Placement,
         "up": core.up,
         "down": core.down,
