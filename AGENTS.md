@@ -28,6 +28,35 @@ evidence only. It is **not** the approved normal Forge architecture.
 **DO NOT WRITE IN HIGH-LEVEL ARCHITECTURE OR DOCUMENT LANGUAGE. WRITE IN NORMAL
 ENGINEERING LANGUAGE.**
 
+**USE NORMAL, EASY-TO-UNDERSTAND WORDS. WORD CHOICE MATTERS.**
+
+Write so an engineer can understand the sentence on the first read.
+
+- Prefer short, direct sentences.
+- Prefer common technical words over jargon.
+- Do not use management language, consultancy language or academic wording.
+- Do not invent new labels for things that already have a clear code name.
+- Use the Python class/function/field name when that is clearer than a generic
+  architecture term.
+- Use the SolidCraft command name when the problem is about that command.
+- If a less common technical term is genuinely needed, explain it immediately
+  in plain words.
+- If a sentence needs several abstract nouns to explain one simple code problem,
+  rewrite the sentence.
+
+For example, prefer:
+
+> `compile_assembly()` builds the string `Board:2` itself and later passes it
+> to `joint.create`. Forge does not control that SolidCraft name, so this is
+> unsafe.
+
+Do not write:
+
+> the native occurrence identity abstraction violates the replay-safe semantic
+> contract.
+
+The second sentence uses more difficult words but explains less.
+
 Explain things at the level an engineer maintaining this repository needs:
 
 - which Python object or function is involved;
