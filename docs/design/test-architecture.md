@@ -1,307 +1,140 @@
-# Forge test and qualification architecture
+# Forge test rules
 
-Status: **draft from foundational audit 2026-11**
+Status: updated after the 2026-11 code audit
 
-This document defines which layer each test is allowed to prove.
+Use the same words as the code. A test should make clear:
 
-A test is not stronger merely because it compares more generated JSON. The
-important question is whether it checks a Forge semantic contract, a
-SolidCraft-adapter contract, or an actual native CAD result.
+- which Forge object or function it checks;
+- which SolidCraft command should be generated;
+- whether it checks generated JSON or a real SolidCraft model;
+- whether a saved parameter change is expected to keep working.
 
-## 1. Layers
+## 1. Forge object tests
 
-### T1 — Public/semantic model tests
-
-Scope:
-
-- public constructors and decorators;
-- DefinitionId / OccurrenceId;
-- copy semantics;
-- Placement values;
-- parameter/dependency classification;
-- grouping graph;
-- attachment graph;
-- validation and early rejection.
-
-These tests must not know:
-
-- SolidCraft occurrence ids;
-- SolidCraft browser names;
-- command ordering caused only by the native adapter;
-- the fact that SolidCraft creates one implicit first occurrence.
-
-Examples after the IR migration:
-
-```python
-right = left.copy(placement=Placement(x=40))
-
-assert right.occurrence_id != left.occurrence_id
-assert right.definition_id == left.definition_id
-assert right.placement.x == 40
-```
-
-### T2 — Native-adapter command contract tests
-
-Scope:
-
-- which SolidCraft 0.42 command represents one semantic operation;
-- result bindings and logical references;
-- parameter/native-expression lowering;
-- SolidCraft-specific first-occurrence handling;
-- command order when the 0.42 engine contract requires it.
-
-These tests may know native command names and schema fields.
-
-They must still not predict browser labels such as `Panel:2`.
-
-Identity-dependent command tests should expect a logical result reference, for
-example conceptually:
-
-```json
-{"occurrence": {"$ref": "occurrence:<forge-id>"}}
-```
-
-and a binding from the producing create/copy command.
-
-### T3 — Execution-plan tests
-
-Scope:
-
-- binding validation;
-- phase splitting;
-- result capture;
-- live/headless replay;
-- atomic checkpoint/restore;
-- fresh ids on replay.
-
-These tests use fake transports for error cases and focused native 0.42 tests
-for the actual result schema.
-
-### T4 — Native Q4 geometric/relationship qualification
-
-Scope:
-
-- SolidCraft successfully builds and saves;
-- native bodies/bounds;
-- actual occurrence transforms;
-- actual joint/relationship inspection;
-- hierarchy where hierarchy itself is the capability.
-
-A T4 test may inspect actual native ids/names as evidence, but it must not
-promote a generated name into a Forge contract.
-
-### T5 — Native Q5 saved-design mutation
-
-Required whenever a public capability claims a persistent associative
-dependency.
-
-The mutation happens **without rerunning Python**.
+Check Forge before SolidCraft commands are generated.
 
 Examples:
 
-- parameter-dependent component size;
-- parameter-dependent Placement;
-- attachment gap/offset;
-- topology-backed anchor;
-- reference-backed feature placement.
+- a component keeps its `Placement`;
+- `.copy()` creates a separate occurrence;
+- copies may reuse the same component definition;
+- the same occurrence object cannot be inserted twice;
+- grouping does not break an attachment;
+- a bad attachment target is rejected;
+- parameter conflicts are reported.
 
-T5 is the authoritative proof that a dependency survived lowering.
+Do not depend on SolidCraft names such as `Panel:1` or `Panel:2`.
 
-### T6 — Visual regression
+## 2. Generated SolidCraft command tests
 
-Scope:
+Check the JSON Forge generates.
 
-- orientation and gross assembly/layout errors that are difficult to infer from
-  scalar bounds alone.
+These tests may check:
 
-Visual evidence supplements semantic/native assertions; it does not replace
-them.
+- `component.create`;
+- `occurrence.copy`;
+- `occurrence.move`;
+- `joint.create`;
+- `joint.origin`;
+- parameter expressions;
+- command order when SolidCraft 0.42 requires it.
 
-### TR — Cross-library reference qualification
+For ordinary positioning, check that `Placement` is put directly into
+`component.create` or `occurrence.copy` when SolidCraft supports it.
 
-PythonSCAD, pyBOSL2 and CadQuery implement the same modelling intent
-idiomatically.
+Do not accept guessed SolidCraft occurrence names as the way Forge finds an
+occurrence.
 
-They verify the expected geometry/modelling interpretation, not Forge native
-identity.
+If Forge cannot safely generate a replayable command for a case, expect a clear
+error.
 
-## 2. Current test-suite classification
+## 3. Live and replay tests
+
+`scpf/tests/test_live.py` checks the existing live connection and replay of a
+static command document.
+
+Keep tests for:
+
+- one strict `engine.batch`;
+- rollback on failure;
+- replay of the same static document;
+- connection and authentication errors.
+
+Runtime result binding is not part of the normal Forge route.
+
+## 4. Native SolidCraft tests
+
+These tests run the generated commands in SolidCraft 0.42.
+
+### Initial model check
+
+Check:
+
+- bodies and bounds;
+- occurrence transforms;
+- joints when the case uses a real joint;
+- group hierarchy when grouping is the feature being tested.
+
+### Saved parameter change
+
+Use this when Forge claims that a relationship stays linked after changing a
+parameter.
+
+Change the parameter in the saved SolidCraft design without rerunning Python.
+
+This is required for things such as:
+
+- parameter-driven component size;
+- parameter-driven Placement;
+- attachment gap or offset;
+- topology-backed anchors;
+- feature placement that claims to remain associative.
+
+An initial correct render is not enough to prove this.
+
+## 5. Visual checks
+
+Use screenshots/renders for mistakes that are hard to catch from numbers alone,
+such as wrong orientation or a bracket on the wrong side.
+
+Visual checks support the other tests; they do not replace them.
+
+## 6. PythonSCAD, pyBOSL2 and CadQuery references
+
+These show the same modelling intent in another library.
+
+They compare the visible model and the way the model is expressed. They do not
+prove SolidCraft joints, saved parameters or SolidCraft occurrence handling.
+
+## 7. Existing test cleanup
 
 ### `scpf/tests/test_assembly.py`
 
-Current state: **mixed T1 + T2; must split**.
+Keep tests for Forge behaviour, but remove assertions that make
+`Component:N` numbering part of the Forge contract.
 
-Keep as T1 after rewriting:
-
-- `copy()` Placement semantics;
-- distinct definition vs occurrence behaviour;
-- parameter publication intent;
-- authored name lookup;
-- group graph validation;
-- attachment intent;
-- AnchorFrame/Topology value validation.
-
-Move to T2:
-
-- `component.create` / `occurrence.copy` decisions;
-- `occurrence.move` expression fields;
-- native joint frame structure;
-- material command deduplication;
-- custom joint-origin lowering;
-- native browser visibility command.
-
-Delete/replace accidental assertions:
-
-- every literal `Block:1`, `Panel:2`, `Marker:1`, etc.;
-- “all groups grounded” as an expected consequence of grouping.
-
-### `scpf/tests/test_explicit_sketch_primitives.py`
-
-Current state: mostly T1/T2.
-
-Split semantic Sketch API tests from exact SolidCraft sketch/extrude command
-tests. When semantic profile centring is implemented, tests must target
-`anchor=CENTER` rather than preserve manual centring offsets.
-
-### `scpf/tests/test_generic_geometry.py`
-
-Current state: mostly T1/T2 and generally appropriate.
-
-Keep polygon naming/validation semantic checks separate from exact sketch
-command details.
+Move exact SolidCraft-command checks into focused command tests where useful.
 
 ### `scpf/tests/test_live.py`
 
-Current state: T3 transport/execution tests.
+Keep transport, batch rollback and replay tests here.
 
-This is the correct home for:
+### `qualification/tests/*NativeTests`
 
-- single-batch atomic execution;
-- result-binding phased execution;
-- checkpoint rollback;
-- replay;
-- connection/authentication errors.
+These classes are currently skipped in CI while
+`qualification/native_validation.py` does the real native checks.
 
-When Phase 1 restores result binding, reuse the proven historical PR #166 test
-ideas rather than mixing these tests into assembly compilation.
+Move any unique useful check into the central validator, then remove the
+duplicate skipped test.
 
-### `scpf/tests/test_models.py`
+## 8. Review rule
 
-Current state: broad T1/T2 integration suite.
+Reject a new test when it:
 
-Keep public API/validation tests in T1. Move exact native command-shape
-assertions to focused adapter tests over time.
-
-This file should not become the catch-all location for new compiler behaviour.
-
-### `scpf/tests/test_version.py`
-
-Current state: version policy tests; keep.
-
-Version policy must derive from one source:
-`TESTED_SOLIDCRAFT_VERSION`.
-
-## 3. Current qualification tests
-
-The `*CommandTests` classes under `qualification/tests/` are T2 fixture
-contracts. Keep them only where they assert meaningful generated intent.
-
-The `*NativeTests` classes guarded by `NATIVE_ROOT` are duplicate/stale
-T4/T5 implementations and are not executed in the current CI path.
-
-The actually authoritative native validation is:
-
-```text
-qualification/native_validation.py
-qualification/visual_validation.py
-```
-
-### Migration rule
-
-- move any unique assertion from skipped native unittest classes into the
-  central validator;
-- verify equivalence;
-- delete the skipped native class;
-- never keep two native truth sources.
-
-## 4. Qualification utility tests
-
-These remain normal Python tests:
-
-- `test_case_selection.py`;
-- `test_native_runtime_metadata.py`;
-- `test_reference_models.py`;
-- `test_report_template.py`;
-- `test_visual_tools.py`.
-
-They validate the qualification infrastructure itself, not CAD semantics.
-
-## 5. Required new foundational tests
-
-### Identity
-
-- one physical occurrence -> one OccurrenceId;
-- `.copy()` -> new OccurrenceId, same DefinitionId;
-- duplicate insertion of one occurrence -> rejected;
-- no generated SolidCraft label appears in semantic IR;
-- native create/copy result id is bound and reused downstream;
-- replay obtains fresh ids.
-
-### Definition identity
-
-- identical build inputs share one definition;
-- different fixed numeric input separates definitions;
-- conflicting inherited parameter values cannot be deduplicated away;
-- bool/string/enum build variants separate definitions;
-- namespace collision `Foo 2` vs `Foo_2` does not collide.
-
-### Grouping
-
-- grouping does not change relationship graph;
-- grouping does not imply grounding;
-- grouping an already attached assembly remaps both ends correctly;
-- externally attached grouped child remains semantically equivalent.
-
-### Parameters
-
-- literal text equal to a parameter name remains unchanged;
-- parameter publication alone does not count as dependency proof;
-- root model and `@assembly` both detect lost dependencies.
-
-### Rotation
-
-For each supported attachment reference type:
-
-- rotated parent;
-- rotated child;
-- initial build;
-- native relationship inspection;
-- saved mutation where associative.
-
-Unsupported combinations must fail before command generation.
-
-## 6. Architecture gate for tests
-
-A new test must state which layer it belongs to.
-
-A test should be rejected during review when it:
-
-- uses a SolidCraft display name in a semantic assertion;
-- treats one successful initial render as proof of associativity;
-- duplicates an existing native truth source;
-- encodes a workaround without naming the SolidCraft version/capability it is
-  protecting;
-- checks implementation ordering that is not required by either Forge
-  semantics or the pinned native command contract.
-
-## 7. Q1-Q6 interpretation after remediation
-
-- **Q1**: public semantics / IR / validation;
-- **Q2**: native adapter and execution-plan contract;
-- **Q3**: pinned SolidCraft accepts and persists the plan;
-- **Q4**: native initial geometry/relationships;
-- **Q5**: native saved-design associativity;
-- **Q6**: visual evidence.
-
-A case can only be labelled fully qualified for a claimed associative
-capability when Q5 is present and passes.
+- depends on a generated SolidCraft browser name;
+- treats one correct initial render as proof that a saved parameter relationship
+  works;
+- duplicates an existing native check;
+- keeps an old SolidCraft workaround without naming the version/case that needs
+  it;
+- checks command order that neither Forge nor SolidCraft requires.
