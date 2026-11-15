@@ -21,9 +21,12 @@ from api_coverage import EXPORT_COVERAGE, CAPABILITY_COVERAGE
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 from api_reference import (
     ENUM_REFERENCES,
+    GROUP_REFERENCES,
     METHOD_REFERENCES,
+    anchor_aliases,
     api_manifest,
     enum_members,
+    group_members,
     references_for_guide,
 )
 
@@ -567,6 +570,43 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     guide_root.mkdir(exist_ok=True)
     guide_cards = []
 
+    def _member_details(member, *, compact=False):
+        if member["kind"] == "enum":
+            return (
+                '<div class="guide-api-members">'
+                + " · ".join(
+                    f'<code>{escape(member["name"])}.{escape(row["name"])}</code>'
+                    for row in member["members"]
+                )
+                + '</div>'
+            )
+        if member["kind"] == "constant":
+            return f'<p><code>{escape(member["name"])} = {escape(member["value"])}</code></p>'
+        if member.get("signature"):
+            css = ' class="guide-api-signature"' if compact else ""
+            return f'<pre{css}><code>{escape(member["signature"])}</code></pre>'
+        return ""
+
+    def _guide_group_details(spec):
+        rows = []
+        for member in group_members(spec):
+            rows.append(
+                f'<div class="guide-api-group-member" id="api-{escape(member["name"])}">'
+                f'<h4><code>{escape(member["name"])}</code></h4>'
+                + _member_details(member, compact=True)
+                + (f'<p>{escape(member["summary"])}</p>' if member["summary"] else "")
+                + (
+                    f'<p><strong>Use when:</strong> {escape(member["use_when"])}</p>'
+                    if member["use_when"] else ""
+                )
+                + (
+                    f'<p><strong>Current limits:</strong> {escape(member["limits"])}</p>'
+                    if member["limits"] else ""
+                )
+                + '</div>'
+            )
+        return '<div class="guide-api-group-members">' + "".join(rows) + '</div>'
+
     def guide_api_summary(slug):
         specs = references_for_guide(slug)
         if not specs:
@@ -582,6 +622,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                     )
                     + '</div>'
                 )
+            elif spec["kind"] == "group":
+                details = _guide_group_details(spec)
             else:
                 details = (
                     f'<pre class="guide-api-signature"><code>'
@@ -595,11 +637,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 + details
                 + (
                     f'<p><strong>Use when:</strong> {escape(spec["use_when"])}</p>'
-                    if spec["use_when"] else ""
+                    if spec.get("use_when") else ""
                 )
                 + (
                     f'<p><strong>Current limits:</strong> {escape(spec["limits"])}</p>'
-                    if spec["limits"] else ""
+                    if spec.get("limits") else ""
                 )
                 + '</article>'
             )
@@ -687,6 +729,12 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             + '<table class="api-table"><thead><tr><th>Name</th><th>Value</th></tr></thead>'
             + f'<tbody>{rows}</tbody></table>'
             + (
+                '<h2>Convenience aliases</h2><p>'
+                + " · ".join(f'<code>{escape(name)}</code>' for name in anchor_aliases())
+                + '</p>'
+                if spec["slug"] == "Anchor" else ""
+            )
+            + (
                 f'<h2>Current limits</h2><p>{escape(spec["limits"])}</p>'
                 if spec["limits"] else ""
             )
@@ -739,6 +787,57 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             f'{escape(spec["title"])}</a></h2>'
             f'<p>{escape(spec["summary"])}</p>'
             f'<pre><code>{escape(spec["signature"])}</code></pre></article>'
+        )
+
+    for spec in GROUP_REFERENCES:
+        slug = spec["slug"]
+        dest = reference_root / slug
+        dest.mkdir(exist_ok=True)
+        member_sections = []
+        for member in group_members(spec):
+            member_sections.append(
+                f'<section class="panel api-group-member" id="{escape(member["name"])}">'
+                f'<h2><code>{escape(member["name"])}</code></h2>'
+                + _member_details(member)
+                + (f'<p>{escape(member["summary"])}</p>' if member["summary"] else "")
+                + (
+                    f'<h3>When to use it</h3><p>{escape(member["use_when"])}</p>'
+                    if member["use_when"] else ""
+                )
+                + (
+                    f'<h3>Current limits</h3><p>{escape(member["limits"])}</p>'
+                    if member["limits"] else ""
+                )
+                + '</section>'
+            )
+        guide_link = (
+            f'<p><a href="../../guide/{escape(spec["guide"])}/#{escape(spec["guide_anchor"])}">'
+            'Worked usage in the guide →</a> · '
+            '<a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
+            if spec.get("guide")
+            else '<p><a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
+        )
+        body = (
+            '<main class="wrap"><p class="crumb"><a href="../">← API Reference</a> / '
+            + escape(spec["title"]) + '</p>'
+            + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
+            + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p>'
+            + guide_link + '</section>'
+            + "".join(member_sections)
+            + '</main>'
+        )
+        (dest / "index.html").write_text(
+            page(spec["title"], body, stylesheet="../../style.css",
+                 home="../../", cheatsheet="../../cheatsheet/"),
+            encoding="utf-8",
+        )
+        member_names = " · ".join(
+            f'<code>{escape(name)}</code>' for name in spec["member_names"]
+        )
+        reference_cards.append(
+            f'<article class="reference"><h2><a href="{escape(slug)}/">'
+            f'{escape(spec["title"])}</a></h2><p>{escape(spec["summary"])}</p>'
+            f'<p class="reference-members">{member_names}</p></article>'
         )
 
     # Compact machine-readable lookup for agents is generated from exactly the
