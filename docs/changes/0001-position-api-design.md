@@ -23,14 +23,26 @@ right = left.copy().at(Position(x=400))
 
 There is no public occurrence `.move()` or occurrence `.rotate()`.
 
+The central rule is:
+
+> **Placement belongs to object creation.** A Position says where the object is
+> created/placed in its parent frame. It is not an instruction to create the
+> object at the origin and then move it.
+
+Forge must therefore encode Position in the native creation/copy command
+whenever SolidCraft exposes that capability. A later native move command is
+only an implementation fallback for a SolidCraft capability gap; it never
+changes the public semantics.
+
 Shape-level geometry transforms such as:
 
 ```python
 bottom = Box(20, 20, 4).move(x=10, y=10, z=-2)
 ```
 
-remain valid because they are compiled into primitive coordinates rather than
-a later occurrence move.
+already follow this rule: Forge emits the box at the translated coordinates in
+the original `solid.box` creation command. It does not create the box and then
+emit `solid.move`.
 
 ---
 
@@ -150,7 +162,7 @@ No sketch is synthesized.
 
 ---
 
-## 4. Shape `.move()`: compile-time geometry placement
+## 4. Shape placement is part of creation
 
 Example:
 
@@ -165,7 +177,10 @@ bottom = Box(20, 20, 4).move(
 This does **not** lower to `solid.move` and does not require a later target
 lookup.
 
-Forge folds the shape translation into the primitive coordinates.
+`.move()` on a Shape is currently the Python expression used to derive the
+shape's creation position. Forge folds that translation into the primitive
+coordinates **before emitting JSON**. The native object is therefore created at
+its final position.
 
 Conceptually:
 
@@ -280,8 +295,12 @@ Rules:
 
 Forge 0.3.0 choice:
 
-> Do not lower ordinary `Shape.move()` through `solid.move`; keep folding the
-> translation into primitive creation coordinates where possible.
+> `solid.move` is not the implementation of Forge Position and is not the
+> normal implementation of `Shape.move()`. Placement is encoded in creation
+> commands wherever the native command supports it.
+
+The command is documented here only to keep the native concepts complete and
+to prevent confusing body movement with declarative placement.
 
 ---
 
@@ -348,7 +367,7 @@ Rules:
   `translate` in world axes;
 - `parent_path` is read with `in_place: true`.
 
-### Forge numeric Position
+### Forge numeric Position: placement during copy creation
 
 Python:
 
@@ -357,7 +376,9 @@ left = Board()
 right = left.copy().at(Position(x=400))
 ```
 
-Preferred native lowering:
+The Position already exists on the Forge object before compilation. Because
+SolidCraft `occurrence.copy` accepts a numeric `translate`, Forge can create
+the copied occurrence directly at that position:
 
 ```json
 {
@@ -369,14 +390,37 @@ Preferred native lowering:
 }
 ```
 
-For a purely numeric Position no follow-up occurrence move is required.
+For a purely numeric copied Position no follow-up occurrence move is required.
+This is the preferred lowering because it matches the Forge semantics exactly:
+the new occurrence is created at its declared Position.
+
+### First occurrence limitation
+
+SolidCraft 0.42 `component.create` creates the component's first occurrence
+but does **not** accept a translation/pose parameter. Therefore a non-origin
+Position for that first occurrence cannot currently be encoded in the creation
+command itself.
+
+This is a SolidCraft backend limitation, not a reason to define Position as a
+move.
 
 ---
 
-## 8. Occurrence placement: `occurrence.move`
+## 8. Native fallback: `occurrence.move`
 
 Forge has **no public occurrence `.move()`**. Native
-`occurrence.move` is a SolidCraft lowering mechanism for Position/Placement.
+`occurrence.move` is used only when SolidCraft 0.42 cannot encode the declared
+Position/Placement in the creation/copy command itself.
+
+Examples of that native gap are:
+
+- the first occurrence created by `component.create`, which has no placement
+  parameter;
+- a copied occurrence whose Position contains parameter expressions, because
+  `occurrence.copy.translate` is numeric-only in SolidCraft 0.42;
+- orientation, which `occurrence.copy` does not encode.
+
+The public meaning remains: **this occurrence has this Position/Placement**.
 
 ### SolidCraft 0.42 complete input contract
 
@@ -437,7 +481,7 @@ Mutual-exclusion rules:
 - expression-driven `translate` is captured and cannot use
   `capture: false`.
 
-### Forge parametric Position
+### Forge parametric Position: fallback only because copy cannot take expressions
 
 Python:
 
@@ -447,7 +491,9 @@ right = Board().at(
 )
 ```
 
-Current qualified SolidCraft 0.42 lowering:
+Ideally this Position would be part of occurrence creation. SolidCraft 0.42
+does not accept expressions in `occurrence.copy.translate`, so Forge uses the
+qualified expressed-move facility as a backend encoding fallback:
 
 ```json
 {
@@ -463,7 +509,9 @@ SolidCraft stores parameter-referencing translate entries as
 `expressed_moves`. If `opening_width` changes later in the saved design, the
 occurrence follows without rerunning Forge.
 
-This behaviour was qualified in Forge PR #158.
+This behaviour was qualified in Forge PR #158. The generated
+`occurrence.move` must therefore be read as **native encoding of a declarative
+Position expression**, not as the public Forge operation "move this object".
 
 ---
 
@@ -510,7 +558,7 @@ This is a backend/version contract, not part of the public Forge Position API.
 
 ---
 
-## 10. Public Forge API decision
+## 10. Public Forge API and lowering decision
 
 ### Allowed
 
@@ -531,10 +579,14 @@ right = rotated.copy().at(Position(x=160, z=160))
 
 Semantics:
 
-- `.at(Position(...))` replaces XYZ and preserves orientation;
-- `.at(Placement(...))` replaces the complete pose;
+- `.at(Position(...))` sets the occurrence's declared XYZ before native
+  creation/lowering and preserves orientation;
+- `.at(Placement(...))` sets the complete declared pose;
 - `copy()` creates another occurrence of the same reusable definition and
-  initially preserves Placement.
+  initially preserves Placement;
+- the compiler prefers creation-time/native-copy placement;
+- a later native `occurrence.move` is permitted only where SolidCraft 0.42
+  cannot encode that Position/Placement during creation.
 
 ### Not part of the occurrence API
 
@@ -545,7 +597,43 @@ Board().rotate(...)
 
 Those action-style occurrence methods are removed.
 
-Shape geometry still has its own transform API.
+Shape geometry still has its own transform API, but its translations are
+likewise folded into native creation coordinates whenever possible.
+
+### Lowering priority
+
+For Position/Placement the compiler uses this order:
+
+```text
+1. encode final placement in the native create/copy command
+2. if SolidCraft cannot represent it there, use the smallest native placement
+   fallback needed to reach the declared final pose
+3. never substitute a joint for placement
+```
+
+For the currently qualified SolidCraft 0.42 backend this gives:
+
+```text
+Shape numeric translation
+    -> solid.box(... corner/center=final position)
+
+Copied occurrence, numeric Position
+    -> occurrence.copy(... translate=final position)
+
+First occurrence, non-origin Position
+    -> component.create(...)
+    -> occurrence.move(...)      # backend gap: create has no pose
+
+Copied occurrence, parametric Position
+    -> occurrence.copy(...)
+    -> occurrence.move(expr)     # backend gap: copy translate is numeric-only
+
+Orientation
+    -> occurrence.move(...) when needed
+```
+
+The final three cases do not change the Forge semantics: Position/Placement is
+still state declared before compilation, not an action requested afterwards.
 
 ---
 
