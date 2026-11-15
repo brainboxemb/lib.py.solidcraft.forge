@@ -32,6 +32,29 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
                 self.assertTrue(spec["measurements"].endswith(".json"))
                 self.assertTrue(spec["label"])
 
+    def test_expectation_dict_literals_have_no_duplicate_keys(self):
+        import ast
+
+        source_path = ROOT / "qualification" / "expectations.py"
+        tree = ast.parse(
+            source_path.read_text(encoding="utf-8"),
+            filename=str(source_path),
+        )
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Dict):
+                continue
+            keys = [
+                key.value
+                for key in node.keys
+                if isinstance(key, ast.Constant)
+                and isinstance(key.value, str)
+            ]
+            self.assertEqual(
+                len(keys),
+                len(set(keys)),
+                f"duplicate dictionary key in {source_path}: {keys}",
+            )
+
     def test_post_build_inspections_reference_real_commands(self):
         for slug, spec in POST_BUILD_INSPECTIONS.items():
             with self.subTest(case=slug):
