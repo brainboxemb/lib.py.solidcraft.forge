@@ -118,13 +118,14 @@ metadata. It must not independently redefine:
 Those belong with the public implementation/docstring or, for a genuinely
 cross-cutting rule, in the API design document.
 
-## Migration
+## Migration status
 
-The current reference generator already reads signatures and enum members from
-Python but still contains some hand-written summaries/contracts. Migrate those
-texts into structured public docstrings before treating the generated reference
-as complete.
+The public API migration is complete for the current Forge surface. Exact public
+names, signatures, defaults, enum members and object-local semantics come from
+the implementation/docstrings; the generator retains only grouping, ordering
+and navigation metadata.
 
-The migration is complete when changing one public API fact requires changing
-one authoritative source and the generated human/agent references update from
-it automatically.
+Changing one public API fact now requires changing one authoritative source.
+The generated human reference, inline guide facts and compact agent index are
+checked against that source in CI. Any future public export must be mapped into
+the generated reference before CI can pass.
