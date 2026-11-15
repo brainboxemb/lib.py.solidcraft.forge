@@ -106,6 +106,9 @@ def check(
     assert '"use_when"' not in agent_source
     assert '"limits"' not in agent_source
     assert 'class="development-banner"' in home
+    assert "querySelectorAll('pre > code')" in home
+    assert "navigator.clipboard.writeText" in home
+    assert 'aria-label", "Copy code"' in home
     assert "Development version." in home
     assert "not a support guarantee" in home
     assert "full API Guide" in cheatsheet
