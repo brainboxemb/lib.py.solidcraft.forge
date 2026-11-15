@@ -393,6 +393,41 @@ def validate_parametric_placement_pair(root: Path) -> Validation:
     return v
 
 
+def validate_rotated_copy_placement(root: Path) -> Validation:
+    v = Validation("rotated-copy-placement")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "rotated-copy-placement")
+    v.check("two panel bodies", d["body_count"] == 2, 2, d["body_count"])
+
+    fixed = next(
+        (
+            body for body in d["bodies"]
+            if bbox_close(body, [-10, -5, 0], [10, 5, 2])
+        ),
+        None,
+    )
+    rotated = next(
+        (
+            body for body in d["bodies"]
+            if bbox_close(body, [20, -2, 35], [40, 0, 45])
+        ),
+        None,
+    )
+    v.check(
+        "fixed panel remains at component origin",
+        fixed is not None,
+        {"min": [-10, -5, 0], "max": [10, 5, 2]},
+        [body["bbox"] for body in d["bodies"]],
+    )
+    v.check(
+        "rotated copy keeps declared translation",
+        rotated is not None,
+        {"min": [20, -2, 35], "max": [40, 0, 45]},
+        [body["bbox"] for body in d["bodies"]],
+    )
+    return v
+
+
 def validate_group_hierarchy(root: Path) -> Validation:
     v = Validation("group-hierarchy")
     d = load(root / "measurements.json")
@@ -889,6 +924,7 @@ VALIDATORS = {
     "assembly-decorator": validate_assembly_decorator,
     "parametric-move": validate_parametric_move,
     "parametric-placement-pair": validate_parametric_placement_pair,
+    "rotated-copy-placement": validate_rotated_copy_placement,
     "group-hierarchy": validate_group_hierarchy,
     "attach-angle": validate_attach_angle,
     "as-built-attach": validate_as_built_attach,
