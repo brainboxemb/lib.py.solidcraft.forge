@@ -30,22 +30,12 @@ $case_preview
 
   <h3>Reference implementations</h3>
   <p>These implement the same modelling intent for review; they are not
-  alternative definitions of the Forge API. PythonSCAD is primarily the neutral
-  Python geometry comparison. pyBOSL2 uses its own anchors/attachment model when
-  that is the concept being compared. Neither reference by itself proves
-  SolidCraft-native joints, feature history, topology identity or saved-design
-  parameter relationships.</p>
+  alternative definitions of the Forge API. Each case selects only the
+  comparison libraries that are useful for that modelling concept. Reference
+  geometry does not by itself prove SolidCraft-native joints, feature history,
+  topology identity or saved-design parameter relationships.</p>
   <div class="twocol qualification-reference-code">
-    <div>
-      <h4>PythonSCAD</h4>
-      <pre><code>$pythonscad_source</code></pre>
-      <p><a href="reference-pythonscad.py">Open PythonSCAD source →</a></p>
-    </div>
-    <div>
-      <h4>pyBOSL2</h4>
-      <pre><code>$pybosl2_source</code></pre>
-      <p><a href="reference-pybosl2.py">Open pyBOSL2 source →</a></p>
-    </div>
+    $reference_source_blocks
   </div>
 
   <h4 class="qualification-reference-render-heading">Rendered comparison</h4>
