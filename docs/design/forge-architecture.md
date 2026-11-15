@@ -261,6 +261,12 @@ local parameter.
 The audit must verify how reference fields participate before the final
 DefinitionId algorithm is chosen.
 
+**Invariant PA-4**
+
+> User-authored strings and native name/enum fields are opaque data.
+> Parameter namespacing may rewrite only typed parameter expressions and
+> references, never arbitrary strings.
+
 ## 9. Compiler stages
 
 Replace the current monolithic assembly lowering with explicit stages.
