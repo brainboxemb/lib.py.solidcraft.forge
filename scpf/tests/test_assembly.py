@@ -46,7 +46,7 @@ class AssemblyTests(unittest.TestCase):
             {"occurrence": "Block:2", "face": [20.0, 0.0, 5.0]},
         )
 
-    def test_component_position_is_occurrence_data(self):
+    def test_component_placement_is_occurrence_data(self):
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "placement_keyword.py"
             script.write_text(
@@ -83,7 +83,7 @@ class AssemblyTests(unittest.TestCase):
             for command in commands
         ))
 
-    def test_occurrence_position_is_declared_with_at(self):
+    def test_occurrence_placement_is_declared_at_construction(self):
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "position_at.py"
             script.write_text(
@@ -107,7 +107,7 @@ class AssemblyTests(unittest.TestCase):
         )
         self.assertEqual(copy["translate"], [50.0, 0.0, 0.0])
 
-    def test_occurrence_at_accepts_position_or_placement(self):
+    def test_copy_accepts_placement_override(self):
         from scpf import Box, Placement, component
 
         @component
@@ -124,7 +124,7 @@ class AssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "Placement"):
             original.copy(placement=(40, 0, 3))
 
-    def test_copies_of_positioned_occurrences_use_declared_native_positions(self):
+    def test_copies_use_declared_native_placements(self):
         """Copied occurrences compile from their declared final Placement."""
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "sidewalls.py"
@@ -358,7 +358,7 @@ class AssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "model class"):
             component(42)
 
-    def test_numeric_copies_receive_position_during_native_creation(self):
+    def test_numeric_copies_receive_placement_during_native_creation(self):
         """Concrete copy positions lower at occurrence.copy creation time."""
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "five.py"
