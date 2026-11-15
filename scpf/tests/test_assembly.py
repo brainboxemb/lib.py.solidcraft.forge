@@ -266,7 +266,9 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(second.placement.rotation, ((0.0, 0.0, 1.0), 180.0))
         self.assertIsNone(second.attachment)
         self.assertEqual(second.copy().placement.rotation, second.placement.rotation)
-        self.assertEqual(second.copy().at(Position(x=40)).placement.position.values, (40, 0, 0))
+        repositioned = second.copy().at(Position(x=40))
+        self.assertEqual(repositioned.placement.position.values, (40, 0, 0))
+        self.assertEqual(repositioned.placement.rotation, second.placement.rotation)
 
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "rotation.py"
