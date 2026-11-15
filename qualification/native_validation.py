@@ -751,6 +751,74 @@ def validate_eight_corner_brackets(root: Path) -> Validation:
     return v
 
 
+def validate_hub75_anchorframe_regression(root: Path) -> Validation:
+    v = Validation("hub75-anchorframe-regression")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "hub75-anchorframe-regression")
+
+    boards = bodies_named(d, "SideBoard")
+    brackets = bodies_named(d, "LProfile")
+    v.check("two side-board occurrences", len(boards) == 2, 2, len(boards))
+    v.check("eight L-profile occurrences", len(brackets) == 8, 8, len(brackets))
+    v.check("ten native bodies", d["body_count"] == 10, 10, d["body_count"])
+
+    joint_results = load(root / "joint-inspect.json")
+    joint_payload = (
+        joint_results[0]
+        if isinstance(joint_results, list) and joint_results
+        else joint_results
+    )
+    joints = (
+        joint_payload.get("joints", [])
+        if isinstance(joint_payload, dict)
+        else []
+    )
+    authored = [
+        row for row in joints
+        if str(row.get("name", "")).startswith("Attach LProfile:")
+    ]
+    v.check("exactly eight authored bracket joints", len(authored) == 8, 8, len(authored))
+    v.check(
+        "all bracket joints are rigid",
+        all(row.get("type") == "rigid" for row in authored),
+        ["rigid"] * 8,
+        [row.get("type") for row in authored],
+    )
+
+    m = load(root / "measurements-size-160x100x80.json")
+    _check_declared_bounds(
+        v,
+        m,
+        "hub75-anchorframe-regression",
+        level="q5",
+        mutation=True,
+    )
+    v.check("ten bodies after saved-design mutation",
+            m["body_count"] == 10, 10, m["body_count"], "q5")
+    v.check("eight brackets after saved-design mutation",
+            len(bodies_named(m, "LProfile")) == 8,
+            8, len(bodies_named(m, "LProfile")), "q5")
+    changed = params(m)
+    v.check(
+        "opening width/height/depth changed natively",
+        changed.get("opening_width") == 160.0
+        and changed.get("opening_height") == 100.0
+        and changed.get("cabinet_depth") == 80.0,
+        {
+            "opening_width": 160.0,
+            "opening_height": 100.0,
+            "cabinet_depth": 80.0,
+        },
+        {
+            "opening_width": changed.get("opening_width"),
+            "opening_height": changed.get("opening_height"),
+            "cabinet_depth": changed.get("cabinet_depth"),
+        },
+        "q5",
+    )
+    return v
+
+
 def validate_custom_anchor(root: Path) -> Validation:
     v = Validation("custom-anchor")
     d = load(root / "measurements.json")
@@ -938,6 +1006,7 @@ VALIDATORS = {
     "four-corner-l": validate_four_corner_l,
     "eight-flightcase-corners": validate_eight_flightcase_corners,
     "eight-corner-brackets": validate_eight_corner_brackets,
+    "hub75-anchorframe-regression": validate_hub75_anchorframe_regression,
     "custom-anchor": validate_custom_anchor,
     "xz-anchor": validate_xz_anchor,
     "circle-negative-extrude": validate_circle_negative_extrude,
