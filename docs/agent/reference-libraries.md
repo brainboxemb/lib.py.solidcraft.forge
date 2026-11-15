@@ -223,7 +223,7 @@ Typical import:
 import cadquery as cq
 ```
 
-Bottom-based block used by the Position reference:
+Bottom-based block used by the Placement reference:
 
 ```python
 block = cq.Solid.makeBox(
