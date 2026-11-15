@@ -104,7 +104,7 @@ class Hub75LikePlacementBaseline:
                 x=outer_x,
                 y=rear_y,
                 z=outer_height,
-                rotation=(Z, 180),
+                rotation=(Y, 90),
             ),
         )
 
@@ -123,7 +123,7 @@ class Hub75LikePlacementBaseline:
                 x=-outer_x,
                 y=rear_y,
                 z=0,
-                rotation=(X, 180),
+                rotation=(Y, 270),
             ),
         )
 
@@ -146,10 +146,8 @@ class Hub75LikePlacementBaseline:
             ),
         )
 
-        return (
-            left_board
-            + right_board
-            + top_left_front
+        brackets = (
+            top_left_front
             + top_left_rear
             + top_right_front
             + top_right_rear
@@ -157,7 +155,9 @@ class Hub75LikePlacementBaseline:
             + bottom_right_rear
             + bottom_left_front
             + bottom_left_rear
-        )
+        ).group("CornerBrackets")
+
+        return left_board + right_board + brackets
 
 
 Hub75LikePlacementBaseline()
