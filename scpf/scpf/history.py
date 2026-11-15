@@ -10,6 +10,16 @@ from enum import Enum
 
 
 class History(str, Enum):
+    """Choose how supported semantic features are lowered to native history.
+
+    Use when:
+        Select AUTO for normal Forge behaviour, or deliberately request one of
+        the supported native/sketch history policies inside behavior().
+
+    Limits:
+        This is a compiler-history policy, not a geometry operation. Exact
+        effects depend on the feature being compiled.
+    """
     AUTO = "auto"
     NATIVE = "native"
     SKETCH = "sketch"
@@ -24,6 +34,16 @@ def active_history():
 
 @contextmanager
 def behavior(*, history=History.AUTO):
+    """Temporarily select a History policy for objects created in the scope.
+
+    Use when:
+        A model intentionally needs to compare or request a particular supported
+        lowering strategy without changing the geometry API.
+
+    Limits:
+        The policy applies only inside the context and only to features that
+        inspect the active history setting.
+    """
     try:
         history = History(history)
     except ValueError as exc:
