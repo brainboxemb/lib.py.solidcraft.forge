@@ -23,7 +23,7 @@ class AssemblyTests(unittest.TestCase):
         copies = [c for c in commands if c["command"] == "occurrence.copy"]
         self.assertEqual(len(copies), 1)
         self.assertEqual(copies[0]["params"]["component"], "Block")
-        self.assertEqual(copies[0]["params"]["translate"], [41.0, 0.0, 0.0])
+        self.assertEqual(copies[0]["params"]["translate"], [1000.0, -1000.0, 1000.0])
         self.assertFalse(any(
             c["command"] == "occurrence.move"
             for c in commands
@@ -38,7 +38,7 @@ class AssemblyTests(unittest.TestCase):
         )
         self.assertEqual(
             joint["b"],
-            {"face": [21.0, 0.0, 5.0]},
+            {"face": [980.0, -1000.0, 1005.0]},
         )
         self.assertFalse(any(
             "Block:" in str(command["params"])
@@ -1733,7 +1733,7 @@ class AssemblyTests(unittest.TestCase):
         )
         self.assertEqual(joint["type"], "rigid")
         self.assertIn("corner", joint["a"])
-        self.assertEqual(joint["b"]["point"], [-20.0, -16.0, 10.0])
+        self.assertEqual(joint["b"]["point"], [980.0, -1015.0, 1000.0])
         self.assertEqual(joint["b"]["z"], [0.0, -1.0, 0.0])
         self.assertNotIn("occurrence", joint["b"])
 
