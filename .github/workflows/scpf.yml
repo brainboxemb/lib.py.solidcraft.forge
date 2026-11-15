@@ -15,6 +15,7 @@ on:
       - "scripts/release/**"
       - "CHANGELOG.md"
       - ".github/workflows/scpf.yml"
+      - ".github/workflows/preview.yml"
       - ".github/workflows/release.yml"
   workflow_dispatch: {}
 
