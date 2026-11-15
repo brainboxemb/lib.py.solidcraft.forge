@@ -8,17 +8,32 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- Nothing yet.
+
+## [0.2.0] - 2026-11-15
+
+Breaking API cleanup plus native occurrence-placement correction.
+
 ### Fixed
 
 - Lower symbolic occurrence `.move()` directly to SolidCraft 0.42.0
   `occurrence.move` expressions instead of generating hidden planar placement
-  joints.
+  joints. Saved designs keep the placement expression associative when its
+  parameter changes.
 
 ### Removed
 
-- Removed the experimental `History` enum and `behavior()` scope. Forge now
-  uses native feature lowering by default; authored sketch history is expressed
-  explicitly with `Sketch`.
+- Removed the experimental public `History` enum and `behavior()` scope.
+  Forge now uses native feature lowering by default; authored sketch history is
+  expressed explicitly with `Sketch`.
+
+### Compatibility
+
+- SCPF package version: **0.2.0**
+- Qualified SolidCraft version: **0.42.0**
+- Python: **3.10+**
 
 ## [0.1.1] - 2026-11-15
 
