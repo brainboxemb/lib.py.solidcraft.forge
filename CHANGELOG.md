@@ -18,24 +18,26 @@ Replay-first placement cleanup and foundational API correction.
 
 ### Added
 
-- Added explicit public `Placement` occurrence data for absolute X/Y/Z
-  positioning and optional axis-angle orientation.
+- Added public `Position` occurrence data for absolute, optionally symbolic
+  X/Y/Z coordinates and `Placement` for Position plus axis-angle orientation.
 - Concrete placement of additional occurrences lowers directly through
   `occurrence.copy(..., translate=...)` where SolidCraft supports it.
+- Added per-case comparison-engine selection and a pinned CadQuery 2.8.0
+  assembly/location reference for parametric occurrence positioning.
 
 ### Changed
 
-- Placement is now the sole public positioning contract for reusable component
-  occurrences. `copy(placement=Placement(...))` declares a copied occurrence's
-  pose without exposing occurrence movement actions.
+- Occurrence `.at(Position(...))` declares absolute XYZ while preserving the
+  current orientation; `.at(Placement(...))` declares the complete pose.
+  `copy()` preserves the source Placement before a new `.at(...)` is applied.
 - Runtime result-handle execution is deferred to roadmap issue #168 instead of
   becoming part of the normal replay compiler.
 
 ### Removed
 
-- Removed occurrence `.move()`, `.at()` and `.rotate()` conveniences. Placement
-  is declarative occurrence state; backend `occurrence.move` remains a valid
-  native lowering mechanism for associative parametric Placement.
+- Removed occurrence `.move()` and `.rotate()` action conveniences. Occurrence
+  `.at()` now accepts only declarative `Position` or `Placement` objects;
+  backend `occurrence.move` remains a valid native lowering mechanism.
 - Removed the phased runtime-result-binding work from this release line; normal
   Forge output remains replay-first.
 
