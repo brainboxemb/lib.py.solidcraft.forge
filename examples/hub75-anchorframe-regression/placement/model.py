@@ -65,6 +65,7 @@ class Hub75LikePlacementBaseline:
             name="left_board",
             placement=Placement(
                 x=-side_center_x,
+                y=half(self.cabinet_depth),
                 z=self.wall_thickness,
             ),
         )
@@ -72,6 +73,7 @@ class Hub75LikePlacementBaseline:
             name="right_board",
             placement=Placement(
                 x=side_center_x,
+                y=half(self.cabinet_depth),
                 z=self.wall_thickness,
             ),
         )
