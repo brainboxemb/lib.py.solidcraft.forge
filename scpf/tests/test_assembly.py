@@ -239,6 +239,49 @@ class AssemblyTests(unittest.TestCase):
             [("LeftGroup", True), ("RightGroup", True)],
         )
 
+    def test_group_with_child_attached_outside_group_is_not_grounded(self):
+        from scpf import Box, component
+        from scpf.assembly import compile_assembly
+
+        @component
+        class Frame:
+            def build(self):
+                return Box(40, 30, 20)
+
+        @component
+        class Bracket:
+            def build(self):
+                return Box(10, 10, 10)
+
+        frame = Frame()
+        bracket = Bracket().attach(frame).group("Brackets")
+        commands = compile_assembly(frame + bracket, "Mounted")["commands"]
+
+        group = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "component.create"
+            and command["params"]["name"] == "Brackets"
+        )
+        self.assertFalse(group["grounded"])
+
+        bracket_component = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "component.create"
+            and command["params"]["name"] == "Bracket"
+        )
+        self.assertEqual(bracket_component["parent"], "Brackets")
+        self.assertEqual(
+            len([
+                command
+                for command in commands
+                if command["command"] == "joint.create"
+                and command["params"]["name"].startswith("Attach Bracket:")
+            ]),
+            1,
+        )
+
     def test_group_name_conflicts_and_multi_parent_definitions_rejected(self):
         from scpf.core import Box
         from scpf.model_objects import ModelDefinition, ModelInstance
