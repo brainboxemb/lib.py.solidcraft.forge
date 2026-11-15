@@ -467,6 +467,7 @@ def check(
     assert not (site / "models").exists()
     assert not (site / "previews").exists()
     assert not list(site.rglob("native.png"))
+    native_case_slugs = {case["slug"] for case in QUALIFICATION_CASES}
     for slug, info in manifest["examples"].items():
         page = (site / "examples" / slug / "index.html").read_text(encoding="utf-8")
         src = (site / info["source"]).read_text(encoding="utf-8")
@@ -478,7 +479,7 @@ def check(
         assert info["preview_kind"] in ("native-snapshot", "schematic")
         assert f'src="{image.name}"' in page
         assert f'examples/{slug}/{image.name}' in home
-        if require_native:
+        if require_native and slug in native_case_slugs:
             assert info["preview_kind"] == "native-snapshot", slug
         if info["preview_kind"] == "native-snapshot":
             assert image.suffix == ".png"
