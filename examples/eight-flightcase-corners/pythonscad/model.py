@@ -27,5 +27,3 @@ for x, y, z, sx, sy, sz in [
     (60, 40, 60, 1, 1, -1), (-60, 40, 60, -1, 1, -1),
 ]:
     model = model | protector(x, y, z, sx, sy, sz)
-
-show(model)
