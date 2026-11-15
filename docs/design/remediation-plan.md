@@ -260,9 +260,17 @@ Only after Forge foundations are released:
 - pin the CAD repository to the new Forge version;
 - remove workarounds that duplicated library/compiler responsibilities;
 - rebuild the HUB75 complex example;
-- reintroduce AnchorFrame use only where it is the simplest semantic
-  relationship;
-- keep explicit Placement where no relationship is needed.
+- keep explicit Placement for ordinary component positioning;
+- introduce an attachment/joint relationship only where the CAD design
+  actually needs a persistent semantic relationship between occurrences;
+- do not reintroduce AnchorFrame merely because Forge supports it.
+
+For the HUB75 wood frame, AnchorFrame is **not** a migration goal. If the model
+is clear and robust with explicit Placement, it should remain that way.
+
+AnchorFrame remains a low-level relationship/frame primitive that can be used
+later only when a concrete model benefits from defining an explicit attachment
+frame that cannot be expressed more simply.
 
 The CAD project is validation of Forge. It is not where Forge compiler bugs are
-worked around.
+worked around, and it is not a showcase that must exercise every Forge API.
