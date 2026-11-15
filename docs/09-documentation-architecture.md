@@ -65,15 +65,22 @@ manual for agents.
 
 The preferred lookup order is:
 
-1. a small generated machine-readable API index derived from the same Python
-   objects/docstrings as the human reference;
+1. `docs/agent/forge-api.json`, a compact generated machine-readable API
+   index derived from the same Python objects/docstrings as the human reference;
 2. the relevant local guide/example when modelling intent is needed;
 3. the implementation or API design document for deeper detail;
 4. external documentation only when the local version-pinned sources are
    insufficient.
 
-The machine-readable index may be JSON, but it is generated output. It must not
-be edited by hand.
+The machine-readable index is generated output and must not be edited by hand.
+After changing public API objects/docstrings, regenerate the local snapshot with:
+
+```text
+python site/api_reference.py > docs/agent/forge-api.json
+```
+
+The site test compares that committed snapshot with the live generator output,
+so drift is a CI failure.
 
 ## Generation rule
 
