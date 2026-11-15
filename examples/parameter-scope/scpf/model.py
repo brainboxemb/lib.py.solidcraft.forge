@@ -1,6 +1,7 @@
-"""Parameter scope qualification: implicit component parameters and inherited bindings."""
+"""Parameter scope qualification: explicit component publication and inherited bindings."""
 
 
+@component(include=("width",))
 class Panel:
     width = 40.0
     DEPTH = 20.0
