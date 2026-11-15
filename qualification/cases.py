@@ -5,6 +5,8 @@ contract between the public Forge API, Forge's compiler model and native
 SolidCraft behaviour.  The site and site tests both consume this table.
 """
 
+from scpf.version import TESTED_SOLIDCRAFT_VERSION
+
 REFERENCE_URLS = {
     "SolidCraft": "https://docs.solidcraft.io/guide/assemblies.html",
     "BOSL2": "https://github.com/BelfrySCAD/BOSL2/wiki/Tutorial-Attachment-Overview",
@@ -16,7 +18,7 @@ REFERENCE_URLS = {
 QUALIFICATION_LEVELS = [
     ("Q1", "Python API", "Public API validation, symbolic values and compiler invariants."),
     ("Q2", "Command contract", "Generated SolidCraft command JSON is complete and inspectable."),
-    ("Q3", "Native build", "SolidCraft 0.30.1 accepts the command plan and saves an editable design."),
+    ("Q3", "Native build", f"SolidCraft {TESTED_SOLIDCRAFT_VERSION} accepts the command plan and saves an editable design."),
     ("Q4", "Native measurement", "Timeline and actual body measurements match the expected result."),
     ("Q5", "Parametric mutation", "A saved design re-solves correctly after parameters.change."),
     ("Q6", "Visual regression", "Fixed-camera native renders are checked from multiple views and published with reference/diff evidence."),
@@ -346,7 +348,7 @@ QUALIFICATION_CASES = [
         "forge_api": "Boss(...).attach(...); with behavior(history=History.SKETCH); explicit Sketch(...).add(Circle2D(...)).extrude(...)",
         "forge_model": "One plate receives the same Boss intent three times: AUTO and explicit NATIVE lower as native plastic features, while SKETCH lowers through editable sketch/extrude/cut history; a separately named explicit sketch adds a circular pad.",
         "lowering": "AUTO and History.NATIVE each emit plastic.boss. History.SKETCH emits a Boss sketch plus join extrusion and a Boss-hole sketch plus cut extrusion. The explicit named Sketch remains a distinct sketch and join extrusion.",
-        "native_expectation": "SolidCraft 0.30.1 builds one plate body with three bosses (AUTO, NATIVE and SKETCH) plus the explicit circular pad, while the saved timeline preserves both native BossFeatures and the forced-sketch feature chain.",
+        "native_expectation": f"SolidCraft {TESTED_SOLIDCRAFT_VERSION} builds one plate body with three bosses (AUTO, NATIVE and SKETCH) plus the explicit circular pad, while the saved timeline preserves both native BossFeatures and the forced-sketch feature chain.",
         "mutation": "No saved-design mutation in this fixture; the contract is persisted native feature history and geometry.",
         "references": [
             ("SolidCraft", "The native timeline is the source of truth for whether feature history remains inspectable after Python compilation."),
