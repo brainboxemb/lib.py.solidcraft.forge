@@ -10,4 +10,3 @@ model = base.attach(
     child_anchor=Anchor.BOTTOM,
     spin=90,
 ).realize()
-model.show()
