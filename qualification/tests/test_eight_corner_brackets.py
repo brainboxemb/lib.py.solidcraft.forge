@@ -80,10 +80,15 @@ class EightCornerBracketsCommandTests(unittest.TestCase):
                 expected_xy[index - 1],
             )
             self.assertEqual(joint["values"][2], expected_angles[index - 1])
-            self.assertEqual(joint["a"]["occurrence"], "FrameBlock:1")
+            self.assertEqual(joint["a"]["occurrence"], "FrameBlock")
             self.assertEqual(joint["a"]["z"], [0.0, 0.0, 1.0])
-            self.assertEqual(joint["b"]["occurrence"], f"LProfile:{index}")
             self.assertEqual(joint["b"]["z"], [0.0, 0.0, -1.0])
+            if index == 1:
+                self.assertEqual(joint["b"]["occurrence"], "LProfile")
+                self.assertEqual(joint["b"]["point"], [0.0, 0.0, 0.0])
+            else:
+                self.assertNotIn("occurrence", joint["b"])
+                self.assertEqual(joint["b"]["point"], [0.0, 0.0, 1.0])
 
         # Every corner is a bottom/top pair. The bottom member has no normal
         # offset; the top member keeps a symbolic frame-height dependency.
