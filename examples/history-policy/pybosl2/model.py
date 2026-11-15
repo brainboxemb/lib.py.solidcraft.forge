@@ -15,4 +15,4 @@ def boss(x, y):
 
 model = body | boss(-10, 0) | boss(0, 15) | boss(10, 0)
 pad = cyl(diameter=10, height=6).translate([0, -15, 9])
-(model | pad).show()
+model = model | pad
