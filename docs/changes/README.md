@@ -26,3 +26,4 @@ Current records:
 
 - [0008-stable-forge-occurrence-id.md](0008-stable-forge-occurrence-id.md) — stop using Python object ids to track Forge occurrences; copy gets a new id while group/attach keep the existing one.
 - [0009-replay-first-placement.md](0009-replay-first-placement.md) — keep ordinary Placement replay-first: identity first occurrence, numeric unrotated copies, and reject cases that would need guessed occurrence names.
+- [0010-replay-safe-attachments.md](0010-replay-safe-attachments.md) — remove predicted occurrence names from attachments; use first-occurrence component selectors and native point/topology inference for copies.
