@@ -1026,6 +1026,7 @@ class AssemblyTests(unittest.TestCase):
     def test_symbolic_parent_placement_and_child_attach_keep_distinct_semantics(self):
         from scpf.assembly import compile_assembly
         from scpf.core import Anchor, Box, Parameter
+        from scpf.model_objects import Placement
         from scpf.runner import component
 
         class Panel:
