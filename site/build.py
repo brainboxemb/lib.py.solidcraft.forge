@@ -486,7 +486,7 @@ def build(out, sha, native_root=None, diagram_root=None):
         metadata = json.loads(meta_file.read_text(encoding="utf-8"))
         verified = (metadata.get("source_commit") == sha
                     and metadata.get("verified") is True
-                    and metadata.get("solidcraft_version") == "0.30.1")
+                    and metadata.get("solidcraft_version") == TESTED_SOLIDCRAFT_VERSION)
         if not verified:
             raise ValueError("Native screenshots do not match this source commit")
 

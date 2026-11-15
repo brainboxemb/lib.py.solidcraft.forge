@@ -421,15 +421,20 @@ jobs:
           name: scpf-library-site
           path: output/site
           if-no-files-found: error
-      - name: Resolve native PR preview target
+      - name: Resolve qualification preview target
         id: native_preview
-        if: success() && startsWith(github.ref_name, 'qualify/pr-')
+        if: success() && startsWith(github.ref_name, 'qualify/')
         shell: bash
         run: |
-          pr="${GITHUB_REF_NAME#qualify/pr-}"
-          echo "destination=previews/pr-$pr" >> "$GITHUB_OUTPUT"
+          slug="${GITHUB_REF_NAME#qualify/}"
+          slug="${slug//\//-}"
+          destination="previews/$slug"
+          repo="${GITHUB_REPOSITORY#*/}"
+          url="https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo}/${destination}/"
+          echo "destination=$destination" >> "$GITHUB_OUTPUT"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
 
-      - name: Publish native qualification to PR preview
+      - name: Publish qualification branch preview
         if: steps.native_preview.outputs.destination != ''
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -439,6 +444,18 @@ jobs:
           destination_dir: ${{ steps.native_preview.outputs.destination }}
           keep_files: true
           commit_message: "Native qualification ${{ github.ref_name }} at ${{ github.sha }}"
+
+      - name: Show qualification preview URL
+        if: steps.native_preview.outputs.url != ''
+        shell: bash
+        run: |
+          echo "### SolidCraft qualification preview" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- SolidCraft: **$SOLIDCRAFT_VERSION**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Branch: `$GITHUB_REF_NAME`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit: `$GITHUB_SHA`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Results: ${{ steps.native_preview.outputs.url }}qualification/results/" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Full preview: ${{ steps.native_preview.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish current library site
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

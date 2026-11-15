@@ -1,34 +1,37 @@
-# SolidCraft upgrade protocol
+# SolidCraft qualification protocol for Forge
 
-This protocol defines how Forge and the downstream CAD project move to a new
-SolidCraft release without changing production branches before compatibility is
-proven.
+This protocol defines how Forge qualifies a new SolidCraft release. It stops at
+the Forge boundary: the CAD repository is upgraded only after Forge itself is
+fully qualified.
 
-## Single source of truth
+## One version source
 
-The SolidCraft version is configured in exactly one operational place:
+Forge has exactly one operational SolidCraft version setting:
 
 ```python
 # scpf/scpf/version.py
 TESTED_SOLIDCRAFT_VERSION = "0.42.0"
 ```
 
-No GitHub Actions workflow should contain its own SolidCraft version literal.
+Everything else reads this value automatically:
 
-The Forge qualification workflow installs SCPF and reads
-`TESTED_SOLIDCRAFT_VERSION`. The CAD workflow first restores its exact pinned
-Forge revision and then reads the same value from the installed `scpf`
-package.
+- `scpf.version.check_cli_version()` uses it for the runtime compatibility
+  check;
+- the Forge qualification workflow reads it to download the matching official
+  SolidCraft release;
+- the generated library and qualification pages show it as the tested version;
+- source-matched native verification accepts evidence only for this exact
+  version.
 
-The CAD repository therefore owns only the **Forge revision pin**. It does not
-own a second SolidCraft version setting.
+A workflow, site builder or qualification script must not contain a second
+SolidCraft version literal.
 
-## Branch convention
+## Qualification branch
 
-Use the same candidate branch name in both repositories:
+Create the candidate from current Forge `main`:
 
 ```text
-qualify/solidcraft-<version>
+qualify/solidcraft-<major>.<minor>
 ```
 
 Example:
@@ -37,142 +40,148 @@ Example:
 qualify/solidcraft-0.42
 ```
 
-Never start an engine qualification by changing `main` directly.
+`main` remains on the previously qualified version until the candidate has
+passed this complete protocol.
 
-## Phase 1 — establish the baseline
+## 1. Verify the baseline
 
-1. Confirm the current Forge `main` qualification is green.
-2. Confirm the current CAD `main` native workflow is green.
-3. Record the current Forge and CAD commit SHAs.
-4. Create the Forge qualification branch from current `main`.
+Before changing the version:
 
-If the baseline is not green, fix the existing regression before testing a new
-SolidCraft version.
+1. Confirm Forge `main` qualification is green.
+2. Record the Forge `main` commit SHA.
+3. Create the qualification branch from that exact SHA.
 
-## Phase 2 — change only the candidate version
+Existing failures are fixed before an engine upgrade starts.
 
-On the Forge qualification branch:
+## 2. Change only the version first
 
-1. Change only `TESTED_SOLIDCRAFT_VERSION` to the candidate release.
-2. Do not initially change compiler behaviour, command JSON or model code.
-3. Run the full Forge qualification against the candidate version.
+Change only `TESTED_SOLIDCRAFT_VERSION`.
 
-This first run answers one question: **does the existing Forge command contract
-still work unchanged?**
+Do not initially change:
 
-If it does, the upgrade is potentially a one-line engine-version change.
-If it does not, compatibility changes are made only on the qualification
-branch and each change must be explained by a failing qualification case or a
-documented SolidCraft API change.
+- Forge compiler behaviour;
+- generated SolidCraft command structures;
+- qualification models;
+- expected geometry.
 
-## Phase 3 — Forge qualification
+Run the complete Forge qualification suite. This first run answers:
 
-The candidate must pass all existing qualification levels:
+> Does the existing Forge API and command contract work unchanged on the new
+> SolidCraft release?
+
+Only a demonstrated incompatibility justifies a Forge code change.
+
+## 3. Run Forge's own qualification projects
+
+The candidate is tested only with Forge's self-contained examples and
+qualification cases. The downstream CAD repository is not part of this stage.
+
+All levels must pass:
 
 - Q1 — Python API contract;
 - Q2 — generated SolidCraft command contract;
 - Q3 — native SolidCraft build;
-- Q4 — native measurement/semantic validation;
+- Q4 — native semantic and measurement validation;
 - Q5 — saved-design parametric mutation;
 - Q6 — native visual regression.
 
-In addition:
+Additionally:
 
-1. every native timeline must be free of errors;
-2. STEP and saved `.sc` artifacts must still be produced;
-3. joint, occurrence and parameter behaviour must remain associative;
-4. command acceptance alone is not sufficient evidence;
-5. unexpected warnings or geometry differences must be investigated rather
-   than accepted automatically.
+- native timelines contain no unexplained errors;
+- saved `.sc` files and STEP exports are produced;
+- parameter mutations remain associative;
+- joints and occurrence placement retain their intended semantics;
+- visual differences are understood rather than silently accepted.
 
-If Forge requires a compatibility change, add or update a regression test that
-proves the required behaviour.
+Command acceptance alone is not qualification.
 
-## Phase 4 — downstream CAD qualification
+## 4. Visible review result
 
-Only after a Forge candidate commit is available:
+Every successful `qualify/**` workflow publishes its generated site to a
+separate GitHub Pages preview:
 
-1. Create the matching CAD qualification branch.
-2. Pin `dependencies.repos` to the exact Forge qualification commit SHA.
-3. Let the CAD workflow read the SolidCraft version from that installed Forge.
-4. Run the complete native CAD workflow against the candidate engine.
+```text
+/previews/<qualification-branch>/
+```
 
-The CAD run must cover:
+For example:
 
-- every catalogued SCPF model;
-- the SCPF/SCPC comparison models;
-- native saved-design parameter changes;
-- component occurrences and assembly joints;
-- expected body counts and bounding boxes;
-- generated snapshots and STEP output;
-- the HUB75 wood-frame regression checks.
+```text
+/previews/solidcraft-0.42/
+```
 
-No project model is changed merely to make an engine upgrade appear green. A
-model change is acceptable only when the old model relied on behaviour that is
-demonstrably obsolete or incorrect in the new SolidCraft API.
+The workflow summary prints direct links to:
 
-## Phase 5 — review the evidence
+- the full preview;
+- `qualification/results/`.
 
-Before promotion, review:
+The review page must visibly contain:
 
-1. Forge qualification results;
-2. CAD native workflow results;
-3. command-plan differences where the compiler changed;
-4. native feature-history differences where relevant;
-5. visual snapshots for unexpected geometry changes;
-6. saved-design parameter mutations;
-7. SolidCraft warnings and timeline errors.
+- the exact Forge source commit;
+- the SolidCraft version from `TESTED_SOLIDCRAFT_VERSION`;
+- the per-case qualification status;
+- native measurements and evidence links;
+- generated visual evidence.
 
-A green process exit without semantic/geometry evidence is not sufficient.
+The Actions artifact remains the complete retained evidence archive. The Pages
+preview is the human review surface.
 
-## Acceptance criteria
+A candidate is not promoted solely because the workflow icon is green; the
+published qualification results are reviewed as part of the protocol.
 
-The candidate can be promoted only when all of the following are true:
+## 5. Investigate a failure
 
-- Forge Q1 through Q6 pass;
-- the complete CAD native workflow passes;
-- saved-design parameter mutations remain associative;
-- all required native models are closed/valid as expected;
-- SCPF/SCPC comparison cases still agree;
-- there are no unexplained native warnings or geometry regressions;
-- any required Forge compatibility changes have regression coverage.
+When the candidate fails:
 
-## Phase 6 — promote to main
+1. Find the smallest failing qualification case.
+2. Determine whether the cause is a SolidCraft API change, changed semantics, a
+   Forge compiler assumption, an obsolete workaround, or an engine regression.
+3. Change Forge only after the cause is understood.
+4. Add or update regression coverage for every required compatibility change.
+5. Run the complete qualification suite again.
 
-Promotion order is fixed:
+Do not weaken assertions merely to make a newer release pass.
 
-1. Merge the qualified Forge branch to Forge `main`.
-2. Record the resulting Forge `main` commit SHA.
-3. Update the CAD qualification branch to pin that exact merged Forge SHA.
-4. Run the CAD native workflow once more with the final Forge SHA.
-5. Merge the CAD branch to CAD `main` only after that final run is green.
+## 6. Forge acceptance criteria
 
-This prevents CAD `main` from ever pointing at an unqualified Forge revision.
+Forge is qualified only when:
 
-## Failure and rollback
+- Q1 through Q6 pass;
+- all Forge qualification projects build natively;
+- saved-design mutations pass;
+- no unexplained native errors or warnings remain;
+- geometry/visual evidence is reviewed;
+- required compatibility changes have regression coverage;
+- the published preview identifies the correct source commit and SolidCraft
+  version.
 
-A failed candidate is not rolled back on `main`, because `main` was never
-changed.
+At this point the branch is a qualified Forge candidate.
 
-Either:
+## 7. Promote Forge
 
-- fix the compatibility issue on the qualification branch and rerun the full
-  protocol; or
-- abandon/delete the qualification branches and keep the existing qualified
-  SolidCraft version.
+1. Merge the qualified branch to Forge `main`.
+2. Run the complete Forge qualification once more on the resulting `main`
+   commit.
+3. Review the normal published Forge qualification site.
+4. Record the final Forge `main` SHA and successful workflow run.
 
-Do not weaken qualification assertions merely to make a new engine version
-pass.
+Only that final qualified Forge `main` SHA is handed to the separate CAD
+upgrade protocol.
 
-## Upgrade record
+## Abort
 
-For each successful engine upgrade, retain in Git history:
+If the candidate cannot be qualified, abandon the qualification branch.
+`main` was never changed, so no production rollback is necessary.
 
-- the qualification branch/PR;
-- the SolidCraft version;
-- the qualified Forge commit;
-- the final CAD pin;
-- any compatibility changes;
-- the successful Forge and CAD workflow evidence.
+## Qualification record
 
-That history is the compatibility record for future SolidCraft upgrades.
+Keep in Git history and CI:
+
+- SolidCraft release number;
+- qualification branch/PR;
+- compatibility changes and their tests;
+- final qualified Forge commit SHA;
+- Q1–Q6 workflow evidence;
+- published preview/result page.
+
+The CAD upgrade begins only after this Forge record is complete.
