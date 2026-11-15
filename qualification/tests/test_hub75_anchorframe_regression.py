@@ -58,9 +58,25 @@ class Hub75AnchorFrameDiagnosticTests(unittest.TestCase):
             self.assertTrue(
                 all(
                     "opening_width" in str(row["translate"])
+                    and "cabinet_depth" in str(row["translate"])
                     for row in moves
                 )
             )
+
+    def test_group_grounding_follows_relationship_semantics(self):
+        anchor_group = next(
+            row
+            for row in of(commands("scpf"), "component.create")
+            if row["name"] == "CornerBrackets"
+        )
+        placement_group = next(
+            row
+            for row in of(commands("placement"), "component.create")
+            if row["name"] == "CornerBrackets"
+        )
+
+        self.assertFalse(anchor_group["grounded"])
+        self.assertTrue(placement_group["grounded"])
 
     def test_attached_child_seed_placement_remains_symbolic(self):
         """The diagnosed command-level regression must stay fixed.
