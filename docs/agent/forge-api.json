@@ -1,751 +1,470 @@
 {
-  "schema": 2,
+  "schema": 1,
   "generated_from": "scpf public objects and docstrings",
-  "references": [
-    {
+  "symbols": {
+    "Faces": {
       "kind": "enum",
-      "name": "Faces",
       "summary": "Select named planar faces for within-component feature operations.",
-      "guide": "guide/features/#hole",
       "reference": "reference/Faces/",
-      "use_when": "Pass a Faces value to operations such as Shape.on() and Shape.shell() to identify a surface of the target body.",
-      "limits": "The enum defines all six cardinal faces. Individual operations may support only a subset; Shape.on() currently accepts TOP and BOTTOM. Component assembly attachment uses Anchor instead.",
-      "members": [
-        {
-          "name": "TOP",
-          "value": "top"
-        },
-        {
-          "name": "BOTTOM",
-          "value": "bottom"
-        },
-        {
-          "name": "LEFT",
-          "value": "left"
-        },
-        {
-          "name": "RIGHT",
-          "value": "right"
-        },
-        {
-          "name": "FRONT",
-          "value": "front"
-        },
-        {
-          "name": "BACK",
-          "value": "back"
-        }
-      ]
-    },
-    {
-      "kind": "enum",
-      "name": "Anchor",
-      "summary": "Select component attachment references and cardinal directions.",
-      "guide": "guide/assembly-basics/#anchor-choice",
-      "reference": "reference/Anchor/",
-      "use_when": "Use cardinal or corner anchors to attach reusable component occurrences, or combine cardinal values to identify Box edges/corners.",
-      "limits": "Anchor is the assembly/alignment vocabulary. Within-component feature placement normally uses Faces instead. INNER_BOTTOM has no direction vector and therefore cannot be used as a cardinal selector.",
-      "members": [
-        {
-          "name": "CENTER",
-          "value": "center"
-        },
-        {
-          "name": "TOP",
-          "value": "top"
-        },
-        {
-          "name": "BOTTOM",
-          "value": "bottom"
-        },
-        {
-          "name": "LEFT",
-          "value": "left"
-        },
-        {
-          "name": "RIGHT",
-          "value": "right"
-        },
-        {
-          "name": "FRONT",
-          "value": "front"
-        },
-        {
-          "name": "BACK",
-          "value": "back"
-        },
-        {
-          "name": "FRONT_TOP_LEFT",
-          "value": "front_top_left"
-        },
-        {
-          "name": "FRONT_TOP_RIGHT",
-          "value": "front_top_right"
-        },
-        {
-          "name": "FRONT_BOTTOM_LEFT",
-          "value": "front_bottom_left"
-        },
-        {
-          "name": "FRONT_BOTTOM_RIGHT",
-          "value": "front_bottom_right"
-        },
-        {
-          "name": "BACK_TOP_LEFT",
-          "value": "back_top_left"
-        },
-        {
-          "name": "BACK_TOP_RIGHT",
-          "value": "back_top_right"
-        },
-        {
-          "name": "BACK_BOTTOM_LEFT",
-          "value": "back_bottom_left"
-        },
-        {
-          "name": "BACK_BOTTOM_RIGHT",
-          "value": "back_bottom_right"
-        },
-        {
-          "name": "INNER_BOTTOM",
-          "value": "inner_bottom"
-        },
-        {
-          "name": "UP",
-          "value": "top"
-        },
-        {
-          "name": "DOWN",
-          "value": "bottom"
-        }
-      ],
-      "aliases": [
-        "TOP",
-        "BOTTOM",
-        "LEFT",
-        "RIGHT",
-        "FRONT",
-        "BACK"
-      ]
-    },
-    {
-      "kind": "enum",
-      "name": "Axis",
-      "summary": "Select one of the native principal X, Y or Z axes.",
-      "guide": "guide/geometry/#solids",
-      "reference": "reference/Axis/",
-      "use_when": "Use Axis for primitive orientation and supported patterns, for example Cylinder(..., axis=Axis.X) or a linear Hole pattern along Axis.Y.",
-      "limits": "Axis is a principal-axis selector, not an attachment reference and not an extrusion Direction.",
-      "members": [
-        {
-          "name": "X",
-          "value": "X"
-        },
-        {
-          "name": "Y",
-          "value": "Y"
-        },
-        {
-          "name": "Z",
-          "value": "Z"
-        }
-      ]
-    },
-    {
-      "kind": "enum",
-      "name": "Direction",
-      "summary": "Choose how an extrusion extends relative to its sketch-plane normal.",
-      "guide": "guide/geometry/#profiles",
-      "reference": "reference/Direction/",
-      "use_when": "Pass a Direction to Sketch.extrude() when the default positive extrusion is not the intended direction.",
-      "limits": "Direction describes extrusion relative to the sketch plane; it is not a world-axis selector. Use Axis for principal X/Y/Z directions.",
-      "members": [
-        {
-          "name": "POSITIVE",
-          "value": "positive"
-        },
-        {
-          "name": "NEGATIVE",
-          "value": "negative"
-        },
-        {
-          "name": "SYMMETRIC",
-          "value": "symmetric"
-        }
-      ]
-    },
-    {
-      "kind": "enum",
-      "name": "Depth",
-      "summary": "Choose a supported feature-depth policy.",
       "guide": "guide/features/#hole",
-      "reference": "reference/Depth/",
-      "use_when": "Use Depth.THROUGH_ALL for features such as Hole that should pass completely through their target instead of using a fixed distance.",
-      "limits": "THROUGH_ALL is currently the only named depth policy.",
-      "members": [
-        {
-          "name": "THROUGH_ALL",
-          "value": "through_all"
-        }
-      ]
+      "members": {
+        "TOP": "top",
+        "BOTTOM": "bottom",
+        "LEFT": "left",
+        "RIGHT": "right",
+        "FRONT": "front",
+        "BACK": "back"
+      }
     },
-    {
+    "Anchor": {
       "kind": "enum",
-      "name": "Edges",
-      "summary": "Select edges for supported fillet and chamfer feature operations.",
-      "guide": "guide/features/#fillet",
-      "reference": "reference/Edges/",
-      "use_when": "Use Edges.VERTICAL for the vertical edges of a supported rectangular body. Use from_profile() for named profile segments and from_vertices() for extrusion-axis edges grown from named profile vertices.",
-      "limits": "Only the selectors implemented here are public. from_profile() currently supports sides=\"both\"; from_vertices() requires named Polygon2D vertices.",
-      "members": [
-        {
-          "name": "VERTICAL",
-          "value": "vertical"
-        }
-      ]
+      "summary": "Select component attachment references and cardinal directions.",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice",
+      "members": {
+        "CENTER": "center",
+        "TOP": "top",
+        "BOTTOM": "bottom",
+        "LEFT": "left",
+        "RIGHT": "right",
+        "FRONT": "front",
+        "BACK": "back",
+        "FRONT_TOP_LEFT": "front_top_left",
+        "FRONT_TOP_RIGHT": "front_top_right",
+        "FRONT_BOTTOM_LEFT": "front_bottom_left",
+        "FRONT_BOTTOM_RIGHT": "front_bottom_right",
+        "BACK_TOP_LEFT": "back_top_left",
+        "BACK_TOP_RIGHT": "back_top_right",
+        "BACK_BOTTOM_LEFT": "back_bottom_left",
+        "BACK_BOTTOM_RIGHT": "back_bottom_right",
+        "INNER_BOTTOM": "inner_bottom",
+        "UP": "top",
+        "DOWN": "bottom"
+      }
     },
-    {
+    "Axis": {
+      "kind": "enum",
+      "summary": "Select one of the native principal X, Y or Z axes.",
+      "reference": "reference/Axis/",
+      "guide": "guide/geometry/#solids",
+      "members": {
+        "X": "X",
+        "Y": "Y",
+        "Z": "Z"
+      }
+    },
+    "Direction": {
+      "kind": "enum",
+      "summary": "Choose how an extrusion extends relative to its sketch-plane normal.",
+      "reference": "reference/Direction/",
+      "guide": "guide/geometry/#profiles",
+      "members": {
+        "POSITIVE": "positive",
+        "NEGATIVE": "negative",
+        "SYMMETRIC": "symmetric"
+      }
+    },
+    "Depth": {
+      "kind": "enum",
+      "summary": "Choose a supported feature-depth policy.",
+      "reference": "reference/Depth/",
+      "guide": "guide/features/#hole",
+      "members": {
+        "THROUGH_ALL": "through_all"
+      }
+    },
+    "Edges": {
+      "kind": "enum",
+      "summary": "Select edges for supported fillet and chamfer feature operations.",
+      "reference": "reference/Edges/",
+      "guide": "guide/features/#fillet",
+      "members": {
+        "VERTICAL": "vertical"
+      }
+    },
+    "Shape": {
       "kind": "callable",
-      "name": "Shape",
       "summary": "Represent Forge geometry/feature intent before SolidCraft executes it.",
-      "guide": "guide/model-objects/#shape",
       "reference": "reference/Shape/",
-      "use_when": "Shape values are normally returned by constructors such as Box(), Cylinder(), Hole() and Sketch.extrude(), then transformed or combined with the supported Shape methods/operators.",
-      "limits": "Shape is Forge's model-intent node, not a second geometry kernel. SolidCraft owns the final BRep and native feature history; users normally do not instantiate Shape(kind, data) directly.",
+      "guide": "guide/model-objects/#shape",
       "signature": "Shape(kind: str, data: Any, history: Any = None) -> None"
     },
-    {
+    "component": {
       "kind": "callable",
-      "name": "component",
       "summary": "Declare one reusable physical component definition.",
-      "guide": "guide/assembly-basics/#simple-component",
       "reference": "reference/component/",
-      "use_when": "Decorate a model class when its build() result represents one reusable physical part. Calling the decorated class creates an occurrence of that shared definition.",
-      "limits": "build() must produce one Shape when the class is reused as a component. Public lower-case numeric fields become editable native parameters; underscore-prefixed inputs remain Forge/build-time inputs.",
+      "guide": "guide/assembly-basics/#simple-component",
       "signature": "component(cls)"
     },
-    {
+    "assembly": {
       "kind": "callable",
-      "name": "assembly",
       "summary": "Declare a reusable class that composes component occurrences.",
-      "guide": "guide/assembly-basics/#reusable-assembly",
       "reference": "reference/assembly/",
-      "use_when": "Decorate a class when the class itself represents a reusable assembly or subassembly built from component occurrences and their relationships.",
-      "limits": "build() must return a component occurrence or Assembly. The decorator does not itself create grouping or attachment relationships; those come from the objects returned by build().",
+      "guide": "guide/assembly-basics/#reusable-assembly",
       "signature": "assembly(cls)"
     },
-    {
+    "Occurrence.copy": {
       "kind": "callable",
-      "name": "Occurrence.copy",
       "summary": "Create another occurrence of the same reusable definition.",
-      "guide": "guide/assembly-basics/#collection",
       "reference": "reference/Occurrence.copy/",
-      "use_when": "Reuse the same physical component definition at another placement.",
-      "limits": "copy() does not duplicate the component feature definition. The new occurrence starts without the source attachment and explicit name.",
+      "guide": "guide/assembly-basics/#collection",
       "signature": "Occurrence.copy(self)"
     },
-    {
+    "Occurrence.move": {
       "kind": "callable",
-      "name": "Occurrence.move",
       "summary": "Translate an occurrence without changing its shared component geometry.",
-      "guide": "guide/assembly-basics/#collection",
       "reference": "reference/Occurrence.move/",
-      "use_when": "The intended design rule is an explicit placement/offset rather than a relationship to a face, corner or datum of another part.",
-      "limits": "move() clears an existing attachment because it defines placement directly. Parameter/Expression inputs stay symbolic where supported; use attach() when another component should own the relationship.",
+      "guide": "guide/assembly-basics/#collection",
       "signature": "Occurrence.move(self, x=0, y=0, z=0)"
     },
-    {
+    "Occurrence.attach": {
       "kind": "callable",
-      "name": "Occurrence.attach",
       "summary": "Create a rigid relationship from this occurrence to another component.",
-      "guide": "guide/assembly-basics/#relationship",
       "reference": "reference/Occurrence.attach/",
-      "use_when": "Placement should be expressed semantically between component references, such as left face to right face or one mounting frame to another, rather than as a calculated global XYZ position.",
-      "limits": "The target must be another component occurrence. Supported standard anchors currently focus on rectangular component geometry; custom AnchorFrame/AnchorTopology references cover more specific datums. as_built=True records the existing pose and takes no anchor/offset relationship arguments.",
+      "guide": "guide/assembly-basics/#relationship",
       "signature": "Occurrence.attach(self, target, *, parent=<Anchor.RIGHT: 'right'>, child=<Anchor.LEFT: 'left'>, offset=(0, 0), gap=0, angle=None, as_built=False)"
     },
-    {
+    "Occurrence.group": {
       "kind": "callable",
-      "name": "Occurrence.group",
       "summary": "Place this occurrence in a named native subassembly component.",
-      "guide": "guide/assembly-basics/#group",
       "reference": "reference/Occurrence.group/",
-      "use_when": "Give one occurrence a useful native browser/subassembly parent.",
-      "limits": "Grouping changes hierarchy only. It does not align, attach or otherwise create a mechanical relationship. One occurrence cannot belong to several different groups.",
+      "guide": "guide/assembly-basics/#group",
       "signature": "Occurrence.group(self, name)"
     },
-    {
+    "Assembly.group": {
       "kind": "callable",
-      "name": "Assembly.group",
       "summary": "Wrap these assembly occurrences in a real nested native component.",
-      "guide": "guide/assembly-basics/#group",
       "reference": "reference/Assembly.group/",
-      "use_when": "The collection should appear as one named subassembly/browser unit in SolidCraft.",
-      "limits": "Grouping changes native hierarchy, not placement or relationships. Use attach() for mechanical relationships between occurrences.",
+      "guide": "guide/assembly-basics/#group",
       "signature": "Assembly.group(self, name)"
     },
-    {
+    "Assembly.with_anchor": {
       "kind": "callable",
-      "name": "Assembly.with_anchor",
       "summary": "Expose one named attachment datum owned by this assembly.",
-      "guide": "guide/components/#assembly-anchor",
       "reference": "reference/Assembly.with_anchor/",
-      "use_when": "A mounting/reference name belongs to the meaning of the larger assembly rather than to the generic reusable component itself.",
-      "limits": "target must be an occurrence already in this Assembly. offset is an optional in-plane correction to pass through to attach(); this does not create the attachment by itself.",
+      "guide": "guide/components/#assembly-anchor",
       "signature": "Assembly.with_anchor(self, name, target, reference, *, offset=(0, 0))"
     },
-    {
+    "Assembly.anchor": {
       "kind": "callable",
-      "name": "Assembly.anchor",
       "summary": "Return one named assembly-owned attachment datum.",
-      "guide": "guide/components/#assembly-anchor",
       "reference": "reference/Assembly.anchor/",
-      "use_when": "A consumer needs the target/reference pair previously exposed with with_anchor() in order to create an attachment.",
-      "limits": "The name must resolve to exactly one assembly-owned anchor.",
+      "guide": "guide/components/#assembly-anchor",
       "signature": "Assembly.anchor(self, name)"
     },
-    {
+    "Shape.at": {
       "kind": "callable",
-      "name": "Shape.at",
       "summary": "Place a shape at absolute coordinates or align it to another Shape.",
-      "guide": "guide/geometry/#solids",
       "reference": "reference/Shape.at/",
-      "use_when": "Use shape.at(x, y, z) for geometric placement. A Box may additionally use a cardinal anchor. Use shape.at(target) for the supported shape-to-shape CENTER alignment.",
-      "limits": "Shape-to-shape alignment currently supports CENTER-to-CENTER only. at() is geometric placement/alignment; selecting a support face for a feature is the job of Shape.on().",
+      "guide": "guide/geometry/#solids",
       "signature": "Shape.at(self, x=0, y=0, z=0, *, anchor=<Anchor.CENTER: 'center'>, child=<Anchor.CENTER: 'center'>)"
     },
-    {
+    "Shape.on": {
       "kind": "callable",
-      "name": "Shape.on",
       "summary": "Place a supported within-component feature on a target face.",
-      "guide": "guide/features/#hole",
       "reference": "reference/Shape.on/",
-      "use_when": "Put a Hole or another supported feature on an existing Shape and select its entry/support surface with Faces.",
-      "limits": "Shape.on() currently accepts Faces.TOP and Faces.BOTTOM. This is feature placement; component assembly attachment uses Anchor and the component occurrence attach() API.",
+      "guide": "guide/features/#hole",
       "signature": "Shape.on(self, target, *, face=<Faces.TOP: 'top'>, offset=(0, 0))"
     },
-    {
+    "Shape.attach": {
       "kind": "callable",
-      "name": "Shape.attach",
       "summary": "Anchor a supported feature explicitly to another Shape.",
-      "guide": "guide/features/#anchors",
       "reference": "reference/Shape.attach/",
-      "use_when": "Use this lower-level feature-placement form when parent/child Anchor references are required explicitly.",
-      "limits": "This is legacy within-component feature anchoring. Prefer on() for simple face placement. It is separate from component occurrence attachment used by assemblies.",
+      "guide": "guide/features/#anchors",
       "signature": "Shape.attach(self, target, *, parent=<Anchor.TOP: 'top'>, child=<Anchor.BOTTOM: 'bottom'>, offset=(0, 0))"
     },
-    {
+    "Shape.shell": {
       "kind": "callable",
-      "name": "Shape.shell",
       "summary": "Hollow a supported solid and leave selected Faces open.",
-      "guide": "guide/features/#shell",
       "reference": "reference/Shape.shell/",
-      "use_when": "Create an enclosure-like body with an even wall thickness while removing one or more named planar faces.",
-      "limits": "open= must be one Faces value or a non-empty sequence of Faces values. Support still depends on the underlying feature tree.",
+      "guide": "guide/features/#shell",
       "signature": "Shape.shell(self, thickness, *, open=<Faces.TOP: 'top'>)"
     },
-    {
+    "Sketch": {
       "kind": "callable",
-      "name": "Sketch",
       "summary": "Create an explicit named 2D sketch scope.",
-      "guide": "guide/geometry/#profiles",
       "reference": "reference/Sketch/",
-      "use_when": "Author one or more 2D profiles before creating a 3D extrusion. A Sketch may be standalone on XY/XZ/YZ or supported by an existing Shape.",
-      "limits": "Sketch(on=target) selects the supporting shape; profile placement inside the sketch is a separate operation. Leave the with-scope before extruding.",
+      "guide": "guide/geometry/#profiles",
       "signature": "Sketch(*, name='Profile', on=None, parent=<Anchor.TOP: 'top'>, plane=None, origin=None, offset=None)"
     },
-    {
+    "Sketch.add": {
       "kind": "callable",
-      "name": "Sketch.add",
       "summary": "Add a supported 2D profile to this Sketch.",
-      "guide": "guide/geometry/#profiles",
       "reference": "reference/Sketch.add/",
-      "use_when": "Explicitly add or reposition Circle2D, Rectangle2D, Polygon2D, RoundedRectangle2D or Text2D geometry in the active sketch.",
-      "limits": "Placement currently uses numeric offset=(x, y). Semantic 2D anchor placement is not implemented by this method yet.",
+      "guide": "guide/geometry/#profiles",
       "signature": "Sketch.add(self, profile, *, offset=(0, 0))"
     },
-    {
+    "Sketch.extrude": {
       "kind": "callable",
-      "name": "Sketch.extrude",
       "summary": "Extrude a completed Sketch into a supported 3D feature.",
-      "guide": "guide/geometry/#profiles",
       "reference": "reference/Sketch.extrude/",
-      "use_when": "Leave the Sketch context and then create material using a finite distance and, when needed, a Direction relative to the sketch plane.",
-      "limits": "A standalone Sketch requires a finite distance. Depth.THROUGH_ALL is only meaningful for a Sketch attached to an existing Shape.",
+      "guide": "guide/geometry/#profiles",
       "signature": "Sketch.extrude(self, distance, *, direction=<Direction.POSITIVE: 'positive'>)"
     },
-    {
-      "kind": "group",
-      "name": "geometry-constructors",
-      "summary": "Direct 3D primitives and 2D profile constructors.",
+    "Box": {
+      "kind": "callable",
+      "summary": "Create a native rectangular solid.",
+      "reference": "reference/geometry-constructors/#Box",
       "guide": "guide/geometry/#solids",
-      "reference": "reference/geometry-constructors/",
-      "members": [
-        {
-          "kind": "callable",
-          "name": "Box",
-          "summary": "Create a native rectangular solid.",
-          "use_when": "Model a simple rectangular part directly without introducing a Sketch.",
-          "limits": "The conventional Box base lies in XY and thickness extends along +Z. Use at() for supported placement/anchor semantics.",
-          "signature": "Box(length, width, thickness)",
-          "reference": "reference/geometry-constructors/#Box"
-        },
-        {
-          "kind": "callable",
-          "name": "Cylinder",
-          "summary": "Create a native cylinder on a principal axis.",
-          "use_when": "Model a cylindrical primitive directly and choose Axis.X, Axis.Y or Axis.Z for its direction.",
-          "limits": ".at(x, y, z) places the cylinder by its base point. axis must be a principal Axis value.",
-          "signature": "Cylinder(*, d, h, axis=<Axis.Z: 'Z'>)",
-          "reference": "reference/geometry-constructors/#Cylinder"
-        },
-        {
-          "kind": "callable",
-          "name": "Sphere",
-          "summary": "Create a sphere from its radius.",
-          "use_when": "A direct spherical primitive is sufficient.",
-          "limits": "Sphere has no separate orientation axis; use Shape placement/CSG operations where supported.",
-          "signature": "Sphere(radius)",
-          "reference": "reference/geometry-constructors/#Sphere"
-        },
-        {
-          "kind": "callable",
-          "name": "Rectangle2D",
-          "summary": "Create a rectangular 2D profile.",
-          "use_when": "Author a simple rectangle inside an explicit Sketch before extrusion.",
-          "limits": "The profile is authored in sketch coordinates; use the Sketch to choose its plane and placement.",
-          "signature": "Rectangle2D(width, depth)",
-          "reference": "reference/geometry-constructors/#Rectangle2D"
-        },
-        {
-          "kind": "callable",
-          "name": "RoundedRectangle2D",
-          "summary": "Create a native rounded-rectangle 2D profile.",
-          "use_when": "A sketch needs a rectangle with true circular corner arcs rather than a polygonal approximation.",
-          "limits": "Current support is inside an explicit Sketch. The radius must be below half the shorter side.",
-          "signature": "RoundedRectangle2D(width, depth, radius)",
-          "reference": "reference/geometry-constructors/#RoundedRectangle2D"
-        },
-        {
-          "kind": "callable",
-          "name": "Circle2D",
-          "summary": "Create a circular 2D profile by diameter or radius.",
-          "use_when": "Author a circular profile inside an explicit Sketch.",
-          "limits": "Supply exactly one of d= or r=; the Sketch determines the plane.",
-          "signature": "Circle2D(*, d=None, r=None)",
-          "reference": "reference/geometry-constructors/#Circle2D"
-        },
-        {
-          "kind": "callable",
-          "name": "Polygon2D",
-          "summary": "Create a closed named or unnamed polygon profile.",
-          "use_when": "A 2D profile needs arbitrary straight segments or named vertices and segments that later drive selectors such as Edges.from_profile().",
-          "limits": "At least three 2D points are required. plane is XY, XZ or YZ. world=True currently supports only XZ and lets input use intuitive world (x, z) coordinates.",
-          "signature": "Polygon2D(points, *, plane='XY', ids=None, world=False)",
-          "reference": "reference/geometry-constructors/#Polygon2D"
-        }
-      ]
+      "signature": "Box(length, width, thickness)"
     },
-    {
-      "kind": "group",
-      "name": "feature-constructors",
-      "summary": "Manufacturing and plastic-feature intent added to supported bodies.",
+    "Cylinder": {
+      "kind": "callable",
+      "summary": "Create a native cylinder on a principal axis.",
+      "reference": "reference/geometry-constructors/#Cylinder",
+      "guide": "guide/geometry/#solids",
+      "signature": "Cylinder(*, d, h, axis=<Axis.Z: 'Z'>)"
+    },
+    "Sphere": {
+      "kind": "callable",
+      "summary": "Create a sphere from its radius.",
+      "reference": "reference/geometry-constructors/#Sphere",
+      "guide": "guide/geometry/#solids",
+      "signature": "Sphere(radius)"
+    },
+    "Rectangle2D": {
+      "kind": "callable",
+      "summary": "Create a rectangular 2D profile.",
+      "reference": "reference/geometry-constructors/#Rectangle2D",
+      "guide": "guide/geometry/#solids",
+      "signature": "Rectangle2D(width, depth)"
+    },
+    "RoundedRectangle2D": {
+      "kind": "callable",
+      "summary": "Create a native rounded-rectangle 2D profile.",
+      "reference": "reference/geometry-constructors/#RoundedRectangle2D",
+      "guide": "guide/geometry/#solids",
+      "signature": "RoundedRectangle2D(width, depth, radius)"
+    },
+    "Circle2D": {
+      "kind": "callable",
+      "summary": "Create a circular 2D profile by diameter or radius.",
+      "reference": "reference/geometry-constructors/#Circle2D",
+      "guide": "guide/geometry/#solids",
+      "signature": "Circle2D(*, d=None, r=None)"
+    },
+    "Polygon2D": {
+      "kind": "callable",
+      "summary": "Create a closed named or unnamed polygon profile.",
+      "reference": "reference/geometry-constructors/#Polygon2D",
+      "guide": "guide/geometry/#solids",
+      "signature": "Polygon2D(points, *, plane='XY', ids=None, world=False)"
+    },
+    "Hole": {
+      "kind": "callable",
+      "summary": "Create hole feature intent, optionally directional and countersunk.",
+      "reference": "reference/feature-constructors/#Hole",
       "guide": "guide/features/#features",
-      "reference": "reference/feature-constructors/",
-      "members": [
-        {
-          "kind": "callable",
-          "name": "Hole",
-          "summary": "Create hole feature intent, optionally directional and countersunk.",
-          "use_when": "Remove a manufacturing-style hole from a supported body. Simple holes can be placed with on(); directional or countersunk holes can use the native Hole path with explicit placement.",
-          "limits": "Diameter must be positive. depth is a positive distance or Depth.THROUGH_ALL. Countersink diameter must exceed the hole diameter.",
-          "signature": "Hole(*, d, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None, countersink_d=None, countersink_angle=90, countersink_recess=0)",
-          "reference": "reference/feature-constructors/#Hole"
-        },
-        {
-          "kind": "callable",
-          "name": "Lip",
-          "summary": "Create plastic enclosure lip feature intent.",
-          "use_when": "Add a lip to a supported shelled enclosure rim using feature placement.",
-          "limits": "Placement and parent-shape support follow the feature-placement API.",
-          "signature": "Lip(*, width, height)",
-          "reference": "reference/feature-constructors/#Lip"
-        },
-        {
-          "kind": "callable",
-          "name": "SnapFit",
-          "summary": "Create cantilever snap-fit feature intent.",
-          "use_when": "Add a plastic snap feature to a supported face with an explicit hook direction.",
-          "limits": "hook must be one 3D direction; optional direction must also be an XYZ triple. Placement uses the supported feature-placement API.",
-          "signature": "SnapFit(*, length, thickness, width, catch_depth, catch_length, hook, direction=None)",
-          "reference": "reference/feature-constructors/#SnapFit"
-        },
-        {
-          "kind": "callable",
-          "name": "Boss",
-          "summary": "Create plastic screw-boss feature intent.",
-          "use_when": "Add a cylindrical support boss, optionally with a central hole, to a supported face.",
-          "limits": "Optional direction is an XYZ triple. The active History policy can affect how the boss is lowered.",
-          "signature": "Boss(*, d, h, hole_d=None, direction=None)",
-          "reference": "reference/feature-constructors/#Boss"
-        },
-        {
-          "kind": "callable",
-          "name": "Rest",
-          "summary": "Create plastic support/rest feature intent.",
-          "use_when": "Add a support pad or elongated rest to a supported face.",
-          "limits": "Optional along and direction values are XYZ triples. Placement uses the supported feature-placement API.",
-          "signature": "Rest(*, width, height, length=None, along=None, direction=None)",
-          "reference": "reference/feature-constructors/#Rest"
-        }
-      ]
+      "signature": "Hole(*, d, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None, countersink_d=None, countersink_angle=90, countersink_recess=0)"
     },
-    {
-      "kind": "group",
-      "name": "parameters-positioning",
-      "summary": "Keep dimensions symbolic and express readable offsets or parent-bound positions.",
+    "Lip": {
+      "kind": "callable",
+      "summary": "Create plastic enclosure lip feature intent.",
+      "reference": "reference/feature-constructors/#Lip",
+      "guide": "guide/features/#features",
+      "signature": "Lip(*, width, height)"
+    },
+    "SnapFit": {
+      "kind": "callable",
+      "summary": "Create cantilever snap-fit feature intent.",
+      "reference": "reference/feature-constructors/#SnapFit",
+      "guide": "guide/features/#features",
+      "signature": "SnapFit(*, length, thickness, width, catch_depth, catch_length, hook, direction=None)"
+    },
+    "Boss": {
+      "kind": "callable",
+      "summary": "Create plastic screw-boss feature intent.",
+      "reference": "reference/feature-constructors/#Boss",
+      "guide": "guide/features/#features",
+      "signature": "Boss(*, d, h, hole_d=None, direction=None)"
+    },
+    "Rest": {
+      "kind": "callable",
+      "summary": "Create plastic support/rest feature intent.",
+      "reference": "reference/feature-constructors/#Rest",
+      "guide": "guide/features/#features",
+      "signature": "Rest(*, width, height, length=None, along=None, direction=None)"
+    },
+    "Parameter": {
+      "kind": "callable",
+      "summary": "Represent one named editable CAD dimension.",
+      "reference": "reference/parameters-positioning/#Parameter",
       "guide": "guide/model-objects/#parameter-intent",
-      "reference": "reference/parameters-positioning/",
-      "members": [
-        {
-          "kind": "callable",
-          "name": "Parameter",
-          "summary": "Represent one named editable CAD dimension.",
-          "use_when": "Keep a value symbolic so generated SolidCraft commands can retain an editable dependency instead of baking in the current Python number.",
-          "limits": "Names must be valid Python identifiers and values finite numbers. Normal public lower-case model fields are usually promoted to parameters automatically, so explicit Parameter() is mainly useful in lower-level or assembly code.",
-          "signature": "Parameter(name: str, value: float) -> None",
-          "reference": "reference/parameters-positioning/#Parameter"
-        },
-        {
-          "kind": "constant",
-          "name": "X",
-          "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
-          "use_when": "Public X, Y and Z tokens let feature offsets refer to a parent bound, for example X.MIN + 10 or Y.MAX - 10, without hard-coding the current global coordinate.",
-          "limits": "These X/Y/Z tokens are bound selectors, not Axis.X/Y/Z primitive-axis enum values.",
-          "value": "X",
-          "reference": "reference/parameters-positioning/#X"
-        },
-        {
-          "kind": "constant",
-          "name": "Y",
-          "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
-          "use_when": "Public X, Y and Z tokens let feature offsets refer to a parent bound, for example X.MIN + 10 or Y.MAX - 10, without hard-coding the current global coordinate.",
-          "limits": "These X/Y/Z tokens are bound selectors, not Axis.X/Y/Z primitive-axis enum values.",
-          "value": "Y",
-          "reference": "reference/parameters-positioning/#Y"
-        },
-        {
-          "kind": "constant",
-          "name": "Z",
-          "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
-          "use_when": "Public X, Y and Z tokens let feature offsets refer to a parent bound, for example X.MIN + 10 or Y.MAX - 10, without hard-coding the current global coordinate.",
-          "limits": "These X/Y/Z tokens are bound selectors, not Axis.X/Y/Z primitive-axis enum values.",
-          "value": "Z",
-          "reference": "reference/parameters-positioning/#Z"
-        },
-        {
-          "kind": "callable",
-          "name": "up",
-          "summary": "Return a symbolic-safe XYZ offset in the +Z direction.",
-          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
-          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
-          "signature": "up(distance)",
-          "reference": "reference/parameters-positioning/#up"
-        },
-        {
-          "kind": "callable",
-          "name": "down",
-          "summary": "Return a symbolic-safe XYZ offset in the -Z direction.",
-          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
-          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
-          "signature": "down(distance)",
-          "reference": "reference/parameters-positioning/#down"
-        },
-        {
-          "kind": "callable",
-          "name": "left",
-          "summary": "Return a symbolic-safe XYZ offset in the -X direction.",
-          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
-          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
-          "signature": "left(distance)",
-          "reference": "reference/parameters-positioning/#left"
-        },
-        {
-          "kind": "callable",
-          "name": "right",
-          "summary": "Return a symbolic-safe XYZ offset in the +X direction.",
-          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
-          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
-          "signature": "right(distance)",
-          "reference": "reference/parameters-positioning/#right"
-        },
-        {
-          "kind": "callable",
-          "name": "front",
-          "summary": "Return a symbolic-safe XYZ offset in the -Y direction.",
-          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
-          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
-          "signature": "front(distance)",
-          "reference": "reference/parameters-positioning/#front"
-        },
-        {
-          "kind": "callable",
-          "name": "back",
-          "summary": "Return a symbolic-safe XYZ offset in the +Y direction.",
-          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
-          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
-          "signature": "back(distance)",
-          "reference": "reference/parameters-positioning/#back"
-        },
-        {
-          "kind": "callable",
-          "name": "half",
-          "summary": "Return half of a numeric or symbolic CAD dimension.",
-          "use_when": "Keep midpoint-style arithmetic readable without converting a symbolic CAD dimension to a concrete Python value.",
-          "limits": "Equivalent to value / 2; the input must support that operation.",
-          "signature": "half(value)",
-          "reference": "reference/parameters-positioning/#half"
-        },
-        {
-          "kind": "callable",
-          "name": "midpoint",
-          "summary": "Return the midpoint between two numeric or symbolic dimensions.",
-          "use_when": "Express a centre position while preserving symbolic CAD dependencies.",
-          "limits": "Equivalent to (start + end) / 2; inputs must support symbolic arithmetic.",
-          "signature": "midpoint(start, end)",
-          "reference": "reference/parameters-positioning/#midpoint"
-        },
-        {
-          "kind": "callable",
-          "name": "pv",
-          "summary": "Return the concrete Python value of a symbolic CAD dimension.",
-          "use_when": "Python itself genuinely needs a number for validation or control flow.",
-          "limits": "Calling pv() intentionally removes the symbolic dependency at that point. Geometry and placement should normally keep Parameter/Expression objects symbolic so SolidCraft remains editable and associative.",
-          "signature": "pv(dim) -> float",
-          "reference": "reference/parameters-positioning/#pv"
-        }
-      ]
+      "signature": "Parameter(name: str, value: float) -> None"
     },
-    {
-      "kind": "group",
-      "name": "attachment-references",
-      "summary": "Use richer local or topology-backed datums when a standard Anchor is not enough.",
+    "X": {
+      "kind": "constant",
+      "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
+      "reference": "reference/parameters-positioning/#X",
+      "guide": "guide/model-objects/#parameter-intent",
+      "value": "X"
+    },
+    "Y": {
+      "kind": "constant",
+      "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
+      "reference": "reference/parameters-positioning/#Y",
+      "guide": "guide/model-objects/#parameter-intent",
+      "value": "Y"
+    },
+    "Z": {
+      "kind": "constant",
+      "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
+      "reference": "reference/parameters-positioning/#Z",
+      "guide": "guide/model-objects/#parameter-intent",
+      "value": "Z"
+    },
+    "up": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the +Z direction.",
+      "reference": "reference/parameters-positioning/#up",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "up(distance)"
+    },
+    "down": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the -Z direction.",
+      "reference": "reference/parameters-positioning/#down",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "down(distance)"
+    },
+    "left": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the -X direction.",
+      "reference": "reference/parameters-positioning/#left",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "left(distance)"
+    },
+    "right": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the +X direction.",
+      "reference": "reference/parameters-positioning/#right",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "right(distance)"
+    },
+    "front": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the -Y direction.",
+      "reference": "reference/parameters-positioning/#front",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "front(distance)"
+    },
+    "back": {
+      "kind": "callable",
+      "summary": "Return a symbolic-safe XYZ offset in the +Y direction.",
+      "reference": "reference/parameters-positioning/#back",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "back(distance)"
+    },
+    "half": {
+      "kind": "callable",
+      "summary": "Return half of a numeric or symbolic CAD dimension.",
+      "reference": "reference/parameters-positioning/#half",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "half(value)"
+    },
+    "midpoint": {
+      "kind": "callable",
+      "summary": "Return the midpoint between two numeric or symbolic dimensions.",
+      "reference": "reference/parameters-positioning/#midpoint",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "midpoint(start, end)"
+    },
+    "pv": {
+      "kind": "callable",
+      "summary": "Return the concrete Python value of a symbolic CAD dimension.",
+      "reference": "reference/parameters-positioning/#pv",
+      "guide": "guide/model-objects/#parameter-intent",
+      "signature": "pv(dim) -> float"
+    },
+    "AnchorFrame": {
+      "kind": "callable",
+      "summary": "Describe one local attachment point and orientation.",
+      "reference": "reference/attachment-references/#AnchorFrame",
       "guide": "guide/assembly-basics/#anchor-choice",
-      "reference": "reference/attachment-references/",
-      "members": [
-        {
-          "kind": "callable",
-          "name": "AnchorFrame",
-          "summary": "Describe one local attachment point and orientation.",
-          "use_when": "A standard face or corner Anchor is not enough and the mounting datum needs its own local origin plus orientation. A reusable component may expose named AnchorFrame values from anchors(), or an assembly may pass one directly to attach().",
-          "limits": "origin is component-local. z is the attachment normal and x fixes the clocking around that normal; both directions must be non-zero and not parallel. Direct frames on explicitly rotated occurrences have limited support as documented by the assembly guide.",
-          "signature": "AnchorFrame(origin: tuple[float, float, float] = (0.0, 0.0, 0.0), z: tuple[float, float, float] | scpf.core.Anchor = <Anchor.TOP: 'top'>, x: tuple[float, float, float] | scpf.core.Anchor = <Anchor.RIGHT: 'right'>) -> None",
-          "reference": "reference/attachment-references/#AnchorFrame"
-        },
-        {
-          "kind": "callable",
-          "name": "AnchorTopology",
-          "summary": "Describe an attachment datum that follows native SolidCraft topology.",
-          "use_when": "A relationship should follow a particular edge, adjacent planar face and optionally one endpoint as dimensions change, rather than freezing one XYZ coordinate.",
-          "limits": "edge and on are native selection pick points; corner is optional. z and x may override frame orientation. Current Forge support focuses on planar-face edges and non-rotated occurrences.",
-          "signature": "AnchorTopology(edge: tuple[float, float, float], on: tuple[float, float, float], corner: tuple[float, float, float] | None = None, z: tuple[float, float, float] | None = None, x: tuple[float, float, float] | None = None) -> None",
-          "reference": "reference/attachment-references/#AnchorTopology"
-        }
-      ]
+      "signature": "AnchorFrame(origin: tuple[float, float, float] = (0.0, 0.0, 0.0), z: tuple[float, float, float] | scpf.core.Anchor = <Anchor.TOP: 'top'>, x: tuple[float, float, float] | scpf.core.Anchor = <Anchor.RIGHT: 'right'>) -> None"
     },
-    {
-      "kind": "group",
-      "name": "history-control",
-      "summary": "Control supported feature-history lowering without changing geometry intent.",
-      "guide": null,
-      "reference": "reference/history-control/",
-      "members": [
-        {
-          "kind": "enum",
-          "name": "History",
-          "summary": "Choose how supported semantic features are lowered to native history.",
-          "use_when": "Select AUTO for normal Forge behaviour, or deliberately request one of the supported native/sketch history policies inside behavior().",
-          "limits": "This is a compiler-history policy, not a geometry operation. Exact effects depend on the feature being compiled.",
-          "members": [
-            {
-              "name": "AUTO",
-              "value": "auto"
-            },
-            {
-              "name": "NATIVE",
-              "value": "native"
-            },
-            {
-              "name": "SKETCH",
-              "value": "sketch"
-            }
-          ],
-          "reference": "reference/history-control/#History"
-        },
-        {
-          "kind": "callable",
-          "name": "behavior",
-          "summary": "Temporarily select a History policy for objects created in the scope.",
-          "use_when": "A model intentionally needs to compare or request a particular supported lowering strategy without changing the geometry API.",
-          "limits": "The policy applies only inside the context and only to features that inspect the active history setting.",
-          "signature": "behavior(*, history=<History.AUTO: 'auto'>)",
-          "reference": "reference/history-control/#behavior"
-        }
-      ]
+    "AnchorTopology": {
+      "kind": "callable",
+      "summary": "Describe an attachment datum that follows native SolidCraft topology.",
+      "reference": "reference/attachment-references/#AnchorTopology",
+      "guide": "guide/assembly-basics/#anchor-choice",
+      "signature": "AnchorTopology(edge: tuple[float, float, float], on: tuple[float, float, float], corner: tuple[float, float, float] | None = None, z: tuple[float, float, float] | None = None, x: tuple[float, float, float] | None = None) -> None"
     },
-    {
-      "kind": "group",
-      "name": "execution-api",
-      "summary": "Lower-level entry points for compiling Shapes or trusted model source files.",
+    "History": {
+      "kind": "enum",
+      "summary": "Choose how supported semantic features are lowered to native history.",
+      "reference": "reference/history-control/#History",
+      "members": {
+        "AUTO": "auto",
+        "NATIVE": "native",
+        "SKETCH": "sketch"
+      }
+    },
+    "behavior": {
+      "kind": "callable",
+      "summary": "Temporarily select a History policy for objects created in the scope.",
+      "reference": "reference/history-control/#behavior",
+      "signature": "behavior(*, history=<History.AUTO: 'auto'>)"
+    },
+    "compile_model": {
+      "kind": "callable",
+      "summary": "Compile one Shape tree to a native SolidCraft command document.",
+      "reference": "reference/execution-api/#compile_model",
       "guide": "guide/getting-started/#run",
-      "reference": "reference/execution-api/",
-      "members": [
-        {
-          "kind": "callable",
-          "name": "compile_model",
-          "summary": "Compile one Shape tree to a native SolidCraft command document.",
-          "use_when": "Lower-level tooling already has a final Shape object and needs the JSON command plan without executing a model source file.",
-          "limits": "The final value must be a Shape and name must be a valid identifier. Normal user workflows usually call the scpf runner/CLI instead.",
-          "signature": "compile_model(shape: scpf.core.Shape, name: str) -> dict",
-          "reference": "reference/execution-api/#compile_model"
-        },
-        {
-          "kind": "callable",
-          "name": "run_script",
-          "summary": "Execute a trusted SCPF model source file and return its command document.",
-          "use_when": "Programmatic tooling needs the same model-loading/root-selection and compilation behaviour as the SCPF CLI.",
-          "limits": "The source is executed as trusted Python. A file must either end in an explicit root model call or define exactly one unambiguous public model class with build().",
-          "signature": "run_script(path: str | pathlib.Path) -> dict",
-          "reference": "reference/execution-api/#run_script"
-        }
-      ]
+      "signature": "compile_model(shape: scpf.core.Shape, name: str) -> dict"
     },
-    {
-      "kind": "group",
-      "name": "diagnostics",
-      "summary": "Public diagnostics for invalid model intent and lost symbolic parameter dependencies.",
-      "guide": null,
-      "reference": "reference/diagnostics/",
-      "members": [
-        {
-          "kind": "callable",
-          "name": "ModelError",
-          "summary": "Report unsupported or invalid CAD model intent.",
-          "use_when": "Catch Forge compilation/model validation failures separately from normal Python argument errors when integrating the lower-level compiler API.",
-          "limits": "User model code normally fixes the underlying model instead of handling this exception as a recoverable geometry result.",
-          "signature": null,
-          "reference": "reference/diagnostics/#ModelError"
-        },
-        {
-          "kind": "callable",
-          "name": "ModelParameterWarning",
-          "summary": "Warn that an editable model parameter lost a native CAD dependency.",
-          "use_when": "Tooling wants to detect parameters that became concrete Python values or are only partly associative in the generated SolidCraft model.",
-          "limits": "This is a warning category, not an exception. The preferred fix is to preserve the symbolic relationship or mark an intentional build-time input with a leading underscore.",
-          "signature": null,
-          "reference": "reference/diagnostics/#ModelParameterWarning"
-        }
-      ]
+    "run_script": {
+      "kind": "callable",
+      "summary": "Execute a trusted SCPF model source file and return its command document.",
+      "reference": "reference/execution-api/#run_script",
+      "guide": "guide/getting-started/#run",
+      "signature": "run_script(path: str | pathlib.Path) -> dict"
+    },
+    "ModelError": {
+      "kind": "callable",
+      "summary": "Report unsupported or invalid CAD model intent.",
+      "reference": "reference/diagnostics/#ModelError"
+    },
+    "ModelParameterWarning": {
+      "kind": "callable",
+      "summary": "Warn that an editable model parameter lost a native CAD dependency.",
+      "reference": "reference/diagnostics/#ModelParameterWarning"
+    },
+    "TOP": {
+      "kind": "alias",
+      "target": "Anchor.TOP",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
+    },
+    "BOTTOM": {
+      "kind": "alias",
+      "target": "Anchor.BOTTOM",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
+    },
+    "LEFT": {
+      "kind": "alias",
+      "target": "Anchor.LEFT",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
+    },
+    "RIGHT": {
+      "kind": "alias",
+      "target": "Anchor.RIGHT",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
+    },
+    "FRONT": {
+      "kind": "alias",
+      "target": "Anchor.FRONT",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
+    },
+    "BACK": {
+      "kind": "alias",
+      "target": "Anchor.BACK",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
     }
-  ]
+  }
 }
