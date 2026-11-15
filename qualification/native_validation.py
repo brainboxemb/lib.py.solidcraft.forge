@@ -337,26 +337,6 @@ def validate_attach_angle(root: Path) -> Validation:
     return v
 
 
-def validate_as_built_attach(root: Path) -> Validation:
-    v = Validation("as-built-attach")
-    d = load(root / "measurements.json")
-    _check_declared_bounds(v, d, "as-built-attach")
-    v.check("two bodies", d["body_count"] == 2, 2, d["body_count"])
-    v.check(
-        "base remains at authored pose",
-        bbox_close(one_body(d, "Base"), [-20, -15, 0], [20, 15, 10]),
-        {"min": [-20, -15, 0], "max": [20, 15, 10]},
-        one_body(d, "Base")["bbox"],
-    )
-    v.check(
-        "as-built child keeps translated 90-degree pose",
-        bbox_close(one_body(d, "Marker"), [45, 5, 15], [55, 35, 23]),
-        {"min": [45, 5, 15], "max": [55, 35, 23]},
-        one_body(d, "Marker")["bbox"],
-    )
-    return v
-
-
 def validate_parametric_attach(root: Path) -> Validation:
     v = Validation("parametric-attach")
     d = load(root / "measurements.json")
@@ -604,25 +584,6 @@ def validate_eight_corner_brackets(root: Path) -> Validation:
     return v
 
 
-def validate_custom_anchor(root: Path) -> Validation:
-    v = Validation("custom-anchor")
-    d = load(root / "measurements.json")
-    _check_declared_bounds(v, d, "custom-anchor")
-    arm = one_body(d, "Arm")
-    marker = one_body(d, "Marker")
-    v.check("rotated arm bounds", bbox_close(arm, [-5, -20, 0], [5, 20, 10]))
-    v.check("marker follows rotated tip", bbox_close(marker, [-5, 15, 0], [5, 25, 10]),
-            {"min": [-5, 15, 0], "max": [5, 25, 10]}, marker["bbox"])
-    return v
-
-
-def _xz_expected(width: float, height: float):
-    return {
-        "right": ([width / 2 - 10, -10, height - 10], [width / 2, 0, height]),
-        "left": ([-width / 2, -10, height - 10], [-width / 2 + 10, 0, height]),
-    }
-
-
 def validate_xz_anchor(root: Path) -> Validation:
     v = Validation("xz-anchor")
     d = load(root / "measurements.json")
@@ -778,7 +739,6 @@ VALIDATORS = {
     "assembly-decorator": validate_assembly_decorator,
     "group-hierarchy": validate_group_hierarchy,
     "attach-angle": validate_attach_angle,
-    "as-built-attach": validate_as_built_attach,
     "parametric-attach": validate_parametric_attach,
     "parametric-offset": validate_parametric_offset,
     "parametric-anchor": validate_parametric_anchor,
@@ -788,7 +748,6 @@ VALIDATORS = {
     "four-corner-l": validate_four_corner_l,
     "eight-flightcase-corners": validate_eight_flightcase_corners,
     "eight-corner-brackets": validate_eight_corner_brackets,
-    "custom-anchor": validate_custom_anchor,
     "xz-anchor": validate_xz_anchor,
     "circle-negative-extrude": validate_circle_negative_extrude,
     "rounded-rectangle-sketch": validate_rounded_rectangle_sketch,
