@@ -119,11 +119,13 @@ Expected structure:
 - exactly eight authored `joint.create` relationships;
 - no generated hidden placement joints;
 - child AnchorFrames are supplied directly to the authored relationships;
-- any occurrence seed placement needed by SolidCraft must preserve symbolic
-  dependencies rather than being flattened merely because the occurrence also
-  has an attachment.
+- the `CornerBrackets` browser group is not grounded, because its children
+  attach to SideBoard occurrences outside that group;
+- attached child `occurrence.move` commands may be concrete solver seeds.
+  That was already the behaviour in the historically working Forge 79b2be2
+  implementation and is not the regression being fixed here.
 
-The exact native command used for seed placement is an implementation detail.
+The exact numeric seed pose remains an implementation detail.
 The public distinction remains:
 
 - `Placement` = absolute occurrence pose;
@@ -192,19 +194,30 @@ This change does not:
 
 ## Expected implementation investigation
 
-Historical CI now gives a stronger boundary:
+Historical CI and retained artifacts now identify the regression boundary:
 
 - CAD commit `7859e3f...`: inside-corner child frames + joint angles, native PASS;
-- CAD commit `4d4130...`: A/B child frames, native PASS;
-- CAD commit `a03c6ae...`: moving the mount frames out of the reusable component,
-  native FAIL;
-- later direct-frame work could pass native again, before the Forge Placement
-  migration exposed the saved-design regression.
+- CAD commit `4d4130...`: A/B child frames as component anchors, native PASS;
+- CAD commit `a03c6ae...`: an incomplete migration moved the frames into the
+  assembly but left four stale string references (`"front_mount_a"` /
+  `"rear_mount_a"`); it failed during Python anchor resolution, so it is not
+  evidence of a native AnchorFrame solver failure;
+- CAD commit `c8f485...`: all eight relationships use direct A/B
+  `AnchorFrame` objects, native PASS, including saved width/height/depth
+  mutations, using Forge `79b2be2`;
+- Forge commit `56db3d6...` later changed named-group lowering to
+  **ground every group**;
+- retained HUB75 artifacts show the later regression with essentially the same
+  eight bracket seed moves and eight joints, but `CornerBrackets` changed
+  from `grounded: false` to `grounded: true`.
 
-Issue #162 also identified a separate lowering problem: attached occurrences
-could receive a symbolic seed pose in the Python model but assembly lowering
-flattened it when `attachment is not None`. Change 0005 fixes and locks that
-command-level regression, then uses the A/B native comparison to determine
-whether any solver/frame issue remains.
+The resulting native symptom matches that over-constraint: one side of the
+external joint graph can remain on the wrong solution and fails to follow a
+saved-design parent mutation.
 
-The diagnostic, not the historical hypothesis, determines the final fix.
+Change 0005 therefore keeps the historical numeric attached-child seed
+lowering and fixes only named-group grounding: independent browser groups stay
+grounded, while a group containing children attached to occurrences outside
+that group remains ungrounded.
+
+The diagnostic evidence, not the earlier seed hypothesis, determines this fix.
