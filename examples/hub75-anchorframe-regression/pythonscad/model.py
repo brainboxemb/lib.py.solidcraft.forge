@@ -8,8 +8,8 @@ right_board = cube([12, 60, 80], center=True).translate([66, 30, 52])
 
 
 def l_profile():
-    horizontal = cube([28, 24, 4], center=True).translate([14, 0, 2])
-    vertical = cube([4, 24, 28], center=True).translate([-2, 0, -14])
+    horizontal = cube([28, 24, 12], center=True).translate([14, 0, 6])
+    vertical = cube([12, 24, 28], center=True).translate([-6, 0, -14])
     return horizontal | vertical
 
 
