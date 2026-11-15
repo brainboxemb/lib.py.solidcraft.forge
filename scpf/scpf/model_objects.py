@@ -577,7 +577,7 @@ class ModelInstance:
 
         return replace(
             self,
-            placement=self.placement.at(*translation),
+            placement=replace(self.placement, position=Position(*translation)),
             attachment=Attachment(
                 target=target,
                 parent=parent,
