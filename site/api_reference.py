@@ -5,8 +5,10 @@ Python implementation and its public docstrings. This module contains only
 grouping and navigation metadata.
 """
 
+from enum import Enum
 import inspect
 
+import scpf as public_api
 from scpf import (
     Anchor,
     Axis,
@@ -23,7 +25,10 @@ from scpf.model_objects import Assembly, ModelInstance
 
 
 def _signature(obj, name):
-    return f"{name}{inspect.signature(obj)}"
+    try:
+        return f"{name}{inspect.signature(obj)}"
+    except (TypeError, ValueError):
+        return None
 
 
 def _doc_sections(obj):
@@ -72,6 +77,65 @@ def _method(slug, title, obj, *, guide, guide_anchor):
     }
 
 
+def _group(slug, title, member_names, *, summary, guide=None, guide_anchor=None):
+    """Describe navigation only; member API facts are introspected separately."""
+    return {
+        "kind": "group",
+        "slug": slug,
+        "title": title,
+        "member_names": tuple(member_names),
+        "summary": summary,
+        "guide": guide,
+        "guide_anchor": guide_anchor,
+    }
+
+
+def _is_enum_type(obj):
+    return inspect.isclass(obj) and issubclass(obj, Enum)
+
+
+def public_member(name):
+    """Build generated reference data for one exported public symbol."""
+    obj = getattr(public_api, name)
+    if _is_enum_type(obj):
+        kind = "enum"
+        doc_obj = obj
+    elif callable(obj):
+        kind = "callable"
+        doc_obj = obj
+    else:
+        kind = "constant"
+        # X/Y/Z are public instances of the private implementation type. Its
+        # docstring is still the authoritative explanation of their semantics.
+        doc_obj = type(obj)
+
+    result = {
+        "kind": kind,
+        "name": name,
+        "object": obj,
+        **_doc_sections(doc_obj),
+    }
+    if kind == "enum":
+        result["members"] = [
+            {"name": member.name, "value": member.value}
+            for member in obj
+        ]
+    elif kind == "callable":
+        result["signature"] = _signature(obj, name)
+    else:
+        result["value"] = str(obj)
+    return result
+
+
+def anchor_aliases():
+    """Return exported convenience names that are actual Anchor values."""
+    return tuple(
+        name
+        for name in public_api.__all__
+        if name != "Anchor" and isinstance(getattr(public_api, name), Anchor)
+    )
+
+
 ENUM_REFERENCES = (
     _enum("Faces", Faces, guide="features", guide_anchor="hole"),
     _enum("Anchor", Anchor, guide="assembly-basics", guide_anchor="anchor-choice"),
@@ -83,6 +147,7 @@ ENUM_REFERENCES = (
 
 
 METHOD_REFERENCES = (
+    _method("Shape", "Shape", Shape, guide="model-objects", guide_anchor="shape"),
     _method(
         "component",
         "component() / @component",
@@ -168,18 +233,95 @@ METHOD_REFERENCES = (
 )
 
 
+GROUP_REFERENCES = (
+    _group(
+        "geometry-constructors",
+        "Geometry constructors",
+        (
+            "Box", "Cylinder", "Sphere",
+            "Rectangle2D", "RoundedRectangle2D", "Circle2D", "Polygon2D",
+        ),
+        summary="Direct 3D primitives and 2D profile constructors.",
+        guide="geometry",
+        guide_anchor="solids",
+    ),
+    _group(
+        "feature-constructors",
+        "Feature constructors",
+        ("Hole", "Lip", "SnapFit", "Boss", "Rest"),
+        summary="Manufacturing and plastic-feature intent added to supported bodies.",
+        guide="features",
+        guide_anchor="features",
+    ),
+    _group(
+        "parameters-positioning",
+        "Parameters and positioning helpers",
+        (
+            "Parameter", "X", "Y", "Z",
+            "up", "down", "left", "right", "front", "back",
+            "half", "midpoint", "pv",
+        ),
+        summary="Keep dimensions symbolic and express readable offsets or parent-bound positions.",
+        guide="model-objects",
+        guide_anchor="parameter-intent",
+    ),
+    _group(
+        "attachment-references",
+        "Custom attachment references",
+        ("AnchorFrame", "AnchorTopology"),
+        summary="Use richer local or topology-backed datums when a standard Anchor is not enough.",
+        guide="assembly-basics",
+        guide_anchor="anchor-choice",
+    ),
+    _group(
+        "history-control",
+        "History controls",
+        ("History", "behavior"),
+        summary="Control supported feature-history lowering without changing geometry intent.",
+    ),
+    _group(
+        "execution-api",
+        "Compiler and runner API",
+        ("compile_model", "run_script"),
+        summary="Lower-level entry points for compiling Shapes or trusted model source files.",
+        guide="getting-started",
+        guide_anchor="run",
+    ),
+    _group(
+        "diagnostics",
+        "Errors and warnings",
+        ("ModelError", "ModelParameterWarning"),
+        summary="Public diagnostics for invalid model intent and lost symbolic parameter dependencies.",
+    ),
+)
+
+
 def enum_members(spec):
     """Return exact public member names/values from the implementation."""
     return [(member.name, member.value) for member in spec["object"]]
 
 
+def group_members(spec):
+    """Return generated member descriptions for one navigation group."""
+    return tuple(public_member(name) for name in spec["member_names"])
+
+
 def all_references():
-    return (*ENUM_REFERENCES, *METHOD_REFERENCES)
+    return (*ENUM_REFERENCES, *METHOD_REFERENCES, *GROUP_REFERENCES)
 
 
 def references_for_guide(slug):
     """Return generated-reference specs relevant to one guide chapter."""
-    return tuple(spec for spec in all_references() if spec["guide"] == slug)
+    return tuple(
+        spec for spec in all_references()
+        if spec.get("guide") == slug
+    )
+
+
+def _guide_path(spec):
+    if not spec.get("guide"):
+        return None
+    return f"guide/{spec['guide']}/#{spec['guide_anchor']}"
 
 
 def public_reference(spec):
@@ -188,25 +330,73 @@ def public_reference(spec):
         "kind": spec["kind"],
         "name": spec["slug"],
         "summary": spec["summary"],
-        "use_when": spec["use_when"],
-        "limits": spec["limits"],
-        "guide": f"guide/{spec['guide']}/#{spec['guide_anchor']}",
+        "guide": _guide_path(spec),
         "reference": f"reference/{spec['slug']}/",
     }
+
+    if spec["kind"] == "group":
+        members = []
+        for member in group_members(spec):
+            row = {
+                key: value
+                for key, value in member.items()
+                if key != "object"
+            }
+            row["reference"] = f"reference/{spec['slug']}/#{member['name']}"
+            members.append(row)
+        result["members"] = members
+        return result
+
+    result["use_when"] = spec["use_when"]
+    result["limits"] = spec["limits"]
     if spec["kind"] == "enum":
         result["members"] = [
             {"name": name, "value": value}
             for name, value in enum_members(spec)
         ]
+        if spec["slug"] == "Anchor":
+            result["aliases"] = list(anchor_aliases())
     else:
         result["signature"] = spec["signature"]
     return result
 
 
+def export_reference_targets():
+    """Map every public scpf export to its generated reference location."""
+    targets = {}
+
+    for spec in ENUM_REFERENCES:
+        if spec["slug"] in public_api.__all__:
+            targets[spec["slug"]] = f"reference/{spec['slug']}/"
+
+    for spec in METHOD_REFERENCES:
+        if spec["slug"] in public_api.__all__:
+            targets[spec["slug"]] = f"reference/{spec['slug']}/"
+
+    for spec in GROUP_REFERENCES:
+        for name in spec["member_names"]:
+            targets[name] = f"reference/{spec['slug']}/#{name}"
+
+    for name in anchor_aliases():
+        targets[name] = "reference/Anchor/"
+
+    return targets
+
+
+def unmapped_public_exports():
+    targets = export_reference_targets()
+    return tuple(name for name in public_api.__all__ if name not in targets)
+
+
 def api_manifest():
     """Return the compact API index used by both site checks and agents."""
+    missing = unmapped_public_exports()
+    if missing:
+        raise ValueError(
+            "public API exports missing from reference: " + ", ".join(missing)
+        )
     return {
-        "schema": 1,
+        "schema": 2,
         "generated_from": "scpf public objects and docstrings",
         "references": [public_reference(spec) for spec in all_references()],
     }
