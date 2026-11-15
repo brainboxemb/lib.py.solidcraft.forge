@@ -7,7 +7,7 @@ source that answers the task:
 
 | Task | Read first |
 | --- | --- |
-| Public Forge API semantics | `docs/05-cad-api-design.md` |
+| Public Forge API lookup/semantics | generated local reference / relevant code docstring |
 | Exact Forge names/signatures/enums | relevant code in `scpf/scpf/` |
 | Qualification rules | `docs/qualification/README.md` |
 | SolidCraft command/API lookup | `docs/agent/solidcraft.md` |
@@ -22,9 +22,12 @@ that reference.
 
 ## Public API source of truth
 
-The normative public Forge API contract is `docs/05-cad-api-design.md`.
-Compiler code, qualification fixtures, README/site examples and downstream CAD
-models do not redefine it.
+Read `docs/09-documentation-architecture.md` for the documentation/source-of-truth split.
+Exact public names, signatures, defaults, enum members and object-local semantics live
+with the Python implementation and its public docstrings. Cross-object design rules that
+cannot sensibly live on one Python object remain in `docs/05-cad-api-design.md`.
+Generated API/reference output, qualification fixtures, README/site examples and downstream
+CAD models do not redefine either source.
 
 If implementation and the API contract disagree, treat that as an
 implementation bug or unresolved API decision. Never make a qualification pass
