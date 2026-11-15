@@ -207,9 +207,10 @@ SolidCraft 0.42 relationship lowering is replay-first. Forge never predicts
 generated occurrence names. The first occurrence of a reusable definition can
 be addressed by its component name in qualified joint commands; copied
 occurrences are resolved from their native world topology/point pick. Copied
-attached children therefore use distinct temporary parking poses before their
-joints are created. Those parking poses are compiler setup state and are not
-part of the public `attach()` meaning.
+attached children therefore use distinct small temporary staging offsets along
+their parent attachment direction before their joints are created. Those
+staging offsets are compiler setup state and are not part of the public
+`attach()` meaning.
 
 Relationship Placement rotation, copied as-built relationships and chained
 attachments are currently rejected where no replay-safe 0.42 selector has been
