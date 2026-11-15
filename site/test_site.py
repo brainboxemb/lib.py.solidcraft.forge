@@ -127,7 +127,7 @@ def check(
     ).read_text(encoding="utf-8")
     for term in (
         "From one component to an assembly",
-        "one physical reusable part",
+        "one physical part",
         "Shape + Shape",
         "occurrence + occurrence",
         "Use @assembly when the composition itself is reusable",
