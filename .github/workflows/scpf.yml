@@ -26,7 +26,7 @@ jobs:
   package:
     runs-on: ubuntu-latest
     env:
-      SOLIDCRAFT_VERSION: "0.30.1"
+      SOLIDCRAFT_VERSION: "0.42.0"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -96,7 +96,7 @@ jobs:
             count="$(jq '.commands | length' "output/$model.json")"
             printf "%s\t%s\tPASS\n" "$model" "$count" >> output/qualification/q2-command-contract.tsv
           done
-      - name: Install official SolidCraft 0.30.1 (checksum-verified)
+      - name: Install official SolidCraft release (checksum-verified)
         shell: bash
         run: |
           set -euo pipefail
