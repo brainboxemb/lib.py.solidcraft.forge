@@ -100,7 +100,7 @@ class AssemblyTests(unittest.TestCase):
             ):
                 run_script(script)
 
-    def test_at_is_absolute_and_move_is_relative_placement(self):
+    def test_at_is_absolute_placement(self):
         from scpf import Box, Placement, component
 
         @component
@@ -110,12 +110,9 @@ class AssemblyTests(unittest.TestCase):
 
         original = Panel(placement=Placement(x=10, y=5))
         absolute = original.at(x=40, y=0, z=3)
-        relative = absolute.move(x=2, z=7)
-
         self.assertEqual(original.placement.position, (10, 5, 0))
         self.assertEqual(absolute.placement.position, (40, 0, 3))
-        self.assertEqual(relative.placement.position, (42, 0, 10))
-        self.assertIsNone(relative.attachment)
+        self.assertIsNone(absolute.attachment)
 
     def test_copies_of_placed_occurrences_use_relative_native_offsets(self):
         """A copied occurrence inherits its source transform."""
@@ -127,8 +124,8 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(15, 100, 362)\n"
                 "class Cabinet:\n"
                 "    def build(self):\n"
-                "        left = SideWall().move(x=-429.5, y=25)\n"
-                "        right = left.copy().move(x=859)\n"
+                "        left = SideWall().at(x=-429.5, y=25)\n"
+                "        right = left.copy().at(x=429.5, y=25)\n"
                 "        return (left + right).group('WoodBoxFrame')\n"
                 "Cabinet()\n",
                 encoding="utf-8",
@@ -151,8 +148,8 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(20, 10, 2)\n"
                 "class Cabinet:\n"
                 "    def build(self):\n"
-                "        first = Panel().move(x=-40).rotate(degrees=180)\n"
-                "        right = first.copy().move(x=80).rotate(degrees=0)\n"
+                "        first = Panel().at(x=-40).rotate(degrees=180)\n"
+                "        right = first.copy().at(x=40).rotate(degrees=0)\n"
                 "        return first + right\n"
                 "Cabinet()\n",
                 encoding="utf-8",
@@ -184,8 +181,8 @@ class AssemblyTests(unittest.TestCase):
                 "class Display:\n"
                 "    def build(self):\n"
                 "        left = Panel()\n"
-                "        group = (left + left.copy().move(x=11)).group('HUB75Panels')\n"
-                "        return group + Frame().move(y=20)\n"
+                "        group = (left + left.copy().at(x=11)).group('HUB75Panels')\n"
+                "        return group + Frame().at(y=20)\n"
                 "Display()\n",
                 encoding="utf-8",
             )
@@ -252,14 +249,14 @@ class AssemblyTests(unittest.TestCase):
         from scpf.model_objects import ModelDefinition, ModelInstance
 
         first = ModelInstance(ModelDefinition("Panel", (), Box(20, 10, 2)))
-        second = first.copy().move(x=30).rotate(axis=(0, 0, 1), degrees=180)
+        second = first.copy().at(x=30).rotate(axis=(0, 0, 1), degrees=180)
         self.assertIs(first.definition, second.definition)
         self.assertIsNone(first.placement.rotation)
         self.assertEqual(second.placement.position, (30, 0, 0))
         self.assertEqual(second.placement.rotation, ((0.0, 0.0, 1.0), 180.0))
         self.assertIsNone(second.attachment)
         self.assertEqual(second.copy().placement.rotation, second.placement.rotation)
-        self.assertEqual(second.move(x=10).placement.position, (40, 0, 0))
+        self.assertEqual(second.at(x=40).placement.position, (40, 0, 0))
 
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "rotation.py"
@@ -270,7 +267,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Display:\n"
                 "    def build(self):\n"
                 "        first = Panel()\n"
-                "        return first + first.copy().move(x=30).rotate(degrees=180)\n"
+                "        return first + first.copy().at(x=30).rotate(degrees=180)\n"
                 "Display()\n",
                 encoding="utf-8",
             )
@@ -324,8 +321,8 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(20, 10, 2)\n"
                 "class Display:\n"
                 "    def build(self):\n"
-                "        first = Panel().move(x=-50).rotate(degrees=180)\n"
-                "        return first + first.copy().move(x=50).rotate(degrees=0)\n"
+                "        first = Panel().at(x=-50).rotate(degrees=180)\n"
+                "        return first + first.copy().at(x=0).rotate(degrees=0)\n"
                 "Display()\n", encoding="utf-8",
             )
             commands = run_script(path)["commands"]
@@ -353,7 +350,7 @@ class AssemblyTests(unittest.TestCase):
 
         Panel = component(LibraryPanel)
         first = Panel()
-        second = Panel().move(x=20)
+        second = Panel().at(x=20)
         self.assertIsInstance(first, ModelInstance)
         self.assertIsInstance(second, ModelInstance)
         self.assertEqual(first.definition.key, second.definition.key)
@@ -371,11 +368,11 @@ class AssemblyTests(unittest.TestCase):
                 "        return Box(159.7, 319.71, 14.5)\n"
                 "class Screen:\n"
                 "    def build(self):\n"
-                "        first = Panel().move(z=160).rotate(axis=(1,0,0), degrees=90)\n"
-                "        return (first + first.copy().move(x=-320) +\n"
-                "                first.copy().move(x=-160) +\n"
-                "                first.copy().move(x=160) +\n"
-                "                first.copy().move(x=320))\n"
+                "        first = Panel().at(z=160).rotate(axis=(1,0,0), degrees=90)\n"
+                "        return (first + first.copy().at(x=-320, z=160) +\n"
+                "                first.copy().at(x=-160, z=160) +\n"
+                "                first.copy().at(x=160, z=160) +\n"
+                "                first.copy().at(x=320, z=160))\n"
                 "Screen()\n",
                 encoding="utf-8",
             )
@@ -460,7 +457,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Pair:\n"
                 "    def build(self):\n"
                 "        left = Block(width=30.0)\n"
-                "        right = Block(width=50.0).move(x=60.0)\n"
+                "        right = Block(width=50.0).at(x=60.0)\n"
                 "        left + right\n"
                 "Pair()\n"
             )
@@ -505,7 +502,7 @@ class AssemblyTests(unittest.TestCase):
         LeftPart = component(Left)
         RightPart = component(Right)
         commands = compile_assembly(
-            LeftPart() + RightPart().move(x=20),
+            LeftPart() + RightPart().at(x=20),
             "Frame",
         )["commands"]
 
@@ -542,7 +539,7 @@ class AssemblyTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ModelError, "defined differently"):
             compile_assembly(
-                component(Left)() + component(Right)().move(x=20),
+                component(Left)() + component(Right)().at(x=20),
                 "Frame",
             )
 
@@ -631,7 +628,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Pair:\n"
                 "    def build(self):\n"
                 "        first = Block()\n"
-                "        return first + first.copy().move(x=50)\n"
+                "        return first + first.copy().at(x=50)\n"
                 "Pair()\n",
                 encoding="utf-8",
             )
@@ -758,7 +755,7 @@ class AssemblyTests(unittest.TestCase):
         opening_width = Parameter("opening_width", 844.0)
 
         horizontal = StripObject(length=opening_width, width=12.0)
-        second = StripObject(length=opening_width, width=15.0).move(y=20)
+        second = StripObject(length=opening_width, width=15.0).at(y=20)
 
         commands = compile_assembly(horizontal + second, "Frame")["commands"]
         parameter_names = [
@@ -853,7 +850,7 @@ class AssemblyTests(unittest.TestCase):
 
             def build(self):
                 self.assert_reference = self.wood_frame
-                marker = FrameObject().move(x=self.spacing)
+                marker = FrameObject().at(x=self.spacing)
                 return self.wood_frame + marker
 
         brackets = Brackets(
@@ -888,7 +885,7 @@ class AssemblyTests(unittest.TestCase):
 
             def build(self):
                 left = PanelObject(width=self.width)
-                right = left.copy().move(x=self.pitch)
+                right = left.copy().at(x=self.pitch)
                 return (left + right).group("Panels")
 
         PanelRowObject = assembly(PanelRow)
@@ -911,7 +908,7 @@ class AssemblyTests(unittest.TestCase):
         )
 
 
-    def test_symbolic_move_lowers_to_native_expression_move(self):
+    def test_symbolic_placement_lowers_to_native_expression_move(self):
         import warnings
 
         with tempfile.TemporaryDirectory() as directory:
@@ -924,7 +921,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Display:\n"
                 "    depth = 12.0\n"
                 "    def build(self):\n"
-                "        return Panel(depth=self.depth).move(y=half(self.depth))\n"
+                "        return Panel(depth=self.depth, placement=Placement(y=half(self.depth)))\n"
                 "Display()\n",
                 encoding="utf-8",
             )
@@ -954,7 +951,7 @@ class AssemblyTests(unittest.TestCase):
         ]
         self.assertEqual(names, ["depth"])
 
-    def test_symbolic_move_adds_placement_only_parameter(self):
+    def test_symbolic_placement_adds_placement_only_parameter(self):
         import warnings
 
         with tempfile.TemporaryDirectory() as directory:
@@ -966,7 +963,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Display:\n"
                 "    offset = 30.0\n"
                 "    def build(self):\n"
-                "        return Panel().move(x=self.offset)\n"
+                "        return Panel(placement=Placement(x=self.offset))\n"
                 "Display()\n",
                 encoding="utf-8",
             )
@@ -996,7 +993,7 @@ class AssemblyTests(unittest.TestCase):
             for command in document["commands"]
         ))
 
-    def test_symbolic_move_with_rotation_uses_one_native_expression_move(self):
+    def test_symbolic_placement_with_rotation_uses_one_native_expression_move(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "rotated_parametric_move.py"
             path.write_text(
@@ -1006,7 +1003,7 @@ class AssemblyTests(unittest.TestCase):
                 "class Frame:\n"
                 "    height = 100.0\n"
                 "    def build(self):\n"
-                "        return Strip().rotate(Y, 90).move(z=half(self.height))\n"
+                "        return Strip(placement=Placement(z=half(self.height), rotation=(Y, 90)))\n"
                 "Frame()\n",
                 encoding="utf-8",
             )
@@ -1026,7 +1023,7 @@ class AssemblyTests(unittest.TestCase):
             for command in document["commands"]
         ))
 
-    def test_symbolic_parent_move_and_child_attach_keep_distinct_semantics(self):
+    def test_symbolic_parent_placement_and_child_attach_keep_distinct_semantics(self):
         from scpf.assembly import compile_assembly
         from scpf.core import Anchor, Box, Parameter
         from scpf.runner import component
@@ -1037,7 +1034,7 @@ class AssemblyTests(unittest.TestCase):
 
         PanelObject = component(Panel)
         station = Parameter("station", 100.0)
-        parent = PanelObject().move(x=station)
+        parent = PanelObject(placement=Placement(x=station))
         child = PanelObject().attach(
             parent,
             parent=Anchor.RIGHT,
@@ -1266,7 +1263,7 @@ class AssemblyTests(unittest.TestCase):
                 return Box(20, 20, 10)
 
         left = Block(name="left")
-        right = Block(name="right").move(x=40)
+        right = Block(name="right").at(x=40)
         topology = AnchorTopology(
             edge=(-10, 0, 5),
             on=(0, 0, 5),
@@ -1746,7 +1743,7 @@ class AssemblyTests(unittest.TestCase):
 
         BlockObject = component(Block)
         base = BlockObject()
-        child = BlockObject().move(x=40).attach(
+        child = BlockObject().at(x=40).attach(
             base,
             as_built=True,
         )
