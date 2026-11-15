@@ -15,4 +15,3 @@ model = base.attach(
     child_anchor=Anchor.LEFT,
     overlap=-gap,
 ).realize()
-model.show()
