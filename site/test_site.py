@@ -61,6 +61,8 @@ def check(site: Path, sha: str, require_native: bool = False):
         for name, value in enum_members(spec):
             assert f"{spec['slug']}.{name}" in page_text, (spec["slug"], name)
             assert str(value) in page_text, (spec["slug"], value)
+    anchor_page = (site / "reference" / "Anchor" / "index.html").read_text(encoding="utf-8")
+    assert "Anchor.UP" in anchor_page and "Anchor.DOWN" in anchor_page
     for spec in METHOD_REFERENCES:
         page_text = (site / "reference" / spec["slug"] / "index.html").read_text(encoding="utf-8")
         assert html.escape(spec["signature"]) in page_text, spec["slug"]
