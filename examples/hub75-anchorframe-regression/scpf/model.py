@@ -1,8 +1,6 @@
 """HUB75-like regression: eight L profiles attached to two placed side boards."""
 
 
-from scpf import BOTTOM, FRONT
-
 
 class SideBoard:
     width = 12.0
@@ -18,7 +16,7 @@ class SideBoard:
             0,
             0,
             0,
-            anchor=FRONT + BOTTOM,
+            anchor=Anchor.FRONT + Anchor.BOTTOM,
         )
 
 
