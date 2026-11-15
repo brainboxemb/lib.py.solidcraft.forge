@@ -14,8 +14,11 @@ reference pages must not become a second API specification.
 | Qualification evidence | qualification sources/results | Qualification pages |
 | Agent routing | `AGENTS.md` | Repository instructions |
 
-Do not copy signatures, enum-member lists, defaults or supported values into
-hand-maintained guide text. Link to the generated reference instead.
+Do not manually copy signatures, enum-member lists, defaults or supported
+values into hand-maintained guide text. Guide pages may and should show relevant
+API facts inline when that material is generated from the same Python
+objects/docstrings as the reference. The reader should not have to click away
+for every small detail.
 
 ## Reference pages must still teach enough to be usable
 
@@ -43,14 +46,17 @@ small feature example.
 The guide is task-oriented rather than an alphabetic API dump. It should
 explain concepts in normal language and show complete small examples.
 
-A guide may use `Faces.TOP`, for example, but it should not maintain a copied
-list of every `Faces` member. The symbol should link to the generated
-`Faces` reference page.
+A guide may use `Faces.TOP` and should show the complete `Faces` choices
+nearby when those choices help the task. That list must be injected from the
+generated API data rather than maintained by hand. The symbol can still link to
+the full `Faces` reference page for deeper lookup.
 
-This keeps the two views complementary:
+This keeps the two views complementary without creating a click maze:
 
-- **Guide:** “How do I put a hole on the top of this plate?”
-- **Reference:** “What exactly does `Faces` contain and where is it accepted?”
+- **Guide:** “How do I put a hole on the top of this plate?” plus the relevant
+  generated `Faces` choices and current `Shape.on()` signature inline.
+- **Reference:** complete lookup for `Faces` and `Shape.on()`, including the
+  same generated facts and links back to worked usage.
 
 ## Agent documentation
 
