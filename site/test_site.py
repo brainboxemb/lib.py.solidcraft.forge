@@ -14,7 +14,12 @@ import scpf
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 
 
-def check(site: Path, sha: str, require_native: bool = False):
+def check(
+    site: Path,
+    sha: str,
+    require_native: bool = False,
+    require_references: bool = False,
+):
     template_dir = ROOT / "qualification" / "templates"
     for template_name in (
         "case.html",
@@ -304,6 +309,32 @@ def check(site: Path, sha: str, require_native: bool = False):
         assert 'href="reference-pythonscad.py"' in page_text
         assert 'href="reference-pybosl2.py"' in page_text
         assert (site / "qualification" / slug / "commands.json").is_file()
+        if require_references:
+            manifest_case = qualification_manifest["cases"][slug]
+            evidence = manifest_case["reference_evidence"]
+            for implementation in ("pythonscad", "pybosl2"):
+                prefix = f"reference-{implementation}"
+                for name in (
+                    "result.json",
+                    "model.stl",
+                    "model-front.png",
+                    "model-right.png",
+                    "model-iso.png",
+                ):
+                    rel = f"{prefix}/{name}"
+                    assert rel in evidence, (slug, rel)
+                    artifact = site / "qualification" / slug / rel
+                    assert artifact.is_file() and artifact.stat().st_size > 0, artifact
+                result = json.loads(
+                    (site / "qualification" / slug / prefix / "result.json")
+                    .read_text(encoding="utf-8")
+                )
+                assert result["status"] == "pass", (slug, implementation)
+                assert f'src="{prefix}/model-iso.png"' in page_text, (
+                    slug,
+                    implementation,
+                )
+            assert "independently exported STL" in page_text, slug
         if require_native:
             manifest_case = qualification_manifest["cases"][slug]
             result_path = site / "qualification" / slug / "qualification-result.json"
@@ -420,4 +451,9 @@ def check(site: Path, sha: str, require_native: bool = False):
 
 
 if __name__ == "__main__":
-    check(Path(sys.argv[1]), sys.argv[2], require_native="--require-native" in sys.argv[3:])
+    check(
+        Path(sys.argv[1]),
+        sys.argv[2],
+        require_native="--require-native" in sys.argv[3:],
+        require_references="--require-references" in sys.argv[3:],
+    )
