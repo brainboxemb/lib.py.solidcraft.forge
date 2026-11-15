@@ -190,7 +190,6 @@ QUALIFICATION_CASES = [
         "lowering": "parameters.add(spacing), one reusable Block definition, occurrence.copy, and two native occurrence.move expressions using -(spacing / 2) and spacing / 2; no placement joint.",
         "native_expectation": "With spacing=80 mm the two 20 mm blocks are centred at X=-40 and X=+40.",
         "mutation": "Change spacing from 80 to 120 mm in the saved design; without rerunning Python the two centres must move symmetrically to X=-60 and X=+60.",
-        "reference_implementations": ("pythonscad", "pybosl2", "cadquery"),
         "references": [
             ("SolidCraft", "SolidCraft 0.42.0 stores both parameter-referencing occurrence translations associatively in the saved design."),
             ("CadQuery", "Independent Assembly Location values provide a comparison for symmetric occurrence pose without turning placement into a constraint."),
