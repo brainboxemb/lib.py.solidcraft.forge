@@ -310,18 +310,17 @@ def compile_assembly(value, name):
                     },
                 ))
 
-        # SolidCraft 0.30.1 accepts only numeric occurrence.move
-        # translations. Keep ordinary numeric moves native. A symbolic move is
-        # lowered to a fully constrained planar placement against the parent
-        # component's XY datum: values carry X/Y and offset carries Z. These
-        # joint expressions remain associative when a design parameter changes.
+        # SolidCraft 0.42.0 accepts length expressions directly in
+        # occurrence.move.translate and keeps them as expressed_moves. That is
+        # the native representation of a parametric occurrence placement:
+        # move() places an occurrence; it does not create an assembly joint.
         #
-        # Rotation is still an ordinary numeric occurrence.move first. The
-        # inline child frame is authored afterwards in world orientation, so
-        # the placement joint changes position without undoing that rotation.
+        # An occurrence that will be attached still receives only a numeric
+        # seed pose. The explicit Attachment below owns the relationship and
+        # the native joint solver owns its final placement.
         for instance, native_name in occurrences:
             symbolic_move = bool(parameters_in(*instance.translation))
-            symbolic_placement = (
+            expressed_move = (
                 symbolic_move and instance.attachment is None
             )
             if instance.rotation is None and not any(instance.translation):
@@ -339,60 +338,24 @@ def compile_assembly(value, name):
                         expression=f"{parameter.value:g} mm",
                     ))
 
-            if instance.rotation is not None or not symbolic_placement:
-                params = {
-                    "occurrence": native_name,
-                    "translate": (
-                        [0.0, 0.0, 0.0]
-                        if symbolic_placement
-                        else [pv(value) for value in instance.translation]
-                    ),
-                }
-                if instance.rotation is not None:
-                    axis, degrees = instance.rotation
-                    params.update(axis=list(axis), angle=f"{degrees:g} deg")
-                if (
-                    instance is assembly.instances[0]
-                    and parent_name is None
-                    and not symbolic_placement
-                ):
-                    params["move_grounded"] = True
-                commands.append(_command("occurrence.move", **params))
-
-            if symbolic_placement:
-                x, y, z = instance.translation
-                parent_origin = {
-                    "occurrence": (
-                        f"{parent_name}:1"
-                        if parent_name is not None
-                        else "root"
-                    ),
-                    "frame": {
-                        "origin": [0.0, 0.0, 0.0],
-                        "z": [0.0, 0.0, 1.0],
-                        "x": [1.0, 0.0, 0.0],
-                    },
-                }
-                commands.append(_command(
-                    "joint.create",
-                    type="planar",
-                    name=f"Place {native_name}",
-                    a=parent_origin,
-                    b={
-                        "occurrence": native_name,
-                        "point": [0.0, 0.0, 0.0],
-                        "z": [0.0, 0.0, 1.0],
-                        "x": [1.0, 0.0, 0.0],
-                    },
-                    values=[
-                        command_value(x),
-                        command_value(y),
-                        0.0,
-                    ],
-                    offset=command_value(z),
-                    flip=True,
-                    angle=0.0,
-                ))
+            params = {
+                "occurrence": native_name,
+                "translate": (
+                    list(instance.translation)
+                    if expressed_move
+                    else [pv(value) for value in instance.translation]
+                ),
+            }
+            if instance.rotation is not None:
+                axis, degrees = instance.rotation
+                params.update(axis=list(axis), angle=f"{degrees:g} deg")
+            if (
+                instance is assembly.instances[0]
+                and parent_name is None
+                and not expressed_move
+            ):
+                params["move_grounded"] = True
+            commands.append(_command("occurrence.move", **params))
 
     for instance in assembly.instances:
         attachment = instance.attachment

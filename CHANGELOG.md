@@ -8,6 +8,12 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Lower symbolic occurrence `.move()` directly to SolidCraft 0.42.0
+  `occurrence.move` expressions instead of generating hidden planar placement
+  joints.
+
 ### Removed
 
 - Removed the experimental `History` enum and `behavior()` scope. Forge now

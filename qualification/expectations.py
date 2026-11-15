@@ -31,6 +31,10 @@ EXPECTED_BOUNDS = {
         {"label": "left Post", "min": [-20, -5, 0], "max": [-10, 5, 20]},
         {"label": "right Post", "min": [10, -5, 0], "max": [20, 5, 20]},
     ],
+    "parametric-move": [
+        {"label": "fixed Block", "min": [-10, -10, 0], "max": [10, 10, 10]},
+        {"label": "moved Block", "min": [30, -10, 0], "max": [50, 10, 10]},
+    ],
     "group-hierarchy": [
         {"label": "left Panel", "min": [-5, -1, 0], "max": [5, 1, 20]},
         {"label": "right Panel", "min": [6, -1, 0], "max": [16, 1, 20]},
@@ -43,6 +47,10 @@ EXPECTED_BOUNDS = {
     "as-built-attach": [
         {"label": "Base", "min": [-20, -15, 0], "max": [20, 15, 10]},
         {"label": "Marker", "min": [45, 5, 15], "max": [55, 35, 23]},
+    ],
+    "parametric-move": [
+        {"label": "fixed Block", "min": [-10, -10, 0], "max": [10, 10, 10]},
+        {"label": "moved Block", "min": [60, -10, 0], "max": [80, 10, 10]},
     ],
     "parametric-attach": [
         {"label": "Base", "min": [-20, -15, 0], "max": [20, 15, 10]},

@@ -57,6 +57,12 @@ MUTATIONS = {
         "measurements": "measurements-size-160x120x90.json",
         "label": "frame 120x80x60 -> 160x120x90 mm",
     },
+    "parametric-move": {
+        "command": "qualification/commands/parametric-move/change-offset.json",
+        "save": "model-offset-70.sc",
+        "measurements": "measurements-offset-70.json",
+        "label": "offset 40 -> 70 mm",
+    },
     "parametric-attach": {
         "command": "qualification/commands/parametric-attach/change-gap.json",
         "save": "model-gap-30.sc",

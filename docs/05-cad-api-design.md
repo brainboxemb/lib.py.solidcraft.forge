@@ -37,6 +37,7 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch supported by the selected target face. The local 2D sketch origin is the centre of that target face. |
 | profile inside a sketch | `sketch.add(profile, anchor=CENTER)` | Place the profile's selected 2D anchor on the sketch origin. CENTER is the default semantic centring operation; numeric offset is not a centring substitute. |
 | deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. Use only when the design actually calls for an offset. |
+| occurrence placement | `child.move(x=..., y=..., z=...)` | Place a reusable component occurrence. Numeric and symbolic coordinates lower to native `occurrence.move`; placement does not create a joint. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
 ### `at()`
@@ -98,6 +99,45 @@ instead.
 
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
+
+### `move()`
+
+`move()` on a reusable component occurrence is placement, not an assembly
+relationship. This distinction is part of the Forge API contract.
+
+```python
+left = Block()
+right = Block().move(x=self.offset)
+assembly = left + right
+```
+
+For SolidCraft 0.42.0, Forge lowers both numeric and symbolic occurrence
+placement directly to `occurrence.move`. A symbolic translation is emitted as
+a native length expression, for example:
+
+```json
+{"command":"occurrence.move","params":{
+  "occurrence":"Block:2",
+  "translate":["offset",0,0]
+}}
+```
+
+SolidCraft stores such translations as expressed occurrence moves and evaluates
+them again when their parameters change. Therefore a saved design remains
+associative without Forge creating a hidden planar joint.
+
+The semantic boundary is deliberate:
+
+- `.move(...)` changes where an occurrence is placed;
+- `.attach(...)` creates an explicit assembly relationship;
+- Forge must not create visible `joint.create` records merely to implement a
+  symbolic `.move(...)`;
+- if a moved occurrence is subsequently attached, its move is only a seed pose
+  for the joint solver; the explicit attachment owns the relationship.
+
+This rule replaces the older workaround for SolidCraft 0.30.1, where symbolic
+`occurrence.move` translations were not available and Forge used a planar
+placement joint to preserve associativity.
 
 ### `attach()`
 
