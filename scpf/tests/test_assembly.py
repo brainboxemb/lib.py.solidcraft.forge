@@ -149,7 +149,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual([m["occurrence"] for m in moves], ["SideWall:1"])
         self.assertEqual(moves[0]["translate"], [-429.5, 25.0, 0.0])
 
-    def test_copy_resets_inherited_rotation_when_target_is_unrotated(self):
+    def test_rotated_copy_receives_full_pose_after_neutral_copy(self):
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / "rotated_source.py"
             script.write_text(
@@ -167,14 +167,14 @@ class AssemblyTests(unittest.TestCase):
             commands = run_script(script)["commands"]
         copy = next(c["params"] for c in commands
                     if c["command"] == "occurrence.copy")
-        self.assertEqual(copy["translate"], [40.0, 0.0, 0.0])
+        self.assertNotIn("translate", copy)
         commands_after_component = [c for c in commands
                                     if c["command"] in ("occurrence.copy", "occurrence.move")]
         self.assertEqual([c["command"] for c in commands_after_component],
                          ["occurrence.copy", "occurrence.move", "occurrence.move"])
         moves = [c["params"] for c in commands_after_component[1:]]
         self.assertEqual([m["translate"] for m in moves],
-                         [[-40.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
+                         [[-40.0, 0.0, 0.0], [40.0, 0.0, 0.0]])
         self.assertEqual([m["angle"] for m in moves], ["180 deg", "0 deg"])
         self.assertTrue(all("matrix" not in m and "to" not in m for m in moves))
 
@@ -296,8 +296,8 @@ class AssemblyTests(unittest.TestCase):
             for command in commands
             if command["command"] == "occurrence.copy"
         )
-        self.assertEqual(copy["translate"], [30.0, 0.0, 0.0])
-        self.assertEqual(rotated[0]["translate"], [0.0, 0.0, 0.0])
+        self.assertNotIn("translate", copy)
+        self.assertEqual(rotated[0]["translate"], [30.0, 0.0, 0.0])
         self.assertEqual(rotated[0]["axis"], [0.0, 0.0, 1.0])
         self.assertEqual(rotated[0]["angle"], "180 deg")
         self.assertNotIn("matrix", rotated[0])
