@@ -18,7 +18,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             [c["params"]["name"] for c in commands
              if c["command"] == "parameters.add"],
-            ["Block_length", "Block_width", "Block_height"],
+            [],
         )
         self.assertEqual(
             [c["params"]["name"] for c in commands
@@ -32,8 +32,8 @@ class AssemblyTests(unittest.TestCase):
         placements = [c["params"] for c in commands if c["command"] == "occurrence.move"]
         self.assertFalse(any(p["occurrence"] == "Block:2" for p in placements))
         box = next(c for c in commands if c["command"] == "solid.box")
-        self.assertIn("Block_length", str(box["params"]))
-        self.assertIn("Block_width", str(box["params"]))
+        self.assertNotIn("Block_length", str(box["params"]))
+        self.assertNotIn("Block_width", str(box["params"]))
 
         joint = next(c for c in commands if c["command"] == "joint.create")
         self.assertEqual(joint["params"]["type"], "rigid")
@@ -469,13 +469,7 @@ class AssemblyTests(unittest.TestCase):
             c["params"]["name"] for c in commands
             if c["command"] == "parameters.add"
         ]
-        self.assertEqual(
-            parameter_names,
-            [
-                "Block_length", "Block_width", "Block_height",
-                "Block_2_length", "Block_2_width", "Block_2_height",
-            ],
-        )
+        self.assertEqual(parameter_names, [])
 
 
     def test_identical_material_is_created_once_across_components(self):
@@ -539,7 +533,7 @@ class AssemblyTests(unittest.TestCase):
                 "Frame",
             )
 
-    def test_component_defaults_are_implicit_editable_parameters(self):
+    def test_component_defaults_are_fixed_unless_included(self):
         from scpf.assembly import compile_assembly
         from scpf.core import Box
         from scpf.runner import component
@@ -556,29 +550,87 @@ class AssemblyTests(unittest.TestCase):
                     self.chamfer + 10,
                 )
 
-        BracketObject = component(Bracket)
-        commands = compile_assembly(BracketObject(), "BracketAssembly")["commands"]
+        Hidden = component(Bracket)
+        hidden = compile_assembly(Hidden(), "Hidden")["commands"]
+        hidden_names = [
+            command["params"]["name"]
+            for command in hidden
+            if command["command"] == "parameters.add"
+        ]
+        self.assertEqual(hidden_names, [])
+
+        Selected = component(Bracket, include=("radius",))
+        selected = compile_assembly(Selected(), "Selected")["commands"]
+        selected_names = [
+            command["params"]["name"]
+            for command in selected
+            if command["command"] == "parameters.add"
+        ]
+        self.assertEqual(selected_names, ["Bracket_radius"])
+
+        All = component(Bracket, include="*")
+        all_commands = compile_assembly(All(), "All")["commands"]
+        all_names = [
+            command["params"]["name"]
+            for command in all_commands
+            if command["command"] == "parameters.add"
+        ]
+        self.assertEqual(
+            all_names,
+            ["Bracket_width", "Bracket_radius", "Bracket_chamfer"],
+        )
+
+        with self.assertRaisesRegex(ValueError, "unknown component parameter"):
+            component(Bracket, include=("missing",))
+
+    def test_component_decorator_accepts_selected_include(self):
+        from scpf.assembly import compile_assembly
+        from scpf.core import Box
+        from scpf.runner import component
+
+        @component(include=("radius",))
+        class Bracket:
+            width = 24.0
+            radius = 4.0
+
+            def build(self):
+                return Box(self.width, self.radius + 20, 10)
+
+        commands = compile_assembly(Bracket(), "BracketAssembly")["commands"]
         names = [
             command["params"]["name"]
             for command in commands
             if command["command"] == "parameters.add"
         ]
-        self.assertEqual(
-            names,
-            ["Bracket_width", "Bracket_radius", "Bracket_chamfer"],
-        )
+        self.assertEqual(names, ["Bracket_radius"])
 
-    def test_component_include_is_not_part_of_public_api(self):
+    def test_component_include_mapping_publishes_shared_name(self):
+        from scpf.assembly import compile_assembly
+        from scpf.core import Box, Edges
         from scpf.runner import component
 
         class Bracket:
             width = 24.0
+            radius = 4.0
 
             def build(self):
-                return Box(self.width, 20, 10)
+                return Box(self.width, 40, 40).fillet(
+                    self.radius,
+                    edges=Edges.VERTICAL,
+                )
 
-        with self.assertRaises(TypeError):
-            component(Bracket, include=("width",))
+        BracketObject = component(
+            Bracket,
+            include={"radius": "corner_radius"},
+        )
+        commands = compile_assembly(BracketObject(), "Display")["commands"]
+        names = [
+            command["params"]["name"]
+            for command in commands
+            if command["command"] == "parameters.add"
+        ]
+        self.assertEqual(names, ["corner_radius"])
+        self.assertNotIn("Bracket_radius", names)
 
     def test_decorated_component_file_runs_as_standalone_root(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -692,7 +744,7 @@ class AssemblyTests(unittest.TestCase):
             for command in commands
             if command["command"] == "parameters.add"
         ]
-        self.assertEqual(names, ["opening_width", "Bracket_width"])
+        self.assertEqual(names, ["opening_width"])
         self.assertNotIn("Bracket__x_position", names)
 
     def test_component_preserves_parent_parameter_dependency(self):
@@ -763,8 +815,8 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(parameter_names.count("opening_width"), 1)
         self.assertNotIn("Strip_length", parameter_names)
         self.assertNotIn("Strip_2_length", parameter_names)
-        self.assertIn("Strip_width", parameter_names)
-        self.assertIn("Strip_2_width", parameter_names)
+        self.assertNotIn("Strip_width", parameter_names)
+        self.assertNotIn("Strip_2_width", parameter_names)
 
     def test_parent_expression_remains_an_expression_in_child_geometry(self):
         from scpf.assembly import compile_assembly
@@ -1098,10 +1150,7 @@ class AssemblyTests(unittest.TestCase):
             for command in commands
             if command["command"] == "parameters.add"
         ]
-        self.assertEqual(
-            parameter_names,
-            ["Bracket_bracket_width", "corner_radius"],
-        )
+        self.assertEqual(parameter_names, ["corner_radius"])
         self.assertNotIn("Bracket_inside_corner_radius", parameter_names)
 
         fillet = next(
