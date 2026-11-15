@@ -651,7 +651,7 @@ fixed local correction and pass the result to <code>attach(offset=...)</code>.
 This is useful when an assembly datum follows a frame parameter such as wall
 thickness while the reusable part keeps a fixed mounting correction.</p>
 <h2 id="anchor-frame">AnchorFrame: point plus orientation</h2>
-<p>An <a href="../../reference/Anchor/"><code>AnchorFrame</code></a> describes one local attachment coordinate frame.
+<p>An <a href="../../reference/attachment-references/#AnchorFrame"><code>AnchorFrame</code></a> describes one local attachment coordinate frame.
 <code>origin</code> gives the local point; <code>z</code> gives the attachment
 normal and <code>x</code> fixes the rotation around that normal. Use it when a
 single point or rectangular <code>Anchor</code> is not enough to describe how
@@ -672,7 +672,7 @@ bracket = CornerBracket().attach(
 <p>There are two ownership patterns. If the datum is an intrinsic part of a
 reusable component, expose it with <code>anchors()</code> and refer to it by
 name. If the frame exists only because of a particular assembly or mounting
-choice, construct the <a href="../../reference/Anchor/"><code>AnchorFrame</code></a> in that assembly and pass it
+choice, construct the <a href="../../reference/attachment-references/#AnchorFrame"><code>AnchorFrame</code></a> in that assembly and pass it
 directly to <code>attach()</code>. This keeps application knowledge out of the
 generic component definition.</p>
 """ + code("""@component
@@ -690,7 +690,7 @@ class Sensor:
         return Box(24, 12, 8)
 
 sensor = Sensor().attach(panel, child="connector")""") + """
-<p>For an unrotated occurrence, Forge lowers an <a href="../../reference/Anchor/"><code>AnchorFrame</code></a>
+<p>For an unrotated occurrence, Forge lowers an <a href="../../reference/attachment-references/#AnchorFrame"><code>AnchorFrame</code></a>
 directly into the native <code>joint.create</code> reference as
 <code>point</code>, <code>z</code> and <code>x</code>; it does not create a
 persistent visible <code>joint.origin</code>. Named frames on explicitly
