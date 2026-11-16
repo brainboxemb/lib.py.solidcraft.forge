@@ -434,7 +434,7 @@ class SCPFExamples(unittest.TestCase):
                 "    def __post_init__(self):\n"
                 "        assert self.size > 0\n"
                 "    def build(self):\n"
-                "        Box(self.size, self.size, self.size).move(x=10)\n"
+                "        Box(self.size, self.size, self.size, origin=CENTER).move(x=10)\n"
                 "Cuboid(80)\n"
             )
             generated = run_script(file)
@@ -699,7 +699,7 @@ class SCPFExamples(unittest.TestCase):
             file = Path(directory) / "model.py"
             file.write_text(
                 "def CsgCube(size=50.0):\n"
-                "    body = Sphere(size / 1.5) & Box(size, size, size)\n"
+                "    body = Sphere(size / 1.5) & Box(size, size, size, origin=CENTER)\n"
                 "    hole = Cylinder(d=size / 1.5, h=size).move(z=-10)\n"
                 "    return (body - hole).move(x=10, y=20, z=30)\n"
                 "CsgCube()\n"
@@ -731,7 +731,7 @@ class SCPFExamples(unittest.TestCase):
             file = Path(directory) / "model.py"
             file.write_text(
                 "def Cuboid(size=50):\n"
-                "    body = Box(size, size, size)\n"
+                "    body = Box(size, size, size, origin=CENTER)\n"
                 "    body.move(x=10)\n"
                 "Cuboid()\n"
             )
