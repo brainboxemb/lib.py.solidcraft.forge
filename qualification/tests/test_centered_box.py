@@ -32,6 +32,15 @@ class CenteredBoxCommandTests(unittest.TestCase):
         self.assertEqual(box["height"], "height")
         self.assertEqual(box["center"], [0, 0, 0])
         self.assertNotIn("corner", box)
+        self.assertFalse(
+            any(row["command"].startswith("sketch.") for row in commands)
+        )
+        self.assertFalse(
+            any(
+                row["command"] in ("solid.move", "occurrence.move")
+                for row in commands
+            )
+        )
 
     def test_cardinal_box_origin_uses_native_corner_datum(self):
         commands = compile_model(
