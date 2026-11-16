@@ -2116,6 +2116,122 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(joint["a"]["corner"], [10.0, 0.0, 0.0])
         self.assertEqual(joint["a"]["z"], [0.0, 0.0, -1.0])
 
+    def test_rotated_normal_attachment_rejects_every_reference_type(self):
+        from scpf import (
+            Anchor,
+            AnchorFrame,
+            AnchorTopology,
+            Axis,
+            Box,
+            Placement,
+            component,
+        )
+        from scpf.assembly import compile_assembly
+        from scpf.compiler import ModelError
+
+        @component
+        class Block:
+            def build(self):
+                return Box(20, 20, 10)
+
+        references = {
+            "anchor": (
+                Anchor.RIGHT,
+                Anchor.LEFT,
+            ),
+            "frame": (
+                AnchorFrame(origin=(10, 0, 5)),
+                AnchorFrame(origin=(-10, 0, 5)),
+            ),
+            "topology": (
+                AnchorTopology(
+                    edge=(10, 0, 5),
+                    on=(10, 0, 5),
+                ),
+                AnchorTopology(
+                    edge=(-10, 0, 5),
+                    on=(-10, 0, 5),
+                ),
+            ),
+        }
+
+        for reference_name, (parent_ref, child_ref) in references.items():
+            for rotated_side in ("parent", "child"):
+                with self.subTest(
+                    reference=reference_name,
+                    rotated=rotated_side,
+                ):
+                    parent = Block(
+                        placement=(
+                            Placement(rotation=(Axis.Z, 90))
+                            if rotated_side == "parent"
+                            else Placement()
+                        )
+                    )
+                    child = Block(
+                        placement=(
+                            Placement(rotation=(Axis.Z, 90))
+                            if rotated_side == "child"
+                            else Placement()
+                        )
+                    ).attach(
+                        parent,
+                        parent=parent_ref,
+                        child=child_ref,
+                    )
+
+                    with self.assertRaisesRegex(
+                        ModelError,
+                        "rotated Placement in a normal attachment is not supported yet",
+                    ):
+                        compile_assembly(
+                            parent + child,
+                            f"Rotated{reference_name}{rotated_side}",
+                        )
+
+    def test_rotated_as_built_attachment_keeps_declared_occurrence_pose(self):
+        from scpf import Axis, Box, Placement, component
+        from scpf.assembly import compile_assembly
+
+        @component
+        class Block:
+            def build(self):
+                return Box(20, 20, 10)
+
+        parent = Block()
+        child = Block(
+            placement=Placement(
+                x=40,
+                rotation=(Axis.Z, 90),
+            )
+        ).attach(
+            parent,
+            as_built=True,
+        )
+
+        commands = compile_assembly(
+            parent + child,
+            "RotatedAsBuilt",
+        )["commands"]
+
+        move = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.move"
+        )
+        self.assertEqual(move["occurrence"], "$block_occurrence_2")
+        self.assertEqual(move["translate"], [40, 0, 0])
+        self.assertEqual(move["axis"], [0.0, 0.0, 1.0])
+        self.assertEqual(move["angle"], "90 deg")
+
+        joint = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "joint.as_built"
+        )
+        self.assertEqual(joint["a"], "$block_occurrence_1")
+        self.assertEqual(joint["b"], "$block_occurrence_2")
+
     def test_named_topology_anchor_rejects_rotated_occurrence(self):
         from scpf.assembly import compile_assembly
         from scpf.compiler import ModelError
