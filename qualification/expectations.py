@@ -9,6 +9,9 @@ EXPECTED_BOUNDS = {
     "simple-box": [
         {"label": "SimpleBox", "min": [-20, -15, 0], "max": [20, 15, 10]},
     ],
+    "centered-box": [
+        {"label": "CenteredBox", "min": [-20, -15, -5], "max": [20, 15, 5]},
+    ],
     "anchored-holes": [
         {"label": "AnchoredHoles", "min": [-50, -30, 0], "max": [50, 30, 10]},
     ],
@@ -117,6 +120,9 @@ EXPECTED_BOUNDS = {
 
 
 EXPECTED_MUTATION_BOUNDS = {
+    "centered-box": [
+        {"label": "CenteredBox", "min": [-30, -20, -10], "max": [30, 20, 10]},
+    ],
     "assembly-owned-anchor": [
         {"label": "Base", "min": [-40, -15, 0], "max": [40, 15, 40]},
         {"label": "Companion", "min": [65, -5, 0], "max": [75, 5, 10]},
