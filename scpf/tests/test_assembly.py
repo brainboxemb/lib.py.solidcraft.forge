@@ -303,6 +303,70 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(move["occurrence"], "$panel_occurrence_1")
         self.assertEqual(move["translate"], [-30, 0, 0])
 
+    def test_parametric_root_placement_stays_ungrounded_in_solidcraft_042(self):
+        from scpf import Box, Parameter, Placement, component, half
+        from scpf.assembly import compile_assembly
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        height = Parameter("opening_height", 362)
+        panel = Panel(
+            placement=Placement(z=half(height)),
+        ).group("Panels")
+
+        commands = compile_assembly(panel, "Display")["commands"]
+        create = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "component.create"
+            and command["params"]["name"] == "Panel"
+        )
+        self.assertFalse(create["grounded"])
+        self.assertEqual(create["parent"], "Panels")
+
+        move = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.move"
+        )
+        self.assertEqual(move["occurrence"], "$panel")
+        self.assertIn("opening_height", str(move["translate"][2]))
+        self.assertNotIn("move_grounded", move)
+
+    def test_fixed_root_placement_keeps_grounded_behaviour(self):
+        from scpf import Box, Placement, component
+        from scpf.assembly import compile_assembly
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        panel = Panel(
+            placement=Placement(x=30),
+        )
+        commands = compile_assembly(panel, "Display")["commands"]
+
+        create = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "component.create"
+            and command["params"]["name"] == "Panel"
+        )
+        self.assertTrue(create["grounded"])
+
+        move = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.move"
+        )
+        self.assertEqual(move["occurrence"], "$panel")
+        self.assertEqual(move["translate"], [30, 0, 0])
+        self.assertTrue(move["move_grounded"])
+
     def test_symbolic_ordinary_copy_placement_uses_replay_variable(self):
         from scpf import Box, Parameter, Placement, component
         from scpf.assembly import compile_assembly

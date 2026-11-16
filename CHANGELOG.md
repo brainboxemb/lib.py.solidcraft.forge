@@ -8,6 +8,16 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Keep a physical root occurrence ungrounded when its Placement position uses
+  Parameters or Expressions. SolidCraft 0.42 otherwise evaluates the initial
+  `move_grounded` correctly but freezes that grounded placement when the
+  parameter later changes in the saved design.
+- Fixed the HUB75-style case where copied occurrences followed a changed
+  opening height but the first occurrence stayed at its original position.
+
+
 ## [0.3.3] - 2026-11-16
 
 ### Changed
