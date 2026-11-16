@@ -3,7 +3,8 @@ import argparse
 import json
 from pathlib import Path
 
-from .live import LiveError, new_design, send_commands
+from .live import LiveError, new_design, send_document
+from .replay import validate_replay_document
 from .runner import run_script
 from .version import check_cli_version
 
@@ -14,15 +15,7 @@ def read_command_file(path):
         document = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         raise ValueError(f"Cannot read SolidCraft JSON {path}: {exc}") from exc
-    if not isinstance(document, dict) or not isinstance(document.get("commands"), list):
-        raise ValueError("SolidCraft JSON must contain a 'commands' array")
-    if not document["commands"]:
-        raise ValueError("SolidCraft JSON has no commands")
-    for index, item in enumerate(document["commands"]):
-        if (not isinstance(item, dict) or not isinstance(item.get("command"), str)
-                or not isinstance(item.get("params", {}), dict)):
-            raise ValueError(f"Invalid SolidCraft command at index {index}")
-    return document
+    return validate_replay_document(document)
 
 
 def main(argv=None):
@@ -41,6 +34,10 @@ def main(argv=None):
     parser.add_argument(
         "--new", action="store_true",
         help="Replace the active SolidCraft design with a new empty design before --connect",
+    )
+    parser.add_argument(
+        "--replay-log", type=Path,
+        help="Write the concrete runtime variable bindings used by this execution",
     )
     args = parser.parse_args(argv)
 
@@ -83,11 +80,18 @@ def main(argv=None):
         if args.new:
             fresh = new_design(connect=args.connect or "auto")
             print(f"Live SolidCraft: new empty design {fresh['name']!r}")
-        result = send_commands(
-            document["commands"], connect=args.connect or "auto"
+        result = send_document(
+            document, connect=args.connect or "auto"
         )
     except LiveError as exc:
         parser.exit(1, f"SCPF live: {exc}\n")
+    if args.replay_log is not None:
+        args.replay_log.parent.mkdir(parents=True, exist_ok=True)
+        args.replay_log.write_text(
+            json.dumps(result["replay_log"], indent=2) + "\n",
+            encoding="utf-8",
+        )
+        print(f"Replay log: {args.replay_log}")
     print(f"Live SolidCraft: {result['completed']} commands applied to the open design")
     return 0
 
