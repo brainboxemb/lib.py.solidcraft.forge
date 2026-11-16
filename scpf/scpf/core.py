@@ -800,6 +800,45 @@ def _box_corner_from_anchor(length, width, height, point, anchor):
     return tuple(corner)
 
 
+def _primitive_center_from_anchor(extents, point, anchor):
+    """Resolve a primitive's center from an anchor on its world XYZ bounds."""
+    vector = _direction_selector(anchor).vector
+    return tuple(
+        _dim_add(coordinate, (
+            half(extent) if side < 0 else
+            -half(extent) if side > 0 else 0
+        ))
+        for coordinate, extent, side in zip(point, extents, vector)
+    )
+
+
+def _cylinder_base_from_anchor(height, diameter, axis, point, anchor):
+    """Get native cylinder base from its selected world-space anchor.
+
+    The axial dimension is height; the two transverse dimensions are
+    diameter. CENTER therefore places the base half a height behind origin.
+    """
+    extents = {
+        "X": (height, diameter, diameter),
+        "Y": (diameter, height, diameter),
+        "Z": (diameter, diameter, height),
+    }[axis]
+    center = _primitive_center_from_anchor(extents, point, anchor)
+    index = {"X": 0, "Y": 1, "Z": 2}[axis]
+    base = list(center)
+    base[index] = _dim_add(base[index], -half(height))
+    return tuple(base)
+
+
+def _sphere_center_from_anchor(radius, point, anchor):
+    """Place the selected sphere tangent/center anchor at a world point."""
+    vector = _direction_selector(anchor).vector
+    return tuple(
+        _dim_add(coordinate, radius if side < 0 else -radius if side > 0 else 0)
+        for coordinate, side in zip(point, vector)
+    )
+
+
 def _shape_center(shape):
     """Return the nominal CENTER anchor of a direct CSG shape.
 
@@ -821,16 +860,17 @@ def _shape_center(shape):
         )
 
     if shape.kind == "sphere":
-        return (0, 0, 0)
+        radius, anchor = shape.data
+        return _sphere_center_from_anchor(radius, (0, 0, 0), anchor)
 
     if shape.kind == "cylinder":
-        height, _diameter, axis = shape.data
-        half_height = half(height)
-        return {
-            "X": (half_height, 0, 0),
-            "Y": (0, half_height, 0),
-            "Z": (0, 0, half_height),
+        height, diameter, axis, anchor = shape.data
+        extents = {
+            "X": (height, diameter, diameter),
+            "Y": (diameter, height, diameter),
+            "Z": (diameter, diameter, height),
         }[axis]
+        return _primitive_center_from_anchor(extents, (0, 0, 0), anchor)
 
     if shape.kind == "translated":
         child, delta = shape.data
@@ -1045,9 +1085,26 @@ class Shape:
             selector = _direction_selector(anchor)
             return Shape("placed_box", (self, x, y, z, selector))
 
+        if self.kind == "cylinder":
+            if child is not Anchor.CENTER:
+                raise ValueError("child= is only valid for shape-to-shape at()")
+            height, diameter, axis, _origin_anchor = self.data
+            selected = _direction_selector(anchor)
+            placed = Shape("cylinder", (height, diameter, axis, selected))
+            return Shape("placed3d", (placed, x, y, z))
+
+        if self.kind == "sphere":
+            if child is not Anchor.CENTER:
+                raise ValueError("child= is only valid for shape-to-shape at()")
+            radius, _origin_anchor = self.data
+            selected = _direction_selector(anchor)
+            placed = Shape("sphere", (radius, selected))
+            return Shape("translated", (placed, (x, y, z)))
+
         if anchor is not Anchor.CENTER or child is not Anchor.CENTER:
             raise ValueError(
-                "anchor/child are only valid for Box or shape-to-shape at()"
+                "anchor/child are only valid for geometric primitives or "
+                "shape-to-shape at()"
             )
         if self.kind not in (
             "circle", "rectangle", "polygon", "positioned", "cylinder", "hole",
@@ -1284,35 +1341,27 @@ def Box(length, width, thickness, *, anchor=Anchor.CENTER):
     return Shape("box", (length, width, thickness, selector))
 
 
-def Sphere(radius):
-    """Create a sphere from its radius.
+def Sphere(radius, *, anchor=Anchor.CENTER):
+    """Create a sphere, centered on the origin unless another anchor is given.
 
-    Use when:
-        A direct spherical primitive is sufficient.
-
-    Limits:
-        Sphere has no separate orientation axis; use Shape placement/CSG
-        operations where supported.
+    The cardinal anchors choose points on its world-aligned tangent box.
+    Sphere has no orientation axis. Use at() for later placement.
     """
-    return Shape("sphere", (radius,))
+    return Shape("sphere", (radius, _direction_selector(anchor)))
 
 
-def Cylinder(*, d, h, axis=Axis.Z):
-    """Create a native cylinder on a principal axis.
+def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
+    """Create a cylindrical solid centered around the origin by default.
 
-    Use when:
-        Model a cylindrical primitive directly and choose Axis.X, Axis.Y or
-        Axis.Z for its direction.
-
-    Limits:
-        .at(x, y, z) places the cylinder by its base point. axis must be a
-        principal Axis value.
+    An explicit anchor refers to the oriented cylinder's world XYZ bounds:
+    BOTTOM for an Axis.Z base, LEFT for an Axis.X base, FRONT for Axis.Y.
+    .at() places the selected anchor at the requested coordinate.
     """
     try:
         axis = Axis(axis)
     except ValueError as exc:
         raise ValueError("Cylinder axis must be Axis.X, Axis.Y or Axis.Z") from exc
-    return Shape("cylinder", (h, d, axis.value))
+    return Shape("cylinder", (h, d, axis.value, _direction_selector(anchor)))
 
 
 def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
