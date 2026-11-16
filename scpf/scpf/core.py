@@ -1428,6 +1428,7 @@ X, Y, Z = _AxisRef("X"), _AxisRef("Y"), _AxisRef("Z")
 # BOSL2-style cardinal direction constants. These remain the same Anchor
 # values used by assemblies, but can also be added to form edge/corner
 # selectors such as BOTTOM + LEFT or TOP + RIGHT.
+CENTER = Anchor.CENTER
 TOP = Anchor.TOP
 BOTTOM = Anchor.BOTTOM
 LEFT = Anchor.LEFT
