@@ -160,6 +160,30 @@ def _plain_reference_fields(cls):
 
 def _definition_identity_value(value, name):
     """Return one stable hashable value for a reusable component input."""
+    if isinstance(value, core._DirectionSelector):
+        return (
+            "direction_selector",
+            tuple(value.vector),
+        )
+    if isinstance(value, core._ProfileEdgeSelection):
+        return (
+            "profile_edge_selection",
+            tuple(value.patterns),
+            value.sides,
+            value.kind,
+        )
+    if isinstance(value, core._AxisRef):
+        return (
+            "axis_ref",
+            str(value),
+        )
+    if isinstance(value, core._BoundOffset):
+        return (
+            "bound_offset",
+            value.axis,
+            value.reference,
+            _definition_identity_value(value.delta, name),
+        )
     if isinstance(value, Enum):
         enum_type = type(value)
         return (
@@ -187,7 +211,7 @@ def _definition_identity_value(value, name):
     raise TypeError(
         f"{name}: {type(value).__name__} cannot be used in reusable "
         "component definition identity; use a fixed immutable value "
-        "(None, bool, number, str, Enum or tuple)"
+        "(None, bool, number, str, Enum, Forge selector or tuple)"
     )
 
 

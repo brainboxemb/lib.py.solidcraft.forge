@@ -877,6 +877,98 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(fixed["axis"][-1], "X")
         self.assertEqual(fixed["options"][0], "tuple")
 
+    def test_forge_selector_values_are_safe_definition_identity_inputs(self):
+        from scpf import BOTTOM, LEFT, RIGHT, TOP, Edges, X, Box
+        from scpf.runner import component
+
+        class SelectorPart:
+            selector = None
+
+            def build(self):
+                return Box(20, 10, 5)
+
+        Part = component(SelectorPart)
+
+        lower_left = Part(selector=BOTTOM + LEFT)
+        lower_left_again = Part(selector=BOTTOM + LEFT)
+        lower_right = Part(selector=BOTTOM + RIGHT)
+        upper_left = Part(selector=TOP + LEFT)
+
+        self.assertEqual(
+            lower_left.definition.key,
+            lower_left_again.definition.key,
+        )
+        self.assertNotEqual(
+            lower_left.definition.key,
+            lower_right.definition.key,
+        )
+        self.assertNotEqual(
+            lower_left.definition.key,
+            upper_left.definition.key,
+        )
+        self.assertEqual(
+            dict(lower_left.definition.fixed_inputs)["selector"],
+            ("direction_selector", (-1, 0, -1)),
+        )
+
+        profile_a = Part(selector=Edges.from_profile("a"))
+        profile_b = Part(selector=Edges.from_profile("b"))
+        self.assertNotEqual(profile_a.definition.key, profile_b.definition.key)
+        self.assertEqual(
+            dict(profile_a.definition.fixed_inputs)["selector"][:2],
+            ("profile_edge_selection", ("a",)),
+        )
+
+        axis_token = Part(selector=X)
+        text_token = Part(selector="X")
+        self.assertNotEqual(axis_token.definition.key, text_token.definition.key)
+
+        near_left = Part(selector=X.MIN + 10)
+        far_left = Part(selector=X.MIN + 20)
+        self.assertNotEqual(near_left.definition.key, far_left.definition.key)
+        self.assertEqual(
+            dict(near_left.definition.fixed_inputs)["selector"],
+            ("bound_offset", "X", "min", ("number", 10.0)),
+        )
+
+    def test_board_style_selector_tuple_is_reusable_definition_input(self):
+        from scpf import BOTTOM, LEFT, RIGHT, TOP, Box
+        from scpf.assembly import compile_assembly
+        from scpf.runner import component
+
+        class Board:
+            fillet = None
+
+            def build(self):
+                body = Box(40, 20, 5)
+                if self.fillet:
+                    body = body.fillet(2, edges=self.fillet)
+                return body
+
+        BoardPart = component(Board)
+        bottom = BoardPart(
+            fillet=(BOTTOM + LEFT, BOTTOM + RIGHT),
+        )
+        same_bottom = BoardPart(
+            fillet=(BOTTOM + LEFT, BOTTOM + RIGHT),
+        )
+        top = BoardPart(
+            fillet=(TOP + LEFT, TOP + RIGHT),
+        )
+
+        self.assertEqual(bottom.definition.key, same_bottom.definition.key)
+        self.assertNotEqual(bottom.definition.key, top.definition.key)
+
+        commands = compile_assembly(bottom + same_bottom, "Boards")["commands"]
+        self.assertEqual(
+            sum(row["command"] == "component.create" for row in commands),
+            1,
+        )
+        self.assertEqual(
+            sum(row["command"] == "occurrence.copy" for row in commands),
+            1,
+        )
+
     def test_reusable_dataclass_rejects_unstable_fixed_input(self):
         from dataclasses import dataclass, field
 

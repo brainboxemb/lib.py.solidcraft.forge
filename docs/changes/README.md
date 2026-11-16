@@ -37,3 +37,4 @@ Current records:
 - [0018-sketch-profile-centering.md](0018-sketch-profile-centering.md) — make CENTER the semantic default for dimension-defined sketch profiles and reserve offset for deliberate local displacement.
 - [0019-qualification-release-cleanup.md](0019-qualification-release-cleanup.md) — keep native Q4/Q5 expectations in one validator, remove copied engine-version assertions, classify test layers, and block releases when a foundational blocker is explicitly listed.
 - [0020-coordinate-profile-default-anchor.md](0020-coordinate-profile-default-anchor.md) — correct the 0.4.0 Sketch.add default so dimension-defined profiles still centre automatically while Text2D/Polygon2D keep their coordinate-defined placement.
+- [0021-selector-definition-identity.md](0021-selector-definition-identity.md) — allow Forge's own immutable cardinal/profile/axis selector values to participate in deterministic reusable-component definition identity.
