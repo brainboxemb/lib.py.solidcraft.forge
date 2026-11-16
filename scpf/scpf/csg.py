@@ -2,15 +2,30 @@
 
 This module is not a geometry engine. SolidCraft executes these operations.
 """
-from .core import Shape, Parameter, Expression, pv, command_value, number_text
+from .core import (
+    Shape,
+    Parameter,
+    Expression,
+    _NativeExpression,
+    _native_expression,
+    pv,
+    command_value,
+    number_text,
+)
 from .compiler import ModelError, _command, _require_positive
 
 def _half(dim, negative=False):
     if isinstance(dim, Parameter):
-        return f"-{dim.name} / 2" if negative else f"{dim.name} / 2"
+        return _native_expression(
+            f"-{dim.name} / 2" if negative else f"{dim.name} / 2"
+        )
     if isinstance(dim, Expression):
         expression = command_value(dim)
-        return f"-({expression}) / 2" if negative else f"({expression}) / 2"
+        return _native_expression(
+            f"-({expression}) / 2"
+            if negative
+            else f"({expression}) / 2"
+        )
     return -pv(dim) / 2 if negative else pv(dim) / 2
 
 
@@ -31,8 +46,10 @@ def _add_offset(coord, offset):
     """Offset either a literal coordinate or a SolidCraft expression."""
     if not offset:
         return coord
-    if isinstance(coord, str):
-        return f"({coord}) + {number_text(offset)}"
+    if isinstance(coord, _NativeExpression):
+        return _native_expression(
+            f"({coord}) + {number_text(offset)}"
+        )
     return coord + offset
 
 
