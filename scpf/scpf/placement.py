@@ -45,20 +45,20 @@ def _base_rectangle(shape):
     if shape.kind == "rectangle":
         return shape.data, (0, 0, 0), None
     if shape.kind == "box":
-        length, width, height, origin = shape.data
+        length, width, height, anchor = shape.data
         corner = _box_corner_from_anchor(
             length,
             width,
             height,
             (0, 0, 0),
-            origin,
+            anchor,
         )
         return (length, width), corner, height
     if shape.kind == "placed_box":
         box, x, y, z, anchor = shape.data
         if box.kind != "box":
             raise ValueError("placed_box must wrap a Box")
-        length, width, height, _origin = box.data
+        length, width, height, _anchor = box.data
         corner = _box_corner_from_anchor(
             length,
             width,
