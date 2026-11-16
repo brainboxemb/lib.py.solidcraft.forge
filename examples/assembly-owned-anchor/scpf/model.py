@@ -7,7 +7,12 @@ class Base:
     DEPTH = 30.0
 
     def build(self):
-        return Box(self.width, self.DEPTH, self.height)
+        return Box(
+            self.width,
+            self.DEPTH,
+            self.height,
+            anchor=Anchor.BOTTOM,
+        )
 
 
 class Companion:
