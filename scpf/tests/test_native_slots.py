@@ -43,7 +43,8 @@ class NativeSlotFamilyTests(unittest.TestCase):
         extrude = next(command for command in commands
                        if command["command"] == "solid.extrude")
         self.assertEqual(extrude["params"]["operation"], "cut")
-        self.assertTrue(extrude["params"]["through_all"])
+        self.assertEqual(extrude["params"]["distance"], 5)
+        self.assertEqual(extrude["params"]["direction"], "negative")
 
     def test_symbolic_width_is_rejected_by_direct_native_slot_creator(self):
         from scpf import Parameter, SlotCenterToCenter2D
