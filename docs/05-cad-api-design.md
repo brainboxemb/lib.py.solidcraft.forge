@@ -321,6 +321,17 @@ parameter reference to `d1_Label_width`, but `Text2D("width")` must still
 produce the literal text `"width"`. This compiler rule is recorded in
 [change 0015](changes/0015-typed-native-expressions.md).
 
+Parameter publication by itself is not proof that a saved design remains
+associative. Forge tracks dependencies carried by emitted native expressions.
+A public parameter with no emitted dependency triggers
+`ModelParameterWarning`. If user model code calls `pv()` on a parameter that
+also remains native elsewhere, Forge warns that only part of the model may
+follow later SolidCraft edits. Internal Forge numeric checks and authoring-time
+pick coordinates do not count as user `pv()` calls.
+
+Root model classes and root `@assembly` classes use the same diagnostic rule.
+See [change 0016](changes/0016-parameter-dependency-diagnostics.md).
+
 ## Features and operations
 
 - `+` joins/adds the described CAD feature to the model; Hole intent lowers
