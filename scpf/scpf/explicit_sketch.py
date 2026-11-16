@@ -14,7 +14,15 @@ def register_profile(profile):
     """Capture authored 2D geometry only while an explicit Sketch is active."""
     sketch = _ACTIVE_SKETCH.get()
     if sketch is not None:
-        sketch.add(profile)
+        # Polygon vertices and text insertion points already carry their own
+        # sketch-local placement. Dimension-defined primitives use the semantic
+        # Sketch centre by default.
+        anchor = (
+            None
+            if profile.kind in ("polygon", "text")
+            else Anchor.CENTER
+        )
+        sketch._store_profile(profile, anchor=anchor, offset=(0, 0))
     return profile
 
 
@@ -80,30 +88,62 @@ class Sketch:
             self._closed = True
         return False
 
-    def add(self, profile, *, offset=(0, 0)):
-        """Add a supported 2D profile to this Sketch.
+    def _store_profile(self, profile, *, anchor, offset):
+        """Store one profile placement without applying public anchor defaults."""
+        self._profiles = [
+            row for row in self._profiles
+            if row[0] is not profile
+        ]
+        self._profiles.append((profile, anchor, tuple(offset)))
+
+    def add(self, profile, *, anchor=Anchor.CENTER, offset=(0, 0)):
+        """Add and place a supported 2D profile in this Sketch.
 
         Use when:
-            Explicitly add or reposition Circle2D, Rectangle2D, Polygon2D,
-            RoundedRectangle2D or Text2D geometry in the active sketch.
+            Place Circle2D, Rectangle2D or RoundedRectangle2D by semantic
+            centre, optionally followed by a deliberate sketch-local offset.
 
         Limits:
-            Placement currently uses numeric offset=(x, y). Semantic 2D anchor
-            placement is not implemented by this method yet.
+            Anchor.CENTER is the supported semantic profile anchor in this
+            change. Polygon2D vertices and Text2D insertion points already
+            define their own placement and are not assigned a guessed centre.
         """
         if self._closed:
             raise ValueError("cannot add geometry after leaving the Sketch scope")
-        if not isinstance(profile, Shape) or profile.kind not in ("circle", "rectangle", "rounded_rectangle", "text", "polygon"):
-            raise ValueError("Sketch supports Circle2D, Rectangle2D, Polygon2D, RoundedRectangle2D or Text2D profiles")
+        if not isinstance(profile, Shape) or profile.kind not in (
+            "circle",
+            "rectangle",
+            "rounded_rectangle",
+            "text",
+            "polygon",
+        ):
+            raise ValueError(
+                "Sketch supports Circle2D, Rectangle2D, Polygon2D, "
+                "RoundedRectangle2D or Text2D profiles"
+            )
+        try:
+            anchor = Anchor(anchor)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Sketch profile anchor must be Anchor.CENTER") from exc
+        if anchor is not Anchor.CENTER:
+            raise ValueError("Sketch profile anchor currently supports CENTER only")
+        if profile.kind in ("polygon", "text"):
+            raise ValueError(
+                f"{profile.kind} profiles define their own sketch-local "
+                "coordinates; CENTER is not supported for this profile yet"
+            )
         if not isinstance(offset, (tuple, list)) or len(offset) != 2:
             raise ValueError("Sketch offset must be an (x, y) pair")
-        # Numeric offsets are sufficient for the first syntax experiment.
         for value in offset:
             pv(value)
-        # An explicitly added profile may already have been captured by its
-        # constructor inside the scope. Replace its automatic placement.
-        self._profiles = [row for row in self._profiles if row[0] is not profile]
-        self._profiles.append((profile, tuple(offset)))
+
+        # The constructor may already have been captured automatically inside
+        # this scope. Explicit add() replaces that placement.
+        self._store_profile(
+            profile,
+            anchor=anchor,
+            offset=tuple(offset),
+        )
         return profile
 
     def extrude(self, distance, *, direction=Direction.POSITIVE):
