@@ -20,7 +20,6 @@ class RoundedRectangleSketch:
                     self.pad_depth,
                     self.radius,
                 ),
-                offset=(-20, -15),
             )
 
         return body + pad.extrude(self.pad_height)
