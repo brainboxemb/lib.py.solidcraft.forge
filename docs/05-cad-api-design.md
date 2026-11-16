@@ -100,8 +100,9 @@ cardinal anchors with native `corner` data. It does not add corrective moves.
 An explicit `.at(..., anchor=...)` is later placement and takes precedence
 over the constructor datum.
 
-`Box.taper()` currently requires `anchor=BOTTOM` because its front and rear
-planes are defined at Z=0 and Z=depth.
+`Box.taper(from_z=..., inset=...)` is anchor-aware. `from_z` is measured
+from the Box bottom face. For a centred Box the bottom face is at
+`-thickness/2`; for `anchor=BOTTOM` it is at Z=0.
 
 See [change 0022](changes/0022-native-box-origin.md).
 
