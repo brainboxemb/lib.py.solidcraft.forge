@@ -8,6 +8,38 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- `Sketch.add(..., anchor=Anchor.CENTER)` now defines semantic centering for
+  dimension-defined sketch profiles; `CENTER` is exported as the short public
+  form of `Anchor.CENTER`.
+- Qualification evidence now records the Forge version, SolidCraft version,
+  source commit and qualification time in structured results and published
+  Pages output.
+- Release validation now reads `docs/design/release-blockers.txt` and refuses
+  a release while an active foundational blocker is listed.
+
+### Changed
+
+- Rectangle2D, Circle2D and RoundedRectangle2D are centred on the Sketch origin
+  by default; `offset=(u, v)` is reserved for deliberate sketch-local
+  displacement. Polygon2D authored coordinates and Text2D insertion coordinates
+  remain explicit.
+- Native parameter expressions remain typed internally until component
+  namespacing is complete. Ordinary text, material names, feature names and enum
+  strings are opaque and are never rewritten as parameter expressions.
+- Model-parameter warnings now use actual emitted native dependencies rather
+  than treating `parameters.add` as proof of associativity. Explicit user
+  `pv()` reads are diagnosed separately from Forge's internal numeric checks,
+  and root models and root `@assembly` classes use the same rule.
+- Normal attachments with rotated parent or child Placement are rejected before
+  lowering until complete Anchor/AnchorFrame/AnchorTopology transforms are
+  qualified. Ordinary rotated Placement and rotated as-built relationships
+  remain supported.
+- Native Q4/Q5 expectations now live only in
+  `qualification/native_validation.py`; duplicate conditionally skipped native
+  unittest classes were removed.
+
 ### Fixed
 
 - Reusable component definition identity now includes inherited parent-parameter
@@ -18,6 +50,17 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 - Compiler-local parameter names now include a stable definition number, so
   different component definitions cannot collide after readable names are
   normalized to the same identifier.
+- Component-local parameter namespace rewriting now changes only typed native
+  expressions, preventing literal strings equal to parameter names from being
+  corrupted.
+
+### Qualification
+
+- Qualification and documentation use
+  `scpf.version.TESTED_SOLIDCRAFT_VERSION` as the single SolidCraft-version
+  source instead of copied engine-version assertions.
+- Qualification documentation now describes the actual three-layer test
+  structure and the required PythonSCAD, pyBOSL2 and CadQuery comparison set.
 
 
 ## [0.3.4] - 2026-11-16
