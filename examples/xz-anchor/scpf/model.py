@@ -16,10 +16,7 @@ class Board:
                 plane="XZ",
                 world=True,
             )
-        return sketch.extrude(
-            self.depth,
-            direction=Direction.POSITIVE,
-        ).with_material(
+        return sketch.extrude(self.depth).with_material(
             "test board",
             density_g_cm3=0.55,
         )

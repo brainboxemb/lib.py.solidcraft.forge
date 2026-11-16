@@ -355,10 +355,10 @@ QUALIFICATION_CASES = [
         "slug": "circle-negative-extrude",
         "group": "fundamentals",
         "title": "Negative circle profile extrusion",
-        "intent": "Qualify Circle2D authored inside an explicit Sketch and an explicitly selected negative extrusion direction with one minimal native model.",
-        "forge_api": "with Sketch(plane='XY'): Circle2D(d=20); sketch.extrude(30, direction=Direction.NEGATIVE)",
+        "intent": "Qualify Circle2D authored inside an explicit Sketch and a negative signed extrusion distance with one minimal native model.",
+        "forge_api": "with Sketch(plane='XY'): Circle2D(d=20); sketch.extrude(-30)",
         "forge_model": "One circular 2D profile authored in an explicit XY Sketch and extruded 30 mm along negative Z; no CSG or attachment is involved.",
-        "lowering": "Native XY sketch with one circle followed by solid.extrude(direction='negative').",
+        "lowering": "The signed Forge distance is normalized to a positive native distance plus solid.extrude(direction='negative').",
         "native_expectation": "One 20 mm diameter cylindrical body spans X/Y -10..10 mm and Z -30..0 mm, with an error-free saved SolidCraft timeline.",
         "mutation": "No saved-design mutation in this fixture; it isolates direct circle-profile lowering and negative extrusion semantics.",
         "references": [

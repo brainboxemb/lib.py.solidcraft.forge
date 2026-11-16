@@ -1,12 +1,14 @@
-"""build123d reference: two panels in one group and a separate frame.
+"""build123d reference: two panels plus a separate frame.
 
-Compound captures the visible hierarchy; native BOM persistence is verified
-through SolidCraft rather than inferred from STL.
+The builder compares visible geometry; SolidCraft-native qualification proves
+browser hierarchy and BOM persistence.
 """
-from build123d import Align, Box, Compound, Pos
+from build123d import Align, Box, BuildPart, Locations
 
 bottom = (Align.CENTER, Align.CENTER, Align.MIN)
-panel = Box(10, 2, 20, align=bottom)
-panels = Compound(children=[panel, Pos(11, 0, 0) * panel])
-frame = Pos(0, 20, 0) * Box(35, 10, 40, align=bottom)
-model = Compound(children=[panels, frame])
+
+with BuildPart() as model:
+    with Locations((0, 0, 0), (11, 0, 0)):
+        Box(10, 2, 20, align=bottom)
+    with Locations((0, 20, 0)):
+        Box(35, 10, 40, align=bottom)

@@ -82,21 +82,27 @@ class SCPFExamples(unittest.TestCase):
         with self.assertRaises(ValueError):
             body.fillet(6, edges="vertical")
 
-    def test_direction_enum_compiles_to_solidcraft_strings(self):
-        from scpf.core import Circle2D, Direction
+    def test_signed_extrude_compiles_to_solidcraft_strings(self):
+        from scpf.core import Circle2D, Parameter
         from scpf.compiler import compile_model
-        self.assertEqual(Direction.POSITIVE.value, "positive")
-        self.assertEqual(Direction.NEGATIVE.value, "negative")
+
+        height = Parameter("height", 8)
         with Sketch(plane="XY") as sketch:
             Circle2D(d=8)
-        shape = sketch.extrude(8, direction=Direction.NEGATIVE)
-        self.assertEqual(shape.data[-1], "negative")
-        self.assertEqual(
-            sketch.extrude(8, direction="negative").data[-1], "negative"
-        )
-        self.assertEqual(sketch.extrude(8).data[-1], "positive")
-        with self.assertRaises(ValueError):
-            sketch.extrude(8, direction="sideways")
+
+        positive = compile_model(
+            sketch.extrude(height), "Positive"
+        )["commands"][-1]["params"]
+        negative = compile_model(
+            sketch.extrude(-height), "Negative"
+        )["commands"][-1]["params"]
+        symmetric = compile_model(
+            sketch.extrude(height, sym=True), "Symmetric"
+        )["commands"][-1]["params"]
+
+        self.assertEqual((positive["distance"], positive["direction"]), ("height", "positive"))
+        self.assertEqual((negative["distance"], negative["direction"]), ("height", "negative"))
+        self.assertEqual((symmetric["distance"], symmetric["direction"]), ("height", "symmetric"))
 
     def test_anchor_directions_have_vectors_and_aliases(self):
         from scpf.core import Anchor, AnchorFrame
@@ -507,7 +513,7 @@ class SCPFExamples(unittest.TestCase):
 
     def test_attached_hole_uses_sketch_while_explicit_at_can_be_native(self):
         from scpf.compiler import compile_model
-        from scpf.core import Box, Rectangle2D, Polygon2D, Direction, Hole, Faces
+        from scpf.core import Box, Rectangle2D, Polygon2D, Hole, Faces
         box = Box(80, 50, 8)
         with Sketch(name="Base", plane="XY") as sketch:
             Rectangle2D(80, 50)
@@ -525,7 +531,7 @@ class SCPFExamples(unittest.TestCase):
             Polygon2D(
                 [(0, 0), (40, 0), (40, 6), (0, 6)], plane="XZ"
             )
-        polygon = sketch.extrude(50, direction=Direction.NEGATIVE)
+        polygon = sketch.extrude(-50)
         commands = compile_model(
             polygon + Hole(d=6).at(20, -25, 0), "Widget"
         )["commands"]
@@ -609,7 +615,7 @@ class SCPFExamples(unittest.TestCase):
             compile_model(body + boss, "Enclosure")
 
     def test_rounded_rectangle_sketch_compiles_to_true_native_arcs(self):
-        from scpf.core import Anchor, Box, RoundedRectangle2D, Direction
+        from scpf.core import Anchor, Box, RoundedRectangle2D
         from scpf.explicit_sketch import Sketch
         from scpf.compiler import compile_model
 
@@ -622,7 +628,7 @@ class SCPFExamples(unittest.TestCase):
                     RoundedRectangle2D(134.7, 59, 5),
                     offset=(0, y),
                 )
-        panel = panel - bays.extrude(12.5, direction=Direction.NEGATIVE)
+        panel = panel - bays.extrude(-12.5)
         commands = compile_model(panel, "Panel")["commands"]
         rounded = [cmd["params"] for cmd in commands
                    if cmd["command"] == "sketch.rectangle.rounded"]
@@ -640,7 +646,7 @@ class SCPFExamples(unittest.TestCase):
 
     def test_explicit_rear_bay_sketch_on_tapered_box(self):
         """Four rear window pockets retain the front plate and the editable loft."""
-        from scpf.core import Anchor, Box, Rectangle2D, Direction
+        from scpf.core import Anchor, Box, Rectangle2D
         from scpf.explicit_sketch import Sketch
         from scpf.compiler import compile_model
 
@@ -654,7 +660,7 @@ class SCPFExamples(unittest.TestCase):
                     Rectangle2D(134.7, 60.0),
                     offset=(0, center_y),
                 )
-        panel = panel - rear.extrude(12.5, direction=Direction.NEGATIVE)
+        panel = panel - rear.extrude(-12.5)
         commands = compile_model(panel, "Panel")["commands"]
         names = [cmd["command"] for cmd in commands]
         self.assertEqual(names.count("solid.loft"), 1)

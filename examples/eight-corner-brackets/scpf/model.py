@@ -33,10 +33,7 @@ class LProfile:
                 ],
                 plane="XY",
             )
-        return sketch.extrude(
-            self.PROFILE_HEIGHT,
-            direction=Direction.POSITIVE,
-        )
+        return sketch.extrude(self.PROFILE_HEIGHT)
 
 
 class EightCornerBrackets:

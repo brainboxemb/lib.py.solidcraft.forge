@@ -113,7 +113,7 @@ class NativePrimitiveTests(unittest.TestCase):
                 offset=(-9, 18),
             )
         commands = compile_model(
-            base - sketch.extrude(0.6, direction="negative"),
+            base - sketch.extrude(-0.6),
             "LabelledBox",
         )["commands"]
         text = next(
@@ -169,11 +169,35 @@ class NativePrimitiveTests(unittest.TestCase):
     def test_circle_in_with_sketch_negative_extrusion(self):
         with Sketch(plane="XY") as sketch:
             Circle2D(d=20)
-        commands = compile_model(
-            sketch.extrude(30, direction="negative"), "Cylinder"
-        )["commands"]
+        commands = compile_model(sketch.extrude(-30), "Cylinder")["commands"]
         self.assertEqual(commands[1]["command"], "sketch.circle.center")
+        self.assertEqual(commands[-1]["params"]["distance"], 30)
         self.assertEqual(commands[-1]["params"]["direction"], "negative")
+
+    def test_sketch_extrude_signed_distance_and_sym(self):
+        height = Parameter("height", 30)
+        with Sketch(plane="XY") as sketch:
+            Circle2D(d=20)
+
+        positive = compile_model(sketch.extrude(height), "Positive")["commands"][-1]["params"]
+        negative = compile_model(sketch.extrude(-height), "Negative")["commands"][-1]["params"]
+        symmetric = compile_model(
+            sketch.extrude(height, sym=True), "Symmetric"
+        )["commands"][-1]["params"]
+
+        self.assertEqual(positive["distance"], "height")
+        self.assertEqual(positive["direction"], "positive")
+        self.assertEqual(negative["distance"], "height")
+        self.assertEqual(negative["direction"], "negative")
+        self.assertEqual(symmetric["distance"], "height")
+        self.assertEqual(symmetric["direction"], "symmetric")
+
+        with self.assertRaisesRegex(ValueError, "non-zero"):
+            sketch.extrude(0)
+        with self.assertRaisesRegex(ValueError, "must be positive"):
+            sketch.extrude(-10, sym=True)
+        with self.assertRaisesRegex(TypeError, "True or False"):
+            sketch.extrude(10, sym="yes")
 
     def test_existing_attached_sketch_still_works(self):
         base = Box(80, 60, 5)

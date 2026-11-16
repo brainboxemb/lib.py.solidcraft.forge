@@ -24,7 +24,7 @@ class Bracket:
                 ],
                 plane="XZ",
             )
-        return sketch.extrude(self.width, direction=Direction.SYMMETRIC)
+        return sketch.extrude(self.width, sym=True)
 
 
 Bracket()

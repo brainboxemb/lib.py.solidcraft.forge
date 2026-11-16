@@ -1,18 +1,19 @@
-"""build123d geometry reference: explicit fixed/shared/derived panel widths.
+"""build123d geometry reference: fixed/shared/derived panel widths.
 
 Persisted native SolidCraft parameter changes are qualified separately.
 """
-from build123d import Align, Box, Compound, Pos
+from build123d import Align, Box, BuildPart, Locations
 
 shared_width = 80.0
+bottom = (Align.CENTER, Align.CENTER, Align.MIN)
 
-def panel(width):
-    return Box(width, 20, 10, align=(Align.CENTER, Align.CENTER, Align.MIN))
-
-model = Compound(children=[
-    Pos(0, 0, 0) * panel(40),
-    Pos(100, 0, 0) * panel(60),
-    Pos(220, 0, 0) * panel(shared_width),
-    Pos(340, 0, 0) * panel(shared_width),
-    Pos(460, 0, 0) * panel(shared_width / 2),
-])
+with BuildPart() as model:
+    for x, width in [
+        (0, 40),
+        (100, 60),
+        (220, shared_width),
+        (340, shared_width),
+        (460, shared_width / 2),
+    ]:
+        with Locations((x, 0, 0)):
+            Box(width, 20, 10, align=bottom)

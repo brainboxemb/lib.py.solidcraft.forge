@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CircleNegativeExtrudeCommandTests(unittest.TestCase):
-    def test_explicit_circle_sketch_preserves_negative_direction(self):
+    def test_signed_distance_preserves_negative_native_direction(self):
         commands = run_script(
             ROOT / "examples/circle-negative-extrude/scpf/model.py"
         )["commands"]

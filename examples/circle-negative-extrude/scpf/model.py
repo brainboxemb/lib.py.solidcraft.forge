@@ -8,10 +8,7 @@ class NegativeCircleExtrude:
     def build(self):
         with Sketch(plane="XY") as sketch:
             Circle2D(d=self.diameter)
-        return sketch.extrude(
-            self.height,
-            direction=Direction.NEGATIVE,
-        )
+        return sketch.extrude(-self.height)
 
 
 NegativeCircleExtrude()
