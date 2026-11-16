@@ -2,12 +2,12 @@ class Base:
     width = 40.0
 
     def build(self):
-        return Box(self.width, 30, 10)
+        return Box(self.width, 30, 10, anchor=BOTTOM)
 
 
 class Block:
     def build(self):
-        return Box(20, 20, 10)
+        return Box(20, 20, 10, anchor=BOTTOM)
 
 
 class ParametricAnchor:
