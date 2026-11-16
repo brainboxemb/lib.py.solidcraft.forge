@@ -23,8 +23,8 @@ class ParameterScopeCommandTests(unittest.TestCase):
         self.assertEqual(
             [(row["name"], row["expression"]) for row in params],
             [
-                ("Panel_width", "40"),
-                ("Panel_2_width", "60"),
+                ("d1_Panel_width", "40"),
+                ("d2_Panel_2_width", "60"),
                 ("shared_width", "80"),
             ],
         )
@@ -37,13 +37,13 @@ class ParameterScopeCommandTests(unittest.TestCase):
         self.assertEqual(len(boxes), 4)
 
         lengths = [row["length"] for row in boxes]
-        self.assertIn("Panel_width", lengths)
-        self.assertIn("Panel_2_width", lengths)
+        self.assertIn("d1_Panel_width", lengths)
+        self.assertIn("d2_Panel_2_width", lengths)
         self.assertIn("shared_width", lengths)
         self.assertIn("shared_width / 2", lengths)
 
         self.assertFalse(any(
-            row["name"].startswith("Panel") and row["name"].endswith("_depth")
+            row["name"].startswith(("d1_Panel", "d2_Panel")) and row["name"].endswith("_depth")
             for row in params
         ))
         self.assertTrue(all(row["width"] == 20.0 for row in boxes))
@@ -77,14 +77,14 @@ class ParameterScopeNativeTests(unittest.TestCase):
         self.assertEqual(
             _params(measurements),
             {
-                "Panel_width": 40.0,
-                "Panel_2_width": 60.0,
+                "d1_Panel_width": 40.0,
+                "d2_Panel_2_width": 60.0,
                 "shared_width": 80.0,
             },
         )
         self.assertEqual(
             {row["name"] for row in parameters},
-            {"Panel_width", "Panel_2_width", "shared_width"},
+            {"d1_Panel_width", "d2_Panel_2_width", "shared_width"},
         )
 
         fmt = design.get("format")
@@ -99,8 +99,8 @@ class ParameterScopeNativeTests(unittest.TestCase):
         )
 
         params = _params(measurements)
-        self.assertEqual(params["Panel_width"], 40.0)
-        self.assertEqual(params["Panel_2_width"], 60.0)
+        self.assertEqual(params["d1_Panel_width"], 40.0)
+        self.assertEqual(params["d2_Panel_2_width"], 60.0)
         self.assertEqual(params["shared_width"], 100.0)
         self.assertEqual(
             _widths(measurements),
