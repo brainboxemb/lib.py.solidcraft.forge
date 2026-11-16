@@ -136,12 +136,17 @@ class AssemblyTests(unittest.TestCase):
         from scpf.assembly import compile_assembly
 
         @component
-        class Panel:
+        class ParentPanel:
             def build(self):
                 return Box(20, 10, 2)
 
-        parent = Panel()
-        child = Panel().attach(
+        @component
+        class ChildPanel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        parent = ParentPanel()
+        child = ChildPanel().attach(
             parent,
             parent=Anchor.RIGHT,
             child=Anchor.LEFT,
@@ -517,13 +522,18 @@ class AssemblyTests(unittest.TestCase):
         from scpf.core import Anchor, Box
         from scpf.model_objects import ModelDefinition, ModelInstance
 
-        definition = ModelDefinition(
-            "Block",
+        left_definition = ModelDefinition(
+            "LeftBlock",
             (("length", 40.0), ("width", 30.0), ("height", 10.0)),
             Box(40, 30, 10),
         )
-        left = ModelInstance(definition)
-        right = ModelInstance(definition).attach(
+        right_definition = ModelDefinition(
+            "RightBlock",
+            (("length", 40.0), ("width", 30.0), ("height", 10.0)),
+            Box(40, 30, 10),
+        )
+        left = ModelInstance(left_definition)
+        right = ModelInstance(right_definition).attach(
             left,
             parent=Anchor.RIGHT,
             child=Anchor.LEFT,
@@ -1191,28 +1201,14 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(fillet["radius"], "corner_radius")
 
 
-    def test_xz_rectangular_component_uses_standard_corner_anchor(self):
-        commands = run_script(
-            ROOT / "examples/xz-anchor/scpf/model.py"
-        )["commands"]
+    def test_xz_repeated_marker_attachment_is_rejected_without_copy_reference(self):
+        from scpf.compiler import ModelError
 
-        joints = [
-            command["params"]
-            for command in commands
-            if command["command"] == "joint.create"
-        ]
-        self.assertEqual(len(joints), 2)
-        self.assertTrue(all(joint["a"]["occurrence"] == "Board" for joint in joints))
-        self.assertEqual(joints[0]["a"]["corner"], [20.0, 0.0, 20.0])
-        self.assertEqual(joints[1]["a"]["corner"], [-20.0, 0.0, 20.0])
-
-        self.assertEqual(joints[0]["b"]["occurrence"], "Marker")
-        self.assertNotIn("occurrence", joints[1]["b"])
-        self.assertFalse(any(
-            "Marker:" in str(command["params"])
-            or "Board:" in str(command["params"])
-            for command in commands
-        ))
+        with self.assertRaisesRegex(
+            ModelError,
+            "attachment involving a copied occurrence",
+        ):
+            run_script(ROOT / "examples/xz-anchor/scpf/model.py")
 
     def test_anchor_frame_accepts_named_axis_directions(self):
         from scpf import Anchor, AnchorFrame
@@ -1252,16 +1248,23 @@ class AssemblyTests(unittest.TestCase):
             def build(self):
                 return Box(10, 10, 10)
 
+        class FrontBracket(Bracket):
+            pass
+
+        class RearBracket(Bracket):
+            pass
+
         BaseObject = component(Base)
-        BracketObject = component(Bracket)
+        FrontBracketObject = component(FrontBracket)
+        RearBracketObject = component(RearBracket)
 
         base = BaseObject()
-        front = BracketObject().attach(
+        front = FrontBracketObject().attach(
             base,
             parent="front_mount",
             child="front_mount",
         )
-        rear = BracketObject().attach(
+        rear = RearBracketObject().attach(
             base,
             parent="rear_mount",
             child="rear_mount",
@@ -1290,7 +1293,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joints[0]["b"],
             {
-                "occurrence": "Bracket",
+                "occurrence": "FrontBracket",
                 "point": [0.0, 0.0, 0.0],
                 "z": [0.0, 0.0, 1.0],
                 "x": [1.0, 0.0, 0.0],
@@ -1298,11 +1301,18 @@ class AssemblyTests(unittest.TestCase):
         )
         self.assertEqual(joints[1]["a"]["z"], [0.0, 0.0, -1.0])
         self.assertEqual(joints[1]["b"]["z"], [0.0, 0.0, -1.0])
-        self.assertNotIn("occurrence", joints[1]["b"])
+        self.assertEqual(joints[1]["b"]["occurrence"], "RearBracket")
         self.assertFalse(any(
-            "Bracket:" in str(command["params"])
-            or "Base:" in str(command["params"])
+            ":" in selector
             for command in commands
+            for selector in (
+                str(command["params"].get("occurrence", "")),
+                str(command["params"].get("a", {}).get("occurrence", ""))
+                if isinstance(command["params"].get("a"), dict) else "",
+                str(command["params"].get("b", {}).get("occurrence", ""))
+                if isinstance(command["params"].get("b"), dict) else "",
+            )
+            if selector
         ))
 
     def test_assembly_can_own_named_attachment_anchor(self):
@@ -1336,7 +1346,12 @@ class AssemblyTests(unittest.TestCase):
         self.assertIs(anchor.reference, topology)
         self.assertEqual(anchor.offset, (5, 0))
 
-        marker = Block().attach(
+        @component
+        class Marker:
+            def build(self):
+                return Box(20, 20, 10)
+
+        marker = Marker().attach(
             anchor.target,
             parent=anchor.reference,
             child=Anchor.LEFT,
@@ -1433,12 +1448,17 @@ class AssemblyTests(unittest.TestCase):
         from scpf.runner import component
 
         @component
-        class Block:
+        class BaseBlock:
             def build(self):
                 return Box(20, 20, 10)
 
-        base = Block()
-        child = Block().attach(
+        @component
+        class ChildBlock:
+            def build(self):
+                return Box(20, 20, 10)
+
+        base = BaseBlock()
+        child = ChildBlock().attach(
             base,
             parent=AnchorTopology(
                 edge=(10, 0, 5),
@@ -1639,13 +1659,18 @@ class AssemblyTests(unittest.TestCase):
         from scpf.core import Anchor, Box
         from scpf.runner import component
 
-        class Block:
+        class BaseBlock:
             def build(self):
                 return Box(20, 20, 10)
 
-        BlockObject = component(Block)
-        base = BlockObject()
-        child = BlockObject().attach(
+        class ChildBlock:
+            def build(self):
+                return Box(20, 20, 10)
+
+        BaseBlockObject = component(BaseBlock)
+        ChildBlockObject = component(ChildBlock)
+        base = BaseBlockObject()
+        child = ChildBlockObject().attach(
             base,
             parent=Anchor.RIGHT,
             child=Anchor.LEFT,
@@ -1663,7 +1688,7 @@ class AssemblyTests(unittest.TestCase):
             any(command["command"] == "joint.create" for command in commands[:-1])
         )
 
-        no_joint_commands = compile_assembly(BlockObject(), "NoJoints")["commands"]
+        no_joint_commands = compile_assembly(BaseBlockObject(), "NoJoints")["commands"]
         self.assertFalse(
             any(command["command"] == "browser.visibility"
                 for command in no_joint_commands)
@@ -1717,12 +1742,17 @@ class AssemblyTests(unittest.TestCase):
         from scpf.runner import component
 
         @component
-        class Block:
+        class BaseBlock:
             def build(self):
                 return Box(40, 30, 10)
 
-        base = Block(name="base")
-        child = Block(name="child")
+        @component
+        class ChildBlock:
+            def build(self):
+                return Box(40, 30, 10)
+
+        base = BaseBlock(name="base")
+        child = ChildBlock(name="child")
         child = child.attach(
             base,
             parent=FRONT + TOP + LEFT,
@@ -1742,7 +1772,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertIn("corner", joint["a"])
         self.assertEqual(joint["b"]["point"], [-20.0, -16.0, 10.0])
         self.assertEqual(joint["b"]["z"], [0.0, -1.0, 0.0])
-        self.assertNotIn("occurrence", joint["b"])
+        self.assertEqual(joint["b"]["occurrence"], "ChildBlock")
 
     def test_corner_anchor_compiles_to_native_edge_and_corner_origins(self):
         commands = run_script(
@@ -1793,7 +1823,7 @@ class AssemblyTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ModelError,
-            "as-built attachment to a copied occurrence is not replay-safe",
+            "attachment involving a copied occurrence",
         ):
             compile_assembly(base + child, "AsBuiltAttach")
 
@@ -1802,19 +1832,29 @@ class AssemblyTests(unittest.TestCase):
         from scpf.core import Anchor, Box
         from scpf.runner import component
 
-        class Block:
+        class BaseBlock:
             def build(self):
                 return Box(20, 20, 10)
 
-        BlockObject = component(Block)
-        base = BlockObject()
-        zero = BlockObject().attach(
+        class ZeroBlock:
+            def build(self):
+                return Box(20, 20, 10)
+
+        class QuarterBlock:
+            def build(self):
+                return Box(20, 20, 10)
+
+        BaseBlockObject = component(BaseBlock)
+        ZeroBlockObject = component(ZeroBlock)
+        QuarterBlockObject = component(QuarterBlock)
+        base = BaseBlockObject()
+        zero = ZeroBlockObject().attach(
             base,
             parent=Anchor.RIGHT,
             child=Anchor.LEFT,
             angle=0,
         )
-        quarter = BlockObject().attach(
+        quarter = QuarterBlockObject().attach(
             base,
             parent=Anchor.TOP,
             child=Anchor.BOTTOM,
@@ -1858,10 +1898,11 @@ class AssemblyTests(unittest.TestCase):
         from scpf.core import Anchor, Box, Parameter
         from scpf.model_objects import ModelDefinition, ModelInstance
 
-        definition = ModelDefinition("Block", (), Box(40, 30, 10))
-        left = ModelInstance(definition)
+        left_definition = ModelDefinition("LeftBlock", (), Box(40, 30, 10))
+        right_definition = ModelDefinition("RightBlock", (), Box(40, 30, 10))
+        left = ModelInstance(left_definition)
         wood = Parameter("wood_thickness", 18)
-        right = ModelInstance(definition).attach(
+        right = ModelInstance(right_definition).attach(
             left,
             parent=Anchor.RIGHT,
             child=Anchor.LEFT,
