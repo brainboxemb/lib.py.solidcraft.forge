@@ -839,6 +839,23 @@ class SCPFExamples(unittest.TestCase):
 
         self.assertEqual(Box(40, 30, 10).data[-1].vector, BOTTOM.vector)
 
+    def test_box_cardinal_origin_uses_native_corner_datum(self):
+        from scpf import BOTTOM, FRONT, Box
+        from scpf.compiler import compile_model
+
+        commands = compile_model(
+            Box(40, 30, 10, origin=FRONT + BOTTOM),
+            "FrontBottomBox",
+        )["commands"]
+        box = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.box"
+        )
+
+        self.assertEqual(box["corner"], [-20.0, 0, 0])
+        self.assertNotIn("center", box)
+
     def test_csg_box_uses_same_origin_contract(self):
         from scpf import CENTER, Box, Sphere
         from scpf.compiler import compile_model
