@@ -325,9 +325,9 @@ assembly-owned datums in detail.</p>""",
         "summary": "Solids, 2D profiles, extrusions and the CSG operators.",
         "body": """
 <h2 id="solids">Start with a solid</h2>
-<p><code>Box(length, width, height)</code> is centred in X/Y, with its lower
-face at Z=0. <code>Cylinder(d=…, h=…, axis=Axis.Z)</code> starts at its
-base point. Use <code>Axis.X</code> or <code>Axis.Y</code> for the other
+<p><code>Box(length, width, height)</code> is centred on X/Y/Z by default.
+Use <code>anchor=BOTTOM</code> when the bottom-face centre should be at Z=0.
+<code>Cylinder(d=…, h=…, axis=Axis.Z)</code> starts at its base point. Use <code>Axis.X</code> or <code>Axis.Y</code> for the other
 native principal directions. A sphere is specified by radius. These initial coordinate assumptions matter
 when locating holes or placing multiple components.</p>
 """ + code("""from scpf import (
