@@ -10,10 +10,8 @@ class Block:
 class TwoBlocks:
     def build(self):
         left = Block()
-        right = Block().attach(
-            left,
-            parent=Anchor.RIGHT,
-            child=Anchor.LEFT,
+        right = left.copy(
+            placement=Placement(x=Block.length),
         )
 
         return left + right
