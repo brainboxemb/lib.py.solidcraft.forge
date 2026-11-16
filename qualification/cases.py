@@ -135,6 +135,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "components",
+        "blocked_reason": "SolidCraft 0.42 replay-first commands cannot explicitly address a later occurrence made by occurrence.copy. Forge does not guess Component:N names or use point-only lookup for attached copies.",
         "group": "components",
         "title": "Place one component relative to another",
         "intent": "Verify reuse of one component definition while a child occurrence is placed relative to a meaningful face of the parent.",
@@ -287,6 +288,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "four-corner-l",
+        "blocked_reason": "SolidCraft 0.42 replay-first commands cannot explicitly address a later occurrence made by occurrence.copy. Forge does not guess Component:N names or use point-only lookup for attached copies.",
         "q5_required": True,
         "group": "anchors",
         "title": "Four centred vertical L-profiles",
@@ -303,6 +305,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "eight-corner-brackets",
+        "blocked_reason": "SolidCraft 0.42 replay-first commands cannot explicitly address a later occurrence made by occurrence.copy. Forge does not guess Component:N names or use point-only lookup for attached copies.",
         "q5_required": True,
         "group": "anchors",
         "title": "Eight vertical L-profiles: two per side corner",
@@ -319,6 +322,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "eight-flightcase-corners",
+        "blocked_reason": "SolidCraft 0.42 replay-first commands cannot explicitly address a later occurrence made by occurrence.copy. Forge does not guess Component:N names or use point-only lookup for attached copies.",
         "q5_required": True,
         "group": "anchors",
         "title": "Eight flightcase corner protectors",
@@ -335,6 +339,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "xz-anchor",
+        "blocked_reason": "SolidCraft 0.42 replay-first commands cannot explicitly address a later occurrence made by occurrence.copy. Forge does not guess Component:N names or use point-only lookup for attached copies.",
         "q5_required": True,
         "group": "anchors",
         "title": "Anchors on XZ-profile extrusion",
@@ -410,3 +415,25 @@ QUALIFICATION_CASES = [
         ],
     },
 ]
+
+
+
+def blocked_qualification_cases() -> tuple[dict, ...]:
+    """Cases kept in the qualification catalog but not currently supported."""
+    return tuple(
+        case for case in QUALIFICATION_CASES
+        if case.get("blocked_reason")
+    )
+
+
+def supported_qualification_cases() -> tuple[dict, ...]:
+    """Cases expected to compile and pass the normal Q1-Q6 flow."""
+    return tuple(
+        case for case in QUALIFICATION_CASES
+        if not case.get("blocked_reason")
+    )
+
+
+def supported_case_slugs() -> tuple[str, ...]:
+    """Slugs for cases that may enter command/native qualification."""
+    return tuple(case["slug"] for case in supported_qualification_cases())
