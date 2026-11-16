@@ -60,7 +60,7 @@ def _add_offset(coord, offset):
 def _csg_primitive(shape, body_name, operation, *, offset=(0, 0, 0)):
     kind, data = shape.kind, shape.data
     if kind == "box":
-        length, width, height, origin = data
+        length, width, height, anchor = data
         _require_positive(length, "box length")
         _require_positive(width, "box width")
         _require_positive(height, "box height")
@@ -70,7 +70,7 @@ def _csg_primitive(shape, body_name, operation, *, offset=(0, 0, 0)):
             height=command_value(height),
             operation=operation,
         )
-        if origin.vector == (0, 0, 0):
+        if anchor.vector == (0, 0, 0):
             params["center"] = [
                 command_value(value) for value in offset
             ]
@@ -80,7 +80,7 @@ def _csg_primitive(shape, body_name, operation, *, offset=(0, 0, 0)):
                 width,
                 height,
                 offset,
-                origin,
+                anchor,
             )
             params["corner"] = [
                 command_value(value) for value in corner
