@@ -94,9 +94,24 @@ before later placement. CENTER is the Box default because it gives the same
 simple meaning in feature-history and CSG code. BOTTOM is explicit when a board
 or plate should grow from Z=0 towards +Z.
 
-Change 0022 changes Box only. Cylinder and other 3D primitives keep their
-existing constructor semantics until a separate change defines and qualifies
-their datum contract.
+Change 0022 applies the same CENTER default to all dimension-defined
+standard solids: Box, Cylinder and Sphere. A cylinder's native base is half
+a height behind its CENTER datum on its selected axis; explicit BOTTOM for
+Axis.Z, LEFT for Axis.X and FRONT for Axis.Y select the positive-going axial
+start. Sphere defaults to its true center. Anchors refer to the primitive's
+world XYZ bounds after its axis is chosen.
+
+Dimension-defined sketch profiles Rectangle2D, Circle2D and
+RoundedRectangle2D are already centered by default. Polygon2D and Text2D
+keep authored coordinates and insertion points; no automatic recentering.
+
+PythonSCAD equivalents require explicit center=True for cube/cylinder.
+pyBOSL2 cuboid/cyl defaults provide the closer user-facing convention.
+Use the pinned local reference docs in docs/agent/reference-libraries.md,
+not an external repository lookup for every comparison.
+
+This is a breaking change: migrate Forge and CAD scripts that relied on
+the previous Cylinder base datum; do not add compatibility offsets.
 
 Forge lowers CENTER directly with SolidCraft's native `center` datum and
 cardinal anchors with native `corner` data. It does not add corrective moves.
