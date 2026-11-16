@@ -2,7 +2,16 @@
 import re
 
 from .compiler import ModelError
-from .core import Anchor, AnchorFrame, AnchorTopology, command_value, parameters_in, pv
+from .core import (
+    Anchor,
+    AnchorFrame,
+    AnchorTopology,
+    _NativeExpression,
+    _plain_command_value,
+    command_value,
+    parameters_in,
+    pv,
+)
 from .model_objects import (
     Assembly,
     ModelInstance,
@@ -12,7 +21,7 @@ from .model_objects import (
     _corner_native_x,
     _corner_normal,
 )
-from .compiler import compile_model
+from .compiler import _compile_model_commands
 from .replay import replay_document
 
 
@@ -68,14 +77,24 @@ def _component_slug(name):
 
 
 def _rewrite_value(value, mapping):
+    if isinstance(value, _NativeExpression):
+        return _NativeExpression(
+            _IDENTIFIER.sub(
+                lambda match: mapping.get(match.group(0), match.group(0)),
+                value,
+            )
+        )
     if isinstance(value, str):
-        return _IDENTIFIER.sub(lambda m: mapping.get(m.group(0), m.group(0)), value)
+        return value
     if isinstance(value, list):
         return [_rewrite_value(item, mapping) for item in value]
     if isinstance(value, tuple):
         return [_rewrite_value(item, mapping) for item in value]
     if isinstance(value, dict):
-        return {key: _rewrite_value(item, mapping) for key, item in value.items()}
+        return {
+            key: _rewrite_value(item, mapping)
+            for key, item in value.items()
+        }
     return value
 
 
@@ -367,10 +386,10 @@ def compile_assembly(value, name):
         definition = instances[0].definition
         parent_name = instances[0].group_name
 
-        compiled = compile_model(
+        compiled = _compile_model_commands(
             definition.shape,
             _component_slug(component_name),
-        )["commands"]
+        )
         external_names = {
             parameter_name
             for parameter_name, _ in definition.external_parameters
@@ -710,4 +729,4 @@ def compile_assembly(value, name):
 
     if not commands:
         raise ModelError(f"{name} contains no component instances")
-    return replay_document(commands)
+    return _plain_command_value(replay_document(commands))

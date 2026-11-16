@@ -31,3 +31,4 @@ Current records:
 - [0012-definition-identity.md](0012-definition-identity.md) — include every reusable component build input in definition identity and give each native local parameter namespace a unique definition number.
 - [0013-correct-0010-placement-cases.md](0013-correct-0010-placement-cases.md) — restore ordinary Placement qualification and bind real SolidCraft occurrence ids through replay variables instead of predicted browser names.
 - [0014-parametric-root-grounding.md](0014-parametric-root-grounding.md) — keep parameter-driven root Placement ungrounded on SolidCraft 0.42 so saved parameter edits continue to move the first occurrence.
+- [0015-typed-native-expressions.md](0015-typed-native-expressions.md) — keep native parameter expressions typed during compilation so local namespacing never rewrites ordinary user strings.

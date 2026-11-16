@@ -6,7 +6,7 @@ actual BRep booleans, sketches, fillets and geometric verification.
 from math import isfinite
 
 from .core import (
-    Shape, Parameter, number_text, parameters_in, pv,
+    Shape, Parameter, number_text, parameters_in, pv, _plain_command_value,
 )
 
 
@@ -59,6 +59,21 @@ def _collect(node, values=None):
     return tuple(Parameter(k, v) for k, v in values.items())
 
 
+def _compile_model_commands(shape: Shape, name: str) -> list[dict]:
+    """Compile one Shape while retaining typed native expression markers."""
+    if not isinstance(shape, Shape):
+        raise TypeError("the final script expression must produce a Shape")
+    if not name or not name.isidentifier():
+        raise ModelError("the model name must be a valid identifier")
+    from .features import _is_feature_tree, compile_features
+    from .csg import _csg_new
+    return (
+        compile_features(shape, name)
+        if _is_feature_tree(shape)
+        else _param_commands(_collect(shape)) + _csg_new(shape, name)
+    )
+
+
 def compile_model(shape: Shape, name: str) -> dict:
     """Compile one Shape tree to a native SolidCraft command document.
 
@@ -70,12 +85,8 @@ def compile_model(shape: Shape, name: str) -> dict:
         The final value must be a Shape and name must be a valid identifier.
         Normal user workflows usually call the scpf runner/CLI instead.
     """
-    if not isinstance(shape, Shape):
-        raise TypeError("the final script expression must produce a Shape")
-    if not name or not name.isidentifier():
-        raise ModelError("the model name must be a valid identifier")
-    from .features import _is_feature_tree, compile_features
-    from .csg import _csg_new
-    commands = (compile_features(shape, name) if _is_feature_tree(shape)
-                else _param_commands(_collect(shape)) + _csg_new(shape, name))
-    return {"commands": commands}
+    return {
+        "commands": _plain_command_value(
+            _compile_model_commands(shape, name)
+        )
+    }
