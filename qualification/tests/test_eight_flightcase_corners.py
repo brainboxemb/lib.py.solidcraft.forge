@@ -12,17 +12,17 @@ NATIVE_ROOT = os.environ.get("SCPF_NATIVE_ROOT")
 
 
 class EightFlightcaseCornersCommandTests(unittest.TestCase):
-    def test_copied_corners_are_blocked_without_native_copy_reference(self):
+    def test_parametric_corner_placement_is_blocked_by_current_backend(self):
         from scpf.compiler import ModelError
 
         with self.assertRaisesRegex(
             ModelError,
-            "cannot attach a copied occurrence",
+            "replay-first Placement requires one occurrence at identity",
         ):
             run_script(ROOT / "examples/eight-flightcase-corners/scpf/model.py")
 
 
-@unittest.skip("blocked: copied attachment occurrences have no explicit SolidCraft 0.42 reference")
+@unittest.skip("blocked: replay-first backend cannot yet encode the required parametric Placement")
 class EightFlightcaseCornersNativeTests(unittest.TestCase):
     def test_native_bounds_wrap_all_eight_case_corners(self):
         data = _load(
