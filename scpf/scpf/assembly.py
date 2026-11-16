@@ -258,16 +258,15 @@ def _occurrence_labels(assembly, names):
 
 
 def _occurrence_replay_variables(assembly, labels):
-    """Give every Forge occurrence one stable, readable replay variable."""
+    """Give every Forge occurrence one deterministic replay variable."""
     variables = {}
-    used = set()
+    counts = {}
     for instance in assembly.instances:
         base = _component_slug(labels[instance.occurrence_id]).lower()
-        candidate = "$" + base
-        if candidate in used:
-            candidate = "$" + base + f"_{instance.occurrence_id}"
-        used.add(candidate)
-        variables[instance.occurrence_id] = candidate
+        count = counts.get(base, 0) + 1
+        counts[base] = count
+        suffix = "" if count == 1 else f"_{count}"
+        variables[instance.occurrence_id] = "$" + base + suffix
     return variables
 
 
