@@ -298,12 +298,8 @@ def _corner_normal(anchor):
     )
 
 
-def _anchor_origin(instance, anchor, occurrence=None, *, position=None):
-    """Build one SolidCraft joint-origin reference at the native seed pose.
-
-    occurrence may be omitted for copied occurrences. SolidCraft 0.42 can then
-    resolve the occurrence from the supplied world topology/point pick.
-    """
+def _anchor_origin(instance, anchor, occurrence, *, position=None):
+    """Build one SolidCraft joint-origin reference for one known occurrence."""
     if instance.placement.rotation is not None and anchor in _CORNER_ANCHORS:
         raise ValueError(
             "corner anchors on explicitly rotated occurrences are not supported yet"
@@ -330,8 +326,7 @@ def _anchor_origin(instance, anchor, occurrence=None, *, position=None):
             "face": world(_anchor_point(instance, anchor)),
         }
 
-    if occurrence is not None:
-        result["occurrence"] = occurrence
+    result["occurrence"] = occurrence
     return result
 
 
