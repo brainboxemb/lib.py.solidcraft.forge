@@ -5,6 +5,7 @@ import re
 import unittest
 
 from qualification.cases import blocked_qualification_cases, supported_qualification_cases
+from scpf.replay import validate_replay_document
 from scpf.runner import run_script
 
 
@@ -58,26 +59,29 @@ class ReplaySafeOccurrenceSelectorTests(unittest.TestCase):
                 ]
                 self.assertEqual(predicted, [])
 
-    def test_blocked_placement_examples_fail_clearly(self):
-        from scpf.compiler import ModelError
+    def test_replay_variable_cases_are_supported_and_well_formed(self):
+        self.assertEqual(blocked_qualification_cases(), [])
 
-        blocked = blocked_qualification_cases()
-        self.assertEqual(
-            {case["slug"] for case in blocked},
-            {
-                "four-corner-l",
-                "eight-corner-brackets",
-                "eight-flightcase-corners",
-            },
-        )
-        for case in blocked:
+        for case in supported_qualification_cases():
             slug = case["slug"]
-            self.assertIn("Placement", case["blocked_reason"])
-            with self.subTest(slug=slug), self.assertRaisesRegex(
-                ModelError,
-                "Placement",
-            ):
-                run_script(ROOT / "examples" / slug / "scpf" / "model.py")
+            with self.subTest(slug=slug):
+                document = run_script(
+                    ROOT / "examples" / slug / "scpf" / "model.py"
+                )
+                validate_replay_document(document)
+
+                bound = {
+                    variable
+                    for command in document["commands"]
+                    for variable in command.get("bind", {})
+                }
+                used = {
+                    selector
+                    for command in document["commands"]
+                    for selector in _occurrence_selectors(command)
+                    if selector.startswith("$")
+                }
+                self.assertTrue(used <= bound)
 
 
 if __name__ == "__main__":
