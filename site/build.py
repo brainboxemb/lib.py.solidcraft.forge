@@ -87,7 +87,7 @@ CHEATSHEET = [
          "length = 40.0\nBox(self.length, 30, 10)", "simple-box"),
     ]),
     ("Shapes and sketches", [
-        ("Box(length, width, height)", "Solid, centered in XY; its bottom is at Z=0.",
+        ("Box(length, width, height, *, anchor=CENTER)", "Native Box centred on XYZ by default; choose anchor=BOTTOM for a bottom-face datum at Z=0.",
          "Box(40, 30, 10)", "simple-box"),
         ("Rectangle2D(width, depth)", "Planar XY profile authored inside a Sketch.",
          "with Sketch(plane='XY') as sketch:\n    Rectangle2D(100, 60)", "anchored-holes"),
