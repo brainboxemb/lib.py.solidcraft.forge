@@ -304,7 +304,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(move["translate"], [-30, 0, 0])
 
     def test_parametric_root_placement_stays_ungrounded_in_solidcraft_042(self):
-        from scpf import Box, Parameter, Placement, component
+        from scpf import Box, Parameter, Placement, component, half
         from scpf.assembly import compile_assembly
 
         @component
