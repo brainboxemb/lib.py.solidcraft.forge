@@ -264,7 +264,7 @@ def validate_components(root: Path) -> Validation:
         )
     )
     v.check(
-        "RIGHT-to-LEFT faces touch",
+        "blocks touch face-to-face",
         touch_ok,
         expected,
         [(body["bbox"]["min"], body["bbox"]["max"]) for body in actual],
