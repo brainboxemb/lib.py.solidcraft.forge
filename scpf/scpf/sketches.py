@@ -10,7 +10,7 @@ from .core import (
     _native_expression,
     command_value,
     half,
-    pv,
+    _pv as pv,
 )
 from .placement import _base_rectangle
 
