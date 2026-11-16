@@ -381,6 +381,15 @@ def check(
             result_path = site / "qualification" / slug / "qualification-result.json"
             assert result_path.is_file(), slug
             structured_result = json.loads(result_path.read_text(encoding="utf-8"))
+            if case.get("blocked_reason"):
+                assert structured_result["status"] == "blocked", slug
+                assert structured_result["blocked_reason"] == case["blocked_reason"], slug
+                assert manifest_case["qualification_status"] == "blocked", slug
+                assert ">BLOCKED</span>" in page_text, slug
+                assert case["blocked_reason"] in page_text, slug
+                assert not (site / "qualification" / slug / "model.png").exists(), slug
+                continue
+
             assert structured_result["status"] in {
                 "pass", "fail", "review", "incomplete"
             }, slug
