@@ -25,7 +25,7 @@ class ReleaseValidationTests(unittest.TestCase):
                 blocker_file.read_text(encoding="utf-8")
             ),
             (
-                "#220 qualification-integrity audit must be completed "
+                "Issue #220: qualification-integrity audit must be completed "
                 "before another Forge release",
             ),
         )
