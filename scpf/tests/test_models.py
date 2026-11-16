@@ -316,7 +316,7 @@ class SCPFExamples(unittest.TestCase):
         from scpf.core import Axis, Cylinder
 
         commands = compile_model(
-            Cylinder(d=12, h=30, axis=Axis.X).at(-15, 0, 0),
+            Cylinder(d=12, h=30, axis=Axis.X).at(0, 0, 0),
             "Pin",
         )["commands"]
         cylinder = commands[-1]
@@ -374,7 +374,7 @@ class SCPFExamples(unittest.TestCase):
                 "class Pin:\n"
                 "    diameter: float = 12\n"
                 "    def build(self):\n"
-                "        Cylinder(d=self.diameter, h=20).at(10, 5, 3)\n"
+                "        Cylinder(d=self.diameter, h=20).at(10, 5, 3, anchor=BOTTOM)\n"
                 "Pin()\n"
             )
             commands = run_script(script)["commands"]
@@ -716,8 +716,65 @@ class SCPFExamples(unittest.TestCase):
         commands = document["commands"]
         self.assertEqual(commands[1]["params"]["center"], [10, 20, 30])
         self.assertEqual(commands[2]["params"]["center"], [10, 20, 30])
-        self.assertEqual(commands[3]["params"]["base"], [10, 20, 20])
+        self.assertEqual(commands[3]["params"]["base"], [10, 20, -5.0])
         self.assertEqual(commands[3]["params"]["axis"], "Z")
+
+    def test_all_standard_solids_use_centered_origin_in_native_and_csg(self):
+        from scpf import BOTTOM, FRONT, LEFT, Axis, Box, Cylinder, Sphere
+        from scpf.compiler import compile_model
+
+        # Feature-tree and CSG lowering must compute exactly the same native
+        # base for a Cylinder. No implicit bottom-vs-center difference.
+        cases = (
+            (Cylinder(d=8, h=20), [0, 0, -10]),
+            (Cylinder(d=8, h=20, anchor=BOTTOM), [0, 0, 0]),
+            (Cylinder(d=8, h=20, axis=Axis.X), [-10, 0, 0]),
+            (Cylinder(d=8, h=20, axis=Axis.X, anchor=LEFT), [0, 0, 0]),
+            (Cylinder(d=8, h=20, axis=Axis.Y, anchor=FRONT), [0, 0, 0]),
+            (Cylinder(d=8, h=20).at(5, 6, 7), [5, 6, -3]),
+            (Cylinder(d=8, h=20).at(5, 6, 7, anchor=BOTTOM), [5, 6, 7]),
+        )
+        for cylinder, expected in cases:
+            with self.subTest(cylinder=cylinder):
+                native = compile_model(Box(50, 50, 50) - cylinder, "Native")["commands"]
+                csg = compile_model(
+                    (Box(50, 50, 50) & Sphere(40)) - cylinder,
+                    "CSG",
+                )["commands"]
+                native_cyl = next(
+                    row["params"] for row in native
+                    if row["command"] == "solid.cylinder"
+                )
+                csg_cyl = next(
+                    row["params"] for row in csg
+                    if row["command"] == "solid.cylinder"
+                )
+                self.assertEqual(native_cyl["base"], expected)
+                self.assertEqual(csg_cyl["base"], expected)
+                self.assertEqual(native_cyl["axis"], csg_cyl["axis"])
+
+        centered = compile_model(Sphere(10), "Sphere")["commands"]
+        self.assertEqual(centered[-1]["params"]["center"], [0, 0, 0])
+        offset = compile_model(Sphere(10, anchor=LEFT), "Sphere")["commands"]
+        self.assertEqual(offset[-1]["params"]["center"], [10, 0, 0])
+        moved = compile_model(Sphere(10).at(5, 6, 7), "Sphere")["commands"]
+        self.assertEqual(moved[-1]["params"]["center"], [5, 6, 7])
+
+    def test_cylinder_symbolic_height_keeps_center_after_parameter_change(self):
+        from scpf import Box, Cylinder, Parameter
+        from scpf.compiler import compile_model
+
+        height = Parameter("height", 20)
+        commands = compile_model(
+            Box(50, 50, 50) - Cylinder(d=8, h=height),
+            "Parametric",
+        )["commands"]
+        cylinder = next(
+            row["params"] for row in commands
+            if row["command"] == "solid.cylinder"
+        )
+        self.assertIn("height", str(cylinder["base"][2]))
+        self.assertNotEqual(cylinder["base"][2], -10)
 
     def test_cylinder_has_no_type_specific_orient_shortcut(self):
         from scpf.core import Cylinder
