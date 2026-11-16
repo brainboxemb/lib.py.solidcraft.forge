@@ -20,7 +20,7 @@ import warnings
 
 from . import core
 from .compiler import ModelError, compile_model
-from .core import Expression, Parameter, Shape, command_value, parameters_in, pv
+from .core import Expression, Parameter, Shape, command_value, parameters_in, _pv as pv
 from .assembly import compile_assembly
 from .model_objects import Assembly, ModelDefinition, ModelInstance, Placement
 from .explicit_sketch import Sketch
