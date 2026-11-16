@@ -98,7 +98,7 @@ def check(
                 member["name"],
             )
             assert f'id="{member["name"]}"' in page_text, (spec["slug"], member["name"])
-            assert member["summary"] in page_text, (spec["slug"], member["name"])
+            assert html.escape(member["summary"]) in page_text, (spec["slug"], member["name"])
             if member["kind"] == "callable" and member.get("signature"):
                 assert html.escape(member["signature"]) in page_text
             elif member["kind"] == "enum":
