@@ -18,12 +18,12 @@ with Sketch(name="Profile", plane="XZ") as sketch:
     Polygon2D(points, plane="XZ", world=True)
 board = sketch.extrude(depth, direction=Direction.POSITIVE)
 
-right = marker().attach(
+right = RightMarker().attach(
     board,
     parent=Anchor.FRONT_TOP_RIGHT,
     child=Anchor.BACK_TOP_RIGHT,
 )
-left = marker().attach(
+left = LeftMarker().attach(
     board,
     parent=Anchor.FRONT_TOP_LEFT,
     child=Anchor.BACK_TOP_LEFT,
