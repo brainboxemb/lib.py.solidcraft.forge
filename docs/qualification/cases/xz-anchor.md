@@ -18,12 +18,12 @@ with Sketch(name="Profile", plane="XZ") as sketch:
     Polygon2D(points, plane="XZ", world=True)
 board = sketch.extrude(depth, direction=Direction.POSITIVE)
 
-right = Marker().attach(
+right = marker().attach(
     board,
     parent=Anchor.FRONT_TOP_RIGHT,
     child=Anchor.BACK_TOP_RIGHT,
 )
-left = Marker().attach(
+left = marker().attach(
     board,
     parent=Anchor.FRONT_TOP_LEFT,
     child=Anchor.BACK_TOP_LEFT,
@@ -61,3 +61,10 @@ Fixture: `examples/xz-anchor/scpf/model.py`
 
 **BOSL2:** mirrored anchors demonstrate why a local attachment frame is a more
 useful abstraction than a single assumed world direction.
+
+
+## Change 0010 note
+
+The two small marker parts use separate Forge definitions. This case tests the
+Board's XZ corner anchors and saved-size mutation; it does not test attaching
+multiple copies of one marker definition.
