@@ -133,6 +133,26 @@ class NativePrimitiveTests(unittest.TestCase):
                     anchor=CENTER,
                 )
 
+    def test_polygon_explicit_add_without_anchor_keeps_authored_coordinates(self):
+        from scpf import Polygon2D
+
+        with Sketch(plane="XY") as sketch:
+            sketch.add(
+                Polygon2D(
+                    [(0, 0), (20, 0), (20, 10), (0, 10)]
+                )
+            )
+        commands = compile_model(sketch.extrude(5), "PolygonAdded")["commands"]
+        line = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.line"
+        )
+        self.assertEqual(
+            line["points"],
+            [[0, 0], [20, 0], [20, 10], [0, 10]],
+        )
+
     def test_explicit_center_is_rejected_for_coordinate_defined_polygon(self):
         from scpf import Polygon2D
 
