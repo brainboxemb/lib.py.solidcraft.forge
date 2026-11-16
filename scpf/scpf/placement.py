@@ -45,14 +45,20 @@ def _base_rectangle(shape):
     if shape.kind == "rectangle":
         return shape.data, (0, 0, 0), None
     if shape.kind == "box":
-        length, width, height = shape.data
-        # Box uses the SolidCraft convention: centered in XY, bottom at Z=0.
-        return (length, width), (-half(length), -half(width), 0), height
+        length, width, height, origin = shape.data
+        corner = _box_corner_from_anchor(
+            length,
+            width,
+            height,
+            (0, 0, 0),
+            origin,
+        )
+        return (length, width), corner, height
     if shape.kind == "placed_box":
         box, x, y, z, anchor = shape.data
         if box.kind != "box":
             raise ValueError("placed_box must wrap a Box")
-        length, width, height = box.data
+        length, width, height, _origin = box.data
         corner = _box_corner_from_anchor(
             length,
             width,
