@@ -339,6 +339,15 @@ Forge must preserve that existing dependency instead of creating unrelated or
 duplicated child parameters. This contract is recorded in
 [change 0003](changes/0003-explicit-component-parameter-publication.md).
 
+Reusable component definition identity also includes fixed build-only inputs.
+Forge rejects arbitrary mutable/opaque Python objects, but its own immutable
+selector values are valid build inputs when they reduce to deterministic
+primitive data. This includes public expressions such as `BOTTOM + LEFT`,
+`Edges.from_profile(...)`, axis tokens such as `X`, and fixed bound offsets
+such as `X.MIN + 10`. Two different selector inputs must not share one native
+component definition. See
+[change 0021](changes/0021-selector-definition-identity.md).
+
 Parameter namespacing applies only to native CAD expressions. Ordinary strings
 are opaque user data. A text value, material name, sketch name, feature name or
 font name must never be rewritten merely because one word matches a parameter
