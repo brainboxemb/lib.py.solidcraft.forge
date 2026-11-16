@@ -10,12 +10,16 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Changed
 
-- Attachment lowering no longer predicts SolidCraft occurrence names such as
-  `Block:2`. First occurrences use qualified component-name selectors; copied
-  joint origins are resolved by SolidCraft from a temporary distinct seed pick.
+- Attachment command generation no longer predicts SolidCraft occurrence names
+  such as `Block:2`. First occurrences use component-name selectors only in
+  joint commands where SolidCraft 0.42 has been tested to accept them.
+- A copied occurrence used as an attachment endpoint now fails clearly because
+  Forge cannot put the runtime occurrence id returned by `occurrence.copy`
+  into its static replay document. Forge does not replace that missing reference
+  with point-only lookup or by moving the copy first.
 - Relationship rotation, copied as-built attachments and chained attachments
-  now fail clearly where replay-safe SolidCraft 0.42 addressing is not yet
-  available.
+  also fail clearly where SolidCraft 0.42 reference behaviour is not yet
+  supported.
 
 - Ordinary occurrence Placement is now limited to replay-safe SolidCraft 0.42
   lowering: one identity occurrence per reusable definition and concrete,
