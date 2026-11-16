@@ -11,6 +11,14 @@ from pathlib import Path
 import socket
 import sys
 
+from .replay import (
+    is_replay_document,
+    replay_hash,
+    resolved_command,
+    validate_replay_document,
+    variables_in,
+)
+
 
 class LiveError(RuntimeError):
     """Live SolidCraft connection or command execution failed."""
@@ -194,3 +202,197 @@ def send_commands(commands, *, connect="auto", directory=None, timeout=3610):
     if result.get("completed") != len(commands):
         raise LiveError(f"SolidCraft reported only {result.get('completed')} of {len(commands)} completed commands")
     return result
+
+
+
+def _execute(command, params, *, connect="auto", directory=None, timeout=3610):
+    """Execute one SolidCraft command and return its native result."""
+    return _send_request(
+        "engine.execute",
+        {
+            "command": command,
+            "params": params,
+            "param_check": "strict",
+        },
+        connect=connect,
+        directory=directory,
+        timeout=timeout,
+    )
+
+
+def _replay_chunks(commands):
+    """Split a replay only where a later command needs a newly bound value."""
+    chunks = []
+    current = []
+    available = set()
+    pending = set()
+
+    for item in commands:
+        needed = variables_in(item.get("params", {}))
+        if not needed <= available:
+            if current:
+                chunks.append(current)
+                available.update(pending)
+                current = []
+                pending = set()
+            if not needed <= available:
+                names = ", ".join(sorted(needed - available))
+                raise LiveError(
+                    f"replay command needs unresolved variable(s): {names}"
+                )
+
+        current.append(item)
+        bind = item.get("bind", {})
+        pending.update(bind)
+
+    if current:
+        chunks.append(current)
+    return chunks
+
+
+def _replay_log(document, variables, entries):
+    return {
+        "format": "scpf-replay-log",
+        "version": 1,
+        "replay_sha256": replay_hash(document),
+        "variables": dict(variables),
+        "commands": entries,
+        "completed": len(entries),
+    }
+
+
+def send_document(document, *, connect="auto", directory=None, timeout=3610):
+    """Execute a native or SCPF replay document.
+
+    SCPF replay variables are bound from SolidCraft command results during this
+    run. When variables require more than one native batch, a SolidCraft
+    checkpoint makes the complete replay atomic across those batches.
+    """
+    try:
+        validate_replay_document(document)
+    except ValueError as exc:
+        raise LiveError(str(exc)) from exc
+
+    commands = document["commands"]
+    if not is_replay_document(document):
+        result = send_commands(
+            commands,
+            connect=connect,
+            directory=directory,
+            timeout=timeout,
+        )
+        entries = [
+            {
+                "index": index,
+                "command": item["command"],
+                "resolved_params": item.get("params", {}),
+            }
+            for index, item in enumerate(commands)
+        ]
+        result = dict(result)
+        result["variables"] = {}
+        result["replay_log"] = _replay_log(document, {}, entries)
+        return result
+
+    chunks = _replay_chunks(commands)
+    has_bindings = any(item.get("bind") for item in commands)
+    checkpoint = None
+    variables = {}
+    entries = []
+    completed = 0
+
+    if has_bindings:
+        checkpoint_result = _execute(
+            "edit.checkpoint",
+            {},
+            connect=connect,
+            directory=directory,
+            timeout=timeout,
+        )
+        if (
+            not isinstance(checkpoint_result, dict)
+            or not isinstance(checkpoint_result.get("checkpoint"), int)
+        ):
+            raise LiveError(
+                f"Unexpected edit.checkpoint result: {checkpoint_result!r}"
+            )
+        checkpoint = checkpoint_result["checkpoint"]
+
+    try:
+        command_index = 0
+        for chunk in chunks:
+            native = [
+                resolved_command(item, variables)
+                for item in chunk
+            ]
+            batch = send_commands(
+                native,
+                connect=connect,
+                directory=directory,
+                timeout=timeout,
+            )
+            results = batch.get("results")
+            if not isinstance(results, list) or len(results) != len(chunk):
+                raise LiveError(
+                    "SolidCraft batch did not return one result per replay command"
+                )
+
+            for item, native_item, native_result in zip(
+                chunk, native, results
+            ):
+                bindings = {}
+                for variable, field in item.get("bind", {}).items():
+                    if (
+                        not isinstance(native_result, dict)
+                        or field not in native_result
+                    ):
+                        raise LiveError(
+                            f"{item['command']} did not return field {field!r} "
+                            f"needed for {variable}"
+                        )
+                    value = native_result[field]
+                    variables[variable] = value
+                    bindings[variable] = value
+
+                entry = {
+                    "index": command_index,
+                    "command": item["command"],
+                    "resolved_params": native_item["params"],
+                }
+                if bindings:
+                    entry["bindings"] = bindings
+                entries.append(entry)
+                command_index += 1
+            completed += len(chunk)
+
+    except Exception as exc:
+        if checkpoint is not None:
+            try:
+                _execute(
+                    "edit.restore_checkpoint",
+                    {"checkpoint": checkpoint},
+                    connect=connect,
+                    directory=directory,
+                    timeout=timeout,
+                )
+            except Exception as restore_exc:
+                raise LiveError(
+                    f"{exc}; restoring replay checkpoint also failed: "
+                    f"{restore_exc}"
+                ) from exc
+        raise
+
+    if checkpoint is not None:
+        _execute(
+            "edit.restore_checkpoint",
+            {"checkpoint": checkpoint, "forget": True},
+            connect=connect,
+            directory=directory,
+            timeout=timeout,
+        )
+
+    return {
+        "completed": completed,
+        "variables": dict(variables),
+        "replay_log": _replay_log(document, variables, entries),
+    }
