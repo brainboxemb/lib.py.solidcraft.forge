@@ -908,16 +908,13 @@ class Shape:
     def taper(self, *, from_z, inset):
         """Make a box with a flat front and continuously tapered rear walls.
 
-        The rear perimeter retreats by inset per side, from from_z to the
-        box's full height. This produces native editable sketches and loft.
+        from_z is measured from the Box bottom face, independent of the Box
+        anchor. The rear perimeter retreats by inset per side from that section
+        to the Box top face. This produces native editable sketches and loft.
         """
         if self.kind != "box":
             raise ValueError("taper() currently requires a Box")
-        width, height, depth, anchor = self.data
-        if _direction_selector(anchor).vector != (0, 0, -1):
-            raise ValueError(
-                "taper() currently requires Box anchor=BOTTOM"
-            )
+        width, height, depth, _anchor = self.data
         if not 0 < _pv(from_z) < _pv(depth):
             raise ValueError("taper from_z must lie within the box depth")
         if not 0 < _pv(inset) * 2 < min(_pv(width), _pv(height)):
