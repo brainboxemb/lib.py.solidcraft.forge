@@ -15,7 +15,7 @@ class RoundedRectangleSketch:
             self.base_width,
             self.base_depth,
             self.base_height,
-            anchor=BOTTOM,
+            anchor=Anchor.BOTTOM,
         )
 
         with Sketch(name="Rounded pad", on=body) as pad:
