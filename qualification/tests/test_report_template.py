@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from qualification.report import TEMPLATE, render
+from scpf.version import TESTED_SOLIDCRAFT_VERSION
 
 
 class QualificationReportTemplateTests(unittest.TestCase):
@@ -20,7 +21,7 @@ class QualificationReportTemplateTests(unittest.TestCase):
             "schema_version": 2,
             "source_commit": "abc123",
             "forge_version": "0.3.4",
-            "solidcraft_version": "0.42.0",
+            "solidcraft_version": TESTED_SOLIDCRAFT_VERSION,
             "qualified_at": "2026-11-16T09:30:00Z",
             "cases": {
                 "demo": {
@@ -43,7 +44,7 @@ class QualificationReportTemplateTests(unittest.TestCase):
         self.assertIn("# SCPF Forge qualification", report)
         self.assertIn("abc123", report)
         self.assertIn("0.3.4", report)
-        self.assertIn("0.42.0", report)
+        self.assertIn(TESTED_SOLIDCRAFT_VERSION, report)
         self.assertIn("2026-11-16T09:30:00Z", report)
         self.assertIn("| `demo` | PASS | PASS | PASS | PASS | PASS | N/R | PASS |", report)
         self.assertIn("../native/demo/model.png", report)
