@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 import unittest
 
-from qualification.cases import QUALIFICATION_CASES
+from qualification.cases import blocked_qualification_cases, supported_qualification_cases
 from scpf.runner import run_script
 
 
@@ -36,7 +36,7 @@ def _occurrence_selectors(command):
 
 class ReplaySafeOccurrenceSelectorTests(unittest.TestCase):
     def test_supported_examples_do_not_predict_solidcraft_occurrence_numbers(self):
-        slugs = [case["slug"] for case in QUALIFICATION_CASES]
+        slugs = [case["slug"] for case in supported_qualification_cases()]
         # custom-anchor is a supported public showcase but deliberately not a
         # native qualification case while rotated relationships are deferred.
         slugs.append("custom-anchor")
@@ -57,6 +57,17 @@ class ReplaySafeOccurrenceSelectorTests(unittest.TestCase):
                     if GENERATED_OCCURRENCE.fullmatch(selector)
                 ]
                 self.assertEqual(predicted, [])
+
+    def test_blocked_copied_attachment_examples_fail_clearly(self):
+        from scpf.compiler import ModelError
+
+        for case in blocked_qualification_cases():
+            slug = case["slug"]
+            with self.subTest(slug=slug), self.assertRaisesRegex(
+                ModelError,
+                "attachment involving a copied occurrence",
+            ):
+                run_script(ROOT / "examples" / slug / "scpf" / "model.py")
 
 
 if __name__ == "__main__":
