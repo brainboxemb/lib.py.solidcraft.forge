@@ -10,40 +10,14 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class AssemblyTests(unittest.TestCase):
-    def test_reusable_model_instances_compile_to_one_component_and_two_occurrences(self):
-        commands = run_script(
-            ROOT / "examples/components/scpf/model.py"
-        )["commands"]
+    def test_copied_occurrence_attachment_is_rejected(self):
+        from scpf.compiler import ModelError
 
-        self.assertEqual(
-            [c["params"]["name"] for c in commands
-             if c["command"] == "component.create"],
-            ["Block"],
-        )
-        copies = [c for c in commands if c["command"] == "occurrence.copy"]
-        self.assertEqual(len(copies), 1)
-        self.assertEqual(copies[0]["params"]["component"], "Block")
-        self.assertEqual(copies[0]["params"]["translate"], [41.0, 0.0, 0.0])
-        self.assertFalse(any(
-            c["command"] == "occurrence.move"
-            for c in commands
-        ))
-
-        joint = next(c["params"] for c in commands
-                     if c["command"] == "joint.create")
-        self.assertEqual(joint["type"], "rigid")
-        self.assertEqual(
-            joint["a"],
-            {"occurrence": "Block", "face": [20.0, 0.0, 5.0]},
-        )
-        self.assertEqual(
-            joint["b"],
-            {"face": [21.0, 0.0, 5.0]},
-        )
-        self.assertFalse(any(
-            "Block:" in str(command["params"])
-            for command in commands
-        ))
+        with self.assertRaisesRegex(
+            ModelError,
+            "attachment involving a copied occurrence",
+        ):
+            run_script(ROOT / "examples/components/scpf/model.py")
 
     def test_component_placement_is_occurrence_data(self):
         with tempfile.TemporaryDirectory() as directory:
