@@ -479,6 +479,20 @@
       "reference": "reference/sketch-slot-constructors/#SlotOverall2D",
       "guide": "guide/geometry/#profiles",
       "signature": "SlotOverall2D(p0, p1, width)"
+    },
+    "Shape.repeat_linear": {
+      "kind": "callable",
+      "summary": "Repeat a Hole or Cylinder before native feature lowering.",
+      "reference": "reference/Shape.repeat_linear/",
+      "guide": "guide/features/#features",
+      "signature": "Shape.repeat_linear(self, *, count, spacing, axis)"
+    },
+    "Shape.rectangular_pattern": {
+      "kind": "callable",
+      "summary": "Pattern an existing native history feature in one or two directions.",
+      "reference": "reference/Shape.rectangular_pattern/",
+      "guide": "guide/features/#features",
+      "signature": "Shape.rectangular_pattern(self, feature, *, count, spacing, direction=<Axis.X: 'X'>, count2=None, spacing2=None, direction2=<Axis.Y: 'Y'>, alignment='right', alignment2='right', reversed=False, reversed2=False)"
     }
   }
 }
