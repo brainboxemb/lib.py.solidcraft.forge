@@ -13,10 +13,27 @@ from .core import (
     command_value,
 )
 
-def _is_centered_box(shape):
+def _is_unshifted_rectangular_base(shape):
+    """Return whether the original rectangular base keeps its declared datum."""
     while shape.kind in ("fillet", "shell", "union", "difference"):
         shape = shape.data[0]
-    return shape.kind == "box"
+    if shape.kind == "box":
+        return True
+    if shape.kind != "sketch_base_extrusion":
+        return False
+
+    _, plane, origin, plane_offset, profiles, _, direction = shape.data
+    if (
+        plane != "XY"
+        or origin is not None
+        or plane_offset is not None
+        or direction != "positive"
+        or len(profiles) != 1
+        or profiles[0][0].kind != "rectangle"
+    ):
+        return False
+    _, _, offset = profiles[0]
+    return all(pv(value) == 0 for value in offset)
 
 
 def _base_rectangle(shape):
@@ -145,8 +162,10 @@ def _anchored_features(shape):
     (width, depth), (x, y, z), thickness = _base_rectangle(target)
     if thickness is None:
         raise ValueError("anchor target must be an extruded Rectangle2D")
-    if pv(z) != 0 or (not _is_centered_box(target)
-                              and (pv(x) != 0 or pv(y) != 0)):
+    if pv(z) != 0 or (
+        not _is_unshifted_rectangular_base(target)
+        and (pv(x) != 0 or pv(y) != 0)
+    ):
         raise ValueError("native references require an unshifted supported base")
     # The original rectangular base is not necessarily the highest face:
     # after a joined boss, Anchor.TOP must resolve to that boss's top.
