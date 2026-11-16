@@ -546,7 +546,7 @@ class SCPFExamples(unittest.TestCase):
             ],
         )
         self.assertEqual(commands[0]["params"]["body_name"], "Enclosure")
-        self.assertEqual(commands[1]["params"]["faces"], [[0, 0, 30]])
+        self.assertEqual(commands[1]["params"]["faces"], [[0, 0, 15]])
         self.assertEqual(commands[1]["params"]["thickness"], 2)
         with self.assertRaises(ValueError):
             Box(80, 50, 30).shell(2, open=Faces.TOP).move(x=10)
@@ -554,7 +554,9 @@ class SCPFExamples(unittest.TestCase):
     def test_bound_relative_offsets_resolve_against_parent_extents(self):
         from scpf.compiler import compile_model
         from scpf.core import Anchor, Boss, Box, Faces, X, Y
-        body = Box(80, 50, 30).shell(2, open=Faces.TOP)
+        body = Box(
+            80, 50, 30, anchor=Anchor.BOTTOM
+        ).shell(2, open=Faces.TOP)
 
         minimum = Boss(d=7, h=12, hole_d=2.5).attach(
             body,
@@ -579,7 +581,9 @@ class SCPFExamples(unittest.TestCase):
 
     def test_bound_relative_offsets_reject_wrong_axis(self):
         from scpf.core import Anchor, Boss, Box, Faces, X, Y
-        body = Box(80, 50, 30).shell(2, open=Faces.TOP)
+        body = Box(
+            80, 50, 30, anchor=Anchor.BOTTOM
+        ).shell(2, open=Faces.TOP)
         with self.assertRaisesRegex(ValueError, "requires X bounds"):
             Boss(d=7, h=12, hole_d=2.5).attach(
                 body,
@@ -605,11 +609,13 @@ class SCPFExamples(unittest.TestCase):
             compile_model(body + boss, "Enclosure")
 
     def test_rounded_rectangle_sketch_compiles_to_true_native_arcs(self):
-        from scpf.core import Box, RoundedRectangle2D, Direction
+        from scpf.core import Anchor, Box, RoundedRectangle2D, Direction
         from scpf.explicit_sketch import Sketch
         from scpf.compiler import compile_model
 
-        panel = Box(159.7, 319.71, 14.5).taper(from_z=2, inset=1.25)
+        panel = Box(
+            159.7, 319.71, 14.5, anchor=Anchor.BOTTOM
+        ).taper(from_z=2, inset=1.25)
         with Sketch(name="Rounded rear bays", on=panel) as bays:
             for y in (-120, -40, 40, 120):
                 bays.add(
@@ -634,11 +640,13 @@ class SCPFExamples(unittest.TestCase):
 
     def test_explicit_rear_bay_sketch_on_tapered_box(self):
         """Four rear window pockets retain the front plate and the editable loft."""
-        from scpf.core import Box, Rectangle2D, Direction
+        from scpf.core import Anchor, Box, Rectangle2D, Direction
         from scpf.explicit_sketch import Sketch
         from scpf.compiler import compile_model
 
-        panel = Box(159.7, 319.71, 14.5).taper(from_z=2, inset=1.25)
+        panel = Box(
+            159.7, 319.71, 14.5, anchor=Anchor.BOTTOM
+        ).taper(from_z=2, inset=1.25)
         with Sketch(name="Rear electronics bays", on=panel, plane="XY",
                     origin=(0, 0, 14.5)) as rear:
             for center_y in (-120, -40, 40, 120):
