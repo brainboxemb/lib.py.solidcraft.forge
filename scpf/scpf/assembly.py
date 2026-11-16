@@ -7,6 +7,7 @@ from .core import (
     AnchorFrame,
     AnchorTopology,
     _NativeExpression,
+    _plain_command_value,
     command_value,
     parameters_in,
     pv,
@@ -20,7 +21,7 @@ from .model_objects import (
     _corner_native_x,
     _corner_normal,
 )
-from .compiler import compile_model
+from .compiler import _compile_model_commands
 from .replay import replay_document
 
 
@@ -385,10 +386,10 @@ def compile_assembly(value, name):
         definition = instances[0].definition
         parent_name = instances[0].group_name
 
-        compiled = compile_model(
+        compiled = _compile_model_commands(
             definition.shape,
             _component_slug(component_name),
-        )["commands"]
+        )
         external_names = {
             parameter_name
             for parameter_name, _ in definition.external_parameters
@@ -728,4 +729,4 @@ def compile_assembly(value, name):
 
     if not commands:
         raise ModelError(f"{name} contains no component instances")
-    return replay_document(commands)
+    return _plain_command_value(replay_document(commands))
