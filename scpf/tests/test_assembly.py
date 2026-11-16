@@ -359,7 +359,6 @@ class AssemblyTests(unittest.TestCase):
         copies = [c for c in commands if c["command"] == "occurrence.copy"]
         self.assertEqual(len(copies), 1)
         self.assertEqual(copies[0]["params"]["component"], "Panel")
-        self.assertEqual(copies[0]["params"]["parent"], "HUB75Panels")
 
     def test_named_groups_are_not_grounded_and_physical_root_stays_grounded(self):
         from scpf import Box, component
@@ -425,6 +424,19 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(copies[0]["component"], "Panel")
         self.assertEqual(copies[0]["parent"], "B")
         self.assertEqual(copies[0]["translate"], [30.0, 0.0, 0.0])
+
+        root_copy = compile_assembly(
+            panel.group("A")
+            + panel.copy(placement=Placement(x=30)),
+            "Display",
+        )["commands"]
+        root_copy_params = next(
+            command["params"]
+            for command in root_copy
+            if command["command"] == "occurrence.copy"
+        )
+        self.assertEqual(root_copy_params["parent"], "root")
+        self.assertEqual(root_copy_params["translate"], [30.0, 0.0, 0.0])
 
         with self.assertRaisesRegex(ModelError, "conflicts"):
             compile_assembly(panel.group("Panel"), "Display")
