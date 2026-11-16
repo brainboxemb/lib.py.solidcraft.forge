@@ -1163,8 +1163,9 @@ def Rectangle2D(width, depth):
         Author a simple rectangle inside an explicit Sketch before extrusion.
 
     Limits:
-        The profile is authored in sketch coordinates; use the Sketch to choose
-        its plane and placement.
+        The dimension-defined profile is centred on the Sketch origin by
+        default. Use Sketch.add(..., offset=(u, v)) for a deliberate local
+        displacement.
     """
     from .explicit_sketch import register_profile
     return register_profile(Shape("rectangle", (width, depth)))
