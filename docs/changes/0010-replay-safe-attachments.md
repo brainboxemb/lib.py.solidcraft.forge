@@ -51,38 +51,26 @@ no occurrence Block
 
 ### Geometry pick
 
-`joint.create` also supports a different form. A side can contain a world
-point on geometry and omit `occurrence`.
+`joint.create` can also find an occurrence from a world point when
+`occurrence` is omitted. The engine chooses the placement whose body bounds
+are nearest that point. If two placements are equally near, the earlier
+occurrence path wins.
 
-Examples include:
+That is real SolidCraft behaviour, but it is **not how the normal SolidCraft UI
+identifies a picked body for a joint**.
 
-```json
-{"face": [80, 0, 5]}
-```
+When the user clicks a face, edge or vertex in the Joint dialog, the UI sends:
 
-and:
+- the geometry pick;
+- the native occurrence id;
+- and, when needed, the occurrence path for a repeated subassembly.
 
-```json
-{
-  "point": [80, 0, 5],
-  "z": [1, 0, 0],
-  "x": [0, 0, 1]
-}
-```
+The point says where on the part the joint origin is. The occurrence id says
+which placed part was picked.
 
-SolidCraft's own 0.42 schema says that when `occurrence` is omitted it is
-found from the supplied point. This is therefore a real `joint.create`
-selection method, not something Forge invented.
-
-The native tests show:
-
-- a unique face pick can select a copied occurrence;
-- a unique point/frame pick can select a copied occurrence;
-- four copies at different positions can be selected independently;
-- if two occurrences have selectable geometry at the same world point, the
-  point alone is ambiguous and SolidCraft can select the wrong occurrence.
-
-That last case is the important risk.
+This matters for Forge. Two mating faces can occupy the same world position in
+a perfectly normal assembly. A point alone can then refer to either part.
+Forge must not let SolidCraft silently choose the earlier occurrence.
 
 ## Comparison with fillet
 
@@ -103,47 +91,39 @@ Change 0010 must answer that before copied attachments are accepted or rejected.
 
 ## Moving a copy only to make selection possible
 
-One research probe moves a copied component away from another part before
-`joint.create`. That makes a point on the copy unique, so SolidCraft can find
-that copy from the point.
+The research probe that moves a copied component away before
+`joint.create` is not a valid Forge implementation.
 
-This is **not an accepted Forge implementation**.
+It only makes point-only occurrence lookup unambiguous. The SolidCraft UI does
+not need that trick because it already knows which occurrence the user clicked
+and sends the occurrence id with the geometry pick.
 
-If Forge has to move a component only because it otherwise cannot identify the
-occurrence, that is a workaround for the missing occurrence reference. Change
-0010 must not put that behaviour in production code.
+Forge will not move a component only to make an otherwise ambiguous point pick
+work.
 
-The probe remains useful for one reason: it helps us understand how
-`joint.create` resolves a geometry pick. It does not prove that Forge should
-move parts this way.
+## What is now established
 
-The only reason to reconsider this later is if SolidCraft's documented/UI
-workflow itself requires a loose part to be positioned before the user selects
-its joint geometry. That must be proved separately before implementation.
+The source and native probes establish enough for change 0010:
 
-## Questions that must be answered
-
-Before copied attachments are considered supported, test and document:
-
-1. Does `joint.create` store the selected occurrence and topology in the
-   saved model, or does it keep depending on the original world point?
-2. Does the joint still refer to the same occurrence after save and reopen?
-3. Does the selected face/edge remain attached after model parameter changes?
-4. Does a copied part remain the selected part after other copies are added or
-   reordered?
-5. When a point is ambiguous, does SolidCraft report that clearly or silently
-   choose one occurrence?
-6. Does the normal SolidCraft UI require the user to position a loose component
-   before selecting its joint geometry, or was that only useful in our probe?
-7. Which cases need an explicit occurrence/path instead of a point pick?
+1. SolidCraft stores the resolved native occurrence in the joint origin.
+2. Face and edge picks are converted to local component data and named topology
+   where possible, so the joint can follow later geometry changes.
+3. Save/reopen preserves the resolved joint reference.
+4. The normal SolidCraft UI sends occurrence/path together with a body pick.
+5. Point-only occurrence lookup can be ambiguous and silently chooses the
+   earlier occurrence path.
+6. Forge cannot know the native id/path of a later copy in a static replayable
+   command document without adding a different runtime-result mechanism.
 
 ## Current implementation state
 
 The `Component:N` construction has been removed from the current 0010 branch.
 
-While the questions above are being checked, the current branch rejects a copy
-as an attachment endpoint. That is only the current implementation state, not
-yet the final design decision.
+A copied occurrence is rejected as an attachment endpoint in SolidCraft 0.42
+replay-first output. Forge cannot provide the explicit native occurrence/path
+reference that the normal SolidCraft joint workflow uses for that copy.
+
+This is deliberate capability removal, not a replacement workaround.
 
 First occurrences still use the component name only in the joint commands where
 SolidCraft 0.42 has been tested to support it.
@@ -170,8 +150,8 @@ The final 0010 tests must at least prove:
   selectors;
 - first-occurrence component-name selection works in each command where Forge
   uses it;
-- copied-occurrence selection, if kept, survives save/reopen;
-- copied-occurrence selection, if kept, survives relevant parameter changes;
-- ambiguous geometry-pick cases are either prevented or rejected clearly;
+- copied occurrences used as attachment endpoints are rejected before command
+  generation;
+- point-only copy selection is not used in generated Forge attachment commands;
 - rotated, chained and as-built cases are only enabled when their own SolidCraft
   reference method has been proved.
