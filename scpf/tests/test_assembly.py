@@ -933,6 +933,7 @@ class AssemblyTests(unittest.TestCase):
 
     def test_board_style_selector_tuple_is_reusable_definition_input(self):
         from scpf import BOTTOM, LEFT, RIGHT, TOP, Box
+        from scpf.assembly import compile_assembly
         from scpf.runner import component
 
         class Board:
