@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-16
+
 ### Added
 
 - Native rectangular history-feature patterns through
