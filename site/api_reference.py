@@ -238,6 +238,20 @@ GROUP_REFERENCES = (
         guide_anchor="solids",
     ),
     _group(
+        "sketch-slot-constructors",
+        "Native Slot constructors",
+        (
+            "SlotCenterToCenter2D",
+            "SlotOverall2D",
+            "SlotCenterPoint2D",
+            "SlotArcThreePoint2D",
+            "SlotArcCenter2D",
+        ),
+        summary="Five explicit 2D Slot construction methods mapped directly to SolidCraft sketch.slot.* commands.",
+        guide="geometry",
+        guide_anchor="profiles",
+    ),
+    _group(
         "feature-constructors",
         "Feature constructors",
         ("Hole", "Lip", "SnapFit", "Boss", "Rest"),

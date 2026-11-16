@@ -10,6 +10,10 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Added
 
+- Native SolidCraft sketch Slot profiles: `SlotCenterToCenter2D`,
+  `SlotOverall2D`, `SlotCenterPoint2D`, `SlotArcThreePoint2D` and
+  `SlotArcCenter2D`, each lowering directly to its matching
+  `sketch.slot.*` command.
 - `python -m scpf check model.py` builds and compiles a model without starting
   SolidCraft so model/API/compiler failures can be found before native testing.
 - build123d 0.12.0 is the fourth required, independently executed and

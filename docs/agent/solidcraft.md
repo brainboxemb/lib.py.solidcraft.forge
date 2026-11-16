@@ -55,6 +55,11 @@ sketch.finish
 sketch.line
 sketch.rectangle.rounded
 sketch.rectangle.two_point
+sketch.slot.arc_center
+sketch.slot.arc_three_point
+sketch.slot.center_point
+sketch.slot.center_to_center
+sketch.slot.overall
 sketch.text
 
 solid.box

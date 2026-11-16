@@ -444,6 +444,41 @@
       "target": "Anchor.CENTER",
       "reference": "reference/Anchor/",
       "guide": "guide/assembly-basics/#anchor-choice"
+    },
+    "SlotArcCenter2D": {
+      "kind": "callable",
+      "summary": "Create a native arc Slot from its centre, start and end or sweep.",
+      "reference": "reference/sketch-slot-constructors/#SlotArcCenter2D",
+      "guide": "guide/geometry/#profiles",
+      "signature": "SlotArcCenter2D(center, start, width, *, end=None, sweep=None)"
+    },
+    "SlotArcThreePoint2D": {
+      "kind": "callable",
+      "summary": "Create a native arc Slot through three points on its centre arc.",
+      "reference": "reference/sketch-slot-constructors/#SlotArcThreePoint2D",
+      "guide": "guide/geometry/#profiles",
+      "signature": "SlotArcThreePoint2D(start, through, end, width)"
+    },
+    "SlotCenterPoint2D": {
+      "kind": "callable",
+      "summary": "Create a native straight Slot from its centre and one end-arc centre.",
+      "reference": "reference/sketch-slot-constructors/#SlotCenterPoint2D",
+      "guide": "guide/geometry/#profiles",
+      "signature": "SlotCenterPoint2D(center, end, width)"
+    },
+    "SlotCenterToCenter2D": {
+      "kind": "callable",
+      "summary": "Create a native straight Slot from the centres of its round ends.",
+      "reference": "reference/sketch-slot-constructors/#SlotCenterToCenter2D",
+      "guide": "guide/geometry/#profiles",
+      "signature": "SlotCenterToCenter2D(p0, p1, width)"
+    },
+    "SlotOverall2D": {
+      "kind": "callable",
+      "summary": "Create a native straight Slot from its two overall end points.",
+      "reference": "reference/sketch-slot-constructors/#SlotOverall2D",
+      "guide": "guide/geometry/#profiles",
+      "signature": "SlotOverall2D(p0, p1, width)"
     }
   }
 }
