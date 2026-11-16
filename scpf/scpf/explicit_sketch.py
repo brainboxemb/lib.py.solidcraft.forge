@@ -5,7 +5,7 @@ so authoring a sketch remains distinct from extruding/cutting it.
 """
 from contextvars import ContextVar
 
-from .core import Anchor, Depth, Direction, Shape, pv
+from .core import Anchor, Depth, Direction, Shape, _pv as pv
 
 _ACTIVE_SKETCH = ContextVar("scpf_active_sketch", default=None)
 

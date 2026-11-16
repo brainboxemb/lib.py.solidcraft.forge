@@ -3,10 +3,15 @@
 All unadorned numerical values are millimetres. Model function arguments
 become named parameters by the runner, not by user-written decorators.
 """
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass
 from enum import Enum
 from math import isfinite
 from typing import Any
+
+
+_PV_TRACKERS = ContextVar("scpf_pv_trackers", default=())
 
 
 def number_text(value: float) -> str:
@@ -410,14 +415,35 @@ class _AxisRef(str):
 
 
 class _NativeExpression(str):
-    """Internal marker for a string that SolidCraft evaluates as an expression."""
+    """Internal SolidCraft expression plus the parameters it depends on."""
 
-    def __new__(cls, value):
-        return super().__new__(cls, str(value))
+    def __new__(cls, value, parameters=()):
+        instance = super().__new__(cls, str(value))
+        instance.parameters = tuple(dict.fromkeys(parameters))
+        return instance
 
 
-def _native_expression(value):
-    return _NativeExpression(value)
+def _native_expression(value, parameters=()):
+    inherited = (
+        value.parameters
+        if isinstance(value, _NativeExpression)
+        else ()
+    )
+    return _NativeExpression(value, (*inherited, *parameters))
+
+
+def _native_dependencies(value):
+    """Return parameter names used by typed native expressions."""
+    found = set()
+    if isinstance(value, _NativeExpression):
+        found.update(value.parameters)
+    elif isinstance(value, dict):
+        for item in value.values():
+            found.update(_native_dependencies(item))
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            found.update(_native_dependencies(item))
+    return frozenset(found)
 
 
 def _plain_command_value(value):
@@ -479,7 +505,7 @@ class Parameter:
                               f"{self.name} + {number_text(other)} mm", (self,))
         if isinstance(other, (Parameter, Expression)):
             return Expression(
-                self.value + pv(other),
+                self.value + _pv(other),
                 f"{self.name} + ({command_value(other)})",
                 parameters_in(self, other),
             )
@@ -493,7 +519,7 @@ class Parameter:
                               f"{self.name} - {number_text(other)} mm", (self,))
         if isinstance(other, (Parameter, Expression)):
             return Expression(
-                self.value - pv(other),
+                self.value - _pv(other),
                 f"{self.name} - ({command_value(other)})",
                 parameters_in(self, other),
             )
@@ -529,7 +555,7 @@ class Expression:
                               self.parameters)
         if isinstance(other, (Parameter, Expression)):
             return Expression(
-                self.value + pv(other),
+                self.value + _pv(other),
                 f"({self.expression}) + ({command_value(other)})",
                 parameters_in(self, other),
             )
@@ -543,7 +569,7 @@ class Expression:
                               f"({self.expression}) - {number_text(other)} mm", self.parameters)
         if isinstance(other, (Parameter, Expression)):
             return Expression(
-                self.value - pv(other),
+                self.value - _pv(other),
                 f"({self.expression}) - ({command_value(other)})",
                 parameters_in(self, other),
             )
@@ -669,6 +695,33 @@ def midpoint(start, end):
     return (start + end) / 2
 
 
+def _pv(dim) -> float:
+    """Read one CAD dimension numerically without recording a user pv() read."""
+    if isinstance(dim, Parameter):
+        return dim.value
+    if isinstance(dim, Expression):
+        return dim.value
+    if isinstance(dim, (int, float)):
+        return float(dim)
+    raise TypeError(f"expected a CAD dimension, got {type(dim).__name__}")
+
+
+@contextmanager
+def _track_pv_reads(parameters):
+    """Record public pv() reads of these exact Parameter objects."""
+    names_by_id = {
+        id(parameter): parameter.name
+        for parameter in parameters
+    }
+    reads = set()
+    current = _PV_TRACKERS.get()
+    token = _PV_TRACKERS.set((*current, (names_by_id, reads)))
+    try:
+        yield reads
+    finally:
+        _PV_TRACKERS.reset(token)
+
+
 def pv(dim) -> float:
     """Return the concrete Python value of a symbolic CAD dimension.
 
@@ -680,18 +733,23 @@ def pv(dim) -> float:
         point. Geometry and placement should normally keep Parameter/Expression
         objects symbolic so SolidCraft remains editable and associative.
     """
-    if isinstance(dim, Parameter):
-        return dim.value
-    if isinstance(dim, Expression):
-        return dim.value
-    if isinstance(dim, (int, float)):
-        return float(dim)
-    raise TypeError(f"expected a CAD dimension, got {type(dim).__name__}")
+    for parameter in parameters_in(dim):
+        parameter_id = id(parameter)
+        for names_by_id, reads in _PV_TRACKERS.get():
+            name = names_by_id.get(parameter_id)
+            if name is not None:
+                reads.add(name)
+    return _pv(dim)
 
 
 def command_value(dim):
-    if isinstance(dim, (Parameter, Expression)):
-        return _native_expression(dim.expression)
+    if isinstance(dim, Parameter):
+        return _native_expression(dim.expression, (dim.name,))
+    if isinstance(dim, Expression):
+        return _native_expression(
+            dim.expression,
+            tuple(parameter.name for parameter in dim.parameters),
+        )
     return dim
 
 
@@ -830,7 +888,7 @@ class Shape:
         Translates all primitives in a composite CSG model together.
         General feature-based box placement is not implemented yet.
         """
-        offsets = (pv(x), pv(y), pv(z))
+        offsets = (_pv(x), _pv(y), _pv(z))
         if not all(isfinite(v) for v in offsets):
             raise ValueError("move() requires finite coordinates")
         if self.kind in ("fillet", "shell", "pattern"):
@@ -846,9 +904,9 @@ class Shape:
         if self.kind != "box":
             raise ValueError("taper() currently requires a Box")
         width, height, depth = self.data
-        if not 0 < pv(from_z) < pv(depth):
+        if not 0 < _pv(from_z) < _pv(depth):
             raise ValueError("taper from_z must lie within the box depth")
-        if not 0 < pv(inset) * 2 < min(pv(width), pv(height)):
+        if not 0 < _pv(inset) * 2 < min(_pv(width), _pv(height)):
             raise ValueError("taper inset must be below half the footprint")
         return Shape("tapered_box", (self, from_z, inset))
 
@@ -888,7 +946,7 @@ class Shape:
 
     def chamfer(self, distance, *, edges):
         """Chamfer explicitly selected solid edges by an equal distance."""
-        pv(distance)
+        _pv(distance)
         if isinstance(edges, _ProfileEdgeSelection):
             return Shape("chamfer", (self, distance, edges))
         if not isinstance(edges, (list, tuple)) or not edges:
@@ -897,7 +955,7 @@ class Shape:
             if not isinstance(point, (list, tuple)) or len(point) != 3:
                 raise ValueError("each chamfer edge point must have x, y and z")
             for coordinate in point:
-                pv(coordinate)
+                _pv(coordinate)
         return Shape("chamfer", (self, distance, tuple(tuple(p) for p in edges)))
 
     def shell(self, thickness, *, open=Faces.TOP):
@@ -911,7 +969,7 @@ class Shape:
             open= must be one Faces value or a non-empty sequence of Faces
             values. Support still depends on the underlying feature tree.
         """
-        pv(thickness)
+        _pv(thickness)
         if isinstance(open, Faces):
             faces = (open,)
         elif isinstance(open, (list, tuple)) and open:
@@ -998,7 +1056,7 @@ class Shape:
             raise ValueError("pattern() supports Cylinder or Hole")
         if not isinstance(count, int) or isinstance(count, bool) or count < 1:
             raise ValueError("pattern count must be a positive integer")
-        if pv(spacing) <= 0:
+        if _pv(spacing) <= 0:
             raise ValueError("pattern spacing must be positive")
         try:
             axis = Axis(axis)
@@ -1071,10 +1129,10 @@ class Shape:
                     raise ValueError(
                         f"offset position {index} requires {expected_axis} bounds"
                     )
-                if not isfinite(pv(value.delta)):
+                if not isfinite(_pv(value.delta)):
                     raise ValueError("bound offset must be finite")
             else:
-                pv(value)
+                _pv(value)
         return Shape(
             "anchored",
             (self, target, parent_anchor, child_anchor, tuple(offset)),
@@ -1092,7 +1150,7 @@ def Text2D(text, *, height=6.0, font="DejaVu Sans Bold"):
         raise ValueError("Text2D requires non-empty text")
     if not isinstance(font, str) or not font.strip():
         raise ValueError("Text2D requires a font family")
-    if pv(height) <= 0:
+    if _pv(height) <= 0:
         raise ValueError("Text2D height must be positive")
     from .explicit_sketch import register_profile
     return register_profile(Shape("text", (text, height, font)))
@@ -1123,9 +1181,9 @@ def RoundedRectangle2D(width, depth, radius):
         Current support is inside an explicit Sketch. The radius must be below
         half the shorter side.
     """
-    if pv(width) <= 0 or pv(depth) <= 0:
+    if _pv(width) <= 0 or _pv(depth) <= 0:
         raise ValueError("RoundedRectangle2D width and depth must be positive")
-    if not 0 < pv(radius) * 2 < min(pv(width), pv(depth)):
+    if not 0 < _pv(radius) * 2 < min(_pv(width), _pv(depth)):
         raise ValueError("RoundedRectangle2D radius must be below half the shorter side")
     from .explicit_sketch import register_profile
     return register_profile(Shape("rounded_rectangle", (width, depth, radius)))
@@ -1255,26 +1313,26 @@ def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
         Diameter must be positive. depth is a positive distance or
         Depth.THROUGH_ALL. Countersink diameter must exceed the hole diameter.
     """
-    if pv(d) <= 0:
+    if _pv(d) <= 0:
         raise ValueError("hole diameter must be positive")
-    if depth is not Depth.THROUGH_ALL and pv(depth) <= 0:
+    if depth is not Depth.THROUGH_ALL and _pv(depth) <= 0:
         raise ValueError("hole depth must be positive or Depth.THROUGH_ALL")
     if direction is not None:
         direction = tuple(direction)
         if len(direction) != 3:
             raise ValueError("Hole direction must be a 3D direction")
-        concrete = [pv(v) for v in direction]
+        concrete = [_pv(v) for v in direction]
         if not all(isfinite(v) for v in concrete) or concrete == [0, 0, 0]:
             raise ValueError("Hole direction must be a finite non-zero direction")
     if countersink_d is not None:
-        if pv(countersink_d) <= pv(d):
+        if _pv(countersink_d) <= _pv(d):
             raise ValueError("countersink diameter must be larger than hole diameter")
-        angle = pv(countersink_angle)
+        angle = _pv(countersink_angle)
         if not isfinite(angle) or angle <= 0 or angle >= 180:
             raise ValueError("countersink angle must be between 0 and 180 degrees")
-        if pv(countersink_recess) < 0:
+        if _pv(countersink_recess) < 0:
             raise ValueError("countersink recess cannot be negative")
-    elif pv(countersink_recess) != 0:
+    elif _pv(countersink_recess) != 0:
         raise ValueError("countersink recess requires countersink_d")
     return Shape(
         "hole",

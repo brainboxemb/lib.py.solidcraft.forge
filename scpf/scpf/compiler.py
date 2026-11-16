@@ -6,7 +6,8 @@ actual BRep booleans, sketches, fillets and geometric verification.
 from math import isfinite
 
 from .core import (
-    Shape, Parameter, number_text, parameters_in, pv, _plain_command_value,
+    Shape, Parameter, number_text, parameters_in, _pv as pv,
+    _native_dependencies, _plain_command_value,
 )
 
 
@@ -74,6 +75,13 @@ def _compile_model_commands(shape: Shape, name: str) -> list[dict]:
     )
 
 
+def _compile_model_with_dependencies(shape: Shape, name: str):
+    """Compile one Shape and retain actual native parameter dependencies."""
+    commands = _compile_model_commands(shape, name)
+    document = {"commands": _plain_command_value(commands)}
+    return document, _native_dependencies(commands)
+
+
 def compile_model(shape: Shape, name: str) -> dict:
     """Compile one Shape tree to a native SolidCraft command document.
 
@@ -85,8 +93,4 @@ def compile_model(shape: Shape, name: str) -> dict:
         The final value must be a Shape and name must be a valid identifier.
         Normal user workflows usually call the scpf runner/CLI instead.
     """
-    return {
-        "commands": _plain_command_value(
-            _compile_model_commands(shape, name)
-        )
-    }
+    return _compile_model_with_dependencies(shape, name)[0]

@@ -19,7 +19,7 @@ from .core import (
     half,
     midpoint,
     parameters_in,
-    pv,
+    _pv as pv,
 )
 
 

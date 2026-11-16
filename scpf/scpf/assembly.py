@@ -7,10 +7,11 @@ from .core import (
     AnchorFrame,
     AnchorTopology,
     _NativeExpression,
+    _native_dependencies,
     _plain_command_value,
     command_value,
     parameters_in,
-    pv,
+    _pv as pv,
 )
 from .model_objects import (
     Assembly,
@@ -82,7 +83,8 @@ def _rewrite_value(value, mapping):
             _IDENTIFIER.sub(
                 lambda match: mapping.get(match.group(0), match.group(0)),
                 value,
-            )
+            ),
+            tuple(mapping.get(name, name) for name in value.parameters),
         )
     if isinstance(value, str):
         return value
@@ -295,7 +297,7 @@ def _occurrence_replay_variables(assembly, labels):
     return variables
 
 
-def compile_assembly(value, name):
+def _compile_assembly_with_dependencies(value, name):
     """Compile a root assembly into reusable components and occurrences."""
     assembly = _as_assembly(value)
     names = _definition_names(assembly)
@@ -729,4 +731,11 @@ def compile_assembly(value, name):
 
     if not commands:
         raise ModelError(f"{name} contains no component instances")
-    return _plain_command_value(replay_document(commands))
+    dependencies = _native_dependencies(commands)
+    document = _plain_command_value(replay_document(commands))
+    return document, dependencies
+
+
+def compile_assembly(value, name):
+    """Compile an assembly to the public replay document."""
+    return _compile_assembly_with_dependencies(value, name)[0]

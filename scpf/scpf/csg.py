@@ -8,7 +8,7 @@ from .core import (
     Expression,
     _NativeExpression,
     _native_expression,
-    pv,
+    _pv as pv,
     command_value,
     number_text,
 )
@@ -17,14 +17,16 @@ from .compiler import ModelError, _command, _require_positive
 def _half(dim, negative=False):
     if isinstance(dim, Parameter):
         return _native_expression(
-            f"-{dim.name} / 2" if negative else f"{dim.name} / 2"
+            f"-{dim.name} / 2" if negative else f"{dim.name} / 2",
+            (dim.name,),
         )
     if isinstance(dim, Expression):
         expression = command_value(dim)
         return _native_expression(
             f"-({expression}) / 2"
             if negative
-            else f"({expression}) / 2"
+            else f"({expression}) / 2",
+            expression.parameters,
         )
     return -pv(dim) / 2 if negative else pv(dim) / 2
 
@@ -48,7 +50,8 @@ def _add_offset(coord, offset):
         return coord
     if isinstance(coord, _NativeExpression):
         return _native_expression(
-            f"({coord}) + {number_text(offset)}"
+            f"({coord}) + {number_text(offset)}",
+            coord.parameters,
         )
     return coord + offset
 

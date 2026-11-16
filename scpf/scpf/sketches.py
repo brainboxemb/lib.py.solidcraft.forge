@@ -8,9 +8,10 @@ from .core import (
     Shape,
     _NativeExpression,
     _native_expression,
+    _native_dependencies,
     command_value,
     half,
-    pv,
+    _pv as pv,
 )
 from .placement import _base_rectangle
 
@@ -23,8 +24,11 @@ def _combine_dimension(a, b):
         return a
     if isinstance(a, (int, float)) and isinstance(b, (int, float)):
         return a + b
+    left = command_value(a)
+    right = command_value(b)
     return _native_expression(
-        f"({command_value(a)}) + ({command_value(b)})"
+        f"({left}) + ({right})",
+        tuple(sorted(_native_dependencies((left, right)))),
     )
 
 from .compiler import ModelError, _command, _require_positive
@@ -151,7 +155,8 @@ def compile_base(shape, name):
                 or isinstance(offset, _NativeExpression)
             ):
                 return _native_expression(
-                    f"({edge}) {'+' if inward else '-'} ({offset})"
+                    f"({edge}) {'+' if inward else '-'} ({offset})",
+                    tuple(sorted(_native_dependencies((edge, offset)))),
                 )
             return edge + offset if inward else edge - offset
 
