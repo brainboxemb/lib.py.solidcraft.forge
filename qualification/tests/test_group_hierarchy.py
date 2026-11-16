@@ -44,14 +44,24 @@ class GroupHierarchyCommandTests(unittest.TestCase):
 @unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
 class GroupHierarchyNativeTests(unittest.TestCase):
     def test_group_geometry_survives_native_build(self):
+        case = Path(NATIVE_ROOT) / "group-hierarchy"
         data = json.loads(
-            (
-                Path(NATIVE_ROOT)
-                / "group-hierarchy"
-                / "measurements.json"
-            ).read_text(encoding="utf-8")
+            (case / "measurements.json").read_text(encoding="utf-8")
         )
         self.assertEqual(data["body_count"], 3)
+
+        inspection = json.loads(
+            (case / "results-bom.json").read_text(encoding="utf-8")
+        )
+        components = inspection[2]["components"]
+        by_name = {component["name"]: component for component in components}
+
+        group = by_name["PanelGroup"]
+        panel = by_name["Panel"]
+        self.assertEqual(len(group["occurrences"]), 1)
+        self.assertFalse(group["occurrences"][0]["grounded"])
+        self.assertEqual(len(panel["occurrences"]), 2)
+        self.assertTrue(panel["occurrences"][0]["grounded"])
 
 
 if __name__ == "__main__":
