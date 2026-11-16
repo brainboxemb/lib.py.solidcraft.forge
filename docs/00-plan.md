@@ -108,5 +108,6 @@ with corrective translations. The existing default Box behaviour and the CSG
 Box lowering must first be made semantically consistent, then qualified against
 the native SolidCraft behaviour.
 
-This is a follow-up API/design change, not part of the completed 0.42
-documentation/qualification architecture above.
+This follow-up API/design change is implemented and qualified by
+[change 0022](changes/0022-native-box-origin.md). It remains separate from the
+completed remediation phases above.
