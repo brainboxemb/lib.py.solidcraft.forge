@@ -811,13 +811,13 @@ def _shape_center(shape):
         raise TypeError("align() target must be a Shape")
 
     if shape.kind == "box":
-        length, width, height, origin = shape.data
+        length, width, height, anchor = shape.data
         dimensions = (length, width, height)
         return tuple(
             half(dimension) if side < 0
             else -half(dimension) if side > 0
             else 0
-            for dimension, side in zip(dimensions, origin.vector)
+            for dimension, side in zip(dimensions, anchor.vector)
         )
 
     if shape.kind == "sphere":
@@ -913,10 +913,10 @@ class Shape:
         """
         if self.kind != "box":
             raise ValueError("taper() currently requires a Box")
-        width, height, depth, origin = self.data
-        if _direction_selector(origin).vector != (0, 0, -1):
+        width, height, depth, anchor = self.data
+        if _direction_selector(anchor).vector != (0, 0, -1):
             raise ValueError(
-                "taper() currently requires Box origin=BOTTOM"
+                "taper() currently requires Box anchor=BOTTOM"
             )
         if not 0 < _pv(from_z) < _pv(depth):
             raise ValueError("taper from_z must lie within the box depth")
@@ -1271,19 +1271,19 @@ def Polygon2D(points, *, plane="XY", ids=None, world=False):
     return register_profile(Shape("polygon", (coordinates, plane, ids)))
 
 
-def Box(length, width, thickness, *, origin=Anchor.BOTTOM):
-    """Create a native rectangular solid with an explicit primitive datum.
+def Box(length, width, thickness, *, anchor=Anchor.CENTER):
+    """Create a native rectangular solid around a declared anchor datum.
 
     Use when:
         Model a simple rectangular part directly without introducing a Sketch.
-        origin selects which Box anchor starts at model coordinate (0, 0, 0).
+        anchor selects which Box anchor starts at model coordinate (0, 0, 0).
 
     Limits:
-        The default origin is BOTTOM: the Box is centred in X/Y and extends
-        from Z=0 towards +Z. Use origin=CENTER for a fully centred native Box.
-        Use at() for later placement of a selected Box anchor.
+        The default anchor is CENTER, so an unplaced Box is centred around the
+        model origin in X, Y and Z. Use anchor=BOTTOM for a box whose bottom
+        face centre is at Z=0. Use at() for later placement.
     """
-    selector = _direction_selector(origin)
+    selector = _direction_selector(anchor)
     return Shape("box", (length, width, thickness, selector))
 
 
