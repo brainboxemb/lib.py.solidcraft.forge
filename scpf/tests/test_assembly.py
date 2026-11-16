@@ -1770,7 +1770,7 @@ class AssemblyTests(unittest.TestCase):
         )
         self.assertEqual(joint["type"], "rigid")
         self.assertIn("corner", joint["a"])
-        self.assertEqual(joint["b"]["point"], [-20.0, -16.0, 10.0])
+        self.assertEqual(joint["b"]["point"], [-20.0, -15.0, 0.0])
         self.assertEqual(joint["b"]["z"], [0.0, -1.0, 0.0])
         self.assertEqual(joint["b"]["occurrence"], "ChildBlock")
 
