@@ -29,6 +29,36 @@ qualification exception with the reason.
 
 Do not translate Forge syntax mechanically. Preserve modelling intent.
 
+
+## Primitive origins: Forge vs PythonSCAD vs pyBOSL2
+
+This is the local lookup for change 0022. Use it instead of consulting external
+repositories for the common primitive defaults and syntax.
+
+| Primitive | Forge intended default | PythonSCAD equivalent | pyBOSL2 equivalent |
+| --- | --- | --- | --- |
+| rectangular solid | `Box(x, y, z)`: centered XYZ | `cube([x,y,z], center=True)` | `cuboid([x,y,z])` |
+| rectangular solid resting on Z=0 | `Box(x,y,z, anchor=BOTTOM)` | `cube([x,y,z], center="00-")` | `cuboid([x,y,z], anchor=Anchor.BOTTOM)` |
+| sphere | `Sphere(r)`: centered | `sphere(r=r)` | `sphere(radius=r)` |
+| cylindrical solid | `Cylinder(d=d, h=h)`: centered on its axis (planned 0022) | `cylinder(d=d,h=h,center=True)` | `cyl(diameter=d,height=h)` |
+| cylinder starting on Z=0 | `Cylinder(d=d,h=h,anchor=BOTTOM)` (planned 0022) | `cylinder(d=d,h=h)` | `cyl(diameter=d,height=h,anchor=Anchor.BOTTOM)` |
+
+**Important:** PythonSCAD's raw cube/cylinder defaults are not the Forge
+defaults; pass an explicit `center=` value in comparison examples. pyBOSL2's
+`cuboid`/`cyl` centered conventions are the closer user-facing reference.
+Forge's contract is defined in its own API; the external libraries are used to
+express comparable geometry, not to dictate implementation details.
+
+The 2D dimension-defined primitives `Rectangle2D` and `Circle2D` are also
+centered by default. Coordinate-defined `Polygon2D` keeps the coordinates
+supplied by the caller, rather than silently centering the polygon.
+
+**Verification:** The box conventions are already reflected in the local
+`examples/simple-box` references. The cylinder rows describe the target for
+the expanded change 0022 and must not be advertised as implemented until their
+native/CSG regression tests pass.
+
+
 ## PythonSCAD: subset used by qualification references
 
 Typical import:
@@ -61,7 +91,7 @@ PythonSCAD's three-character cube center code is ordered X/Y/Z. Runtime
 verification against 1.1.2 shows the sign is a placement-side symbol rather
 than an intuitive growth-direction sign: `"-"` places the datum on the
 negative/min side so geometry grows toward the positive axis; `"+"` does the
-opposite. Therefore `"00-"` matches Forge's default bottom-centred box.
+opposite. Therefore `"00-"` represents a **deliberately bottom-anchored** Forge Box (`anchor=BOTTOM`), not the Forge default.
 
 Prefer explicit transforms in references when that makes the geometry obvious.
 Do not claim that a PythonSCAD transform is equivalent to a persisted
