@@ -460,15 +460,12 @@ class Parameter:
 
     name: str
     value: float
-    unit: str = "mm"
 
     def __post_init__(self):
         if not self.name.isidentifier():
             raise ValueError(f"invalid CAD parameter name: {self.name}")
         if not isinstance(self.value, (int, float)) or not isfinite(self.value):
             raise ValueError(f"invalid CAD parameter value: {self.name}")
-        if self.unit not in ("mm", ""):
-            raise ValueError("CAD parameter unit must be 'mm' or empty")
 
     @property
     def expression(self):
@@ -940,7 +937,7 @@ def _pattern_count(value, label):
         numeric = value.value
         if numeric < 1 or not float(numeric).is_integer():
             raise ValueError(f"{label} must currently evaluate to a positive integer")
-        return Parameter(value.name, value.value, unit="")
+        return value
     if isinstance(value, Expression):
         raise TypeError(
             f"{label} expressions are not supported yet; use a direct model "

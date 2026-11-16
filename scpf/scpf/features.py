@@ -20,6 +20,7 @@ from .core import (
     midpoint,
     _pv as pv,
     command_value,
+    parameters_in,
 )
 from .compiler import ModelError, _command, _collect, _param_commands, _require_positive
 from .placement import (
@@ -744,6 +745,58 @@ def _explicit_sketch_commands(shape, original, feature, name):
     return commands
 
 
+def _pattern_count_parameter_names(node, found=None):
+    """Collect direct Parameters used as native dimensionless pattern counts."""
+    if found is None:
+        found = set()
+    if isinstance(node, Shape):
+        if node.kind == "rectangular_pattern":
+            (
+                original, _sources,
+                _dir1, count1, _spacing1,
+                _dir2, count2, _spacing2,
+                _alignment, _alignment2,
+                _reversed1, _reversed2,
+            ) = node.data
+            found.update(param.name for param in parameters_in(count1, count2))
+            _pattern_count_parameter_names(original, found)
+            return found
+        _pattern_count_parameter_names(node.data, found)
+    elif isinstance(node, (tuple, list)):
+        for item in node:
+            _pattern_count_parameter_names(item, found)
+    return found
+
+
+def _non_count_parameter_names(node, found=None):
+    """Collect parameter uses outside rectangular-pattern count fields."""
+    if found is None:
+        found = set()
+    if isinstance(node, Shape):
+        if node.kind == "rectangular_pattern":
+            (
+                original, _sources,
+                dir1, _count1, spacing1,
+                dir2, _count2, spacing2,
+                alignment, alignment2,
+                reversed1, reversed2,
+            ) = node.data
+            _non_count_parameter_names(original, found)
+            _non_count_parameter_names(
+                (dir1, spacing1, dir2, spacing2,
+                 alignment, alignment2, reversed1, reversed2),
+                found,
+            )
+            return found
+        _non_count_parameter_names(node.data, found)
+    elif isinstance(node, (tuple, list)):
+        for item in node:
+            _non_count_parameter_names(item, found)
+    else:
+        found.update(param.name for param in parameters_in(node))
+    return found
+
+
 def _native_feature_name(feature):
     """Resolve the native history feature referenced by a pattern source."""
     if feature.kind == "explicit_sketch_extrusion":
@@ -880,4 +933,14 @@ def compile_features(shape, name):
             parameters = _collect(shape)
     else:
         parameters = _collect(shape)
-    return _param_commands(parameters) + steps
+
+    count_parameters = _pattern_count_parameter_names(shape)
+    mixed_units = count_parameters & _non_count_parameter_names(shape)
+    if mixed_units:
+        names = ", ".join(sorted(mixed_units))
+        raise ModelError(
+            "pattern count parameter(s) also used as millimetre dimensions: "
+            f"{names}; use separate model parameters for count and length"
+        )
+    units = {parameter: "" for parameter in count_parameters}
+    return _param_commands(parameters, units=units) + steps
