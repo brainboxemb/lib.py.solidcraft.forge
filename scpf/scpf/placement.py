@@ -168,9 +168,9 @@ def _anchored_features(shape):
     (width, depth), (x, y, z), thickness = _base_rectangle(target)
     if thickness is None:
         raise ValueError("anchor target must be an extruded Rectangle2D")
-    if pv(z) != 0 or (
+    if (
         not _is_unshifted_rectangular_base(target)
-        and (pv(x) != 0 or pv(y) != 0)
+        and (pv(x) != 0 or pv(y) != 0 or pv(z) != 0)
     ):
         raise ValueError("native references require an unshifted supported base")
     # The original rectangular base is not necessarily the highest face:
@@ -195,7 +195,11 @@ def _anchored_features(shape):
             # Other joins (including attached Hole features) do not raise
             # the top surface; the rectangular top remains the reference.
     if parent_anchor is Anchor.TOP:
-        face_z = _combine(thickness, boss_height) if on_boss else thickness
+        face_z = (
+            _combine(z, thickness, boss_height)
+            if on_boss
+            else _combine(z, thickness)
+        )
     elif parent_anchor is Anchor.BOTTOM:
         face_z = z
     elif parent_anchor is Anchor.INNER_BOTTOM:
