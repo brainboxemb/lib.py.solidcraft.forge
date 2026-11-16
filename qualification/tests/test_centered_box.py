@@ -3,6 +3,8 @@
 from pathlib import Path
 import unittest
 
+from scpf import BOTTOM, FRONT, Box
+from scpf.compiler import compile_model
 from scpf.runner import run_script
 
 
@@ -30,6 +32,20 @@ class CenteredBoxCommandTests(unittest.TestCase):
         self.assertEqual(box["height"], "height")
         self.assertEqual(box["center"], [0, 0, 0])
         self.assertNotIn("corner", box)
+
+    def test_cardinal_box_origin_uses_native_corner_datum(self):
+        commands = compile_model(
+            Box(40, 30, 10, origin=FRONT + BOTTOM),
+            "FrontBottomBox",
+        )["commands"]
+        box = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.box"
+        )
+
+        self.assertEqual(box["corner"], [-20.0, 0, 0])
+        self.assertNotIn("center", box)
 
 
 if __name__ == "__main__":
