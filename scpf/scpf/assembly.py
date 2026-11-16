@@ -82,7 +82,8 @@ def _rewrite_value(value, mapping):
             _IDENTIFIER.sub(
                 lambda match: mapping.get(match.group(0), match.group(0)),
                 value,
-            )
+            ),
+            tuple(mapping.get(name, name) for name in value.parameters),
         )
     if isinstance(value, str):
         return value
