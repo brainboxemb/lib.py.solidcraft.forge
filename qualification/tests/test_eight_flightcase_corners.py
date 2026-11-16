@@ -39,6 +39,7 @@ class EightFlightcaseCornersCommandTests(unittest.TestCase):
             for command in commands
         ))
 
+@unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
 class EightFlightcaseCornersNativeTests(unittest.TestCase):
     def test_native_bounds_wrap_all_eight_case_corners(self):
         data = _load(
