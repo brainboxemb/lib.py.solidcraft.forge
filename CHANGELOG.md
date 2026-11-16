@@ -10,6 +10,10 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Changed
 
+- Corrected the change-0010 qualification classification: the `components`
+  case uses ordinary `Placement` and is supported again. The three corner
+  reuse cases now use `Placement` instead of artificial attachments and remain
+  blocked only by the known replay-first Placement limits from change 0009.
 - `.group(...)` now changes SolidCraft hierarchy only. Forge creates group
   components with `grounded=false`; grouping a physical root occurrence no
   longer moves the grounding decision onto the empty group.
