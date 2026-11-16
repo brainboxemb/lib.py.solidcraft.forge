@@ -1054,7 +1054,8 @@ class AssemblyTests(unittest.TestCase):
         )
 
     def test_reusable_text_component_keeps_literal_strings_opaque(self):
-        from scpf import Sketch, Text2D
+        from scpf import Sketch
+        from scpf.core import Text2D
         from scpf.assembly import compile_assembly
         from scpf.runner import component
 
