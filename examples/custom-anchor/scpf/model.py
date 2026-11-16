@@ -9,7 +9,7 @@ class Arm:
         }
 
     def build(self):
-        return Box(40, 10, 10)
+        return Box(40, 10, 10, anchor=Anchor.BOTTOM)
 
 
 class Marker:
@@ -23,12 +23,12 @@ class Marker:
         }
 
     def build(self):
-        return Box(10, 10, 10)
+        return Box(10, 10, 10, anchor=Anchor.BOTTOM)
 
 
 class CustomAnchor:
     def build(self):
-        arm = Arm()
+        arm = Arm(placement=Placement(rotation=(Axis.Z, 90)))
         marker = Marker().attach(
             arm,
             parent="tip",

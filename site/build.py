@@ -76,6 +76,11 @@ EXAMPLES = {
         "title": "5 · Named attachment frame",
         "description": "Expose a named local AnchorFrame from a component when the datum belongs to that reusable part.",
         "concepts": ["AnchorFrame", "anchors()", "attach", "named datum"],
+        "blocked_reason": (
+            "The original showcase uses a rotated parent in a normal attachment. "
+            "Forge deliberately rejects that relationship until rotated anchor "
+            "frames are qualified; the example is kept unchanged as the target."
+        ),
     },
 }
 
@@ -602,7 +607,10 @@ def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root
 
     for slug, info in EXAMPLES.items():
         source_path = ROOT / "examples" / slug / "scpf" / "model.py"
-        blocked_reason = qualification_by_slug.get(slug, {}).get("blocked_reason")
+        blocked_reason = (
+            info.get("blocked_reason")
+            or qualification_by_slug.get(slug, {}).get("blocked_reason")
+        )
         if blocked_reason:
             commands = {
                 "commands": [],

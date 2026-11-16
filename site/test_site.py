@@ -513,7 +513,10 @@ def check(
         src = (site / info["source"]).read_text(encoding="utf-8")
         commands = json.loads((site / info["commands"]).read_text(encoding="utf-8"))["commands"]
         assert src.strip()
-        blocked_reason = qualification_by_slug.get(slug, {}).get("blocked_reason")
+        blocked_reason = (
+            info.get("blocked_reason")
+            or qualification_by_slug.get(slug, {}).get("blocked_reason")
+        )
         if blocked_reason:
             assert info["command_count"] == 0, slug
             command_record = json.loads(

@@ -124,8 +124,9 @@ Change 0022 proves:
 - ordinary Sphere is centred and cardinal anchors move its native center to
   keep the selected tangent datum at the origin;
 - primitive CSG and non-CSG paths use the same datum calculation;
-- saved simple-box dimension changes keep the native Box centre fixed without
-  rerunning Python;
+- focused compiler regressions prove the new default CENTER and explicit
+  anchors; the older simple-box qualification keeps its established
+  bottom-based geometry by stating anchor=BOTTOM explicitly;
 - Box.taper keeps the same physical taper intent for CENTER and BOTTOM;
 - qualification fixtures that require a bottom datum state it explicitly;
 - PythonSCAD, pyBOSL2 and CadQuery references for the qualification cases keep

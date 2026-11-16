@@ -38,10 +38,6 @@ def _occurrence_selectors(command):
 class ReplaySafeOccurrenceSelectorTests(unittest.TestCase):
     def test_supported_examples_do_not_predict_solidcraft_occurrence_numbers(self):
         slugs = [case["slug"] for case in supported_qualification_cases()]
-        # custom-anchor is a supported public showcase but deliberately not a
-        # native qualification case while rotated relationships are deferred.
-        slugs.append("custom-anchor")
-
         for slug in slugs:
             with self.subTest(slug=slug):
                 document = run_script(
