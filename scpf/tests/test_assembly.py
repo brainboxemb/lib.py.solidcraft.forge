@@ -2134,6 +2134,7 @@ class AssemblyTests(unittest.TestCase):
             def build(self):
                 return Box(20, 20, 10)
 
+        # This matrix must fail before any Anchor/Frame/Topology lowering.
         references = {
             "anchor": (
                 Anchor.RIGHT,
