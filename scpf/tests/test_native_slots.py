@@ -26,7 +26,7 @@ class NativeSlotFamilyTests(unittest.TestCase):
                 "sketch.slot.arc_center",
             ],
         )
-        self.assertTrue(all(command["params"]["width"] == "slot_width"
+        self.assertTrue(all(command["params"]["width"] == 8.0
                             for command in slot_commands))
         self.assertEqual(slot_commands[-1]["params"]["sweep"], 120)
         self.assertNotIn(
@@ -44,6 +44,11 @@ class NativeSlotFamilyTests(unittest.TestCase):
                        if command["command"] == "solid.extrude")
         self.assertEqual(extrude["params"]["operation"], "cut")
         self.assertTrue(extrude["params"]["through_all"])
+
+    def test_symbolic_width_is_rejected_by_direct_native_slot_creator(self):
+        from scpf import Parameter, SlotCenterToCenter2D
+        with self.assertRaisesRegex(TypeError, "sketch.draw.dimensioned"):
+            SlotCenterToCenter2D((0, 0), (20, 0), Parameter("width", 8))
 
     def test_arc_center_requires_one_end_definition(self):
         from scpf import SlotArcCenter2D
