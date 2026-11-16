@@ -33,3 +33,4 @@ Current records:
 - [0014-parametric-root-grounding.md](0014-parametric-root-grounding.md) — keep parameter-driven root Placement ungrounded on SolidCraft 0.42 so saved parameter edits continue to move the first occurrence.
 - [0015-typed-native-expressions.md](0015-typed-native-expressions.md) — keep native parameter expressions typed during compilation so local namespacing never rewrites ordinary user strings.
 - [0016-parameter-dependency-diagnostics.md](0016-parameter-dependency-diagnostics.md) — base model-parameter warnings on actual emitted native dependencies and explicit user `pv()` reads, with the same diagnostics for root models and root assemblies.
+- [0017-transform-safe-attachments.md](0017-transform-safe-attachments.md) — reject rotated parent/child Placement for normal attachments before lowering until complete Anchor/AnchorFrame/AnchorTopology transforms are qualified; keep ordinary rotation and as-built relationships supported.

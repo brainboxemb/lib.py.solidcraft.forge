@@ -297,9 +297,35 @@ def _occurrence_replay_variables(assembly, labels):
     return variables
 
 
+def _validate_attachment_relationships(assembly):
+    """Reject relationship states Forge cannot lower completely."""
+    for instance in assembly.instances:
+        attachment = instance.attachment
+        if attachment is None:
+            continue
+        if attachment.target.attachment is not None:
+            raise ModelError(
+                "chained attachments are not supported yet; the parent would "
+                "move when its first joint is created, before Forge creates the "
+                "child joint"
+            )
+        if attachment.as_built:
+            continue
+        if (
+            instance.placement.rotation is not None
+            or attachment.target.placement.rotation is not None
+        ):
+            raise ModelError(
+                "rotated Placement in a normal attachment is not supported yet; "
+                "Forge cannot transform every Anchor, AnchorFrame and "
+                "AnchorTopology reference through occurrence rotation"
+            )
+
+
 def _compile_assembly_with_dependencies(value, name):
     """Compile a root assembly into reusable components and occurrences."""
     assembly = _as_assembly(value)
+    _validate_attachment_relationships(assembly)
     names = _definition_names(assembly)
     commands = []
     occurrence_labels = _occurrence_labels(assembly, names)
@@ -331,20 +357,6 @@ def _compile_assembly_with_dependencies(value, name):
             grounded=False,
         ))
 
-    relationship_occurrence_ids = set()
-    for instance in assembly.instances:
-        attachment = instance.attachment
-        if attachment is None:
-            continue
-        if attachment.target.attachment is not None:
-            raise ModelError(
-                "chained attachments are not supported yet; the parent would "
-                "move when its first joint is created, before Forge creates the "
-                "child joint"
-            )
-        relationship_occurrence_ids.add(instance.occurrence_id)
-        relationship_occurrence_ids.add(attachment.target.occurrence_id)
-
     by_definition = {}
     for instance in assembly.instances:
         by_definition.setdefault(instance.definition.key, []).append(instance)
@@ -354,37 +366,6 @@ def _compile_assembly_with_dependencies(value, name):
         start=1,
     ):
         component_name = names[key]
-        relationship_definition = any(
-            instance.occurrence_id in relationship_occurrence_ids
-            for instance in instances
-        )
-        if relationship_definition:
-            normal_target_ids = {
-                other.attachment.target.occurrence_id
-                for other in assembly.instances
-                if (
-                    other.attachment is not None
-                    and not other.attachment.as_built
-                )
-            }
-            for instance in instances:
-                attachment = instance.attachment
-                normal_child = (
-                    attachment is not None
-                    and not attachment.as_built
-                )
-                normal_target = (
-                    instance.occurrence_id in normal_target_ids
-                )
-                if (
-                    instance.placement.rotation is not None
-                    and (normal_child or normal_target)
-                ):
-                    raise ModelError(
-                        f"{component_name}: rotated Placement in a normal "
-                        "attachment is not supported yet"
-                    )
-
         definition = instances[0].definition
         parent_name = instances[0].group_name
 
