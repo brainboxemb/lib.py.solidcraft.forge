@@ -2,6 +2,8 @@
 from pathlib import Path
 import unittest
 
+from scpf import BOTTOM, LEFT, Axis, Cylinder, Sphere
+from scpf.compiler import compile_model
 from scpf.runner import run_script
 
 
@@ -26,6 +28,7 @@ class PrimitiveCsgCommandTests(unittest.TestCase):
 
         self.assertEqual(sphere["operation"], "new")
         self.assertEqual(sphere["radius"], 20)
+        self.assertEqual(sphere["center"], [0, 0, 0])
         self.assertEqual(joined_box["operation"], "join")
         self.assertEqual(joined_box["center"], [18.0, 0.0, 10.0])
 
@@ -37,6 +40,25 @@ class PrimitiveCsgCommandTests(unittest.TestCase):
 
         self.assertEqual(clipped_box["operation"], "intersect")
         self.assertEqual(clipped_box["center"], [0.0, 0.0, 15.0])
+
+    def test_explicit_primitive_anchors_choose_native_datums(self):
+        bottom = compile_model(
+            Cylinder(d=8, h=20, anchor=BOTTOM),
+            "BottomCylinder",
+        )["commands"][-1]["params"]
+        self.assertEqual(bottom["base"], [0, 0, 0])
+
+        left = compile_model(
+            Cylinder(d=8, h=20, axis=Axis.X, anchor=LEFT),
+            "LeftCylinder",
+        )["commands"][-1]["params"]
+        self.assertEqual(left["base"], [0, 0, 0])
+
+        sphere = compile_model(
+            Sphere(10, anchor=LEFT),
+            "LeftSphere",
+        )["commands"][-1]["params"]
+        self.assertEqual(sphere["center"], [10, 0, 0])
 
 
 if __name__ == "__main__":
