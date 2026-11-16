@@ -311,6 +311,16 @@ Forge must preserve that existing dependency instead of creating unrelated or
 duplicated child parameters. This contract is recorded in
 [change 0003](changes/0003-explicit-component-parameter-publication.md).
 
+Parameter namespacing applies only to native CAD expressions. Ordinary strings
+are opaque user data. A text value, material name, sketch name, feature name or
+font name must never be rewritten merely because one word matches a parameter
+name.
+
+For example, publishing a child parameter named `width` may rename the native
+parameter reference to `d1_Label_width`, but `Text2D("width")` must still
+produce the literal text `"width"`. This compiler rule is recorded in
+[change 0015](changes/0015-typed-native-expressions.md).
+
 ## Features and operations
 
 - `+` joins/adds the described CAD feature to the model; Hole intent lowers
