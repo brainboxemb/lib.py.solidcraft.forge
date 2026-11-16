@@ -1710,7 +1710,7 @@ class AssemblyTests(unittest.TestCase):
         child = Board().attach(board, parent="edge_mount", child=Anchor.LEFT)
 
         with self.assertRaisesRegex(
-            ModelError, "rotated relationship Placement is not supported yet"
+            ModelError, "rotated Placement in a normal attachment is not supported yet"
         ):
             compile_assembly(board + child, "RotatedTopologyAnchor")
 
@@ -1859,7 +1859,7 @@ class AssemblyTests(unittest.TestCase):
         )
 
         with self.assertRaisesRegex(
-            ModelError, "rotated relationship Placement is not supported yet"
+            ModelError, "rotated Placement in a normal attachment is not supported yet"
         ):
             compile_assembly(base + child, "RotatedDirectFrame")
 
@@ -1941,7 +1941,7 @@ class AssemblyTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ModelError,
-            "rotated relationship Placement is not supported yet",
+            "rotated Placement in a normal attachment is not supported yet",
         ):
             compile_assembly(arm + marker, "RotatedCustomAnchor")
 
