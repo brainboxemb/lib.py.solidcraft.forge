@@ -12,17 +12,34 @@ NATIVE_ROOT = os.environ.get("SCPF_NATIVE_ROOT")
 
 
 class FourCornerLCommandTests(unittest.TestCase):
-    def test_parametric_profile_placement_is_blocked_by_current_backend(self):
-        from scpf.compiler import ModelError
+    def test_parametric_profile_placement_uses_replay_variables(self):
+        commands = run_script(
+            ROOT / "examples/four-corner-l/scpf/model.py"
+        )["commands"]
+        copies = [
+            command for command in commands
+            if command["command"] == "occurrence.copy"
+        ]
+        moves = [
+            command["params"] for command in commands
+            if command["command"] == "occurrence.move"
+        ]
+        self.assertEqual(len(copies), 3)
+        self.assertEqual(len(moves), 4)
+        self.assertTrue(all(
+            move["occurrence"].startswith("$lprofile_occurrence_")
+            for move in moves
+        ))
+        self.assertTrue(all(
+            any(name in str(move["translate"])
+                for name in ("frame_width", "frame_depth", "frame_height"))
+            for move in moves
+        ))
+        self.assertFalse(any(
+            command["command"].startswith("joint.")
+            for command in commands
+        ))
 
-        with self.assertRaisesRegex(
-            ModelError,
-            "replay-first Placement requires one occurrence at identity",
-        ):
-            run_script(ROOT / "examples/four-corner-l/scpf/model.py")
-
-
-@unittest.skip("blocked: replay-first backend cannot yet encode the required parametric Placement")
 class FourCornerLNativeTests(unittest.TestCase):
     def test_native_bounding_boxes_match_four_centered_vertical_profiles(self):
         data = _load(
