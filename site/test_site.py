@@ -288,7 +288,13 @@ def check(
     assert "Q1" in qualification_index and "Q6" in qualification_index
     assert 'class="reference-grid qualification-grid"' in qualification_index
     assert qualification_manifest["library_commit"] == sha
+    assert qualification_manifest["forge_version"]
     assert qualification_manifest["solidcraft_version"] == TESTED_SOLIDCRAFT_VERSION
+    assert qualification_manifest["qualified_at"]
+    assert f"Forge {qualification_manifest['forge_version']}" in qualification_index
+    assert f"Forge {qualification_manifest['forge_version']}" in results_page
+    assert qualification_manifest["qualified_at"] in qualification_index
+    assert qualification_manifest["qualified_at"] in results_page
     assert set(qualification_manifest["cases"]) == {
         case["slug"] for case in QUALIFICATION_CASES
     }
@@ -404,7 +410,9 @@ def check(
             assert f">{badge}</span>" in page_text, slug
 
             assert structured_result["source_commit"] == sha, slug
+            assert structured_result["forge_version"] == qualification_manifest["forge_version"], slug
             assert structured_result["solidcraft_version"] == TESTED_SOLIDCRAFT_VERSION, slug
+            assert structured_result["qualified_at"] == qualification_manifest["qualified_at"], slug
             assert manifest_case["levels"] == structured_result["levels"], slug
             assert "Native runtime:" in page_text, slug
             assert f"SolidCraft {TESTED_SOLIDCRAFT_VERSION}" in page_text, slug
