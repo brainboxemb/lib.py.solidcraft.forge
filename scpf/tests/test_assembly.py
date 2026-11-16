@@ -1053,6 +1053,68 @@ class AssemblyTests(unittest.TestCase):
             "width",
         )
 
+    def test_reusable_text_component_keeps_literal_strings_opaque(self):
+        from scpf import Sketch, Text2D
+        from scpf.assembly import compile_assembly
+        from scpf.runner import component
+
+        class Label:
+            height = 8.0
+
+            def build(self):
+                with Sketch(name="height") as sketch:
+                    Text2D(
+                        "height",
+                        height=self.height / 2,
+                        font="height",
+                    )
+                return sketch.extrude(2)
+
+        Part = component(Label, include=("height",))
+        document = compile_assembly(Part(), "Display")
+        commands = document["commands"]
+
+        parameter = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "parameters.add"
+        )
+        sketch = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.create"
+        )
+        text = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.text"
+        )
+        extrude = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.extrude"
+        )
+
+        self.assertEqual(parameter["name"], "d1_Label_height")
+        self.assertEqual(text["height"], "d1_Label_height / 2")
+        self.assertEqual(text["text"], "height")
+        self.assertEqual(text["font"], "height")
+        self.assertEqual(sketch["name"], "height")
+        self.assertEqual(extrude["name"], "height")
+
+        def assert_plain_json_strings(value):
+            if isinstance(value, str):
+                self.assertIs(type(value), str)
+            elif isinstance(value, dict):
+                for key, item in value.items():
+                    self.assertIs(type(key), str)
+                    assert_plain_json_strings(item)
+            elif isinstance(value, (list, tuple)):
+                for item in value:
+                    assert_plain_json_strings(item)
+
+        assert_plain_json_strings(document)
+
     def test_reusable_component_keeps_material_name_equal_to_parameter_name(self):
         from scpf.assembly import compile_assembly
         from scpf.core import Box
