@@ -101,17 +101,16 @@ A point used by `joint.create` may be equally valid. The question is not
 
 Change 0010 must answer that before copied attachments are accepted or rejected.
 
-## Temporary placement before creating a joint
+## Placing a copy before creating a joint
 
-One experiment moves a copied component a small distance away before
-`joint.create` runs. Forge then gives SolidCraft a geometry point that belongs
-only to that copy. After `joint.create`, the joint solver moves the component
-to its required attached position.
+One experiment first places a copied component a small distance away.
+Forge then gives `joint.create` a point on that copy. After the joint is
+created, SolidCraft moves the component to the position required by the joint.
 
-Do not call this only a "staging offset". The actual behaviour is:
+Describe this literally:
 
 > Forge first places the copied component a small distance away so SolidCraft
-> can select that copy by its geometry. Forge then creates the joint.
+> can select that copy by its geometry. Forge then runs `joint.create`.
 
 This may match normal interactive CAD use: a loose part is positioned where it
 can be selected, the user selects geometry on both parts, and the joint then
@@ -132,17 +131,17 @@ Before copied attachments are considered supported, test and document:
    reordered?
 5. When a point is ambiguous, does SolidCraft report that clearly or silently
    choose one occurrence?
-6. Is temporarily placing a loose component before creating the joint
-   equivalent to the normal SolidCraft UI workflow?
+6. Is placing a loose component away from the other part before
+   `joint.create` the same operation a user performs in the SolidCraft UI?
 7. Which cases need an explicit occurrence/path instead of a point pick?
 
 ## Current implementation state
 
 The `Component:N` construction has been removed from the current 0010 branch.
 
-While the questions above are being checked, copied occurrences are temporarily
-rejected as attachment endpoints. That is a conservative implementation state,
-not yet the final design decision.
+While the questions above are being checked, the current branch rejects a copy
+as an attachment endpoint. That is only the current implementation state, not
+yet the final design decision.
 
 First occurrences still use the component name only in the joint commands where
 SolidCraft 0.42 has been tested to support it.
