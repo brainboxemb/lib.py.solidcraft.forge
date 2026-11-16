@@ -10,41 +10,39 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Changed
 
-- Corrected the change-0010 qualification classification: the `components`
-  case uses ordinary `Placement` and is supported again. The three corner
-  reuse cases now use `Placement` instead of artificial attachments and remain
-  blocked only by the known replay-first Placement limits from change 0009.
-- `.group(...)` now changes SolidCraft hierarchy only. Forge creates group
+- Occurrence replay no longer depends on predicted SolidCraft browser names
+  such as `Block:2`. `component.create` and `occurrence.copy` bind their
+  returned occurrence ids to explicit replay variables such as `$block_2`.
+- Numeric unrotated copies still put their translation directly in
+  `occurrence.copy(..., translate=...)`. Symbolic Placement, rotated copies,
+  and a non-identity first occurrence use a later `occurrence.move` addressed
+  by the bound runtime id.
+- Copied occurrences can now be used as attachment/as-built endpoints without
+  guessing their SolidCraft occurrence name.
+- The same replay-variable resolver is used for the live GUI connection,
+  saved replay files and headless SolidCraft qualification.
+- Replay executions can write a separate replay log containing the concrete
+  SolidCraft ids and resolved command parameters for that run. The replay file
+  itself remains deterministic and contains no temporary native ids.
+- The `components`, `four-corner-l`, `eight-corner-brackets` and
+  `eight-flightcase-corners` qualification cases now model ordinary
+  assembly-owned `Placement` instead of artificial attachment workarounds.
+- `.group(...)` changes SolidCraft hierarchy only. Forge creates group
   components with `grounded=false`; grouping a physical root occurrence no
   longer moves the grounding decision onto the empty group.
-- Ordinary copies of one reusable definition may now be placed under different
-  groups by using SolidCraft 0.42 `occurrence.copy(parent=...)` instead of
-  duplicating geometry or guessing occurrence names.
-- `Assembly.group()` now remaps direct attachment targets to the grouped
+- Ordinary copies of one reusable definition may be placed under different
+  groups by using SolidCraft 0.42 `occurrence.copy(parent=...)`.
+- `Assembly.group()` remaps direct attachment targets to the grouped
   occurrence objects, not only to matching Forge occurrence ids.
-
-- Attachment command generation no longer predicts SolidCraft occurrence names
-  such as `Block:2`. First occurrences use component-name selectors only in
-  joint commands where SolidCraft 0.42 has been tested to accept them.
-- A copied occurrence used as an attachment endpoint now fails clearly because
-  Forge cannot put the runtime occurrence id returned by `occurrence.copy`
-  into its static replay document. Forge does not replace that missing reference
-  with point-only lookup or by moving the copy first.
-- Relationship rotation, copied as-built attachments and chained attachments
-  also fail clearly where SolidCraft 0.42 reference behaviour is not yet
-  supported.
-
-- Ordinary occurrence Placement is now limited to replay-safe SolidCraft 0.42
-  lowering: one identity occurrence per reusable definition and concrete,
-  unrotated copies through `occurrence.copy(..., translate=...)`.
-- Forge rejects ordinary Placement that would require a later
-  `occurrence.move` addressed through a predicted SolidCraft `Component:N`
-  name.
+- Rotated relationship Placement and chained attachments remain unsupported
+  until their relationship semantics are qualified separately.
 
 ### Added
 
-- Stable internal Forge occurrence ids are now used to track physical
-  occurrences across copy/group/attach transformations.
+- Versioned `scpf-replay` JSON documents with explicit named runtime-id
+  bindings and `scpf-replay-log` execution logs.
+- Stable internal Forge occurrence ids are used to track physical occurrences
+  across copy/group/attach transformations.
 
 ## [0.3.2] - 2026-11-15
 
