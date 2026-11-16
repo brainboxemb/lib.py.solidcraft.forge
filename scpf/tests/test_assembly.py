@@ -15,7 +15,7 @@ class AssemblyTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ModelError,
-            "attachment involving a copied occurrence",
+            "cannot attach a copied occurrence",
         ):
             run_script(ROOT / "examples/components/scpf/model.py")
 
@@ -1206,7 +1206,7 @@ class AssemblyTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ModelError,
-            "attachment involving a copied occurrence",
+            "cannot attach a copied occurrence",
         ):
             run_script(ROOT / "examples/xz-anchor/scpf/model.py")
 
@@ -1823,7 +1823,7 @@ class AssemblyTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ModelError,
-            "attachment involving a copied occurrence",
+            "cannot attach a copied occurrence",
         ):
             compile_assembly(base + child, "AsBuiltAttach")
 
