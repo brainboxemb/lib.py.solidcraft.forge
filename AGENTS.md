@@ -89,7 +89,7 @@ source that answers the task:
 | SolidCraft command/API lookup | `docs/agent/solidcraft.md` |
 | SolidCraft version upgrade | `docs/qualification/solidcraft-upgrade-protocol.md` |
 | SCPF version/release work | `docs/10-release-process.md` |
-| PythonSCAD / pyBOSL2 / CadQuery qualification reference | `docs/agent/reference-libraries.md` |
+| PythonSCAD / pyBOSL2 / CadQuery / build123d qualification reference | `docs/agent/reference-libraries.md` |
 
 Only read additional files when the first source is insufficient. The compact
 `docs/agent/forge-api.json` snapshot is generated from the same public Python
@@ -99,7 +99,7 @@ then read the linked local guide or relevant implementation/docstring only when
 more semantics are needed. Do not edit the snapshot by hand.
 For SolidCraft, use the version-pinned local vendor snapshot or local CLI
 introspection before any website lookup. Only consult upstream/external
-PythonSCAD, pyBOSL2 or CadQuery documentation when the local agent reference
+PythonSCAD, pyBOSL2, CadQuery or build123d documentation when the local agent reference
 does not cover the required operation or when intentionally refreshing that reference.
 
 ## Public API source of truth
@@ -139,8 +139,9 @@ Every qualification case contains:
 - `examples/<case>/pythonscad/model.py`
 - `examples/<case>/pybosl2/model.py`
 - `examples/<case>/cadquery/model.py`
+- `examples/<case>/build123d/model.py`
 
-PythonSCAD, pyBOSL2 and CadQuery express the same modelling intent from
+PythonSCAD, pyBOSL2, CadQuery and build123d express the same modelling intent from
 different library viewpoints. They are not alternative Forge specifications. Use
 `docs/agent/reference-libraries.md` before looking upstream.
 
@@ -161,7 +162,7 @@ Keep the edit-check loop short:
   main-branch qualification.
 
 A qualification case is a fixed comparison target. Do not change its expected
-geometry or its PythonSCAD, pyBOSL2 or CadQuery reference code merely because
+geometry or its PythonSCAD, pyBOSL2, CadQuery or build123d reference code merely because
 Forge changes its defaults or syntax. Migrate the Forge/SCPF fixture so it
 continues to produce the established case. Change expected geometry and
 external references only when the task explicitly changes that qualification

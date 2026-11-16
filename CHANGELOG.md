@@ -8,6 +8,12 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- build123d 0.12.0 is the fourth required, independently executed and
+  rendered qualification reference for each supported case, beside
+  PythonSCAD, pyBOSL2 and CadQuery (issue #196).
+
 ## [0.5.0] - 2026-11-16
 
 ### Added

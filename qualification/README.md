@@ -73,12 +73,11 @@ that startup is the bottleneck.
 The same runner is available in GitHub Actions through
 `SCPF affected-case qualification` (manual workflow dispatch). That workflow
 also executes the configured comparison references and stores their independently
-exported STL/render evidence. PythonSCAD, pyBOSL2 and CadQuery are required by
+exported STL/render evidence. PythonSCAD, pyBOSL2, CadQuery and build123d are required by
 default. A case may omit one only through a documented technical
 `reference_exceptions` entry.
 
-To run those comparison references locally after installing the pinned
-comparison libraries:
+To run those comparison references locally, install the pinned comparison libraries. Keep build123d in a separate virtual environment from pyBOSL2 because their pinned webcolors requirements conflict, and set `BUILD123D_PYTHON` to that environment's Python:
 
 ```text
 python qualification/reference_validation.py \
@@ -98,13 +97,14 @@ gate.
 
 ## Reference models
 
-Every case has a Forge model plus three independent comparison models:
+Every case has a Forge model plus four independent comparison models:
 
 ```text
 examples/<case>/scpf/model.py
 examples/<case>/pythonscad/model.py
 examples/<case>/pybosl2/model.py
 examples/<case>/cadquery/model.py
+examples/<case>/build123d/model.py
 ```
 
 The required set is defined once in `qualification/cases.py`. Missing

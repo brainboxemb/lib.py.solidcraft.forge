@@ -13,13 +13,15 @@ REFERENCE_URLS = {
     "OpenSCAD": "https://openscad.org/documentation.html",
     "PythonSCAD": "https://github.com/pythonscad/pythonscad",
     "CadQuery": "https://cadquery.readthedocs.io/",
+    "build123d": "https://build123d.readthedocs.io/en/stable/",
 }
 
-DEFAULT_REFERENCE_IMPLEMENTATIONS = ("pythonscad", "pybosl2", "cadquery")
+DEFAULT_REFERENCE_IMPLEMENTATIONS = ("pythonscad", "pybosl2", "cadquery", "build123d")
 REFERENCE_IMPLEMENTATION_LABELS = {
     "pythonscad": "PythonSCAD",
     "pybosl2": "pyBOSL2",
     "cadquery": "CadQuery",
+    "build123d": "build123d",
 }
 
 
