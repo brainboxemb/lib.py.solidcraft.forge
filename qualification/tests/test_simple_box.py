@@ -28,16 +28,20 @@ class SimpleBoxCommandTests(unittest.TestCase):
         self.assertEqual(box["length"], "length")
         self.assertEqual(box["width"], "width")
         self.assertEqual(box["height"], "height")
-        self.assertEqual(
-            box["corner"],
-            ["-length / 2", "-width / 2", 0],
-        )
+        self.assertEqual(box["center"], [0, 0, 0])
+        self.assertNotIn("corner", box)
 
         self.assertFalse(
             any(row["command"].startswith("sketch.") for row in commands)
         )
         self.assertFalse(
             any(row["command"] == "solid.extrude" for row in commands)
+        )
+        self.assertFalse(
+            any(
+                row["command"] in ("solid.move", "occurrence.move")
+                for row in commands
+            )
         )
 
 
