@@ -10,7 +10,7 @@ EXPECTED_BOUNDS = {
         {"label": "SimpleBox", "min": [-20, -15, 0], "max": [20, 15, 10]},
     ],
     "anchored-holes": [
-        {"label": "AnchoredHoles", "min": [0, 0, 0], "max": [100, 60, 10]},
+        {"label": "AnchoredHoles", "min": [-50, -30, 0], "max": [50, 30, 10]},
     ],
     "parameter-scope": [
         {"label": "local", "min": [-20, -10, 0], "max": [20, 10, 10]},
