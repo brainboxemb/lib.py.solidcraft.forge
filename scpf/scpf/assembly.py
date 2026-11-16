@@ -193,8 +193,8 @@ def _relationship_replay_order(instances, component_name):
         )
     if first is None:
         raise ModelError(
-            f"{component_name}: relationship lowering needs either an identity "
-            "first occurrence or a non-as-built attached occurrence"
+            f"{component_name}: SolidCraft must create the first occurrence at "
+            "identity, unless a normal joint will place that first occurrence"
         )
 
     ordered = [first] + [
@@ -288,8 +288,9 @@ def compile_assembly(value, name):
             continue
         if attachment.target.attachment is not None:
             raise ModelError(
-                "chained attachments are not replay-safe yet; attach children "
-                "to an occurrence that is not itself attached"
+                "chained attachments are not supported yet; the parent would "
+                "move when its first joint is created, before Forge creates the "
+                "child joint"
             )
         relationship_occurrence_ids.add(instance.occurrence_id)
         relationship_occurrence_ids.add(attachment.target.occurrence_id)
@@ -395,10 +396,10 @@ def compile_assembly(value, name):
         commands.append(_command("component.activate", component="root"))
 
         # SolidCraft creates the first occurrence together with the component.
-        # In qualified joint commands SolidCraft 0.42 accepts the component name
-        # as an explicit selector for that first occurrence. Forge has no equally
-        # explicit replay-safe selector for later copies, so copied occurrences
-        # are never used as attachment endpoints.
+        # In the tested joint commands SolidCraft 0.42 accepts the component
+        # name for the first occurrence. A later copy only gets its native id
+        # when occurrence.copy runs, so Forge cannot use that copy as an
+        # attachment endpoint in this static command document.
         for index, instance in enumerate(instances, start=1):
             if index == 1:
                 if relationship_definition:
@@ -431,9 +432,8 @@ def compile_assembly(value, name):
         parent_id = attachment.target.occurrence_id
         if child_id not in occurrence_refs or parent_id not in occurrence_refs:
             raise ModelError(
-                "attachment endpoints must be explicit first occurrences; "
-                "copied occurrence relationships are not replay-safe in "
-                "SolidCraft 0.42"
+                "Forge cannot address one of these attachment occurrences in "
+                "the static SolidCraft 0.42 command document"
             )
 
         child_occurrence = occurrence_refs[child_id]
