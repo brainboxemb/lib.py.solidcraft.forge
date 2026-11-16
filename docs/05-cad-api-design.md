@@ -70,7 +70,7 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch supported by the selected target face. The local 2D sketch origin is the centre of that target face. |
 | profile inside a sketch | `sketch.add(profile, anchor=CENTER)` | Place the profile's selected 2D anchor on the sketch origin. CENTER is the default semantic centring operation; numeric offset is not a centring substitute. |
 | deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. Use only when the design actually calls for an offset. |
-| occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Placement itself does not create a joint; the replay-first SolidCraft 0.42 backend currently supports an identity first occurrence plus concrete unrotated copies and rejects ordinary cases that need a later occurrence selector. |
+| occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Placement itself does not create a joint. Forge replay variables bind the real SolidCraft occurrence ids when a later native move is needed. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
 ### `at()`
@@ -186,6 +186,14 @@ existing parameters instead of publishing helper parameters.
 The replay-variable correction is recorded in
 [change 0013](changes/0013-correct-0010-placement-cases.md).
 
+SolidCraft 0.42 has one grounding limitation: an expression-based
+`occurrence.move` on a grounded occurrence does not follow later parameter
+changes. Therefore Forge leaves a physical root occurrence ungrounded when its
+Placement position contains Parameters or Expressions. A fixed root occurrence
+still uses the normal grounded behaviour. This is a backend compatibility rule,
+not a change to the public meaning of Placement. See
+[change 0014](changes/0014-parametric-root-grounding.md).
+
 ### `attach()`
 
 `attach()` is reserved for explicit relationships between reusable component
@@ -225,9 +233,10 @@ Forge represents the group with an empty SolidCraft component and explicitly
 sets that group to `grounded=false`. Grouping must not add a joint, Placement
 or solver constraint.
 
-If the physical root occurrence is inside a group, that physical occurrence
-keeps the same grounded state it had before grouping. The empty group does not
-become the fixed part.
+If the physical root occurrence is inside a group, grouping itself does not
+change its grounding decision. The empty group does not become the fixed part.
+For SolidCraft 0.42, a root occurrence with parameter-driven Placement remains
+ungrounded so its occurrence move can follow later parameter changes.
 
 One reusable definition may have occurrences in different groups. Forge uses
 SolidCraft 0.42 `occurrence.copy(parent=...)` when a later copy belongs under a
