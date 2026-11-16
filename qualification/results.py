@@ -163,12 +163,20 @@ def collect(
             },
         }
 
+        blocked_reason = case.get("blocked_reason")
+        if blocked_reason:
+            levels["q1"]["status"] = "pass" if q1_pass else "missing"
+            for key in ("q2", "q3", "q4", "q5", "q6"):
+                levels[key]["status"] = "blocked"
+
         required_statuses = [
             level["status"]
             for key, level in levels.items()
             if key != "q5" or mutation_required
         ]
-        if "fail" in required_statuses:
+        if blocked_reason:
+            overall = "blocked"
+        elif "fail" in required_statuses:
             overall = "fail"
         elif "missing" in required_statuses:
             overall = "incomplete"
@@ -184,6 +192,7 @@ def collect(
             "source_commit": source_commit,
             "solidcraft_version": solidcraft_version,
             "status": overall,
+            "blocked_reason": blocked_reason,
             "levels": levels,
             "evidence": {
                 "native_files": native_files,
