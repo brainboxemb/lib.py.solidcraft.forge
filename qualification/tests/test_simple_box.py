@@ -3,6 +3,8 @@
 from pathlib import Path
 import unittest
 
+from scpf.core import Anchor, Box
+from scpf.compiler import compile_model
 from scpf.runner import run_script
 
 
@@ -43,6 +45,19 @@ class SimpleBoxCommandTests(unittest.TestCase):
                 for row in commands
             )
         )
+
+    def test_cardinal_box_anchor_uses_native_corner_datum(self):
+        commands = compile_model(
+            Box(40, 30, 10, anchor=Anchor.FRONT + Anchor.BOTTOM),
+            "FrontBottomBox",
+        )["commands"]
+        box = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(box["corner"], [-20.0, 0, 0])
+        self.assertNotIn("center", box)
 
 
 if __name__ == "__main__":
