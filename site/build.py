@@ -40,6 +40,7 @@ try:
         REFERENCE_IMPLEMENTATION_LABELS,
         REFERENCE_URLS,
         reference_implementations_for,
+        supported_case_slugs,
     )
     from qualification.expectations import EXPECTED_VISUAL_BOXES
 finally:
@@ -580,17 +581,33 @@ def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root
     (out / ".nojekyll").write_text("", encoding="utf-8")
     cards = []
     manifest = {"library_commit": sha, "qualifier": "command-generation", "examples": {}}
+    qualification_by_slug = {
+        case["slug"]: case for case in QUALIFICATION_CASES
+    }
+    supported_slugs = set(supported_case_slugs())
+
     for slug, info in EXAMPLES.items():
         source_path = ROOT / "examples" / slug / "scpf" / "model.py"
-        commands = run_script(source_path)
-        assert commands.get("commands"), f"{slug}: empty command list"
+        blocked_reason = qualification_by_slug.get(slug, {}).get("blocked_reason")
+        if blocked_reason:
+            commands = {
+                "commands": [],
+                "blocked_reason": blocked_reason,
+            }
+        else:
+            commands = run_script(source_path)
+            assert commands.get("commands"), f"{slug}: empty command list"
         dest = out / "examples" / slug
         dest.mkdir(parents=True, exist_ok=True)
         source = text(source_path)
         (dest / "model.py").write_text(source, encoding="utf-8")
         (dest / "commands.json").write_text(json.dumps(commands, indent=2) + "\n", encoding="utf-8")
         count = len(commands["commands"])
-        screenshot = native_root / slug / "model.png" if verified else None
+        screenshot = (
+            native_root / slug / "model.png"
+            if verified and not blocked_reason
+            else None
+        )
         if (
             screenshot is not None
             and screenshot.is_file()
@@ -608,21 +625,26 @@ def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root
             preview_path = "preview.svg"
             preview_kind = "schematic"
             preview_caption = (
-                "Schematic illustration only; this example is not part of the "
-                "current native screenshot set."
+                f"BLOCKED: {blocked_reason}"
+                if blocked_reason
+                else (
+                    "Schematic illustration only; this example is not part of the "
+                    "current native screenshot set."
+                )
             )
         manifest["examples"][slug] = {"source": f"examples/{slug}/model.py",
                                       "commands": f"examples/{slug}/commands.json",
                                       "command_count": count,
                                       "preview": f"examples/{slug}/{preview_path}",
-                                      "preview_kind": preview_kind}
+                                      "preview_kind": preview_kind,
+                                      "blocked_reason": blocked_reason}
         kinds = [row["command"] for row in commands["commands"]]
         timeline = "".join(f"<li><code>{escape(kind)}</code></li>" for kind in kinds)
         source_url = f"{LIBRARY_URL}/blob/main/examples/{slug}/scpf/model.py"
         body = f"""<main class="wrap"><div class="crumb"><a href="../../">← Examples</a> / {escape(info['title'])}</div>
 <section class="hero small"><p class="eyebrow">Small API regression fixture</p>
 <h1>{escape(info['title'])}</h1><p>{escape(info['description'])}</p>
-<p class="meta"><span>Compiled: {count} native commands</span><span>{escape(preview_caption)}</span></p></section>
+<p class="meta"><span>{escape("Blocked before command generation" if blocked_reason else f"Compiled: {count} native commands")}</span><span>{escape(preview_caption)}</span></p></section>
 <figure class="example-image"><img src="{preview_path}" alt="{escape(info['title'])}: {escape(preview_caption)}" loading="lazy">
 <figcaption>{escape(preview_caption)}</figcaption></figure>
 <div class="twocol"><section class="panel"><h2>Python source</h2><pre><code>{escape(source)}</code></pre>
@@ -1081,8 +1103,15 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
 
     for case in QUALIFICATION_CASES:
         slug = case["slug"]
+        blocked_reason = case.get("blocked_reason")
         source_path = ROOT / "examples" / slug / "scpf" / "model.py"
-        commands = run_script(source_path)
+        if blocked_reason:
+            commands = {
+                "commands": [],
+                "blocked_reason": blocked_reason,
+            }
+        else:
+            commands = run_script(source_path)
         case_dir = qualification_root / slug
         case_dir.mkdir(exist_ok=True)
         source = text(source_path)
@@ -1280,9 +1309,27 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             'to this site build. The case sheet and command contract are still shown.</div>'
         )
         case_preview_html = ""
-        status = "NOT RUN"
-        status_detail = "Q1 Q2 documented"
-        if native_case is not None and native_case.is_dir():
+        status = "BLOCKED" if blocked_reason else "NOT RUN"
+        status_detail = blocked_reason or "Q1 Q2 documented"
+        if blocked_reason:
+            results_html = (
+                '<section class="panel"><h2>3. Results</h2>'
+                '<div class="notice"><strong>BLOCKED</strong><p>'
+                + escape(blocked_reason)
+                + '</p><p>Forge stops before generating SolidCraft commands for '
+                'this case.</p></div></section>'
+            )
+            preview_html = (
+                '<div class="notice"><strong>BLOCKED</strong><p>'
+                + escape(blocked_reason)
+                + '</p></div>'
+            )
+            result_file = native_case / "qualification-result.json" if native_case is not None else None
+            if result_file is not None and result_file.is_file():
+                qualification_result = json.loads(result_file.read_text(encoding="utf-8"))
+                shutil.copyfile(result_file, case_dir / result_file.name)
+                native_files.append(result_file.name)
+        elif native_case is not None and native_case.is_dir():
             result_file = native_case / "qualification-result.json"
             if not result_file.is_file():
                 raise ValueError(f"Structured qualification result missing: {result_file}")
