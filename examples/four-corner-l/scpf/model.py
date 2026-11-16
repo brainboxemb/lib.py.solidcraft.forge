@@ -11,6 +11,7 @@ class FrameBlock:
             self._width,
             self._depth,
             self._height,
+            anchor=Anchor.BOTTOM,
         ).fillet(8, edges=Edges.VERTICAL)
 
 

@@ -325,11 +325,12 @@ assembly-owned datums in detail.</p>""",
         "summary": "Solids, 2D profiles, extrusions and the CSG operators.",
         "body": """
 <h2 id="solids">Start with a solid</h2>
-<p><code>Box(length, width, height)</code> is centred in X/Y, with its lower
-face at Z=0. <code>Cylinder(d=…, h=…, axis=Axis.Z)</code> starts at its
-base point. Use <code>Axis.X</code> or <code>Axis.Y</code> for the other
-native principal directions. A sphere is specified by radius. These initial coordinate assumptions matter
-when locating holes or placing multiple components.</p>
+<p><code>Box</code>, <code>Cylinder</code> and <code>Sphere</code> are centred
+on their geometric CENTER by default. Use <code>anchor=...</code> when a face,
+axial end or tangent datum should lie at the origin. For Cylinder the anchor is
+resolved after choosing <code>Axis.X</code>, <code>Axis.Y</code> or
+<code>Axis.Z</code>; for example LEFT/RIGHT are the axial ends of an X-axis
+cylinder and BOTTOM/TOP are the axial ends of a Z-axis cylinder.</p>
 """ + code("""from scpf import (
     BOTTOM, FRONT, LEFT, RIGHT,
     Axis, Box, Cylinder, Sphere,
@@ -343,17 +344,20 @@ board = Box(80, 50, 12).at(
     4,
     edges=[BOTTOM + LEFT, BOTTOM + RIGHT],
 )
-pin = Cylinder(d=8, h=20, axis=Axis.Z).at(10, 10, 8)
+pin = Cylinder(d=8, h=20, axis=Axis.Z).at(
+    10, 10, 8,
+    anchor=BOTTOM,
+)
 side_pin = Cylinder(d=8, h=20, axis=Axis.X).at(-10, 0, 0)
 ball = Sphere(12)
 
 body = Sphere(20) & Box(30, 30, 30)
 centered_bore = Cylinder(d=8, h=30, axis=Axis.X).at(body)""") + """
-<p><code>at(x, y, z)</code> uses absolute coordinates. Passing another
-Shape instead uses shape-relative placement. The first supported relation is
-CENTER-to-CENTER, so <code>Cylinder(...).at(body)</code> derives the native
-cylinder base from its axis and height instead of requiring a manual
-<code>-h/2</code> offset.</p>
+<p><code>at(x, y, z)</code> places CENTER at those coordinates unless another
+<code>anchor=...</code> is supplied. Passing another Shape instead uses
+shape-relative CENTER-to-CENTER placement. Forge derives the native Box corner,
+Cylinder base or Sphere center from the selected datum; callers do not add
+manual half-size corrections.</p>
 <h2 id="profiles">Draw a 2D profile, then extrude it</h2>
 <p>A <code>Rectangle2D</code> is a planar profile rather than a 3D body. 2D geometry is authored inside an explicit <code>Sketch</code> scope. <code>Polygon2D</code> can be created on the XY, XZ or YZ plane.</p>
 """ + code("""from scpf import Sketch, Rectangle2D, Polygon2D

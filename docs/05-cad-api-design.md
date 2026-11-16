@@ -73,6 +73,57 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Placement itself does not create a joint. Forge replay variables bind the real SolidCraft occurrence ids when a later native move is needed. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
+### Native primitive anchor datum
+
+Direct standard 3D primitives use CENTER as their constructor datum:
+
+```python
+box = Box(80, 50, 10)
+pin = Cylinder(d=8, h=20)
+ball = Sphere(12)
+```
+
+The public signatures are:
+
+```python
+Box(length, width, thickness, *, anchor=Anchor.CENTER)
+Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER)
+Sphere(radius, *, anchor=Anchor.CENTER)
+```
+
+`anchor` selects which world-cardinal primitive datum lies at model
+coordinate `(0, 0, 0)` before later placement.
+
+For Cylinder the anchor is resolved against its world XYZ bounds after the axis
+is chosen. Axis.X therefore uses LEFT/RIGHT for the axial ends; Axis.Y uses
+FRONT/BACK; Axis.Z uses BOTTOM/TOP. The remaining cardinal directions select
+tangent datums on the transverse circular bounds.
+
+Forge lowers each primitive through the native command that SolidCraft already
+owns:
+
+- Box CENTER maps to native `center`; another Box anchor maps to the matching
+  native `corner`.
+- Cylinder always maps to native `base`; Forge derives that base from axis,
+  height, diameter and the selected anchor.
+- Sphere maps to native `center`; Forge derives the center from the selected
+  tangent/center anchor.
+
+The same calculation is used in direct and Boolean CSG paths. Do not add a
+corrective move merely to preserve an old constructor convention.
+
+Dimension-defined sketch profiles Rectangle2D, Circle2D and RoundedRectangle2D
+are already centered by default from change 0018. Polygon2D and Text2D keep
+authored coordinates/insertion points.
+
+`Box.taper(from_z=..., inset=...)` is anchor-aware: `from_z` is measured
+from the actual Box bottom face regardless of the constructor anchor.
+
+This is intentionally a breaking cleanup while Forge remains unstable. Models
+that require an old base/bottom datum must state it explicitly with `anchor=`.
+
+See [change 0022](changes/0022-native-box-origin.md).
+
 ### `at()`
 
 `at()` is geometric placement/alignment.

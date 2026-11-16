@@ -1,11 +1,11 @@
 class Base:
     def build(self):
-        return Box(40, 30, 10)
+        return Box(40, 30, 10, anchor=Anchor.BOTTOM)
 
 
 class Block:
     def build(self):
-        return Box(20, 20, 10)
+        return Box(20, 20, 10, anchor=Anchor.BOTTOM)
 
 
 class ParametricAttach:

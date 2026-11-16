@@ -8,6 +8,23 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- `Box(..., anchor=...)`, `Cylinder(..., anchor=...)` and
+  `Sphere(..., anchor=...)` select deliberate world-cardinal primitive
+  datums with the existing Anchor vocabulary.
+
+### Changed
+
+- Box, Cylinder and Sphere now use their geometric CENTER at XYZ=0 by default.
+  Models that require a bottom/base/tangent datum state it explicitly through
+  `anchor=`.
+- Native feature-history and Boolean CSG lowering now share the same primitive
+  datum calculations. Box emits native center/corner data, Cylinder derives its
+  native base from axis and anchor, and Sphere derives its native center.
+- `Box.taper()` measures `from_z` from the actual Box bottom face regardless
+  of the constructor anchor.
+
 ## [0.4.2] - 2026-11-16
 
 ### Fixed

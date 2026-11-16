@@ -316,7 +316,7 @@ class SCPFExamples(unittest.TestCase):
         from scpf.core import Axis, Cylinder
 
         commands = compile_model(
-            Cylinder(d=12, h=30, axis=Axis.X).at(-15, 0, 0),
+            Cylinder(d=12, h=30, axis=Axis.X).at(0, 0, 0),
             "Pin",
         )["commands"]
         cylinder = commands[-1]
@@ -332,7 +332,9 @@ class SCPFExamples(unittest.TestCase):
         from scpf.core import Anchor, Axis, Box, Cylinder, Parameter, Sphere
 
         size = Parameter("size", 50)
-        body = Sphere(size / 1.5) & Box(size, size, size)
+        body = Sphere(size / 1.5) & Box(
+            size, size, size
+        )
         diameter = size / 1.5
 
         holes = (
@@ -372,7 +374,7 @@ class SCPFExamples(unittest.TestCase):
                 "class Pin:\n"
                 "    diameter: float = 12\n"
                 "    def build(self):\n"
-                "        Cylinder(d=self.diameter, h=20).at(10, 5, 3)\n"
+                "        Cylinder(d=self.diameter, h=20).at(10, 5, 3, anchor=Anchor.BOTTOM)\n"
                 "Pin()\n"
             )
             commands = run_script(script)["commands"]
@@ -544,7 +546,7 @@ class SCPFExamples(unittest.TestCase):
             ],
         )
         self.assertEqual(commands[0]["params"]["body_name"], "Enclosure")
-        self.assertEqual(commands[1]["params"]["faces"], [[0, 0, 30]])
+        self.assertEqual(commands[1]["params"]["faces"], [[0, 0, 15]])
         self.assertEqual(commands[1]["params"]["thickness"], 2)
         with self.assertRaises(ValueError):
             Box(80, 50, 30).shell(2, open=Faces.TOP).move(x=10)
@@ -552,7 +554,9 @@ class SCPFExamples(unittest.TestCase):
     def test_bound_relative_offsets_resolve_against_parent_extents(self):
         from scpf.compiler import compile_model
         from scpf.core import Anchor, Boss, Box, Faces, X, Y
-        body = Box(80, 50, 30).shell(2, open=Faces.TOP)
+        body = Box(
+            80, 50, 30, anchor=Anchor.BOTTOM
+        ).shell(2, open=Faces.TOP)
 
         minimum = Boss(d=7, h=12, hole_d=2.5).attach(
             body,
@@ -577,7 +581,9 @@ class SCPFExamples(unittest.TestCase):
 
     def test_bound_relative_offsets_reject_wrong_axis(self):
         from scpf.core import Anchor, Boss, Box, Faces, X, Y
-        body = Box(80, 50, 30).shell(2, open=Faces.TOP)
+        body = Box(
+            80, 50, 30, anchor=Anchor.BOTTOM
+        ).shell(2, open=Faces.TOP)
         with self.assertRaisesRegex(ValueError, "requires X bounds"):
             Boss(d=7, h=12, hole_d=2.5).attach(
                 body,
@@ -603,11 +609,13 @@ class SCPFExamples(unittest.TestCase):
             compile_model(body + boss, "Enclosure")
 
     def test_rounded_rectangle_sketch_compiles_to_true_native_arcs(self):
-        from scpf.core import Box, RoundedRectangle2D, Direction
+        from scpf.core import Anchor, Box, RoundedRectangle2D, Direction
         from scpf.explicit_sketch import Sketch
         from scpf.compiler import compile_model
 
-        panel = Box(159.7, 319.71, 14.5).taper(from_z=2, inset=1.25)
+        panel = Box(
+            159.7, 319.71, 14.5, anchor=Anchor.BOTTOM
+        ).taper(from_z=2, inset=1.25)
         with Sketch(name="Rounded rear bays", on=panel) as bays:
             for y in (-120, -40, 40, 120):
                 bays.add(
@@ -632,11 +640,13 @@ class SCPFExamples(unittest.TestCase):
 
     def test_explicit_rear_bay_sketch_on_tapered_box(self):
         """Four rear window pockets retain the front plate and the editable loft."""
-        from scpf.core import Box, Rectangle2D, Direction
+        from scpf.core import Anchor, Box, Rectangle2D, Direction
         from scpf.explicit_sketch import Sketch
         from scpf.compiler import compile_model
 
-        panel = Box(159.7, 319.71, 14.5).taper(from_z=2, inset=1.25)
+        panel = Box(
+            159.7, 319.71, 14.5, anchor=Anchor.BOTTOM
+        ).taper(from_z=2, inset=1.25)
         with Sketch(name="Rear electronics bays", on=panel, plane="XY",
                     origin=(0, 0, 14.5)) as rear:
             for center_y in (-120, -40, 40, 120):
@@ -706,8 +716,67 @@ class SCPFExamples(unittest.TestCase):
         commands = document["commands"]
         self.assertEqual(commands[1]["params"]["center"], [10, 20, 30])
         self.assertEqual(commands[2]["params"]["center"], [10, 20, 30])
-        self.assertEqual(commands[3]["params"]["base"], [10, 20, 20])
+        self.assertEqual(commands[3]["params"]["base"][:2], [10, 20])
+        self.assertIn("size / 2", str(commands[3]["params"]["base"][2]))
+        self.assertIn("20 mm", str(commands[3]["params"]["base"][2]))
         self.assertEqual(commands[3]["params"]["axis"], "Z")
+
+    def test_all_standard_solids_use_centered_origin_in_native_and_csg(self):
+        from scpf import BOTTOM, FRONT, LEFT, Axis, Box, Cylinder, Sphere
+        from scpf.compiler import compile_model
+
+        # Feature-tree and CSG lowering must compute exactly the same native
+        # base for a Cylinder. No implicit bottom-vs-center difference.
+        cases = (
+            (Cylinder(d=8, h=20), [0, 0, -10]),
+            (Cylinder(d=8, h=20, anchor=BOTTOM), [0, 0, 0]),
+            (Cylinder(d=8, h=20, axis=Axis.X), [-10, 0, 0]),
+            (Cylinder(d=8, h=20, axis=Axis.X, anchor=LEFT), [0, 0, 0]),
+            (Cylinder(d=8, h=20, axis=Axis.Y, anchor=FRONT), [0, 0, 0]),
+            (Cylinder(d=8, h=20).at(5, 6, 7), [5, 6, -3]),
+            (Cylinder(d=8, h=20).at(5, 6, 7, anchor=BOTTOM), [5, 6, 7]),
+        )
+        for cylinder, expected in cases:
+            with self.subTest(cylinder=cylinder):
+                native = compile_model(Box(50, 50, 50) - cylinder, "Native")["commands"]
+                csg = compile_model(
+                    (Box(50, 50, 50) & Sphere(40)) - cylinder,
+                    "CSG",
+                )["commands"]
+                native_cyl = next(
+                    row["params"] for row in native
+                    if row["command"] == "solid.cylinder"
+                )
+                csg_cyl = next(
+                    row["params"] for row in csg
+                    if row["command"] == "solid.cylinder"
+                )
+                self.assertEqual(native_cyl["base"], expected)
+                self.assertEqual(csg_cyl["base"], expected)
+                self.assertEqual(native_cyl["axis"], csg_cyl["axis"])
+
+        centered = compile_model(Sphere(10), "Sphere")["commands"]
+        self.assertEqual(centered[-1]["params"]["center"], [0, 0, 0])
+        offset = compile_model(Sphere(10, anchor=LEFT), "Sphere")["commands"]
+        self.assertEqual(offset[-1]["params"]["center"], [10, 0, 0])
+        moved = compile_model(Sphere(10).at(5, 6, 7), "Sphere")["commands"]
+        self.assertEqual(moved[-1]["params"]["center"], [5, 6, 7])
+
+    def test_cylinder_symbolic_height_keeps_center_after_parameter_change(self):
+        from scpf import Box, Cylinder, Parameter
+        from scpf.compiler import compile_model
+
+        height = Parameter("height", 20)
+        commands = compile_model(
+            Box(50, 50, 50) - Cylinder(d=8, h=height),
+            "Parametric",
+        )["commands"]
+        cylinder = next(
+            row["params"] for row in commands
+            if row["command"] == "solid.cylinder"
+        )
+        self.assertIn("height", str(cylinder["base"][2]))
+        self.assertNotEqual(cylinder["base"][2], -10)
 
     def test_cylinder_has_no_type_specific_orient_shortcut(self):
         from scpf.core import Cylinder
@@ -811,6 +880,175 @@ class SCPFExamples(unittest.TestCase):
         width = Parameter("width", 868.0)
         self.assertEqual(pv(width), 868.0)
         self.assertEqual(pv(width / 2), 434.0)
+
+    def test_box_default_is_native_center_and_bottom_is_explicit(self):
+        from scpf import BOTTOM, CENTER, Box
+        from scpf.compiler import compile_model
+
+        default = compile_model(Box(40, 30, 10), "DefaultBox")["commands"]
+        default_box = next(
+            row["params"] for row in default
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(default_box["center"], [0, 0, 0])
+        self.assertNotIn("corner", default_box)
+        self.assertEqual(Box(40, 30, 10).data[-1].vector, CENTER.vector)
+
+        bottom = compile_model(
+            Box(40, 30, 10, anchor=BOTTOM),
+            "BottomBox",
+        )["commands"]
+        bottom_box = next(
+            row["params"] for row in bottom
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(bottom_box["corner"], [-20.0, -15.0, 0])
+        self.assertNotIn("center", bottom_box)
+
+    def test_box_cardinal_anchor_uses_native_corner_datum(self):
+        from scpf import BOTTOM, FRONT, Box
+        from scpf.compiler import compile_model
+
+        commands = compile_model(
+            Box(40, 30, 10, anchor=FRONT + BOTTOM),
+            "FrontBottomBox",
+        )["commands"]
+        box = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(box["corner"], [-20.0, 0, 0])
+        self.assertNotIn("center", box)
+
+    def test_csg_box_uses_same_centered_default(self):
+        from scpf import BOTTOM, Box, Sphere
+        from scpf.compiler import compile_model
+
+        default = compile_model(
+            Sphere(20) + Box(10, 10, 10),
+            "DefaultCsgBox",
+        )["commands"]
+        joined_default = next(
+            row["params"] for row in default
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(joined_default["center"], [0, 0, 0])
+        self.assertNotIn("corner", joined_default)
+
+        bottom = compile_model(
+            Sphere(20) + Box(10, 10, 10, anchor=BOTTOM),
+            "BottomCsgBox",
+        )["commands"]
+        joined_bottom = next(
+            row["params"] for row in bottom
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(joined_bottom["corner"], [-5.0, -5.0, 0])
+        self.assertNotIn("center", joined_bottom)
+
+    def test_box_center_tracks_declared_anchor(self):
+        from scpf import BOTTOM, Box
+        from scpf.core import _shape_center
+
+        self.assertEqual(_shape_center(Box(40, 30, 10)), (0, 0, 0))
+        self.assertEqual(
+            _shape_center(Box(40, 30, 10, anchor=BOTTOM)),
+            (0, 0, 5.0),
+        )
+
+    def test_box_at_overrides_constructor_anchor_placement(self):
+        from scpf import BOTTOM, Box
+        from scpf.compiler import compile_model
+
+        commands = compile_model(
+            Box(20, 10, 6).at(
+                0, 0, 0, anchor=BOTTOM
+            ),
+            "PlacedBox",
+        )["commands"]
+        box = next(
+            row["params"] for row in commands
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(box["corner"], [-10.0, -5.0, 0])
+        self.assertNotIn("center", box)
+
+    def test_taper_measures_from_bottom_for_center_and_bottom_anchors(self):
+        from scpf import BOTTOM, Box
+        from scpf.compiler import compile_model
+
+        centered = compile_model(
+            Box(40, 30, 10).taper(from_z=2, inset=1),
+            "CenteredTaper",
+        )["commands"]
+        centered_sketches = [
+            row["params"]
+            for row in centered
+            if row["command"] == "sketch.create"
+        ]
+        self.assertEqual(
+            [row.get("offset", 0) for row in centered_sketches],
+            [-5.0, -3.0, 5.0],
+        )
+
+        bottom = compile_model(
+            Box(40, 30, 10, anchor=BOTTOM).taper(from_z=2, inset=1),
+            "BottomTaper",
+        )["commands"]
+        bottom_sketches = [
+            row["params"]
+            for row in bottom
+            if row["command"] == "sketch.create"
+        ]
+        self.assertEqual(
+            [row.get("offset", 0) for row in bottom_sketches],
+            [0, 2, 10],
+        )
+
+    def test_parameterized_taper_commands_are_serializable_for_both_origins(self):
+        from scpf import Anchor, Box, Parameter
+        from scpf.compiler import compile_model
+
+        length = Parameter("length", 159.70)
+        width = Parameter("width", 319.71)
+        depth = Parameter("depth", 14.50)
+        start = Parameter("front_depth", 2.0)
+        inset = Parameter("rear_inset", 1.25)
+
+        for anchor in (Anchor.CENTER, Anchor.BOTTOM):
+            with self.subTest(anchor=anchor):
+                document = compile_model(
+                    Box(length, width, depth, anchor=anchor).taper(
+                        from_z=start, inset=inset
+                    ),
+                    "ParametricTaper",
+                )
+                # This also catches raw Python Expression instances nested
+                # inside native sketch p0/p1 lists.
+                json.dumps(document)
+                rectangles = [
+                    row["params"]
+                    for row in document["commands"]
+                    if row["command"] == "sketch.rectangle.two_point"
+                ]
+                self.assertEqual(len(rectangles), 3)
+                for rectangle in rectangles:
+                    for key in ("p0", "p1"):
+                        self.assertTrue(all(
+                            isinstance(value, (int, float, str))
+                            for value in rectangle[key]
+                        ))
+                self.assertIn("length", str(rectangles[0]["p0"]))
+                self.assertIn("width", str(rectangles[0]["p0"]))
+                # The rear sketch used to stringify Python's Expression
+                # dataclass, yielding invalid SolidCraft syntax such as
+                # "Expression(value=..., expression=...) + rear_inset".
+                for rectangle in rectangles:
+                    for value in (*rectangle["p0"], *rectangle["p1"]):
+                        self.assertNotIn("Expression(", str(value))
+                        self.assertNotIn("value=", str(value))
+                self.assertIn("rear_inset", str(rectangles[2]["p0"]))
 
     def test_native_box_supports_directional_anchor_and_edge_selectors(self):
         from scpf import BOTTOM, FRONT, LEFT, RIGHT, Box

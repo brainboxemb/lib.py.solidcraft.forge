@@ -75,16 +75,19 @@ QUALIFICATION_GROUPS = [
 QUALIFICATION_CASES = [
     {
         "slug": "simple-box",
+        "q5_required": True,
         "group": "fundamentals",
         "title": "Parameterized Box",
-        "intent": "Establish the smallest model/parameter contract: three public Python fields create one editable native box.",
+        "intent": "Establish the smallest Box contract: Box() is natively centred on the model origin and remains centred when its dimensions change.",
         "forge_api": "class fields -> Parameter; Box(length, width, height); build()",
-        "forge_model": "One root Shape with symbolic length, width and height; no occurrence or assembly layer.",
-        "lowering": "parameters.add for the public dimensions, followed directly by native solid.box; no sketch is synthesized.",
-        "native_expectation": "One rectangular solid with the requested 40 x 30 x 10 mm dimensions and an error-free timeline.",
-        "mutation": "Not required in this fixture; parameter-expression preservation is covered by focused Q1 tests and more specific native mutation cases.",
+        "forge_model": "One root Box with symbolic length, width and height; no occurrence or assembly layer.",
+        "lowering": "parameters.add for the public dimensions followed directly by native solid.box(center=[0,0,0]); no sketch or corrective move is synthesized.",
+        "native_expectation": "One 40 x 30 x 10 mm solid spanning equally around X=0, Y=0 and Z=0.",
+        "mutation": "Change length/width/height from 40/30/10 to 60/40/20 mm in the saved design; all six bounds move symmetrically while the centre remains [0,0,0].",
         "references": [
-            ("OpenSCAD", "cube([40,30,10]) is the constructive-geometry baseline; Forge differs by preserving editable SolidCraft history."),
+            ("PythonSCAD", "cube(..., center=True) expresses the same centred primitive default."),
+            ("pyBOSL2", "cuboid(...) is centred by default, matching the Forge Box default."),
+            ("CadQuery", "Workplane.box(..., centered=(True,True,True)) expresses the same centred primitive intent."),
         ],
     },
     {

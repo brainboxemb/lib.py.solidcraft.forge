@@ -8,6 +8,9 @@ from .core import (
     Expression,
     _NativeExpression,
     _native_expression,
+    _box_corner_from_anchor,
+    _sphere_center_from_anchor,
+    _cylinder_base_from_anchor,
     _pv as pv,
     command_value,
     number_text,
@@ -59,31 +62,50 @@ def _add_offset(coord, offset):
 def _csg_primitive(shape, body_name, operation, *, offset=(0, 0, 0)):
     kind, data = shape.kind, shape.data
     if kind == "box":
-        length, width, height = data
+        length, width, height, anchor = data
         _require_positive(length, "box length")
         _require_positive(width, "box width")
         _require_positive(height, "box height")
-        params = dict(length=command_value(length), width=command_value(width),
-                      height=command_value(height),
-                      center=[command_value(value) for value in offset],
-                      operation=operation)
+        params = dict(
+            length=command_value(length),
+            width=command_value(width),
+            height=command_value(height),
+            operation=operation,
+        )
+        if anchor.vector == (0, 0, 0):
+            params["center"] = [
+                command_value(value) for value in offset
+            ]
+        else:
+            corner = _box_corner_from_anchor(
+                length,
+                width,
+                height,
+                offset,
+                anchor,
+            )
+            params["corner"] = [
+                command_value(value) for value in corner
+            ]
         command = "solid.box"
     elif kind == "sphere":
-        (radius,) = data
+        radius, anchor = data
         _require_positive(radius, "sphere radius")
+        center = _sphere_center_from_anchor(radius, offset, anchor)
         params = dict(
             radius=command_value(radius),
-            center=[command_value(value) for value in offset],
+            center=[command_value(value) for value in center],
             operation=operation,
         )
         command = "solid.sphere"
     elif kind == "cylinder":
-        height, diameter, axis = data
+        height, diameter, axis, anchor = data
         _require_positive(height, "cylinder height")
         _require_positive(diameter, "cylinder diameter")
+        base = _cylinder_base_from_anchor(height, diameter, axis, offset, anchor)
         params = dict(height=command_value(height),
                       diameter=command_value(diameter),
-                      base=[command_value(value) for value in offset],
+                      base=[command_value(value) for value in base],
                       axis=axis, operation=operation)
         command = "solid.cylinder"
     else:

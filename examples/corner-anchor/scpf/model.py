@@ -3,12 +3,12 @@ class Base:
     height = 20.0
 
     def build(self):
-        return Box(self.width, 30, self.height)
+        return Box(self.width, 30, self.height, anchor=Anchor.BOTTOM)
 
 
 class Marker:
     def build(self):
-        return Box(10, 10, 10)
+        return Box(10, 10, 10, anchor=Anchor.BOTTOM)
 
 
 class CornerAnchor:

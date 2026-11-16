@@ -7,7 +7,7 @@ class Base:
     HEIGHT = 10.0
 
     def build(self):
-        return Box(self.WIDTH, self.DEPTH, self.HEIGHT)
+        return Box(self.WIDTH, self.DEPTH, self.HEIGHT, anchor=Anchor.BOTTOM)
 
 
 class Arm:
@@ -16,7 +16,7 @@ class Arm:
     HEIGHT = 6.0
 
     def build(self):
-        return Box(self.LENGTH, self.WIDTH, self.HEIGHT)
+        return Box(self.LENGTH, self.WIDTH, self.HEIGHT, anchor=Anchor.BOTTOM)
 
 
 class AttachAngle:

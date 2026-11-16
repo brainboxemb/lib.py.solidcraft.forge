@@ -28,7 +28,8 @@ class NativePrimitiveTests(unittest.TestCase):
         self.assertEqual(box["length"], "length")
         self.assertEqual(box["width"], "width")
         self.assertEqual(box["height"], "height")
-        self.assertEqual(box["corner"], ["-length / 2", "-width / 2", 0])
+        self.assertEqual(box["center"], [0, 0, 0])
+        self.assertNotIn("corner", box)
 
     def test_2d_profile_has_no_direct_extrude_api(self):
         profile = Rectangle2D(40, 30)

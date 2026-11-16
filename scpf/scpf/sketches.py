@@ -10,6 +10,7 @@ from .core import (
     _NativeExpression,
     _native_expression,
     _native_dependencies,
+    _box_corner_from_anchor,
     command_value,
     half,
     _pv as pv,
@@ -39,16 +40,41 @@ def compile_base(shape, name):
     """Create a native editable base body, regardless of example/model name."""
     if shape.kind in ("box", "placed_box"):
         if shape.kind == "box":
-            length, width, height = shape.data
-            origin = (-half(length), -half(width), 0)
-            command_corner = (
-                _half(length, True),
-                _half(width, True),
-                0,
+            length, width, height, box_anchor = shape.data
+            origin = _box_corner_from_anchor(
+                length,
+                width,
+                height,
+                (0, 0, 0),
+                box_anchor,
             )
+            selector = box_anchor.vector
+            if selector == (0, 0, 0):
+                placement = {"center": [0, 0, 0]}
+            elif selector == (0, 0, -1):
+                # Explicit BOTTOM keeps the bottom-face centre at Z=0.
+                placement = {
+                    "corner": [
+                        _half(length, True),
+                        _half(width, True),
+                        0,
+                    ]
+                }
+            else:
+                placement = {
+                    "corner": [
+                        command_value(value)
+                        for value in origin
+                    ]
+                }
         else:
             (length, width), origin, height = _base_rectangle(shape)
-            command_corner = tuple(command_value(value) for value in origin)
+            placement = {
+                "corner": [
+                    command_value(value)
+                    for value in origin
+                ]
+            }
 
         _require_positive(length, "box length")
         _require_positive(width, "box width")
@@ -60,7 +86,7 @@ def compile_base(shape, name):
                 length=command_value(length),
                 width=command_value(width),
                 height=command_value(height),
-                corner=list(command_corner),
+                **placement,
                 body_name=name,
             ),
         ]
@@ -159,9 +185,10 @@ def compile_base(shape, name):
 
     if shape.kind == "tapered_box":
         # A straight front mask and a long, smoothly tapered rear housing.
-        # The two section sketches are left in the native model history.
+        # from_z is always measured from the Box bottom face, while the Box
+        # anchor decides where that bottom face lies in model coordinates.
         original, start, inset = shape.data
-        width, height, depth = original.data
+        width, height, depth, box_anchor = original.data
         _require_positive(width, "taper width")
         _require_positive(height, "taper height")
         _require_positive(depth, "taper depth")
@@ -170,20 +197,34 @@ def compile_base(shape, name):
         if not 0 < 2 * pv(inset) < min(pv(width), pv(height)):
             raise ModelError("taper inset is too large")
 
-        x0, x1 = _half(width, True), _half(width)
-        y0, y1 = _half(height, True), _half(height)
+        x0, y0, z0 = _box_corner_from_anchor(
+            width,
+            height,
+            depth,
+            (0, 0, 0),
+            box_anchor,
+        )
+        x1 = _combine_dimension(x0, width)
+        y1 = _combine_dimension(y0, height)
+        z_start = _combine_dimension(z0, start)
+        z_end = _combine_dimension(z0, depth)
 
         def shifted(edge, inward):
-            offset = command_value(inset)
+            # Expression.__str__ is a debug representation that includes
+            # fields such as value=... and is not a SolidCraft expression.
+            # Convert both operands to typed native values before formatting.
+            native_edge = command_value(edge)
+            native_offset = command_value(inset)
             if (
-                isinstance(edge, _NativeExpression)
-                or isinstance(offset, _NativeExpression)
+                isinstance(native_edge, _NativeExpression)
+                or isinstance(native_offset, _NativeExpression)
             ):
                 return _native_expression(
-                    f"({edge}) {'+' if inward else '-'} ({offset})",
-                    tuple(sorted(_native_dependencies((edge, offset)))),
+                    f"({native_edge}) {'+' if inward else '-'} ({native_offset})",
+                    tuple(sorted(_native_dependencies((native_edge, native_offset)))),
                 )
-            return edge + offset if inward else edge - offset
+            return (native_edge + native_offset if inward
+                    else native_edge - native_offset)
 
         front = f"{name} footprint"
         rear_start = f"{name} rear start"
@@ -191,23 +232,27 @@ def compile_base(shape, name):
 
         def sketch_rectangle(sketch_name, offset, a, b):
             plane = dict(plane="XY", name=sketch_name)
-            if offset is not None:
+            if offset != 0:
                 plane["offset"] = command_value(offset)
             return [
                 _command("sketch.create", **plane),
-                _command("sketch.rectangle.two_point", p0=a, p1=b),
+                _command(
+                    "sketch.rectangle.two_point",
+                    p0=[command_value(value) for value in a],
+                    p1=[command_value(value) for value in b],
+                ),
                 _command("sketch.finish"),
             ]
 
-        steps = sketch_rectangle(front, None, [x0, y0], [x1, y1])
+        steps = sketch_rectangle(front, z0, [x0, y0], [x1, y1])
         steps.append(_command(
             "solid.extrude", distance=command_value(start), body_name=name,
         ))
         steps.extend(sketch_rectangle(
-            rear_start, start, [x0, y0], [x1, y1],
+            rear_start, z_start, [x0, y0], [x1, y1],
         ))
         steps.extend(sketch_rectangle(
-            rear_end, depth,
+            rear_end, z_end,
             [shifted(x0, True), shifted(y0, True)],
             [shifted(x1, False), shifted(y1, False)],
         ))
@@ -219,7 +264,7 @@ def compile_base(shape, name):
         return steps, {
             "profile": "rectangle", "width": width, "depth": height,
             "thickness": depth,
-            "origin": (-half(pv(width)), -half(pv(height)), 0),
+            "origin": (x0, y0, z0),
         }
 
     raise ModelError(f"Expected a Box or explicit Sketch extrusion, got {shape.kind}")

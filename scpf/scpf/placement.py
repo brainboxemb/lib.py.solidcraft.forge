@@ -45,14 +45,20 @@ def _base_rectangle(shape):
     if shape.kind == "rectangle":
         return shape.data, (0, 0, 0), None
     if shape.kind == "box":
-        length, width, height = shape.data
-        # Box uses the SolidCraft convention: centered in XY, bottom at Z=0.
-        return (length, width), (-half(length), -half(width), 0), height
+        length, width, height, anchor = shape.data
+        corner = _box_corner_from_anchor(
+            length,
+            width,
+            height,
+            (0, 0, 0),
+            anchor,
+        )
+        return (length, width), corner, height
     if shape.kind == "placed_box":
         box, x, y, z, anchor = shape.data
         if box.kind != "box":
             raise ValueError("placed_box must wrap a Box")
-        length, width, height = box.data
+        length, width, height, _anchor = box.data
         corner = _box_corner_from_anchor(
             length,
             width,
@@ -162,9 +168,9 @@ def _anchored_features(shape):
     (width, depth), (x, y, z), thickness = _base_rectangle(target)
     if thickness is None:
         raise ValueError("anchor target must be an extruded Rectangle2D")
-    if pv(z) != 0 or (
+    if (
         not _is_unshifted_rectangular_base(target)
-        and (pv(x) != 0 or pv(y) != 0)
+        and (pv(x) != 0 or pv(y) != 0 or pv(z) != 0)
     ):
         raise ValueError("native references require an unshifted supported base")
     # The original rectangular base is not necessarily the highest face:
@@ -179,7 +185,7 @@ def _anchored_features(shape):
             if (boss_feature.kind == "cylinder" and boss_parent == previous
                     and boss_anchor is Anchor.TOP and boss_child is Anchor.BOTTOM
                     and all(pv(v) == 0 for v in boss_offset)):
-                boss_height, boss_diameter, boss_axis = boss_feature.data
+                boss_height, boss_diameter, boss_axis, _boss_anchor = boss_feature.data
                 if boss_axis != "Z":
                     raise ValueError("attached boss Cylinder must use Axis.Z")
                 _require_positive_local = pv(boss_height) > 0 and pv(boss_diameter) > 0
@@ -189,7 +195,11 @@ def _anchored_features(shape):
             # Other joins (including attached Hole features) do not raise
             # the top surface; the rectangular top remains the reference.
     if parent_anchor is Anchor.TOP:
-        face_z = _combine(thickness, boss_height) if on_boss else thickness
+        face_z = (
+            _combine(z, thickness, boss_height)
+            if on_boss
+            else _combine(z, thickness)
+        )
     elif parent_anchor is Anchor.BOTTOM:
         face_z = z
     elif parent_anchor is Anchor.INNER_BOTTOM:

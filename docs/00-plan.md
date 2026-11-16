@@ -97,16 +97,18 @@ topology persistence or saved-design parameter associativity.
 
 ## Next API work after this plan
 
-### Native primitive origin selection
+### Native primitive datum selection
 
-SolidCraft 0.42 natively supports two `solid.box` placement modes:
-`corner:[x,y,z]` and `center:[x,y,z]`; centre-placed boxes retain that
-centred datum when their dimensions change.
+Change 0022 standardises direct standard-solid datums:
 
-Forge should expose primitive-origin intent directly instead of emulating it
-with corrective translations. The existing default Box behaviour and the CSG
-Box lowering must first be made semantically consistent, then qualified against
-the native SolidCraft behaviour.
+- Box, Cylinder and Sphere default to CENTER;
+- `anchor=` selects a deliberate world-cardinal datum;
+- native and CSG lowering use the same datum calculation;
+- Box tapering measures from the actual Box bottom independently of constructor
+  datum.
 
-This is a follow-up API/design change, not part of the completed 0.42
-documentation/qualification architecture above.
+Dimension-defined 2D profiles already use semantic centering from change 0018.
+Polygon2D and Text2D keep authored coordinates.
+
+The implementation and qualification record is
+[change 0022](changes/0022-native-box-origin.md).

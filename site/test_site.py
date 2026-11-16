@@ -98,7 +98,7 @@ def check(
                 member["name"],
             )
             assert f'id="{member["name"]}"' in page_text, (spec["slug"], member["name"])
-            assert member["summary"] in page_text, (spec["slug"], member["name"])
+            assert html.escape(member["summary"]) in page_text, (spec["slug"], member["name"])
             if member["kind"] == "callable" and member.get("signature"):
                 assert html.escape(member["signature"]) in page_text
             elif member["kind"] == "enum":
@@ -117,7 +117,24 @@ def check(
     local_agent_api = json.loads(
         (ROOT / "docs" / "agent" / "forge-api.json").read_text(encoding="utf-8")
     )
-    assert local_agent_api == agent_manifest()
+    expected_agent_api = agent_manifest()
+    if local_agent_api != expected_agent_api:
+        cached_symbols = local_agent_api["symbols"]
+        expected_symbols = expected_agent_api["symbols"]
+        changed = {
+            name: {
+                "cached": cached_symbols.get(name),
+                "generated": expected_symbols.get(name),
+            }
+            for name in sorted(set(cached_symbols) | set(expected_symbols))
+            if cached_symbols.get(name) != expected_symbols.get(name)
+        }
+        raise AssertionError(
+            "docs/agent/forge-api.json is out of date for: "
+            + ", ".join(changed)
+            + "\\n"
+            + json.dumps(changed, indent=2)
+        )
     assert set(scpf.__all__) <= set(local_agent_api["symbols"])
     agent_source = (ROOT / "docs" / "agent" / "forge-api.json").read_text(encoding="utf-8")
     assert len(agent_source.encode("utf-8")) < 25000

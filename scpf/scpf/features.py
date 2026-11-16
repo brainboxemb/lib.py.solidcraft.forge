@@ -15,6 +15,7 @@ from .core import (
     _DirectionSelector,
     _ProfileEdgeSelection,
     _dim_add,
+    _cylinder_base_from_anchor,
     half,
     midpoint,
     _pv as pv,
@@ -263,9 +264,7 @@ def _fillet_command(base, radius, edges, name):
         if r * 2 >= min(w, d):
             raise ModelError("fillet radius exceeds rectangular base dimensions")
         x, y, z = (pv(v) for v in base["origin"])
-        if z != 0:
-            raise ModelError("vertical fillet of shifted base not supported")
-        picks = [[x + dx, y + dy, half(h)]
+        picks = [[x + dx, y + dy, z + half(h)]
                  for dx, dy in ((0, 0), (w, 0), (w, d), (0, d))]
         return _command(
             "solid.fillet",
@@ -445,7 +444,7 @@ def _attached_hole_commands(child, target, parent_anchor, resolved, name):
                     and boss_parent_anchor is Anchor.TOP
                     and boss_child_anchor is Anchor.BOTTOM
                     and all(pv(v) == 0 for v in boss_offset)):
-                boss_height, _, boss_axis = boss.data
+                boss_height, _, boss_axis, _boss_origin = boss.data
                 if boss_axis != "Z":
                     raise ModelError("attached boss Cylinder must use Axis.Z")
                 entry_z = (base_top + boss_height
@@ -522,7 +521,7 @@ def _attached_commands(shape, original, feature, name, *, feature_name=None):
 
     operations = []
     for primitive, position, refs in resolved:
-        height, diameter, axis = primitive.data
+        height, diameter, axis, _constructor_anchor = primitive.data
         _require_positive(height, "cylinder height")
         _require_positive(diameter, "cylinder diameter")
         if axis != "Z":
@@ -741,14 +740,17 @@ def _to_commands(shape, name):
                 primitive, x, y, z = added, 0, 0, 0
             if primitive.kind != "cylinder":
                 raise ModelError("boolean primitive requires Cylinder")
-            height, diameter, axis = primitive.data
+            height, diameter, axis, anchor = primitive.data
             _require_positive(height, "cylinder height")
             _require_positive(diameter, "cylinder diameter")
+            native_base = _cylinder_base_from_anchor(
+                height, diameter, axis, (x, y, z), anchor
+            )
             return steps + [
                 _command("solid.cylinder",
                          height=command_value(height),
                          diameter=command_value(diameter),
-                         base=[command_value(x), command_value(y), command_value(z)],
+                         base=[command_value(v) for v in native_base],
                          axis=axis, operation="join" if shape.kind == "union" else "cut",
                          targets=[name]),
             ], base
