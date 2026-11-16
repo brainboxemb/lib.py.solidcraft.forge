@@ -410,8 +410,9 @@ def compile_assembly(value, name):
                 and instance.occurrence_id in relationship_occurrence_ids
             ):
                 raise ModelError(
-                    f"{component_name}: attachment involving a copied occurrence "
-                    "is not replay-safe in SolidCraft 0.42"
+                    f"{component_name}: cannot attach a copied occurrence in "
+                    "SolidCraft 0.42 replay-first output; occurrence.copy returns "
+                    "its native occurrence id only at runtime"
                 )
 
             params = {"component": component_name}
