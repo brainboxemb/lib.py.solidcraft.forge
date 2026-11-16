@@ -696,7 +696,7 @@ def midpoint(start, end):
 
 
 def _pv(dim) -> float:
-    """Read one CAD dimension numerically without recording a user _pv() read."""
+    """Read one CAD dimension numerically without recording a user pv() read."""
     if isinstance(dim, Parameter):
         return dim.value
     if isinstance(dim, Expression):
@@ -708,7 +708,7 @@ def _pv(dim) -> float:
 
 @contextmanager
 def _track_pv_reads(parameters):
-    """Record public _pv() reads of these exact Parameter objects."""
+    """Record public pv() reads of these exact Parameter objects."""
     names_by_id = {
         id(parameter): parameter.name
         for parameter in parameters
