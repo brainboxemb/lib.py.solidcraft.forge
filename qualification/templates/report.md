@@ -1,7 +1,9 @@
 # SCPF Forge qualification
 
+- Forge: `$forge_version`
+- SolidCraft: `$solidcraft_version`
 - Commit: `$source_commit`
-- Target SolidCraft: `$solidcraft_version`
+- Qualified at: `$qualified_at`
 - Result schema: `$schema_version`
 
 ## Qualification cases
