@@ -88,6 +88,23 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "centered-box",
+        "q5_required": True,
+        "group": "fundamentals",
+        "title": "Centered native Box",
+        "intent": "Verify that Box(origin=CENTER) uses SolidCraft's native center datum and stays centered when dimensions change in the saved design.",
+        "forge_api": "Box(length, width, height, origin=CENTER)",
+        "forge_model": "One root Box whose geometric centre is the declared model origin.",
+        "lowering": "parameters.add for the three dimensions followed by native solid.box(center=[0,0,0]); no corrective translation or sketch is emitted.",
+        "native_expectation": "One 40 x 30 x 10 mm solid spanning equally around X=0, Y=0 and Z=0.",
+        "mutation": "Change length/width/height from 40/30/10 to 60/40/20 mm in the saved native design; all six bounds move symmetrically while the centre remains [0,0,0].",
+        "references": [
+            ("PythonSCAD", "cube(..., center=True) expresses the same fully centered primitive intent."),
+            ("pyBOSL2", "cuboid(..., anchor=Anchor.CENTER) expresses the same centered datum explicitly."),
+            ("CadQuery", "Workplane.box(..., centered=(True,True,True)) expresses the same centered primitive intent."),
+        ],
+    },
+    {
         "slug": "anchored-holes",
         "group": "features",
         "title": "Face-relative hole pattern",
