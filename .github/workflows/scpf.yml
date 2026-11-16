@@ -426,36 +426,22 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-          from qualification.cases import QUALIFICATION_CASES
 
           results = json.loads(
               Path("output/qualification/results.json").read_text(encoding="utf-8")
           )
-          blocked = {
-              case["slug"]: case["blocked_reason"]
-              for case in QUALIFICATION_CASES
-              if case.get("blocked_reason")
+          failing = {
+              slug: case["status"]
+              for slug, case in results["cases"].items()
+              if case["status"] != "pass"
           }
-          failing = {}
-          for slug, case in results["cases"].items():
-              status = case["status"]
-              if status == "pass":
-                  continue
-              if status == "blocked" and slug in blocked:
-                  continue
-              failing[slug] = status
-
           if failing:
               for slug, status in failing.items():
                   print(f"{slug}: {status.upper()}")
               raise SystemExit(
-                  f"Qualification failed: {len(failing)} unexpected non-PASS case(s)"
+                  f"Qualification failed: {len(failing)} case(s) are not PASS"
               )
-
-          print(
-              f"Qualification passed for supported cases; "
-              f"{len(blocked)} documented case(s) are BLOCKED"
-          )
+          print(f"Qualification passed: {len(results['cases'])} case(s)")
           PY
 
       - name: Publish current library site
