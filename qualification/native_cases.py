@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from qualification.cases import QUALIFICATION_CASES
+from qualification.cases import supported_qualification_cases
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,24 +39,6 @@ MUTATIONS = {
         "measurements": "measurements-size-80x40.json",
         "label": "board 40x20 -> 80x40 mm; fixed topology pick follows corner",
     },
-    "four-corner-l": {
-        "command": "qualification/commands/four-corner-l/change-size.json",
-        "save": "model-size-160x120.sc",
-        "measurements": "measurements-size-160x120.json",
-        "label": "frame footprint 120x80 -> 160x120 mm",
-    },
-    "eight-flightcase-corners": {
-        "command": "qualification/commands/eight-flightcase-corners/change-size.json",
-        "save": "model-size-160x120x90.sc",
-        "measurements": "measurements-size-160x120x90.json",
-        "label": "case 120x80x60 -> 160x120x90 mm",
-    },
-    "eight-corner-brackets": {
-        "command": "qualification/commands/eight-corner-brackets/change-size.json",
-        "save": "model-size-160x120x90.sc",
-        "measurements": "measurements-size-160x120x90.json",
-        "label": "frame 120x80x60 -> 160x120x90 mm",
-    },
     "parametric-attach": {
         "command": "qualification/commands/parametric-attach/change-gap.json",
         "save": "model-gap-30.sc",
@@ -81,12 +63,6 @@ MUTATIONS = {
         "measurements": "measurements-size-80x40.json",
         "label": "base 40x20 -> 80x40 mm",
     },
-    "xz-anchor": {
-        "command": "qualification/commands/xz-anchor/change-size.json",
-        "save": "model-size-80x40.sc",
-        "measurements": "measurements-size-80x40.json",
-        "label": "board 40x20 -> 80x40 mm",
-    },
 }
 
 
@@ -101,7 +77,7 @@ POST_BUILD_INSPECTIONS = {
 def q5_required_cases() -> tuple[str, ...]:
     return tuple(
         case["slug"]
-        for case in QUALIFICATION_CASES
+        for case in supported_qualification_cases()
         if case.get("q5_required", False)
     )
 
