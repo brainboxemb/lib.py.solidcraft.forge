@@ -203,17 +203,17 @@
     },
     "Cylinder": {
       "kind": "callable",
-      "summary": "Create a native cylinder on a principal axis.",
+      "summary": "Create a native cylinder around a declared world-cardinal anchor datum.",
       "reference": "reference/geometry-constructors/#Cylinder",
       "guide": "guide/geometry/#solids",
-      "signature": "Cylinder(*, d, h, axis=<Axis.Z: 'Z'>)"
+      "signature": "Cylinder(*, d, h, axis=<Axis.Z: 'Z'>, anchor=<Anchor.CENTER: 'center'>)"
     },
     "Sphere": {
       "kind": "callable",
-      "summary": "Create a sphere from its radius.",
+      "summary": "Create a sphere around a declared world-cardinal anchor datum.",
       "reference": "reference/geometry-constructors/#Sphere",
       "guide": "guide/geometry/#solids",
-      "signature": "Sphere(radius)"
+      "signature": "Sphere(radius, *, anchor=<Anchor.CENTER: 'center'>)"
     },
     "Rectangle2D": {
       "kind": "callable",
