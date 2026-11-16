@@ -1,7 +1,15 @@
 """Regression contract: native primitives and explicit standalone sketches."""
 import unittest
 
-from scpf import Box, Rectangle2D, Circle2D, Sketch, Parameter
+from scpf import (
+    Anchor,
+    Box,
+    CENTER,
+    Rectangle2D,
+    Circle2D,
+    Sketch,
+    Parameter,
+)
 from scpf.compiler import compile_model
 
 
@@ -38,6 +46,67 @@ class NativePrimitiveTests(unittest.TestCase):
         self.assertEqual(commands[1]["params"]["p0"], [-20, -15])
         self.assertEqual(commands[1]["params"]["p1"], [20, 15])
         self.assertEqual(commands[-1]["params"]["body_name"], "Plate")
+
+    def test_center_is_public_short_form_for_anchor_center(self):
+        self.assertIs(CENTER, Anchor.CENTER)
+
+    def test_rectangle_center_then_deliberate_offset(self):
+        with Sketch(plane="XY") as sketch:
+            sketch.add(
+                Rectangle2D(40, 30),
+                offset=(5, -2),
+            )
+        commands = compile_model(sketch.extrude(10), "OffsetPlate")["commands"]
+        rectangle = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.rectangle.two_point"
+        )
+        self.assertEqual(rectangle["p0"], [-15, -17])
+        self.assertEqual(rectangle["p1"], [25, 13])
+
+    def test_centered_rectangle_keeps_symbolic_dimensions(self):
+        width = Parameter("width", 40)
+        depth = Parameter("depth", 30)
+        with Sketch(plane="XY") as sketch:
+            sketch.add(Rectangle2D(width, depth))
+        commands = compile_model(sketch.extrude(10), "SymbolicPlate")["commands"]
+        rectangle = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.rectangle.two_point"
+        )
+        self.assertIn("width", rectangle["p0"][0])
+        self.assertIn("width", rectangle["p1"][0])
+        self.assertIn("depth", rectangle["p0"][1])
+        self.assertIn("depth", rectangle["p1"][1])
+
+    def test_polygon_auto_capture_keeps_authored_coordinates(self):
+        from scpf import Polygon2D
+
+        with Sketch(plane="XY") as sketch:
+            Polygon2D([(0, 0), (20, 0), (20, 10), (0, 10)])
+        commands = compile_model(sketch.extrude(5), "PolygonPlate")["commands"]
+        line = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.line"
+        )
+        self.assertEqual(
+            line["points"],
+            [[0, 0], [20, 0], [20, 10], [0, 10]],
+        )
+
+    def test_explicit_center_is_rejected_for_coordinate_defined_polygon(self):
+        from scpf import Polygon2D
+
+        with self.assertRaisesRegex(ValueError, "CENTER is not supported"):
+            with Sketch(plane="XY") as sketch:
+                sketch.add(
+                    Polygon2D(
+                        [(0, 0), (20, 0), (20, 10), (0, 10)]
+                    )
+                )
 
     def test_circle_in_with_sketch_negative_extrusion(self):
         with Sketch(plane="XY") as sketch:
