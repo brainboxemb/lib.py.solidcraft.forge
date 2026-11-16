@@ -188,3 +188,41 @@ def run_document(
     finally:
         if owned_tmp is not None:
             owned_tmp.cleanup()
+
+
+
+def main(argv=None):
+    """Run an SCPF replay file through solidcraft-cli."""
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("replay", type=Path)
+    parser.add_argument("--save", type=Path, required=True)
+    parser.add_argument("--out", type=Path)
+    parser.add_argument("--results", type=Path)
+    parser.add_argument("--replay-log", type=Path)
+    parser.add_argument("--solidcraft-cli", default="solidcraft-cli")
+    args = parser.parse_args(argv)
+
+    try:
+        document = json.loads(args.replay.read_text(encoding="utf-8"))
+        result = run_document(
+            document,
+            save=args.save,
+            export=args.out,
+            results_out=args.results,
+            replay_log_out=args.replay_log,
+            executable=args.solidcraft_cli,
+        )
+    except (OSError, json.JSONDecodeError, HeadlessReplayError) as exc:
+        parser.exit(1, f"SCPF headless replay: {exc}\n")
+
+    print(
+        f"Headless SolidCraft: {result['completed']} commands applied; "
+        f"{len(result['variables'])} replay variable(s) bound"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
