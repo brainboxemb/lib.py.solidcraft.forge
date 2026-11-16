@@ -10,6 +10,7 @@ from pathlib import Path
 
 SEMVER = re.compile(r"\d+\.\d+\.\d+")
 FULL_SHA = re.compile(r"[0-9a-f]{40}")
+BLOCKERS_PATH = "docs/design/release-blockers.txt"
 
 
 def git(*args: str) -> str:
@@ -18,6 +19,15 @@ def git(*args: str) -> str:
 
 def read_at(commit: str, path: str) -> str:
     return git("show", f"{commit}:{path}")
+
+
+def active_blockers(text: str) -> tuple[str, ...]:
+    """Return non-comment release blocker lines."""
+    return tuple(
+        line.strip()
+        for line in text.splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    )
 
 
 def validate(version: str, target_sha: str, notes_out: Path) -> str:
@@ -30,6 +40,13 @@ def validate(version: str, target_sha: str, notes_out: Path) -> str:
     if target_sha != main_sha:
         raise SystemExit(
             f"release target must equal current main HEAD: {main_sha}"
+        )
+
+    blockers = active_blockers(read_at(target_sha, BLOCKERS_PATH))
+    if blockers:
+        detail = "\n".join(f"- {blocker}" for blocker in blockers)
+        raise SystemExit(
+            "release blocked by foundational Forge issue(s):\n" + detail
         )
 
     pyproject = tomllib.loads(read_at(target_sha, "scpf/pyproject.toml"))
