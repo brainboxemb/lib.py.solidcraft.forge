@@ -8,6 +8,18 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- `Box(..., origin=...)` now declares the native primitive datum directly.
+  The existing default remains `Anchor.BOTTOM`; `origin=CENTER` creates a
+  fully XYZ-centred native SolidCraft box.
+
+### Changed
+
+- Feature-history and direct CSG Box lowering now use the same origin contract.
+  CSG models that require a centred Box state that intent explicitly instead of
+  receiving an implicit CSG-only centre convention.
+
 ## [0.4.2] - 2026-11-16
 
 ### Fixed
