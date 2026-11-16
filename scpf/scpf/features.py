@@ -15,6 +15,7 @@ from .core import (
     _DirectionSelector,
     _ProfileEdgeSelection,
     _dim_add,
+    _cylinder_base_from_anchor,
     half,
     midpoint,
     _pv as pv,
@@ -520,7 +521,7 @@ def _attached_commands(shape, original, feature, name, *, feature_name=None):
 
     operations = []
     for primitive, position, refs in resolved:
-        height, diameter, axis = primitive.data
+        height, diameter, axis, _constructor_anchor = primitive.data
         _require_positive(height, "cylinder height")
         _require_positive(diameter, "cylinder diameter")
         if axis != "Z":
@@ -739,14 +740,17 @@ def _to_commands(shape, name):
                 primitive, x, y, z = added, 0, 0, 0
             if primitive.kind != "cylinder":
                 raise ModelError("boolean primitive requires Cylinder")
-            height, diameter, axis = primitive.data
+            height, diameter, axis, anchor = primitive.data
             _require_positive(height, "cylinder height")
             _require_positive(diameter, "cylinder diameter")
+            native_base = _cylinder_base_from_anchor(
+                height, diameter, axis, (x, y, z), anchor
+            )
             return steps + [
                 _command("solid.cylinder",
                          height=command_value(height),
                          diameter=command_value(diameter),
-                         base=[command_value(x), command_value(y), command_value(z)],
+                         base=[command_value(v) for v in native_base],
                          axis=axis, operation="join" if shape.kind == "union" else "cut",
                          targets=[name]),
             ], base
