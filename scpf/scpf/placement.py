@@ -211,7 +211,7 @@ def _anchored_features(shape):
         face_z = _combine(z, wall)
     else:
         face_z = _combine(z, half(thickness))
-    if child.kind == "linear_pattern":
+    if child.kind == "linear_repeat":
         feature, count, spacing, axis = child.data
         shifts = [((n - half(count - 1)) * spacing, axis)
                   for n in range(count)]

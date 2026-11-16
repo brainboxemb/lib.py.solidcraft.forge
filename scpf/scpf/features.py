@@ -416,7 +416,7 @@ def _plastic_feature_command(feature, position, name):
 
 def _attached_hole_commands(child, target, parent_anchor, resolved, name):
     """Compile Hole intent as one editable sketch plus one cut feature."""
-    feature = child.data[0] if child.kind == "linear_pattern" else child
+    feature = child.data[0] if child.kind == "linear_repeat" else child
     if feature.kind != "hole":
         raise ModelError("expected Hole feature")
     if parent_anchor is not Anchor.TOP:
@@ -476,7 +476,7 @@ def _attached_hole_commands(child, target, parent_anchor, resolved, name):
         distance = depth
         direction = "negative"
 
-    label = "Holes" if child.kind == "linear_pattern" else (
+    label = "Holes" if child.kind == "linear_repeat" else (
         "Bore" if not on_base_top else "Hole")
     plane = {"plane": "XY", "name": label}
     if pv(sketch_z):
@@ -511,7 +511,7 @@ def _attached_commands(shape, original, feature, name, *, feature_name=None):
     except (ValueError, TypeError) as exc:
         raise ModelError(str(exc)) from exc
 
-    attached_primitive = child.data[0] if child.kind == "linear_pattern" else child
+    attached_primitive = child.data[0] if child.kind == "linear_repeat" else child
     if attached_primitive.kind == "hole":
         return _attached_hole_commands(
             child, target, parent_anchor, resolved, name)

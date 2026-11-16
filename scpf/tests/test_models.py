@@ -191,7 +191,7 @@ class SCPFExamples(unittest.TestCase):
         ):
             self.assertFalse(hasattr(scpf, name), name)
 
-    def test_attached_hole_pattern_builds_one_sketch_cut(self):
+    def test_attached_hole_repeat_builds_one_sketch_cut(self):
         from scpf.core import Axis, Depth, Faces, Hole, Rectangle2D, Parameter
         from scpf.compiler import compile_model
         width = Parameter("width", 100)
@@ -320,7 +320,7 @@ class SCPFExamples(unittest.TestCase):
         self.assertIs(top.data[3], Anchor.BOTTOM)
         self.assertIs(bottom.data[3], Anchor.BOTTOM)
 
-    def test_symmetric_anchored_cylinder_pattern_follows_plate_dimensions(self):
+    def test_symmetric_anchored_cylinder_repeat_follows_plate_dimensions(self):
         from scpf.core import Anchor, Axis, Cylinder, Rectangle2D
         from scpf.compiler import compile_model
         with Sketch(name="Base", plane="XY") as sketch:
@@ -564,7 +564,7 @@ class SCPFExamples(unittest.TestCase):
         self.assertEqual(generated["commands"][0]["params"]["expression"], "60")
         self.assertEqual(generated["commands"][1]["params"]["radius"], "size / 1.5")
 
-    def test_pattern_requires_explicit_axes_and_valid_count(self):
+    def test_repeat_linear_requires_explicit_axes_and_valid_count(self):
         from scpf.core import Axis, Cylinder, Hole
         with self.assertRaises(TypeError):
             Hole(d=8).repeat_linear(x=70, y=30)

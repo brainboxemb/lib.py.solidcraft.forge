@@ -1213,7 +1213,7 @@ class Shape:
             raise ValueError("repeat_linear axis must be Axis.X or Axis.Y") from exc
         if axis not in (Axis.X, Axis.Y):
             raise ValueError("repeat_linear supports only Axis.X or Axis.Y")
-        return Shape("linear_pattern", (self, count, spacing, axis))
+        return Shape("linear_repeat", (self, count, spacing, axis))
 
     def rectangular_pattern(
         self,
@@ -1240,6 +1240,11 @@ class Shape:
         else:
             raise TypeError("rectangular_pattern requires a source feature Shape")
 
+        if any(source.kind != "explicit_sketch_extrusion" for source in sources):
+            raise ValueError(
+                "rectangular_pattern currently supports features produced by "
+                "Sketch.extrude()"
+            )
         if any(not _shape_contains(self, source) for source in sources):
             raise ValueError(
                 "rectangular_pattern source feature must already be applied "
@@ -1266,7 +1271,7 @@ class Shape:
 
         if alignment not in ("left", "center", "right"):
             raise ValueError("rectangular_pattern alignment must be left, center or right")
-        if alignment2 not in ("left", "center", "right"):
+        if second_requested and alignment2 not in ("left", "center", "right"):
             raise ValueError("rectangular_pattern alignment2 must be left, center or right")
         if not isinstance(reversed, bool) or not isinstance(reversed2, bool):
             raise TypeError("rectangular_pattern reversed flags must be bool")
@@ -1323,7 +1328,7 @@ class Shape:
 
     def _anchor_to(self, target, parent_anchor, child_anchor, offset):
         if self.kind not in (
-            "cylinder", "linear_pattern", "hole",
+            "cylinder", "linear_repeat", "hole",
             "lip", "snap_fit", "boss", "rest",
         ):
             raise ValueError(
