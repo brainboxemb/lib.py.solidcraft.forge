@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-11-16
+
 ### Fixed
 
 - Restore `Sketch.add(Text2D(...), offset=(u, v))` after the 0.4.0 semantic
