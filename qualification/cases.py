@@ -92,11 +92,11 @@ QUALIFICATION_CASES = [
     {
         "slug": "anchored-holes",
         "group": "features",
-        "title": "Face-relative hole pattern",
-        "intent": "Verify a 2D profile, native extrusion, patterned holes and placement on a selected face.",
-        "forge_api": "with Sketch(plane='XY'): Rectangle2D(...); sketch.extrude(...); Hole(...).pattern(...).on(..., face=Faces.TOP)",
-        "forge_model": "A feature-based plate plus a patterned Hole feature anchored to the plate's TOP face.",
-        "lowering": "Native sketch/extrude commands followed by native hole/pattern placement commands; Forge does not subtract hand-built cylinders.",
+        "title": "Face-relative repeated holes",
+        "intent": "Verify a 2D profile, native extrusion, repeated holes and placement on a selected face.",
+        "forge_api": "with Sketch(plane='XY'): Rectangle2D(...); sketch.extrude(...); Hole(...).repeat_linear(...).on(..., face=Faces.TOP)",
+        "forge_model": "A feature-based plate plus a Forge-side repeated Hole layout anchored to the plate's TOP face.",
+        "lowering": "Forge expands the small primitive repetition before lowering and emits one native hole sketch/cut; this case is intentionally not a SolidCraft History Pattern.",
         "native_expectation": "One plate with two through holes at the requested Y spacing and no feature errors.",
         "mutation": "No saved-design mutation in this fixture; geometry and feature placement are measured at Q4.",
         "references": [
@@ -365,6 +365,26 @@ QUALIFICATION_CASES = [
             ("OpenSCAD", "Comparable to a circle followed by linear_extrude(height=30) after selecting the opposite extrusion direction."),
             ("SolidCraft", "The persisted native extrusion direction and measured Z bounds are the source of truth for negative-direction semantics."),
         ],
+    },
+    {
+        "slug": "rectangular-pattern",
+        "group": "features",
+        "title": "Native rectangular feature pattern",
+        "intent": "Qualify a real SolidCraft rectangular History pattern over one existing cut feature, rather than Forge-expanded repeated geometry.",
+        "forge_api": "source = slot.extrude(-4); body = body - source; body.rectangular_pattern(source, count=columns, spacing=pitch, direction=Axis.X, count2=rows, spacing2=row_pitch, direction2=Axis.Y)",
+        "forge_model": "One 120 x 80 x 4 mm plate, one native straight Slot cut and one native 3 x 2 rectangular feature pattern.",
+        "lowering": "Forge emits the source Sketch/cut once, then exactly one solid.pattern.rectangular with features=['Slot']; columns/rows are dimensionless native parameters and pitches remain millimetre parameters.",
+        "native_expectation": "SolidCraft saves one plate with six slot cuts and one native rectangular pattern History feature that references the original Slot cut.",
+        "mutation": "No Q5 mutation is required in this first pattern case; native feature identity, measured geometry and visual result are qualified directly.",
+        "references": [
+            ("SolidCraft", "Native saved History is the source of truth because this case qualifies solid.pattern.rectangular itself, not only equivalent repeated geometry."),
+        ],
+        "reference_exceptions": {
+            "pythonscad": "PythonSCAD can repeat equivalent geometry but cannot validate SolidCraft's saved rectangular History feature relationship.",
+            "pybosl2": "pyBOSL2 can repeat equivalent geometry but cannot provide evidence for SolidCraft's native solid.pattern.rectangular feature identity.",
+            "cadquery": "CadQuery can create an equivalent slot array but cannot validate the SolidCraft History pattern command and saved source-feature reference.",
+            "build123d": "build123d can create equivalent repeated geometry but cannot validate SolidCraft's native rectangular History pattern semantics.",
+        },
     },
     {
         "slug": "slot-family",

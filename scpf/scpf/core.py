@@ -904,6 +904,61 @@ def _shape_center(shape):
     )
 
 
+def _pattern_direction(value, label):
+    """Convert one public pattern direction to a native XYZ vector."""
+    try:
+        axis = Axis(value)
+    except (TypeError, ValueError):
+        axis = None
+    if axis is not None:
+        return {
+            Axis.X: (1.0, 0.0, 0.0),
+            Axis.Y: (0.0, 1.0, 0.0),
+            Axis.Z: (0.0, 0.0, 1.0),
+        }[axis]
+    if not isinstance(value, (tuple, list)) or len(value) != 3:
+        raise TypeError(f"{label} must be Axis.X/Y/Z or an XYZ direction")
+    if any(
+        isinstance(component, bool)
+        or not isinstance(component, (int, float))
+        or not isfinite(component)
+        for component in value
+    ):
+        raise ValueError(f"{label} must contain finite numeric values")
+    vector = tuple(float(component) for component in value)
+    if sum(component * component for component in vector) <= 0:
+        raise ValueError(f"{label} must be non-zero")
+    return vector
+
+
+def _pattern_count(value, label):
+    """Validate a native pattern count and keep direct parameters unitless."""
+    if isinstance(value, Parameter):
+        numeric = value.value
+        if numeric < 1 or not float(numeric).is_integer():
+            raise ValueError(f"{label} must currently evaluate to a positive integer")
+        return value
+    if isinstance(value, Expression):
+        raise TypeError(
+            f"{label} expressions are not supported yet; use a direct model "
+            "parameter or a fixed integer"
+        )
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise ValueError(f"{label} must be a positive integer or direct Parameter")
+    return value
+
+
+def _shape_contains(root, needle):
+    """Return whether the exact source Shape is already in a feature tree."""
+    if root is needle:
+        return True
+    if isinstance(root, Shape):
+        return _shape_contains(root.data, needle)
+    if isinstance(root, (tuple, list)):
+        return any(_shape_contains(item, needle) for item in root)
+    return False
+
+
 @dataclass(frozen=True)
 class Shape:
     """Represent Forge geometry/feature intent before SolidCraft executes it.
@@ -967,7 +1022,7 @@ class Shape:
         offsets = (_pv(x), _pv(y), _pv(z))
         if not all(isfinite(v) for v in offsets):
             raise ValueError("move() requires finite coordinates")
-        if self.kind in ("fillet", "shell", "pattern"):
+        if self.kind in ("fillet", "shell", "rectangular_pattern"):
             raise ValueError("move() currently supports only primitive and CSG shapes")
         return Shape("translated", (self, offsets))
 
@@ -1144,21 +1199,93 @@ class Shape:
             (self, x, y, z),
         )
 
-    def pattern(self, *, count, spacing, axis):
-        """Repeat a Hole or Cylinder at symmetric offsets along an XY axis."""
+    def repeat_linear(self, *, count, spacing, axis):
+        """Repeat a Hole or Cylinder before native feature lowering."""
         if self.kind not in ("cylinder", "hole"):
-            raise ValueError("pattern() supports Cylinder or Hole")
+            raise ValueError("repeat_linear() supports Cylinder or Hole")
         if not isinstance(count, int) or isinstance(count, bool) or count < 1:
-            raise ValueError("pattern count must be a positive integer")
+            raise ValueError("repeat_linear count must be a positive integer")
         if _pv(spacing) <= 0:
-            raise ValueError("pattern spacing must be positive")
+            raise ValueError("repeat_linear spacing must be positive")
         try:
             axis = Axis(axis)
         except ValueError as exc:
-            raise ValueError("pattern axis must be Axis.X or Axis.Y") from exc
+            raise ValueError("repeat_linear axis must be Axis.X or Axis.Y") from exc
         if axis not in (Axis.X, Axis.Y):
-            raise ValueError("only XY linear patterns are supported")
-        return Shape("linear_pattern", (self, count, spacing, axis))
+            raise ValueError("repeat_linear supports only Axis.X or Axis.Y")
+        return Shape("linear_repeat", (self, count, spacing, axis))
+
+    def rectangular_pattern(
+        self,
+        feature,
+        *,
+        count,
+        spacing,
+        direction=Axis.X,
+        count2=None,
+        spacing2=None,
+        direction2=Axis.Y,
+        alignment="right",
+        alignment2="right",
+        reversed=False,
+        reversed2=False,
+    ):
+        """Pattern an existing native history feature in one or two directions."""
+        if isinstance(feature, Shape):
+            sources = (feature,)
+        elif isinstance(feature, (tuple, list)) and feature:
+            if not all(isinstance(item, Shape) for item in feature):
+                raise TypeError("rectangular_pattern feature list must contain Shapes")
+            sources = tuple(feature)
+        else:
+            raise TypeError("rectangular_pattern requires a source feature Shape")
+
+        if any(source.kind != "explicit_sketch_extrusion" for source in sources):
+            raise ValueError(
+                "rectangular_pattern currently supports features produced by "
+                "Sketch.extrude()"
+            )
+        if any(not _shape_contains(self, source) for source in sources):
+            raise ValueError(
+                "rectangular_pattern source feature must already be applied "
+                "to this Shape"
+            )
+
+        count = _pattern_count(count, "rectangular_pattern count")
+        if _pv(spacing) <= 0:
+            raise ValueError("rectangular_pattern spacing must be positive")
+        dir1 = _pattern_direction(direction, "rectangular_pattern direction")
+
+        second_requested = count2 is not None or spacing2 is not None
+        if second_requested and (count2 is None or spacing2 is None):
+            raise ValueError(
+                "rectangular_pattern second direction requires count2 and spacing2"
+            )
+        if second_requested:
+            count2 = _pattern_count(count2, "rectangular_pattern count2")
+            if _pv(spacing2) <= 0:
+                raise ValueError("rectangular_pattern spacing2 must be positive")
+            dir2 = _pattern_direction(direction2, "rectangular_pattern direction2")
+        else:
+            count2 = spacing2 = dir2 = None
+
+        if alignment not in ("left", "center", "right"):
+            raise ValueError("rectangular_pattern alignment must be left, center or right")
+        if second_requested and alignment2 not in ("left", "center", "right"):
+            raise ValueError("rectangular_pattern alignment2 must be left, center or right")
+        if not isinstance(reversed, bool) or not isinstance(reversed2, bool):
+            raise TypeError("rectangular_pattern reversed flags must be bool")
+
+        return Shape(
+            "rectangular_pattern",
+            (
+                self, sources,
+                dir1, count, spacing,
+                dir2, count2, spacing2,
+                alignment, alignment2,
+                reversed, reversed2,
+            ),
+        )
 
     def on(self, target, *, face=Faces.TOP, offset=(0, 0)):
         """Place a supported within-component feature on a target face.
@@ -1201,7 +1328,7 @@ class Shape:
 
     def _anchor_to(self, target, parent_anchor, child_anchor, offset):
         if self.kind not in (
-            "cylinder", "linear_pattern", "hole",
+            "cylinder", "linear_repeat", "hole",
             "lip", "snap_fit", "boss", "rest",
         ):
             raise ValueError(

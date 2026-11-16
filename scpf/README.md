@@ -432,7 +432,7 @@ The saved Sample Plate has four named sketches: `Base`, `Holes`, `Boss`
 and `Bore`. SCPF keeps the Python model object-oriented:
 
 ```python
-holes = Hole(d=8, depth=Depth.THROUGH_ALL).pattern(
+holes = Hole(d=8, depth=Depth.THROUGH_ALL).repeat_linear(
     count=2, spacing=self.width - 24, axis=Axis.X
 ).on(plate, face=Faces.TOP)
 plate = plate + holes
@@ -502,7 +502,7 @@ occurrences at assembly level. It is not the ordinary way to choose the top or
 bottom surface for a Hole, Boss or Cylinder. Strings such as
 `edges="vertical"` are no longer part of the SCPF API.
 
-## Relative anchors and symmetric patterns (experimental)
+## Relative anchors and primitive repetition (experimental)
 
 For a rectangular XY plate, placement can reference the plate rather than
 hard-coded world coordinates:
@@ -511,7 +511,7 @@ hard-coded world coordinates:
 with Sketch(plane="XY") as sketch:
     Rectangle2D(100, 60)
 plate = sketch.extrude(10)
-holes = Cylinder(d=8, h=12).pattern(
+holes = Cylinder(d=8, h=12).repeat_linear(
     count=2, spacing=40, axis=Axis.Y
 ).attach(plate, parent=Anchor.CENTER, child=Anchor.CENTER)
 plate - holes
@@ -521,7 +521,10 @@ plate - holes
 explicit anchors. `offset=(dx, dy)` is measured along the local XY axes.
 Currently supported: Box or explicit rectangular Sketch extrusion bases; `Anchor.CENTER`,
 `Anchor.TOP`, `Anchor.BOTTOM`; `Anchor.INNER_BOTTOM` for the inner floor
-of a shelled rectangular body; and XY linear patterns of cylinders.
+of a shelled rectangular body; and XY linear repetition of cylinders. This `repeat_linear()` helper expands
+primitive positions before lowering; it is not a SolidCraft History Pattern.
+Use `Shape.rectangular_pattern()` when the saved design should contain a
+native `solid.pattern.rectangular` feature.
 
 For X/Y placement relative to the parent bounds, use the axis-qualified
 selectors `X.MIN`, `X.CENTER`, `X.MAX` and `Y.MIN`, `Y.CENTER`,

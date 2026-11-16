@@ -35,10 +35,15 @@ def _command(command_name, **params):
     return {"command": command_name, "params": params}
 
 
-def _param_commands(params):
+def _param_commands(params, *, units=None):
+    units = units or {}
     return [
-        _command("parameters.add", name=p.name,
-                 expression=number_text(p.value), unit="mm")
+        _command(
+            "parameters.add",
+            name=p.name,
+            expression=number_text(p.value),
+            unit=units.get(p.name, "mm"),
+        )
         for p in params
     ]
 

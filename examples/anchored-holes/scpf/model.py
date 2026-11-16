@@ -18,7 +18,7 @@ class AnchoredHoles:
                 offset=(self.width / 2, self.depth / 2),
             )
         plate = sketch.extrude(self.thickness)
-        holes = Hole(d=8, depth=Depth.THROUGH_ALL).pattern(
+        holes = Hole(d=8, depth=Depth.THROUGH_ALL).repeat_linear(
             count=2, spacing=self.spacing, axis=Axis.Y
         ).on(plate, face=Faces.TOP)
         plate + holes

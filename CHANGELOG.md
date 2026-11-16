@@ -8,8 +8,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-16
+
 ### Added
 
+- Native rectangular history-feature patterns through
+  `Shape.rectangular_pattern(...)`, lowering directly to
+  `solid.pattern.rectangular`.
 - Native SolidCraft sketch Slot profiles: `SlotCenterToCenter2D`,
   `SlotOverall2D`, `SlotCenterPoint2D`, `SlotArcThreePoint2D` and
   `SlotArcCenter2D`, each lowering directly to its matching
@@ -22,6 +27,11 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Changed
 
+- The old Hole/Cylinder `.pattern()` pre-lowering helper is renamed to
+  `.repeat_linear()`. Pattern terminology is now reserved for native
+  SolidCraft Pattern features.
+- Native pattern counts publish direct model Parameters as dimensionless
+  SolidCraft parameters instead of millimetre dimensions.
 - Common model-authoring mistakes now fail with direct guidance: editable CAD
   parameters used as Python counts explain the naming convention, `Shape.group`
   points to component/assembly grouping, and material-assigned Shapes cannot be

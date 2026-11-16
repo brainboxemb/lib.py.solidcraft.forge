@@ -15,7 +15,7 @@ from .core import (
 
 def _is_unshifted_rectangular_base(shape):
     """Return whether the original rectangular base keeps its declared datum."""
-    while shape.kind in ("fillet", "shell", "union", "difference"):
+    while shape.kind in ("fillet", "shell", "union", "difference", "rectangular_pattern"):
         shape = shape.data[0]
     if shape.kind == "box":
         return True
@@ -94,7 +94,7 @@ def _base_rectangle(shape):
         else:
             corner = (offset[0], offset[1], 0)
         return (width, depth), corner, height
-    if shape.kind in ("fillet", "chamfer", "shell"):
+    if shape.kind in ("fillet", "chamfer", "shell", "rectangular_pattern"):
         return _base_rectangle(shape.data[0])
     if shape.kind in ("union", "difference"):
         return _base_rectangle(shape.data[0])
@@ -105,7 +105,9 @@ def _shell_thickness(shape):
     """Return the active shell wall thickness in a supported feature chain."""
     if shape.kind == "shell":
         return shape.data[1]
-    if shape.kind in ("fillet", "chamfer", "union", "difference"):
+    if shape.kind in (
+        "fillet", "chamfer", "union", "difference", "rectangular_pattern"
+    ):
         return _shell_thickness(shape.data[0])
     return None
 
@@ -209,7 +211,7 @@ def _anchored_features(shape):
         face_z = _combine(z, wall)
     else:
         face_z = _combine(z, half(thickness))
-    if child.kind == "linear_pattern":
+    if child.kind == "linear_repeat":
         feature, count, spacing, axis = child.data
         shifts = [((n - half(count - 1)) * spacing, axis)
                   for n in range(count)]

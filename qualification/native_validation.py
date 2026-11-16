@@ -722,6 +722,72 @@ def validate_circle_negative_extrude(root: Path) -> Validation:
     return v
 
 
+def validate_rectangular_pattern(root: Path) -> Validation:
+    v = Validation("rectangular-pattern")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "rectangular-pattern", tol=0.01)
+    v.check("single patterned plate body", d["body_count"] == 1, 1, d["body_count"])
+
+    if d["bodies"]:
+        body = d["bodies"][0]
+        v.check(
+            "pattern keeps the plate outer bounds",
+            bbox_close(body, [-60, -40, 0], [60, 40, 4], 0.01),
+            {"min": [-60, -40, 0], "max": [60, 40, 4]},
+            body["bbox"],
+        )
+        faces = body.get("face_types", {})
+        v.check(
+            "3 x 2 rectangular Slot pattern has qualified native geometry",
+            close(body["volume_mm3"], 36281.4159864975, 0.01)
+            and body["faces"] == 30
+            and faces.get("cylinder") == 12
+            and faces.get("plane") == 18,
+            {
+                "volume_mm3": 36281.4159864975,
+                "faces": 30,
+                "face_types": {"cylinder": 12, "plane": 18},
+            },
+            {
+                "volume_mm3": body["volume_mm3"],
+                "faces": body["faces"],
+                "face_types": faces,
+            },
+        )
+
+    sketch = next(
+        (row for row in d.get("sketches", []) if row.get("name") == "Slot"),
+        None,
+    )
+    v.check(
+        "source Slot remains one solved native sketch profile",
+        sketch is not None
+        and sketch.get("curves") == 5
+        and sketch.get("profiles") == 1
+        and sketch.get("status") == "solved",
+        {"name": "Slot", "curves": 5, "profiles": 1, "status": "solved"},
+        sketch,
+    )
+
+    timeline = [
+        (row.get("type"), row.get("name"))
+        for row in d.get("timeline", [])
+    ]
+    expected_timeline = [
+        ("BoxFeature", "Box1"),
+        ("Sketch", "Slot"),
+        ("ExtrudeFeature", "Slot"),
+        ("RectangularPatternFeature", "RectangularPattern1"),
+    ]
+    v.check(
+        "source cut stays single and pattern is one native History feature",
+        timeline == expected_timeline,
+        expected_timeline,
+        timeline,
+    )
+    return v
+
+
 def validate_slot_family(root: Path) -> Validation:
     v = Validation("slot-family")
     d = load(root / "measurements.json")
@@ -895,6 +961,7 @@ VALIDATORS = {
     "eight-corner-brackets": validate_eight_corner_brackets,
     "xz-anchor": validate_xz_anchor,
     "circle-negative-extrude": validate_circle_negative_extrude,
+    "rectangular-pattern": validate_rectangular_pattern,
     "slot-family": validate_slot_family,
     "rounded-rectangle-sketch": validate_rounded_rectangle_sketch,
     "primitive-csg": validate_primitive_csg,

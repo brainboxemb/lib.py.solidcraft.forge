@@ -34,7 +34,7 @@ Inside one component, geometry remains a lightweight feature/expression model:
 class Board:
     def build(self):
         body = Box(self.width, self.depth, self.height)
-        holes = Hole(d=5, depth=Depth.THROUGH_ALL).pattern(...)
+        holes = Hole(d=5, depth=Depth.THROUGH_ALL).repeat_linear(...)
         return body - holes
 ```
 
@@ -141,7 +141,7 @@ not mean "put this on a face". Use `on()` or `Sketch(on=...)` for that intent.
 `on()` selects a target surface for a within-component feature.
 
 ```python
-holes = Hole(d=8, depth=Depth.THROUGH_ALL).pattern(
+holes = Hole(d=8, depth=Depth.THROUGH_ALL).repeat_linear(
     count=2,
     spacing=self.width - 24,
     axis=Axis.X,
