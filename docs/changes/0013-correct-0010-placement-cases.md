@@ -1,110 +1,186 @@
-# Change 0013 — Correct the change 0010 qualification cases
+# Change 0013 — Replayable occurrence ids
 
 Status: implementation  
 SolidCraft target: **0.42.0**
 
 ## Problem
 
-Change 0010 correctly removed guessed SolidCraft occurrence names such as
-`Block:2` from attachment commands.
+Forge must not predict SolidCraft-generated occurrence names such as
+`Board:2`.
 
-It also marked four qualification cases as blocked because their fixtures used
-`attach()` on copied occurrences:
+Change 0009 removed that unsafe addressing. The immediate result was also a
+loss of useful Placement behaviour: symbolic positions, rotated copies and a
+definition whose first occurrence was not at identity could no longer be
+written as a replayable command file.
 
-- `components`;
-- `four-corner-l`;
-- `eight-corner-brackets`;
-- `eight-flightcase-corners`.
+Change 0010 exposed the same problem for a copied occurrence used by an
+attachment.
 
-That classification was too broad. Those fixtures were treated as attachment
-models even where their actual job was ordinary occurrence placement.
-
-## Rule
-
-Start from what the model means.
-
-Use `Placement` when the assembly can calculate an occurrence position and
-orientation directly.
-
-Use `attach()` only when the model needs an actual relationship between two
-occurrences.
-
-Do not add a joint merely because a Placement backend path is missing.
-
-## Corrected cases
-
-### components
-
-This case only qualifies one reusable definition with two occurrences.
-
-The second block is therefore:
+The public model was not the problem. A copy still means:
 
 ```python
 right = left.copy(
-    placement=Placement(x=Block.length),
+    placement=Placement(
+        x=100,
+        rotation=(Z, 90),
+    ),
 )
 ```
 
-The current SolidCraft 0.42 backend can write this directly as
-`occurrence.copy(..., translate=[40,0,0])`.
+The missing piece was a replayable way to refer to the real occurrence id that
+SolidCraft returns when the occurrence is created.
 
-The case is no longer blocked.
+## SolidCraft behaviour
 
-### four-corner-l
+SolidCraft 0.42 returns an occurrence id from both:
 
-The frame dimensions directly determine X, Y and Z. The quarter-turn around Z
-is also part of the occurrence pose.
+- `component.create`;
+- `occurrence.copy`.
 
-The four profiles therefore use `Placement`, not `attach()`.
+`occurrence.copy` accepts a numeric `translate`, but it does not accept
+`axis` and `angle`. Rotation therefore needs a later `occurrence.move`.
 
-### eight-corner-brackets
+The later command must use the actual returned id. It must not guess a browser
+name.
 
-The frame dimensions directly determine all eight X/Y/Z positions and the
-corner clocking. These are ordinary `Placement` values.
+## Replay variables
 
-### eight-flightcase-corners
+Forge replay documents may bind a returned field to a named variable:
 
-The case dimensions directly determine the eight positions. Each protector has
-one explicit axis-angle orientation. These are ordinary `Placement` values.
+```json
+{
+  "command": "occurrence.copy",
+  "params": {
+    "component": "Board",
+    "translate": [100, 0, 0]
+  },
+  "bind": {
+    "$board_2": "occurrence"
+  }
+}
+```
 
-## Remaining backend limit
+A later command can use that variable:
 
-The last three cases remain blocked, but for a different reason.
+```json
+{
+  "command": "occurrence.move",
+  "params": {
+    "occurrence": "$board_2",
+    "axis": [0, 0, 1],
+    "angle": "90 deg"
+  }
+}
+```
 
-Change 0009 deliberately limits replay-first Placement because SolidCraft 0.42:
+During every replay Forge executes the first command, reads the returned
+`occurrence` field, binds `$board_2` to that value and resolves the later
+command.
 
-- creates the first component occurrence at identity;
-- accepts only numeric `occurrence.copy.translate`;
-- has no rotation input on `occurrence.copy`;
-- requires an existing occurrence selector for a later `occurrence.move`.
+The temporary SolidCraft id is never written back into the replay file.
 
-Forge still does not guess generated names such as `Component:2`.
+## Replay file
 
-Therefore the current backend cannot yet write these parameter-driven,
-rotated Placements safely into one static replay document.
+A replay file is explicitly identified as Forge replay data:
 
-This is a Placement backend gap. It is not an attachment limitation.
+```json
+{
+  "format": "scpf-replay",
+  "version": 1,
+  "commands": []
+}
+```
 
-## What stays valid from change 0010
+A variable:
 
-Change 0010's attachment rule remains valid:
+- starts with `$`;
+- is bound exactly once;
+- may only be used after its binding command;
+- is replaced only when the complete JSON string is that variable name.
 
-- no guessed generated occurrence names;
-- no point-only copied-occurrence lookup;
-- no temporary move just to make a copied occurrence selectable;
-- copied attachment endpoints remain unsupported until SolidCraft provides a
-  replay-safe reference that Forge can write into the static command document.
+Forge does not perform text substitution inside CAD expressions.
+
+## Replay log
+
+One concrete execution can write a separate `scpf-replay-log` file.
+
+The log contains:
+
+- a SHA-256 hash of the replay document;
+- the concrete value of every replay variable for that run;
+- each command's resolved parameters;
+- the bindings produced by each command.
+
+The log is diagnostic output. It is never input for another replay.
+
+## Native execution
+
+The live GUI connection and the headless SolidCraft runner use the same replay
+rules.
+
+Commands are kept in one native batch until a later command needs a variable
+that is produced by that batch. Forge then starts the next batch with the real
+resolved id.
+
+For a live GUI run Forge takes a SolidCraft checkpoint before a multi-phase
+replay. If a later phase fails, the complete replay is restored to that
+checkpoint.
+
+For headless qualification, phases are saved to temporary `.sc` files. The
+next phase opens the previous file, whose occurrence ids are part of the saved
+design. Only the final successful phase is written to the requested output
+path.
+
+## Placement lowering
+
+Use the simplest SolidCraft operation that preserves the declared Placement.
+
+### Numeric unrotated copy
+
+```python
+right = left.copy(placement=Placement(x=100))
+```
+
+lowers directly to:
+
+```text
+occurrence.copy(component="Board", translate=[100, 0, 0])
+```
+
+There is no later move.
+
+### Rotated or symbolic copy
+
+The copy is created and its occurrence id is bound. A later
+`occurrence.move` uses that bound id for the part of Placement that
+`occurrence.copy` cannot express safely.
+
+### First occurrence
+
+`component.create` also binds its returned occurrence id. A non-identity
+first occurrence can therefore be placed without predicting `Component:1`.
+
+## Attachments
+
+Attachments continue to mean an actual assembly relationship. Placement is not
+converted into a joint.
+
+When an attachment endpoint is a copied occurrence, its real runtime id comes
+from the same replay-variable mechanism. There is no separate copied-attachment
+addressing workaround.
 
 ## Qualification
 
-This change must prove:
+Change 0013 must prove that:
 
-- `components` compiles with one shared Block definition and one
-  `occurrence.copy(..., translate=[40,0,0])`;
-- `components` contains no `joint.create` and no `occurrence.move`;
-- the three corner models contain no `attach()`;
-- the three corner cases fail on the current Placement backend, not on copied
-  attachment addressing;
-- exactly those three cases remain `BLOCKED`;
-- supported cases still contain no predicted SolidCraft `Component:N`
-  occurrence selector.
+- normal numeric copy translation stays in `occurrence.copy`;
+- symbolic and rotated Placement use a bound occurrence id;
+- no generated `Component:N` selector is predicted;
+- replay variables are deterministic;
+- use-before-bind is rejected;
+- live execution resolves variables and rolls back the complete replay on a
+  later failure;
+- headless qualification uses the same replay file semantics;
+- copied attachment endpoints use bound ids;
+- the four corner/component fixtures contain no artificial Placement joints;
+- saved-design parameter changes continue to move the placed occurrences.
