@@ -205,16 +205,17 @@ frame, not in world XY.
 
 SolidCraft 0.42 relationship lowering is replay-first. Forge never predicts
 generated occurrence names. The first occurrence of a reusable definition can
-be addressed by its component name in qualified joint commands; copied
-occurrences are resolved from their native world topology/point pick. Copied
-attached children therefore use distinct small temporary staging offsets along
-their parent attachment direction before their joints are created. Those
-staging offsets are compiler setup state and are not part of the public
-`attach()` meaning.
+be addressed by its component name in the joint commands where this is
+explicitly qualified.
 
-Relationship Placement rotation, copied as-built relationships and chained
-attachments are currently rejected where no replay-safe 0.42 selector has been
-qualified. See [change 0010](changes/0010-replay-safe-attachments.md).
+Copied occurrences are currently rejected as attachment endpoints because
+Forge has no explicit replay-safe SolidCraft 0.42 selector for them. Forge does
+not replace the missing selector with geometry inference, temporary staging or
+another heuristic.
+
+Relationship Placement rotation, copied relationships and chained attachments
+remain unsupported where no explicit replay-safe 0.42 reference mechanism has
+been qualified. See [change 0010](changes/0010-replay-safe-attachments.md).
 
 ## Direction, face and anchor vocabulary
 
