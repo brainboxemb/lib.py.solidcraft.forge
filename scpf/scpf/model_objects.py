@@ -39,7 +39,7 @@ class ModelDefinition:
     class_name: str
     parameters: tuple[tuple[str, float], ...]
     shape: Shape
-    fixed_inputs: tuple[tuple[str, float], ...] = ()
+    fixed_inputs: tuple[tuple[str, object], ...] = ()
     external_parameters: tuple[tuple[str, float], ...] = ()
     input_bindings: tuple[tuple[str, str], ...] = ()
     anchors: tuple[tuple[str, AnchorFrame | AnchorTopology], ...] = ()
@@ -50,6 +50,7 @@ class ModelDefinition:
             self.class_name,
             self.parameters,
             self.fixed_inputs,
+            self.external_parameters,
             self.input_bindings,
             self.anchors,
         )

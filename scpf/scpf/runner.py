@@ -11,6 +11,7 @@ an implicit return. No show() or main() is required.
 import ast
 from contextlib import contextmanager
 from dataclasses import dataclass, is_dataclass
+from enum import Enum
 import functools
 import inspect
 from pathlib import Path
@@ -156,6 +157,39 @@ def _plain_reference_fields(cls):
     return list(fields.items())
 
 
+def _definition_identity_value(value, name):
+    """Return one stable hashable value for a reusable component input."""
+    if isinstance(value, Enum):
+        enum_type = type(value)
+        return (
+            "enum",
+            enum_type.__module__,
+            enum_type.__qualname__,
+            value.name,
+        )
+    if value is None:
+        return ("none",)
+    if isinstance(value, bool):
+        return ("bool", value)
+    if isinstance(value, str):
+        return ("str", value)
+    if isinstance(value, (int, float)):
+        return ("number", float(value))
+    if isinstance(value, tuple):
+        return (
+            "tuple",
+            tuple(
+                _definition_identity_value(item, name)
+                for item in value
+            ),
+        )
+    raise TypeError(
+        f"{name}: {type(value).__name__} cannot be used in reusable "
+        "component definition identity; use a fixed immutable value "
+        "(None, bool, number, str, Enum or tuple)"
+    )
+
+
 def _parameter_input(
     value,
     name,
@@ -213,6 +247,7 @@ def _plain_model_data(
     *args,
     _include=None,
     _aliases=None,
+    _definition_identity=False,
     **kwargs,
 ):
     """Instantiate a plain model and classify public vs fixed inputs."""
@@ -259,6 +294,12 @@ def _plain_model_data(
     aliases = {} if _aliases is None else dict(_aliases)
     concrete = []
     fixed = []
+    if _definition_identity:
+        for name in reference_names:
+            fixed.append((
+                name,
+                _definition_identity_value(reference_values[name], name),
+            ))
     external = {}
     bindings = []
     for name in names:
@@ -310,6 +351,7 @@ def _parameterized_instance(
     *args,
     _include=None,
     _aliases=None,
+    _definition_identity=False,
     **kwargs,
 ):
     """Construct one model object and classify its reusable inputs."""
@@ -319,6 +361,7 @@ def _parameterized_instance(
             *args,
             _include=_include,
             _aliases=_aliases,
+            _definition_identity=_definition_identity,
             **kwargs,
         )
 
@@ -363,6 +406,13 @@ def _parameterized_instance(
                             f"conflicting inherited parameter {parameter_name!r}"
                         )
             object.__setattr__(instance, name, symbolic)
+            continue
+
+        if _definition_identity:
+            fixed.append((
+                name,
+                _definition_identity_value(value, name),
+            ))
     return (
         instance,
         tuple(concrete),
@@ -407,6 +457,7 @@ def _build_object(
     *args,
     _include=None,
     _aliases=None,
+    _definition_identity=False,
     **kwargs,
 ):
     """Build one user model and return its classified reusable inputs."""
@@ -415,6 +466,7 @@ def _build_object(
         *args,
         _include=_include,
         _aliases=_aliases,
+        _definition_identity=_definition_identity,
         **kwargs,
     )
     build = getattr(instance, "build", None)
@@ -464,6 +516,7 @@ def _reusable_model_object(
         *args,
         _include=_include,
         _aliases=_aliases,
+        _definition_identity=True,
         **kwargs,
     )
     if not isinstance(result, Shape):

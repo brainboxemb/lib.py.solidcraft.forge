@@ -187,9 +187,17 @@ def validate_parameter_scope(root: Path) -> Validation:
     _check_declared_bounds(v, d, "parameter-scope")
     v.check("baseline widths", widths(d) == [40.0, 40.0, 60.0, 80.0, 80.0],
             [40, 40, 60, 80, 80], widths(d))
-    v.check("baseline parameters", params(d) == {
-        "Panel_width": 40.0, "Panel_2_width": 60.0, "shared_width": 80.0
-    }, {"Panel_width": 40.0, "Panel_2_width": 60.0, "shared_width": 80.0}, params(d))
+    expected_parameters = {
+        "d1_Panel_width": 40.0,
+        "d2_Panel_2_width": 60.0,
+        "shared_width": 80.0,
+    }
+    v.check(
+        "baseline parameters",
+        params(d) == expected_parameters,
+        expected_parameters,
+        params(d),
+    )
 
     m = load(root / "measurements-shared-width-100.json")
     _check_declared_bounds(v, m, "parameter-scope", level="q5", mutation=True)

@@ -8,6 +8,18 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Reusable component definition identity now includes inherited parent-parameter
+  defaults and supported fixed non-numeric build inputs, so definitions that
+  can build different geometry are not silently merged.
+- Unsupported mutable/arbitrary build inputs are rejected for reusable physical
+  components instead of being omitted from definition identity.
+- Compiler-local parameter names now include a stable definition number, so
+  different component definitions cannot collide after readable names are
+  normalized to the same identifier.
+
+
 ## [0.3.4] - 2026-11-16
 
 ### Fixed

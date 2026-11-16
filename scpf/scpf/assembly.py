@@ -79,8 +79,14 @@ def _rewrite_value(value, mapping):
     return value
 
 
-def _namespace_commands(commands, component_name, external_names=()):
-    """Namespace local component parameters, but keep inherited names intact."""
+def _namespace_commands(
+    commands,
+    component_name,
+    *,
+    definition_number,
+    external_names=(),
+):
+    """Namespace local parameters uniquely, but keep inherited names intact."""
     external_names = set(external_names)
     local_names = [
         command["params"]["name"]
@@ -88,7 +94,7 @@ def _namespace_commands(commands, component_name, external_names=()):
         if command["command"] == "parameters.add"
         and command["params"]["name"] not in external_names
     ]
-    prefix = _component_slug(component_name)
+    prefix = f"d{definition_number}_{_component_slug(component_name)}"
     mapping = {name: f"{prefix}_{name}" for name in local_names}
 
     result = []
@@ -322,7 +328,10 @@ def compile_assembly(value, name):
     for instance in assembly.instances:
         by_definition.setdefault(instance.definition.key, []).append(instance)
 
-    for key, instances in by_definition.items():
+    for definition_number, (key, instances) in enumerate(
+        by_definition.items(),
+        start=1,
+    ):
         component_name = names[key]
         relationship_definition = any(
             instance.occurrence_id in relationship_occurrence_ids
@@ -369,6 +378,7 @@ def compile_assembly(value, name):
         compiled = _namespace_commands(
             compiled,
             component_name,
+            definition_number=definition_number,
             external_names=external_names,
         )
         parameter_commands = [
