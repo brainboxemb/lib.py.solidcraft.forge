@@ -2,7 +2,10 @@
 from pathlib import Path
 import unittest
 
-from scpf import BOTTOM, LEFT, Axis, Cylinder, Sphere
+from scpf.core import Anchor, Axis, Cylinder, Sphere
+
+BOTTOM = Anchor.BOTTOM
+LEFT = Anchor.LEFT
 from scpf.compiler import compile_model
 from scpf.runner import run_script
 
