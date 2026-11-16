@@ -49,16 +49,24 @@ def compile_base(shape, name):
                 box_origin,
             )
             selector = box_origin.vector
-            placement = (
-                {"center": [0, 0, 0]}
-                if selector == (0, 0, 0)
-                else {
+            if selector == (0, 0, 0):
+                placement = {"center": [0, 0, 0]}
+            elif selector == (0, 0, -1):
+                # Preserve the established default command expressions exactly.
+                placement = {
+                    "corner": [
+                        _half(length, True),
+                        _half(width, True),
+                        0,
+                    ]
+                }
+            else:
+                placement = {
                     "corner": [
                         command_value(value)
                         for value in origin
                     ]
                 }
-            )
         else:
             (length, width), origin, height = _base_rectangle(shape)
             placement = {
