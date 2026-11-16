@@ -73,55 +73,54 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Placement itself does not create a joint. Forge replay variables bind the real SolidCraft occurrence ids when a later native move is needed. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
-### Native `Box` anchor datum
+### Native primitive anchor datum
 
-A direct Box is centred by default:
+Direct standard 3D primitives use CENTER as their constructor datum:
 
 ```python
-centered = Box(80, 50, 10)
-bottom_based = Box(80, 50, 10, anchor=BOTTOM)
-front_bottom = Box(80, 50, 10, anchor=FRONT + BOTTOM)
+box = Box(80, 50, 10)
+pin = Cylinder(d=8, h=20)
+ball = Sphere(12)
 ```
 
-The public signature is:
+The public signatures are:
 
 ```python
 Box(length, width, thickness, *, anchor=Anchor.CENTER)
+Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER)
+Sphere(radius, *, anchor=Anchor.CENTER)
 ```
 
-`anchor` selects which Box anchor lies at model coordinate `(0, 0, 0)`
-before later placement. CENTER is the Box default because it gives the same
-simple meaning in feature-history and CSG code. BOTTOM is explicit when a board
-or plate should grow from Z=0 towards +Z.
+`anchor` selects which world-cardinal primitive datum lies at model
+coordinate `(0, 0, 0)` before later placement.
 
-Change 0022 applies the same CENTER default to all dimension-defined
-standard solids: Box, Cylinder and Sphere. A cylinder's native base is half
-a height behind its CENTER datum on its selected axis; explicit BOTTOM for
-Axis.Z, LEFT for Axis.X and FRONT for Axis.Y select the positive-going axial
-start. Sphere defaults to its true center. Anchors refer to the primitive's
-world XYZ bounds after its axis is chosen.
+For Cylinder the anchor is resolved against its world XYZ bounds after the axis
+is chosen. Axis.X therefore uses LEFT/RIGHT for the axial ends; Axis.Y uses
+FRONT/BACK; Axis.Z uses BOTTOM/TOP. The remaining cardinal directions select
+tangent datums on the transverse circular bounds.
 
-Dimension-defined sketch profiles Rectangle2D, Circle2D and
-RoundedRectangle2D are already centered by default. Polygon2D and Text2D
-keep authored coordinates and insertion points; no automatic recentering.
+Forge lowers each primitive through the native command that SolidCraft already
+owns:
 
-PythonSCAD equivalents require explicit center=True for cube/cylinder.
-pyBOSL2 cuboid/cyl defaults provide the closer user-facing convention.
-Use the pinned local reference docs in docs/agent/reference-libraries.md,
-not an external repository lookup for every comparison.
+- Box CENTER maps to native `center`; another Box anchor maps to the matching
+  native `corner`.
+- Cylinder always maps to native `base`; Forge derives that base from axis,
+  height, diameter and the selected anchor.
+- Sphere maps to native `center`; Forge derives the center from the selected
+  tangent/center anchor.
 
-This is a breaking change: migrate Forge and CAD scripts that relied on
-the previous Cylinder base datum; do not add compatibility offsets.
+The same calculation is used in direct and Boolean CSG paths. Do not add a
+corrective move merely to preserve an old constructor convention.
 
-Forge lowers CENTER directly with SolidCraft's native `center` datum and
-cardinal anchors with native `corner` data. It does not add corrective moves.
+Dimension-defined sketch profiles Rectangle2D, Circle2D and RoundedRectangle2D
+are already centered by default from change 0018. Polygon2D and Text2D keep
+authored coordinates/insertion points.
 
-An explicit `.at(..., anchor=...)` is later placement and takes precedence
-over the constructor datum.
+`Box.taper(from_z=..., inset=...)` is anchor-aware: `from_z` is measured
+from the actual Box bottom face regardless of the constructor anchor.
 
-`Box.taper(from_z=..., inset=...)` is anchor-aware. `from_z` is measured
-from the Box bottom face. For a centred Box the bottom face is at
-`-thickness/2`; for `anchor=BOTTOM` it is at Z=0.
+This is intentionally a breaking cleanup while Forge remains unstable. Models
+that require an old base/bottom datum must state it explicitly with `anchor=`.
 
 See [change 0022](changes/0022-native-box-origin.md).
 
