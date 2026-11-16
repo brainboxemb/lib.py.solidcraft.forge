@@ -915,18 +915,37 @@ class SCPFExamples(unittest.TestCase):
         self.assertEqual(box["corner"], [-10.0, -5.0, 0])
         self.assertNotIn("center", box)
 
-    def test_taper_requires_bottom_box_anchor(self):
+    def test_taper_measures_from_bottom_for_center_and_bottom_anchors(self):
         from scpf import BOTTOM, Box
+        from scpf.compiler import compile_model
 
-        Box(40, 30, 10, anchor=BOTTOM).taper(from_z=2, inset=1)
-        with self.assertRaisesRegex(
-            ValueError,
-            "requires Box anchor=BOTTOM",
-        ):
-            Box(40, 30, 10).taper(
-                from_z=2,
-                inset=1,
-            )
+        centered = compile_model(
+            Box(40, 30, 10).taper(from_z=2, inset=1),
+            "CenteredTaper",
+        )["commands"]
+        centered_sketches = [
+            row["params"]
+            for row in centered
+            if row["command"] == "sketch.create"
+        ]
+        self.assertEqual(
+            [row.get("offset", 0) for row in centered_sketches],
+            [-5.0, -3.0, 5.0],
+        )
+
+        bottom = compile_model(
+            Box(40, 30, 10, anchor=BOTTOM).taper(from_z=2, inset=1),
+            "BottomTaper",
+        )["commands"]
+        bottom_sketches = [
+            row["params"]
+            for row in bottom
+            if row["command"] == "sketch.create"
+        ]
+        self.assertEqual(
+            [row.get("offset", 0) for row in bottom_sketches],
+            [0, 2, 10],
+        )
 
     def test_native_box_supports_directional_anchor_and_edge_selectors(self):
         from scpf import BOTTOM, FRONT, LEFT, RIGHT, Box
