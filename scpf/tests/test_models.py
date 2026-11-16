@@ -200,7 +200,7 @@ class SCPFExamples(unittest.TestCase):
         with Sketch(name="Base", plane="XY") as sketch:
             Rectangle2D(width, depth)
         plate = sketch.extrude(thickness)
-        holes = Hole(d=8, depth=Depth.THROUGH_ALL).pattern(
+        holes = Hole(d=8, depth=Depth.THROUGH_ALL).repeat_linear(
             count=2, spacing=40, axis=Axis.Y
         ).on(plate, face=Faces.TOP)
         commands = compile_model(plate + holes, "Plate")["commands"]
@@ -220,6 +220,68 @@ class SCPFExamples(unittest.TestCase):
         self.assertEqual(commands[-1]["params"]["operation"], "cut")
         self.assertEqual(commands[-1]["params"]["direction"], "positive")
         self.assertEqual(commands[-1]["params"]["distance"], "thickness")
+
+    def test_native_rectangular_feature_pattern_command(self):
+        from scpf.core import Anchor, Axis, Box, Parameter, Rectangle2D
+        from scpf.compiler import compile_model
+
+        columns = Parameter("columns", 3)
+        rows = Parameter("rows", 2)
+        pitch = Parameter("pitch", 20)
+        plate = Box(120, 80, 4, anchor=Anchor.BOTTOM)
+        with Sketch(name="Slot", on=plate) as slot:
+            Rectangle2D(8, 16)
+        cut = slot.extrude(-4)
+        plate = plate - cut
+        patterned = plate.rectangular_pattern(
+            cut,
+            count=columns,
+            spacing=pitch,
+            direction=Axis.X,
+            count2=rows,
+            spacing2=22,
+            direction2=Axis.Y,
+        )
+        commands = compile_model(patterned, "Plate")["commands"]
+
+        params = {
+            command["params"]["name"]: command["params"]
+            for command in commands
+            if command["command"] == "parameters.add"
+        }
+        self.assertEqual(params["columns"]["unit"], "")
+        self.assertEqual(params["rows"]["unit"], "")
+        self.assertEqual(params["pitch"]["unit"], "mm")
+
+        pattern = next(
+            command for command in commands
+            if command["command"] == "solid.pattern.rectangular"
+        )
+        self.assertEqual(pattern["params"]["features"], ["Slot"])
+        self.assertEqual(pattern["params"]["dir1"], [1.0, 0.0, 0.0])
+        self.assertEqual(pattern["params"]["count1"], "columns")
+        self.assertEqual(pattern["params"]["spacing1"], "pitch")
+        self.assertEqual(pattern["params"]["dir2"], [0.0, 1.0, 0.0])
+        self.assertEqual(pattern["params"]["count2"], "rows")
+        self.assertEqual(pattern["params"]["spacing2"], 22)
+        self.assertEqual(
+            [c["command"] for c in commands].count("solid.pattern.rectangular"),
+            1,
+        )
+
+    def test_rectangular_pattern_requires_applied_extrude_feature(self):
+        from scpf.core import Anchor, Box, Rectangle2D
+
+        plate = Box(80, 50, 4, anchor=Anchor.BOTTOM)
+        with Sketch(name="Slot", on=plate) as slot:
+            Rectangle2D(8, 16)
+        cut = slot.extrude(-4)
+        with self.assertRaisesRegex(ValueError, "already be applied"):
+            plate.rectangular_pattern(cut, count=3, spacing=15)
+
+    def test_old_primitive_pattern_spelling_is_removed(self):
+        from scpf.core import Hole
+        self.assertFalse(hasattr(Hole(d=8), "pattern"))
 
     def test_hole_on_starts_at_exterior_top(self):
         from scpf.core import Anchor, Faces, Hole, Rectangle2D
@@ -264,7 +326,7 @@ class SCPFExamples(unittest.TestCase):
         with Sketch(name="Base", plane="XY") as sketch:
             Rectangle2D(100, 60)
         base = sketch.extrude(10)
-        holes = Cylinder(d=8, h=12).pattern(
+        holes = Cylinder(d=8, h=12).repeat_linear(
             count=2, spacing=40, axis=Axis.Y
         ).attach(base, parent=Anchor.CENTER, child=Anchor.CENTER)
         commands = compile_model(base - holes, "Plate")["commands"]
@@ -308,7 +370,7 @@ class SCPFExamples(unittest.TestCase):
         with self.assertRaises(ValueError):
             Sphere(8).attach(base, parent=Anchor.TOP)
         with self.assertRaises(ValueError):
-            Cylinder(d=8, h=10).pattern(count=2, spacing=40, axis=Axis.Z)
+            Cylinder(d=8, h=10).repeat_linear(count=2, spacing=40, axis=Axis.Z)
         with self.assertRaises(ValueError):
             Cylinder(d=8, h=10).attach(base, offset=(1, 2, 3))
 
@@ -505,11 +567,11 @@ class SCPFExamples(unittest.TestCase):
     def test_pattern_requires_explicit_axes_and_valid_count(self):
         from scpf.core import Axis, Cylinder, Hole
         with self.assertRaises(TypeError):
-            Hole(d=8).pattern(x=70, y=30)
+            Hole(d=8).repeat_linear(x=70, y=30)
         with self.assertRaises(ValueError):
-            Cylinder(d=8, h=3).pattern(count=0, spacing=40, axis=Axis.X)
+            Cylinder(d=8, h=3).repeat_linear(count=0, spacing=40, axis=Axis.X)
         with self.assertRaises(ValueError):
-            Hole(d=8).pattern(count=2, spacing=40, axis=Axis.Z)
+            Hole(d=8).repeat_linear(count=2, spacing=40, axis=Axis.Z)
 
     def test_attached_hole_uses_sketch_while_explicit_at_can_be_native(self):
         from scpf.compiler import compile_model
