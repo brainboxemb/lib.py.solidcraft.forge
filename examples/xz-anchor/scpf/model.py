@@ -25,7 +25,12 @@ class Board:
         )
 
 
-class Marker:
+class RightMarker:
+    def build(self):
+        return Box(10, 10, 10)
+
+
+class LeftMarker:
     def build(self):
         return Box(10, 10, 10)
 
@@ -39,12 +44,12 @@ class XzAnchor:
             width=self.board_width,
             height=self.board_height,
         )
-        right_marker = Marker().attach(
+        right_marker = RightMarker().attach(
             board,
             parent=Anchor.FRONT_TOP_RIGHT,
             child=Anchor.BACK_TOP_RIGHT,
         )
-        left_marker = Marker().attach(
+        left_marker = LeftMarker().attach(
             board,
             parent=Anchor.FRONT_TOP_LEFT,
             child=Anchor.BACK_TOP_LEFT,
