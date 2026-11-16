@@ -237,6 +237,7 @@ def _qualification_status(result):
         "incomplete": "INCOMPLETE",
         "missing": "MISSING",
         "not-required": "N/R",
+        "blocked": "BLOCKED",
     }
     details = []
     for name in ("q1", "q2", "q3", "q4", "q5", "q6"):
@@ -259,6 +260,7 @@ def _qualification_status_html(overall, detail):
         "REVIEW": "review",
         "INCOMPLETE": "incomplete",
         "NOT RUN": "not-run",
+        "BLOCKED": "blocked",
     }.get(overall, "incomplete")
     return (
         '<div class="qualification-status-line">'
