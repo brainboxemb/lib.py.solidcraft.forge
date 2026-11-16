@@ -1,4 +1,4 @@
-# Agent reference: PythonSCAD, pyBOSL2 and CadQuery
+# Agent reference: PythonSCAD, pyBOSL2, CadQuery and build123d
 
 Purpose: avoid repeated external documentation lookups while writing Forge
 qualification comparison models. Read only this file unless the needed
@@ -13,6 +13,7 @@ Snapshot used when this cache was written:
 - PythonSCAD: `pythonscad/pythonscad@0d1b8a0ce1a9b98b4b56b45bbfc928376638788b`
 - pyBOSL2: `pinkfish/pybosl2@d4279910c12435ed7224b3406616e495db1c96ec`
 - CadQuery: PyPI `cadquery==2.8.0`
+- build123d: PyPI `build123d==0.12.0`
 
 ## Selection rule
 
@@ -26,6 +27,12 @@ Use **CadQuery** as the third default comparison, especially for object
 Location, assembly hierarchy, workplane and constraint-vs-placement semantics.
 If a useful CadQuery comparison is technically unavailable, record an explicit
 qualification exception with the reason.
+
+Use **build123d** as the fourth default reference for Pythonic parametric
+solids, algebraic CSG, placement and independent OpenCascade geometry.
+Its STL/render/bounds evidence is required exactly like the other references.
+The comparison does not qualify SolidCraft's native feature history,
+persistent joints or saved-design parameter changes.
 
 Do not translate Forge syntax mechanically. Preserve modelling intent.
 
@@ -59,6 +66,46 @@ keeps its established bottom-based datum; its Forge fixture now says
 `anchor=Anchor.BOTTOM` explicitly while the independent reference examples
 remain unchanged. Cylinder/Sphere origin code has native/CSG regression tests.
 
+
+## build123d 0.12.0: local qualification syntax
+
+This is a pinned, local quick reference. Standard algebraic-mode examples:
+
+```python
+from build123d import Align, Axis, Box, Cylinder, Sphere, Pos, Rot
+from build123d import Compound, fillet, export_stl
+
+centered = Box(40, 30, 10)  # XYZ center
+bottom_based = Box(40, 30, 10,
+                   align=(Align.CENTER, Align.CENTER, Align.MIN))
+located = Pos(40, 0, 0) * bottom_based
+turned = Pos(0, 0, 10) * Rot(0, 0, 90) * bottom_based
+bores = bottom_based - Pos(0, 0, 5) * Cylinder(4, 12)
+joined = centered + Cylinder(4, 20)
+intersection = centered & Sphere(20)
+rounded = fillet(bottom_based.edges().filter_by(Axis.Z), radius=2)
+assembly = Compound(children=[bottom_based, located])
+export_stl(assembly, "model.stl")
+```
+
+`Box` and `Cylinder` are geometrically centered by default in build123d,
+unlike the older bottom-based Forge/CSG mismatch. Use explicit `Align.MIN`
+for bottom-based models. The `Cylinder` constructor takes radius before
+height, unlike Forge's keyword diameter.
+
+Because the pinned pyBOSL2 and build123d releases require incompatible `webcolors` versions, CI runs build123d in its own virtual environment. The qualification runner calls `qualification/build123d_export.py` through `BUILD123D_PYTHON`; this is dependency isolation, not a different qualification rule.
+
+One source per qualification case is stored at
+`examples/<slug>/build123d/model.py`. It exposes a top-level `model`
+containing a build123d Shape/Part/Compound. Only the runner calls
+`build123d.export_stl(model, file_path)`, not the model source.
+The runner then validates STL bounds and renders front/right/iso images.
+`Compound` preserves separate occurrence geometry but STL does not
+prove SolidCraft native assembly identities/relationships.
+
+For operations not listed above, consult the **installed pinned** version and
+refresh this cache before relying on a new behaviour; do not repeatedly
+browse the build123d Git repository for ordinary modelling tasks.
 
 ## PythonSCAD: subset used by qualification references
 
@@ -303,7 +350,7 @@ Consult upstream only when:
 
 1. the required operation is not listed here;
 2. a reference fails against the installed library;
-3. PythonSCAD/pyBOSL2/CadQuery dependency versions are intentionally upgraded;
+3. PythonSCAD/pyBOSL2/CadQuery/build123d dependency versions are intentionally upgraded;
 4. an upstream behavioural change is suspected.
 
 After verifying upstream, update this file with the smallest useful new fact

@@ -15,10 +15,10 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class ReferenceModelTests(unittest.TestCase):
-    def test_default_reference_set_is_three_independent_libraries(self):
+    def test_default_reference_set_is_four_independent_libraries(self):
         self.assertEqual(
             DEFAULT_REFERENCE_IMPLEMENTATIONS,
-            ("pythonscad", "pybosl2", "cadquery"),
+            ("pythonscad", "pybosl2", "cadquery", "build123d"),
         )
 
     def test_every_qualification_has_python_references(self):
@@ -56,6 +56,11 @@ class ReferenceModelTests(unittest.TestCase):
                     ROOT / "examples" / slug / reference / "model.py"
                 ).read_text(encoding="utf-8")
                 self.assertNotIn("from scpf", source, (slug, reference))
+                if reference == "build123d":
+                    self.assertIn("from build123d import", source)
+                    self.assertNotIn("import cadquery", source)
+                    self.assertNotIn("from pythonscad", source)
+                    self.assertNotIn("from pybosl2", source)
 
 
 if __name__ == "__main__":

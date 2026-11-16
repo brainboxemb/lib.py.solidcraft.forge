@@ -1,4 +1,4 @@
-"""Execute PythonSCAD, pyBOSL2 and CadQuery qualification references.
+"""Execute PythonSCAD, pyBOSL2, CadQuery and build123d qualification references.
 
 Each reference source must expose a final 3-D object as model. The runner
 exports that object with the reference library itself, checks the resulting STL
@@ -10,7 +10,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import runpy
+import subprocess
 import sys
 from pathlib import Path
 
@@ -50,6 +52,24 @@ def load_reference(path: Path):
 
 def implementations_for(slug: str) -> tuple[str, ...]:
     return reference_implementations_for(CASE_BY_SLUG[slug])
+
+
+def export_build123d_reference(source: Path, stl: Path):
+    """Run build123d in its isolated environment and export one STL."""
+    python = os.environ.get("BUILD123D_PYTHON", sys.executable)
+    helper = ROOT / "qualification" / "build123d_export.py"
+    completed = subprocess.run(
+        [python, str(helper), str(source), str(stl)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if completed.returncode != 0:
+        detail = (completed.stderr or completed.stdout).strip()
+        raise RuntimeError(
+            f"build123d export failed with exit {completed.returncode}: {detail}"
+        )
+    return None
 
 
 def export_reference(model, implementation: str, stl: Path):
@@ -106,8 +126,11 @@ def validate_one(slug: str, implementation: str, out: Path, tolerance: float) ->
     target.mkdir(parents=True, exist_ok=True)
     stl = target / "model.stl"
 
-    model = load_reference(source)
-    exported = export_reference(model, implementation, stl)
+    if implementation == "build123d":
+        exported = export_build123d_reference(source, stl)
+    else:
+        model = load_reference(source)
+        exported = export_reference(model, implementation, stl)
     if not stl.is_file() and exported is not None:
         candidate = Path(exported)
         if candidate.is_file():

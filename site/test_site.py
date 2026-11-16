@@ -336,6 +336,7 @@ def check(
             "PythonSCAD",
             "pyBOSL2",
             "CadQuery",
+            "build123d",
             "3. Generated SolidCraft relationship",
             "6. Evidence and references",
         ):

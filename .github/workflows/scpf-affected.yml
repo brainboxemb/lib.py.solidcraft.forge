@@ -33,6 +33,15 @@ jobs:
             "trimesh>=4,<5" \
             "matplotlib>=3.8,<4"
 
+      - name: Set up isolated build123d reference environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/build123d-venv"
+          "$RUNNER_TEMP/build123d-venv/bin/python" -m pip install \
+            "build123d==0.12.0"
+          echo "BUILD123D_PYTHON=$RUNNER_TEMP/build123d-venv/bin/python" >> "$GITHUB_ENV"
+
       - name: Read qualified SolidCraft version from Forge
         shell: bash
         run: |

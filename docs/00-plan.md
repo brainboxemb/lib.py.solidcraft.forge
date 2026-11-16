@@ -48,7 +48,7 @@ website/upstream lookup.
 - Forge API: `docs/agent/forge-api.json`
 - SolidCraft 0.42 routing/semantics: `docs/agent/solidcraft.md`
 - SolidCraft 0.42 command catalog: `docs/vendor/solidcraft/0.42.0/commands.md`
-- PythonSCAD / pyBOSL2 working cache:
+- PythonSCAD / pyBOSL2 / CadQuery / build123d working cache:
   `docs/agent/reference-libraries.md`
 
 When runtime introspection fills a reusable gap, the useful result belongs in
@@ -74,11 +74,13 @@ The full gate remains mandatory for version qualification and release.
 
 ### Executable comparison references
 
-Every qualification case has both:
+Every qualification case has four independent references:
 
 ```text
 examples/<case>/pythonscad/model.py
 examples/<case>/pybosl2/model.py
+examples/<case>/cadquery/model.py
+examples/<case>/build123d/model.py
 ```
 
 Each file is executable Python, has a module explanation and exposes its final
@@ -87,13 +89,15 @@ geometry as `model`.
 The qualification runner executes each implementation, exports its own STL,
 checks its overall bounds against the independent case expectation and creates
 front/right/isometric renders. The final case sheet can therefore show Forge /
-SolidCraft evidence alongside separately generated PythonSCAD and pyBOSL2
-reference evidence.
+SolidCraft evidence alongside separately generated PythonSCAD, pyBOSL2,
+CadQuery and build123d reference evidence.
 
 PythonSCAD is primarily the neutral Python geometry comparison. pyBOSL2 uses
-its own anchors/attachment concepts when they are relevant. Neither comparison
-is allowed to masquerade as proof of SolidCraft-native joints, feature history,
-topology persistence or saved-design parameter associativity.
+its own anchors/attachment concepts when they are relevant. CadQuery adds an
+object/workplane/assembly viewpoint and build123d adds an algebraic OpenCascade
+viewpoint. None of these references may masquerade as proof of SolidCraft-native
+joints, feature history, topology persistence or saved-design parameter
+associativity.
 
 ## Next API work after this plan
 
