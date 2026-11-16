@@ -27,6 +27,8 @@ For a normal attachment (`as_built=False`):
 - the target/parent occurrence must not have a rotated `Placement`;
 - this is checked before component geometry and joint references are lowered.
 
+Validation happens before Forge emits any component, occurrence or joint command.
+
 This rule applies equally to:
 
 - standard `Anchor` references;
