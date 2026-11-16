@@ -1,11 +1,11 @@
 class Base:
     def build(self):
-        return Box(40, 30, 20)
+        return Box(40, 30, 20, anchor=BOTTOM)
 
 
 class Marker:
     def build(self):
-        return Box(10, 10, 10)
+        return Box(10, 10, 10, anchor=BOTTOM)
 
 
 class ParametricOffset:
