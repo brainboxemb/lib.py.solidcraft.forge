@@ -43,8 +43,11 @@ jobs:
         shell: bash
         run: |
           version="$(python -c 'from scpf.version import TESTED_SOLIDCRAFT_VERSION; print(TESTED_SOLIDCRAFT_VERSION)')"
+          forge_version="$(python -c 'from importlib.metadata import version; print(version("scpf"))')"
           echo "SOLIDCRAFT_VERSION=$version" >> "$GITHUB_ENV"
+          echo "FORGE_VERSION=$forge_version" >> "$GITHUB_ENV"
           echo "SolidCraft qualification target: $version"
+          echo "Forge package version: $forge_version"
 
       - name: Restore rendered CADCraft diagrams
         id: cadcraft_diagrams
@@ -360,8 +363,15 @@ jobs:
             --native-root output/native \
             --qualification-dir output/qualification
 
-          jq -n --arg source "$GITHUB_SHA" --arg version "$SOLIDCRAFT_VERSION" \
-            '{source_commit:$source,solidcraft_version:$version,verified:true,
+          qualified_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          echo "QUALIFIED_AT=$qualified_at" >> "$GITHUB_ENV"
+          jq -n \
+            --arg source "$GITHUB_SHA" \
+            --arg forge "$FORGE_VERSION" \
+            --arg version "$SOLIDCRAFT_VERSION" \
+            --arg qualified_at "$qualified_at" \
+            '{source_commit:$source,forge_version:$forge,solidcraft_version:$version,
+              qualified_at:$qualified_at,verified:true,
               levels:{q1:"python-api",q2:"command-contract",q3:"native-build",
                       q4:"native-semantic-validation",q5:"parametric-mutation",
                       q6:"visual-regression"}}' \
@@ -374,7 +384,9 @@ jobs:
             --qualification-dir output/qualification \
             --native-root output/native \
             --source-sha "$GITHUB_SHA" \
-            --solidcraft-version "$SOLIDCRAFT_VERSION"
+            --forge-version "$FORGE_VERSION" \
+            --solidcraft-version "$SOLIDCRAFT_VERSION" \
+            --qualified-at "$QUALIFIED_AT"
 
       - name: Build qualification report
         if: always()
@@ -452,9 +464,11 @@ jobs:
         run: |
           echo "### SolidCraft qualification preview" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Forge: **$FORGE_VERSION**" >> "$GITHUB_STEP_SUMMARY"
           echo "- SolidCraft: **$SOLIDCRAFT_VERSION**" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Branch: `$GITHUB_REF_NAME`" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Commit: `$GITHUB_SHA`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Qualified: **$QUALIFIED_AT**" >> "$GITHUB_STEP_SUMMARY"
+          printf -- '- Branch: `%s`\n' "$GITHUB_REF_NAME" >> "$GITHUB_STEP_SUMMARY"
+          printf -- '- Commit: `%s`\n' "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
           echo "- Results: ${{ steps.native_preview.outputs.url }}qualification/results/" >> "$GITHUB_STEP_SUMMARY"
           echo "- Full preview: ${{ steps.native_preview.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
 
