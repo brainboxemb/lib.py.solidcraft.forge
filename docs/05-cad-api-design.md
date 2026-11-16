@@ -212,18 +212,29 @@ A local planar `offset=(u, v)` on an attachment is measured in the attachment
 frame, not in world XY.
 
 Forge generates replayable SolidCraft 0.42 commands and never makes up
-occurrence names such as `Block:2`. In the joint commands tested so far, the
-component name can refer to that component's first occurrence.
+occurrence names such as `Block:2`. Every physical occurrence has a stable
+Forge-side id and a deterministic replay variable. During live execution or
+later replay, `component.create` and `occurrence.copy` bind those variables
+to the actual SolidCraft occurrence ids before a joint command uses them.
 
-A copied occurrence is rejected as an attachment endpoint in the SolidCraft
-0.42 replay-first backend. `occurrence.copy` returns the native occurrence id
-at runtime, but Forge's normal output is one static command document and cannot
-reuse that runtime result. Forge does not guess `Block:2`, omit the occurrence
-and depend on point-only lookup, or move the copy only to make a pick unique.
+Copied occurrences can therefore be valid attachment endpoints without
+predicting browser numbering. The replay document still contains only the
+variable name; concrete runtime ids remain in the separate replay log.
 
-Rotated relationships, copied relationships and chained attachments stay
-unsupported until their SolidCraft reference behaviour has been tested. See
-[change 0010](changes/0010-replay-safe-attachments.md).
+A normal attachment currently requires both parent and child Placement
+rotations to be `None`. Forge does not yet transform every Anchor,
+AnchorFrame and AnchorTopology point/axis through occurrence rotation, so a
+rotated parent or child is rejected before command lowering rather than using a
+translation-only approximation. Ordinary rotated Placement remains supported
+outside normal attachments. `as_built=True` also remains compatible with
+rotated Placement because it relates already-positioned occurrences and does
+not lower anchor frames.
+
+Chained normal attachments remain unsupported until their SolidCraft solve and
+replay order has been qualified. See
+[change 0010](changes/0010-replay-safe-attachments.md),
+[change 0013](changes/0013-correct-0010-placement-cases.md) and
+[change 0017](changes/0017-transform-safe-attachments.md).
 
 ### `group()`
 
