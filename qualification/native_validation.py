@@ -735,6 +735,12 @@ def validate_slot_family(root: Path) -> Validation:
             {"min": [-80, -60, 0], "max": [80, 60, 5]},
             body["bbox"],
         )
+        v.check(
+            "five slot cuts actually remove material",
+            body["volume_mm3"] < 95999.0 and body["faces"] > 6,
+            {"volume_mm3": "< 95999", "faces": "> 6"},
+            {"volume_mm3": body["volume_mm3"], "faces": body["faces"]},
+        )
 
     sketch = next(
         (row for row in d.get("sketches", []) if row.get("name") == "Slot family"),
