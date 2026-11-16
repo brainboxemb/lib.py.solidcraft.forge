@@ -4,7 +4,14 @@ Each supported base shape returns its command list plus simple shape metadata.
 Feature operations (Hole, Fillet, join, cut) are handled separately.
 """
 from math import isfinite
-from .core import Shape, command_value, half, pv
+from .core import (
+    Shape,
+    _NativeExpression,
+    _native_expression,
+    command_value,
+    half,
+    pv,
+)
 from .placement import _base_rectangle
 
 
@@ -16,7 +23,9 @@ def _combine_dimension(a, b):
         return a
     if isinstance(a, (int, float)) and isinstance(b, (int, float)):
         return a + b
-    return f"({command_value(a)}) + ({command_value(b)})"
+    return _native_expression(
+        f"({command_value(a)}) + ({command_value(b)})"
+    )
 
 from .compiler import ModelError, _command, _require_positive
 from .csg import _half
@@ -137,8 +146,13 @@ def compile_base(shape, name):
 
         def shifted(edge, inward):
             offset = command_value(inset)
-            if isinstance(edge, str) or isinstance(offset, str):
-                return f"({edge}) {'+' if inward else '-'} ({offset})"
+            if (
+                isinstance(edge, _NativeExpression)
+                or isinstance(offset, _NativeExpression)
+            ):
+                return _native_expression(
+                    f"({edge}) {'+' if inward else '-'} ({offset})"
+                )
             return edge + offset if inward else edge - offset
 
         front = f"{name} footprint"
