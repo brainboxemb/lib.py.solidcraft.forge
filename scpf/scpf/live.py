@@ -12,11 +12,12 @@ import socket
 import sys
 
 from .replay import (
+    apply_bindings,
     is_replay_document,
-    replay_hash,
+    replay_chunks,
+    replay_log,
     resolved_command,
     validate_replay_document,
-    variables_in,
 )
 
 
@@ -220,47 +221,6 @@ def _execute(command, params, *, connect="auto", directory=None, timeout=3610):
     )
 
 
-def _replay_chunks(commands):
-    """Split a replay only where a later command needs a newly bound value."""
-    chunks = []
-    current = []
-    available = set()
-    pending = set()
-
-    for item in commands:
-        needed = variables_in(item.get("params", {}))
-        if not needed <= available:
-            if current:
-                chunks.append(current)
-                available.update(pending)
-                current = []
-                pending = set()
-            if not needed <= available:
-                names = ", ".join(sorted(needed - available))
-                raise LiveError(
-                    f"replay command needs unresolved variable(s): {names}"
-                )
-
-        current.append(item)
-        bind = item.get("bind", {})
-        pending.update(bind)
-
-    if current:
-        chunks.append(current)
-    return chunks
-
-
-def _replay_log(document, variables, entries):
-    return {
-        "format": "scpf-replay-log",
-        "version": 1,
-        "replay_sha256": replay_hash(document),
-        "variables": dict(variables),
-        "commands": entries,
-        "completed": len(entries),
-    }
-
-
 def send_document(document, *, connect="auto", directory=None, timeout=3610):
     """Execute a native or SCPF replay document.
 
@@ -291,10 +251,13 @@ def send_document(document, *, connect="auto", directory=None, timeout=3610):
         ]
         result = dict(result)
         result["variables"] = {}
-        result["replay_log"] = _replay_log(document, {}, entries)
+        result["replay_log"] = replay_log(document, {}, entries)
         return result
 
-    chunks = _replay_chunks(commands)
+    try:
+        chunks = replay_chunks(commands)
+    except ValueError as exc:
+        raise LiveError(str(exc)) from exc
     has_bindings = any(item.get("bind") for item in commands)
     checkpoint = None
     variables = {}
@@ -332,28 +295,18 @@ def send_document(document, *, connect="auto", directory=None, timeout=3610):
                 timeout=timeout,
             )
             results = batch.get("results")
-            if not isinstance(results, list) or len(results) != len(chunk):
-                raise LiveError(
-                    "SolidCraft batch did not return one result per replay command"
+            try:
+                bindings_for_chunk = apply_bindings(
+                    chunk,
+                    results,
+                    variables,
                 )
+            except ValueError as exc:
+                raise LiveError(str(exc)) from exc
 
-            for item, native_item, native_result in zip(
-                chunk, native, results
+            for item, native_item, bindings in zip(
+                chunk, native, bindings_for_chunk
             ):
-                bindings = {}
-                for variable, field in item.get("bind", {}).items():
-                    if (
-                        not isinstance(native_result, dict)
-                        or field not in native_result
-                    ):
-                        raise LiveError(
-                            f"{item['command']} did not return field {field!r} "
-                            f"needed for {variable}"
-                        )
-                    value = native_result[field]
-                    variables[variable] = value
-                    bindings[variable] = value
-
                 entry = {
                     "index": command_index,
                     "command": item["command"],
@@ -394,5 +347,5 @@ def send_document(document, *, connect="auto", directory=None, timeout=3610):
     return {
         "completed": completed,
         "variables": dict(variables),
-        "replay_log": _replay_log(document, variables, entries),
+        "replay_log": replay_log(document, variables, entries),
     }
