@@ -328,16 +328,30 @@ def compile_assembly(value, name):
             for instance in instances
         )
         if relationship_definition:
+            normal_target_ids = {
+                other.attachment.target.occurrence_id
+                for other in assembly.instances
+                if (
+                    other.attachment is not None
+                    and not other.attachment.as_built
+                )
+            }
             for instance in instances:
                 attachment = instance.attachment
-                if (
+                normal_child = (
                     attachment is not None
                     and not attachment.as_built
-                    and instance.placement.rotation is not None
+                )
+                normal_target = (
+                    instance.occurrence_id in normal_target_ids
+                )
+                if (
+                    instance.placement.rotation is not None
+                    and (normal_child or normal_target)
                 ):
                     raise ModelError(
-                        f"{component_name}: rotated Placement on a normal "
-                        "attached child is not supported yet"
+                        f"{component_name}: rotated Placement in a normal "
+                        "attachment is not supported yet"
                     )
 
         definition = instances[0].definition
