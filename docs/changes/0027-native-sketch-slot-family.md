@@ -39,8 +39,13 @@ and must be qualified separately before SCPF exposes it.
 
 Forge qualifies the complete family itself with one small plate and one sketch
 containing all five variants. Q1/Q2 must prove exact one-to-one native command
-lowering. Native qualification must prove SolidCraft 0.42 builds and saves the
-sketch/cut without feature errors and visual output distinguishes the variants.
+lowering. Native qualification uses a fixed negative cut from the TOP support
+face and must prove SolidCraft 0.42 actually removes material, builds and saves
+the sketch/cut without feature errors, and visually distinguishes the variants.
+
+`Depth.THROUGH_ALL` on an attached explicit Sketch is deliberately not part of
+this case: qualification exposed a separate no-op cut-direction problem, tracked
+independently in issue #218.
 
 No Slot qualification may lower through `sketch.rectangle.rounded`, a polygon
 or hand-built line/arc geometry.
