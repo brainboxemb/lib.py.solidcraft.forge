@@ -135,11 +135,13 @@ The following qualification cases stay in the catalog but are marked
 - `four-corner-l`;
 - `eight-corner-brackets`;
 - `eight-flightcase-corners`;
-- `xz-anchor`.
 
 These cases are not removed and are not counted as PASS. They document the
 reusable-copy attachment capability that Forge cannot currently generate safely
-for SolidCraft 0.42.
+for SolidCraft 0.42. Qualification cases whose real purpose is another feature
+must not be blocked merely because their fixture happened to reuse a child
+definition; `xz-anchor` was changed to use separate marker definitions for
+that reason.
 
 ## Rules that are already final
 
