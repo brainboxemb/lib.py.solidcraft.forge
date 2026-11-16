@@ -82,23 +82,25 @@ world point. The copied side omitted `occurrence`.
 SolidCraft resolved both joint origins to the first occurrence and rejected the
 joint because both sides referred to the same native occurrence.
 
-PASS after separating the copied occurrence before `joint.create`.
+PASS after moving the copied occurrence away before `joint.create`.
 
-This is why Forge change 0010 gives copied attached children distinct temporary
-staging offsets along the parent attachment direction before authoring their
-joints. The staging pose only makes native occurrence inference unambiguous;
-the joint still defines the final relationship.
+That experiment proves only that point-only lookup can find the copy when the
+point is no longer ambiguous. Forge does **not** use that move in production.
+The normal SolidCraft Joint UI sends the native occurrence id/path together
+with a picked face, edge or vertex.
 
 ## Forge rule derived from these probes
 
 For replay-first SolidCraft 0.42 output:
 
-- first occurrence in a joint command: component-name selector is allowed;
-- copied side of `joint.create`: omit `occurrence` and use an unambiguous
-  world topology/point pick;
-- copied side of `joint.as_built`: unsupported because there is no equivalent
-  point-based selector;
-- `occurrence.move`: never substitute a component name for an occurrence
+- a component name may select that component's first occurrence in the joint
+  commands where this was tested;
+- a later copy used as an attachment endpoint is unsupported because Forge
+  cannot put the runtime id returned by `occurrence.copy` into its static
+  command document;
+- do not omit `occurrence` and depend on point-only lookup to identify that
+  copy;
+- `occurrence.move` never substitutes a component name for an occurrence
   selector;
 - never predict generated labels such as `Component:2`.
 
