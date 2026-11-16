@@ -112,13 +112,14 @@ under multiple assembly parents" restriction for ordinary copies.
 
 Research branch: `qualification/0011-grouping-probe`.
 
-Native SolidCraft 0.42 run `43790665910` passed these checks:
+Native SolidCraft 0.42 run `43790998050` passed these checks:
 
 - an ungrouped two-part rigid attachment;
 - the same two parts inside an ungrounded group;
 - a grounded grouped part attached to a root-level part;
 - one `Panel` definition with occurrences under `GroupA` and `GroupB`;
-- one `Panel` definition copied from `GroupA` back to `root`.
+- one `Panel` definition copied from `GroupA` back to `root`;
+- one `Panel` definition copied from `root` into `GroupB`.
 
 The grouped attachment variants produced the same solved body bounds as the
 ungrouped baseline. `component.list` showed the group occurrences as
