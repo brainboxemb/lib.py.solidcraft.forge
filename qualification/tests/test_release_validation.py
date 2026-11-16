@@ -93,9 +93,10 @@ class ReleaseValidationTests(unittest.TestCase):
                 target,
                 notes,
             )
+            note_text = notes.read_text(encoding="utf-8")
 
         self.assertEqual(solidcraft, TESTED_SOLIDCRAFT_VERSION)
-        self.assertIn(f"## [{version}]", notes.read_text(encoding="utf-8"))
+        self.assertIn(f"## [{version}]", note_text)
 
 
 if __name__ == "__main__":
