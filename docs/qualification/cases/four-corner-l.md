@@ -30,12 +30,12 @@ wrap the four side corners. After changing the saved frame width/depth to
 160 × 120 mm, all four positions must follow the changed parameters without
 rerunning Python.
 
-## Current backend status
+## Replay lowering
 
-This case is currently `BLOCKED` by ordinary Placement support from change
-0009. SolidCraft 0.42 `component.create` cannot give the first occurrence its
-non-identity pose, while `occurrence.copy` only accepts numeric translation
-and has no rotation input.
+The first profile occurrence is bound from `component.create`; each later
+copy is bound from `occurrence.copy`. Parameter-driven XYZ position and the
+three rotated copies are then addressed through those replay variables.
 
-That is a Placement backend limitation. It is not an attachment-reference
-problem from change 0010.
+The replay file therefore remains deterministic and contains no guessed
+`LProfile:N` names. Saved-design frame parameter changes continue to drive
+the occurrence moves.
