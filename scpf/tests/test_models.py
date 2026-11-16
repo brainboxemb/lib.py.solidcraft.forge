@@ -1014,6 +1014,105 @@ class SCPFExamples(unittest.TestCase):
         self.assertNotIn("_panel_pitch", names)
         self.assertNotIn("PANEL_DEPTH", names)
 
+    def test_partial_pv_flattening_warns_even_with_native_dependency(self):
+        with tempfile.TemporaryDirectory() as directory:
+            file = Path(directory) / "partial.py"
+            file.write_text(
+                "class Partial:\n"
+                "    width = 40.0\n"
+                "    def build(self):\n"
+                "        fixed_depth = pv(self.width) / 2\n"
+                "        return Box(self.width, fixed_depth, 5)\n"
+                "Partial()\n",
+                encoding="utf-8",
+            )
+            with self.assertWarnsRegex(
+                UserWarning,
+                "parameter 'width' remains a native dependency, but pv\\(\\) also consumes",
+            ):
+                generated = run_script(file)
+
+        box = next(
+            command["params"]
+            for command in generated["commands"]
+            if command["command"] == "solid.box"
+        )
+        self.assertEqual(box["length"], "width")
+        self.assertEqual(box["width"], 20.0)
+
+    def test_root_assembly_uses_same_parameter_dependency_warning(self):
+        with tempfile.TemporaryDirectory() as directory:
+            file = Path(directory) / "assembly_warning.py"
+            file.write_text(
+                "@component\n"
+                "class Panel:\n"
+                "    def build(self):\n"
+                "        return Box(20, 10, 2)\n"
+                "@assembly\n"
+                "class Display:\n"
+                "    offset = 30.0\n"
+                "    count = 2\n"
+                "    def build(self):\n"
+                "        count = int(pv(self.count))\n"
+                "        assert count == 2\n"
+                "        first = Panel()\n"
+                "        second = first.copy(placement=Placement(x=self.offset))\n"
+                "        return first + second\n"
+                "Display()\n",
+                encoding="utf-8",
+            )
+            import warnings
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+                generated = run_script(file)
+
+        model_warnings = [
+            str(item.message)
+            for item in caught
+            if "Display parameter" in str(item.message)
+        ]
+        self.assertEqual(len(model_warnings), 1)
+        self.assertIn("parameter 'count' has no native SolidCraft dependency", model_warnings[0])
+        self.assertNotIn("offset", model_warnings[0])
+
+        move = next(
+            command["params"]
+            for command in generated["commands"]
+            if command["command"] == "occurrence.move"
+        )
+        self.assertEqual(move["translate"][0], "offset")
+
+    def test_nested_component_pv_does_not_mark_same_named_parent_parameter(self):
+        with tempfile.TemporaryDirectory() as directory:
+            file = Path(directory) / "nested_pv.py"
+            file.write_text(
+                "@component\n"
+                "class Child:\n"
+                "    width = 40.0\n"
+                "    def build(self):\n"
+                "        fixed = pv(self.width)\n"
+                "        return Box(fixed, 10, 2)\n"
+                "class Display:\n"
+                "    width = 40.0\n"
+                "    def build(self):\n"
+                "        first = Child()\n"
+                "        second = first.copy(placement=Placement(x=self.width))\n"
+                "        return first + second\n"
+                "Display()\n",
+                encoding="utf-8",
+            )
+            import warnings
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+                run_script(file)
+
+        self.assertFalse(
+            any(
+                "Display parameter 'width'" in str(item.message)
+                for item in caught
+            )
+        )
+
     def test_public_parameter_kept_in_native_geometry_does_not_warn(self):
         with tempfile.TemporaryDirectory() as directory:
             file = Path(directory) / "model.py"
