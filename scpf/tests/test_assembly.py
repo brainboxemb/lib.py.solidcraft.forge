@@ -976,6 +976,133 @@ class AssemblyTests(unittest.TestCase):
         )
         self.assertEqual(len(parameter_names), len(set(parameter_names)))
 
+    def test_parameter_namespacing_does_not_rewrite_plain_strings(self):
+        from scpf.assembly import _namespace_commands
+        from scpf.core import _native_expression
+
+        commands = [
+            {
+                "command": "parameters.add",
+                "params": {
+                    "name": "width",
+                    "expression": "40",
+                    "unit": "mm",
+                },
+            },
+            {
+                "command": "sketch.text",
+                "params": {
+                    "text": "width",
+                    "font": "width",
+                    "name": "width label",
+                    "height": _native_expression("width / 4"),
+                },
+            },
+            {
+                "command": "material.create",
+                "params": {
+                    "name": "width",
+                    "density_g_cm3": 1.0,
+                },
+            },
+            {
+                "command": "solid.box",
+                "params": {
+                    "length": _native_expression("width"),
+                    "body_name": "width",
+                },
+            },
+        ]
+
+        namespaced = _namespace_commands(
+            commands,
+            "Label",
+            definition_number=1,
+        )
+
+        self.assertEqual(
+            namespaced[0]["params"]["name"],
+            "d1_Label_width",
+        )
+        self.assertEqual(
+            namespaced[1]["params"]["height"],
+            "d1_Label_width / 4",
+        )
+        self.assertEqual(
+            namespaced[1]["params"]["text"],
+            "width",
+        )
+        self.assertEqual(
+            namespaced[1]["params"]["font"],
+            "width",
+        )
+        self.assertEqual(
+            namespaced[1]["params"]["name"],
+            "width label",
+        )
+        self.assertEqual(
+            namespaced[2]["params"]["name"],
+            "width",
+        )
+        self.assertEqual(
+            namespaced[3]["params"]["length"],
+            "d1_Label_width",
+        )
+        self.assertEqual(
+            namespaced[3]["params"]["body_name"],
+            "width",
+        )
+
+    def test_reusable_component_keeps_material_name_equal_to_parameter_name(self):
+        from scpf.assembly import compile_assembly
+        from scpf.core import Box
+        from scpf.runner import component
+
+        class MaterialBlock:
+            width = 40.0
+
+            def build(self):
+                return Box(
+                    self.width,
+                    20,
+                    10,
+                ).with_material(
+                    "width",
+                    density_g_cm3=1.2,
+                )
+
+        Part = component(MaterialBlock, include=("width",))
+        commands = compile_assembly(
+            Part(),
+            "Display",
+        )["commands"]
+
+        parameter = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "parameters.add"
+        )
+        box = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.box"
+        )
+        material = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "material.create"
+        )
+        assignment = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "material.assign"
+        )
+
+        self.assertEqual(parameter["name"], "d1_MaterialBlock_width")
+        self.assertEqual(box["length"], "d1_MaterialBlock_width")
+        self.assertEqual(material["name"], "width")
+        self.assertEqual(assignment["material"], "width")
+
     def test_identical_material_is_created_once_across_components(self):
         from scpf.assembly import compile_assembly
         from scpf.core import Box
