@@ -92,7 +92,7 @@ QUALIFICATION_CASES = [
     {
         "slug": "anchored-holes",
         "group": "features",
-        "title": "Face-relative hole pattern",
+        "title": "Face-relative repeated holes",
         "intent": "Verify a 2D profile, native extrusion, repeated holes and placement on a selected face.",
         "forge_api": "with Sketch(plane='XY'): Rectangle2D(...); sketch.extrude(...); Hole(...).repeat_linear(...).on(..., face=Faces.TOP)",
         "forge_model": "A feature-based plate plus a Forge-side repeated Hole layout anchored to the plate's TOP face.",

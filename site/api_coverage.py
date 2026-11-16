@@ -75,7 +75,7 @@ CAPABILITY_COVERAGE = [
     ("Profiles", "Sketch.extrude(+d / -d / d, sym=True)", "Q6", "Q6", ["circle-negative-extrude", "bracket"], "Signed distance selects positive/negative extrusion; sym=True selects symmetric extrusion. Native direction and bounds remain qualified."),
     ("Features", "fillet()", "Q6", "Q6", ["four-corner-l", "eight-corner-brackets", "eight-flightcase-corners"], "Basic vertical-edge fillet is command-, native- and visual-qualified; richer edge-selection modes remain separate gaps."),
     ("Features", "Shape.repeat_linear()", "Q2", "Q2", ["anchored-holes"], "Forge-side primitive repetition retained under an explicit non-Pattern name; it is not a SolidCraft History pattern."),
-    ("Features", "Shape.rectangular_pattern()", "Q6", "Q2", ["rectangular-pattern"], "Command-level native rectangular feature-pattern lowering is implemented; Q3/Q4/Q6 are being qualified in the dedicated case."),
+    ("Features", "Shape.rectangular_pattern()", "Q6", "Q6", ["rectangular-pattern"], "Native SolidCraft rectangular History pattern passed command, build, measured geometry and visual qualification."),
     ("Features", "chamfer()", "Q6", "GAP", [], "Add profile-edge and explicit pick cases."),
     ("Features", "shell()", "Q6", "GAP", [], "Add open-face shell measurement."),
     ("Features", "with_material()", "Q4", "Q6", ["xz-anchor"], "Material creation/assignment runs natively; add explicit material assertions if needed."),

@@ -736,11 +736,23 @@ def validate_rectangular_pattern(root: Path) -> Validation:
             {"min": [-60, -40, 0], "max": [60, 40, 4]},
             body["bbox"],
         )
+        faces = body.get("face_types", {})
         v.check(
-            "rectangular pattern removes material beyond the source cut",
-            body["volume_mm3"] < 38050.0 and body["faces"] > 10,
-            {"volume_mm3": "< 38050", "faces": "> 10"},
-            {"volume_mm3": body["volume_mm3"], "faces": body["faces"]},
+            "3 x 2 rectangular Slot pattern has qualified native geometry",
+            close(body["volume_mm3"], 36281.4159864975, 0.01)
+            and body["faces"] == 30
+            and faces.get("cylinder") == 12
+            and faces.get("plane") == 18,
+            {
+                "volume_mm3": 36281.4159864975,
+                "faces": 30,
+                "face_types": {"cylinder": 12, "plane": 18},
+            },
+            {
+                "volume_mm3": body["volume_mm3"],
+                "faces": body["faces"],
+                "face_types": faces,
+            },
         )
 
     sketch = next(
@@ -750,9 +762,10 @@ def validate_rectangular_pattern(root: Path) -> Validation:
     v.check(
         "source Slot remains one solved native sketch profile",
         sketch is not None
+        and sketch.get("curves") == 5
         and sketch.get("profiles") == 1
         and sketch.get("status") == "solved",
-        {"name": "Slot", "profiles": 1, "status": "solved"},
+        {"name": "Slot", "curves": 5, "profiles": 1, "status": "solved"},
         sketch,
     )
 
@@ -760,15 +773,16 @@ def validate_rectangular_pattern(root: Path) -> Validation:
         (row.get("type"), row.get("name"))
         for row in d.get("timeline", [])
     ]
-    pattern_rows = [
-        row for row in timeline
-        if "pattern" in str(row[0]).lower()
-        or "pattern" in str(row[1]).lower()
+    expected_timeline = [
+        ("BoxFeature", "Box1"),
+        ("Sketch", "Slot"),
+        ("ExtrudeFeature", "Slot"),
+        ("RectangularPatternFeature", "RectangularPattern1"),
     ]
     v.check(
-        "saved timeline contains one native pattern feature",
-        len(pattern_rows) == 1,
-        "one pattern timeline row",
+        "source cut stays single and pattern is one native History feature",
+        timeline == expected_timeline,
+        expected_timeline,
         timeline,
     )
     return v

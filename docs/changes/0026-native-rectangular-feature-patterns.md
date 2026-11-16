@@ -1,6 +1,6 @@
 # 0026 — native rectangular feature patterns
 
-Status: **active design**  
+Status: **implemented; final qualification required before merge**  
 Issue: **#215**  
 SolidCraft target: **0.42.0**
 
@@ -155,3 +155,25 @@ The full Vent Plate remains a downstream CAD-library example.
 - no circular/path pattern API in this change;
 - no requirement for users to manage native history labels manually;
 - no ambiguous public `.pattern()` helper for pre-lowering primitive repetition.
+
+
+## Native qualification result
+
+The first SolidCraft 0.42 qualification run confirmed the intended JSON and
+saved-history behaviour:
+
+- one source Sketch named `Slot`;
+- one source cut ExtrudeFeature named `Slot`;
+- one `RectangularPatternFeature` named `RectangularPattern1`;
+- one final body with six 3 x 2 patterned Slot cuts;
+- `columns=3` and `rows=2` persisted as unitless native parameters;
+- `pitch=24 mm` and `row_pitch=28 mm` persisted as length parameters;
+- measured volume: `36281.4159864975 mm³`;
+- 30 faces: 12 cylindrical and 18 planar.
+
+This verifies that `features=["Slot"]` resolves to the geometry feature rather
+than the sketch when the two share the same label, matching SolidCraft's native
+`seed_feature()` behaviour.
+
+Q6 uses the fixed-camera renders from qualification commit
+`56a1ce684d586a98158013c3ad0b117c8f5b58b3` as its approved baseline.
