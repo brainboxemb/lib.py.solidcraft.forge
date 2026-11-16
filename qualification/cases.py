@@ -367,6 +367,26 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "slot-family",
+        "group": "features",
+        "title": "Native sketch Slot family",
+        "intent": "Qualify all five SolidCraft 0.42 Slot construction methods as direct SCPF sketch profiles rather than approximating them with rounded rectangles or hand-built curves.",
+        "forge_api": "SlotCenterToCenter2D(...); SlotOverall2D(...); SlotCenterPoint2D(...); SlotArcThreePoint2D(...); SlotArcCenter2D(...) inside one explicit Sketch",
+        "forge_model": "One 160 x 120 x 5 mm plate with five separate closed Slot profiles in one named sketch, removed with one through-all cut.",
+        "lowering": "Each public constructor emits exactly its matching sketch.slot.* command; the sketch is finished once and one native cut extrusion removes all five profiles.",
+        "native_expectation": "SolidCraft saves one plate, one Slot family sketch containing five closed profiles and one error-free cut extrusion. The native timeline must not contain sketch.rectangle.rounded as a substitute for Slot construction.",
+        "mutation": "No Q5 mutation is required; this case isolates the five native sketch construction methods and their saved feature history.",
+        "references": [
+            ("SolidCraft", "The native sketch.slot.* command family is the source of truth because this case qualifies construction-method identity, not only equivalent final geometry."),
+        ],
+        "reference_exceptions": {
+            "pythonscad": "PythonSCAD can approximate the final outlines but cannot preserve SolidCraft's five distinct native Slot construction methods, which is the contract under test.",
+            "pybosl2": "pyBOSL2 can construct equivalent slot geometry but does not provide evidence for SolidCraft's five native sketch Slot command identities.",
+            "cadquery": "CadQuery can reproduce slot-shaped cuts but not the saved SolidCraft sketch-construction methods being qualified here.",
+            "build123d": "build123d can reproduce slot geometry but cannot validate one-to-one lowering to SolidCraft's five native sketch.slot.* commands.",
+        },
+    },
+    {
         "slug": "rounded-rectangle-sketch",
         "group": "features",
         "title": "Explicit rounded-rectangle sketch pad",

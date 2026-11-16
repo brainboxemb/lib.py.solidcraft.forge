@@ -102,6 +102,9 @@ EXPECTED_BOUNDS = {
     "circle-negative-extrude": [
         {"label": "NegativeCircleExtrude", "min": [-10, -10, -30], "max": [10, 10, 0]},
     ],
+    "slot-family": [
+        {"label": "SlotFamily", "min": [-80, -60, 0], "max": [80, 60, 5]},
+    ],
     "rounded-rectangle-sketch": [
         {"label": "RoundedRectangleSketch", "min": [-40, -30, 0], "max": [40, 30, 13]},
     ],

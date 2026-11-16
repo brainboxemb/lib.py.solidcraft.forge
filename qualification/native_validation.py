@@ -722,6 +722,49 @@ def validate_circle_negative_extrude(root: Path) -> Validation:
     return v
 
 
+def validate_slot_family(root: Path) -> Validation:
+    v = Validation("slot-family")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "slot-family", tol=0.01)
+    v.check("single cut plate body", d["body_count"] == 1, 1, d["body_count"])
+    if d["bodies"]:
+        body = d["bodies"][0]
+        v.check(
+            "plate outer bounds remain unchanged by five slot cuts",
+            bbox_close(body, [-80, -60, 0], [80, 60, 5], 0.01),
+            {"min": [-80, -60, 0], "max": [80, 60, 5]},
+            body["bbox"],
+        )
+
+    sketch = next(
+        (row for row in d.get("sketches", []) if row.get("name") == "Slot family"),
+        None,
+    )
+    v.check(
+        "native sketch contains five closed slot profiles",
+        sketch is not None and sketch.get("profiles") == 5,
+        {"name": "Slot family", "profiles": 5},
+        sketch,
+    )
+
+    timeline = [
+        (row.get("type"), row.get("name"))
+        for row in d.get("timeline", [])
+    ]
+    expected_timeline = [
+        ("BoxFeature", "Box1"),
+        ("Sketch", "Slot family"),
+        ("ExtrudeFeature", "Slot family"),
+    ]
+    v.check(
+        "slot family remains one native sketch plus one cut feature",
+        timeline == expected_timeline,
+        expected_timeline,
+        timeline,
+    )
+    return v
+
+
 def validate_rounded_rectangle_sketch(root: Path) -> Validation:
     v = Validation("rounded-rectangle-sketch")
     d = load(root / "measurements.json")
@@ -826,6 +869,7 @@ VALIDATORS = {
     "eight-corner-brackets": validate_eight_corner_brackets,
     "xz-anchor": validate_xz_anchor,
     "circle-negative-extrude": validate_circle_negative_extrude,
+    "slot-family": validate_slot_family,
     "rounded-rectangle-sketch": validate_rounded_rectangle_sketch,
     "primitive-csg": validate_primitive_csg,
     "bracket": validate_bracket,
