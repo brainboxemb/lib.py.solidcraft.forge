@@ -8,7 +8,7 @@ from .core import (
     Expression,
     _NativeExpression,
     _native_expression,
-    pv,
+    _pv as pv,
     command_value,
     number_text,
 )
