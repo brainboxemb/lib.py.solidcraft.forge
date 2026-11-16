@@ -409,6 +409,17 @@ class _AxisRef(str):
         return _BoundOffset(str(self), "max")
 
 
+class _NativeExpression(str):
+    """Internal marker for a string that SolidCraft evaluates as an expression."""
+
+    def __new__(cls, value):
+        return super().__new__(cls, str(value))
+
+
+def _native_expression(value):
+    return _NativeExpression(value)
+
+
 @dataclass(frozen=True)
 class Parameter:
     """Represent one named editable CAD dimension.
@@ -666,7 +677,9 @@ def pv(dim) -> float:
 
 
 def command_value(dim):
-    return dim.expression if isinstance(dim, (Parameter, Expression)) else dim
+    if isinstance(dim, (Parameter, Expression)):
+        return _native_expression(dim.expression)
+    return dim
 
 
 def parameters_in(*values) -> tuple[Parameter, ...]:
