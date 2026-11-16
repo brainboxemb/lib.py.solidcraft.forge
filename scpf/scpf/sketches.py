@@ -40,19 +40,19 @@ def compile_base(shape, name):
     """Create a native editable base body, regardless of example/model name."""
     if shape.kind in ("box", "placed_box"):
         if shape.kind == "box":
-            length, width, height, box_origin = shape.data
+            length, width, height, box_anchor = shape.data
             origin = _box_corner_from_anchor(
                 length,
                 width,
                 height,
                 (0, 0, 0),
-                box_origin,
+                box_anchor,
             )
-            selector = box_origin.vector
+            selector = box_anchor.vector
             if selector == (0, 0, 0):
                 placement = {"center": [0, 0, 0]}
             elif selector == (0, 0, -1):
-                # Preserve the established default command expressions exactly.
+                # Explicit BOTTOM keeps the bottom-face centre at Z=0.
                 placement = {
                     "corner": [
                         _half(length, True),
