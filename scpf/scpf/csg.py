@@ -8,6 +8,7 @@ from .core import (
     Expression,
     _NativeExpression,
     _native_expression,
+    _box_corner_from_anchor,
     _pv as pv,
     command_value,
     number_text,
@@ -59,14 +60,31 @@ def _add_offset(coord, offset):
 def _csg_primitive(shape, body_name, operation, *, offset=(0, 0, 0)):
     kind, data = shape.kind, shape.data
     if kind == "box":
-        length, width, height = data
+        length, width, height, origin = data
         _require_positive(length, "box length")
         _require_positive(width, "box width")
         _require_positive(height, "box height")
-        params = dict(length=command_value(length), width=command_value(width),
-                      height=command_value(height),
-                      center=[command_value(value) for value in offset],
-                      operation=operation)
+        params = dict(
+            length=command_value(length),
+            width=command_value(width),
+            height=command_value(height),
+            operation=operation,
+        )
+        if origin.vector == (0, 0, 0):
+            params["center"] = [
+                command_value(value) for value in offset
+            ]
+        else:
+            corner = _box_corner_from_anchor(
+                length,
+                width,
+                height,
+                offset,
+                origin,
+            )
+            params["corner"] = [
+                command_value(value) for value in corner
+            ]
         command = "solid.box"
     elif kind == "sphere":
         (radius,) = data
