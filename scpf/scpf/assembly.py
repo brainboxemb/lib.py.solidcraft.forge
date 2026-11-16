@@ -2,7 +2,15 @@
 import re
 
 from .compiler import ModelError
-from .core import Anchor, AnchorFrame, AnchorTopology, command_value, parameters_in, pv
+from .core import (
+    Anchor,
+    AnchorFrame,
+    AnchorTopology,
+    _NativeExpression,
+    command_value,
+    parameters_in,
+    pv,
+)
 from .model_objects import (
     Assembly,
     ModelInstance,
@@ -68,14 +76,24 @@ def _component_slug(name):
 
 
 def _rewrite_value(value, mapping):
+    if isinstance(value, _NativeExpression):
+        return _NativeExpression(
+            _IDENTIFIER.sub(
+                lambda match: mapping.get(match.group(0), match.group(0)),
+                value,
+            )
+        )
     if isinstance(value, str):
-        return _IDENTIFIER.sub(lambda m: mapping.get(m.group(0), m.group(0)), value)
+        return value
     if isinstance(value, list):
         return [_rewrite_value(item, mapping) for item in value]
     if isinstance(value, tuple):
         return [_rewrite_value(item, mapping) for item in value]
     if isinstance(value, dict):
-        return {key: _rewrite_value(item, mapping) for key, item in value.items()}
+        return {
+            key: _rewrite_value(item, mapping)
+            for key, item in value.items()
+        }
     return value
 
 
