@@ -97,6 +97,62 @@ class NativePrimitiveTests(unittest.TestCase):
             [[0, 0], [20, 0], [20, 10], [0, 10]],
         )
 
+    def test_text_explicit_offset_keeps_native_insertion_coordinates(self):
+        from scpf.core import Text2D
+
+        base = Box(80, 60, 5)
+        with Sketch(
+            name="Label",
+            on=base,
+            plane="XY",
+            origin=(0, 0, 5),
+        ) as sketch:
+            sketch.add(
+                Text2D("Pi 4", height=6.0, font="DejaVu Sans Bold"),
+                offset=(-9, 18),
+            )
+        commands = compile_model(
+            base - sketch.extrude(0.6, direction="negative"),
+            "LabelledBox",
+        )["commands"]
+        text = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.text"
+        )
+        self.assertEqual(text["at"], [-9, 18])
+        self.assertEqual(text["text"], "Pi 4")
+
+    def test_explicit_center_is_rejected_for_text(self):
+        from scpf.core import Text2D
+
+        with self.assertRaisesRegex(ValueError, "CENTER is not supported"):
+            with Sketch(plane="XY") as sketch:
+                sketch.add(
+                    Text2D("Label"),
+                    anchor=CENTER,
+                )
+
+    def test_polygon_explicit_add_without_anchor_keeps_authored_coordinates(self):
+        from scpf import Polygon2D
+
+        with Sketch(plane="XY") as sketch:
+            sketch.add(
+                Polygon2D(
+                    [(0, 0), (20, 0), (20, 10), (0, 10)]
+                )
+            )
+        commands = compile_model(sketch.extrude(5), "PolygonAdded")["commands"]
+        line = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.line"
+        )
+        self.assertEqual(
+            line["points"],
+            [[0, 0], [20, 0], [20, 10], [0, 10]],
+        )
+
     def test_explicit_center_is_rejected_for_coordinate_defined_polygon(self):
         from scpf import Polygon2D
 
@@ -105,7 +161,8 @@ class NativePrimitiveTests(unittest.TestCase):
                 sketch.add(
                     Polygon2D(
                         [(0, 0), (20, 0), (20, 10), (0, 10)]
-                    )
+                    ),
+                    anchor=CENTER,
                 )
 
     def test_circle_in_with_sketch_negative_extrusion(self):

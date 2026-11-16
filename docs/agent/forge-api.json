@@ -185,7 +185,7 @@
       "summary": "Add and place a supported 2D profile in this Sketch.",
       "reference": "reference/Sketch.add/",
       "guide": "guide/geometry/#profiles",
-      "signature": "Sketch.add(self, profile, *, anchor=<Anchor.CENTER: 'center'>, offset=(0, 0))"
+      "signature": "Sketch.add(self, profile, *, anchor=None, offset=(0, 0))"
     },
     "Sketch.extrude": {
       "kind": "callable",
