@@ -157,18 +157,20 @@ It does **not** identify either side using a SolidCraft browser name.
 > One Forge attachment lowers to the required SolidCraft relationship
 > command(s) without predicting generated occurrence names.
 
-For SolidCraft 0.42 the qualified replay-safe rule is deliberately narrow:
+For SolidCraft 0.42 we have proved this so far:
 
-- the component name may select that component's first occurrence in
+- the component name can select that component's first occurrence in
   `joint.create`, `joint.origin` and `joint.as_built`;
-- copied occurrences are not accepted as relationship endpoints because Forge
-  has no explicit replay-safe SolidCraft 0.42 selector for them;
-- geometry/point inference and temporary staging are not occurrence identity
-  mechanisms and must not be used to patch over that missing selector.
+- Forge does not yet have a proved way to refer to a later copy in every
+  relationship command;
+- do not move a copy or leave out `occurrence` only to work around that
+  missing reference. First prove that the method matches normal SolidCraft
+  joint selection and behaves correctly when the model changes.
 
 **Rule JT-2**
 
-> A seed pose used to help the native solver is not the attachment relationship.
+> If Forge places a loose component somewhere before `joint.create`, that is
+> only its starting position. The joint defines the relationship.
 
 **Rule JT-3**
 
@@ -427,15 +429,15 @@ already-created occurrence.
 For each such command we need a replay-safe SolidCraft reference that has been
 qualified on 0.42.
 
-For attachment lowering, change 0010 qualifies only the first-occurrence
-component name in the joint commands where SolidCraft 0.42 explicitly supports
-it. Copied occurrences remain unsupported as relationship endpoints. Other
-commands do not inherit the first-occurrence capability automatically: for
-example, SolidCraft 0.42 rejects a component name passed as
-`occurrence.move.occurrence`.
+When generating attachment commands, change 0010 currently uses the component
+name only for the first occurrence and only in joint commands where SolidCraft
+0.42 has been tested to accept it. A copied occurrence is not enabled until we
+have proved how SolidCraft should select it. Other commands do not automatically
+accept the same reference. For example, SolidCraft 0.42 rejects a component name
+passed as `occurrence.move.occurrence`.
 
-If a remaining case has no replay-safe selector, that Forge capability is
-unsupported until one is qualified. Do not solve it by:
+If Forge cannot reliably refer to an occurrence in a command, that case stays
+unsupported until the reference method has been tested. Do not solve it by:
 
 - guessing `Component:1` / `Component:2`;
 - adding runtime `$ref` result binding to the normal compiler path;
@@ -454,7 +456,7 @@ Recommended implementation order after the audit:
 2. lower ordinary Placement directly through `component.create` /
    `occurrence.copy` where SolidCraft supports it;
 3. remove all guessed `Component:N` addressing;
-4. explicitly reject relationship cases that still lack a replay-safe
+4. reject relationship cases where Forge still has no proved SolidCraft
    occurrence reference;
 5. repair grouping so it only changes hierarchy;
 6. fix attachment handling under rotation;
