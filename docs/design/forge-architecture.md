@@ -157,17 +157,14 @@ It does **not** identify either side using a SolidCraft browser name.
 > One Forge attachment lowers to the required SolidCraft relationship
 > command(s) without predicting generated occurrence names.
 
-For SolidCraft 0.42 the qualified replay-safe rules are concrete:
+For SolidCraft 0.42 the qualified replay-safe rule is deliberately narrow:
 
 - the component name may select that component's first occurrence in
   `joint.create`, `joint.origin` and `joint.as_built`;
-- a copied side of `joint.create` may omit `occurrence` when Forge supplies
-  an unambiguous world topology/point pick;
-- copied attached children use distinct temporary staging offsets along their
-  attachment direction so their picks remain unambiguous before the joint
-  solves;
-- if a relationship still needs a copied occurrence selector that SolidCraft
-  cannot infer, Forge rejects that case.
+- copied occurrences are not accepted as relationship endpoints because Forge
+  has no explicit replay-safe SolidCraft 0.42 selector for them;
+- geometry/point inference and temporary staging are not occurrence identity
+  mechanisms and must not be used to patch over that missing selector.
 
 **Rule JT-2**
 
@@ -430,10 +427,12 @@ already-created occurrence.
 For each such command we need a replay-safe SolidCraft reference that has been
 qualified on 0.42.
 
-For attachment lowering, change 0010 qualifies the first-occurrence component
-name and copied `joint.create` world-pick inference. Other commands do not
-inherit that capability automatically: for example, SolidCraft 0.42 rejects a
-component name passed as `occurrence.move.occurrence`.
+For attachment lowering, change 0010 qualifies only the first-occurrence
+component name in the joint commands where SolidCraft 0.42 explicitly supports
+it. Copied occurrences remain unsupported as relationship endpoints. Other
+commands do not inherit the first-occurrence capability automatically: for
+example, SolidCraft 0.42 rejects a component name passed as
+`occurrence.move.occurrence`.
 
 If a remaining case has no replay-safe selector, that Forge capability is
 unsupported until one is qualified. Do not solve it by:
