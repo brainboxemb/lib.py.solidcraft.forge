@@ -283,6 +283,7 @@ def compile_assembly(value, name):
     inherited_parameters = {}
     shared_materials = {}
     positioned_at_copy = set()
+    grounded_occurrence_ids = set()
 
     # Named groups are empty native components used only for browser hierarchy.
     # They are explicitly ungrounded because SolidCraft would otherwise ground
@@ -404,13 +405,25 @@ def compile_assembly(value, name):
             first.occurrence_id
             == assembly.instances[0].occurrence_id
         )
+        # SolidCraft 0.42 keeps expression-based occurrence moves
+        # associative only while the occurrence is ungrounded. A grounded
+        # occurrence can be moved with move_grounded=true, but its placement
+        # expression does not follow later parameter changes in 0.42.
+        #
+        # Therefore a root occurrence whose Placement position depends on
+        # parameters must remain ungrounded. Fixed/identity roots keep the
+        # normal grounded behaviour.
+        create_grounded = (
+            first_is_root
+            and first.attachment is None
+            and not parameters_in(*first.placement.position)
+        )
         create_params = {
             "name": component_name,
-            "grounded": (
-                first_is_root
-                and first.attachment is None
-            ),
+            "grounded": create_grounded,
         }
+        if create_grounded:
+            grounded_occurrence_ids.add(first.occurrence_id)
         if parent_name is not None:
             create_params["parent"] = parent_name
         commands.append(_bound_command(
@@ -501,10 +514,7 @@ def compile_assembly(value, name):
             axis, degrees = instance.placement.rotation
             params["axis"] = list(axis)
             params["angle"] = f"{degrees:g} deg"
-        if (
-            instance.occurrence_id == assembly.instances[0].occurrence_id
-            and instance.attachment is None
-        ):
+        if instance.occurrence_id in grounded_occurrence_ids:
             params["move_grounded"] = True
 
         commands.append(_command("occurrence.move", **params))
