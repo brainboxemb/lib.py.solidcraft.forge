@@ -25,6 +25,7 @@ from qualification.native_cases import (
     mutation_spec,
     validate_runtime_metadata,
 )
+from scpf.headless import run_document
 
 
 def _run(
@@ -115,23 +116,20 @@ def _build_case(slug: str, out: Path, env: dict[str, str]) -> tuple[float, float
     case_dir = out / "native" / slug
     case_dir.mkdir(parents=True, exist_ok=True)
 
-    build, _ = _run(
-        [
-            "solidcraft-cli",
-            "run",
-            str(out / f"{slug}.json"),
-            "--param-check",
-            "strict",
-            "--results",
-            "--json-out",
-            str(case_dir / "results.json"),
-            "--save",
-            str(case_dir / "model.sc"),
-            "--out",
-            str(case_dir / "model.step"),
-        ],
-        env=env,
+    started = time.perf_counter()
+    replay = json.loads(
+        (out / f"{slug}.json").read_text(encoding="utf-8")
     )
+    run_document(
+        replay,
+        save=case_dir / "model.sc",
+        export=case_dir / "model.step",
+        results_out=case_dir / "results.json",
+        replay_log_out=case_dir / "replay-log.json",
+        env=env,
+        work_dir=case_dir / "replay-work",
+    )
+    build = time.perf_counter() - started
 
     evaluate, _ = _run(
         [

@@ -12,7 +12,8 @@ import threading
 import unittest
 from unittest.mock import patch
 
-from scpf.live import LiveError, new_design, send_commands
+from scpf.live import LiveError, new_design, send_commands, send_document
+from scpf.replay import replay_document
 from scpf.__main__ import read_command_file, main
 from scpf.runner import run_script
 
@@ -80,6 +81,207 @@ class LiveProtocolTests(unittest.TestCase):
         self.assertEqual(server.request["params"]["commands"], commands)
         self.assertEqual(server.request["params"]["rollback"], True)
         self.assertEqual(server.request["params"]["param_check"], "strict")
+
+    def test_replay_variables_bind_real_occurrence_ids(self):
+        document = replay_document([
+            {
+                "command": "component.create",
+                "params": {
+                    "name": "Board",
+                    "grounded": False,
+                },
+                "bind": {
+                    "$board_1": "occurrence",
+                },
+            },
+            {
+                "command": "occurrence.copy",
+                "params": {
+                    "component": "Board",
+                    "translate": [100, 0, 0],
+                },
+                "bind": {
+                    "$board_2": "occurrence",
+                },
+            },
+            {
+                "command": "occurrence.move",
+                "params": {
+                    "occurrence": "$board_2",
+                    "axis": [0, 0, 1],
+                    "angle": "90 deg",
+                },
+            },
+        ])
+        server = FakeSolidCraft([
+            {
+                "id": 1,
+                "ok": True,
+                "result": {"checkpoint": 7},
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 2,
+                    "results": [
+                        {"component": 20, "occurrence": 101},
+                        {"component": 20, "occurrence": 102},
+                    ],
+                    "undone": 0,
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 1,
+                    "results": [
+                        {"occurrence": 102},
+                    ],
+                    "undone": 0,
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "checkpoint": 7,
+                    "restored": False,
+                },
+            },
+        ])
+        self.configure(server)
+
+        result = send_document(document, directory=self.directory)
+        server.join()
+
+        self.assertEqual(
+            result["variables"],
+            {
+                "$board_1": 101,
+                "$board_2": 102,
+            },
+        )
+        self.assertEqual(
+            [request["method"] for request in server.requests],
+            [
+                "engine.execute",
+                "engine.batch",
+                "engine.batch",
+                "engine.execute",
+            ],
+        )
+        first_batch = server.requests[1]["params"]["commands"]
+        self.assertNotIn("bind", first_batch[0])
+        self.assertNotIn("bind", first_batch[1])
+        self.assertEqual(
+            server.requests[2]["params"]["commands"][0]["params"]["occurrence"],
+            102,
+        )
+        self.assertEqual(
+            server.requests[3]["params"]["command"],
+            "edit.restore_checkpoint",
+        )
+        self.assertEqual(
+            server.requests[3]["params"]["params"],
+            {"checkpoint": 7, "forget": True},
+        )
+        self.assertEqual(
+            result["replay_log"]["variables"]["$board_2"],
+            102,
+        )
+        self.assertEqual(
+            result["replay_log"]["commands"][2]["resolved_params"]["occurrence"],
+            102,
+        )
+
+    def test_replay_failure_restores_whole_checkpoint(self):
+        document = replay_document([
+            {
+                "command": "component.create",
+                "params": {"name": "Board", "grounded": False},
+                "bind": {"$board": "occurrence"},
+            },
+            {
+                "command": "occurrence.move",
+                "params": {
+                    "occurrence": "$board",
+                    "axis": [0, 0, 1],
+                    "angle": "90 deg",
+                },
+            },
+        ])
+        server = FakeSolidCraft([
+            {
+                "id": 1,
+                "ok": True,
+                "result": {"checkpoint": 9},
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 1,
+                    "results": [
+                        {"component": 30, "occurrence": 201},
+                    ],
+                    "undone": 0,
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 0,
+                    "results": [],
+                    "undone": 0,
+                    "rolled_back": True,
+                    "failed": {
+                        "index": 0,
+                        "command": "occurrence.move",
+                        "error": "bad move",
+                    },
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "checkpoint": 9,
+                    "restored": True,
+                },
+            },
+        ])
+        self.configure(server)
+
+        with self.assertRaisesRegex(LiveError, "bad move"):
+            send_document(document, directory=self.directory)
+        server.join()
+
+        self.assertEqual(
+            server.requests[-1]["params"]["command"],
+            "edit.restore_checkpoint",
+        )
+        self.assertEqual(
+            server.requests[-1]["params"]["params"],
+            {"checkpoint": 9},
+        )
+
+    def test_replay_document_rejects_use_before_bind(self):
+        document = replay_document([
+            {
+                "command": "occurrence.move",
+                "params": {"occurrence": "$board"},
+            },
+            {
+                "command": "component.create",
+                "params": {"name": "Board"},
+                "bind": {"$board": "occurrence"},
+            },
+        ])
+        with self.assertRaisesRegex(LiveError, "before binding"):
+            send_document(document, directory=self.directory)
 
     def test_new_design_uses_native_file_new(self):
         server = FakeSolidCraft({

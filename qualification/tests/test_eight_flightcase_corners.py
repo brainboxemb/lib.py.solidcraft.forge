@@ -12,17 +12,34 @@ NATIVE_ROOT = os.environ.get("SCPF_NATIVE_ROOT")
 
 
 class EightFlightcaseCornersCommandTests(unittest.TestCase):
-    def test_copied_corners_are_blocked_without_native_copy_reference(self):
-        from scpf.compiler import ModelError
+    def test_parametric_corner_placement_uses_replay_variables(self):
+        commands = run_script(
+            ROOT / "examples/eight-flightcase-corners/scpf/model.py"
+        )["commands"]
+        copies = [
+            command for command in commands
+            if command["command"] == "occurrence.copy"
+        ]
+        moves = [
+            command["params"] for command in commands
+            if command["command"] == "occurrence.move"
+        ]
+        self.assertEqual(len(copies), 7)
+        self.assertEqual(len(moves), 8)
+        self.assertTrue(all(
+            move["occurrence"].startswith("$flightcasecorner_occurrence_")
+            for move in moves
+        ))
+        self.assertTrue(any(
+            "case_height" in str(move["translate"])
+            for move in moves
+        ))
+        self.assertFalse(any(
+            command["command"].startswith("joint.")
+            for command in commands
+        ))
 
-        with self.assertRaisesRegex(
-            ModelError,
-            "cannot attach a copied occurrence",
-        ):
-            run_script(ROOT / "examples/eight-flightcase-corners/scpf/model.py")
-
-
-@unittest.skip("blocked: copied attachment occurrences have no explicit SolidCraft 0.42 reference")
+@unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
 class EightFlightcaseCornersNativeTests(unittest.TestCase):
     def test_native_bounds_wrap_all_eight_case_corners(self):
         data = _load(

@@ -12,17 +12,34 @@ NATIVE_ROOT = os.environ.get("SCPF_NATIVE_ROOT")
 
 
 class EightCornerBracketsCommandTests(unittest.TestCase):
-    def test_copied_profiles_are_blocked_without_native_copy_reference(self):
-        from scpf.compiler import ModelError
+    def test_parametric_profile_placement_uses_replay_variables(self):
+        commands = run_script(
+            ROOT / "examples/eight-corner-brackets/scpf/model.py"
+        )["commands"]
+        copies = [
+            command for command in commands
+            if command["command"] == "occurrence.copy"
+        ]
+        moves = [
+            command["params"] for command in commands
+            if command["command"] == "occurrence.move"
+        ]
+        self.assertEqual(len(copies), 7)
+        self.assertEqual(len(moves), 8)
+        self.assertTrue(all(
+            move["occurrence"].startswith("$lprofile_occurrence_")
+            for move in moves
+        ))
+        self.assertTrue(any(
+            "frame_height" in str(move["translate"])
+            for move in moves
+        ))
+        self.assertFalse(any(
+            command["command"].startswith("joint.")
+            for command in commands
+        ))
 
-        with self.assertRaisesRegex(
-            ModelError,
-            "cannot attach a copied occurrence",
-        ):
-            run_script(ROOT / "examples/eight-corner-brackets/scpf/model.py")
-
-
-@unittest.skip("blocked: copied attachment occurrences have no explicit SolidCraft 0.42 reference")
+@unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
 class EightCornerBracketsNativeTests(unittest.TestCase):
     def test_native_bounding_boxes_match_two_profiles_per_vertical_corner(self):
         data = _load(

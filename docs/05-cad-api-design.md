@@ -152,39 +152,39 @@ right = left.copy(
 ```
 
 `Placement(x=0, y=0, z=0, rotation=None)` stores the absolute pose in the
-parent coordinate frame. The value object can contain Parameters or
-Expressions, but ordinary replay-first SolidCraft 0.42 lowering currently
-rejects symbolic occurrence Placement when it would require a later
-`occurrence.move`. `half(value)` remains symbolic for capabilities whose
-native command accepts expressions.
+parent coordinate frame. Position values may contain Parameters or Expressions.
 
 The component factory consumes `placement=` before building the reusable
 component definition, so placement never becomes a model parameter. There is no
 separate public `Position` object and no occurrence `.at()`, `.move()` or
 `.rotate()` for initial placement.
 
-The compiler keeps ordinary Placement replay-first. SolidCraft 0.42
-`component.create` has no pose input, so one occurrence of a reusable
-definition must currently be at identity and is used as SolidCraft's implicit
-first occurrence. Additional concrete, unrotated placements lower directly to
-`occurrence.copy(..., translate=...)`.
+SolidCraft 0.42 can apply a numeric translation directly in
+`occurrence.copy(..., translate=...)`. Forge uses that direct form whenever it
+is sufficient.
 
-Forge does not use a later `occurrence.move` when doing so would require
-guessing a SolidCraft-generated occurrence name. Ordinary symbolic copy
-Placement, copied rotation, or a reusable definition with no identity
-occurrence is therefore rejected until SolidCraft has a qualified replay-safe
-selector for that case.
+Some Placements need a second native command. Examples are a rotated copy, a
+symbolic position, or the first occurrence created by `component.create`.
+SolidCraft returns the real occurrence id from `component.create` and
+`occurrence.copy`. Forge therefore gives that returned id a named replay
+variable such as `$board_2`.
 
-This backend support correction is recorded in
-[change 0009](changes/0009-replay-first-placement.md). Change 0002 remains
-historical evidence for the earlier rotated-copy fallback.
+The replay document stores the variable name, not the temporary SolidCraft id.
+Every live run and every later replay binds the variable again from the command
+result before a command uses it. Forge never predicts SolidCraft browser names
+such as `Board:2`.
+
+This keeps `copy(placement=...)` as one Forge operation even when SolidCraft
+needs more than one native command to realise the pose. The second native
+`occurrence.move` is a backend detail; it does not add a second Forge movement
+operation.
 
 Placement must not create a `joint.create` as an implementation workaround.
 Attachments remain explicit relationships and Placement expressions reuse
 existing parameters instead of publishing helper parameters.
 
-The detailed decision, native command contracts and release qualification are
-recorded in [change 0001](changes/0001-position-api-design.md).
+The replay-variable correction is recorded in
+[change 0013](changes/0013-correct-0010-placement-cases.md).
 
 ### `attach()`
 

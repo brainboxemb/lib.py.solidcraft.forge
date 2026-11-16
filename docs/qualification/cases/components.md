@@ -1,55 +1,40 @@
-# Place one component relative to another
+# Reuse one component definition in two placements
 
 ## Use scenario
 
-A model author has one reusable block definition and wants a second occurrence
-attached directly to the right-hand face of the first.
-
-## Expected behaviour
-
-Both occurrences share one component definition. The second occurrence is
-positioned by an attachment relationship, not by duplicating geometry or
-hard-coding an unrelated world coordinate.
+A model has one reusable block definition and needs two physical occurrences.
+The second block is placed directly beside the first.
 
 ## Forge API
 
 ```python
 left = Block()
-right = Block().attach(
-    left,
-    parent=Anchor.RIGHT,
-    child=Anchor.LEFT,
+right = left.copy(
+    placement=Placement(x=Block.length),
 )
 return left + right
 ```
 
-## Semantics
+## Expected behaviour
 
-An assembly attachment relates a **parent anchor** to a **child anchor**.
-For this case both anchors are standard semantic faces.
+- one reusable `Block` definition;
+- two occurrences;
+- the second occurrence has an ordinary `Placement`;
+- the blocks touch face-to-face;
+- no attachment or joint is created.
 
 ## SolidCraft mapping
 
-Forge creates one reusable component definition, copies an occurrence and emits
-a native rigid `joint.create` between the selected references.
+Forge creates the first occurrence with the component definition and creates the
+second with:
 
-## Acceptance criteria
+```text
+occurrence.copy(component="Block", translate=[40, 0, 0])
+```
 
-- exactly one shared component definition is used;
-- two occurrences exist;
-- the occurrences touch face-to-face;
-- the joint is native and rigid.
+There is no `joint.create` and no later `occurrence.move`.
 
-## Parametric change
+## Why this case exists
 
-This base case has no mutation. A moving parent face is qualified separately.
-
-## Verification evidence
-
-Fixture: `examples/components/scpf/model.py`
-
-## Reference models
-
-**BOSL2:** conceptually similar to attaching a child anchor to a parent anchor.
-The important common idea is that the relationship is expressed in terms of
-meaningful attachment references rather than unrelated world coordinates.
+This case qualifies component-definition reuse and multiple occurrences. Joint
+behaviour belongs in the separate attachment qualification cases.

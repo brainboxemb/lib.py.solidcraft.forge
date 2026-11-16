@@ -51,33 +51,21 @@ class EightCornerBrackets:
         )
         profile = LProfile()
 
-        frame_xy = AnchorFrame(
-            origin=(0, 0, 0),
-            z=Anchor.UP,
-            x=Anchor.RIGHT,
-        )
-        profile_origin = AnchorFrame(
-            origin=(0, 0, 0),
-            z=Anchor.DOWN,
-            x=Anchor.RIGHT,
-        )
-
         half_width = half(self.frame_width)
         half_depth = half(self.frame_depth)
         top_height = self.frame_height - LProfile.PROFILE_HEIGHT
 
         def placed(x, y, angle, height):
-            return profile.copy().attach(
-                frame,
-                parent=frame_xy,
-                child=profile_origin,
-                offset=(x, y),
-                gap=height,
-                angle=angle,
+            rotation = None if angle == 0 else (Z, angle)
+            return profile.copy(
+                placement=Placement(
+                    x=x,
+                    y=y,
+                    z=height,
+                    rotation=rotation,
+                ),
             )
 
-        # Two short vertical angle profiles on each of the four rounded
-        # side corners: one at the bottom and one at the top.
         front_left_bottom = placed(-half_width, -half_depth, 0, 0)
         front_left_top = placed(-half_width, -half_depth, 0, top_height)
 

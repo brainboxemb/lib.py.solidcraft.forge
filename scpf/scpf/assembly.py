@@ -13,6 +13,7 @@ from .model_objects import (
     _corner_normal,
 )
 from .compiler import compile_model
+from .replay import replay_document
 
 
 _IDENTIFIER = re.compile(r"\b[A-Za-z_][A-Za-z0-9_]*\b")
@@ -32,6 +33,12 @@ def _command(command_name, **params):
         "command": command_name,
         "params": _command_value(params),
     }
+
+
+def _bound_command(command_name, variable, field="occurrence", **params):
+    command = _command(command_name, **params)
+    command["bind"] = {variable: field}
+    return command
 
 
 def _concrete_joint_reference(reference):
@@ -250,15 +257,32 @@ def _occurrence_labels(assembly, names):
     return labels
 
 
+def _occurrence_replay_variables(assembly, labels):
+    """Give every Forge occurrence one deterministic replay variable."""
+    variables = {}
+    counts = {}
+    for instance in assembly.instances:
+        base = _component_slug(labels[instance.occurrence_id]).lower()
+        count = counts.get(base, 0) + 1
+        counts[base] = count
+        suffix = "" if count == 1 else f"_{count}"
+        variables[instance.occurrence_id] = "$" + base + suffix
+    return variables
+
+
 def compile_assembly(value, name):
     """Compile a root assembly into reusable components and occurrences."""
     assembly = _as_assembly(value)
     names = _definition_names(assembly)
     commands = []
-    occurrence_refs = {}
     occurrence_labels = _occurrence_labels(assembly, names)
+    occurrence_refs = _occurrence_replay_variables(
+        assembly,
+        occurrence_labels,
+    )
     inherited_parameters = {}
     shared_materials = {}
+    positioned_at_copy = set()
 
     # Named groups are empty native components used only for browser hierarchy.
     # They are explicitly ungrounded because SolidCraft would otherwise ground
@@ -304,14 +328,32 @@ def compile_assembly(value, name):
             for instance in instances
         )
         if relationship_definition:
-            instances = _relationship_replay_order(instances, component_name)
-            ordinary_replay_placement = False
-        else:
-            instances, ordinary_replay_placement = _ordinary_replay_order(
-                instances,
-                component_name,
-                relationship_occurrence_ids,
-            )
+            normal_target_ids = {
+                other.attachment.target.occurrence_id
+                for other in assembly.instances
+                if (
+                    other.attachment is not None
+                    and not other.attachment.as_built
+                )
+            }
+            for instance in instances:
+                attachment = instance.attachment
+                normal_child = (
+                    attachment is not None
+                    and not attachment.as_built
+                )
+                normal_target = (
+                    instance.occurrence_id in normal_target_ids
+                )
+                if (
+                    instance.placement.rotation is not None
+                    and (normal_child or normal_target)
+                ):
+                    raise ModelError(
+                        f"{component_name}: rotated Placement in a normal "
+                        "attachment is not supported yet"
+                    )
+
         definition = instances[0].definition
         parent_name = instances[0].group_name
 
@@ -356,20 +398,27 @@ def compile_assembly(value, name):
                 ):
                     continue
             commands.append(command)
+
+        first = instances[0]
         first_is_root = (
-            instances[0].occurrence_id
+            first.occurrence_id
             == assembly.instances[0].occurrence_id
         )
         create_params = {
             "name": component_name,
             "grounded": (
                 first_is_root
-                and instances[0].attachment is None
+                and first.attachment is None
             ),
         }
         if parent_name is not None:
             create_params["parent"] = parent_name
-        commands.append(_command("component.create", **create_params))
+        commands.append(_bound_command(
+            "component.create",
+            occurrence_refs[first.occurrence_id],
+            **create_params,
+        ))
+
         for command in geometry_commands:
             if command["command"] == "material.create":
                 material_name = command["params"]["name"]
@@ -386,35 +435,79 @@ def compile_assembly(value, name):
             commands.append(command)
         commands.append(_command("component.activate", component="root"))
 
-        # SolidCraft creates the first occurrence together with the component.
-        # In the tested joint commands SolidCraft 0.42 accepts the component
-        # name for the first occurrence. A later copy only gets its native id
-        # when occurrence.copy runs, so Forge cannot use that copy as an
-        # attachment endpoint in this static command document.
-        for index, instance in enumerate(instances, start=1):
-            if index == 1:
-                if relationship_definition:
-                    occurrence_refs[instance.occurrence_id] = component_name
-                continue
-
-            if (
-                relationship_definition
-                and instance.occurrence_id in relationship_occurrence_ids
-            ):
-                raise ModelError(
-                    f"{component_name}: cannot attach a copied occurrence in "
-                    "SolidCraft 0.42 replay-first output; occurrence.copy returns "
-                    "its native occurrence id only at runtime"
-                )
-
+        # Create every copy before applying any later occurrence.move. A numeric
+        # unrotated copy can receive its final translation directly. Symbolic
+        # position or rotation is applied later through the real occurrence id
+        # bound from occurrence.copy.
+        for instance in instances[1:]:
             params = {"component": component_name}
             if instance.group_name != parent_name:
                 params["parent"] = instance.group_name or "root"
+
+            attachment = instance.attachment
+            normal_attachment = (
+                attachment is not None
+                and not attachment.as_built
+            )
             position = instance.placement.position
-            concrete_position = [pv(value) for value in position]
-            if any(concrete_position):
-                params["translate"] = concrete_position
-            commands.append(_command("occurrence.copy", **params))
+            symbolic_position = bool(parameters_in(*position))
+            if (
+                not normal_attachment
+                and instance.placement.rotation is None
+                and not symbolic_position
+            ):
+                concrete_position = [pv(value) for value in position]
+                if any(concrete_position):
+                    params["translate"] = concrete_position
+                positioned_at_copy.add(instance.occurrence_id)
+
+            commands.append(_bound_command(
+                "occurrence.copy",
+                occurrence_refs[instance.occurrence_id],
+                **params,
+            ))
+
+    # Placement is assembly-owned occurrence pose. SolidCraft can express some
+    # copies directly with occurrence.copy.translate. The remaining cases use
+    # the actual occurrence id returned by component.create/occurrence.copy.
+    for instance in assembly.instances:
+        attachment = instance.attachment
+        if attachment is not None and not attachment.as_built:
+            # A normal joint determines this occurrence's pose.
+            continue
+        if instance.occurrence_id in positioned_at_copy:
+            continue
+        if _identity_placement(instance):
+            continue
+
+        position = instance.placement.position
+        for parameter in parameters_in(*position):
+            if not any(
+                command["command"] == "parameters.add"
+                and command["params"]["name"] == parameter.name
+                for command in commands
+            ):
+                commands.append(_command(
+                    "parameters.add",
+                    name=parameter.name,
+                    expression=f"{parameter.value:g} mm",
+                ))
+
+        params = {
+            "occurrence": occurrence_refs[instance.occurrence_id],
+            "translate": list(position),
+        }
+        if instance.placement.rotation is not None:
+            axis, degrees = instance.placement.rotation
+            params["axis"] = list(axis)
+            params["angle"] = f"{degrees:g} deg"
+        if (
+            instance.occurrence_id == assembly.instances[0].occurrence_id
+            and instance.attachment is None
+        ):
+            params["move_grounded"] = True
+
+        commands.append(_command("occurrence.move", **params))
 
     for instance in assembly.instances:
         attachment = instance.attachment
@@ -597,4 +690,4 @@ def compile_assembly(value, name):
 
     if not commands:
         raise ModelError(f"{name} contains no component instances")
-    return {"commands": commands}
+    return replay_document(commands)

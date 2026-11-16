@@ -60,62 +60,53 @@ class EightFlightcaseCorners:
         )
         protector = FlightcaseCorner()
 
-        case_xy = AnchorFrame(
-            origin=(0, 0, 0),
-            z=Anchor.UP,
-            x=Anchor.RIGHT,
-        )
-
-        # These child frames are rotations of one neutral trihedral component.
-        # Bottom corners keep local +Z upward; top corners map local +Z down
-        # so the same protector wraps inward while its bottom plate becomes
-        # the outside top plate.
-        bottom_front_left = AnchorFrame(z=Anchor.DOWN, x=Anchor.RIGHT)
-        bottom_front_right = AnchorFrame(z=Anchor.DOWN, x=Anchor.FRONT)
-        bottom_rear_right = AnchorFrame(z=Anchor.DOWN, x=Anchor.LEFT)
-        bottom_rear_left = AnchorFrame(z=Anchor.DOWN, x=Anchor.BACK)
-
-        top_front_left = AnchorFrame(z=Anchor.UP, x=Anchor.BACK)
-        top_front_right = AnchorFrame(z=Anchor.UP, x=Anchor.LEFT)
-        top_rear_right = AnchorFrame(z=Anchor.UP, x=Anchor.FRONT)
-        top_rear_left = AnchorFrame(z=Anchor.UP, x=Anchor.RIGHT)
-
         half_width = half(self.case_width)
         half_depth = half(self.case_depth)
 
-        def placed(x, y, z, child_frame):
-            return protector.copy().attach(
-                case,
-                parent=case_xy,
-                child=child_frame,
-                offset=(x, y),
-                gap=z,
+        def placed(x, y, z, rotation=None):
+            return protector.copy(
+                placement=Placement(
+                    x=x,
+                    y=y,
+                    z=z,
+                    rotation=rotation,
+                ),
             )
 
-        front_bottom_left = placed(
-            -half_width, -half_depth, 0, bottom_front_left,
-        )
+        front_bottom_left = placed(-half_width, -half_depth, 0)
         front_bottom_right = placed(
-            half_width, -half_depth, 0, bottom_front_right,
+            half_width, -half_depth, 0, (Z, 90),
         )
         rear_bottom_right = placed(
-            half_width, half_depth, 0, bottom_rear_right,
+            half_width, half_depth, 0, (Z, 180),
         )
         rear_bottom_left = placed(
-            -half_width, half_depth, 0, bottom_rear_left,
+            -half_width, half_depth, 0, (Z, 270),
         )
 
         front_top_left = placed(
-            -half_width, -half_depth, self.case_height, top_front_left,
+            -half_width,
+            -half_depth,
+            self.case_height,
+            ((1, 1, 0), 180),
         )
         front_top_right = placed(
-            half_width, -half_depth, self.case_height, top_front_right,
+            half_width,
+            -half_depth,
+            self.case_height,
+            (Y, 180),
         )
         rear_top_right = placed(
-            half_width, half_depth, self.case_height, top_rear_right,
+            half_width,
+            half_depth,
+            self.case_height,
+            ((1, -1, 0), 180),
         )
         rear_top_left = placed(
-            -half_width, half_depth, self.case_height, top_rear_left,
+            -half_width,
+            half_depth,
+            self.case_height,
+            (X, 180),
         )
 
         return (

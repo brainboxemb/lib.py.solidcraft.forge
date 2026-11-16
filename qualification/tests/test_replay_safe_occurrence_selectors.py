@@ -5,6 +5,7 @@ import re
 import unittest
 
 from qualification.cases import blocked_qualification_cases, supported_qualification_cases
+from scpf.replay import validate_replay_document
 from scpf.runner import run_script
 
 
@@ -58,16 +59,29 @@ class ReplaySafeOccurrenceSelectorTests(unittest.TestCase):
                 ]
                 self.assertEqual(predicted, [])
 
-    def test_blocked_copied_attachment_examples_fail_clearly(self):
-        from scpf.compiler import ModelError
+    def test_replay_variable_cases_are_supported_and_well_formed(self):
+        self.assertEqual(blocked_qualification_cases(), ())
 
-        for case in blocked_qualification_cases():
+        for case in supported_qualification_cases():
             slug = case["slug"]
-            with self.subTest(slug=slug), self.assertRaisesRegex(
-                ModelError,
-                "cannot attach a copied occurrence",
-            ):
-                run_script(ROOT / "examples" / slug / "scpf" / "model.py")
+            with self.subTest(slug=slug):
+                document = run_script(
+                    ROOT / "examples" / slug / "scpf" / "model.py"
+                )
+                validate_replay_document(document)
+
+                bound = {
+                    variable
+                    for command in document["commands"]
+                    for variable in command.get("bind", {})
+                }
+                used = {
+                    selector
+                    for command in document["commands"]
+                    for selector in _occurrence_selectors(command)
+                    if selector.startswith("$")
+                }
+                self.assertTrue(used <= bound)
 
 
 if __name__ == "__main__":

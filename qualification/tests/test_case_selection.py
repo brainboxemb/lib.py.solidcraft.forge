@@ -29,7 +29,7 @@ class CaseSelectionTests(unittest.TestCase):
         selected = parse_case_selection("group:anchors")
         self.assertIn("corner-anchor", selected)
         self.assertIn("anchor-topology-mutation", selected)
-        self.assertIn("four-corner-l", selected)
+        self.assertIn("xz-anchor", selected)
         self.assertNotIn("simple-box", selected)
 
     def test_duplicate_tokens_do_not_duplicate_cases(self):
