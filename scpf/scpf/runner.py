@@ -19,9 +19,9 @@ import sys
 import warnings
 
 from . import core
-from .compiler import ModelError, compile_model
+from .compiler import ModelError, _compile_model_with_dependencies
 from .core import Expression, Parameter, Shape, command_value, parameters_in, _pv as pv
-from .assembly import compile_assembly
+from .assembly import _compile_assembly_with_dependencies
 from .model_objects import Assembly, ModelDefinition, ModelInstance, Placement
 from .explicit_sketch import Sketch
 
@@ -44,46 +44,47 @@ class ModelParameterWarning(UserWarning):
 class _BuiltDesign:
     result: object
     parameters: tuple[tuple[str, float], ...]
+    pv_parameters: tuple[str, ...] = ()
 
 
 def _warn_missing_model_parameters(
-    parameters, commands, *, context="model", flattened_parameters=()
+    parameters,
+    dependencies,
+    *,
+    context="model",
+    pv_parameters=(),
 ):
-    """Warn when declared model parameters are lost or only partly native."""
-    native = {
-        command["params"]["name"]
-        for command in commands
-        if command["command"] == "parameters.add"
-    }
-    flattened = set(flattened_parameters)
+    """Warn from actual emitted dependencies and explicit user pv() reads."""
+    native = set(dependencies)
+    concrete_reads = set(pv_parameters)
 
     for name, _ in parameters:
-        if name in flattened:
+        if name in concrete_reads:
             if name in native:
                 detail = (
-                    "remains native in some geometry, but occurrence placement "
-                    "also consumes it as a concrete Python value. Changing the "
-                    "SolidCraft parameter will therefore update only part of "
-                    "the model."
+                    "remains a native dependency, but pv() also consumes its "
+                    "current Python value. Changing the SolidCraft parameter "
+                    "may therefore update only part of the model."
                 )
             else:
                 detail = (
-                    "has no native SolidCraft dependency because occurrence "
-                    "placement consumes it as a concrete Python value."
+                    "has no native SolidCraft dependency and pv() consumes its "
+                    "current Python value."
                 )
             warnings.warn(
                 f"{context} parameter {name!r} {detail} Preserve the symbolic "
-                "relationship in native geometry/placement, or rename it to "
-                f"_{name} if it is intentionally Forge/build-time.",
+                "value wherever native associativity is required, or rename "
+                f"it to _{name} if it is intentionally Forge/build-time.",
                 ModelParameterWarning,
                 stacklevel=3,
             )
         elif name not in native:
             warnings.warn(
                 f"{context} parameter {name!r} has no native SolidCraft "
-                "dependency; it may have been consumed as a Python value "
-                "(for example via pv()). Preserve the symbolic value, or "
-                f"rename it to _{name} if it is intentionally Forge/build-time.",
+                "dependency; publishing a parameter alone does not make model "
+                "geometry or placement associative. Preserve the symbolic "
+                f"value, or rename it to _{name} if it is intentionally "
+                "Forge/build-time.",
                 ModelParameterWarning,
                 stacklevel=3,
             )
@@ -472,19 +473,42 @@ def _build_object(
     build = getattr(instance, "build", None)
     if not callable(build):
         raise TypeError(f"{cls.__name__} must define build()")
-    result = build()
-    anchors = _component_anchor_frames(instance)
-    return result, concrete, fixed, external, bindings, anchors
+
+    tracked_parameters = []
+    for parameter_name, _ in concrete:
+        value = getattr(instance, parameter_name, None)
+        if isinstance(value, Parameter):
+            tracked_parameters.append(value)
+
+    with core._track_pv_reads(tracked_parameters) as pv_parameters:
+        result = build()
+        anchors = _component_anchor_frames(instance)
+
+    return (
+        result,
+        concrete,
+        fixed,
+        external,
+        bindings,
+        anchors,
+        tuple(sorted(pv_parameters)),
+    )
 
 
 def _design_object(cls, *args, **kwargs):
     """Build the root model and retain its declared native parameters."""
-    result, concrete, _, _, _, _ = _build_object(cls, *args, **kwargs)
+    result, concrete, _, _, _, _, pv_parameters = _build_object(
+        cls, *args, **kwargs
+    )
     if not isinstance(result, (Shape, ModelInstance, Assembly)):
         raise TypeError(
             f"{cls.__name__}.build() must finish with a Shape or assembly"
         )
-    return _BuiltDesign(result=result, parameters=concrete)
+    return _BuiltDesign(
+        result=result,
+        parameters=concrete,
+        pv_parameters=pv_parameters,
+    )
 
 
 def _reusable_model_object(
@@ -511,7 +535,7 @@ def _reusable_model_object(
                 "component object name must be a public Python identifier"
             )
 
-    result, concrete, fixed, external, bindings, anchors = _build_object(
+    result, concrete, fixed, external, bindings, anchors, pv_parameters = _build_object(
         cls,
         *args,
         _include=_include,
@@ -535,6 +559,7 @@ def _reusable_model_object(
         ),
         placement=placement,
         name=object_name,
+        flattened_parameters=pv_parameters,
     )
 
 
@@ -632,7 +657,7 @@ def component(cls=None, *, include=()):
 
 def _reusable_assembly_object(cls, *args, **kwargs):
     """Build an imported assembly class without exposing build_* helpers."""
-    result, _, _, _, _, _ = _build_object(cls, *args, **kwargs)
+    result, _, _, _, _, _, _ = _build_object(cls, *args, **kwargs)
     if not isinstance(result, (ModelInstance, Assembly)):
         raise TypeError(
             f"{cls.__name__}.build() must produce a component or assembly"
@@ -894,10 +919,22 @@ def run_script(path: str | Path) -> dict:
             )
             result = built.result
         elif root_is_assembly:
-            result = eval(
-                compile(ast.Expression(body=last.value), str(path), "eval"),
+            constructor = ast.Call(
+                func=ast.Name(id="_scpf_design_object", ctx=ast.Load()),
+                args=[
+                    ast.Name(id="_scpf_root_assembly_class", ctx=ast.Load()),
+                    *last.value.args,
+                ],
+                keywords=last.value.keywords,
+            )
+            context["_scpf_design_object"] = _design_object
+            context["_scpf_root_assembly_class"] = root_assembly_class
+            ast.fix_missing_locations(constructor)
+            built = eval(
+                compile(ast.Expression(body=constructor), str(path), "eval"),
                 context,
             )
+            result = built.result
         else:
             raise SyntaxError(
                 f"the last call must use a defined function/class or "
@@ -905,29 +942,21 @@ def run_script(path: str | Path) -> dict:
             )
 
     if isinstance(result, Shape):
-        document = compile_model(result, name)
+        document, dependencies = _compile_model_with_dependencies(
+            result, name
+        )
     elif isinstance(result, (ModelInstance, Assembly)):
-        document = compile_assembly(result, name)
+        document, dependencies = _compile_assembly_with_dependencies(
+            result, name
+        )
     else:
         raise TypeError(f"{name}() must produce CAD geometry or an assembly")
 
-    if root_is_class or root_is_component:
-        instances = (
-            (result,)
-            if isinstance(result, ModelInstance)
-            else result.instances
-            if isinstance(result, Assembly)
-            else ()
-        )
-        flattened_parameters = {
-            parameter_name
-            for instance in instances
-            for parameter_name in instance.flattened_parameters
-        }
+    if root_is_class or root_is_component or root_is_assembly:
         _warn_missing_model_parameters(
             built.parameters,
-            document["commands"],
+            dependencies,
             context=name,
-            flattened_parameters=flattened_parameters,
+            pv_parameters=built.pv_parameters,
         )
     return document
