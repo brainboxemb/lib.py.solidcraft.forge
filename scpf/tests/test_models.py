@@ -1006,6 +1006,42 @@ class SCPFExamples(unittest.TestCase):
             [0, 2, 10],
         )
 
+    def test_parameterized_taper_commands_are_serializable_for_both_origins(self):
+        from scpf import Anchor, Box, Parameter
+        from scpf.compiler import compile_model
+
+        length = Parameter("length", 159.70)
+        width = Parameter("width", 319.71)
+        depth = Parameter("depth", 14.50)
+        start = Parameter("front_depth", 2.0)
+        inset = Parameter("rear_inset", 1.25)
+
+        for anchor in (Anchor.CENTER, Anchor.BOTTOM):
+            with self.subTest(anchor=anchor):
+                document = compile_model(
+                    Box(length, width, depth, anchor=anchor).taper(
+                        from_z=start, inset=inset
+                    ),
+                    "ParametricTaper",
+                )
+                # This also catches raw Python Expression instances nested
+                # inside native sketch p0/p1 lists.
+                json.dumps(document)
+                rectangles = [
+                    row["params"]
+                    for row in document["commands"]
+                    if row["command"] == "sketch.rectangle.two_point"
+                ]
+                self.assertEqual(len(rectangles), 3)
+                for rectangle in rectangles:
+                    for key in ("p0", "p1"):
+                        self.assertTrue(all(
+                            isinstance(value, (int, float, str))
+                            for value in rectangle[key]
+                        ))
+                self.assertIn("length", str(rectangles[0]["p0"]))
+                self.assertIn("width", str(rectangles[0]["p0"]))
+
     def test_native_box_supports_directional_anchor_and_edge_selectors(self):
         from scpf import BOTTOM, FRONT, LEFT, RIGHT, Box
         from scpf.compiler import compile_model
