@@ -3,13 +3,13 @@
 
 class Panel:
     def build(self):
-        return Box(10, 2, 20)
+        return Box(10, 2, 20, anchor=BOTTOM)
 
 
 class Frame:
     def build(self):
         # The frame offset is visual fixture geometry, not the grouping API.
-        return Box(35, 10, 40).move(y=20, z=20)
+        return Box(35, 10, 40, anchor=BOTTOM).move(y=20)
 
 
 class GroupHierarchy:
