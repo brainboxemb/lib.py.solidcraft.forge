@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-11-16
+
 ### Changed
 
 - Occurrence replay no longer depends on predicted SolidCraft browser names
