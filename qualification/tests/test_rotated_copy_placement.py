@@ -20,13 +20,14 @@ class RotatedCopyPlacementCommandTests(unittest.TestCase):
             for command in commands
             if command["command"] == "occurrence.copy"
         )
+        variable = next(iter(copy["bind"]))
         move = next(
             command["params"]
             for command in commands
             if command["command"] == "occurrence.move"
+            and command["params"]["occurrence"] == variable
         )
 
-        variable = next(iter(copy["bind"]))
         self.assertTrue(variable.startswith("$"))
         self.assertEqual(copy["bind"][variable], "occurrence")
         self.assertEqual(move["occurrence"], variable)
