@@ -608,7 +608,10 @@ def validate_xz_anchor(root: Path) -> Validation:
     v = Validation("xz-anchor")
     d = load(root / "measurements.json")
     _check_declared_bounds(v, d, "xz-anchor")
-    markers = bodies_named(d, "Marker")
+    markers = (
+        bodies_named(d, "RightMarker")
+        + bodies_named(d, "LeftMarker")
+    )
     expected = _xz_expected(40, 20)
     actual_boxes = [(b["bbox"]["min"], b["bbox"]["max"]) for b in markers]
     v.check("two markers", len(markers) == 2, 2, len(markers))
@@ -618,7 +621,10 @@ def validate_xz_anchor(root: Path) -> Validation:
                 {"min": emin, "max": emax}, actual_boxes)
 
     m = load(root / "measurements-size-80x40.json")
-    markers2 = bodies_named(m, "Marker")
+    markers2 = (
+        bodies_named(m, "RightMarker")
+        + bodies_named(m, "LeftMarker")
+    )
     expected2 = _xz_expected(80, 40)
     actual2 = [(b["bbox"]["min"], b["bbox"]["max"]) for b in markers2]
     for side, (emin, emax) in expected2.items():
