@@ -1344,8 +1344,12 @@ def Box(length, width, thickness, *, anchor=Anchor.CENTER):
 def Sphere(radius, *, anchor=Anchor.CENTER):
     """Create a sphere, centered on the origin unless another anchor is given.
 
-    The cardinal anchors choose points on its world-aligned tangent box.
-    Sphere has no orientation axis. Use at() for later placement.
+    Use when:
+        Model a spherical primitive, optionally with a tangent-point anchor.
+
+    Limits:
+        Cardinal anchors select points on the sphere's world-aligned bounds.
+        Sphere has no separate orientation axis; use at() for placement.
     """
     return Shape("sphere", (radius, _direction_selector(anchor)))
 
@@ -1353,9 +1357,13 @@ def Sphere(radius, *, anchor=Anchor.CENTER):
 def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
     """Create a cylindrical solid centered around the origin by default.
 
-    An explicit anchor refers to the oriented cylinder's world XYZ bounds:
-    BOTTOM for an Axis.Z base, LEFT for an Axis.X base, FRONT for Axis.Y.
-    .at() places the selected anchor at the requested coordinate.
+    Use when:
+        Model a cylinder along Axis.X, Axis.Y or Axis.Z. Use BOTTOM for a
+        Z-axis base, LEFT for an X-axis base or FRONT for a Y-axis base.
+
+    Limits:
+        Anchors refer to world XYZ bounds after choosing the cylinder axis.
+        at() places the selected anchor at the requested coordinate.
     """
     try:
         axis = Axis(axis)
