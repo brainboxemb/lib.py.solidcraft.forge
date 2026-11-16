@@ -438,6 +438,19 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(root_copy_params["parent"], "root")
         self.assertEqual(root_copy_params["translate"], [30.0, 0.0, 0.0])
 
+        grouped_copy = compile_assembly(
+            panel
+            + panel.copy(placement=Placement(x=30)).group("B"),
+            "Display",
+        )["commands"]
+        grouped_copy_params = next(
+            command["params"]
+            for command in grouped_copy
+            if command["command"] == "occurrence.copy"
+        )
+        self.assertEqual(grouped_copy_params["parent"], "B")
+        self.assertEqual(grouped_copy_params["translate"], [30.0, 0.0, 0.0])
+
         with self.assertRaisesRegex(ModelError, "conflicts"):
             compile_assembly(panel.group("Panel"), "Display")
 
