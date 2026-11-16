@@ -106,13 +106,27 @@ feature.
 - Alignment/reversed values should be passed through using the native
   SolidCraft semantics.
 
-## Existing Hole.pattern()
+## Existing primitive repetition
 
-`Hole.pattern()` is a different SCPF concept. It expands a layout before
-lowering and currently becomes sketch circles plus a cut.
+The existing public `.pattern()` on Hole/Cylinder is not a SolidCraft Pattern
+feature. It is a Forge-side primitive repetition helper that expands positions
+before native lowering.
 
-Do not silently redefine `Hole.pattern()` as a native history pattern in this
-change.
+Keeping both concepts under the word `pattern` is misleading.
+
+Because SCPF is still unstable, change 0026 deliberately breaks that spelling:
+
+```python
+Hole(...).repeat_linear(count=9, spacing=80, axis=Axis.X)
+```
+
+`repeat_linear()` means Forge repeats a primitive layout before lowering.
+
+Pattern terminology is reserved for actual SolidCraft native Pattern features,
+such as `solid.pattern.rectangular`.
+
+The old ambiguous `.pattern()` spelling is removed rather than preserved as a
+compatibility alias.
 
 Do not add `Hole.grid()` as the primary solution.
 
@@ -139,4 +153,5 @@ The full Vent Plate remains a downstream CAD-library example.
 - no product-specific grid API;
 - no Python-loop emulation of a native pattern;
 - no circular/path pattern API in this change;
-- no requirement for users to manage native history labels manually.
+- no requirement for users to manage native history labels manually;
+- no ambiguous public `.pattern()` helper for pre-lowering primitive repetition.
