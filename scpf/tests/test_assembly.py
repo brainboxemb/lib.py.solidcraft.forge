@@ -978,7 +978,7 @@ class AssemblyTests(unittest.TestCase):
 
     def test_parameter_namespacing_does_not_rewrite_plain_strings(self):
         from scpf.assembly import _namespace_commands
-        from scpf.core import _native_expression
+        from scpf.core import _native_dependencies, _native_expression
 
         commands = [
             {
@@ -1047,6 +1047,10 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             namespaced[3]["params"]["length"],
             "d1_Label_width",
+        )
+        self.assertEqual(
+            _native_dependencies(namespaced),
+            frozenset({"d1_Label_width"}),
         )
         self.assertEqual(
             namespaced[3]["params"]["body_name"],
