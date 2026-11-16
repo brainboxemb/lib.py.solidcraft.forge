@@ -101,23 +101,25 @@ A point used by `joint.create` may be equally valid. The question is not
 
 Change 0010 must answer that before copied attachments are accepted or rejected.
 
-## Placing a copy before creating a joint
+## Moving a copy only to make selection possible
 
-One experiment first places a copied component a small distance away.
-Forge then gives `joint.create` a point on that copy. After the joint is
-created, SolidCraft moves the component to the position required by the joint.
+One research probe moves a copied component away from another part before
+`joint.create`. That makes a point on the copy unique, so SolidCraft can find
+that copy from the point.
 
-Describe this literally:
+This is **not an accepted Forge implementation**.
 
-> Forge first places the copied component a small distance away so SolidCraft
-> can select that copy by its geometry. Forge then runs `joint.create`.
+If Forge has to move a component only because it otherwise cannot identify the
+occurrence, that is a workaround for the missing occurrence reference. Change
+0010 must not put that behaviour in production code.
 
-This may match normal interactive CAD use: a loose part is positioned where it
-can be selected, the user selects geometry on both parts, and the joint then
-places the part.
+The probe remains useful for one reason: it helps us understand how
+`joint.create` resolves a geometry pick. It does not prove that Forge should
+move parts this way.
 
-It may also be an unnecessary workaround. We need native evidence before making
-that decision.
+The only reason to reconsider this later is if SolidCraft's documented/UI
+workflow itself requires a loose part to be positioned before the user selects
+its joint geometry. That must be proved separately before implementation.
 
 ## Questions that must be answered
 
@@ -131,8 +133,8 @@ Before copied attachments are considered supported, test and document:
    reordered?
 5. When a point is ambiguous, does SolidCraft report that clearly or silently
    choose one occurrence?
-6. Is placing a loose component away from the other part before
-   `joint.create` the same operation a user performs in the SolidCraft UI?
+6. Does the normal SolidCraft UI require the user to position a loose component
+   before selecting its joint geometry, or was that only useful in our probe?
 7. Which cases need an explicit occurrence/path instead of a point pick?
 
 ## Current implementation state
