@@ -57,5 +57,13 @@ class ParameterScopeCommandTests(unittest.TestCase):
         self.assertEqual(len(copies), 1)
 
 
+def _parameter_commands(document):
+    return [
+        row["params"]
+        for row in document["commands"]
+        if row["command"] == "parameters.add"
+    ]
+
+
 if __name__ == "__main__":
     unittest.main()
