@@ -91,7 +91,7 @@ class QualificationCameraTests(unittest.TestCase):
             Image.new("RGB", (240, 180), (120, 120, 120)).save(actual)
             camera_path.write_text(
                 json.dumps({
-                    "target": [0, 0, 5],
+                    "target": [0, 0, 0],
                     "yaw": 0.0,
                     "pitch": 0.0,
                     "roll": 0.0,
