@@ -31,23 +31,16 @@ Probe run **43765272041** established:
   first occurrence;
 - `joint.origin` accepts the component name for the first occurrence;
 - `joint.as_built` accepts component names for first occurrences;
-- a copied occurrence can be found by `joint.create` from a world face/point
-  when that pick is unique;
-- four copied occurrences were each resolved correctly from four different
-  world points;
+- omitting an occurrence selector can make SolidCraft infer an occurrence from
+  geometry, but this is not an explicit occurrence reference and therefore is
+  **not accepted as a Forge identity mechanism**;
 - `occurrence.move(occurrence="Block", ...)` fails with
   `no occurrence Block`.
 
-A second focused probe tested two occurrences of the same `Block` definition
-whose mating faces occupy the same world point.
-
-- coincident copy inference **fails** because SolidCraft resolves both joint
-  origins to the first occurrence;
-- moving the copy temporarily away from the mating face makes the same
-  occurrence inference **pass**.
-
-This means occurrence inference is useful, but the compiler must give a copied
-attached child a unique temporary seed pose before `joint.create`.
+The copy-inference probes remain useful evidence of SolidCraft behaviour, but
+they are not a supported Forge implementation strategy. An inference that works
+only while a pick is unique can become ambiguous after geometry, placement or
+assembly changes.
 
 ## Decision
 
@@ -67,43 +60,22 @@ command does not resolve a component name as an occurrence.
 
 ### Copied occurrence
 
-Forge does not invent a selector for a copy.
+Forge has no explicit replay-safe SolidCraft 0.42 selector for a copied
+occurrence in the relationship commands covered by this change.
 
-For `joint.create`:
+Therefore a copied occurrence is **not supported as an attachment endpoint**.
 
-- omit the `occurrence` field for the copied side;
-- provide the actual world topology/point at the copy's native seed pose;
-- let SolidCraft 0.42 resolve the occurrence from that pick.
+Forge does not:
 
-### Temporary seed gap
+- omit the occurrence selector and rely on geometry inference;
+- move the copy temporarily to make a pick unique;
+- invent a generated occurrence name;
+- add runtime result binding.
 
-A copied normal attachment is created at a small temporary staging offset
-before its joint is authored.
-
-Each copied attached child gets an assembly-wide staging slot. Slot `n` moves
-the child's calculated pre-joint pose by `n mm` along the parent attachment
-direction:
-
-- a standard face anchor uses its outward face direction;
-- a corner anchor uses the normal of the front/back face that owns the corner;
-- `AnchorFrame` uses its `z` direction;
-- `AnchorTopology` must provide a `z` direction when a copied child needs
-  native occurrence inference.
-
-Only copied attached children use this offset. The first occurrence can be
-addressed by the qualified component-name selector and stays at native
-identity.
-
-The copy and its world joint pick move together. Different copied children
-therefore get distinct picks even when their authored attachment math produces
-the same pre-joint pose. This avoids the SolidCraft 0.42 ambiguity proved by
-the coincident same-definition probe without moving temporary geometry to an
-arbitrary distant world location.
-
-The staging offset is compiler setup state only. The authored `attach()`
-relationship remains the final relationship and moves every staged copy to its
-requested position. Saved-design relationship behaviour is checked after the
-native joint solve, not from the temporary staging coordinates.
+If copied-occurrence relationship support is needed later, it requires a
+separate design change based on an explicit SolidCraft reference mechanism.
+If that mechanism is not clearly reliable, it must be discussed before
+implementation.
 
 ### No generated occurrence names
 
@@ -147,11 +119,11 @@ Required command tests:
 
 - no generated `Component:N` selector appears in an attachment plan;
 - first occurrences use component names;
-- copied joint origins omit `occurrence`;
-- copied attached children receive distinct local staging seeds;
-- same-definition parent/child attachment remains one reusable component plus a
+- copied occurrences used as attachment endpoints are rejected;
+- same-definition parent/child attachment is rejected when one side would be a
   copy;
-- repeated copied brackets use point inference without generated names;
+- repeated copied brackets that require attachment relationships are rejected
+  rather than inferred from geometry;
 - rotated relationship Placement is rejected;
 - copied as-built attachment is rejected;
 - symbolic absolute Placement on a relationship target is rejected.
