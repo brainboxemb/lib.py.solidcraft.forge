@@ -58,14 +58,24 @@ class ReplaySafeOccurrenceSelectorTests(unittest.TestCase):
                 ]
                 self.assertEqual(predicted, [])
 
-    def test_blocked_copied_attachment_examples_fail_clearly(self):
+    def test_blocked_placement_examples_fail_clearly(self):
         from scpf.compiler import ModelError
 
-        for case in blocked_qualification_cases():
+        blocked = blocked_qualification_cases()
+        self.assertEqual(
+            {case["slug"] for case in blocked},
+            {
+                "four-corner-l",
+                "eight-corner-brackets",
+                "eight-flightcase-corners",
+            },
+        )
+        for case in blocked:
             slug = case["slug"]
+            self.assertIn("Placement", case["blocked_reason"])
             with self.subTest(slug=slug), self.assertRaisesRegex(
                 ModelError,
-                "cannot attach a copied occurrence",
+                "Placement",
             ):
                 run_script(ROOT / "examples" / slug / "scpf" / "model.py")
 
