@@ -14,7 +14,7 @@ class SlotFamily:
             SlotArcThreePoint2D((-50, 25), (-35, 38), (-20, 25), self.SLOT_WIDTH)
             SlotArcCenter2D((40, 25), (52, 25), self.SLOT_WIDTH, sweep=120)
 
-        return body - slots.extrude(Depth.THROUGH_ALL)
+        return body - slots.extrude(-5)
 
 
 SlotFamily()
