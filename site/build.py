@@ -95,8 +95,10 @@ CHEATSHEET = [
          "with Sketch(plane='XY') as sketch:\n    Circle2D(d=8)", None),
         ("Polygon2D(points, plane=...)", "A closed profile on XY, XZ or YZ.",
          "Polygon2D([(0,0), (40,0), (0,30)], plane='XZ')", None),
-        ("Cylinder(d=..., h=..., axis=...)", "Direct native cylinder on Axis.X, Axis.Y or Axis.Z, with its base at the placement point.",
-         "Cylinder(d=24, h=14, axis=Axis.X).at(-7, 0, 0)", None),
+        ("Cylinder(d=..., h=..., axis=..., anchor=CENTER)", "Native cylinder centred by default; choose an axial anchor such as BOTTOM or LEFT when that end should define the datum.",
+         "Cylinder(d=24, h=14, axis=Axis.X, anchor=LEFT)", None),
+        ("Sphere(radius, *, anchor=CENTER)", "Native sphere centred by default; cardinal anchors select tangent datums.",
+         "Sphere(12, anchor=LEFT)", None),
     ]),
     ("Features and placement", [
         ("sketch.extrude(distance)", "Extrude an explicitly authored Sketch into editable native solid history.",
