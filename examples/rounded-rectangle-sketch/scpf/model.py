@@ -11,7 +11,12 @@ class RoundedRectangleSketch:
     pad_height = 8.0
 
     def build(self):
-        body = Box(self.base_width, self.base_depth, self.base_height)
+        body = Box(
+            self.base_width,
+            self.base_depth,
+            self.base_height,
+            anchor=BOTTOM,
+        )
 
         with Sketch(name="Rounded pad", on=body) as pad:
             pad.add(
