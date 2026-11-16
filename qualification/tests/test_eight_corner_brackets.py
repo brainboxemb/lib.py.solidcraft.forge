@@ -39,6 +39,7 @@ class EightCornerBracketsCommandTests(unittest.TestCase):
             for command in commands
         ))
 
+@unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
 class EightCornerBracketsNativeTests(unittest.TestCase):
     def test_native_bounding_boxes_match_two_profiles_per_vertical_corner(self):
         data = _load(
