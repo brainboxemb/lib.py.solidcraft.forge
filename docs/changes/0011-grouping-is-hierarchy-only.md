@@ -83,26 +83,46 @@ Find the SolidCraft cause first.
 
 ## Reusable definitions under different groups
 
-Forge currently rejects this:
+SolidCraft 0.42 `occurrence.copy` has a `parent` parameter. It accepts a
+component id or component name.
 
-```python
-part = Panel()
-assembly = part.group("A") + part.copy().group("B")
+The native probe proved both of these static command sequences:
+
+```text
+Panel first occurrence -> GroupA
+occurrence.copy(component="Panel", parent="GroupB")
 ```
 
-because one SolidCraft component definition is currently created under exactly
-one native parent.
+and:
 
-Do not remove that check as part of the grounding fix.
+```text
+Panel first occurrence -> GroupA
+occurrence.copy(component="Panel", parent="root")
+```
 
-First determine whether SolidCraft 0.42 has a replay-first way to place
-occurrences of one reusable definition under different parent components.
-A runtime occurrence id returned by a previous command is not available to the
-normal static Forge document.
+SolidCraft keeps one `Panel` component definition and creates the second
+occurrence under the requested parent. Forge therefore does not need a runtime
+occurrence id, duplicated geometry or a generated `Panel:2` name for this
+case.
 
-If SolidCraft cannot express this safely, keep the restriction and document it
-plainly. Do not duplicate geometry or use guessed occurrence names only to make
-the example compile.
+Forge may remove the old "one reusable definition cannot currently be placed
+under multiple assembly parents" restriction for ordinary copies.
+
+## Native evidence
+
+Research branch: `qualification/0011-grouping-probe`.
+
+Native SolidCraft 0.42 run `43790665910` passed these checks:
+
+- an ungrouped two-part rigid attachment;
+- the same two parts inside an ungrounded group;
+- a grounded grouped part attached to a root-level part;
+- one `Panel` definition with occurrences under `GroupA` and `GroupB`;
+- one `Panel` definition copied from `GroupA` back to `root`.
+
+The grouped attachment variants produced the same solved body bounds as the
+ungrouped baseline. `component.list` showed the group occurrences as
+`grounded=false` and the physical fixed part as `grounded=true`.
 
 ## Tests required for this change
 
