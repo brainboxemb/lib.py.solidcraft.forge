@@ -6,6 +6,7 @@ Feature operations (Hole, Fillet, join, cut) are handled separately.
 from math import isfinite
 from .core import (
     Shape,
+    Anchor,
     _NativeExpression,
     _native_expression,
     _native_dependencies,
@@ -79,7 +80,7 @@ def compile_base(shape, name):
             raise ModelError("standalone Sketch requires an XY, XZ or YZ plane")
         if len(profiles) != 1:
             raise ModelError("standalone Sketch currently requires exactly one profile")
-        profile, (ox, oy) = profiles[0]
+        profile, profile_anchor, (ox, oy) = profiles[0]
         if origin is not None:
             raise ModelError("standalone Sketch origin is not supported yet")
         sketch_params = {"plane": plane, "name": sketch_name}
@@ -90,20 +91,44 @@ def compile_base(shape, name):
             width, depth = profile.data
             _require_positive(width, "rectangle width")
             _require_positive(depth, "rectangle depth")
-            sketch.append(_command("sketch.rectangle.two_point",
-                p0=[command_value(ox), command_value(oy)],
-                p1=[command_value(_combine_dimension(ox, width)),
-                    command_value(_combine_dimension(oy, depth))]))
-            meta = {"profile": "rectangle", "width": width, "depth": depth,
-                    "thickness": distance, "origin": (ox, oy, 0)}
+            if profile_anchor is Anchor.CENTER:
+                x0 = _combine_dimension(ox, -half(width))
+                y0 = _combine_dimension(oy, -half(depth))
+                x1 = _combine_dimension(ox, half(width))
+                y1 = _combine_dimension(oy, half(depth))
+            else:
+                x0, y0 = ox, oy
+                x1 = _combine_dimension(ox, width)
+                y1 = _combine_dimension(oy, depth)
+            sketch.append(_command(
+                "sketch.rectangle.two_point",
+                p0=[command_value(x0), command_value(y0)],
+                p1=[command_value(x1), command_value(y1)],
+            ))
+            meta = {
+                "profile": "rectangle",
+                "width": width,
+                "depth": depth,
+                "thickness": distance,
+                "origin": (x0, y0, 0),
+            }
         elif profile.kind == "circle":
             (diameter,) = profile.data
             _require_positive(diameter, "circle diameter")
-            sketch.append(_command("sketch.circle.center",
+            if profile_anchor not in (None, Anchor.CENTER):
+                raise ModelError("Circle2D sketch anchor must be CENTER")
+            sketch.append(_command(
+                "sketch.circle.center",
                 center=[command_value(ox), command_value(oy)],
-                diameter=command_value(diameter)))
+                diameter=command_value(diameter),
+            ))
             meta = {"profile": "circle", "thickness": distance}
         elif profile.kind == "polygon":
+            if profile_anchor is not None:
+                raise ModelError(
+                    "Polygon2D uses authored sketch coordinates; "
+                    "semantic CENTER is not supported yet"
+                )
             points, profile_plane, ids = profile.data
             if profile_plane != plane:
                 raise ModelError("Polygon2D plane must match Sketch plane")

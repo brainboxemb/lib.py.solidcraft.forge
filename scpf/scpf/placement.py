@@ -5,6 +5,7 @@ It is not a geometry engine: SolidCraft owns actual face identity.
 """
 from .core import (
     Shape,
+    Anchor,
     _BoundOffset,
     _box_corner_from_anchor,
     half,
@@ -12,10 +13,27 @@ from .core import (
     command_value,
 )
 
-def _is_centered_box(shape):
+def _is_unshifted_rectangular_base(shape):
+    """Return whether the original rectangular base keeps its declared datum."""
     while shape.kind in ("fillet", "shell", "union", "difference"):
         shape = shape.data[0]
-    return shape.kind == "box"
+    if shape.kind == "box":
+        return True
+    if shape.kind != "sketch_base_extrusion":
+        return False
+
+    _, plane, origin, plane_offset, profiles, _, direction = shape.data
+    if (
+        plane != "XY"
+        or origin is not None
+        or plane_offset is not None
+        or direction != "positive"
+        or len(profiles) != 1
+        or profiles[0][0].kind != "rectangle"
+    ):
+        return False
+    _, _, offset = profiles[0]
+    return all(pv(value) == 0 for value in offset)
 
 
 def _base_rectangle(shape):
@@ -59,8 +77,17 @@ def _base_rectangle(shape):
             raise ValueError("anchoring requires a positive XY rectangular Sketch")
         if len(profiles) != 1 or profiles[0][0].kind != "rectangle":
             raise ValueError("anchoring requires one rectangular Sketch profile")
-        (width, depth), offset = profiles[0][0].data, profiles[0][1]
-        return (width, depth), (offset[0], offset[1], 0), height
+        profile, profile_anchor, offset = profiles[0]
+        width, depth = profile.data
+        if profile_anchor is Anchor.CENTER:
+            corner = (
+                _combine(offset[0], -half(width)),
+                _combine(offset[1], -half(depth)),
+                0,
+            )
+        else:
+            corner = (offset[0], offset[1], 0)
+        return (width, depth), corner, height
     if shape.kind in ("fillet", "chamfer", "shell"):
         return _base_rectangle(shape.data[0])
     if shape.kind in ("union", "difference"):
@@ -135,8 +162,10 @@ def _anchored_features(shape):
     (width, depth), (x, y, z), thickness = _base_rectangle(target)
     if thickness is None:
         raise ValueError("anchor target must be an extruded Rectangle2D")
-    if pv(z) != 0 or (not _is_centered_box(target)
-                              and (pv(x) != 0 or pv(y) != 0)):
+    if pv(z) != 0 or (
+        not _is_unshifted_rectangular_base(target)
+        and (pv(x) != 0 or pv(y) != 0)
+    ):
         raise ValueError("native references require an unshifted supported base")
     # The original rectangular base is not necessarily the highest face:
     # after a joined boss, Anchor.TOP must resolve to that boss's top.
@@ -225,10 +254,23 @@ def _anchored_features(shape):
         # Native solid.hole uses a numeric authoring pick. For holes on the
         # joined circular boss no stable straight-edge references exist yet.
         # Do not pass unevaluated expressions as its position coordinates.
-        if feature.kind in ("hole", "lip", "snap_fit", "boss", "rest") or refs:
+        if feature.kind == "hole" and refs:
+            # The Hole backend below emits sketch.circle.center, so its planar
+            # centre may stay symbolic. The numeric Z value is only an
+            # authoring pick for the supporting face.
+            position = [
+                command_value(xx),
+                command_value(yy),
+                pv(base_z),
+            ]
+        elif feature.kind in ("hole", "lip", "snap_fit", "boss", "rest") or refs:
             position = [pv(xx), pv(yy), pv(base_z)]
         else:
-            position = [command_value(xx), command_value(yy), command_value(base_z)]
+            position = [
+                command_value(xx),
+                command_value(yy),
+                command_value(base_z),
+            ]
         result.append((feature, position, refs))
     return result
 

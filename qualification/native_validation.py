@@ -171,8 +171,12 @@ def validate_anchored_holes(root: Path) -> Validation:
     _check_declared_bounds(v, d, "anchored-holes")
     v.check("one plate body", d["body_count"] == 1, 1, d["body_count"])
     b = d["bodies"][0]
-    v.check("plate outer bounds", bbox_close(b, [0, 0, 0], [100, 60, 10]),
-            {"min": [0, 0, 0], "max": [100, 60, 10]}, b["bbox"])
+    v.check(
+        "plate outer bounds",
+        bbox_close(b, [-50, -30, 0], [50, 30, 10]),
+        {"min": [-50, -30, 0], "max": [50, 30, 10]},
+        b["bbox"],
+    )
     cylinders = b.get("face_types", {}).get("cylinder", 0)
     v.check("two cylindrical hole walls", cylinders == 2, 2, cylinders)
     expected_volume = 100 * 60 * 10 - 2 * 3.141592653589793 * 4 * 4 * 10

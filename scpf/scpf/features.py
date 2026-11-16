@@ -594,11 +594,13 @@ def _explicit_sketch_commands(shape, original, feature, name):
 
     commands = [_command("sketch.create", **plane)]
 
-    for profile, offset in profiles:
+    for profile, profile_anchor, offset in profiles:
         ox = _combine(relative_origin[0], offset[0])
         oy = _combine(relative_origin[1], offset[1])
 
         if profile.kind == "circle":
+            if profile_anchor not in (None, Anchor.CENTER):
+                raise ModelError("Circle2D sketch anchor must be CENTER")
             diameter = profile.data[0]
             _require_positive(diameter, "sketch circle diameter")
             commands.append(
@@ -614,12 +616,18 @@ def _explicit_sketch_commands(shape, original, feature, name):
             rectangle_width, rectangle_height = profile.data[:2]
             _require_positive(rectangle_width, "sketch rectangle width")
             _require_positive(rectangle_height, "sketch rectangle height")
+            if profile_anchor is Anchor.CENTER:
+                x0 = _combine(ox, -half(rectangle_width))
+                y0 = _combine(oy, -half(rectangle_height))
+                x1 = _combine(ox, half(rectangle_width))
+                y1 = _combine(oy, half(rectangle_height))
+            else:
+                x0, y0 = ox, oy
+                x1 = _combine(ox, rectangle_width)
+                y1 = _combine(oy, rectangle_height)
             params = dict(
-                p0=[command_value(ox), command_value(oy)],
-                p1=[
-                    command_value(_combine(ox, rectangle_width)),
-                    command_value(_combine(oy, rectangle_height)),
-                ],
+                p0=[command_value(x0), command_value(y0)],
+                p1=[command_value(x1), command_value(y1)],
             )
             if profile.kind == "rounded_rectangle":
                 radius = profile.data[2]
@@ -635,6 +643,11 @@ def _explicit_sketch_commands(shape, original, feature, name):
             continue
 
         if profile.kind == "text":
+            if profile_anchor is not None:
+                raise ModelError(
+                    "Text2D uses its native insertion point; "
+                    "semantic CENTER is not supported yet"
+                )
             text, height, font = profile.data
             _require_positive(height, "sketch text height")
             commands.append(_command(

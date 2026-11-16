@@ -22,6 +22,11 @@ class RoundedRectangleSketchCommandTests(unittest.TestCase):
         ]
         self.assertEqual(len(rounded), 1)
         self.assertEqual(rounded[0]["radius"], "radius")
+        self.assertIn("pad_width", rounded[0]["p0"][0])
+        self.assertIn("pad_width", rounded[0]["p1"][0])
+        self.assertIn("pad_depth", rounded[0]["p0"][1])
+        self.assertIn("pad_depth", rounded[0]["p1"][1])
+        self.assertNotEqual(rounded[0]["p0"], [-20, -15])
 
         sketches = [
             row["params"].get("name")

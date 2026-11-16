@@ -127,8 +127,18 @@ For `Sketch(on=target, parent=Anchor.TOP)`:
 - a numeric `offset=(u, v)` is reserved for a real design displacement.
 
 Therefore code such as `offset=(-width/2, -depth/2)` used only to emulate
-centering is a smell. Forge should expose the intended anchor relationship
-instead.
+centering is a smell. Circle2D, Rectangle2D and RoundedRectangle2D now use
+`CENTER` by default; `offset=(u, v)` is applied afterwards as a real local
+design displacement.
+
+Polygon2D is different because its vertex coordinates already define its
+sketch-local placement. Text2D likewise uses SolidCraft's text insertion point.
+Forge preserves those authored coordinates rather than inventing a profile
+centre. Explicit `anchor=CENTER` is therefore not supported for Polygon2D or
+Text2D yet.
+
+This contract is implemented by
+[change 0018](changes/0018-sketch-profile-centering.md).
 
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.

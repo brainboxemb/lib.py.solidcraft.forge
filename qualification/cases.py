@@ -91,10 +91,10 @@ QUALIFICATION_CASES = [
         "slug": "anchored-holes",
         "group": "features",
         "title": "Face-relative hole pattern",
-        "intent": "Verify a 2D profile, native extrusion, patterned holes and placement on a selected face.",
+        "intent": "Verify a semantically centred 2D profile, native extrusion, patterned holes and placement on a selected face.",
         "forge_api": "with Sketch(plane='XY'): Rectangle2D(...); sketch.extrude(...); Hole(...).pattern(...).on(..., face=Faces.TOP)",
-        "forge_model": "A feature-based plate plus a patterned Hole feature anchored to the plate's TOP face.",
-        "lowering": "Native sketch/extrude commands followed by native hole/pattern placement commands; Forge does not subtract hand-built cylinders.",
+        "forge_model": "A centred feature-based plate plus a patterned Hole feature anchored to the plate's TOP face.",
+        "lowering": "Rectangle2D is centred on the standalone Sketch origin, then native sketch/extrude commands are followed by native hole/pattern placement commands; Forge does not subtract hand-built cylinders.",
         "native_expectation": "One plate with two through holes at the requested Y spacing and no feature errors.",
         "mutation": "No saved-design mutation in this fixture; geometry and feature placement are measured at Q4.",
         "references": [

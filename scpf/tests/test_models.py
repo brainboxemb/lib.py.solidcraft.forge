@@ -62,11 +62,13 @@ class SCPFExamples(unittest.TestCase):
              if c["command"] == "sketch.create"],
             ["Base", "Holes"],
         )
-        self.assertEqual(
-            [c["params"]["center"] for c in commands
-             if c["command"] == "sketch.circle.center"],
-            [[50, 10], [50, 50]],
-        )
+        centers = [
+            c["params"]["center"]
+            for c in commands
+            if c["command"] == "sketch.circle.center"
+        ]
+        self.assertEqual(len(centers), 2)
+        self.assertTrue(all("spacing" in str(center[1]) for center in centers))
         self.assertFalse(any(c["command"] == "solid.hole" for c in commands))
         self.assertEqual(commands[-1]["command"], "solid.extrude")
         self.assertEqual(commands[-1]["params"]["operation"], "cut")
@@ -202,7 +204,10 @@ class SCPFExamples(unittest.TestCase):
         self.assertEqual(sketches, ["Base", "Holes"])
         circles = [c["params"] for c in commands
                    if c["command"] == "sketch.circle.center"]
-        self.assertEqual([c["center"] for c in circles], [[50, 10], [50, 50]])
+        centers = [c["center"] for c in circles]
+        self.assertEqual(len(centers), 2)
+        self.assertTrue(all("width" in str(center[0]) for center in centers))
+        self.assertTrue(all("depth" in str(center[1]) for center in centers))
         self.assertTrue(all(c["diameter"] == 8 for c in circles))
         self.assertFalse(any(c["command"] == "solid.hole" for c in commands))
         self.assertEqual(commands[-1]["command"], "solid.extrude")
@@ -260,8 +265,8 @@ class SCPFExamples(unittest.TestCase):
         cylinders = [c["params"] for c in commands
                      if c["command"] == "solid.cylinder"]
         self.assertEqual(len(cylinders), 2)
-        self.assertEqual([c["base"][0] for c in cylinders], [50, 50])
-        self.assertEqual([c["base"][1] for c in cylinders], [10, 50])
+        self.assertEqual([c["base"][0] for c in cylinders], [0, 0])
+        self.assertEqual([c["base"][1] for c in cylinders], [-20, 20])
         self.assertEqual([c["base"][2] for c in cylinders], [-1, -1])
         self.assertEqual([c["operation"] for c in cylinders], ["cut", "cut"])
 
@@ -282,7 +287,7 @@ class SCPFExamples(unittest.TestCase):
         self.assertEqual(cylinder["params"]["operation"], "join")
         self.assertEqual(cylinder["params"]["height"], 14)
         self.assertEqual(cylinder["params"]["diameter"], 24)
-        self.assertEqual(cylinder["params"]["base"], [40.0, 25.0, 8.0])
+        self.assertEqual(cylinder["params"]["base"], [0.0, 0.0, 8.0])
         self.assertEqual(
             [row["params"]["name"] for row in commands
              if row["command"] == "sketch.create"],
@@ -605,8 +610,10 @@ class SCPFExamples(unittest.TestCase):
         panel = Box(159.7, 319.71, 14.5).taper(from_z=2, inset=1.25)
         with Sketch(name="Rounded rear bays", on=panel) as bays:
             for y in (-120, -40, 40, 120):
-                bays.add(RoundedRectangle2D(134.7, 59, 5),
-                         offset=(-67.35, y - 29.5))
+                bays.add(
+                    RoundedRectangle2D(134.7, 59, 5),
+                    offset=(0, y),
+                )
         panel = panel - bays.extrude(12.5, direction=Direction.NEGATIVE)
         commands = compile_model(panel, "Panel")["commands"]
         rounded = [cmd["params"] for cmd in commands
@@ -633,8 +640,10 @@ class SCPFExamples(unittest.TestCase):
         with Sketch(name="Rear electronics bays", on=panel, plane="XY",
                     origin=(0, 0, 14.5)) as rear:
             for center_y in (-120, -40, 40, 120):
-                rear.add(Rectangle2D(134.7, 60.0),
-                         offset=(-67.35, center_y - 30))
+                rear.add(
+                    Rectangle2D(134.7, 60.0),
+                    offset=(0, center_y),
+                )
         panel = panel - rear.extrude(12.5, direction=Direction.NEGATIVE)
         commands = compile_model(panel, "Panel")["commands"]
         names = [cmd["command"] for cmd in commands]

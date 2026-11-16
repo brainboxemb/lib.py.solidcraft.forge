@@ -1163,8 +1163,9 @@ def Rectangle2D(width, depth):
         Author a simple rectangle inside an explicit Sketch before extrusion.
 
     Limits:
-        The profile is authored in sketch coordinates; use the Sketch to choose
-        its plane and placement.
+        The dimension-defined profile is centred on the Sketch origin by
+        default. Use Sketch.add(..., offset=(u, v)) for a deliberate local
+        displacement.
     """
     from .explicit_sketch import register_profile
     return register_profile(Shape("rectangle", (width, depth)))
@@ -1428,6 +1429,7 @@ X, Y, Z = _AxisRef("X"), _AxisRef("Y"), _AxisRef("Z")
 # BOSL2-style cardinal direction constants. These remain the same Anchor
 # values used by assemblies, but can also be added to form edge/corner
 # selectors such as BOTTOM + LEFT or TOP + RIGHT.
+CENTER = Anchor.CENTER
 TOP = Anchor.TOP
 BOTTOM = Anchor.BOTTOM
 LEFT = Anchor.LEFT
