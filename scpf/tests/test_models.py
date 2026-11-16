@@ -332,7 +332,9 @@ class SCPFExamples(unittest.TestCase):
         from scpf.core import Anchor, Axis, Box, Cylinder, Parameter, Sphere
 
         size = Parameter("size", 50)
-        body = Sphere(size / 1.5) & Box(size, size, size)
+        body = Sphere(size / 1.5) & Box(
+            size, size, size, origin=Anchor.CENTER
+        )
         diameter = size / 1.5
 
         holes = (
@@ -811,6 +813,97 @@ class SCPFExamples(unittest.TestCase):
         width = Parameter("width", 868.0)
         self.assertEqual(pv(width), 868.0)
         self.assertEqual(pv(width / 2), 434.0)
+
+    def test_box_origin_default_and_center_use_native_datums(self):
+        from scpf import BOTTOM, CENTER, Box
+        from scpf.compiler import compile_model
+
+        default = compile_model(Box(40, 30, 10), "DefaultBox")["commands"]
+        default_box = next(
+            row["params"] for row in default
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(default_box["corner"], [-20.0, -15.0, 0])
+        self.assertNotIn("center", default_box)
+
+        centered = compile_model(
+            Box(40, 30, 10, origin=CENTER),
+            "CenteredBox",
+        )["commands"]
+        centered_box = next(
+            row["params"] for row in centered
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(centered_box["center"], [0, 0, 0])
+        self.assertNotIn("corner", centered_box)
+
+        self.assertEqual(Box(40, 30, 10).data[-1].vector, BOTTOM.vector)
+
+    def test_csg_box_uses_same_origin_contract(self):
+        from scpf import CENTER, Box, Sphere
+        from scpf.compiler import compile_model
+
+        default = compile_model(
+            Sphere(20) + Box(10, 10, 10),
+            "DefaultCsgBox",
+        )["commands"]
+        joined_default = next(
+            row["params"] for row in default
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(joined_default["corner"], [-5.0, -5.0, 0])
+        self.assertNotIn("center", joined_default)
+
+        centered = compile_model(
+            Sphere(20) + Box(10, 10, 10, origin=CENTER),
+            "CenteredCsgBox",
+        )["commands"]
+        joined_centered = next(
+            row["params"] for row in centered
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(joined_centered["center"], [0, 0, 0])
+        self.assertNotIn("corner", joined_centered)
+
+    def test_box_center_tracks_declared_origin(self):
+        from scpf import CENTER, Box
+        from scpf.core import _shape_center
+
+        self.assertEqual(_shape_center(Box(40, 30, 10)), (0, 0, 5.0))
+        self.assertEqual(
+            _shape_center(Box(40, 30, 10, origin=CENTER)),
+            (0, 0, 0),
+        )
+
+    def test_box_at_overrides_constructor_origin_placement(self):
+        from scpf import BOTTOM, CENTER, Box
+        from scpf.compiler import compile_model
+
+        commands = compile_model(
+            Box(20, 10, 6, origin=CENTER).at(
+                0, 0, 0, anchor=BOTTOM
+            ),
+            "PlacedBox",
+        )["commands"]
+        box = next(
+            row["params"] for row in commands
+            if row["command"] == "solid.box"
+        )
+        self.assertEqual(box["corner"], [-10.0, -5.0, 0])
+        self.assertNotIn("center", box)
+
+    def test_taper_requires_default_bottom_box_origin(self):
+        from scpf import CENTER, Box
+
+        Box(40, 30, 10).taper(from_z=2, inset=1)
+        with self.assertRaisesRegex(
+            ValueError,
+            "requires Box origin=BOTTOM",
+        ):
+            Box(40, 30, 10, origin=CENTER).taper(
+                from_z=2,
+                inset=1,
+            )
 
     def test_native_box_supports_directional_anchor_and_edge_selectors(self):
         from scpf import BOTTOM, FRONT, LEFT, RIGHT, Box
