@@ -17,7 +17,9 @@ def main() -> int:
     if "model" not in namespace:
         raise RuntimeError(f"{source} must expose final geometry as model")
     target.parent.mkdir(parents=True, exist_ok=True)
-    export_stl(namespace["model"], str(target))
+    model = namespace["model"]
+    geometry = getattr(model, "part", model)
+    export_stl(geometry, str(target))
     if not target.is_file() or target.stat().st_size == 0:
         raise RuntimeError(f"build123d did not export a non-empty STL: {target}")
     return 0

@@ -1,10 +1,9 @@
 """build123d reference: companion and marker positioned by assembly intent."""
-from build123d import Align, Box, Compound, Pos
+from build123d import Align, Box, BuildPart, Locations
 
-base = Box(40, 30, 20, align=(Align.CENTER, Align.CENTER, Align.MIN))
-small = Box(10, 10, 10)
-model = Compound(children=[
-    base,
-    Pos(70, 0, 5) * small,
-    Pos(15, -20, 15) * small,
-])
+bottom = (Align.CENTER, Align.CENTER, Align.MIN)
+
+with BuildPart() as model:
+    Box(40, 30, 20, align=bottom)
+    with Locations((70, 0, 5), (15, -20, 15)):
+        Box(10, 10, 10)

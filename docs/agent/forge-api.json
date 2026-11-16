@@ -53,17 +53,6 @@
         "Z": "Z"
       }
     },
-    "Direction": {
-      "kind": "enum",
-      "summary": "Choose how an extrusion extends relative to its sketch-plane normal.",
-      "reference": "reference/Direction/",
-      "guide": "guide/geometry/#profiles",
-      "members": {
-        "POSITIVE": "positive",
-        "NEGATIVE": "negative",
-        "SYMMETRIC": "symmetric"
-      }
-    },
     "Depth": {
       "kind": "enum",
       "summary": "Choose a supported feature-depth policy.",
@@ -189,10 +178,10 @@
     },
     "Sketch.extrude": {
       "kind": "callable",
-      "summary": "Extrude a completed Sketch into a supported 3D feature.",
+      "summary": "Extrude a completed Sketch using a signed distance.",
       "reference": "reference/Sketch.extrude/",
       "guide": "guide/geometry/#profiles",
-      "signature": "Sketch.extrude(self, distance, *, direction=<Direction.POSITIVE: 'positive'>)"
+      "signature": "Sketch.extrude(self, distance, *, sym=False)"
     },
     "Box": {
       "kind": "callable",

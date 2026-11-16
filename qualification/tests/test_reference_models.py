@@ -35,17 +35,27 @@ class ReferenceModelTests(unittest.TestCase):
                     self.assertTrue(source.strip(), path)
                     tree = ast.parse(source, filename=str(path))
                     self.assertTrue(ast.get_docstring(tree), path)
+                    assigned_model = any(
+                        isinstance(node, ast.Assign)
+                        and any(
+                            isinstance(target, ast.Name)
+                            and target.id == "model"
+                            for target in node.targets
+                        )
+                        for node in ast.walk(tree)
+                    )
+                    builder_model = any(
+                        isinstance(node, ast.With)
+                        and any(
+                            isinstance(item.optional_vars, ast.Name)
+                            and item.optional_vars.id == "model"
+                            for item in node.items
+                        )
+                        for node in ast.walk(tree)
+                    )
                     self.assertTrue(
-                        any(
-                            isinstance(node, ast.Assign)
-                            and any(
-                                isinstance(target, ast.Name)
-                                and target.id == "model"
-                                for target in node.targets
-                            )
-                            for node in ast.walk(tree)
-                        ),
-                        f"{path} must expose final geometry as model",
+                        assigned_model or builder_model,
+                        f"{path} must expose final geometry or builder as model",
                     )
 
     def test_references_do_not_become_forge_api_sources(self):
@@ -58,6 +68,7 @@ class ReferenceModelTests(unittest.TestCase):
                 self.assertNotIn("from scpf", source, (slug, reference))
                 if reference == "build123d":
                     self.assertIn("from build123d import", source)
+                    self.assertIn("BuildPart", source)
                     self.assertNotIn("import cadquery", source)
                     self.assertNotIn("from pythonscad", source)
                     self.assertNotIn("from pybosl2", source)

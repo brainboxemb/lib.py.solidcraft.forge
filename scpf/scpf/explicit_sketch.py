@@ -5,7 +5,7 @@ so authoring a sketch remains distinct from extruding/cutting it.
 """
 from contextvars import ContextVar
 
-from .core import Anchor, Depth, Direction, Shape, _pv as pv
+from .core import Anchor, Depth, Shape, _pv as pv
 
 _ACTIVE_SKETCH = ContextVar("scpf_active_sketch", default=None)
 
@@ -157,31 +157,54 @@ class Sketch:
         )
         return profile
 
-    def extrude(self, distance, *, direction=Direction.POSITIVE):
-        """Extrude a completed Sketch into a supported 3D feature.
+    def extrude(self, distance, *, sym=False):
+        """Extrude a completed Sketch using a signed distance.
 
         Use when:
-            Leave the Sketch context and then create material using a finite
-            distance and, when needed, a Direction relative to the sketch plane.
+            Leave the Sketch context and create material normal to the sketch
+            plane. Positive distance follows the plane normal; negative distance
+            extrudes in the opposite direction. Use sym=True to split a positive
+            distance equally across both sides of the sketch plane.
 
         Limits:
-            A standalone Sketch requires a finite distance. Depth.THROUGH_ALL
-            is only meaningful for a Sketch attached to an existing Shape.
+            A standalone Sketch requires a finite non-zero distance.
+            Depth.THROUGH_ALL is only meaningful for a Sketch attached to an
+            existing Shape and cannot be combined with sym=True.
         """
         if not self._closed:
             raise ValueError("leave the Sketch scope before extruding it")
-        if distance is not Depth.THROUGH_ALL and pv(distance) <= 0:
-            raise ValueError("Sketch extrusion distance must be positive or Depth.THROUGH_ALL")
-        try:
-            direction = Direction(direction)
-        except ValueError as exc:
-            raise ValueError("invalid Sketch extrusion direction") from exc
+        if not isinstance(sym, bool):
+            raise TypeError("Sketch extrusion sym must be True or False")
+
+        if distance is Depth.THROUGH_ALL:
+            if sym:
+                raise ValueError("Depth.THROUGH_ALL cannot be combined with sym=True")
+            native_distance = distance
+            direction = "positive"
+        else:
+            value = pv(distance)
+            if value == 0:
+                raise ValueError("Sketch extrusion distance must be non-zero")
+            if sym:
+                if value < 0:
+                    raise ValueError(
+                        "symmetric Sketch extrusion distance must be positive"
+                    )
+                native_distance = distance
+                direction = "symmetric"
+            elif value < 0:
+                native_distance = -distance
+                direction = "negative"
+            else:
+                native_distance = distance
+                direction = "positive"
+
         if self.on is None:
             if distance is Depth.THROUGH_ALL:
                 raise ValueError("standalone Sketch requires a finite extrusion distance")
             return Shape(
                 "sketch_base_extrusion",
-                (self.name, self.plane, self.origin, self.offset, tuple(self._profiles), distance, direction.value),
+                (self.name, self.plane, self.origin, self.offset, tuple(self._profiles), native_distance, direction),
             )
         return Shape(
             "explicit_sketch_extrusion",
@@ -191,7 +214,7 @@ class Sketch:
                 self.parent,
                 (self.plane, self.origin),
                 tuple(self._profiles),
-                distance,
-                direction.value,
+                native_distance,
+                direction,
             ),
         )

@@ -39,3 +39,6 @@ Current records:
 - [0020-coordinate-profile-default-anchor.md](0020-coordinate-profile-default-anchor.md) — correct the 0.4.0 Sketch.add default so dimension-defined profiles still centre automatically while Text2D/Polygon2D keep their coordinate-defined placement.
 - [0021-selector-definition-identity.md](0021-selector-definition-identity.md) — allow Forge's own immutable cardinal/profile/axis selector values to participate in deterministic reusable-component definition identity.
 - [0022-native-box-origin.md](0022-native-box-origin.md) — make Box centred by default and use the existing Anchor vocabulary for explicit native primitive datums.
+- [0023-build123d-fourth-reference.md](0023-build123d-fourth-reference.md) — add build123d 0.12.0 as the fourth independently executed qualification reference.
+- [0024-signed-sketch-extrude.md](0024-signed-sketch-extrude.md) — replace Extrude Direction with signed distance and `sym=True`.
+- [0025-build123d-builder-references.md](0025-build123d-builder-references.md) — make build123d qualification references builder-first and allow reusable custom part objects where useful.

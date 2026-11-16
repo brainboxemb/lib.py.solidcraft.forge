@@ -1,4 +1,7 @@
-"""build123d reference: a diameter-20 cylinder extruded down from Z=0."""
-from build123d import Cylinder, Pos
+"""build123d reference: a diameter-20 sketch extruded down from Z=0."""
+from build123d import BuildPart, BuildSketch, Circle, extrude
 
-model = Pos(0, 0, -15) * Cylinder(10, 30)
+with BuildPart() as model:
+    with BuildSketch():
+        Circle(10)
+    extrude(amount=-30)

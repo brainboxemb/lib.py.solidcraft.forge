@@ -18,22 +18,6 @@ def number_text(value: float) -> str:
     return format(value, "g")
 
 
-class Direction(str, Enum):
-    """Choose how an extrusion extends relative to its sketch-plane normal.
-
-    Use when:
-        Pass a Direction to Sketch.extrude() when the default positive
-        extrusion is not the intended direction.
-
-    Limits:
-        Direction describes extrusion relative to the sketch plane; it is not
-        a world-axis selector. Use Axis for principal X/Y/Z directions.
-    """
-    POSITIVE = "positive"
-    NEGATIVE = "negative"
-    SYMMETRIC = "symmetric"
-
-
 @dataclass(frozen=True)
 class _DirectionSelector:
     """BOSL2-style cardinal selector used for faces, edges and anchors."""
@@ -576,6 +560,16 @@ class Expression:
         return NotImplemented
 
     def __neg__(self):
+        # Unary minus is used by signed dimensions such as Sketch.extrude(-h).
+        # Collapse the exact outer negation form emitted by Forge so converting
+        # a negative signed distance back to its positive native magnitude keeps
+        # the original symbolic expression instead of producing -(-(h)).
+        if self.expression.startswith("-(") and self.expression.endswith(")"):
+            return Expression(
+                -self.value,
+                self.expression[2:-1],
+                self.parameters,
+            )
         return Expression(-self.value, f"-({self.expression})", self.parameters)
 
 

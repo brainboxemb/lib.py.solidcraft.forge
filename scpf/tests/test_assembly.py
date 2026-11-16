@@ -1498,7 +1498,7 @@ class AssemblyTests(unittest.TestCase):
     def test_private_component_build_input_can_bind_parent_parameter(self):
         from scpf.assembly import compile_assembly
         from scpf import Sketch
-        from scpf.core import Direction, Parameter, Polygon2D
+        from scpf.core import Parameter, Polygon2D
         from scpf.runner import component
 
         class Bracket:
@@ -1514,7 +1514,7 @@ class AssemblyTests(unittest.TestCase):
                         (x0 + self.width, 10),
                         (x0, 10),
                     ], plane="XZ", world=True)
-                return sketch.extrude(10, direction=Direction.POSITIVE)
+                return sketch.extrude(10)
 
         BracketObject = component(Bracket)
         opening_width = Parameter("opening_width", 844.0)

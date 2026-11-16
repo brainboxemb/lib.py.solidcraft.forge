@@ -69,43 +69,67 @@ remain unchanged. Cylinder/Sphere origin code has native/CSG regression tests.
 
 ## build123d 0.12.0: local qualification syntax
 
-This is a pinned, local quick reference. Standard algebraic-mode examples:
+Use build123d's **Builder API first** for qualification examples when it
+expresses the model naturally. This keeps the reference idiomatic and makes
+`BuildPart`, `Locations` and `Mode` visible instead of translating Forge
+operators mechanically.
 
 ```python
-from build123d import Align, Axis, Box, Cylinder, Sphere, Pos, Rot
-from build123d import Compound, fillet, export_stl
+from build123d import (
+    Align, BasePartObject, Box, BuildPart, Cylinder,
+    Locations, Mode, Rot, Sphere,
+)
 
-centered = Box(40, 30, 10)  # XYZ center
-bottom_based = Box(40, 30, 10,
-                   align=(Align.CENTER, Align.CENTER, Align.MIN))
-located = Pos(40, 0, 0) * bottom_based
-turned = Pos(0, 0, 10) * Rot(0, 0, 90) * bottom_based
-bores = bottom_based - Pos(0, 0, 5) * Cylinder(4, 12)
-joined = centered + Cylinder(4, 20)
-intersection = centered & Sphere(20)
-rounded = fillet(bottom_based.edges().filter_by(Axis.Z), radius=2)
-assembly = Compound(children=[bottom_based, located])
-export_stl(assembly, "model.stl")
+with BuildPart() as model:
+    Sphere(20)
+    with Locations((18, 0, 10)):
+        Box(30, 30, 20)
+    with Locations(Rot(0, 90, 0)):
+        Cylinder(4, 120, mode=Mode.SUBTRACT)
+    with Locations((0, 0, 15)):
+        Box(50, 50, 30, mode=Mode.INTERSECT)
 ```
 
-`Box` and `Cylinder` are geometrically centered by default in build123d,
-unlike the older bottom-based Forge/CSG mismatch. Use explicit `Align.MIN`
-for bottom-based models. The `Cylinder` constructor takes radius before
-height, unlike Forge's keyword diameter.
+`Box` and `Cylinder` are geometrically centered by default in build123d.
+Use explicit `Align.MIN` where a qualification baseline is bottom-based. The
+`Cylinder` constructor takes radius before height, unlike Forge's keyword
+diameter.
 
-Because the pinned pyBOSL2 and build123d releases require incompatible `webcolors` versions, CI runs build123d in its own virtual environment. The qualification runner calls `qualification/build123d_export.py` through `BUILD123D_PYTHON`; this is dependency isolation, not a different qualification rule.
+For a reusable 3D object, subclass `BasePartObject`, build the internal
+geometry in its own `BuildPart`, then publish the completed part once:
+
+```python
+class CornerProtector(BasePartObject):
+    def __init__(self, mode=Mode.ADD):
+        with BuildPart() as corner:
+            Box(20, 20, 4)
+            # additional local geometry...
+        super().__init__(part=corner.part, mode=mode)
+```
+
+Use algebraic build123d syntax only when it is genuinely clearer for that
+model. Do not choose `+`, `-` or `&` merely to resemble Forge; Builder
+`Mode.ADD`, `Mode.SUBTRACT` and `Mode.INTERSECT` are useful API comparison
+points in their own right.
+
+Because the pinned pyBOSL2 and build123d releases require incompatible
+`webcolors` versions, CI runs build123d in its own virtual environment. The
+qualification runner calls `qualification/build123d_export.py` through
+`BUILD123D_PYTHON`; this is dependency isolation, not a different
+qualification rule.
 
 One source per qualification case is stored at
-`examples/<slug>/build123d/model.py`. It exposes a top-level `model`
-containing a build123d Shape/Part/Compound. Only the runner calls
-`build123d.export_stl(model, file_path)`, not the model source.
-The runner then validates STL bounds and renders front/right/iso images.
-`Compound` preserves separate occurrence geometry but STL does not
-prove SolidCraft native assembly identities/relationships.
+`examples/<slug>/build123d/model.py`. It exposes a top-level `model`.
+`model` may be final build123d geometry or a `BuildPart` builder; the runner
+exports `model.part` for a builder. The runner then validates STL bounds and
+renders front/right/iso images.
+
+STL output compares visible geometry only. It does not prove SolidCraft native
+assembly identities, persisted joints or saved-design parameter mutation.
 
 For operations not listed above, consult the **installed pinned** version and
-refresh this cache before relying on a new behaviour; do not repeatedly
-browse the build123d Git repository for ordinary modelling tasks.
+refresh this cache before relying on new behaviour; do not repeatedly browse
+the build123d Git repository for ordinary modelling tasks.
 
 ## PythonSCAD: subset used by qualification references
 

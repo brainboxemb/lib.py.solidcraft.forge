@@ -14,6 +14,15 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
   rendered qualification reference for each supported case, beside
   PythonSCAD, pyBOSL2 and CadQuery (issue #196).
 
+### Changed
+
+- `Sketch.extrude(distance, *, sym=False)` now uses the sign of `distance`
+  for positive/negative extrusion and `sym=True` for a symmetric extrusion;
+  the public Extrude `Direction` enum/argument is removed.
+- build123d qualification sources now prefer its native Builder API
+  (`BuildPart`, `Locations`, `Mode`) and may use reusable custom part
+  objects when that makes component structure clearer.
+
 ## [0.5.0] - 2026-11-16
 
 ### Added

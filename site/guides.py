@@ -372,8 +372,12 @@ with Sketch(plane="XZ") as side_sketch:
         plane="XZ",
         world=True,
     )
-side = side_sketch.extrude(10)""") + """
-<p>A sketch plane affects where its axes go; changing the camera does not rotate its geometry. Leave the <code>with Sketch(...)</code> scope, then call <code>sketch.extrude(...)</code> to create 3D material. Direct <code>Rectangle2D(...).extrude(...)</code> syntax is intentionally not supported.</p>
+side = side_sketch.extrude(10)
+
+# Signed distance chooses the side of the sketch plane.
+backward = plate_sketch.extrude(-8)
+centered = plate_sketch.extrude(8, sym=True)""") + """
+<p>A sketch plane affects where its axes go; changing the camera does not rotate its geometry. Leave the <code>with Sketch(...)</code> scope, then call <code>sketch.extrude(...)</code> to create 3D material. A positive distance follows the sketch-plane normal, a negative distance goes the other way, and <code>sym=True</code> divides a positive distance equally over both sides. Direct <code>Rectangle2D(...).extrude(...)</code> syntax is intentionally not supported.</p>
 <h2 id="boolean">Add, subtract and intersect</h2>
 """ + code("""body = Box(50, 50, 20)
 tool = Cylinder(d=12, h=22).at(0, 0, 0)
