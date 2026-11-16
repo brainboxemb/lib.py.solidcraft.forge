@@ -60,7 +60,7 @@ class ReplaySafeOccurrenceSelectorTests(unittest.TestCase):
                 self.assertEqual(predicted, [])
 
     def test_replay_variable_cases_are_supported_and_well_formed(self):
-        self.assertEqual(blocked_qualification_cases(), [])
+        self.assertEqual(blocked_qualification_cases(), ())
 
         for case in supported_qualification_cases():
             slug = case["slug"]
