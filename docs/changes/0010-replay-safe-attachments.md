@@ -128,6 +128,19 @@ This is deliberate capability removal, not a replacement workaround.
 First occurrences still use the component name only in the joint commands where
 SolidCraft 0.42 has been tested to support it.
 
+The following qualification cases stay in the catalog but are marked
+`BLOCKED`:
+
+- `components`;
+- `four-corner-l`;
+- `eight-corner-brackets`;
+- `eight-flightcase-corners`;
+- `xz-anchor`.
+
+These cases are not removed and are not counted as PASS. They document the
+reusable-copy attachment capability that Forge cannot currently generate safely
+for SolidCraft 0.42.
+
 ## Rules that are already final
 
 Whatever decision is made about geometry picks:
