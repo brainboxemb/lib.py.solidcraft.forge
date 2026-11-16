@@ -735,11 +735,23 @@ def validate_slot_family(root: Path) -> Validation:
             {"min": [-80, -60, 0], "max": [80, 60, 5]},
             body["bbox"],
         )
+        faces = body.get("face_types", {})
         v.check(
-            "five slot cuts actually remove material",
-            body["volume_mm3"] < 95999.0 and body["faces"] > 6,
-            {"volume_mm3": "< 95999", "faces": "> 6"},
-            {"volume_mm3": body["volume_mm3"], "faces": body["faces"]},
+            "five slot cuts remove the qualified amount of material",
+            close(body["volume_mm3"], 89526.65799650521, 0.01)
+            and body["faces"] == 26
+            and faces.get("cylinder") == 14
+            and faces.get("plane") == 12,
+            {
+                "volume_mm3": 89526.65799650521,
+                "faces": 26,
+                "face_types": {"cylinder": 14, "plane": 12},
+            },
+            {
+                "volume_mm3": body["volume_mm3"],
+                "faces": body["faces"],
+                "face_types": faces,
+            },
         )
 
     sketch = next(
@@ -748,8 +760,16 @@ def validate_slot_family(root: Path) -> Validation:
     )
     v.check(
         "native sketch contains five closed slot profiles",
-        sketch is not None and sketch.get("profiles") == 5,
-        {"name": "Slot family", "profiles": 5},
+        sketch is not None
+        and sketch.get("profiles") == 5
+        and sketch.get("curves") == 29
+        and sketch.get("status") == "solved",
+        {
+            "name": "Slot family",
+            "profiles": 5,
+            "curves": 29,
+            "status": "solved",
+        },
         sketch,
     )
 
