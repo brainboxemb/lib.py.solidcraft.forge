@@ -207,10 +207,11 @@ Forge generates replayable SolidCraft 0.42 commands and never makes up
 occurrence names such as `Block:2`. In the joint commands tested so far, the
 component name can refer to that component's first occurrence.
 
-Copied occurrences are currently rejected as attachment endpoints while change
-0010 checks how SolidCraft normally selects a copy from joint geometry. Forge
-will only use that method if the native tests show that the selected occurrence
-and geometry remain correct after save/reopen and relevant model changes.
+A copied occurrence is rejected as an attachment endpoint in the SolidCraft
+0.42 replay-first backend. `occurrence.copy` returns the native occurrence id
+at runtime, but Forge's normal output is one static command document and cannot
+reuse that runtime result. Forge does not guess `Block:2`, omit the occurrence
+and depend on point-only lookup, or move the copy only to make a pick unique.
 
 Rotated relationships, copied relationships and chained attachments stay
 unsupported until their SolidCraft reference behaviour has been tested. See
