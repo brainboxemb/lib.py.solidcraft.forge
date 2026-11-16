@@ -15,6 +15,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 MUTATIONS = {
+    "centered-box": {
+        "command": "qualification/commands/centered-box/change-size.json",
+        "save": "model-size-60x40x20.sc",
+        "measurements": "measurements-size-60x40x20.json",
+        "label": "centered box 40x30x10 -> 60x40x20 mm",
+    },
     "parameter-scope": {
         "command": "qualification/commands/parameter-scope/change-shared-width.json",
         "save": "model-shared-width-100.sc",
