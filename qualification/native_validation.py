@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from qualification.case_selection import parse_case_selection
+from qualification.cases import supported_case_slugs
 from qualification.expectations import EXPECTED_BOUNDS, EXPECTED_MUTATION_BOUNDS
 
 
@@ -786,7 +787,9 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    selected = parse_case_selection(args.cases)
+    requested = parse_case_selection(args.cases)
+    supported = set(supported_case_slugs())
+    selected = tuple(case for case in requested if case in supported)
     args.qualification_dir.mkdir(parents=True, exist_ok=True)
     rows = ["case\tq4\tq5\n"]
     summary = {}
