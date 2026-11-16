@@ -96,17 +96,18 @@ class Sketch:
         ]
         self._profiles.append((profile, anchor, tuple(offset)))
 
-    def add(self, profile, *, anchor=Anchor.CENTER, offset=(0, 0)):
+    def add(self, profile, *, anchor=None, offset=(0, 0)):
         """Add and place a supported 2D profile in this Sketch.
 
         Use when:
-            Place Circle2D, Rectangle2D or RoundedRectangle2D by semantic
-            centre, optionally followed by a deliberate sketch-local offset.
+            Add a profile explicitly or apply a deliberate sketch-local
+            offset. Dimension-defined profiles default to semantic CENTER.
+            Polygon2D and Text2D keep their authored/insertion coordinates.
 
         Limits:
-            Anchor.CENTER is the supported semantic profile anchor in this
-            change. Polygon2D vertices and Text2D insertion points already
-            define their own placement and are not assigned a guessed centre.
+            Explicit Anchor.CENTER is supported for Circle2D, Rectangle2D and
+            RoundedRectangle2D. Polygon2D and Text2D do not have a qualified
+            semantic centre yet; leave anchor=None for those profile types.
         """
         if self._closed:
             raise ValueError("cannot add geometry after leaving the Sketch scope")
@@ -121,17 +122,27 @@ class Sketch:
                 "Sketch supports Circle2D, Rectangle2D, Polygon2D, "
                 "RoundedRectangle2D or Text2D profiles"
             )
-        try:
-            anchor = Anchor(anchor)
-        except (TypeError, ValueError) as exc:
-            raise ValueError("Sketch profile anchor must be Anchor.CENTER") from exc
-        if anchor is not Anchor.CENTER:
-            raise ValueError("Sketch profile anchor currently supports CENTER only")
-        if profile.kind in ("polygon", "text"):
-            raise ValueError(
-                f"{profile.kind} profiles define their own sketch-local "
-                "coordinates; CENTER is not supported for this profile yet"
-            )
+
+        coordinate_defined = profile.kind in ("polygon", "text")
+        if anchor is None:
+            anchor = None if coordinate_defined else Anchor.CENTER
+        else:
+            try:
+                anchor = Anchor(anchor)
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "Sketch profile anchor must be Anchor.CENTER or None"
+                ) from exc
+            if anchor is not Anchor.CENTER:
+                raise ValueError(
+                    "Sketch profile anchor currently supports CENTER only"
+                )
+            if coordinate_defined:
+                raise ValueError(
+                    f"{profile.kind} profiles define their own sketch-local "
+                    "coordinates; CENTER is not supported for this profile yet"
+                )
+
         if not isinstance(offset, (tuple, list)) or len(offset) != 2:
             raise ValueError("Sketch offset must be an (x, y) pair")
         for value in offset:
