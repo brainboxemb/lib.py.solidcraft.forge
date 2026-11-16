@@ -3,8 +3,7 @@
 from dataclasses import dataclass
 import unittest
 
-from scpf import Box, Parameter
-from scpf.core import Axis
+from scpf.core import Axis, Box, Parameter
 from scpf.assembly import compile_assembly
 from scpf.runner import component
 
