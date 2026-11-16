@@ -16,7 +16,7 @@ class Panel:
             self.width,
             self.depth,
             self.HEIGHT,
-            anchor=BOTTOM,
+            anchor=Anchor.BOTTOM,
         ).move(x=self._x)
 
 
