@@ -12,110 +12,17 @@ NATIVE_ROOT = os.environ.get("SCPF_NATIVE_ROOT")
 
 
 class EightFlightcaseCornersCommandTests(unittest.TestCase):
-    def test_all_eight_3d_corners_reuse_one_component(self):
-        commands = run_script(
-            ROOT / "examples/eight-flightcase-corners/scpf/model.py"
-        )["commands"]
+    def test_copied_corners_are_blocked_without_native_copy_reference(self):
+        from scpf.compiler import ModelError
 
-        parameters = [
-            row["params"]
-            for row in commands
-            if row["command"] == "parameters.add"
-        ]
-        self.assertEqual(
-            [(row["name"], row["expression"]) for row in parameters],
-            [
-                ("case_width", "120"),
-                ("case_depth", "80"),
-                ("case_height", "60"),
-            ],
-        )
-
-        components = [
-            row["params"]["name"] for row in commands
-            if row["command"] == "component.create"
-        ]
-        self.assertEqual(components, ["CaseBlock", "FlightcaseCorner"])
-        self.assertEqual(
-            len([row for row in commands if row["command"] == "occurrence.copy"]),
-            7,
-        )
-
-        fillets = [
-            row["params"]
-            for row in commands
-            if row["command"] == "solid.fillet"
-        ]
-        self.assertEqual(len(fillets), 1)
-        self.assertEqual(float(fillets[0]["radius"]), 8.0)
-
-        joints = [
-            row["params"] for row in commands
-            if row["command"] == "joint.create"
-        ]
-        self.assertEqual(len(joints), 8)
-
-        expected_xy = [
-            ("-(case_width / 2)", "-(case_depth / 2)"),
-            ("case_width / 2", "-(case_depth / 2)"),
-            ("case_width / 2", "case_depth / 2"),
-            ("-(case_width / 2)", "case_depth / 2"),
-            ("-(case_width / 2)", "-(case_depth / 2)"),
-            ("case_width / 2", "-(case_depth / 2)"),
-            ("case_width / 2", "case_depth / 2"),
-            ("-(case_width / 2)", "case_depth / 2"),
-        ]
-        expected_child_frames = [
-            ([0.0, 0.0, -1.0], [1.0, 0.0, 0.0]),
-            ([0.0, 0.0, -1.0], [0.0, -1.0, 0.0]),
-            ([0.0, 0.0, -1.0], [-1.0, 0.0, 0.0]),
-            ([0.0, 0.0, -1.0], [0.0, 1.0, 0.0]),
-            ([0.0, 0.0, 1.0], [0.0, 1.0, 0.0]),
-            ([0.0, 0.0, 1.0], [-1.0, 0.0, 0.0]),
-            ([0.0, 0.0, 1.0], [0.0, -1.0, 0.0]),
-            ([0.0, 0.0, 1.0], [1.0, 0.0, 0.0]),
-        ]
-
-        for index, joint in enumerate(joints, 1):
-            self.assertEqual(joint["type"], "planar")
-            self.assertEqual(joint["angle"], 0.0)
-            self.assertEqual(
-                joint["a"],
-                {
-                    "occurrence": "CaseBlock",
-                    "point": [0.0, 0.0, 0.0],
-                    "z": [0.0, 0.0, 1.0],
-                    "x": [1.0, 0.0, 0.0],
-                },
-            )
-            self.assertEqual(
-                tuple(joint["values"][:2]),
-                expected_xy[index - 1],
-            )
-            self.assertEqual(joint["values"][2], 0.0)
-            if index == 1:
-                self.assertEqual(
-                    joint["b"]["occurrence"],
-                    "FlightcaseCorner",
-                )
-                self.assertEqual(joint["b"]["point"], [0.0, 0.0, 0.0])
-            else:
-                self.assertNotIn("occurrence", joint["b"])
-                self.assertEqual(
-                    joint["b"]["point"],
-                    [0.0, 0.0, float(index)],
-                )
-            z, x = expected_child_frames[index - 1]
-            self.assertEqual(joint["b"]["z"], z)
-            self.assertEqual(joint["b"]["x"], x)
-
-        for joint in joints[:4]:
-            self.assertNotIn("offset", joint)
-        for joint in joints[4:]:
-            self.assertEqual(joint["offset"], "case_height")
+        with self.assertRaisesRegex(
+            ModelError,
+            "attachment involving a copied occurrence",
+        ):
+            run_script(ROOT / "examples/eight-flightcase-corners/scpf/model.py")
 
 
-@unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
+@unittest.skip("blocked: copied attachment occurrences have no explicit SolidCraft 0.42 reference")
 class EightFlightcaseCornersNativeTests(unittest.TestCase):
     def test_native_bounds_wrap_all_eight_case_corners(self):
         data = _load(
