@@ -254,10 +254,23 @@ def _anchored_features(shape):
         # Native solid.hole uses a numeric authoring pick. For holes on the
         # joined circular boss no stable straight-edge references exist yet.
         # Do not pass unevaluated expressions as its position coordinates.
-        if feature.kind in ("hole", "lip", "snap_fit", "boss", "rest") or refs:
+        if feature.kind == "hole" and refs:
+            # The Hole backend below emits sketch.circle.center, so its planar
+            # centre may stay symbolic. The numeric Z value is only an
+            # authoring pick for the supporting face.
+            position = [
+                command_value(xx),
+                command_value(yy),
+                pv(base_z),
+            ]
+        elif feature.kind in ("hole", "lip", "snap_fit", "boss", "rest") or refs:
             position = [pv(xx), pv(yy), pv(base_z)]
         else:
-            position = [command_value(xx), command_value(yy), command_value(base_z)]
+            position = [
+                command_value(xx),
+                command_value(yy),
+                command_value(base_z),
+            ]
         result.append((feature, position, refs))
     return result
 
