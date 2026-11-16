@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-11-16
+
 ### Fixed
 
 - Keep a physical root occurrence ungrounded when its Placement position uses
@@ -16,7 +18,6 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
   parameter later changes in the saved design.
 - Fixed the HUB75-style case where copied occurrences followed a changed
   opening height but the first occurrence stayed at its original position.
-
 
 ## [0.3.3] - 2026-11-16
 
