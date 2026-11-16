@@ -196,10 +196,10 @@
     },
     "Box": {
       "kind": "callable",
-      "summary": "Create a native rectangular solid with an explicit primitive datum.",
+      "summary": "Create a native rectangular solid around a declared anchor datum.",
       "reference": "reference/geometry-constructors/#Box",
       "guide": "guide/geometry/#solids",
-      "signature": "Box(length, width, thickness, *, origin=<Anchor.BOTTOM: 'bottom'>)"
+      "signature": "Box(length, width, thickness, *, anchor=<Anchor.CENTER: 'center'>)"
     },
     "Cylinder": {
       "kind": "callable",
