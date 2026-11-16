@@ -810,6 +810,172 @@ class AssemblyTests(unittest.TestCase):
         ]
         self.assertEqual(parameter_names, [])
 
+    def test_conflicting_inherited_defaults_do_not_share_one_definition(self):
+        from scpf import Box, Parameter
+        from scpf.assembly import compile_assembly
+        from scpf.compiler import ModelError
+        from scpf.runner import component
+
+        class Panel:
+            width = 100.0
+
+            def build(self):
+                return Box(self.width, 10, 2)
+
+        PanelObject = component(Panel)
+        first = PanelObject(width=Parameter("opening_width", 800))
+        second = PanelObject(width=Parameter("opening_width", 900))
+
+        self.assertNotEqual(
+            first.definition.key,
+            second.definition.key,
+        )
+        with self.assertRaisesRegex(
+            ModelError,
+            "conflicting inherited parameter opening_width",
+        ):
+            compile_assembly(first + second, "Display")
+
+    def test_dataclass_fixed_variants_are_part_of_definition_identity(self):
+        from dataclasses import dataclass
+
+        from scpf import Axis, Box
+        from scpf.runner import component
+
+        @dataclass
+        class VariantPart:
+            enabled: object = True
+            label: str = "wide"
+            axis: Axis = Axis.X
+            optional: object = None
+            options: tuple = ("outer", True, None, (1, "mm"))
+
+            def build(self):
+                length = 20 if self.enabled is True else 10
+                width = 30 if self.label == "wide" else 15
+                height = 8 if self.axis is Axis.X else 12
+                return Box(length, width, height)
+
+        Part = component(VariantPart)
+        variants = [
+            Part(),
+            Part(enabled=False),
+            Part(enabled=1),
+            Part(label="narrow"),
+            Part(axis=Axis.Y),
+            Part(optional="present"),
+            Part(options=("inner", False, None, (2, "mm"))),
+        ]
+
+        keys = {part.definition.key for part in variants}
+        self.assertEqual(len(keys), len(variants))
+
+        fixed = dict(variants[0].definition.fixed_inputs)
+        self.assertEqual(fixed["enabled"], ("bool", True))
+        self.assertEqual(fixed["label"], ("str", "wide"))
+        self.assertEqual(fixed["optional"], ("none",))
+        self.assertEqual(fixed["axis"][-1], "X")
+        self.assertEqual(fixed["options"][0], "tuple")
+
+    def test_reusable_dataclass_rejects_unstable_fixed_input(self):
+        from dataclasses import dataclass, field
+
+        from scpf import Box
+        from scpf.runner import component
+
+        @dataclass
+        class VariantPart:
+            profile: list = field(default_factory=lambda: [20, 10])
+
+            def build(self):
+                return Box(self.profile[0], self.profile[1], 5)
+
+        Part = component(VariantPart)
+        with self.assertRaisesRegex(
+            TypeError,
+            "profile.*list.*definition identity",
+        ):
+            Part(profile=[30, 10])
+
+    def test_plain_none_input_uses_fixed_identity_when_reused(self):
+        from scpf import Box
+        from scpf.runner import component
+
+        class Variant:
+            profile = None
+
+            def build(self):
+                return Box(20 if self.profile == "wide" else 10, 10, 5)
+
+        Part = component(Variant)
+        wide = Part(profile="wide")
+        narrow = Part(profile="narrow")
+
+        self.assertNotEqual(wide.definition.key, narrow.definition.key)
+        self.assertEqual(
+            dict(wide.definition.fixed_inputs)["profile"],
+            ("str", "wide"),
+        )
+
+    def test_plain_reusable_component_rejects_arbitrary_object_input(self):
+        from scpf import Box
+        from scpf.runner import component
+
+        class Variant:
+            profile = None
+
+            def build(self):
+                return Box(10, 10, 5)
+
+        Part = component(Variant)
+        with self.assertRaisesRegex(
+            TypeError,
+            "profile.*object.*definition identity",
+        ):
+            Part(profile=object())
+
+    def test_definition_number_prevents_parameter_namespace_slug_collision(self):
+        from scpf import Box
+        from scpf.assembly import compile_assembly
+        from scpf.runner import component
+
+        class Foo:
+            width = 10.0
+
+            def build(self):
+                return Box(self.width, 10, 2)
+
+        class Foo_2:
+            width = 30.0
+
+            def build(self):
+                return Box(self.width, 10, 2)
+
+        FooObject = component(Foo, include=("width",))
+        Foo2Object = component(Foo_2, include=("width",))
+
+        commands = compile_assembly(
+            FooObject(width=10)
+            + FooObject(width=20)
+            + Foo2Object(width=30),
+            "Display",
+        )["commands"]
+
+        parameter_names = [
+            command["params"]["name"]
+            for command in commands
+            if command["command"] == "parameters.add"
+        ]
+        self.assertEqual(
+            parameter_names,
+            [
+                "d1_Foo_width",
+                "d2_Foo_2_width",
+                "d3_Foo_2_width",
+            ],
+        )
+        self.assertEqual(len(parameter_names), len(set(parameter_names)))
+
     def test_identical_material_is_created_once_across_components(self):
         from scpf.assembly import compile_assembly
         from scpf.core import Box
