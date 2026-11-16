@@ -18,13 +18,16 @@ spec.loader.exec_module(release_validation)
 
 
 class ReleaseValidationTests(unittest.TestCase):
-    def test_repository_has_no_active_foundational_blockers(self):
+    def test_repository_records_qualification_integrity_blocker(self):
         blocker_file = ROOT / release_validation.BLOCKERS_PATH
         self.assertEqual(
             release_validation.active_blockers(
                 blocker_file.read_text(encoding="utf-8")
             ),
-            (),
+            (
+                "Issue #220: qualification-integrity audit must be completed "
+                "before another Forge release",
+            ),
         )
 
     def test_comments_only_blocker_file_has_no_active_blockers(self):
