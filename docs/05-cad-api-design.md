@@ -203,19 +203,18 @@ right = Block().attach(
 A local planar `offset=(u, v)` on an attachment is measured in the attachment
 frame, not in world XY.
 
-SolidCraft 0.42 relationship lowering is replay-first. Forge never predicts
-generated occurrence names. The first occurrence of a reusable definition can
-be addressed by its component name in the joint commands where this is
-explicitly qualified.
+Forge generates replayable SolidCraft 0.42 commands and never makes up
+occurrence names such as `Block:2`. In the joint commands tested so far, the
+component name can refer to that component's first occurrence.
 
-Copied occurrences are currently rejected as attachment endpoints because
-Forge has no explicit replay-safe SolidCraft 0.42 selector for them. Forge does
-not replace the missing selector with geometry inference, temporary staging or
-another heuristic.
+Copied occurrences are currently rejected as attachment endpoints while change
+0010 checks how SolidCraft normally selects a copy from joint geometry. Forge
+will only use that method if the native tests show that the selected occurrence
+and geometry remain correct after save/reopen and relevant model changes.
 
-Relationship Placement rotation, copied relationships and chained attachments
-remain unsupported where no explicit replay-safe 0.42 reference mechanism has
-been qualified. See [change 0010](changes/0010-replay-safe-attachments.md).
+Rotated relationships, copied relationships and chained attachments stay
+unsupported until their SolidCraft reference behaviour has been tested. See
+[change 0010](changes/0010-replay-safe-attachments.md).
 
 ## Direction, face and anchor vocabulary
 
