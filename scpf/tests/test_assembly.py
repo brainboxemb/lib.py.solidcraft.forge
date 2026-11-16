@@ -183,6 +183,34 @@ class AssemblyTests(unittest.TestCase):
         ]
         self.assertEqual(len(joints), 1)
 
+    def test_replay_variable_names_do_not_depend_on_process_occurrence_ids(self):
+        from scpf import Box, Placement, Z, component
+        from scpf.assembly import compile_assembly
+
+        @component
+        class Panel:
+            def build(self):
+                return Box(20, 10, 2)
+
+        def build_commands():
+            first = Panel()
+            second = first.copy(
+                placement=Placement(x=30, rotation=(Z, 90)),
+            )
+            return compile_assembly(first + second, "Panels")["commands"]
+
+        first_run = build_commands()
+        second_run = build_commands()
+        self.assertEqual(first_run, second_run)
+        self.assertIn(
+            {"$panel_occurrence_1": "occurrence"},
+            [command.get("bind") for command in first_run],
+        )
+        self.assertIn(
+            {"$panel_occurrence_2": "occurrence"},
+            [command.get("bind") for command in first_run],
+        )
+
     def test_replay_first_ordinary_placement_uses_copy_translate_only(self):
         from scpf import Box, Placement, component
         from scpf.assembly import compile_assembly
