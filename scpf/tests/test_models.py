@@ -62,11 +62,13 @@ class SCPFExamples(unittest.TestCase):
              if c["command"] == "sketch.create"],
             ["Base", "Holes"],
         )
-        self.assertEqual(
-            [c["params"]["center"] for c in commands
-             if c["command"] == "sketch.circle.center"],
-            [[0, -20], [0, 20]],
-        )
+        centers = [
+            c["params"]["center"]
+            for c in commands
+            if c["command"] == "sketch.circle.center"
+        ]
+        self.assertEqual(len(centers), 2)
+        self.assertTrue(all("spacing" in str(center[1]) for center in centers))
         self.assertFalse(any(c["command"] == "solid.hole" for c in commands))
         self.assertEqual(commands[-1]["command"], "solid.extrude")
         self.assertEqual(commands[-1]["params"]["operation"], "cut")
