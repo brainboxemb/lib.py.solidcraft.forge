@@ -27,9 +27,13 @@ SlotArcCenter2D      -> sketch.slot.arc_center
 The constructor name states the SolidCraft construction method. There is no
 generic `Slot(type=...)` switch.
 
-Straight and arc Slot widths may remain symbolic CAD dimensions. Authored Slot
-point coordinates are currently fixed numeric sketch coordinates, matching the
-qualified Forge path.
+SolidCraft 0.42's direct `sketch.slot.*` creators require fixed numeric
+coordinates **and a numeric width**. Forge follows that contract exactly.
+
+Parametric Slot dimensions are not faked by sending expressions to fields that
+reject them. SolidCraft provides a separate `sketch.draw.dimensioned` authoring
+route for parameter-backed dimensions; that capability is outside change 0027
+and must be qualified separately before SCPF exposes it.
 
 ## Qualification
 
