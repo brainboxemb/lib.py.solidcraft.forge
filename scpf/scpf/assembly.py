@@ -227,65 +227,6 @@ def _relationship_replay_order(instances, component_name):
     return ordered
 
 
-_ATTACHMENT_STAGE_STEP_MM = 1.0
-
-
-def _attachment_stage_direction(attachment):
-    """Return a unit direction used to separate one copied attached child."""
-    parent = attachment.parent
-
-    if isinstance(parent, Anchor):
-        if parent in _CORNER_ANCHORS:
-            direction = _corner_normal(parent)
-        elif parent is Anchor.CENTER:
-            raise ModelError(
-                "copied CENTER attachment has no replay-safe staging direction"
-            )
-        else:
-            direction = parent.vector
-    elif isinstance(parent, str):
-        custom = dict(attachment.target.definition.anchors)[parent]
-        if isinstance(custom, AnchorFrame):
-            direction = custom.z
-        elif isinstance(custom, AnchorTopology) and custom.z is not None:
-            direction = custom.z
-        else:
-            raise ModelError(
-                "copied named attachment needs an explicit frame/z direction "
-                "for replay-safe occurrence inference"
-            )
-    elif isinstance(parent, AnchorFrame):
-        direction = parent.z
-    elif isinstance(parent, AnchorTopology) and parent.z is not None:
-        direction = parent.z
-    else:
-        raise ModelError(
-            "copied attachment needs an explicit frame/z direction for "
-            "replay-safe occurrence inference"
-        )
-
-    values = tuple(float(pv(value)) for value in direction)
-    length = sum(value * value for value in values) ** 0.5
-    if length <= 0:
-        raise ModelError("attachment staging direction must be non-zero")
-    return tuple(value / length for value in values)
-
-
-def _relationship_copy_seed(instance, staging_slot):
-    """Return a unique temporary seed pose close to the authored attachment."""
-    position = [pv(value) for value in instance.placement.position]
-    attachment = instance.attachment
-    if attachment is None or attachment.as_built:
-        return position
-
-    direction = _attachment_stage_direction(attachment)
-    distance = _ATTACHMENT_STAGE_STEP_MM * staging_slot
-    return [
-        position[i] + direction[i] * distance
-        for i in range(3)
-    ]
-
-
 def _occurrence_labels(assembly, names):
     """Build stable human labels without using SolidCraft browser numbering."""
     totals = {}
@@ -315,7 +256,6 @@ def compile_assembly(value, name):
     names = _definition_names(assembly)
     commands = []
     occurrence_refs = {}
-    native_seed_positions = {}
     occurrence_labels = _occurrence_labels(assembly, names)
     inherited_parameters = {}
     shared_materials = {}
@@ -342,8 +282,6 @@ def compile_assembly(value, name):
         ))
 
     relationship_occurrence_ids = set()
-    attachment_staging_slots = {}
-    next_staging_slot = 1
     for instance in assembly.instances:
         attachment = instance.attachment
         if attachment is None:
@@ -355,9 +293,6 @@ def compile_assembly(value, name):
             )
         relationship_occurrence_ids.add(instance.occurrence_id)
         relationship_occurrence_ids.add(attachment.target.occurrence_id)
-        if not attachment.as_built:
-            attachment_staging_slots[instance.occurrence_id] = next_staging_slot
-            next_staging_slot += 1
 
     by_definition = {}
     for instance in assembly.instances:
@@ -460,36 +395,30 @@ def compile_assembly(value, name):
         commands.append(_command("component.activate", component="root"))
 
         # SolidCraft creates the first occurrence together with the component.
-        # For relationship definitions the component name is a qualified selector
-        # for that first occurrence in joint commands. Copies do not receive a
-        # Forge-controlled native name, so joint.create resolves them from their
-        # world topology/point picks.
+        # In qualified joint commands SolidCraft 0.42 accepts the component name
+        # as an explicit selector for that first occurrence. Forge has no equally
+        # explicit replay-safe selector for later copies, so copied occurrences
+        # are never used as attachment endpoints.
         for index, instance in enumerate(instances, start=1):
             if index == 1:
                 if relationship_definition:
                     occurrence_refs[instance.occurrence_id] = component_name
-                    native_seed_positions[instance.occurrence_id] = (0.0, 0.0, 0.0)
                 continue
+
+            if (
+                relationship_definition
+                and instance.occurrence_id in relationship_occurrence_ids
+            ):
+                raise ModelError(
+                    f"{component_name}: attachment involving a copied occurrence "
+                    "is not replay-safe in SolidCraft 0.42"
+                )
 
             params = {"component": component_name}
             position = instance.placement.position
-
-            if relationship_definition:
-                concrete_position = _relationship_copy_seed(
-                    instance,
-                    attachment_staging_slots.get(instance.occurrence_id, 0),
-                )
-                if any(concrete_position):
-                    params["translate"] = concrete_position
-                occurrence_refs[instance.occurrence_id] = None
-                native_seed_positions[instance.occurrence_id] = tuple(
-                    concrete_position
-                )
-            else:
-                concrete_position = [pv(value) for value in position]
-                if any(concrete_position):
-                    params["translate"] = concrete_position
-
+            concrete_position = [pv(value) for value in position]
+            if any(concrete_position):
+                params["translate"] = concrete_position
             commands.append(_command("occurrence.copy", **params))
 
     for instance in assembly.instances:
@@ -499,13 +428,12 @@ def compile_assembly(value, name):
 
         child_id = instance.occurrence_id
         parent_id = attachment.target.occurrence_id
-        if (
-            child_id not in occurrence_refs
-            or parent_id not in occurrence_refs
-            or child_id not in native_seed_positions
-            or parent_id not in native_seed_positions
-        ):
-            raise ModelError("component attach target must be part of the assembly")
+        if child_id not in occurrence_refs or parent_id not in occurrence_refs:
+            raise ModelError(
+                "attachment endpoints must be explicit first occurrences; "
+                "copied occurrence relationships are not replay-safe in "
+                "SolidCraft 0.42"
+            )
 
         child_occurrence = occurrence_refs[child_id]
         parent_occurrence = occurrence_refs[parent_id]
@@ -514,11 +442,6 @@ def compile_assembly(value, name):
         joint_name = f"Attach {child_label} to {parent_label}"
 
         if attachment.as_built:
-            if child_occurrence is None or parent_occurrence is None:
-                raise ModelError(
-                    "as-built attachment to a copied occurrence is not "
-                    "replay-safe in SolidCraft 0.42"
-                )
             commands.append(_command(
                 "joint.as_built",
                 type="rigid",
@@ -563,12 +486,11 @@ def compile_assembly(value, name):
                     "x": list(custom.x),
                 }
 
-            if occurrence is not None:
-                reference["occurrence"] = occurrence
+            reference["occurrence"] = occurrence
             return reference
 
-        parent_position = native_seed_positions[parent_id]
-        child_position = native_seed_positions[child_id]
+        parent_position = (0.0, 0.0, 0.0)
+        child_position = (0.0, 0.0, 0.0)
 
         if isinstance(attachment.parent, Anchor):
             parent_origin = _anchor_origin(
@@ -601,8 +523,7 @@ def compile_assembly(value, name):
                 "z": list(_corner_normal(attachment.child)),
                 "x": list(_corner_native_x(attachment.parent)),
             }
-            if child_occurrence is not None:
-                child_origin["occurrence"] = child_occurrence
+            child_origin["occurrence"] = child_occurrence
         elif isinstance(attachment.child, Anchor):
             child_origin = _anchor_origin(
                 instance,
