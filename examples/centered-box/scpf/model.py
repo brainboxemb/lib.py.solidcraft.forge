@@ -11,7 +11,7 @@ class CenteredBox:
             self.length,
             self.width,
             self.height,
-            origin=CENTER,
+            origin=Anchor.CENTER,
         )
 
 
