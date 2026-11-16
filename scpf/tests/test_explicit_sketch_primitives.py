@@ -35,7 +35,8 @@ class NativePrimitiveTests(unittest.TestCase):
             ["sketch.create", "sketch.rectangle.two_point",
              "sketch.finish", "solid.extrude"],
         )
-        self.assertEqual(commands[1]["params"]["p1"], [40, 30])
+        self.assertEqual(commands[1]["params"]["p0"], [-20, -15])
+        self.assertEqual(commands[1]["params"]["p1"], [20, 15])
         self.assertEqual(commands[-1]["params"]["body_name"], "Plate")
 
     def test_circle_in_with_sketch_negative_extrusion(self):
@@ -50,7 +51,7 @@ class NativePrimitiveTests(unittest.TestCase):
     def test_existing_attached_sketch_still_works(self):
         base = Box(80, 60, 5)
         with Sketch(name="Pad", on=base) as sketch:
-            sketch.add(Rectangle2D(40, 30), offset=(-20, -15))
+            sketch.add(Rectangle2D(40, 30))
         commands = compile_model(base + sketch.extrude(8), "Part")["commands"]
         self.assertEqual(commands[0]["command"], "solid.box")
         self.assertEqual(
