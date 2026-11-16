@@ -1054,7 +1054,7 @@ class AssemblyTests(unittest.TestCase):
         )
 
     def test_reusable_text_component_keeps_literal_strings_opaque(self):
-        from scpf import Sketch
+        from scpf import Anchor, Box, Sketch
         from scpf.core import Text2D
         from scpf.assembly import compile_assembly
         from scpf.runner import component
@@ -1063,13 +1063,18 @@ class AssemblyTests(unittest.TestCase):
             height = 8.0
 
             def build(self):
-                with Sketch(name="height") as sketch:
+                body = Box(40, 20, 2)
+                with Sketch(
+                    name="height",
+                    on=body,
+                    parent=Anchor.TOP,
+                ) as sketch:
                     Text2D(
                         "height",
                         height=self.height / 2,
                         font="height",
                     )
-                return sketch.extrude(2)
+                return body + sketch.extrude(2)
 
         Part = component(Label, include=("height",))
         document = compile_assembly(Part(), "Display")
