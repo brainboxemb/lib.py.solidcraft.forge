@@ -655,7 +655,72 @@ def _explicit_sketch_commands(shape, original, feature, name):
                 height=command_value(height), font=font,
             ))
             continue
-        raise ModelError("explicit Sketch supports Circle2D, Rectangle2D, RoundedRectangle2D or Text2D")
+
+        if profile.kind in (
+            "slot_center_to_center",
+            "slot_overall",
+            "slot_center_point",
+            "slot_arc_three_point",
+            "slot_arc_center",
+        ):
+            if profile_anchor is not None:
+                raise ModelError("native Slot profiles use authored sketch coordinates")
+
+            def slot_point(point):
+                values = [
+                    command_value(_combine(ox, point[0])),
+                    command_value(_combine(oy, point[1])),
+                ]
+                if any(isinstance(value, str) for value in values):
+                    raise ModelError(
+                        "native Slot point coordinates currently require fixed values"
+                    )
+                return values
+
+            if profile.kind == "slot_center_to_center":
+                p0, p1, width = profile.data
+                params = dict(p0=slot_point(p0), p1=slot_point(p1),
+                              width=command_value(width))
+                command = "sketch.slot.center_to_center"
+            elif profile.kind == "slot_overall":
+                p0, p1, width = profile.data
+                params = dict(p0=slot_point(p0), p1=slot_point(p1),
+                              width=command_value(width))
+                command = "sketch.slot.overall"
+            elif profile.kind == "slot_center_point":
+                center, end, width = profile.data
+                params = dict(center=slot_point(center), end=slot_point(end),
+                              width=command_value(width))
+                command = "sketch.slot.center_point"
+            elif profile.kind == "slot_arc_three_point":
+                start, through, end, width = profile.data
+                params = dict(
+                    start=slot_point(start),
+                    through=slot_point(through),
+                    end=slot_point(end),
+                    width=command_value(width),
+                )
+                command = "sketch.slot.arc_three_point"
+            else:
+                center, start, end, sweep, width = profile.data
+                params = dict(
+                    center=slot_point(center),
+                    start=slot_point(start),
+                    width=command_value(width),
+                )
+                if end is not None:
+                    params["end"] = slot_point(end)
+                else:
+                    params["sweep"] = sweep
+                command = "sketch.slot.arc_center"
+
+            commands.append(_command(command, **params))
+            continue
+
+        raise ModelError(
+            "explicit Sketch supports Circle2D, Rectangle2D, RoundedRectangle2D, "
+            "Text2D or native Slot*2D profiles"
+        )
 
     commands.append(_command("sketch.finish"))
 

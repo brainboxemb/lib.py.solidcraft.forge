@@ -19,7 +19,11 @@ def register_profile(profile):
         # Sketch centre by default.
         anchor = (
             None
-            if profile.kind in ("polygon", "text")
+            if profile.kind in (
+                "polygon", "text",
+                "slot_center_to_center", "slot_overall", "slot_center_point",
+                "slot_arc_three_point", "slot_arc_center",
+            )
             else Anchor.CENTER
         )
         sketch._store_profile(profile, anchor=anchor, offset=(0, 0))
@@ -117,6 +121,11 @@ class Sketch:
             "rounded_rectangle",
             "text",
             "polygon",
+            "slot_center_to_center",
+            "slot_overall",
+            "slot_center_point",
+            "slot_arc_three_point",
+            "slot_arc_center",
         ):
             raise ValueError(
                 "Sketch supports Circle2D, Rectangle2D, Polygon2D, "

@@ -1284,6 +1284,96 @@ def RoundedRectangle2D(width, depth, radius):
     return register_profile(Shape("rounded_rectangle", (width, depth, radius)))
 
 
+def _slot_point(name, value):
+    if not isinstance(value, (tuple, list)) or len(value) != 2:
+        raise ValueError(f"{name} must be an (x, y) point")
+    point = tuple(value)
+    concrete = tuple(_pv(coordinate) for coordinate in point)
+    if not all(isfinite(coordinate) for coordinate in concrete):
+        raise ValueError(f"{name} must contain finite coordinates")
+    # SolidCraft's native Slot creators take authored sketch points. Keep
+    # those positions fixed; dimensions such as width remain symbolic.
+    if any(isinstance(coordinate, (Parameter, Expression)) for coordinate in point):
+        raise TypeError(f"{name} currently requires fixed numeric coordinates")
+    return point
+
+
+def _slot_width(width):
+    if _pv(width) <= 0:
+        raise ValueError("slot width must be positive")
+    return width
+
+
+def SlotCenterToCenter2D(p0, p1, width):
+    """Create a native straight Slot from the centres of its round ends."""
+    p0 = _slot_point("p0", p0)
+    p1 = _slot_point("p1", p1)
+    if p0 == p1:
+        raise ValueError("center-to-center Slot endpoints must differ")
+    from .explicit_sketch import register_profile
+    return register_profile(
+        Shape("slot_center_to_center", (p0, p1, _slot_width(width)))
+    )
+
+
+def SlotOverall2D(p0, p1, width):
+    """Create a native straight Slot from its two overall end points."""
+    p0 = _slot_point("p0", p0)
+    p1 = _slot_point("p1", p1)
+    width = _slot_width(width)
+    length = sum((b - a) ** 2 for a, b in zip(p0, p1)) ** 0.5
+    if length <= _pv(width):
+        raise ValueError("overall Slot length must be larger than its width")
+    from .explicit_sketch import register_profile
+    return register_profile(Shape("slot_overall", (p0, p1, width)))
+
+
+def SlotCenterPoint2D(center, end, width):
+    """Create a native straight Slot from its centre and one end-arc centre."""
+    center = _slot_point("center", center)
+    end = _slot_point("end", end)
+    if center == end:
+        raise ValueError("center-point Slot end must differ from its centre")
+    from .explicit_sketch import register_profile
+    return register_profile(
+        Shape("slot_center_point", (center, end, _slot_width(width)))
+    )
+
+
+def SlotArcThreePoint2D(start, through, end, width):
+    """Create a native arc Slot through three points on its centre arc."""
+    start = _slot_point("start", start)
+    through = _slot_point("through", through)
+    end = _slot_point("end", end)
+    if len({start, through, end}) != 3:
+        raise ValueError("three-point arc Slot requires three distinct points")
+    from .explicit_sketch import register_profile
+    return register_profile(
+        Shape("slot_arc_three_point", (start, through, end, _slot_width(width)))
+    )
+
+
+def SlotArcCenter2D(center, start, width, *, end=None, sweep=None):
+    """Create a native arc Slot from its centre, start and end or sweep."""
+    center = _slot_point("center", center)
+    start = _slot_point("start", start)
+    if center == start:
+        raise ValueError("arc Slot start must differ from its centre")
+    if (end is None) == (sweep is None):
+        raise ValueError("arc Slot requires exactly one of end= or sweep=")
+    if end is not None:
+        end = _slot_point("end", end)
+    else:
+        if isinstance(sweep, bool) or not isinstance(sweep, (int, float)):
+            raise TypeError("arc Slot sweep must be a numeric angle in degrees")
+        if not isfinite(sweep) or not 0 < sweep < 360:
+            raise ValueError("arc Slot sweep must be between 0 and 360 degrees")
+    from .explicit_sketch import register_profile
+    return register_profile(
+        Shape("slot_arc_center", (center, start, end, sweep, _slot_width(width)))
+    )
+
+
 def Circle2D(*, d=None, r=None):
     """Create a circular 2D profile by diameter or radius.
 

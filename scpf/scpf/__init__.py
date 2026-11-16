@@ -2,6 +2,8 @@
 from .core import (
     Box, Cylinder, Sphere, Hole, Lip, SnapFit, Boss, Rest, Depth,
     Rectangle2D, RoundedRectangle2D, Circle2D, Polygon2D,
+    SlotCenterToCenter2D, SlotOverall2D, SlotCenterPoint2D,
+    SlotArcThreePoint2D, SlotArcCenter2D,
     Shape, Parameter, Edges, Faces, Anchor, AnchorFrame, AnchorTopology, Axis, X, Y, Z, CENTER, TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK, up, down, left, right, front, back, half, midpoint, pv,
 )
 from .compiler import compile_model, ModelError
@@ -11,7 +13,9 @@ from .model_objects import Placement
 
 __all__ = [
     "Box", "Cylinder", "Sphere", "Hole", "Lip", "SnapFit", "Boss", "Rest",
-    "Depth", "Rectangle2D", "RoundedRectangle2D", "Circle2D", "Polygon2D", "Shape", "Parameter",
+    "Depth", "Rectangle2D", "RoundedRectangle2D", "Circle2D", "Polygon2D",
+    "SlotCenterToCenter2D", "SlotOverall2D", "SlotCenterPoint2D",
+    "SlotArcThreePoint2D", "SlotArcCenter2D", "Shape", "Parameter",
     "Edges", "Faces", "Anchor", "AnchorFrame", "AnchorTopology", "Axis", "X", "Y", "Z", "CENTER", "TOP", "BOTTOM", "LEFT", "RIGHT", "FRONT", "BACK", "up", "down", "left", "right", "front", "back", "half", "midpoint", "pv",
     "Sketch", "Placement", "compile_model", "run_script", "component", "assembly", "ModelParameterWarning", "ModelError",
 ]
