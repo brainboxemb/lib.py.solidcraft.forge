@@ -329,10 +329,15 @@ def compile_assembly(value, name):
         )
         if relationship_definition:
             for instance in instances:
-                if instance.placement.rotation is not None:
+                attachment = instance.attachment
+                if (
+                    attachment is not None
+                    and not attachment.as_built
+                    and instance.placement.rotation is not None
+                ):
                     raise ModelError(
-                        f"{component_name}: rotated relationship Placement is "
-                        "not supported yet"
+                        f"{component_name}: rotated Placement on a normal "
+                        "attached child is not supported yet"
                     )
 
         definition = instances[0].definition
