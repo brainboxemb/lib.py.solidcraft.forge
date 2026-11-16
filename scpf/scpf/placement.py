@@ -8,7 +8,7 @@ from .core import (
     _BoundOffset,
     _box_corner_from_anchor,
     half,
-    pv,
+    _pv as pv,
     command_value,
 )
 
