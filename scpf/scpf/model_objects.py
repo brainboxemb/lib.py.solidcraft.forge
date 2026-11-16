@@ -141,9 +141,11 @@ def _xz_polygon_rectangle_bounds(shape):
     if len(profiles) != 1:
         raise ValueError("XZ attachment rectangle requires one profile")
 
-    profile, profile_offset = profiles[0]
+    profile, profile_anchor, profile_offset = profiles[0]
     if profile.kind != "polygon" or profile.data[1] != "XZ":
         raise ValueError("not an XZ polygon")
+    if profile_anchor is not None:
+        raise ValueError("XZ attachment polygon uses authored coordinates")
     if any(pv(value) != 0 for value in profile_offset):
         raise ValueError("XZ attachment polygon must use the Sketch origin")
     plane_y = 0.0 if plane_offset is None else pv(plane_offset)
