@@ -641,6 +641,31 @@ class Assembly:
             original.occurrence_id: replacement
             for original, replacement in zip(self.instances, grouped)
         }
+
+        # Direct attachments keep pointing at the same physical Forge
+        # occurrence, but use the grouped replacement object when that target is
+        # part of this Assembly. Chained attachments remain unsupported by the
+        # compiler and are not rebuilt here.
+        grouped = tuple(
+            replace(
+                instance,
+                attachment=replace(
+                    instance.attachment,
+                    target=remap.get(
+                        instance.attachment.target.occurrence_id,
+                        instance.attachment.target,
+                    ),
+                ),
+            )
+            if instance.attachment is not None
+            else instance
+            for instance in grouped
+        )
+        remap = {
+            instance.occurrence_id: instance
+            for instance in grouped
+        }
+
         anchors = tuple(
             (
                 anchor_name,
