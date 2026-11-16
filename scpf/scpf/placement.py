@@ -5,6 +5,7 @@ It is not a geometry engine: SolidCraft owns actual face identity.
 """
 from .core import (
     Shape,
+    Anchor,
     _BoundOffset,
     _box_corner_from_anchor,
     half,
@@ -59,8 +60,17 @@ def _base_rectangle(shape):
             raise ValueError("anchoring requires a positive XY rectangular Sketch")
         if len(profiles) != 1 or profiles[0][0].kind != "rectangle":
             raise ValueError("anchoring requires one rectangular Sketch profile")
-        (width, depth), offset = profiles[0][0].data, profiles[0][1]
-        return (width, depth), (offset[0], offset[1], 0), height
+        profile, profile_anchor, offset = profiles[0]
+        width, depth = profile.data
+        if profile_anchor is Anchor.CENTER:
+            corner = (
+                _combine(offset[0], -half(width)),
+                _combine(offset[1], -half(depth)),
+                0,
+            )
+        else:
+            corner = (offset[0], offset[1], 0)
+        return (width, depth), corner, height
     if shape.kind in ("fillet", "chamfer", "shell"):
         return _base_rectangle(shape.data[0])
     if shape.kind in ("union", "difference"):
