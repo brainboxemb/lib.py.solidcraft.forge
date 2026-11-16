@@ -231,7 +231,11 @@ def compile_base(shape, name):
                 plane["offset"] = command_value(offset)
             return [
                 _command("sketch.create", **plane),
-                _command("sketch.rectangle.two_point", p0=a, p1=b),
+                _command(
+                    "sketch.rectangle.two_point",
+                    p0=[command_value(value) for value in a],
+                    p1=[command_value(value) for value in b],
+                ),
                 _command("sketch.finish"),
             ]
 
