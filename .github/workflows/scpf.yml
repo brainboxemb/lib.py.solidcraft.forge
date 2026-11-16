@@ -303,6 +303,23 @@ jobs:
           solidcraft-cli eval output/native/corner-anchor/model-size-80x40.sc \
             --json-out output/native/corner-anchor/measurements-size-80x40.json
 
+          cat > output/native/xz-anchor/change-size.json <<'JSON'
+          {"commands":[
+            {"command":"parameters.change","params":{
+              "name":"board_width","expression":"80 mm"
+            }},
+            {"command":"parameters.change","params":{
+              "name":"board_height","expression":"40 mm"
+            }}
+          ]}
+          JSON
+          solidcraft-cli run output/native/xz-anchor/change-size.json \
+            --in output/native/xz-anchor/model.sc \
+            --param-check strict \
+            --save output/native/xz-anchor/model-size-80x40.sc
+          solidcraft-cli eval output/native/xz-anchor/model-size-80x40.sc \
+            --json-out output/native/xz-anchor/measurements-size-80x40.json
+
           printf "case\tmutation\tstatus\n" > output/qualification/q5-parametric-mutation.tsv
           printf "parameter-scope\tshared_width 80 -> 100 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parent-derived-child-size\tparent 120x80 -> 160x120 mm; child follows 60x40 -> 80x60 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
@@ -312,6 +329,7 @@ jobs:
           printf "parametric-offset\tshift 5 -> 10 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-anchor\tbase_width 40 -> 80 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "corner-anchor\tbase 40x20 -> 80x40 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
+          printf "xz-anchor\tboard 40x20 -> 80x40 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
 
           python qualification/native_validation.py \
             --native-root output/native \
