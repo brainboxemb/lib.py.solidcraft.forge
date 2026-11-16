@@ -43,7 +43,7 @@ class AnchorTopologyMutationCommandTests(unittest.TestCase):
         self.assertEqual(
             joint["a"],
             {
-                "occurrence": "Board",
+                "occurrence": "$board",
                 "edge": [-20.0, -10.0, 10.0],
                 "on": [0.0, -10.0, 10.0],
                 "corner": [-20.0, -10.0, 20.0],
@@ -51,7 +51,7 @@ class AnchorTopologyMutationCommandTests(unittest.TestCase):
                 "x": [0.0, 0.0, -1.0],
             },
         )
-        self.assertEqual(joint["b"]["occurrence"], "Marker")
+        self.assertEqual(joint["b"]["occurrence"], "$marker")
         # The first Marker occurrence is created at native identity. The
         # joint owns the relationship, so its child frame stays local here.
         self.assertEqual(joint["b"]["point"], [0.0, 0.0, 0.0])
