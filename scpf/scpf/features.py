@@ -17,7 +17,7 @@ from .core import (
     _dim_add,
     half,
     midpoint,
-    pv,
+    _pv as pv,
     command_value,
 )
 from .compiler import ModelError, _command, _collect, _param_commands, _require_positive
