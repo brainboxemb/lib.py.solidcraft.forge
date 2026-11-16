@@ -1376,13 +1376,13 @@ class AssemblyTests(unittest.TestCase):
             if command["command"] == "joint.create"
         ]
         self.assertEqual(len(joints), 2)
-        self.assertEqual(joints[0]["a"]["occurrence"], "Board")
+        self.assertEqual(joints[0]["a"]["occurrence"], "$board")
         self.assertEqual(joints[0]["a"]["corner"], [20.0, 0.0, 20.0])
-        self.assertEqual(joints[1]["a"]["occurrence"], "Board")
+        self.assertEqual(joints[1]["a"]["occurrence"], "$board")
         self.assertEqual(joints[1]["a"]["corner"], [-20.0, 0.0, 20.0])
         self.assertEqual(
             [joint["b"]["occurrence"] for joint in joints],
-            ["RightMarker", "LeftMarker"],
+            ["$rightmarker", "$leftmarker"],
         )
         self.assertFalse(any(
             "Board:" in str(command["params"])
@@ -1465,7 +1465,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joints[0]["a"],
             {
-                "occurrence": "Base",
+                "occurrence": "$base",
                 "point": [0.0, 0.0, 0.0],
                 "z": [0.0, 0.0, 1.0],
                 "x": [1.0, 0.0, 0.0],
@@ -1474,7 +1474,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joints[0]["b"],
             {
-                "occurrence": "FrontBracket",
+                "occurrence": "$frontbracket",
                 "point": [0.0, 0.0, 0.0],
                 "z": [0.0, 0.0, 1.0],
                 "x": [1.0, 0.0, 0.0],
@@ -1482,7 +1482,7 @@ class AssemblyTests(unittest.TestCase):
         )
         self.assertEqual(joints[1]["a"]["z"], [0.0, 0.0, -1.0])
         self.assertEqual(joints[1]["b"]["z"], [0.0, 0.0, -1.0])
-        self.assertEqual(joints[1]["b"]["occurrence"], "RearBracket")
+        self.assertEqual(joints[1]["b"]["occurrence"], "$rearbracket")
         self.assertFalse(any(
             ":" in selector
             for command in commands
@@ -1543,7 +1543,7 @@ class AssemblyTests(unittest.TestCase):
             for command in commands
             if command["command"] == "joint.create"
         )
-        self.assertEqual(joint["a"]["occurrence"], "Block")
+        self.assertEqual(joint["a"]["occurrence"], "$left")
         self.assertEqual(joint["a"]["edge"], [-10.0, 0.0, 5.0])
         self.assertEqual(joint["a"]["corner"], [-10.0, 0.0, 10.0])
 
@@ -1614,7 +1614,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["a"],
             {
-                "occurrence": "Board",
+                "occurrence": "$board",
                 "edge": [-20.0, 0.0, 5.0],
                 "on": [-20.0, 10.0, 10.0],
                 "corner": [-20.0, 0.0, 5.0],
@@ -1805,7 +1805,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["b"],
             {
-                "occurrence": "Bracket",
+                "occurrence": "$bracket",
                 "point": [0.0, 0.0, -5.0],
                 "z": [0.0, 1.0, 0.0],
                 "x": [0.0, 0.0, -1.0],
@@ -1953,7 +1953,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertIn("corner", joint["a"])
         self.assertEqual(joint["b"]["point"], [-20.0, -15.0, 0.0])
         self.assertEqual(joint["b"]["z"], [0.0, -1.0, 0.0])
-        self.assertEqual(joint["b"]["occurrence"], "ChildBlock")
+        self.assertEqual(joint["b"]["occurrence"], "$child")
 
     def test_corner_anchor_compiles_to_native_edge_and_corner_origins(self):
         commands = run_script(
@@ -1969,7 +1969,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["a"],
             {
-                "occurrence": "Base",
+                "occurrence": "$base",
                 "edge": [20.0, -15.0, 10.0],
                 "on": [0.0, -15.0, 10.0],
                 "corner": [20.0, -15.0, 20.0],
@@ -1978,7 +1978,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(
             joint["b"],
             {
-                "occurrence": "Marker",
+                "occurrence": "$marker",
                 "point": [5.0, 5.0, 10.0],
                 "z": [0.0, 1.0, 0.0],
                 "x": [-1.0, 0.0, 0.0],
