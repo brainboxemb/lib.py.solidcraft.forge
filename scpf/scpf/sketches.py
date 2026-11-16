@@ -210,16 +210,21 @@ def compile_base(shape, name):
         z_end = _combine_dimension(z0, depth)
 
         def shifted(edge, inward):
-            offset = command_value(inset)
+            # Expression.__str__ is a debug representation that includes
+            # fields such as value=... and is not a SolidCraft expression.
+            # Convert both operands to typed native values before formatting.
+            native_edge = command_value(edge)
+            native_offset = command_value(inset)
             if (
-                isinstance(edge, _NativeExpression)
-                or isinstance(offset, _NativeExpression)
+                isinstance(native_edge, _NativeExpression)
+                or isinstance(native_offset, _NativeExpression)
             ):
                 return _native_expression(
-                    f"({edge}) {'+' if inward else '-'} ({offset})",
-                    tuple(sorted(_native_dependencies((edge, offset)))),
+                    f"({native_edge}) {'+' if inward else '-'} ({native_offset})",
+                    tuple(sorted(_native_dependencies((native_edge, native_offset)))),
                 )
-            return edge + offset if inward else edge - offset
+            return (native_edge + native_offset if inward
+                    else native_edge - native_offset)
 
         front = f"{name} footprint"
         rear_start = f"{name} rear start"
