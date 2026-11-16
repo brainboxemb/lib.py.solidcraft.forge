@@ -69,6 +69,24 @@ MUTATIONS = {
         "measurements": "measurements-size-80x40.json",
         "label": "board 40x20 -> 80x40 mm",
     },
+    "four-corner-l": {
+        "command": "qualification/commands/four-corner-l/change-size.json",
+        "save": "model-size-160x120.sc",
+        "measurements": "measurements-size-160x120.json",
+        "label": "frame 120x80 -> 160x120 mm",
+    },
+    "eight-corner-brackets": {
+        "command": "qualification/commands/eight-corner-brackets/change-size.json",
+        "save": "model-size-160x120x90.sc",
+        "measurements": "measurements-size-160x120x90.json",
+        "label": "frame 120x80x60 -> 160x120x90 mm",
+    },
+    "eight-flightcase-corners": {
+        "command": "qualification/commands/eight-flightcase-corners/change-size.json",
+        "save": "model-size-160x120x90.sc",
+        "measurements": "measurements-size-160x120x90.json",
+        "label": "case 120x80x60 -> 160x120x90 mm",
+    },
 }
 
 
