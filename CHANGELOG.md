@@ -8,6 +8,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Restore `Sketch.add(Text2D(...), offset=(u, v))` after the 0.4.0 semantic
+  centering change. An omitted sketch-profile anchor now chooses the profile's
+  natural default: dimension-defined profiles still use CENTER, while Text2D
+  and Polygon2D keep their coordinate-defined placement. Explicit CENTER
+  remains unsupported for Text2D/Polygon2D.
+
 ## [0.4.0] - 2026-11-16
 
 ### Added
