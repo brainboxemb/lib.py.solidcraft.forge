@@ -17,7 +17,7 @@ class EightFlightcaseCornersCommandTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ModelError,
-            "attachment involving a copied occurrence",
+            "cannot attach a copied occurrence",
         ):
             run_script(ROOT / "examples/eight-flightcase-corners/scpf/model.py")
 
