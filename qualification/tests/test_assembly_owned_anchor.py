@@ -45,7 +45,7 @@ class AssemblyOwnedAnchorCommandTests(unittest.TestCase):
         self.assertEqual(joint["type"], "rigid")
         self.assertEqual(
             joint["a"]["corner"],
-            [20.0, -15.0, 10.0],
+            [20.0, -15.0, 20.0],
         )
         self.assertEqual(joint["a"]["occurrence"], "$base")
         self.assertEqual(joint["b"]["occurrence"], "$marker")
