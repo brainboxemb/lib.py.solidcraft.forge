@@ -203,14 +203,14 @@
     },
     "Cylinder": {
       "kind": "callable",
-      "summary": "Create a native cylinder around a declared world-cardinal anchor datum.",
+      "summary": "Create a cylindrical solid centered around the origin by default.",
       "reference": "reference/geometry-constructors/#Cylinder",
       "guide": "guide/geometry/#solids",
       "signature": "Cylinder(*, d, h, axis=<Axis.Z: 'Z'>, anchor=<Anchor.CENTER: 'center'>)"
     },
     "Sphere": {
       "kind": "callable",
-      "summary": "Create a sphere around a declared world-cardinal anchor datum.",
+      "summary": "Create a sphere, centered on the origin unless another anchor is given.",
       "reference": "reference/geometry-constructors/#Sphere",
       "guide": "guide/geometry/#solids",
       "signature": "Sphere(radius, *, anchor=<Anchor.CENTER: 'center'>)"
