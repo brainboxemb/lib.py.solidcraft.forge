@@ -73,6 +73,39 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Placement itself does not create a joint. Forge replay variables bind the real SolidCraft occurrence ids when a later native move is needed. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
+### Native `Box` origin
+
+`Box` declares its own primitive datum separately from later placement:
+
+```python
+bottom_based = Box(80, 50, 10)
+centered = Box(80, 50, 10, origin=CENTER)
+front_bottom = Box(80, 50, 10, origin=FRONT + BOTTOM)
+```
+
+The public signature is:
+
+```python
+Box(length, width, thickness, *, origin=Anchor.BOTTOM)
+```
+
+`origin` means which Box anchor is located at model coordinate `(0, 0, 0)`
+before any later `.at()` call. The default BOTTOM preserves Forge's existing
+box convention: X/Y centred on zero and the bottom face at Z=0. `CENTER`
+selects SolidCraft's native fully centred box datum.
+
+Forge lowers the same origin intent in feature-history and direct CSG paths.
+It does not emulate a centred primitive with a corrective translation.
+
+An explicit `.at(..., anchor=...)` is later placement and therefore takes
+precedence over the constructor origin for that placed Box.
+
+`Box.taper()` currently requires the default BOTTOM origin because its front
+and rear planes are defined at Z=0 and Z=depth. Other tapered-box origins are
+rejected rather than partially translated.
+
+See [change 0022](changes/0022-native-box-origin.md).
+
 ### `at()`
 
 `at()` is geometric placement/alignment.
