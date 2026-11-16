@@ -1041,6 +1041,14 @@ class SCPFExamples(unittest.TestCase):
                         ))
                 self.assertIn("length", str(rectangles[0]["p0"]))
                 self.assertIn("width", str(rectangles[0]["p0"]))
+                # The rear sketch used to stringify Python's Expression
+                # dataclass, yielding invalid SolidCraft syntax such as
+                # "Expression(value=..., expression=...) + rear_inset".
+                for rectangle in rectangles:
+                    for value in (*rectangle["p0"], *rectangle["p1"]):
+                        self.assertNotIn("Expression(", str(value))
+                        self.assertNotIn("value=", str(value))
+                self.assertIn("rear_inset", str(rectangles[2]["p0"]))
 
     def test_native_box_supports_directional_anchor_and_edge_selectors(self):
         from scpf import BOTTOM, FRONT, LEFT, RIGHT, Box
