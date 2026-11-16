@@ -1,140 +1,176 @@
-# Change 0010 — Replay-safe attachments
+# Change 0010 — Remove guessed SolidCraft occurrence names from attachments
 
-Status: implementation  
+Status: design review and implementation  
 SolidCraft target: **0.42.0**
 
 ## Problem
 
-After change 0009, ordinary Placement no longer predicts SolidCraft-generated
-occurrence names. Attachment lowering still does.
-
-The old compiler builds names such as:
+The old attachment compiler makes SolidCraft occurrence names itself:
 
 ```python
 native_name = f"{component_name}:{index}"
 ```
 
-and uses those strings in `joint.create`, `joint.origin`,
-`joint.as_built` and sometimes `occurrence.move`.
+For example, Forge may build `Block:2` and pass that string to
+`joint.create`, `joint.origin`, `joint.as_built` or
+`occurrence.move`.
 
-Forge does not control SolidCraft's occurrence numbering. A replayable command
-document must not depend on those generated names.
+Forge does not create or control SolidCraft's `:1`, `:2`, ... numbering.
+If SolidCraft numbers the occurrences differently, Forge can address the wrong
+part.
 
-## Native SolidCraft 0.42 evidence
+Change 0010 must remove that dependency. It must not replace it with another
+method until we understand why that method is correct.
 
-The focused native probe is on
+## What SolidCraft 0.42 actually supports
+
+The native research branch is
 `qualification/0010-joint-reference-probe`.
 
-Probe run **43765272041** established:
+The tests show several different behaviours. They must not be treated as if
+they were the same API.
 
-- `joint.create` accepts a component name as the selector for that component's
-  first occurrence;
-- `joint.origin` accepts the component name for the first occurrence;
-- `joint.as_built` accepts component names for first occurrences;
-- omitting an occurrence selector can make SolidCraft infer an occurrence from
-  geometry, but this is not an explicit occurrence reference and therefore is
-  **not accepted as a Forge identity mechanism**;
-- `occurrence.move(occurrence="Block", ...)` fails with
-  `no occurrence Block`.
+### Component name
 
-The copy-inference probes remain useful evidence of SolidCraft behaviour, but
-they are not a supported Forge implementation strategy. An inference that works
-only while a pick is unique can become ambiguous after geometry, placement or
-assembly changes.
-
-## Decision
-
-### First occurrence
-
-For relationship commands that SolidCraft 0.42 explicitly supports, Forge uses
-the Forge-controlled **component name** to address the first occurrence.
-
-This is allowed for:
+For these joint commands, SolidCraft accepts a component name for that
+component's first occurrence:
 
 - `joint.create`;
 - `joint.origin`;
 - `joint.as_built`.
 
-It is **not** allowed for `occurrence.move`; the native probe proves that
-command does not resolve a component name as an occurrence.
+For example, `"Block"` can address the first occurrence of component
+`Block` in those commands.
 
-### Copied occurrence
+This does **not** mean every command accepts the component name.
+`occurrence.move(occurrence="Block", ...)` fails with:
 
-Forge has no explicit replay-safe SolidCraft 0.42 selector for a copied
-occurrence in the relationship commands covered by this change.
+```text
+no occurrence Block
+```
 
-Therefore a copied occurrence is **not supported as an attachment endpoint**.
+### Geometry pick
 
-Forge does not:
+`joint.create` also supports a different form. A side can contain a world
+point on geometry and omit `occurrence`.
 
-- omit the occurrence selector and rely on geometry inference;
-- move the copy temporarily to make a pick unique;
-- invent a generated occurrence name;
-- add runtime result binding.
+Examples include:
 
-If copied-occurrence relationship support is needed later, it requires a
-separate design change based on an explicit SolidCraft reference mechanism.
-If that mechanism is not clearly reliable, it must be discussed before
-implementation.
+```json
+{"face": [80, 0, 5]}
+```
 
-### No generated occurrence names
+and:
 
-Generated SolidCraft names such as `Block:2` may appear in native inspection
-output, but Forge does not put them into the command document.
+```json
+{
+  "point": [80, 0, 5],
+  "z": [1, 0, 0],
+  "x": [0, 0, 1]
+}
+```
 
-Human-readable joint names use Forge object names or labels such as
-`Block occurrence 2`. Those labels are display text only.
+SolidCraft's own 0.42 schema says that when `occurrence` is omitted it is
+found from the supplied point. This is therefore a real `joint.create`
+selection method, not something Forge invented.
 
-## Explicitly unsupported in this change
+The native tests show:
 
-### Relationship rotation
+- a unique face pick can select a copied occurrence;
+- a unique point/frame pick can select a copied occurrence;
+- four copies at different positions can be selected independently;
+- if two occurrences have selectable geometry at the same world point, the
+  point alone is ambiguous and SolidCraft can select the wrong occurrence.
 
-A relationship occurrence with `Placement(rotation=...)` is rejected.
+That last case is the important risk.
 
-The old implementation required `occurrence.move` with a predicted native
-name. Correct rotated attachment transforms are handled separately by the
-transform-safe attachment change.
+## Comparison with fillet
 
-### As-built copied occurrence
+Forge already uses point-based native selection for operations such as
+`solid.fillet`.
 
-`joint.as_built` takes occurrence selectors only; it has no point-based
-occurrence inference.
+A Forge edge selection is converted to a point on the required edge. SolidCraft
+uses that point to select the native edge. That is a normal CAD selection
+mechanism.
 
-An as-built relationship involving a copied occurrence is therefore rejected
-until SolidCraft provides a replay-safe selector for that copy.
+A point used by `joint.create` may be equally valid. The question is not
+"does it use a point?" The question is:
 
-A non-identity first as-built occurrence is also unsupported because
-`component.create` cannot place it before the as-built joint is recorded.
+> Does the point describe the geometry the user intends to select, and does
+> SolidCraft store a stable native joint reference after that selection?
 
-### Chained attachments
+Change 0010 must answer that before copied attachments are accepted or rejected.
 
-An attached occurrence used as the parent of another attachment is rejected in
-this change. Its world pick changes when the first joint solves, so it needs
-explicit relationship ordering/transform qualification before Forge can claim
-it is replay-safe.
+## Temporary placement before creating a joint
+
+One experiment moves a copied component a small distance away before
+`joint.create` runs. Forge then gives SolidCraft a geometry point that belongs
+only to that copy. After `joint.create`, the joint solver moves the component
+to its required attached position.
+
+Do not call this only a "staging offset". The actual behaviour is:
+
+> Forge first places the copied component a small distance away so SolidCraft
+> can select that copy by its geometry. Forge then creates the joint.
+
+This may match normal interactive CAD use: a loose part is positioned where it
+can be selected, the user selects geometry on both parts, and the joint then
+places the part.
+
+It may also be an unnecessary workaround. We need native evidence before making
+that decision.
+
+## Questions that must be answered
+
+Before copied attachments are considered supported, test and document:
+
+1. Does `joint.create` store the selected occurrence and topology in the
+   saved model, or does it keep depending on the original world point?
+2. Does the joint still refer to the same occurrence after save and reopen?
+3. Does the selected face/edge remain attached after model parameter changes?
+4. Does a copied part remain the selected part after other copies are added or
+   reordered?
+5. When a point is ambiguous, does SolidCraft report that clearly or silently
+   choose one occurrence?
+6. Is temporarily placing a loose component before creating the joint
+   equivalent to the normal SolidCraft UI workflow?
+7. Which cases need an explicit occurrence/path instead of a point pick?
+
+## Current implementation state
+
+The `Component:N` construction has been removed from the current 0010 branch.
+
+While the questions above are being checked, copied occurrences are temporarily
+rejected as attachment endpoints. That is a conservative implementation state,
+not yet the final design decision.
+
+First occurrences still use the component name only in the joint commands where
+SolidCraft 0.42 has been tested to support it.
+
+## Rules that are already final
+
+Whatever decision is made about geometry picks:
+
+- Forge must not generate `Component:1`, `Component:2`, ... to address an
+  occurrence;
+- one SolidCraft command accepting a component name does not prove another
+  command accepts it;
+- a geometry pick is acceptable only when it is the intended SolidCraft
+  selection mechanism for that operation;
+- ambiguity must be tested, not assumed away;
+- unsupported cases must fail clearly instead of silently selecting another
+  occurrence.
 
 ## Qualification
 
-Required command tests:
+The final 0010 tests must at least prove:
 
-- no generated `Component:N` selector appears in an attachment plan;
-- first occurrences use component names;
-- copied occurrences used as attachment endpoints are rejected;
-- same-definition parent/child attachment is rejected when one side would be a
-  copy;
-- repeated copied brackets that require attachment relationships are rejected
-  rather than inferred from geometry;
-- rotated relationship Placement is rejected;
-- copied as-built attachment is rejected;
-- symbolic absolute Placement on a relationship target is rejected.
-
-Required native tests:
-
-- reusable two-block attachment;
-- standard corner and XZ anchors;
-- parametric attachment gap/offset cases;
-- four/eight repeated corner components;
-- saved-design mutations for relationships that claim associativity.
-
-The native result, not the temporary seed position, determines whether the
-relationship is qualified.
+- generated Forge commands contain no guessed `Component:N` occurrence
+  selectors;
+- first-occurrence component-name selection works in each command where Forge
+  uses it;
+- copied-occurrence selection, if kept, survives save/reopen;
+- copied-occurrence selection, if kept, survives relevant parameter changes;
+- ambiguous geometry-pick cases are either prevented or rejected clearly;
+- rotated, chained and as-built cases are only enabled when their own SolidCraft
+  reference method has been proved.
