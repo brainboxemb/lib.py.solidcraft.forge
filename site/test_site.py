@@ -467,13 +467,28 @@ def check(
     assert not (site / "models").exists()
     assert not (site / "previews").exists()
     assert not list(site.rglob("native.png"))
-    native_case_slugs = {case["slug"] for case in QUALIFICATION_CASES}
+    qualification_by_slug = {
+        case["slug"]: case for case in QUALIFICATION_CASES
+    }
+    native_case_slugs = {
+        case["slug"] for case in QUALIFICATION_CASES
+        if not case.get("blocked_reason")
+    }
     for slug, info in manifest["examples"].items():
         page = (site / "examples" / slug / "index.html").read_text(encoding="utf-8")
         src = (site / info["source"]).read_text(encoding="utf-8")
         commands = json.loads((site / info["commands"]).read_text(encoding="utf-8"))["commands"]
         assert src.strip()
-        assert len(commands) == info["command_count"] > 0
+        blocked_reason = qualification_by_slug.get(slug, {}).get("blocked_reason")
+        if blocked_reason:
+            assert info["command_count"] == 0, slug
+            command_record = json.loads(
+                (site / info["commands"]).read_text(encoding="utf-8")
+            )
+            assert command_record.get("blocked_reason") == blocked_reason, slug
+            assert info.get("blocked_reason") == blocked_reason, slug
+        else:
+            assert len(commands) == info["command_count"] > 0
         image = site / info["preview"]
         assert image.is_file() and image.stat().st_size > 0
         assert info["preview_kind"] in ("native-snapshot", "schematic")
