@@ -1299,8 +1299,17 @@ def _slot_point(name, value):
 
 
 def _slot_width(width):
-    if _pv(width) <= 0:
-        raise ValueError("slot width must be positive")
+    # SolidCraft 0.42's direct sketch.slot.* creators require a JSON number.
+    # Parametric Slot dimensions belong to sketch.draw.dimensioned, which is
+    # a separate native authoring contract.
+    if isinstance(width, bool) or not isinstance(width, (int, float)):
+        raise TypeError(
+            "native Slot width must be a fixed numeric value; "
+            "parametric Slot dimensions require the separate "
+            "sketch.draw.dimensioned capability"
+        )
+    if not isfinite(width) or width <= 0:
+        raise ValueError("slot width must be a positive finite number")
     return width
 
 
