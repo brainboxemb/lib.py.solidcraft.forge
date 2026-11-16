@@ -24,6 +24,35 @@ class RectangularPatternQualificationTests(unittest.TestCase):
         self.assertEqual(params["count2"], "rows")
         self.assertEqual(params["spacing2"], "row_pitch")
 
+    def test_one_direction_form_omits_second_direction_fields(self):
+        commands = run_script(MODEL)["commands"]
+        # Reuse the compiled source feature but construct a focused one-row
+        # command contract through the public API in the unit-level test.
+        from scpf import Anchor, Axis, Box, Sketch, SlotCenterToCenter2D
+        from scpf.compiler import compile_model
+
+        plate = Box(80, 40, 4, anchor=Anchor.BOTTOM)
+        with Sketch(name="Slot", on=plate) as slot:
+            SlotCenterToCenter2D((-5, 0), (5, 0), 6)
+        source = slot.extrude(-4)
+        plate = plate - source
+        patterned = plate.rectangular_pattern(
+            source,
+            count=3,
+            spacing=20,
+            direction=Axis.X,
+        )
+        pattern = next(
+            command for command in compile_model(patterned, "Plate")["commands"]
+            if command["command"] == "solid.pattern.rectangular"
+        )
+        self.assertEqual(pattern["params"]["features"], ["Slot"])
+        self.assertEqual(pattern["params"]["count1"], 3)
+        self.assertEqual(pattern["params"]["spacing1"], 20)
+        self.assertNotIn("dir2", pattern["params"])
+        self.assertNotIn("count2", pattern["params"])
+        self.assertNotIn("spacing2", pattern["params"])
+
     def test_count_parameters_are_dimensionless(self):
         commands = run_script(MODEL)["commands"]
         params = {
