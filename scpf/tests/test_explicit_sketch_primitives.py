@@ -141,7 +141,8 @@ class NativePrimitiveTests(unittest.TestCase):
                 sketch.add(
                     Polygon2D(
                         [(0, 0), (20, 0), (20, 10), (0, 10)]
-                    )
+                    ),
+                    anchor=CENTER,
                 )
 
     def test_circle_in_with_sketch_negative_extrusion(self):
