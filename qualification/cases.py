@@ -146,7 +146,7 @@ QUALIFICATION_CASES = [
         "references": [
             ("SolidCraft", "One component definition may be placed more than once; this case qualifies that basic component/occurrence structure without introducing a joint."),
         ],
-    }
+    },
     {
         "slug": "assembly-decorator",
         "group": "components",
@@ -301,7 +301,7 @@ QUALIFICATION_CASES = [
             ("SolidCraft", "The missing backend capability is replay-safe parametric occurrence Placement, not a joint between the frame and each profile."),
             ("BOSL2", "The neutral angle profile is reused while the assembly owns position and orientation."),
         ],
-    }
+    },
     {
         "slug": "eight-corner-brackets",
         "blocked_reason": "The model uses ordinary parameter-driven Placement, not attachments. The current replay-first Placement backend cannot place the first LProfile occurrence away from identity and cannot yet encode symbolic/rotated copied Placement without a later occurrence selector.",
@@ -318,7 +318,7 @@ QUALIFICATION_CASES = [
             ("SolidCraft", "The missing backend capability is replay-safe parametric occurrence Placement, not eight frame/profile joints."),
             ("BOSL2", "One neutral component is repeated by assembly-owned placement."),
         ],
-    }
+    },
     {
         "slug": "eight-flightcase-corners",
         "blocked_reason": "The model uses ordinary parameter-driven Placement, not attachments. The current replay-first Placement backend cannot place the first FlightcaseCorner occurrence away from identity and cannot yet encode symbolic/rotated copied Placement without a later occurrence selector.",
@@ -335,7 +335,7 @@ QUALIFICATION_CASES = [
             ("SolidCraft", "The missing backend capability is replay-safe parametric occurrence Placement, not a joint between the case and each protector."),
             ("BOSL2", "One neutral trihedral part is reused in eight assembly-owned poses."),
         ],
-    }
+    },
     {
         "slug": "xz-anchor",
         "q5_required": True,
