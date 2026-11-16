@@ -1,9 +1,13 @@
-# Change 0022 — Native Box anchor selection
+# Change 0022 — Consistent origins for standard primitives
 
 **Status:** design and implementation  
 **SolidCraft target:** 0.42.0
 
 ## Problem
+
+Change 0022 covers **all standard dimension-defined primitives**, not only
+Box. The placement rule must be consistent between the direct native route,
+CSG booleans, and feature addition/subtraction.
 
 Forge gave one `Box()` two different native meanings.
 
@@ -26,6 +30,30 @@ either `center=[x,y,z]` or `corner=[x,y,z]`.
 
 ## Public API
 
+The default for a dimension-defined solid is the geometric center, following
+the useful pyBOSL2 modelling convention. PythonSCAD generally needs an explicit
+`center=True` for centered cube/cylinder equivalents. Reference syntax and
+version pins are cached locally in `docs/agent/reference-libraries.md`; do not
+revisit upstream projects for every qualification.
+
+| Shape | Normal origin | Deliberate alternative |
+| --- | --- | --- |
+| `Box` | XYZ center | `anchor=BOTTOM`, edge/corner anchors |
+| `Cylinder` | center of its axis and circular sections | `anchor=BOTTOM` for Z axis, `anchor=LEFT` for X axis |
+| `Sphere` | sphere center | a cardinal tangent-point anchor if exposed |
+| `Rectangle2D`, `RoundedRectangle2D` | profile center | explicit sketch anchor |
+| `Circle2D` | circle center | explicit sketch placement |
+| `Polygon2D`, `Text2D` | authored coordinates/insertion point | explicit placement, no forced recentering |
+
+For an oriented cylinder, cardinal anchors refer to world X/Y/Z dimensions
+after orientation. This avoids using BOTTOM to mean the axial end of an X-axis
+cylinder.
+
+**Rollout:** apply each primitive's new origin consistently, migrate existing
+scripts/examples/qualification expectations that relied on the old origin, and
+then qualify native and CSG equivalents. No compatibility shim is required in
+this unstable release.
+
 `Box` uses the existing anchor vocabulary:
 
 ```python
@@ -47,6 +75,14 @@ Box(80, 50, 10, anchor=FRONT + LEFT + BOTTOM)  # corner at origin
 Forge is still in unstable-release development. Change 0022 deliberately picks
 one clear default instead of preserving the previous accidental bottom-centred
 behaviour.
+
+## Other primitive lowering
+
+A default Z-axis cylinder of diameter `d` and height `h` is centered at the
+origin, so the native cylinder `base` is at `[0, 0, -h / 2]`. An explicit
+`anchor=BOTTOM` sets the base to `[0, 0, 0]`. For a sphere the native
+`center=[0,0,0]` is already correct. The same parameter-aware calculation
+must be reused for boolean operands.
 
 ## Native lowering
 
@@ -92,6 +128,12 @@ translation is added.
 
 ## Qualification
 
+The box qualification already covers the initial correction. Extend tests
+and the migration to Cylinder and Sphere in native/CSG, including all supported
+axes, anchors and placements. Check 2D profile defaults explicitly. A native
+parameter mutation must keep the declared center/anchor rather than a stale
+numeric offset.
+
 Change 0022 proves:
 
 - ordinary `Box()` emits native `center=[0,0,0]`;
@@ -108,5 +150,5 @@ Change 0022 proves:
 
 ## Exit condition
 
-> One Box anchor has one meaning in every compiler path, and ordinary
-> `Box(...)` means a native Box centred on its model origin.
+> Every standard primitive has one origin convention in every compiler path, and ordinary
+> `Box(...)` and `Cylinder(...)` are centered on the model origin.
