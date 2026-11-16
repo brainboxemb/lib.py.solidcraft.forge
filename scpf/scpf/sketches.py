@@ -185,9 +185,10 @@ def compile_base(shape, name):
 
     if shape.kind == "tapered_box":
         # A straight front mask and a long, smoothly tapered rear housing.
-        # The two section sketches are left in the native model history.
+        # from_z is always measured from the Box bottom face, while the Box
+        # anchor decides where that bottom face lies in model coordinates.
         original, start, inset = shape.data
-        width, height, depth, _origin = original.data
+        width, height, depth, box_anchor = original.data
         _require_positive(width, "taper width")
         _require_positive(height, "taper height")
         _require_positive(depth, "taper depth")
@@ -196,8 +197,17 @@ def compile_base(shape, name):
         if not 0 < 2 * pv(inset) < min(pv(width), pv(height)):
             raise ModelError("taper inset is too large")
 
-        x0, x1 = _half(width, True), _half(width)
-        y0, y1 = _half(height, True), _half(height)
+        x0, y0, z0 = _box_corner_from_anchor(
+            width,
+            height,
+            depth,
+            (0, 0, 0),
+            box_anchor,
+        )
+        x1 = _combine_dimension(x0, width)
+        y1 = _combine_dimension(y0, height)
+        z_start = _combine_dimension(z0, start)
+        z_end = _combine_dimension(z0, depth)
 
         def shifted(edge, inward):
             offset = command_value(inset)
@@ -217,7 +227,7 @@ def compile_base(shape, name):
 
         def sketch_rectangle(sketch_name, offset, a, b):
             plane = dict(plane="XY", name=sketch_name)
-            if offset is not None:
+            if offset != 0:
                 plane["offset"] = command_value(offset)
             return [
                 _command("sketch.create", **plane),
@@ -225,15 +235,15 @@ def compile_base(shape, name):
                 _command("sketch.finish"),
             ]
 
-        steps = sketch_rectangle(front, None, [x0, y0], [x1, y1])
+        steps = sketch_rectangle(front, z0, [x0, y0], [x1, y1])
         steps.append(_command(
             "solid.extrude", distance=command_value(start), body_name=name,
         ))
         steps.extend(sketch_rectangle(
-            rear_start, start, [x0, y0], [x1, y1],
+            rear_start, z_start, [x0, y0], [x1, y1],
         ))
         steps.extend(sketch_rectangle(
-            rear_end, depth,
+            rear_end, z_end,
             [shifted(x0, True), shifted(y0, True)],
             [shifted(x1, False), shifted(y1, False)],
         ))
@@ -245,7 +255,7 @@ def compile_base(shape, name):
         return steps, {
             "profile": "rectangle", "width": width, "depth": height,
             "thickness": depth,
-            "origin": (-half(pv(width)), -half(pv(height)), 0),
+            "origin": (x0, y0, z0),
         }
 
     raise ModelError(f"Expected a Box or explicit Sketch extrusion, got {shape.kind}")
