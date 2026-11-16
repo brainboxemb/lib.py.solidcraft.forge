@@ -2636,16 +2636,16 @@ class AssemblyTests(unittest.TestCase):
             joint["a"],
             {
                 "occurrence": "$base",
-                "edge": [20.0, -15.0, 0.0],
-                "on": [0.0, -15.0, 0.0],
-                "corner": [20.0, -15.0, 10.0],
+                "edge": [20.0, -15.0, 10.0],
+                "on": [0.0, -15.0, 10.0],
+                "corner": [20.0, -15.0, 20.0],
             },
         )
         self.assertEqual(
             joint["b"],
             {
                 "occurrence": "$marker",
-                "point": [5.0, 5.0, 5.0],
+                "point": [5.0, 5.0, 10.0],
                 "z": [0.0, 1.0, 0.0],
                 "x": [-1.0, 0.0, 0.0],
             },
