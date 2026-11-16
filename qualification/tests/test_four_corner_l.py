@@ -40,6 +40,7 @@ class FourCornerLCommandTests(unittest.TestCase):
             for command in commands
         ))
 
+@unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
 class FourCornerLNativeTests(unittest.TestCase):
     def test_native_bounding_boxes_match_four_centered_vertical_profiles(self):
         data = _load(
