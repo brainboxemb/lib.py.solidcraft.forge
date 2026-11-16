@@ -68,8 +68,8 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | shape-relative alignment | `shape.at(target)` | Align the supported child CENTER to the target CENTER. Explicit anchor forms may extend this contract where documented. It does not select a support face. |
 | feature on a surface | `feature.on(target, face=Faces.TOP)` | Put a within-component feature on a selected target surface. |
 | explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch supported by the selected target face. The local 2D sketch origin is the centre of that target face. |
-| profile inside a sketch | `sketch.add(profile, anchor=CENTER)` | Place the profile's selected 2D anchor on the sketch origin. CENTER is the default semantic centring operation; numeric offset is not a centring substitute. |
-| deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. Use only when the design actually calls for an offset. |
+| profile inside a sketch | `sketch.add(profile, anchor=None)` | Use the profile's natural placement default. Dimension-defined Circle2D/Rectangle2D/RoundedRectangle2D resolve the omitted anchor to CENTER; coordinate-defined Text2D/Polygon2D keep their own coordinates. |
+| deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. For dimension-defined profiles this shifts the centred profile; for Text2D it sets the native insertion-point displacement. |
 | occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Placement itself does not create a joint. Forge replay variables bind the real SolidCraft occurrence ids when a later native move is needed. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
@@ -123,22 +123,29 @@ For `Sketch(on=target, parent=Anchor.TOP)`:
 - the target and face choose the support plane;
 - the sketch's local `(0, 0)` is at the centre of that target face;
 - profile placement is relative to that local sketch coordinate system;
-- `anchor=CENTER` means centre the profile on the sketch origin;
+- `anchor=None` means use the profile type's defined default;
+- for Circle2D, Rectangle2D and RoundedRectangle2D that default is CENTER;
+- explicit `anchor=CENTER` centres a dimension-defined profile on the sketch origin;
 - a numeric `offset=(u, v)` is reserved for a real design displacement.
 
 Therefore code such as `offset=(-width/2, -depth/2)` used only to emulate
-centering is a smell. Circle2D, Rectangle2D and RoundedRectangle2D now use
-`CENTER` by default; `offset=(u, v)` is applied afterwards as a real local
+centering is a smell. Circle2D, Rectangle2D and RoundedRectangle2D use CENTER
+when anchor is omitted; `offset=(u, v)` is applied afterwards as a real local
 design displacement.
 
 Polygon2D is different because its vertex coordinates already define its
 sketch-local placement. Text2D likewise uses SolidCraft's text insertion point.
-Forge preserves those authored coordinates rather than inventing a profile
-centre. Explicit `anchor=CENTER` is therefore not supported for Polygon2D or
-Text2D yet.
+For these coordinate-defined profiles an omitted anchor remains `None`, so
+Forge does not invent a profile centre. Text2D may still use
+`Sketch.add(..., offset=(u, v))` to set its native insertion-point
+displacement. Explicit `anchor=CENTER` is not supported for Polygon2D or
+Text2D yet. Polygon2D keeps its existing offset/lowering limits.
 
-This contract is implemented by
-[change 0018](changes/0018-sketch-profile-centering.md).
+Semantic profile centering was introduced by
+[change 0018](changes/0018-sketch-profile-centering.md). The profile-specific
+omitted-anchor rule that preserves coordinate-defined Text2D placement is
+recorded in
+[change 0020](changes/0020-coordinate-profile-default-anchor.md).
 
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
