@@ -202,7 +202,7 @@ class SCPFExamples(unittest.TestCase):
         self.assertEqual(sketches, ["Base", "Holes"])
         circles = [c["params"] for c in commands
                    if c["command"] == "sketch.circle.center"]
-        self.assertEqual([c["center"] for c in circles], [[50, 10], [50, 50]])
+        self.assertEqual([c["center"] for c in circles], [[0, -20], [0, 20]])
         self.assertTrue(all(c["diameter"] == 8 for c in circles))
         self.assertFalse(any(c["command"] == "solid.hole" for c in commands))
         self.assertEqual(commands[-1]["command"], "solid.extrude")
