@@ -6,7 +6,7 @@ actual BRep booleans, sketches, fillets and geometric verification.
 from math import isfinite
 
 from .core import (
-    Shape, Parameter, number_text, parameters_in, pv, _plain_command_value,
+    Shape, Parameter, number_text, parameters_in, _pv as pv, _plain_command_value,
 )
 
 
