@@ -141,7 +141,7 @@ QUALIFICATION_CASES = [
         "intent": "Verify reuse of one component definition while a child occurrence is placed relative to a meaningful face of the parent.",
         "forge_api": "copy()/reusable model semantics; attach(parent=Anchor.RIGHT, child=Anchor.LEFT)",
         "forge_model": "Two ModelInstance occurrences sharing one ModelDefinition; the second carries an Attachment to the first.",
-        "lowering": "One component definition, one copied occurrence and joint.create(type='rigid') using the RIGHT and LEFT native references.",
+        "lowering": "Blocked before joint.create. SolidCraft 0.42 returns the copied occurrence id from occurrence.copy, but a static Forge command document cannot reuse that runtime id and Forge does not guess Block:2.",
         "native_expectation": "Two identical blocks touch face-to-face and retain one shared editable component definition.",
         "mutation": "No mutation in this base case; parametric joint distance and moving anchor geometry are isolated below.",
         "references": [
@@ -295,7 +295,7 @@ QUALIFICATION_CASES = [
         "intent": "Place one short vertical angle profile around each of the four rounded side corners of a rectangular frame. The profile is centred in height and wraps the two adjacent side faces instead of lying flat on a front/rear face.",
         "forge_api": "LProfile + one assembly-local XY AnchorFrame; planar X/Y offsets select the four side corners, gap selects height, and angle=0/90/180/270 clocks the same neutral profile.",
         "forge_model": "One rounded parametric FrameBlock plus four occurrences of one vertical LProfile definition. The child is a true XY angle section extruded in Z; the assembly owns only corner position, height and clocking.",
-        "lowering": "Four planar joint.create commands share one parent XY frame at Z=0. Symbolic X/Y offsets use frame_width/frame_depth and a symbolic normal offset centres the fixed-height profile vertically. Placement does not depend on a sharp corner edge, so the frame may keep its vertical fillets.",
+        "lowering": "Blocked before the four joint.create commands. The first LProfile can be addressed by component name, but the three later LProfile occurrences need native occurrence ids that occurrence.copy only returns at runtime.",
         "native_expectation": "One vertical angle profile wraps each front-left, front-right, rear-right and rear-left rounded side corner. All four occupy Z=22..38 on the 60 mm frame.",
         "mutation": "Change frame_width/depth from 120x80 to 160x120 mm in the saved .sc design; all four profiles follow the moved side corners while remaining centred at the same frame height.",
         "references": [
@@ -312,7 +312,7 @@ QUALIFICATION_CASES = [
         "intent": "Extend the four-profile baseline by placing two short vertical angle profiles on each rounded side corner: one at the bottom and one at the top.",
         "forge_api": "the same neutral LProfile and central XY AnchorFrame as the 4-profile case; every X/Y corner offset is emitted twice with different Z gaps.",
         "forge_model": "One rounded parametric FrameBlock plus eight occurrences of one LProfile definition, organised as four vertical side corners with a bottom/top pair on each.",
-        "lowering": "Eight planar joint.create commands reuse the same four X/Y offsets and clocking angles. The lower member uses Z=0; the upper member uses frame_height-PROFILE_HEIGHT so the fixed 16 mm profile remains flush with the top after native height mutation.",
+        "lowering": "Blocked before the eight joint.create commands. Seven LProfile copies would need explicit native occurrence ids; Forge cannot put those runtime ids into its static command document.",
         "native_expectation": "Each rounded vertical side corner carries exactly two outside angle profiles. On the 60 mm frame they occupy Z=0..16 and Z=44..60.",
         "mutation": "Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow X/Y growth and each upper member moves to Z=74..90 while the lower member remains at the bottom.",
         "references": [
@@ -329,7 +329,7 @@ QUALIFICATION_CASES = [
         "intent": "Qualify a genuinely three-dimensional corner component: one smaller trihedral protector reused on all eight corners of the same rounded reference case used by the 4/8 profile progression.",
         "forge_api": "FlightcaseCorner + one assembly-local XY AnchorFrame; symbolic X/Y offsets and Z gap place eight occurrences, while explicit child AnchorFrames provide the eight 3D orientations.",
         "forge_model": "One rounded CaseBlock plus eight occurrences of one neutral trihedral protector. The protector is built from three fixed 20 mm plates with 4 mm thickness and deliberately does not derive its size from the case.",
-        "lowering": "Eight planar joint.create relationships use one parent XY frame instead of sharp topology corners. Bottom occurrences use z=0; top occurrences use case_height. Child frame z/x directions rotate the same trihedral component onto the correct three outside faces.",
+        "lowering": "Blocked before the eight joint.create commands. Seven FlightcaseCorner copies would need explicit native occurrence ids; Forge does not replace them with guessed names or point-only occurrence lookup.",
         "native_expectation": "Each of the eight case corners is wrapped by three connected plates: one horizontal and two vertical. The protector outer envelope is a fixed 24x24x24 mm at every corner.",
         "mutation": "Change case_width/depth/height from 120x80x60 to 160x120x90 mm; all protectors follow the moved corners without rerunning Python, while every protector remains exactly 24x24x24 mm.",
         "references": [
@@ -346,7 +346,7 @@ QUALIFICATION_CASES = [
         "intent": "Verify standard corner anchors on geometry authored as an XZ polygon and extruded in Y.",
         "forge_api": "with Sketch(plane='XZ'): Polygon2D(..., plane='XZ', world=True); sketch.extrude(...); standard corner Anchors",
         "forge_model": "Forge recovers rectangular bounds/topology from the XZ profile while preserving symbolic width and height.",
-        "lowering": "Corner attachments lower to native topology references on the extruded board; no special HUB75-specific placement logic is involved.",
+        "lowering": "Blocked before both corner attachments can be generated. The second Marker is a copied occurrence and SolidCraft 0.42 provides no replay-first explicit reference for that copy.",
         "native_expectation": "Left and right markers attach to their respective front-top corners with mirrored spatial results.",
         "mutation": "Change board width/height from 40x20 to 80x40 mm; both markers follow their own corners.",
         "references": [
