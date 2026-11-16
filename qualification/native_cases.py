@@ -15,11 +15,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 MUTATIONS = {
-    "centered-box": {
-        "command": "qualification/commands/centered-box/change-size.json",
+    "simple-box": {
+        "command": "qualification/commands/simple-box/change-size.json",
         "save": "model-size-60x40x20.sc",
         "measurements": "measurements-size-60x40x20.json",
-        "label": "centered box 40x30x10 -> 60x40x20 mm",
+        "label": "box 40x30x10 -> 60x40x20 mm while centre stays fixed",
     },
     "parameter-scope": {
         "command": "qualification/commands/parameter-scope/change-shared-width.json",
