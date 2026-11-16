@@ -28,9 +28,9 @@ class GroupHierarchyCommandTests(unittest.TestCase):
             ["PanelGroup", "Panel", "Frame"],
         )
         self.assertEqual(created[0]["activate"], False)
-        self.assertTrue(created[0]["grounded"])
+        self.assertFalse(created[0]["grounded"])
         self.assertEqual(created[1]["parent"], "PanelGroup")
-        self.assertFalse(created[1]["grounded"])
+        self.assertTrue(created[1]["grounded"])
         self.assertNotIn("parent", created[2])
 
         copies = [
