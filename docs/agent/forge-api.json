@@ -182,10 +182,10 @@
     },
     "Sketch.add": {
       "kind": "callable",
-      "summary": "Add a supported 2D profile to this Sketch.",
+      "summary": "Add and place a supported 2D profile in this Sketch.",
       "reference": "reference/Sketch.add/",
       "guide": "guide/geometry/#profiles",
-      "signature": "Sketch.add(self, profile, *, offset=(0, 0))"
+      "signature": "Sketch.add(self, profile, *, anchor=<Anchor.CENTER: 'center'>, offset=(0, 0))"
     },
     "Sketch.extrude": {
       "kind": "callable",
@@ -449,6 +449,12 @@
       "reference": "reference/parameters-positioning/#Placement",
       "guide": "guide/model-objects/#parameter-intent",
       "signature": "Placement(x: object = 0, y: object = 0, z: object = 0, rotation: tuple[object, object] | None = None) -> None"
+    },
+    "CENTER": {
+      "kind": "alias",
+      "target": "Anchor.CENTER",
+      "reference": "reference/Anchor/",
+      "guide": "guide/assembly-basics/#anchor-choice"
     }
   }
 }
