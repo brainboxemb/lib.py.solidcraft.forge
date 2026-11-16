@@ -10,7 +10,7 @@ from .core import (
     _plain_command_value,
     command_value,
     parameters_in,
-    pv,
+    _pv as pv,
 )
 from .model_objects import (
     Assembly,
