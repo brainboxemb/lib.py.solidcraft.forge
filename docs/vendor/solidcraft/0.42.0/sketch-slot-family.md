@@ -22,9 +22,12 @@ Relevant input contracts:
 - arc-center: arc `center`, centre-arc `start`, `width`, and exactly one
   of `end` or `sweep` (degrees, 0 < sweep < 360).
 
-SolidCraft's dimension roles are length/width for the three straight variants,
+The direct Slot creator schemas require numeric point coordinates and a numeric
+`width`; `SlotWidth` is explicitly a JSON number. SolidCraft's separate
+`sketch.draw.dimensioned` command can attach semantic dimensions after/during
+creation. Its dimension roles are length/width for the three straight variants,
 radius/sweep/width for the center arc variant, and width for the three-point arc
-variant.
+variant. Forge change 0027 qualifies the direct creator family only.
 
 These are native Slot creators. `sketch.rectangle.rounded` is a different
 command and is not a Slot substitute for qualification.
