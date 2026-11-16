@@ -4,15 +4,23 @@
       "command": "assembly.bom",
       "params": {
         "levels": "top",
-        "group_by": ["definition"]
+        "group_by": [
+          "definition"
+        ]
       }
     },
     {
       "command": "assembly.bom",
       "params": {
         "levels": "flat",
-        "group_by": ["definition"]
+        "group_by": [
+          "definition"
+        ]
       }
+    },
+    {
+      "command": "component.list",
+      "params": {}
     }
   ]
 }
