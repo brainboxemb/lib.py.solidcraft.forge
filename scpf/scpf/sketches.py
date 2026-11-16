@@ -10,6 +10,7 @@ from .core import (
     _NativeExpression,
     _native_expression,
     _native_dependencies,
+    _box_corner_from_anchor,
     command_value,
     half,
     _pv as pv,
@@ -39,16 +40,33 @@ def compile_base(shape, name):
     """Create a native editable base body, regardless of example/model name."""
     if shape.kind in ("box", "placed_box"):
         if shape.kind == "box":
-            length, width, height = shape.data
-            origin = (-half(length), -half(width), 0)
-            command_corner = (
-                _half(length, True),
-                _half(width, True),
-                0,
+            length, width, height, box_origin = shape.data
+            origin = _box_corner_from_anchor(
+                length,
+                width,
+                height,
+                (0, 0, 0),
+                box_origin,
+            )
+            selector = box_origin.vector
+            placement = (
+                {"center": [0, 0, 0]}
+                if selector == (0, 0, 0)
+                else {
+                    "corner": [
+                        command_value(value)
+                        for value in origin
+                    ]
+                }
             )
         else:
             (length, width), origin, height = _base_rectangle(shape)
-            command_corner = tuple(command_value(value) for value in origin)
+            placement = {
+                "corner": [
+                    command_value(value)
+                    for value in origin
+                ]
+            }
 
         _require_positive(length, "box length")
         _require_positive(width, "box width")
@@ -60,7 +78,7 @@ def compile_base(shape, name):
                 length=command_value(length),
                 width=command_value(width),
                 height=command_value(height),
-                corner=list(command_corner),
+                **placement,
                 body_name=name,
             ),
         ]
@@ -161,7 +179,7 @@ def compile_base(shape, name):
         # A straight front mask and a long, smoothly tapered rear housing.
         # The two section sketches are left in the native model history.
         original, start, inset = shape.data
-        width, height, depth = original.data
+        width, height, depth, _origin = original.data
         _require_positive(width, "taper width")
         _require_positive(height, "taper height")
         _require_positive(depth, "taper depth")
