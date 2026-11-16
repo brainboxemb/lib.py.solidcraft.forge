@@ -511,7 +511,11 @@ def check(
             assert f"Native SolidCraft {TESTED_SOLIDCRAFT_VERSION} render" in page
         else:
             assert image.suffix == ".svg"
-            assert "Schematic illustration only" in page
+            if blocked_reason:
+                assert "BLOCKED" in page
+                assert blocked_reason in page
+            else:
+                assert "Schematic illustration only" in page
         assert "commands.json" in page and "model.py" in page
     print(f"OK: {len(EXAMPLES)} compiled library examples, cheatsheet, no CAD duplicates")
 
