@@ -27,3 +27,4 @@ Current records:
 - [0008-stable-forge-occurrence-id.md](0008-stable-forge-occurrence-id.md) — stop using Python object ids to track Forge occurrences; copy gets a new id while group/attach keep the existing one.
 - [0009-replay-first-placement.md](0009-replay-first-placement.md) — keep ordinary Placement replay-first: identity first occurrence, numeric unrotated copies, and reject cases that would need guessed occurrence names.
 - [0010-replay-safe-attachments.md](0010-replay-safe-attachments.md) — remove guessed occurrence names from attachment commands; use the component name only where SolidCraft 0.42 supports it and reject copied attachment endpoints that need an unavailable native occurrence reference.
+- [0011-grouping-is-hierarchy-only.md](0011-grouping-is-hierarchy-only.md) — make `.group()` change browser hierarchy only; groups stay ungrounded and `occurrence.copy(parent=...)` keeps one reusable definition across different groups.

@@ -10,6 +10,15 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Changed
 
+- `.group(...)` now changes SolidCraft hierarchy only. Forge creates group
+  components with `grounded=false`; grouping a physical root occurrence no
+  longer moves the grounding decision onto the empty group.
+- Ordinary copies of one reusable definition may now be placed under different
+  groups by using SolidCraft 0.42 `occurrence.copy(parent=...)` instead of
+  duplicating geometry or guessing occurrence names.
+- `Assembly.group()` now remaps direct attachment targets to the grouped
+  occurrence objects, not only to matching Forge occurrence ids.
+
 - Attachment command generation no longer predicts SolidCraft occurrence names
   such as `Block:2`. First occurrences use component-name selectors only in
   joint commands where SolidCraft 0.42 has been tested to accept them.

@@ -153,7 +153,7 @@ class AssemblyTests(unittest.TestCase):
         )
         grouped = (parent + child).group("Pair")
 
-        self.assertIsNot(
+        self.assertIs(
             grouped.instances[1].attachment.target,
             grouped.instances[0],
         )
@@ -352,15 +352,15 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual([c["name"] for c in created],
                          ["HUB75Panels", "Panel", "Frame"])
         self.assertEqual(created[0]["activate"], False)
-        self.assertTrue(created[0]["grounded"])
+        self.assertFalse(created[0]["grounded"])
         self.assertEqual(created[1]["parent"], "HUB75Panels")
-        self.assertFalse(created[1]["grounded"])
+        self.assertTrue(created[1]["grounded"])
         self.assertNotIn("parent", created[2])
         copies = [c for c in commands if c["command"] == "occurrence.copy"]
         self.assertEqual(len(copies), 1)
         self.assertEqual(copies[0]["params"]["component"], "Panel")
 
-    def test_each_named_group_is_grounded_as_a_fixed_parent_frame(self):
+    def test_named_groups_are_not_grounded_and_physical_root_stays_grounded(self):
         from scpf import Box, component
         from scpf.assembly import compile_assembly
 
@@ -378,29 +378,79 @@ class AssemblyTests(unittest.TestCase):
         right = RightPart().group("RightGroup")
         commands = compile_assembly(left + right, "Grouped")["commands"]
 
-        groups = [
-            command["params"]
+        created = {
+            command["params"]["name"]: command["params"]
             for command in commands
             if command["command"] == "component.create"
-            and command["params"]["name"] in {"LeftGroup", "RightGroup"}
-        ]
-        self.assertEqual(
-            [(group["name"], group["grounded"]) for group in groups],
-            [("LeftGroup", True), ("RightGroup", True)],
-        )
+        }
+        self.assertFalse(created["LeftGroup"]["grounded"])
+        self.assertFalse(created["RightGroup"]["grounded"])
+        self.assertTrue(created["LeftPart"]["grounded"])
+        self.assertFalse(created["RightPart"]["grounded"])
 
-    def test_group_name_conflicts_and_multi_parent_definitions_rejected(self):
+    def test_group_name_conflicts_and_reusable_definition_can_span_groups(self):
         from scpf.core import Box
-        from scpf.model_objects import ModelDefinition, ModelInstance
+        from scpf.model_objects import ModelDefinition, ModelInstance, Placement
         from scpf.assembly import compile_assembly
         from scpf.compiler import ModelError
+
         panel = ModelInstance(ModelDefinition("Panel", (), Box(10, 2, 20)))
         with self.assertRaisesRegex(ValueError, "non-empty"):
             panel.group("")
         with self.assertRaisesRegex(ValueError, "multiple groups"):
             panel.group("One").group("Two")
-        with self.assertRaisesRegex(ModelError, "multiple assembly parents"):
-            compile_assembly(panel.group("A") + panel.copy(), "Display")
+
+        assembly = (
+            panel.group("A")
+            + panel.copy(placement=Placement(x=30)).group("B")
+        )
+        commands = compile_assembly(assembly, "Display")["commands"]
+        panel_creates = [
+            command["params"]
+            for command in commands
+            if command["command"] == "component.create"
+            and command["params"]["name"] == "Panel"
+        ]
+        self.assertEqual(len(panel_creates), 1)
+        self.assertEqual(panel_creates[0]["parent"], "A")
+        self.assertTrue(panel_creates[0]["grounded"])
+
+        copies = [
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.copy"
+        ]
+        self.assertEqual(len(copies), 1)
+        self.assertEqual(copies[0]["component"], "Panel")
+        self.assertEqual(copies[0]["parent"], "B")
+        self.assertEqual(copies[0]["translate"], [30.0, 0.0, 0.0])
+
+        root_copy = compile_assembly(
+            panel.group("A")
+            + panel.copy(placement=Placement(x=30)),
+            "Display",
+        )["commands"]
+        root_copy_params = next(
+            command["params"]
+            for command in root_copy
+            if command["command"] == "occurrence.copy"
+        )
+        self.assertEqual(root_copy_params["parent"], "root")
+        self.assertEqual(root_copy_params["translate"], [30.0, 0.0, 0.0])
+
+        grouped_copy = compile_assembly(
+            panel
+            + panel.copy(placement=Placement(x=30)).group("B"),
+            "Display",
+        )["commands"]
+        grouped_copy_params = next(
+            command["params"]
+            for command in grouped_copy
+            if command["command"] == "occurrence.copy"
+        )
+        self.assertEqual(grouped_copy_params["parent"], "B")
+        self.assertEqual(grouped_copy_params["translate"], [30.0, 0.0, 0.0])
+
         with self.assertRaisesRegex(ModelError, "conflicts"):
             compile_assembly(panel.group("Panel"), "Display")
 

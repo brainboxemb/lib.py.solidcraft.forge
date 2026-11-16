@@ -206,10 +206,17 @@ Therefore grouping must not imply:
 - a Placement;
 - a solver constraint.
 
-If the native SolidCraft representation requires an intermediate component,
-the adapter may create one, but any required grounding must come from an
-independent mechanical/root policy, not from the fact that `.group()` was
-called.
+SolidCraft 0.42 represents a Forge group as an empty component. Forge creates that
+component with `grounded=false` explicitly. This matters because SolidCraft
+otherwise grounds the first component in a new design by default.
+
+The physical occurrence that Forge already treats as the assembly root keeps
+its own grounded state even when it is placed inside a group. The group itself
+does not become the fixed mechanical object.
+
+SolidCraft 0.42 `occurrence.copy(parent=...)` also lets later occurrences of
+one reusable component definition live under different groups without
+duplicating the definition.
 
 **Rule GR-2**
 

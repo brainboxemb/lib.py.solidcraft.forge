@@ -217,6 +217,25 @@ Rotated relationships, copied relationships and chained attachments stay
 unsupported until their SolidCraft reference behaviour has been tested. See
 [change 0010](changes/0010-replay-safe-attachments.md).
 
+### `group()`
+
+`group(name)` changes only the SolidCraft browser hierarchy.
+
+Forge represents the group with an empty SolidCraft component and explicitly
+sets that group to `grounded=false`. Grouping must not add a joint, Placement
+or solver constraint.
+
+If the physical root occurrence is inside a group, that physical occurrence
+keeps the same grounded state it had before grouping. The empty group does not
+become the fixed part.
+
+One reusable definition may have occurrences in different groups. Forge uses
+SolidCraft 0.42 `occurrence.copy(parent=...)` when a later copy belongs under a
+different group or back at the design root. The component definition remains
+shared.
+
+See [change 0011](changes/0011-grouping-is-hierarchy-only.md).
+
 ## Direction, face and anchor vocabulary
 
 Cardinal direction names are shared where their geometric meaning is shared:
