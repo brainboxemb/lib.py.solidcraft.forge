@@ -399,7 +399,31 @@ def check(
                     slug,
                     implementation,
                 )
-            assert "independently exported stl" in page_text.lower(), slug
+            if reference_names:
+                assert "independently exported stl" in page_text.lower(), slug
+            else:
+                exceptions = case.get("reference_exceptions", {})
+                assert exceptions, (
+                    slug,
+                    "a case without executable references needs documented exceptions",
+                )
+                assert (
+                    set(exceptions) == set(REFERENCE_IMPLEMENTATION_LABELS)
+                ), (
+                    slug,
+                    "a fully excepted case must explain every default reference implementation",
+                )
+                assert "Documented reference exceptions" in page_text, slug
+                assert not evidence, (
+                    slug,
+                    "a fully excepted case must not fabricate reference evidence",
+                )
+                for implementation, reason in exceptions.items():
+                    assert REFERENCE_IMPLEMENTATION_LABELS[implementation] in page_text, (
+                        slug,
+                        implementation,
+                    )
+                    assert html.escape(reason) in page_text, (slug, implementation)
         if require_native:
             manifest_case = qualification_manifest["cases"][slug]
             result_path = site / "qualification" / slug / "qualification-result.json"

@@ -1,6 +1,6 @@
 # 0027 — native sketch slot family
 
-Status: **active design**  
+Status: **implemented; full qualification required before merge**  
 Issue: **#216**  
 SolidCraft target: **0.42.0**
 
@@ -55,3 +55,15 @@ or hand-built line/arc geometry.
 Change 0026 / issue #215 concerns native **solid feature patterns**.
 Change 0027 / issue #216 concerns native **sketch Slot construction**.
 They are independently qualified before a downstream CAD model combines them.
+
+## Qualification finding
+
+The first native qualification used an attached Sketch with
+`Depth.THROUGH_ALL`. SolidCraft saved an error-free timeline but removed no
+material. That is a separate existing cut-direction problem tracked by issue
+#218.
+
+The Slot-family fixture therefore uses the already-qualified signed extrusion
+path (`-5 mm`) and Q4 explicitly checks the resulting volume, face count and
+face types. This prevents a visually plausible feature history from passing
+when the body was not actually cut.
