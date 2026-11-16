@@ -471,6 +471,14 @@ class Parameter:
     def expression(self):
         return self.name
 
+    def __index__(self):
+        raise TypeError(
+            f"{self.name!r} is an editable CAD parameter, not a Python count. "
+            f"Use {self.name.upper()} = ... for a fixed constant or "
+            f"_{self.name} = ... for a Forge/build-time input used by loops "
+            "or other Python-only logic."
+        )
+
     def __truediv__(self, other: float):
         if not isinstance(other, (float, int)) or other == 0:
             return NotImplemented
@@ -914,17 +922,41 @@ class Shape:
     kind: str
     data: Any
 
+    def __getattr__(self, name):
+        if name == "group":
+            raise AttributeError(
+                "Shape has no group(). group() changes SolidCraft browser "
+                "hierarchy for component occurrences or Assemblies. Keep one "
+                "physical part's geometry as a Shape; model separate physical "
+                "parts as components/occurrences."
+            )
+        raise AttributeError(f"Shape has no attribute {name!r}")
+
+    def _csg_operand(self, other, operator):
+        other = _shape(other)
+        if (
+            self.kind == "material_assignment"
+            or other.kind == "material_assignment"
+        ):
+            raise TypeError(
+                f"material-assigned Shapes cannot be combined with {operator}. "
+                "Finish one physical part's Shape geometry before calling "
+                "with_material(). For separate physical parts or different "
+                "materials, use component occurrences in an Assembly."
+            )
+        return other
+
     def __and__(self, other):
-        return Shape("intersection", (self, _shape(other)))
+        return Shape("intersection", (self, self._csg_operand(other, "&")))
 
     def __add__(self, other):
-        return Shape("union", (self, _shape(other)))
+        return Shape("union", (self, self._csg_operand(other, "+")))
 
     def __or__(self, other):
         return self + other
 
     def __sub__(self, other):
-        return Shape("difference", (self, _shape(other)))
+        return Shape("difference", (self, self._csg_operand(other, "-")))
 
     def move(self, x=0, y=0, z=0):
         """Translate a CSG shape by millimetres.
