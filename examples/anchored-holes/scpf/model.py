@@ -9,7 +9,14 @@ class AnchoredHoles:
 
     def build(self):
         with Sketch(name="Base", plane="XY") as sketch:
-            Rectangle2D(self.width, self.depth)
+            profile = Rectangle2D(self.width, self.depth)
+            # Keep this qualification's original lower-left datum. Rectangle2D
+            # is centered by default now, so the Forge fixture states the old
+            # placement explicitly instead of moving the reference models.
+            sketch.add(
+                profile,
+                offset=(self.width / 2, self.depth / 2),
+            )
         plate = sketch.extrude(self.thickness)
         holes = Hole(d=8, depth=Depth.THROUGH_ALL).pattern(
             count=2, spacing=self.spacing, axis=Axis.Y

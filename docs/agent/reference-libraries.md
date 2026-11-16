@@ -53,9 +53,11 @@ The 2D dimension-defined primitives `Rectangle2D` and `Circle2D` are also
 centered by default. Coordinate-defined `Polygon2D` keeps the coordinates
 supplied by the caller, rather than silently centering the polygon.
 
-**Verification:** The box conventions are already reflected in the local
-`examples/simple-box` references. Cylinder/Sphere origin code and regression tests have been added. Full Q1-Q6
-qualification and downstream model migration remain required before release.
+**Verification:** Forge's centered Box/Cylinder/Sphere defaults are covered by
+focused compiler regressions. The older `simple-box` qualification deliberately
+keeps its established bottom-based datum; its Forge fixture now says
+`anchor=Anchor.BOTTOM` explicitly while the independent reference examples
+remain unchanged. Cylinder/Sphere origin code has native/CSG regression tests.
 
 
 ## PythonSCAD: subset used by qualification references

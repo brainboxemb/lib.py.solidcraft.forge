@@ -160,9 +160,29 @@ Keep the edit-check loop short:
 - Full Q1-Q6 is mandatory for SolidCraft-version promotion and final
   main-branch qualification.
 
-When changing a qualification model, update its regression/native checks and
-all required reference implementations.
+A qualification case is a fixed comparison target. Do not change its expected
+geometry or its PythonSCAD, pyBOSL2 or CadQuery reference code merely because
+Forge changes its defaults or syntax. Migrate the Forge/SCPF fixture so it
+continues to produce the established case. Change expected geometry and
+external references only when the task explicitly changes that qualification
+case itself.
 
+When intentionally changing a qualification model, update its regression/native
+checks and all required reference implementations.
+
+
+
+## Git workflow
+
+Treat one logical change as one branch/PR and finish that change before calling
+the task complete. For a multi-file change, prepare the complete patch first
+and push one logical commit; do not commit or push once per file. After CI has
+run, collect the failures before making one bundled follow-up fix instead of
+triggering a new workflow for every small edit.
+
+Parallel work on another existing branch is fine while CI runs. Keep the topics
+separate, and merge or otherwise finish the first PR as soon as its checks are
+green.
 
 ## Release discipline
 

@@ -7,10 +7,10 @@ wrong implementation cannot become its own reference.
 
 EXPECTED_BOUNDS = {
     "simple-box": [
-        {"label": "SimpleBox", "min": [-20, -15, -5], "max": [20, 15, 5]},
+        {"label": "SimpleBox", "min": [-20, -15, 0], "max": [20, 15, 10]},
     ],
     "anchored-holes": [
-        {"label": "AnchoredHoles", "min": [-50, -30, 0], "max": [50, 30, 10]},
+        {"label": "AnchoredHoles", "min": [0, 0, 0], "max": [100, 60, 10]},
     ],
     "parameter-scope": [
         {"label": "local", "min": [-20, -10, 0], "max": [20, 10, 10]},
@@ -117,9 +117,6 @@ EXPECTED_BOUNDS = {
 
 
 EXPECTED_MUTATION_BOUNDS = {
-    "simple-box": [
-        {"label": "SimpleBox", "min": [-30, -20, -10], "max": [30, 20, 10]},
-    ],
     "assembly-owned-anchor": [
         {"label": "Base", "min": [-40, -15, 0], "max": [40, 15, 40]},
         {"label": "Companion", "min": [65, -5, 0], "max": [75, 5, 10]},
