@@ -374,7 +374,7 @@ class SCPFExamples(unittest.TestCase):
                 "class Pin:\n"
                 "    diameter: float = 12\n"
                 "    def build(self):\n"
-                "        Cylinder(d=self.diameter, h=20).at(10, 5, 3, anchor=BOTTOM)\n"
+                "        Cylinder(d=self.diameter, h=20).at(10, 5, 3, anchor=Anchor.BOTTOM)\n"
                 "Pin()\n"
             )
             commands = run_script(script)["commands"]
@@ -716,7 +716,9 @@ class SCPFExamples(unittest.TestCase):
         commands = document["commands"]
         self.assertEqual(commands[1]["params"]["center"], [10, 20, 30])
         self.assertEqual(commands[2]["params"]["center"], [10, 20, 30])
-        self.assertEqual(commands[3]["params"]["base"], [10, 20, -5.0])
+        self.assertEqual(commands[3]["params"]["base"][:2], [10, 20])
+        self.assertIn("size / 2", str(commands[3]["params"]["base"][2]))
+        self.assertIn("20 mm", str(commands[3]["params"]["base"][2]))
         self.assertEqual(commands[3]["params"]["axis"], "Z")
 
     def test_all_standard_solids_use_centered_origin_in_native_and_csg(self):
