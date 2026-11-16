@@ -135,3 +135,68 @@ def resolved_command(item, variables):
         "command": item["command"],
         "params": resolve_value(item.get("params", {}), variables),
     }
+
+
+
+def replay_chunks(commands):
+    """Split commands only where a later step needs a newly bound variable."""
+    chunks = []
+    current = []
+    available = set()
+    pending = set()
+
+    for item in commands:
+        needed = variables_in(item.get("params", {}))
+        if not needed <= available:
+            if current:
+                chunks.append(current)
+                available.update(pending)
+                current = []
+                pending = set()
+            if not needed <= available:
+                names = ", ".join(sorted(needed - available))
+                raise ValueError(
+                    f"replay command needs unresolved variable(s): {names}"
+                )
+
+        current.append(item)
+        pending.update(item.get("bind", {}))
+
+    if current:
+        chunks.append(current)
+    return chunks
+
+
+def apply_bindings(items, results, variables):
+    """Bind replay variables from one completed native batch."""
+    if not isinstance(results, list) or len(results) != len(items):
+        raise ValueError(
+            "SolidCraft batch did not return one result per replay command"
+        )
+
+    bound_per_command = []
+    for item, result in zip(items, results):
+        bindings = {}
+        for variable, field in item.get("bind", {}).items():
+            if not isinstance(result, dict) or field not in result:
+                raise ValueError(
+                    f"{item['command']} did not return field {field!r} "
+                    f"needed for {variable}"
+                )
+            value = result[field]
+            variables[variable] = value
+            bindings[variable] = value
+        bound_per_command.append(bindings)
+    return bound_per_command
+
+
+def replay_log(document, variables, entries):
+    """Build the diagnostic log for one concrete replay run."""
+    return {
+        "format": "scpf-replay-log",
+        "version": 1,
+        "replay_sha256": replay_hash(document),
+        "variables": dict(variables),
+        "commands": entries,
+        "completed": len(entries),
+    }
