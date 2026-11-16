@@ -59,6 +59,32 @@ class SimpleBoxCommandTests(unittest.TestCase):
         self.assertEqual(box["corner"], [-20.0, 0, 0])
         self.assertNotIn("center", box)
 
+    def test_taper_offsets_follow_box_anchor(self):
+        centered = compile_model(
+            Box(40, 30, 10).taper(from_z=2, inset=1),
+            "CenteredTaper",
+        )["commands"]
+        centered_offsets = [
+            row["params"].get("offset", 0)
+            for row in centered
+            if row["command"] == "sketch.create"
+        ]
+        self.assertEqual(centered_offsets, [-5.0, -3.0, 5.0])
+
+        bottom = compile_model(
+            Box(40, 30, 10, anchor=Anchor.BOTTOM).taper(
+                from_z=2,
+                inset=1,
+            ),
+            "BottomTaper",
+        )["commands"]
+        bottom_offsets = [
+            row["params"].get("offset", 0)
+            for row in bottom
+            if row["command"] == "sketch.create"
+        ]
+        self.assertEqual(bottom_offsets, [0, 2, 10])
+
 
 if __name__ == "__main__":
     unittest.main()
