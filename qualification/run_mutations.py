@@ -6,6 +6,10 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 import subprocess
+import sys
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT))
 
 from qualification.native_cases import MUTATIONS, ROOT, validate_runtime_metadata
 
