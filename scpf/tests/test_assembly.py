@@ -1201,14 +1201,31 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual(fillet["radius"], "corner_radius")
 
 
-    def test_xz_repeated_marker_attachment_is_rejected_without_copy_reference(self):
-        from scpf.compiler import ModelError
+    def test_xz_rectangular_component_uses_standard_corner_anchor(self):
+        commands = run_script(
+            ROOT / "examples/xz-anchor/scpf/model.py"
+        )["commands"]
 
-        with self.assertRaisesRegex(
-            ModelError,
-            "cannot attach a copied occurrence",
-        ):
-            run_script(ROOT / "examples/xz-anchor/scpf/model.py")
+        joints = [
+            command["params"]
+            for command in commands
+            if command["command"] == "joint.create"
+        ]
+        self.assertEqual(len(joints), 2)
+        self.assertEqual(joints[0]["a"]["occurrence"], "Board")
+        self.assertEqual(joints[0]["a"]["corner"], [20.0, 0.0, 20.0])
+        self.assertEqual(joints[1]["a"]["occurrence"], "Board")
+        self.assertEqual(joints[1]["a"]["corner"], [-20.0, 0.0, 20.0])
+        self.assertEqual(
+            [joint["b"]["occurrence"] for joint in joints],
+            ["RightMarker", "LeftMarker"],
+        )
+        self.assertFalse(any(
+            "Board:" in str(command["params"])
+            or "RightMarker:" in str(command["params"])
+            or "LeftMarker:" in str(command["params"])
+            for command in commands
+        ))
 
     def test_anchor_frame_accepts_named_axis_directions(self):
         from scpf import Anchor, AnchorFrame
