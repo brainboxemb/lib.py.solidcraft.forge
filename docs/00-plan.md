@@ -103,10 +103,11 @@ SolidCraft 0.42 natively supports two `solid.box` placement modes:
 `corner:[x,y,z]` and `center:[x,y,z]`; centre-placed boxes retain that
 centred datum when their dimensions change.
 
-Forge should expose primitive-origin intent directly instead of emulating it
-with corrective translations. The existing default Box behaviour and the CSG
-Box lowering must first be made semantically consistent, then qualified against
-the native SolidCraft behaviour.
+Forge should expose primitive datum intent directly instead of emulating it
+with corrective translations. Because the API is still unstable, choose the
+simplest consistent default rather than preserving the old feature-tree
+behaviour: a plain Box is centred in feature-history and CSG, while BOTTOM or
+another cardinal datum is explicit.
 
 This follow-up API/design change is implemented and qualified by
 [change 0022](changes/0022-native-box-origin.md). It remains separate from the
