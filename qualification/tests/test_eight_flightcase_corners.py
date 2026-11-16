@@ -12,17 +12,33 @@ NATIVE_ROOT = os.environ.get("SCPF_NATIVE_ROOT")
 
 
 class EightFlightcaseCornersCommandTests(unittest.TestCase):
-    def test_parametric_corner_placement_is_blocked_by_current_backend(self):
-        from scpf.compiler import ModelError
+    def test_parametric_corner_placement_uses_replay_variables(self):
+        commands = run_script(
+            ROOT / "examples/eight-flightcase-corners/scpf/model.py"
+        )["commands"]
+        copies = [
+            command for command in commands
+            if command["command"] == "occurrence.copy"
+        ]
+        moves = [
+            command["params"] for command in commands
+            if command["command"] == "occurrence.move"
+        ]
+        self.assertEqual(len(copies), 7)
+        self.assertEqual(len(moves), 8)
+        self.assertTrue(all(
+            move["occurrence"].startswith("$flightcasecorner_occurrence_")
+            for move in moves
+        ))
+        self.assertTrue(any(
+            "case_height" in str(move["translate"])
+            for move in moves
+        ))
+        self.assertFalse(any(
+            command["command"].startswith("joint.")
+            for command in commands
+        ))
 
-        with self.assertRaisesRegex(
-            ModelError,
-            "replay-first Placement requires one occurrence at identity",
-        ):
-            run_script(ROOT / "examples/eight-flightcase-corners/scpf/model.py")
-
-
-@unittest.skip("blocked: replay-first backend cannot yet encode the required parametric Placement")
 class EightFlightcaseCornersNativeTests(unittest.TestCase):
     def test_native_bounds_wrap_all_eight_case_corners(self):
         data = _load(
