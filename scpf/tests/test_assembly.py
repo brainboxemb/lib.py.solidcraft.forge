@@ -1070,7 +1070,7 @@ class AssemblyTests(unittest.TestCase):
             for command in selected
             if command["command"] == "parameters.add"
         ]
-        self.assertEqual(selected_names, ["Bracket_radius"])
+        self.assertEqual(selected_names, ["d1_Bracket_radius"])
 
         All = component(Bracket, include="*")
         all_commands = compile_assembly(All(), "All")["commands"]
@@ -1081,7 +1081,7 @@ class AssemblyTests(unittest.TestCase):
         ]
         self.assertEqual(
             all_names,
-            ["Bracket_width", "Bracket_radius", "Bracket_chamfer"],
+            ["d1_Bracket_width", "d1_Bracket_radius", "d1_Bracket_chamfer"],
         )
 
         with self.assertRaisesRegex(ValueError, "unknown component parameter"):
@@ -1106,7 +1106,7 @@ class AssemblyTests(unittest.TestCase):
             for command in commands
             if command["command"] == "parameters.add"
         ]
-        self.assertEqual(names, ["Bracket_radius"])
+        self.assertEqual(names, ["d1_Bracket_radius"])
 
     def test_component_include_mapping_publishes_shared_name(self):
         from scpf.assembly import compile_assembly
