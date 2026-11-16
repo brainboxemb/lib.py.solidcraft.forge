@@ -420,6 +420,27 @@ def _native_expression(value):
     return _NativeExpression(value)
 
 
+class _NativeExpression(str):
+    """Internal marker for a SolidCraft parameter expression.
+
+    Ordinary strings are user data and must remain opaque during namespacing.
+    This subtype exists only while Forge compiles commands.
+    """
+
+
+def _plain_command_value(value):
+    """Convert internal expression markers to ordinary JSON-compatible values."""
+    if isinstance(value, _NativeExpression):
+        return str(value)
+    if isinstance(value, dict):
+        return {key: _plain_command_value(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_plain_command_value(item) for item in value]
+    if isinstance(value, tuple):
+        return [_plain_command_value(item) for item in value]
+    return value
+
+
 @dataclass(frozen=True)
 class Parameter:
     """Represent one named editable CAD dimension.
