@@ -28,7 +28,8 @@ class RectangularPatternQualificationTests(unittest.TestCase):
         commands = run_script(MODEL)["commands"]
         # Reuse the compiled source feature but construct a focused one-row
         # command contract through the public API in the unit-level test.
-        from scpf import Anchor, Axis, Box, Sketch, SlotCenterToCenter2D
+        from scpf.core import Anchor, Axis, Box, SlotCenterToCenter2D
+        from scpf.explicit_sketch import Sketch
         from scpf.compiler import compile_model
 
         plate = Box(80, 40, 4, anchor=Anchor.BOTTOM)
