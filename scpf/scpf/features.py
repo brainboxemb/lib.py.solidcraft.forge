@@ -33,7 +33,10 @@ def _is_feature_tree(shape):
         return False
     if shape.kind in ("box", "placed_box", "tapered_box", "sketch_base_extrusion"):
         return True
-    if shape.kind in ("fillet", "chamfer", "shell", "union", "difference", "material_assignment"):
+    if shape.kind in (
+        "fillet", "chamfer", "shell", "union", "difference",
+        "material_assignment", "rectangular_pattern",
+    ):
         return _is_feature_tree(shape.data[0])
     return False
 
@@ -741,9 +744,45 @@ def _explicit_sketch_commands(shape, original, feature, name):
     return commands
 
 
+def _native_feature_name(feature):
+    """Resolve the native history feature referenced by a pattern source."""
+    if feature.kind == "explicit_sketch_extrusion":
+        return feature.data[0]
+    raise ModelError(
+        "rectangular_pattern currently supports features produced by "
+        "Sketch.extrude()"
+    )
+
+
 def _to_commands(shape, name):
     if shape.kind in ("box", "placed_box", "tapered_box", "sketch_base_extrusion"):
         return compile_base(shape, name)
+    if shape.kind == "rectangular_pattern":
+        (
+            original, sources,
+            dir1, count1, spacing1,
+            dir2, count2, spacing2,
+            alignment, alignment2,
+            reversed1, reversed2,
+        ) = shape.data
+        steps, base = _to_commands(original, name)
+        params = dict(
+            features=[_native_feature_name(source) for source in sources],
+            dir1=list(dir1),
+            count1=command_value(count1),
+            spacing1=command_value(spacing1),
+            alignment=alignment,
+            reversed=reversed1,
+        )
+        if dir2 is not None:
+            params.update(
+                dir2=list(dir2),
+                count2=command_value(count2),
+                spacing2=command_value(spacing2),
+                alignment2=alignment2,
+                reversed2=reversed2,
+            )
+        return steps + [_command("solid.pattern.rectangular", **params)], base
     if shape.kind == "material_assignment":
         base_shape, material, density, color = shape.data
         steps, base = _to_commands(base_shape, name)

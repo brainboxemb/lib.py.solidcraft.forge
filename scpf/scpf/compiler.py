@@ -38,7 +38,7 @@ def _command(command_name, **params):
 def _param_commands(params):
     return [
         _command("parameters.add", name=p.name,
-                 expression=number_text(p.value), unit="mm")
+                 expression=number_text(p.value), unit=p.unit)
         for p in params
     ]
 
@@ -54,10 +54,12 @@ def _collect(node, values=None):
             _collect(item, values)
     else:
         for param in parameters_in(node):
-            previous = values.setdefault(param.name, param.value)
-            if previous != param.value:
-                raise ModelError(f"conflicting values for parameter {param.name}")
-    return tuple(Parameter(k, v) for k, v in values.items())
+            previous = values.setdefault(param.name, param)
+            if previous.value != param.value or previous.unit != param.unit:
+                raise ModelError(
+                    f"conflicting values or units for parameter {param.name}"
+                )
+    return tuple(values.values())
 
 
 def _compile_model_commands(shape: Shape, name: str) -> list[dict]:
