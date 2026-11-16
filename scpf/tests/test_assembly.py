@@ -10,14 +10,28 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class AssemblyTests(unittest.TestCase):
-    def test_copied_occurrence_attachment_is_rejected(self):
-        from scpf.compiler import ModelError
+    def test_components_example_uses_placement_without_joint(self):
+        commands = run_script(
+            ROOT / "examples/components/scpf/model.py"
+        )["commands"]
 
-        with self.assertRaisesRegex(
-            ModelError,
-            "cannot attach a copied occurrence",
-        ):
-            run_script(ROOT / "examples/components/scpf/model.py")
+        copies = [
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.copy"
+        ]
+        self.assertEqual(
+            copies,
+            [{"component": "Block", "translate": [40.0, 0.0, 0.0]}],
+        )
+        self.assertFalse(any(
+            command["command"] == "joint.create"
+            for command in commands
+        ))
+        self.assertFalse(any(
+            command["command"] == "occurrence.move"
+            for command in commands
+        ))
 
     def test_component_placement_is_occurrence_data(self):
         with tempfile.TemporaryDirectory() as directory:
