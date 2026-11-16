@@ -995,7 +995,7 @@ class AssemblyTests(unittest.TestCase):
                     "text": "width",
                     "font": "width",
                     "name": "width label",
-                    "height": _native_expression("width / 4"),
+                    "height": _native_expression("width / 4", ("width",)),
                 },
             },
             {
@@ -1008,7 +1008,7 @@ class AssemblyTests(unittest.TestCase):
             {
                 "command": "solid.box",
                 "params": {
-                    "length": _native_expression("width"),
+                    "length": _native_expression("width", ("width",)),
                     "body_name": "width",
                 },
             },
