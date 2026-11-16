@@ -812,19 +812,12 @@ def _shape_center(shape):
 
     if shape.kind == "box":
         length, width, height, origin = shape.data
-        corner = _box_corner_from_anchor(
-            length,
-            width,
-            height,
-            (0, 0, 0),
-            origin,
-        )
+        dimensions = (length, width, height)
         return tuple(
-            _dim_add(coordinate, half(dimension))
-            for coordinate, dimension in zip(
-                corner,
-                (length, width, height),
-            )
+            half(dimension) if side < 0
+            else -half(dimension) if side > 0
+            else 0
+            for dimension, side in zip(dimensions, origin.vector)
         )
 
     if shape.kind == "sphere":
