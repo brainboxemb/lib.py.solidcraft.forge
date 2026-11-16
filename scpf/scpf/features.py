@@ -263,9 +263,7 @@ def _fillet_command(base, radius, edges, name):
         if r * 2 >= min(w, d):
             raise ModelError("fillet radius exceeds rectangular base dimensions")
         x, y, z = (pv(v) for v in base["origin"])
-        if z != 0:
-            raise ModelError("vertical fillet of shifted base not supported")
-        picks = [[x + dx, y + dy, half(h)]
+        picks = [[x + dx, y + dy, z + half(h)]
                  for dx, dy in ((0, 0), (w, 0), (w, d), (0, d))]
         return _command(
             "solid.fillet",
