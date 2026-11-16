@@ -24,8 +24,8 @@ class AttachAngleCommandTests(unittest.TestCase):
         self.assertEqual(len(joints), 1)
         self.assertEqual(joints[0]["type"], "rigid")
         self.assertEqual(joints[0]["angle"], 90)
-        self.assertEqual(joints[0]["a"]["occurrence"], "Base")
-        self.assertEqual(joints[0]["b"]["occurrence"], "Arm")
+        self.assertEqual(joints[0]["a"]["occurrence"], "$base")
+        self.assertEqual(joints[0]["b"]["occurrence"], "$arm")
 
 
 @unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
