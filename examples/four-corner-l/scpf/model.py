@@ -20,8 +20,6 @@ class LProfile:
     PROFILE_HEIGHT = 16.0
 
     def build(self):
-        # A real angle profile around a vertical corner. Local +X/+Y is the
-        # inside of the case; material sits just outside those two faces.
         with Sketch(name="Profile", plane="XY") as sketch:
             Polygon2D(
                 [
@@ -53,54 +51,42 @@ class FourCornerL:
         )
         profile = LProfile()
 
-        frame_xy = AnchorFrame(
-            origin=(0, 0, 0),
-            z=Anchor.UP,
-            x=Anchor.RIGHT,
-        )
-        profile_origin = AnchorFrame(
-            origin=(0, 0, 0),
-            z=Anchor.DOWN,
-            x=Anchor.RIGHT,
-        )
-
         half_width = half(self.frame_width)
         half_depth = half(self.frame_depth)
         centre_height = half(
             self.frame_height - LProfile.PROFILE_HEIGHT
         )
 
-        front_left = profile.copy().attach(
-            frame,
-            parent=frame_xy,
-            child=profile_origin,
-            offset=(-half_width, -half_depth),
-            gap=centre_height,
-            angle=0,
+        front_left = profile.copy(
+            placement=Placement(
+                x=-half_width,
+                y=-half_depth,
+                z=centre_height,
+            ),
         )
-        front_right = profile.copy().attach(
-            frame,
-            parent=frame_xy,
-            child=profile_origin,
-            offset=(half_width, -half_depth),
-            gap=centre_height,
-            angle=90,
+        front_right = profile.copy(
+            placement=Placement(
+                x=half_width,
+                y=-half_depth,
+                z=centre_height,
+                rotation=(Z, 90),
+            ),
         )
-        rear_right = profile.copy().attach(
-            frame,
-            parent=frame_xy,
-            child=profile_origin,
-            offset=(half_width, half_depth),
-            gap=centre_height,
-            angle=180,
+        rear_right = profile.copy(
+            placement=Placement(
+                x=half_width,
+                y=half_depth,
+                z=centre_height,
+                rotation=(Z, 180),
+            ),
         )
-        rear_left = profile.copy().attach(
-            frame,
-            parent=frame_xy,
-            child=profile_origin,
-            offset=(-half_width, half_depth),
-            gap=centre_height,
-            angle=270,
+        rear_left = profile.copy(
+            placement=Placement(
+                x=-half_width,
+                y=half_depth,
+                z=centre_height,
+                rotation=(Z, 270),
+            ),
         )
 
         return frame + front_left + front_right + rear_right + rear_left
