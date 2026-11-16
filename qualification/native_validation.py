@@ -158,19 +158,6 @@ def validate_simple_box(root: Path) -> Validation:
     _check_declared_bounds(v, d, "simple-box")
     v.check("one body", d["body_count"] == 1, 1, d["body_count"])
     b = d["bodies"][0]
-    v.check("40x30x10 bounds", bbox_close(b, [-20, -15, 0], [20, 15, 10]),
-            {"min": [-20, -15, 0], "max": [20, 15, 10]}, b["bbox"])
-    v.check("parameters", params(d) == {"length": 40.0, "width": 30.0, "height": 10.0},
-            {"length": 40.0, "width": 30.0, "height": 10.0}, params(d))
-    return v
-
-
-def validate_centered_box(root: Path) -> Validation:
-    v = Validation("centered-box")
-    d = load(root / "measurements.json")
-    _check_declared_bounds(v, d, "centered-box")
-    v.check("one body", d["body_count"] == 1, 1, d["body_count"])
-    b = d["bodies"][0]
     v.check(
         "40x30x10 centered bounds",
         bbox_close(b, [-20, -15, -5], [20, 15, 5]),
@@ -188,7 +175,7 @@ def validate_centered_box(root: Path) -> Validation:
     _check_declared_bounds(
         v,
         m,
-        "centered-box",
+        "simple-box",
         level="q5",
         mutation=True,
     )
@@ -857,7 +844,6 @@ def validate_bracket(root: Path) -> Validation:
 
 VALIDATORS = {
     "simple-box": validate_simple_box,
-    "centered-box": validate_centered_box,
     "anchored-holes": validate_anchored_holes,
     "parameter-scope": validate_parameter_scope,
     "parent-derived-child-size": validate_parent_derived_child_size,
