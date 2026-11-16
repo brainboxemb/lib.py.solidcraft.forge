@@ -73,36 +73,35 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Placement itself does not create a joint. Forge replay variables bind the real SolidCraft occurrence ids when a later native move is needed. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
-### Native `Box` origin
+### Native `Box` anchor datum
 
-`Box` declares its own primitive datum separately from later placement:
+A direct Box is centred by default:
 
 ```python
-bottom_based = Box(80, 50, 10)
-centered = Box(80, 50, 10, origin=CENTER)
-front_bottom = Box(80, 50, 10, origin=FRONT + BOTTOM)
+centered = Box(80, 50, 10)
+bottom_based = Box(80, 50, 10, anchor=BOTTOM)
+front_bottom = Box(80, 50, 10, anchor=FRONT + BOTTOM)
 ```
 
 The public signature is:
 
 ```python
-Box(length, width, thickness, *, origin=Anchor.BOTTOM)
+Box(length, width, thickness, *, anchor=Anchor.CENTER)
 ```
 
-`origin` means which Box anchor is located at model coordinate `(0, 0, 0)`
-before any later `.at()` call. The default BOTTOM preserves Forge's existing
-box convention: X/Y centred on zero and the bottom face at Z=0. `CENTER`
-selects SolidCraft's native fully centred box datum.
+`anchor` selects which Box anchor lies at model coordinate `(0, 0, 0)`
+before later placement. CENTER is the normal primitive default because it gives
+the same simple meaning in feature-history and CSG code. BOTTOM is explicit
+when a board or plate should grow from Z=0 towards +Z.
 
-Forge lowers the same origin intent in feature-history and direct CSG paths.
-It does not emulate a centred primitive with a corrective translation.
+Forge lowers CENTER directly with SolidCraft's native `center` datum and
+cardinal anchors with native `corner` data. It does not add corrective moves.
 
-An explicit `.at(..., anchor=...)` is later placement and therefore takes
-precedence over the constructor origin for that placed Box.
+An explicit `.at(..., anchor=...)` is later placement and takes precedence
+over the constructor datum.
 
-`Box.taper()` currently requires the default BOTTOM origin because its front
-and rear planes are defined at Z=0 and Z=depth. Other tapered-box origins are
-rejected rather than partially translated.
+`Box.taper()` currently requires `anchor=BOTTOM` because its front and rear
+planes are defined at Z=0 and Z=depth.
 
 See [change 0022](changes/0022-native-box-origin.md).
 
