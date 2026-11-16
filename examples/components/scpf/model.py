@@ -14,6 +14,8 @@ class TwoBlocks:
             placement=Placement(x=Block.length),
         )
 
+        # left/right are ModelInstance occurrences here. Their + operator
+        # creates an Assembly; it is not the Shape + Boolean/feature operator.
         return left + right
 
 

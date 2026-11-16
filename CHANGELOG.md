@@ -10,12 +10,18 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Added
 
+- `python -m scpf check model.py` builds and compiles a model without starting
+  SolidCraft so model/API/compiler failures can be found before native testing.
 - build123d 0.12.0 is the fourth required, independently executed and
   rendered qualification reference for each supported case, beside
   PythonSCAD, pyBOSL2 and CadQuery (issue #196).
 
 ### Changed
 
+- Common model-authoring mistakes now fail with direct guidance: editable CAD
+  parameters used as Python counts explain the naming convention, `Shape.group`
+  points to component/assembly grouping, and material-assigned Shapes cannot be
+  combined as if separate physical parts were one Shape.
 - `Sketch.extrude(distance, *, sym=False)` now uses the sign of `distance`
   for positive/negative extrusion and `sym=True` for a symmetric extrusion;
   the public Extrude `Direction` enum/argument is removed.

@@ -15,6 +15,10 @@ right = left.copy(
 return left + right
 ```
 
+Here `left` and `right` are component occurrences (`ModelInstance` values).
+Their `+` operator creates an `Assembly`. This is deliberately different from
+`Shape + Shape`, which combines geometry/features inside one physical part.
+
 ## Expected behaviour
 
 - one reusable `Block` definition;

@@ -172,6 +172,29 @@ When intentionally changing a qualification model, update its regression/native
 checks and all required reference implementations.
 
 
+## Model authoring workflow
+
+When writing or changing an SCPF model:
+
+1. Find the smallest existing working example that uses the required features.
+2. Decide which things are separate physical parts and which geometry belongs
+   inside one part.
+3. Classify numeric fields before coding: lower-case is an editable CAD
+   parameter, UPPER_CASE is a fixed constant, and a leading underscore is a
+   Forge/build-time input.
+4. Use only current API constructs confirmed by the local API snapshot, source
+   or a working example.
+5. Run `python -m scpf check path/to/model.py`.
+6. Compile the model to command JSON when reviewing the generated SolidCraft
+   operations.
+7. Do not describe a model as working at Q1/Q2 level until those checks pass.
+8. Do not claim native SolidCraft behaviour unless the relevant Q3+ validation
+   actually ran.
+
+A downstream CAD model such as Simple MFT belongs in the CAD model repository.
+Forge qualification models should stay small and abstract so a failure proves
+one API rule rather than product-specific geometry.
+
 
 ## Git workflow
 

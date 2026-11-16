@@ -2,6 +2,8 @@
 import argparse
 import json
 from pathlib import Path
+import sys
+import warnings
 
 from .live import LiveError, new_design, send_document
 from .replay import validate_replay_document
@@ -18,7 +20,45 @@ def read_command_file(path):
     return validate_replay_document(document)
 
 
+def _check_model(argv):
+    """Build and compile one model without starting SolidCraft."""
+    parser = argparse.ArgumentParser(
+        prog="scpf check",
+        description="Build and compile an SCPF model without native SolidCraft.",
+    )
+    parser.add_argument("script", type=Path)
+    args = parser.parse_args(argv)
+
+    failure = None
+    document = None
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        try:
+            document = run_script(args.script)
+        except Exception as exc:  # CLI boundary: report model/build/compile failures cleanly.
+            failure = exc
+
+    for item in caught:
+        print(f"SCPF check warning: {item.message}", file=sys.stderr)
+
+    if failure is not None:
+        parser.exit(
+            1,
+            f"SCPF check failed: {type(failure).__name__}: {failure}\n",
+        )
+
+    print(
+        f"SCPF check PASS: {args.script}: "
+        f"{len(document['commands'])} SolidCraft commands"
+    )
+    return 0
+
+
 def main(argv=None):
+    argv = sys.argv[1:] if argv is None else list(argv)
+    if argv and argv[0] == "check":
+        return _check_model(argv[1:])
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "script", type=Path,
