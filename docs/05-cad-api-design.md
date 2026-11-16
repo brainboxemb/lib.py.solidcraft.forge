@@ -73,6 +73,25 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Placement itself does not create a joint. Forge replay variables bind the real SolidCraft occurrence ids when a later native move is needed. |
 | assembly relationship | `child.attach(parent, ...)` | Create an explicit relationship between reusable component occurrences. |
 
+### Primitive origins and anchors
+
+All dimension-defined standard primitives use the same default: **CENTER** is at
+`(0, 0, 0)` before placement, in both feature-history and CSG. This applies to
+`Box`, `Cylinder`, `Sphere`, `Rectangle2D`, `Circle2D` and rounded rectangular
+2D profiles. `Polygon2D` and `Text2D` keep authored coordinates; centering
+arbitrary point sets or insertion points would change their intended meaning.
+
+A primitive can expose an explicit `anchor=` when an edge, face, tangent or
+corner should lie at the origin. For oriented cylinders, the anchor is resolved
+against world X/Y/Z bounds after choosing the cylinder axis: an X-axis cylinder
+uses LEFT/RIGHT for its axial ends; a Z-axis cylinder uses BOTTOM/TOP.
+
+The native command path must use the same origin calculation for a primitive
+whether or not it participates in boolean CSG. PythonSCAD uses explicit
+`center=True` to match centered Forge solids; pyBOSL2's `cuboid`/`cyl`
+conventions are the nearer default model. The local lookup is
+`docs/agent/reference-libraries.md`.
+
 ### Native `Box` anchor datum
 
 A direct Box is centred by default:
