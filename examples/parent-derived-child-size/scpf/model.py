@@ -7,7 +7,7 @@ class ParentBlock:
     HEIGHT = 10.0
 
     def build(self):
-        return Box(self.width, self.depth, self.HEIGHT, anchor=BOTTOM)
+        return Box(self.width, self.depth, self.HEIGHT, anchor=Anchor.BOTTOM)
 
 
 class DerivedChild:
@@ -21,7 +21,7 @@ class DerivedChild:
             self.width,
             self.depth,
             self.HEIGHT,
-            anchor=BOTTOM,
+            anchor=Anchor.BOTTOM,
         ).move(z=self.Z_BOTTOM)
 
 
