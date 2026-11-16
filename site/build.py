@@ -6,6 +6,7 @@ This site deliberately contains only tiny fixtures and the SCPF cheatsheet.
 """
 import argparse
 import html
+from importlib.metadata import version as package_version
 import json
 from pathlib import Path
 import re
@@ -566,6 +567,8 @@ def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root
                     and metadata.get("solidcraft_version") == TESTED_SOLIDCRAFT_VERSION)
         if not verified:
             raise ValueError("Native screenshots do not match this source commit")
+        if not metadata.get("forge_version") or not metadata.get("qualified_at"):
+            raise ValueError("Native verification is missing Forge version or qualification time")
 
     reference_verified = False
     reference_summary = {}
@@ -577,6 +580,13 @@ def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root
         reference_verified = reference_summary.get("source_commit") == sha
         if not reference_verified:
             raise ValueError("Reference renders do not match this source commit")
+
+    forge_version = (
+        metadata["forge_version"] if verified else package_version("scpf")
+    )
+    qualified_at = (
+        metadata["qualified_at"] if verified else "not run in this site build"
+    )
 
     out.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / "site" / "style.css", out / "style.css")
@@ -1538,9 +1548,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     results_body = render_template(
         "results.html",
         source_sha=escape(sha),
+        forge_version=escape(forge_version),
         solidcraft_version=escape(
             metadata.get("solidcraft_version") if verified else TESTED_SOLIDCRAFT_VERSION
         ),
+        qualified_at=escape(qualified_at),
         result_rows="".join(result_rows),
     )
     (results_root / "index.html").write_text(
@@ -1568,7 +1580,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     qualification_index = render_template(
         "index.html",
         source_sha=escape(sha),
-        solidcraft_version=escape(TESTED_SOLIDCRAFT_VERSION),
+        forge_version=escape(forge_version),
+        solidcraft_version=escape(
+            metadata.get("solidcraft_version") if verified else TESTED_SOLIDCRAFT_VERSION
+        ),
+        qualified_at=escape(qualified_at),
         level_rows=level_rows,
         group_sections=group_sections,
     )
@@ -1766,7 +1782,12 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         json.dumps(
             {
                 "library_commit": sha,
-                "solidcraft_version": TESTED_SOLIDCRAFT_VERSION,
+                "forge_version": forge_version,
+                "solidcraft_version": (
+                    metadata.get("solidcraft_version")
+                    if verified else TESTED_SOLIDCRAFT_VERSION
+                ),
+                "qualified_at": qualified_at,
                 "native_verified": verified,
                 "cases": qualification_manifest,
             },
