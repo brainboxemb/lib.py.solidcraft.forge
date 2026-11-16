@@ -21,7 +21,7 @@ class Board:
         }
 
     def build(self):
-        return Box(self.width, self.DEPTH, self.height, anchor=BOTTOM)
+        return Box(self.width, self.DEPTH, self.height, anchor=Anchor.BOTTOM)
 
 
 class Marker:
