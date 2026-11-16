@@ -63,6 +63,12 @@ MUTATIONS = {
         "measurements": "measurements-size-80x40.json",
         "label": "base 40x20 -> 80x40 mm",
     },
+    "xz-anchor": {
+        "command": "qualification/commands/xz-anchor/change-size.json",
+        "save": "model-size-80x40.sc",
+        "measurements": "measurements-size-80x40.json",
+        "label": "board 40x20 -> 80x40 mm",
+    },
 }
 
 
