@@ -1,4 +1,4 @@
-"""CadQuery reference for a plate with two symmetric through holes."""
+"""CadQuery reference for a centred plate with two symmetric through holes."""
 
 import cadquery as cq
 
@@ -10,12 +10,12 @@ spacing = 40.0
 
 plate = (
     cq.Workplane("XY")
-    .box(width, depth, thickness, centered=(False, False, False))
+    .box(width, depth, thickness, centered=(True, True, False))
     .faces(">Z")
     .workplane()
     .pushPoints([
-        (width / 2, depth / 2 - spacing / 2),
-        (width / 2, depth / 2 + spacing / 2),
+        (0, -spacing / 2),
+        (0, spacing / 2),
     ])
     .hole(8.0)
 )
