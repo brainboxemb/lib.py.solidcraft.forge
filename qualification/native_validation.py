@@ -301,10 +301,15 @@ def validate_group_hierarchy(root: Path) -> Validation:
     _check_declared_bounds(v, d, "group-hierarchy")
     v.check("three native bodies", d["body_count"] == 3, 3, d["body_count"])
 
-    bom = load(root / "results-bom.json")
-    v.check("two native BOM inspections", len(bom) == 2, 2, len(bom))
-    if len(bom) == 2:
-        top, flat = bom
+    inspection = load(root / "results-bom.json")
+    v.check(
+        "BOM and component inspections",
+        len(inspection) == 3,
+        3,
+        len(inspection),
+    )
+    if len(inspection) == 3:
+        top, flat, component_list = inspection
         top_rows = {
             row["definition"]: row["count"]
             for row in top.get("rows", [])
@@ -328,6 +333,43 @@ def validate_group_hierarchy(root: Path) -> Validation:
             and flat.get("total_occurrences") == 3,
             {"Frame": 1, "Panel": 2, "total_occurrences": 3},
             {**flat_rows, "total_occurrences": flat.get("total_occurrences")},
+        )
+
+        components = {
+            component["name"]: component
+            for component in component_list.get("components", [])
+        }
+        group_occurrences = components.get("PanelGroup", {}).get(
+            "occurrences", []
+        )
+        panel_occurrences = components.get("Panel", {}).get(
+            "occurrences", []
+        )
+        v.check(
+            "browser group is not grounded",
+            len(group_occurrences) == 1
+            and group_occurrences[0].get("grounded") is False,
+            {"count": 1, "grounded": False},
+            {
+                "count": len(group_occurrences),
+                "grounded": (
+                    group_occurrences[0].get("grounded")
+                    if group_occurrences else None
+                ),
+            },
+        )
+        v.check(
+            "physical first panel remains grounded",
+            len(panel_occurrences) == 2
+            and panel_occurrences[0].get("grounded") is True,
+            {"count": 2, "first_grounded": True},
+            {
+                "count": len(panel_occurrences),
+                "first_grounded": (
+                    panel_occurrences[0].get("grounded")
+                    if panel_occurrences else None
+                ),
+            },
         )
     return v
 
