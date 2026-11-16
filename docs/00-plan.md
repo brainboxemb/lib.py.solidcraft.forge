@@ -97,18 +97,12 @@ topology persistence or saved-design parameter associativity.
 
 ## Next API work after this plan
 
-### Native primitive origin selection
+### Native primitive datum selection
 
-SolidCraft 0.42 natively supports two `solid.box` placement modes:
-`corner:[x,y,z]` and `center:[x,y,z]`; centre-placed boxes retain that
-centred datum when their dimensions change.
+Box datum selection is implemented and qualified by
+[change 0022](changes/0022-native-box-origin.md): plain Box is centred, and a
+different Box datum is explicit through `anchor=`.
 
-Forge should expose primitive datum intent directly instead of emulating it
-with corrective translations. Because the API is still unstable, choose the
-simplest consistent default rather than preserving the old feature-tree
-behaviour: a plain Box is centred in feature-history and CSG, while BOTTOM or
-another cardinal datum is explicit.
-
-This follow-up API/design change is implemented and qualified by
-[change 0022](changes/0022-native-box-origin.md). It remains separate from the
-completed remediation phases above.
+Cylinder and any other primitive datum changes remain separate follow-up work.
+Do not infer their behaviour from the Box contract; define and qualify each
+native primitive before changing its public default.
