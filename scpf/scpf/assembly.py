@@ -260,12 +260,10 @@ def compile_assembly(value, name):
     inherited_parameters = {}
     shared_materials = {}
 
-    # Named groups are actual empty native components, not just labels in
-    # Python. Child component definitions are created under their parent.
-    # A group is a fixed local/browser container: placement belongs to its
-    # children, not to the group itself. Ground every group so independent
-    # grouped subassemblies keep the root coordinate frame in the native solver.
-    # Native "component.create(parent=...)" makes the browser expandable.
+    # Named groups are empty native components used only for browser hierarchy.
+    # They are explicitly ungrounded because SolidCraft would otherwise ground
+    # the first component in a new design by default. Physical occurrences keep
+    # their own grounding decision below.
     group_names = list(dict.fromkeys(
         instance.group_name
         for instance in assembly.instances
@@ -278,7 +276,7 @@ def compile_assembly(value, name):
             "component.create",
             name=group_name,
             activate=False,
-            grounded=True,
+            grounded=False,
         ))
 
     relationship_occurrence_ids = set()
@@ -315,12 +313,6 @@ def compile_assembly(value, name):
                 relationship_occurrence_ids,
             )
         definition = instances[0].definition
-        parent_names = {instance.group_name for instance in instances}
-        if len(parent_names) != 1:
-            raise ModelError(
-                f"{component_name}: one reusable definition cannot currently "
-                "be placed under multiple assembly parents"
-            )
         parent_name = instances[0].group_name
 
         compiled = compile_model(
@@ -365,8 +357,7 @@ def compile_assembly(value, name):
                     continue
             commands.append(command)
         first_is_root = (
-            parent_name is None
-            and instances[0].occurrence_id
+            instances[0].occurrence_id
             == assembly.instances[0].occurrence_id
         )
         create_params = {
@@ -416,7 +407,10 @@ def compile_assembly(value, name):
                     "its native occurrence id only at runtime"
                 )
 
-            params = {"component": component_name}
+            params = {
+                "component": component_name,
+                "parent": instance.group_name or "root",
+            }
             position = instance.placement.position
             concrete_position = [pv(value) for value in position]
             if any(concrete_position):
