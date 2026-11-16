@@ -57,7 +57,9 @@ def render(results: dict) -> str:
     template = Template(TEMPLATE.read_text(encoding="utf-8"))
     return template.substitute(
         source_commit=results["source_commit"],
+        forge_version=results["forge_version"],
         solidcraft_version=results["solidcraft_version"],
+        qualified_at=results["qualified_at"],
         schema_version=results["schema_version"],
         case_rows="\n".join(rows),
         image_sections="\n".join(image_sections).rstrip() or "No native images were produced.",
