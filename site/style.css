@@ -105,6 +105,7 @@ font-weight:800;letter-spacing:.06em;line-height:1}
 .qualification-status.fail{background:#fdeaea;color:#a12b2b;border:1px solid #efb3b3}
 .qualification-status.review{background:#fff4d8;color:#7a5b00;border:1px solid #ead18b}
 .qualification-status.incomplete{background:#fff0e5;color:#9a4b00;border:1px solid #edc09a}
+.qualification-status.blocked{background:#fff0e5;color:#7d3f00;border:1px solid #d9a66f}
 .qualification-status.not-run{background:#eef2f7;color:#596b82;border:1px solid #ccd6e2}
 .coverage-status{display:inline-block;padding:3px 8px;border-radius:999px;font-size:.72rem;
 font-weight:800;line-height:1.1;white-space:nowrap;border:1px solid transparent}

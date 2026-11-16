@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from qualification.case_selection import parse_case_selection
+from qualification.cases import supported_case_slugs
 from qualification.expectations import EXPECTED_BOUNDS, EXPECTED_MUTATION_BOUNDS
 
 
@@ -250,12 +251,24 @@ def validate_components(root: Path) -> Validation:
     _check_declared_bounds(v, d, "components")
     rows = bodies_named(d, "Block")
     v.check("two block occurrences", len(rows) == 2, 2, len(rows))
-    actual = sorted((body["bbox"]["min"], body["bbox"]["max"]) for body in rows)
-    expected = sorted([
+    actual = sorted(rows, key=lambda body: body["bbox"]["min"][0])
+    expected = [
         ([-20, -15, 0], [20, 15, 10]),
         ([20, -15, 0], [60, 15, 10]),
-    ])
-    v.check("RIGHT-to-LEFT faces touch", actual == expected, expected, actual)
+    ]
+    touch_ok = (
+        len(actual) == 2
+        and all(
+            bbox_close(body, minimum, maximum)
+            for body, (minimum, maximum) in zip(actual, expected)
+        )
+    )
+    v.check(
+        "RIGHT-to-LEFT faces touch",
+        touch_ok,
+        expected,
+        [(body["bbox"]["min"], body["bbox"]["max"]) for body in actual],
+    )
     return v
 
 
@@ -333,26 +346,6 @@ def validate_attach_angle(root: Path) -> Validation:
         ),
         {"min": [-5, -15, 10], "max": [5, 15, 16]},
         arm["bbox"],
-    )
-    return v
-
-
-def validate_as_built_attach(root: Path) -> Validation:
-    v = Validation("as-built-attach")
-    d = load(root / "measurements.json")
-    _check_declared_bounds(v, d, "as-built-attach")
-    v.check("two bodies", d["body_count"] == 2, 2, d["body_count"])
-    v.check(
-        "base remains at authored pose",
-        bbox_close(one_body(d, "Base"), [-20, -15, 0], [20, 15, 10]),
-        {"min": [-20, -15, 0], "max": [20, 15, 10]},
-        one_body(d, "Base")["bbox"],
-    )
-    v.check(
-        "as-built child keeps translated 90-degree pose",
-        bbox_close(one_body(d, "Marker"), [45, 5, 15], [55, 35, 23]),
-        {"min": [45, 5, 15], "max": [55, 35, 23]},
-        one_body(d, "Marker")["bbox"],
     )
     return v
 
@@ -604,18 +597,6 @@ def validate_eight_corner_brackets(root: Path) -> Validation:
     return v
 
 
-def validate_custom_anchor(root: Path) -> Validation:
-    v = Validation("custom-anchor")
-    d = load(root / "measurements.json")
-    _check_declared_bounds(v, d, "custom-anchor")
-    arm = one_body(d, "Arm")
-    marker = one_body(d, "Marker")
-    v.check("rotated arm bounds", bbox_close(arm, [-5, -20, 0], [5, 20, 10]))
-    v.check("marker follows rotated tip", bbox_close(marker, [-5, 15, 0], [5, 25, 10]),
-            {"min": [-5, 15, 0], "max": [5, 25, 10]}, marker["bbox"])
-    return v
-
-
 def _xz_expected(width: float, height: float):
     return {
         "right": ([width / 2 - 10, -10, height - 10], [width / 2, 0, height]),
@@ -627,7 +608,10 @@ def validate_xz_anchor(root: Path) -> Validation:
     v = Validation("xz-anchor")
     d = load(root / "measurements.json")
     _check_declared_bounds(v, d, "xz-anchor")
-    markers = bodies_named(d, "Marker")
+    markers = (
+        bodies_named(d, "RightMarker")
+        + bodies_named(d, "LeftMarker")
+    )
     expected = _xz_expected(40, 20)
     actual_boxes = [(b["bbox"]["min"], b["bbox"]["max"]) for b in markers]
     v.check("two markers", len(markers) == 2, 2, len(markers))
@@ -637,7 +621,10 @@ def validate_xz_anchor(root: Path) -> Validation:
                 {"min": emin, "max": emax}, actual_boxes)
 
     m = load(root / "measurements-size-80x40.json")
-    markers2 = bodies_named(m, "Marker")
+    markers2 = (
+        bodies_named(m, "RightMarker")
+        + bodies_named(m, "LeftMarker")
+    )
     expected2 = _xz_expected(80, 40)
     actual2 = [(b["bbox"]["min"], b["bbox"]["max"]) for b in markers2]
     for side, (emin, emax) in expected2.items():
@@ -778,7 +765,6 @@ VALIDATORS = {
     "assembly-decorator": validate_assembly_decorator,
     "group-hierarchy": validate_group_hierarchy,
     "attach-angle": validate_attach_angle,
-    "as-built-attach": validate_as_built_attach,
     "parametric-attach": validate_parametric_attach,
     "parametric-offset": validate_parametric_offset,
     "parametric-anchor": validate_parametric_anchor,
@@ -788,7 +774,6 @@ VALIDATORS = {
     "four-corner-l": validate_four_corner_l,
     "eight-flightcase-corners": validate_eight_flightcase_corners,
     "eight-corner-brackets": validate_eight_corner_brackets,
-    "custom-anchor": validate_custom_anchor,
     "xz-anchor": validate_xz_anchor,
     "circle-negative-extrude": validate_circle_negative_extrude,
     "rounded-rectangle-sketch": validate_rounded_rectangle_sketch,
@@ -808,7 +793,9 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    selected = parse_case_selection(args.cases)
+    requested = parse_case_selection(args.cases)
+    supported = set(supported_case_slugs())
+    selected = tuple(case for case in requested if case in supported)
     args.qualification_dir.mkdir(parents=True, exist_ok=True)
     rows = ["case\tq4\tq5\n"]
     summary = {}

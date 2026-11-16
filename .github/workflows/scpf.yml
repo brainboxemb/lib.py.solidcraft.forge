@@ -122,7 +122,7 @@ jobs:
           unset PYTHONPATH
           mkdir -p output/qualification
           printf "case\tcommands\tstatus\n" > output/qualification/q2-command-contract.tsv
-          native_models="$(python -c 'from qualification.cases import QUALIFICATION_CASES; print(" ".join(case["slug"] for case in QUALIFICATION_CASES))')"
+          native_models="$(python -c 'from qualification.cases import supported_case_slugs; print(" ".join(supported_case_slugs()))')"
           for model in $native_models plate; do
             python -m scpf "examples/$model/scpf/model.py" --out "output/$model.json"
             python -m json.tool "output/$model.json" >/dev/null
@@ -151,7 +151,7 @@ jobs:
           solidcraft-cli --version
           mkdir -p output/native output/qualification
           printf "case\tbuild\teval\tsnapshot\tstatus\n" > output/qualification/q3-q4-q6-native.tsv
-          native_models="$(python -c 'from qualification.cases import QUALIFICATION_CASES; print(" ".join(case["slug"] for case in QUALIFICATION_CASES))')"
+          native_models="$(python -c 'from qualification.cases import supported_case_slugs; print(" ".join(supported_case_slugs()))')"
           for model in $native_models; do
             mkdir -p "output/native/$model"
             solidcraft-cli run "output/$model.json" \
@@ -189,13 +189,6 @@ jobs:
 
             printf "%s\tPASS\tPASS\tPASS\tPASS\n" "$model" >> output/qualification/q3-q4-q6-native.tsv
           done
-          # Four-corner diagnostic evidence. The functional assertions are
-          # standard unittest cases in qualification/tests.
-          solidcraft-cli run qualification/commands/four-corner-l/inspect-joints.json \
-            --in output/native/four-corner-l/model.sc \
-            --param-check strict --results \
-            --json-out output/native/four-corner-l/joint-inspect.json
-
           # Named group hierarchy: ask native SolidCraft to report both the
           # direct root children and the flattened subassembly contents.
           solidcraft-cli run qualification/commands/group-hierarchy/inspect-bom.json \
@@ -221,33 +214,6 @@ jobs:
           solidcraft-cli eval output/native/anchor-topology-mutation/model-size-80x40.sc \
             --json-out output/native/anchor-topology-mutation/measurements-size-80x40.json
 
-          # Saved-design width/depth mutation. Python is not rerun here.
-          solidcraft-cli run qualification/commands/four-corner-l/change-size.json \
-            --in output/native/four-corner-l/model.sc \
-            --param-check strict \
-            --save output/native/four-corner-l/model-size-160x120.sc
-
-          solidcraft-cli eval output/native/four-corner-l/model-size-160x120.sc \
-            --json-out output/native/four-corner-l/measurements-size-160x120.json
-
-          solidcraft-cli snapshot output/native/four-corner-l/model-size-160x120.sc \
-            --out output/native/four-corner-l/model-size-160x120.png --no-grid --no-axes
-          test -s output/native/four-corner-l/model-size-160x120.png
-          for view in front right iso; do
-            camera="$(python qualification/camera.py \
-              output/native/four-corner-l/measurements-size-160x120.json "$view")"
-            printf '%s\n' "$camera" > "output/native/four-corner-l/camera-size-160x120-$view.json"
-            solidcraft-cli snapshot output/native/four-corner-l/model-size-160x120.sc \
-              --out "output/native/four-corner-l/model-size-160x120-$view.png" \
-              --width 720 --height 540 --camera "$camera" --no-grid --no-axes
-            test -s "output/native/four-corner-l/model-size-160x120-$view.png"
-          done
-
-          solidcraft-cli run qualification/commands/four-corner-l/inspect-joints.json \
-            --in output/native/four-corner-l/model-size-160x120.sc \
-            --param-check strict --results \
-            --json-out output/native/four-corner-l/joint-inspect-size-160x120.json
-
           # Parent-derived child dimensions: mutate only parent parameters.
           solidcraft-cli run qualification/commands/parent-derived-child-size/change-size.json \
             --in output/native/parent-derived-child-size/model.sc \
@@ -256,24 +222,6 @@ jobs:
 
           solidcraft-cli eval output/native/parent-derived-child-size/model-size-160x120.sc \
             --json-out output/native/parent-derived-child-size/measurements-size-160x120.json
-
-          # Eight 3D flightcase corners: verify all topology corners follow resize.
-          solidcraft-cli run qualification/commands/eight-flightcase-corners/change-size.json \
-            --in output/native/eight-flightcase-corners/model.sc \
-            --param-check strict \
-            --save output/native/eight-flightcase-corners/model-size-160x120x90.sc
-
-          solidcraft-cli eval output/native/eight-flightcase-corners/model-size-160x120x90.sc \
-            --json-out output/native/eight-flightcase-corners/measurements-size-160x120x90.json
-
-          # Eight outside brackets: saved-design width/depth/height mutation.
-          solidcraft-cli run qualification/commands/eight-corner-brackets/change-size.json \
-            --in output/native/eight-corner-brackets/model.sc \
-            --param-check strict \
-            --save output/native/eight-corner-brackets/model-size-160x120x90.sc
-
-          solidcraft-cli eval output/native/eight-corner-brackets/model-size-160x120x90.sc \
-            --json-out output/native/eight-corner-brackets/measurements-size-160x120x90.json
 
           # Parameter-scope native evidence and saved-design mutation.
           solidcraft-cli run output/parameter-scope.json \
@@ -377,9 +325,6 @@ jobs:
           printf "parent-derived-child-size\tparent 120x80 -> 160x120 mm; child follows 60x40 -> 80x60 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "assembly-owned-anchor\tbase 40x20 -> 80x40 mm; named semantic anchor follows corner\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "anchor-topology-mutation\tboard 40x20 -> 80x40 mm; fixed topology pick follows corner\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
-          printf "four-corner-l\tframe footprint 120x80 -> 160x120 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
-          printf "eight-flightcase-corners\tcase 120x80x60 -> 160x120x90 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
-          printf "eight-corner-brackets\tframe 120x80x60 -> 160x120x90 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-attach\tgap 10 -> 30 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-offset\tshift 5 -> 10 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv
           printf "parametric-anchor\tbase_width 40 -> 80 mm\tPRODUCED\n" >> output/qualification/q5-parametric-mutation.tsv

@@ -94,13 +94,24 @@ Exit condition:
 
 ## Phase 3 — Replay-safe joint/attachment command generation
 
+Implemented by [change 0010](../changes/0010-replay-safe-attachments.md).
+
+SolidCraft 0.42 tests show that supported joint commands may use a component
+name for that component's first occurrence. A later copy needs its native
+occurrence id/path. `occurrence.copy` returns that id at runtime, so Forge
+cannot put it into its normal static command document. Forge therefore rejects
+a copied occurrence used as an attachment endpoint instead of guessing a
+`Component:N` name or relying on point-only occurrence lookup. Relationship
+rotation, copied as-built relationships and chained attachments remain
+unsupported until their own SolidCraft reference behaviour is proved.
+
 Purpose: keep joints/attachments only for genuine relationships.
 
 Deliver:
 
 - enumerate attachment/joint paths that need native occurrence references;
 - use only replay-safe qualified selectors;
-- keep attachment meaning separate from seed Placement;
+- keep attachment meaning separate from ordinary Placement;
 - reject unsupported relationship cases instead of guessing names or adding
   runtime result binding;
 - preserve ordinary Placement as the preferred tool when no relationship is

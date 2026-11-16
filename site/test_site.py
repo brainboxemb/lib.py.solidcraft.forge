@@ -381,6 +381,15 @@ def check(
             result_path = site / "qualification" / slug / "qualification-result.json"
             assert result_path.is_file(), slug
             structured_result = json.loads(result_path.read_text(encoding="utf-8"))
+            if case.get("blocked_reason"):
+                assert structured_result["status"] == "blocked", slug
+                assert structured_result["blocked_reason"] == case["blocked_reason"], slug
+                assert manifest_case["qualification_status"] == "blocked", slug
+                assert ">BLOCKED</span>" in page_text, slug
+                assert case["blocked_reason"] in page_text, slug
+                assert not (site / "qualification" / slug / "model.png").exists(), slug
+                continue
+
             assert structured_result["status"] in {
                 "pass", "fail", "review", "incomplete"
             }, slug
@@ -467,18 +476,34 @@ def check(
     assert not (site / "models").exists()
     assert not (site / "previews").exists()
     assert not list(site.rglob("native.png"))
+    qualification_by_slug = {
+        case["slug"]: case for case in QUALIFICATION_CASES
+    }
+    native_case_slugs = {
+        case["slug"] for case in QUALIFICATION_CASES
+        if not case.get("blocked_reason")
+    }
     for slug, info in manifest["examples"].items():
         page = (site / "examples" / slug / "index.html").read_text(encoding="utf-8")
         src = (site / info["source"]).read_text(encoding="utf-8")
         commands = json.loads((site / info["commands"]).read_text(encoding="utf-8"))["commands"]
         assert src.strip()
-        assert len(commands) == info["command_count"] > 0
+        blocked_reason = qualification_by_slug.get(slug, {}).get("blocked_reason")
+        if blocked_reason:
+            assert info["command_count"] == 0, slug
+            command_record = json.loads(
+                (site / info["commands"]).read_text(encoding="utf-8")
+            )
+            assert command_record.get("blocked_reason") == blocked_reason, slug
+            assert info.get("blocked_reason") == blocked_reason, slug
+        else:
+            assert len(commands) == info["command_count"] > 0
         image = site / info["preview"]
         assert image.is_file() and image.stat().st_size > 0
         assert info["preview_kind"] in ("native-snapshot", "schematic")
         assert f'src="{image.name}"' in page
         assert f'examples/{slug}/{image.name}' in home
-        if require_native:
+        if require_native and slug in native_case_slugs:
             assert info["preview_kind"] == "native-snapshot", slug
         if info["preview_kind"] == "native-snapshot":
             assert image.suffix == ".png"
@@ -486,7 +511,11 @@ def check(
             assert f"Native SolidCraft {TESTED_SOLIDCRAFT_VERSION} render" in page
         else:
             assert image.suffix == ".svg"
-            assert "Schematic illustration only" in page
+            if blocked_reason:
+                assert "BLOCKED" in page
+                assert blocked_reason in page
+            else:
+                assert "Schematic illustration only" in page
         assert "commands.json" in page and "model.py" in page
     print(f"OK: {len(EXAMPLES)} compiled library examples, cheatsheet, no CAD duplicates")
 

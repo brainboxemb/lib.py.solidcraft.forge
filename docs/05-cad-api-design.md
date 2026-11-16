@@ -203,6 +203,20 @@ right = Block().attach(
 A local planar `offset=(u, v)` on an attachment is measured in the attachment
 frame, not in world XY.
 
+Forge generates replayable SolidCraft 0.42 commands and never makes up
+occurrence names such as `Block:2`. In the joint commands tested so far, the
+component name can refer to that component's first occurrence.
+
+A copied occurrence is rejected as an attachment endpoint in the SolidCraft
+0.42 replay-first backend. `occurrence.copy` returns the native occurrence id
+at runtime, but Forge's normal output is one static command document and cannot
+reuse that runtime result. Forge does not guess `Block:2`, omit the occurrence
+and depend on point-only lookup, or move the copy only to make a pick unique.
+
+Rotated relationships, copied relationships and chained attachments stay
+unsupported until their SolidCraft reference behaviour has been tested. See
+[change 0010](changes/0010-replay-safe-attachments.md).
+
 ## Direction, face and anchor vocabulary
 
 Cardinal direction names are shared where their geometric meaning is shared:

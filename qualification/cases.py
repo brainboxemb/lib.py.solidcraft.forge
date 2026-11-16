@@ -135,12 +135,13 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "components",
+        "blocked_reason": "SolidCraft 0.42 replay-first commands cannot explicitly address a later occurrence made by occurrence.copy. Forge does not guess Component:N names or use point-only lookup for attached copies.",
         "group": "components",
         "title": "Place one component relative to another",
         "intent": "Verify reuse of one component definition while a child occurrence is placed relative to a meaningful face of the parent.",
         "forge_api": "copy()/reusable model semantics; attach(parent=Anchor.RIGHT, child=Anchor.LEFT)",
         "forge_model": "Two ModelInstance occurrences sharing one ModelDefinition; the second carries an Attachment to the first.",
-        "lowering": "One component definition, one copied occurrence and joint.create(type='rigid') using the RIGHT and LEFT native references.",
+        "lowering": "Blocked before joint.create. SolidCraft 0.42 returns the copied occurrence id from occurrence.copy, but a static Forge command document cannot reuse that runtime id and Forge does not guess Block:2.",
         "native_expectation": "Two identical blocks touch face-to-face and retain one shared editable component definition.",
         "mutation": "No mutation in this base case; parametric joint distance and moving anchor geometry are isolated below.",
         "references": [
@@ -190,20 +191,6 @@ QUALIFICATION_CASES = [
         "references": [
             ("SolidCraft", "The joint angle is the persisted native relationship value that clocks the child about the attachment normal."),
             ("BOSL2", "Conceptually comparable to spin/clocking around an attachment normal, while the child geometry remains reusable and neutral."),
-        ],
-    },
-    {
-        "slug": "as-built-attach",
-        "group": "components",
-        "title": "As-built rigid relationship preserves pose",
-        "intent": "Verify that attach(as_built=True) records a rigid native assembly relationship without re-positioning or re-orienting a child occurrence that already has an authored pose.",
-        "forge_api": "Marker(placement=Placement(x=50, y=20, z=15, rotation=(Z,90))).attach(base, as_built=True)",
-        "forge_model": "One Base and one non-square Marker occurrence. The Marker already owns a translation and rotation before the Attachment is added; the as-built relationship carries no parent/child anchor, offset, gap or angle.",
-        "lowering": "Forge emits occurrence.move for the existing Marker pose first, then joint.as_built(type='rigid', a='Base:1', b='Marker:1'). No joint.create or anchor-origin solve is involved.",
-        "native_expectation": "The Base remains at [-20,-15,0]..[20,15,10]. The 30x10 Marker remains quarter-turned to a 10x30 footprint at [45,5,15]..[55,35,23] after the native as-built joint is created.",
-        "mutation": "Not required: an as-built relationship intentionally captures the current relative pose rather than defining a parameter-driven placement rule.",
-        "references": [
-            ("SolidCraft", "The native as-built rigid relationship constrains two already-positioned occurrences without solving a new mating position."),
         ],
     },
     {
@@ -301,13 +288,14 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "four-corner-l",
+        "blocked_reason": "SolidCraft 0.42 replay-first commands cannot explicitly address a later occurrence made by occurrence.copy. Forge does not guess Component:N names or use point-only lookup for attached copies.",
         "q5_required": True,
         "group": "anchors",
         "title": "Four centred vertical L-profiles",
         "intent": "Place one short vertical angle profile around each of the four rounded side corners of a rectangular frame. The profile is centred in height and wraps the two adjacent side faces instead of lying flat on a front/rear face.",
         "forge_api": "LProfile + one assembly-local XY AnchorFrame; planar X/Y offsets select the four side corners, gap selects height, and angle=0/90/180/270 clocks the same neutral profile.",
         "forge_model": "One rounded parametric FrameBlock plus four occurrences of one vertical LProfile definition. The child is a true XY angle section extruded in Z; the assembly owns only corner position, height and clocking.",
-        "lowering": "Four planar joint.create commands share one parent XY frame at Z=0. Symbolic X/Y offsets use frame_width/frame_depth and a symbolic normal offset centres the fixed-height profile vertically. Placement does not depend on a sharp corner edge, so the frame may keep its vertical fillets.",
+        "lowering": "Blocked before the four joint.create commands. The first LProfile can be addressed by component name, but the three later LProfile occurrences need native occurrence ids that occurrence.copy only returns at runtime.",
         "native_expectation": "One vertical angle profile wraps each front-left, front-right, rear-right and rear-left rounded side corner. All four occupy Z=22..38 on the 60 mm frame.",
         "mutation": "Change frame_width/depth from 120x80 to 160x120 mm in the saved .sc design; all four profiles follow the moved side corners while remaining centred at the same frame height.",
         "references": [
@@ -317,13 +305,14 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "eight-corner-brackets",
+        "blocked_reason": "SolidCraft 0.42 replay-first commands cannot explicitly address a later occurrence made by occurrence.copy. Forge does not guess Component:N names or use point-only lookup for attached copies.",
         "q5_required": True,
         "group": "anchors",
         "title": "Eight vertical L-profiles: two per side corner",
         "intent": "Extend the four-profile baseline by placing two short vertical angle profiles on each rounded side corner: one at the bottom and one at the top.",
         "forge_api": "the same neutral LProfile and central XY AnchorFrame as the 4-profile case; every X/Y corner offset is emitted twice with different Z gaps.",
         "forge_model": "One rounded parametric FrameBlock plus eight occurrences of one LProfile definition, organised as four vertical side corners with a bottom/top pair on each.",
-        "lowering": "Eight planar joint.create commands reuse the same four X/Y offsets and clocking angles. The lower member uses Z=0; the upper member uses frame_height-PROFILE_HEIGHT so the fixed 16 mm profile remains flush with the top after native height mutation.",
+        "lowering": "Blocked before the eight joint.create commands. Seven LProfile copies would need explicit native occurrence ids; Forge cannot put those runtime ids into its static command document.",
         "native_expectation": "Each rounded vertical side corner carries exactly two outside angle profiles. On the 60 mm frame they occupy Z=0..16 and Z=44..60.",
         "mutation": "Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow X/Y growth and each upper member moves to Z=74..90 while the lower member remains at the bottom.",
         "references": [
@@ -333,32 +322,19 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "eight-flightcase-corners",
+        "blocked_reason": "SolidCraft 0.42 replay-first commands cannot explicitly address a later occurrence made by occurrence.copy. Forge does not guess Component:N names or use point-only lookup for attached copies.",
         "q5_required": True,
         "group": "anchors",
         "title": "Eight flightcase corner protectors",
         "intent": "Qualify a genuinely three-dimensional corner component: one smaller trihedral protector reused on all eight corners of the same rounded reference case used by the 4/8 profile progression.",
         "forge_api": "FlightcaseCorner + one assembly-local XY AnchorFrame; symbolic X/Y offsets and Z gap place eight occurrences, while explicit child AnchorFrames provide the eight 3D orientations.",
         "forge_model": "One rounded CaseBlock plus eight occurrences of one neutral trihedral protector. The protector is built from three fixed 20 mm plates with 4 mm thickness and deliberately does not derive its size from the case.",
-        "lowering": "Eight planar joint.create relationships use one parent XY frame instead of sharp topology corners. Bottom occurrences use z=0; top occurrences use case_height. Child frame z/x directions rotate the same trihedral component onto the correct three outside faces.",
+        "lowering": "Blocked before the eight joint.create commands. Seven FlightcaseCorner copies would need explicit native occurrence ids; Forge does not replace them with guessed names or point-only occurrence lookup.",
         "native_expectation": "Each of the eight case corners is wrapped by three connected plates: one horizontal and two vertical. The protector outer envelope is a fixed 24x24x24 mm at every corner.",
         "mutation": "Change case_width/depth/height from 120x80x60 to 160x120x90 mm; all protectors follow the moved corners without rerunning Python, while every protector remains exactly 24x24x24 mm.",
         "references": [
             ("SolidCraft", "Assembly-local frames keep placement associative even though the visible case corners are rounded and no sharp corner edge exists."),
             ("BOSL2", "One neutral trihedral part is reused in eight orientations; position/orientation belongs to the assembly rather than the component."),
-        ],
-    },
-    {
-        "slug": "custom-anchor",
-        "group": "anchors",
-        "title": "Named oriented AnchorFrame",
-        "intent": "Verify that a reusable component can publish a named attachment datum with both position and orientation.",
-        "forge_api": "AnchorFrame(origin=..., z=Anchor.RIGHT, x=Anchor.UP); attach(parent='tip', child='mount')",
-        "forge_model": "AnchorFrame is a local coordinate frame: origin says where the point is, Z says which way it faces, and X fixes the clocking around Z.",
-        "lowering": "For the rotated parent occurrence Forge materializes/uses the native joint-origin path so SolidCraft owns the occurrence rotation.",
-        "native_expectation": "After the arm rotates 90 degrees about Z, the marker remains attached to the rotated tip with the authored frame orientation.",
-        "mutation": "No parameter mutation; this fixture isolates occurrence rotation plus named-frame attachment.",
-        "references": [
-            ("BOSL2", "Closest conceptual match: an anchor defines position, local Z direction and spin/orientation information."),
         ],
     },
     {
@@ -368,8 +344,8 @@ QUALIFICATION_CASES = [
         "title": "Anchors on XZ-profile extrusion",
         "intent": "Verify standard corner anchors on geometry authored as an XZ polygon and extruded in Y.",
         "forge_api": "with Sketch(plane='XZ'): Polygon2D(..., plane='XZ', world=True); sketch.extrude(...); standard corner Anchors",
-        "forge_model": "Forge recovers rectangular bounds/topology from the XZ profile while preserving symbolic width and height.",
-        "lowering": "Corner attachments lower to native topology references on the extruded board; no special HUB75-specific placement logic is involved.",
+        "forge_model": "Forge recovers rectangular bounds/topology from the XZ profile while preserving symbolic width and height. RightMarker and LeftMarker are separate small test parts so this case tests the board anchors, not copied-occurrence addressing.",
+        "lowering": "Two joint.create commands use the Board corner topology plus explicit RightMarker and LeftMarker occurrence references. No generated Component:N name is required.",
         "native_expectation": "Left and right markers attach to their respective front-top corners with mirrored spatial results.",
         "mutation": "Change board width/height from 40x20 to 80x40 mm; both markers follow their own corners.",
         "references": [
@@ -438,3 +414,25 @@ QUALIFICATION_CASES = [
         ],
     },
 ]
+
+
+
+def blocked_qualification_cases() -> tuple[dict, ...]:
+    """Cases kept in the qualification catalog but not currently supported."""
+    return tuple(
+        case for case in QUALIFICATION_CASES
+        if case.get("blocked_reason")
+    )
+
+
+def supported_qualification_cases() -> tuple[dict, ...]:
+    """Cases expected to compile and pass the normal Q1-Q6 flow."""
+    return tuple(
+        case for case in QUALIFICATION_CASES
+        if not case.get("blocked_reason")
+    )
+
+
+def supported_case_slugs() -> tuple[str, ...]:
+    """Slugs for cases that may enter command/native qualification."""
+    return tuple(case["slug"] for case in supported_qualification_cases())

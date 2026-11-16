@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from qualification.case_selection import parse_case_selection
+from qualification.cases import supported_case_slugs
 BASELINES = ROOT / "qualification" / "visual_baselines.json"
 VIEWS = ("front", "right", "iso")
 REFERENCE_SIZE = (96, 72)
@@ -187,7 +188,9 @@ def main() -> int:
     rows = ["case\tstatus\n"]
     summary = {}
 
-    selected = parse_case_selection(args.cases)
+    requested = parse_case_selection(args.cases)
+    supported = set(supported_case_slugs())
+    selected = tuple(case for case in requested if case in supported)
     for slug in selected:
         case_dir = args.native_root / slug
         result = validate_case(case_dir, slug, baselines.get(slug))

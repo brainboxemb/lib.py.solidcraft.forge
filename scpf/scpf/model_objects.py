@@ -298,31 +298,36 @@ def _corner_normal(anchor):
     )
 
 
-def _anchor_origin(instance, anchor, occurrence):
-    """Native SolidCraft joint-origin spec for one component anchor."""
+def _anchor_origin(instance, anchor, occurrence, *, position=None):
+    """Build one SolidCraft joint-origin reference for one known occurrence."""
     if instance.placement.rotation is not None and anchor in _CORNER_ANCHORS:
         raise ValueError(
             "corner anchors on explicitly rotated occurrences are not supported yet"
         )
 
+    if position is None:
+        position = instance.placement.position
+
     def world(point):
         return [
-            point[i] + instance.placement.position[i]
+            point[i] + position[i]
             for i in range(3)
         ]
 
     if anchor in _CORNER_ANCHORS:
         edge, on, corner = _corner_origin_points(instance, anchor)
-        return {
-            "occurrence": occurrence,
+        result = {
             "edge": world(edge),
             "on": world(on),
             "corner": world(corner),
         }
-    return {
-        "occurrence": occurrence,
-        "face": world(_anchor_point(instance, anchor)),
-    }
+    else:
+        result = {
+            "face": world(_anchor_point(instance, anchor)),
+        }
+
+    result["occurrence"] = occurrence
+    return result
 
 
 def _face_offset(anchor, offset):
