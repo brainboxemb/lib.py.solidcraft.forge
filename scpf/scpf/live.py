@@ -264,7 +264,7 @@ def send_document(document, *, connect="auto", directory=None, timeout=3610):
     entries = []
     completed = 0
 
-    if has_bindings:
+    if has_bindings and len(chunks) > 1:
         checkpoint_result = _execute(
             "edit.checkpoint",
             {},
