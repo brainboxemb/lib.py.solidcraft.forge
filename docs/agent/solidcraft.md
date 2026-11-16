@@ -69,6 +69,7 @@ solid.extrude
 solid.fillet
 solid.hole
 solid.loft
+solid.pattern.rectangular
 solid.shell
 solid.sphere
 ```

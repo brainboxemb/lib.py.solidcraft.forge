@@ -213,6 +213,20 @@ METHOD_REFERENCES = (
         guide_anchor="anchors",
     ),
     _method("Shape.shell", "Shape.shell()", Shape.shell, guide="features", guide_anchor="shell"),
+    _method(
+        "Shape.repeat_linear",
+        "Shape.repeat_linear()",
+        Shape.repeat_linear,
+        guide="features",
+        guide_anchor="features",
+    ),
+    _method(
+        "Shape.rectangular_pattern",
+        "Shape.rectangular_pattern()",
+        Shape.rectangular_pattern,
+        guide="features",
+        guide_anchor="features",
+    ),
     _method("Sketch", "Sketch", Sketch, guide="geometry", guide_anchor="profiles"),
     _method("Sketch.add", "Sketch.add()", Sketch.add, guide="geometry", guide_anchor="profiles"),
     _method(

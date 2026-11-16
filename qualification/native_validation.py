@@ -722,6 +722,58 @@ def validate_circle_negative_extrude(root: Path) -> Validation:
     return v
 
 
+def validate_rectangular_pattern(root: Path) -> Validation:
+    v = Validation("rectangular-pattern")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "rectangular-pattern", tol=0.01)
+    v.check("single patterned plate body", d["body_count"] == 1, 1, d["body_count"])
+
+    if d["bodies"]:
+        body = d["bodies"][0]
+        v.check(
+            "pattern keeps the plate outer bounds",
+            bbox_close(body, [-60, -40, 0], [60, 40, 4], 0.01),
+            {"min": [-60, -40, 0], "max": [60, 40, 4]},
+            body["bbox"],
+        )
+        v.check(
+            "rectangular pattern removes material beyond the source cut",
+            body["volume_mm3"] < 38050.0 and body["faces"] > 10,
+            {"volume_mm3": "< 38050", "faces": "> 10"},
+            {"volume_mm3": body["volume_mm3"], "faces": body["faces"]},
+        )
+
+    sketch = next(
+        (row for row in d.get("sketches", []) if row.get("name") == "Slot"),
+        None,
+    )
+    v.check(
+        "source Slot remains one solved native sketch profile",
+        sketch is not None
+        and sketch.get("profiles") == 1
+        and sketch.get("status") == "solved",
+        {"name": "Slot", "profiles": 1, "status": "solved"},
+        sketch,
+    )
+
+    timeline = [
+        (row.get("type"), row.get("name"))
+        for row in d.get("timeline", [])
+    ]
+    pattern_rows = [
+        row for row in timeline
+        if "pattern" in str(row[0]).lower()
+        or "pattern" in str(row[1]).lower()
+    ]
+    v.check(
+        "saved timeline contains one native pattern feature",
+        len(pattern_rows) == 1,
+        "one pattern timeline row",
+        timeline,
+    )
+    return v
+
+
 def validate_slot_family(root: Path) -> Validation:
     v = Validation("slot-family")
     d = load(root / "measurements.json")
@@ -895,6 +947,7 @@ VALIDATORS = {
     "eight-corner-brackets": validate_eight_corner_brackets,
     "xz-anchor": validate_xz_anchor,
     "circle-negative-extrude": validate_circle_negative_extrude,
+    "rectangular-pattern": validate_rectangular_pattern,
     "slot-family": validate_slot_family,
     "rounded-rectangle-sketch": validate_rounded_rectangle_sketch,
     "primitive-csg": validate_primitive_csg,

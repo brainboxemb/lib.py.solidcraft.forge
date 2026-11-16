@@ -367,6 +367,26 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "rectangular-pattern",
+        "group": "features",
+        "title": "Native rectangular feature pattern",
+        "intent": "Qualify a real SolidCraft rectangular History pattern over one existing cut feature, rather than Forge-expanded repeated geometry.",
+        "forge_api": "source = slot.extrude(-4); body = body - source; body.rectangular_pattern(source, count=columns, spacing=pitch, direction=Axis.X, count2=rows, spacing2=row_pitch, direction2=Axis.Y)",
+        "forge_model": "One 120 x 80 x 4 mm plate, one native straight Slot cut and one native 3 x 2 rectangular feature pattern.",
+        "lowering": "Forge emits the source Sketch/cut once, then exactly one solid.pattern.rectangular with features=['Slot']; columns/rows are dimensionless native parameters and pitches remain millimetre parameters.",
+        "native_expectation": "SolidCraft saves one plate with six slot cuts and one native rectangular pattern History feature that references the original Slot cut.",
+        "mutation": "No Q5 mutation is required in this first pattern case; native feature identity, measured geometry and visual result are qualified directly.",
+        "references": [
+            ("SolidCraft", "Native saved History is the source of truth because this case qualifies solid.pattern.rectangular itself, not only equivalent repeated geometry."),
+        ],
+        "reference_exceptions": {
+            "pythonscad": "PythonSCAD can repeat equivalent geometry but cannot validate SolidCraft's saved rectangular History feature relationship.",
+            "pybosl2": "pyBOSL2 can repeat equivalent geometry but cannot provide evidence for SolidCraft's native solid.pattern.rectangular feature identity.",
+            "cadquery": "CadQuery can create an equivalent slot array but cannot validate the SolidCraft History pattern command and saved source-feature reference.",
+            "build123d": "build123d can create equivalent repeated geometry but cannot validate SolidCraft's native rectangular History pattern semantics.",
+        },
+    },
+    {
         "slug": "slot-family",
         "group": "features",
         "title": "Native sketch Slot family",
