@@ -40,8 +40,8 @@ repositories for the common primitive defaults and syntax.
 | rectangular solid | `Box(x, y, z)`: centered XYZ | `cube([x,y,z], center=True)` | `cuboid([x,y,z])` |
 | rectangular solid resting on Z=0 | `Box(x,y,z, anchor=BOTTOM)` | `cube([x,y,z], center="00-")` | `cuboid([x,y,z], anchor=Anchor.BOTTOM)` |
 | sphere | `Sphere(r)`: centered | `sphere(r=r)` | `sphere(radius=r)` |
-| cylindrical solid | `Cylinder(d=d, h=h)`: centered on its axis (planned 0022) | `cylinder(d=d,h=h,center=True)` | `cyl(diameter=d,height=h)` |
-| cylinder starting on Z=0 | `Cylinder(d=d,h=h,anchor=BOTTOM)` (planned 0022) | `cylinder(d=d,h=h)` | `cyl(diameter=d,height=h,anchor=Anchor.BOTTOM)` |
+| cylindrical solid | `Cylinder(d=d, h=h)`: centered on its axis | `cylinder(d=d,h=h,center=True)` | `cyl(diameter=d,height=h)` |
+| cylinder starting on Z=0 | `Cylinder(d=d,h=h,anchor=BOTTOM)` | `cylinder(d=d,h=h)` | `cyl(diameter=d,height=h,anchor=Anchor.BOTTOM)` |
 
 **Important:** PythonSCAD's raw cube/cylinder defaults are not the Forge
 defaults; pass an explicit `center=` value in comparison examples. pyBOSL2's
@@ -54,9 +54,8 @@ centered by default. Coordinate-defined `Polygon2D` keeps the coordinates
 supplied by the caller, rather than silently centering the polygon.
 
 **Verification:** The box conventions are already reflected in the local
-`examples/simple-box` references. The cylinder rows describe the target for
-the expanded change 0022 and must not be advertised as implemented until their
-native/CSG regression tests pass.
+`examples/simple-box` references. Cylinder/Sphere origin code and regression tests have been added. Full Q1-Q6
+qualification and downstream model migration remain required before release.
 
 
 ## PythonSCAD: subset used by qualification references
