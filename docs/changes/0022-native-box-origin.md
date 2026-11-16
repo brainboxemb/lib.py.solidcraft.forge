@@ -1,109 +1,138 @@
-# Change 0022 — Native Box anchor datum
+# Change 0022 — Consistent anchors for standard 3D primitives
 
 **Status:** design and implementation  
 **SolidCraft target:** 0.42.0
 
 ## Problem
 
-Forge gave one `Box()` two different native meanings.
+Forge did not give its direct 3D primitives one consistent datum rule.
 
-The feature-history path used a bottom-centred corner:
+The clearest example was `Box()`:
 
-```text
-solid.box(..., corner=[-length / 2, -width / 2, 0])
-```
+- feature-history lowering used a bottom-centred corner;
+- direct CSG lowering used the geometric centre.
 
-while the direct CSG path used:
+Cylinder also historically treated its constructor/placement point as the
+native base, while CENTER alignment elsewhere already needed half-height
+offsets.
 
-```text
-solid.box(..., center=[0, 0, 0])
-```
+Because Forge is still in unstable-release development, change 0022 chooses one
+simple rule instead of preserving those accidental defaults.
 
-for the same unplaced Box.
+## Rule
 
-SolidCraft 0.42 already has the right native distinction: `solid.box` accepts
-either `center=[x,y,z]` or `corner=[x,y,z]`.
-
-## Public API
-
-`Box` uses the existing anchor vocabulary:
-
-```python
-Box(length, width, thickness, *, anchor=Anchor.CENTER)
-```
-
-`anchor` means which Box datum lies at model coordinate `(0, 0, 0)` before
-later placement.
-
-The default is the geometric centre:
+Standard dimension-defined 3D primitives are centred on model coordinate
+`(0, 0, 0)` by default:
 
 ```python
 Box(80, 50, 10)
-Box(80, 50, 10, anchor=BOTTOM)
-Box(80, 50, 10, anchor=FRONT + BOTTOM)
-Box(80, 50, 10, anchor=FRONT + LEFT + BOTTOM)
+Cylinder(d=8, h=20)
+Sphere(12)
 ```
 
-Forge is still in unstable-release development. Change 0022 deliberately picks
-the simpler CENTER default instead of preserving the previous accidental
-bottom-centred behaviour.
+An optional `anchor=` chooses which world-cardinal datum lies at the origin.
 
-Other primitives keep their current constructor semantics in this change. They
-can be normalised separately, with their own native and qualification contract.
+```python
+Box(80, 50, 10, anchor=BOTTOM)
+Cylinder(d=8, h=20, anchor=BOTTOM)
+Cylinder(d=8, h=20, axis=Axis.X, anchor=LEFT)
+Sphere(12, anchor=LEFT)
+```
+
+The public signatures are:
+
+```python
+Box(length, width, thickness, *, anchor=Anchor.CENTER)
+Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER)
+Sphere(radius, *, anchor=Anchor.CENTER)
+```
+
+For an oriented Cylinder, anchors refer to its **world X/Y/Z bounds after the
+axis is chosen**. Therefore:
+
+- Axis.Z uses BOTTOM/TOP for its axial ends;
+- Axis.X uses LEFT/RIGHT for its axial ends;
+- Axis.Y uses FRONT/BACK for its axial ends.
+
+Other cardinal directions select tangent points/planes on the transverse
+circular bounds.
 
 ## Native lowering
 
-For the default CENTER datum Forge emits:
+Forge lowers the selected datum directly to SolidCraft primitive coordinates.
 
-```text
-solid.box(..., center=[0, 0, 0])
-```
+For Box:
 
-For another supported Box anchor Forge calculates the matching native
-`corner=[...]` directly from the dimensions.
+- CENTER uses native `center=[...]`;
+- another anchor is converted to native `corner=[...]`.
 
-Feature-history and direct CSG use the same rule. A translated CSG Box adds the
-translation to the selected native datum; Forge does not add a corrective move.
+For Cylinder:
+
+- SolidCraft still receives a native `base=[...]`;
+- Forge derives that base from the selected anchor, axis, height and diameter.
+
+For Sphere:
+
+- SolidCraft receives the native `center=[...]`;
+- Forge derives that center from the selected tangent/center anchor.
+
+The same calculation is used whether a primitive is a root body, a Boolean CSG
+operand, or is translated later. No corrective move is added merely to emulate
+the chosen datum.
 
 ## `.at()` remains placement
 
-Constructor `anchor=` chooses the unplaced Box datum. `.at(..., anchor=...)`
-is later placement and may choose another Box anchor for that placement.
+Constructor `anchor=` chooses the unplaced primitive datum.
 
-For example:
+`.at(x, y, z, anchor=...)` chooses which datum is placed at the requested
+world coordinate. With no explicit anchor, CENTER is placed there.
+
+Examples:
 
 ```python
 Box(80, 50, 10).at(0, 0, 0, anchor=BOTTOM)
+Cylinder(d=8, h=20).at(10, 5, 3)
+Cylinder(d=8, h=20).at(10, 5, 3, anchor=BOTTOM)
+Sphere(12).at(30, 0, 0)
 ```
 
-places the Box bottom-face centre at the requested point even though the
-constructor default is CENTER.
+`shape.at(other_shape)` remains CENTER-to-CENTER for the supported direct
+shapes.
 
-## `taper()`
+## Box taper
 
 `Box.taper(from_z=..., inset=...)` is anchor-aware.
 
 `from_z` is measured from the Box bottom face regardless of which constructor
 anchor lies at model origin. The native section sketches are emitted at the
-real bottom/start/top planes.
+actual bottom/start/top planes.
+
+## 2D profiles
+
+Rectangle2D, RoundedRectangle2D and Circle2D already use semantic centering
+inside a Sketch from change 0018. Polygon2D and Text2D keep their authored
+coordinates/insertion point and are not forcibly recentered.
 
 ## Qualification
 
 Change 0022 proves:
 
-- ordinary `Box()` emits native `center=[0,0,0]`;
-- `anchor=BOTTOM` and cardinal edge/corner anchors emit the correct native
-  `corner=[...]`;
-- feature-history and CSG use the same Box datum contract;
-- a saved default Box remains centred after length/width/height parameter
-  changes without rerunning Python;
-- `Box.taper()` keeps the same taper intent for CENTER and BOTTOM;
-- explicit `.at(..., anchor=...)` selects the requested placement datum;
-- existing qualification fixtures that require a bottom datum say so explicitly;
-- PythonSCAD, pyBOSL2 and CadQuery references describe the same centred Box;
+- ordinary Box uses native CENTER in both feature-history and CSG;
+- Box bottom/edge/corner anchors lower to the correct native corner;
+- ordinary Cylinder is centred on all principal axes;
+- explicit Cylinder axial anchors use the expected native base;
+- ordinary Sphere is centred and cardinal anchors move its native center to
+  keep the selected tangent datum at the origin;
+- primitive CSG and non-CSG paths use the same datum calculation;
+- saved simple-box dimension changes keep the native Box centre fixed without
+  rerunning Python;
+- Box.taper keeps the same physical taper intent for CENTER and BOTTOM;
+- qualification fixtures that require a bottom datum state it explicitly;
+- PythonSCAD, pyBOSL2 and CadQuery references for the qualification cases keep
+  the same visible modelling intent;
 - full Q1-Q6 qualification remains green.
 
 ## Exit condition
 
-> One Box anchor has one meaning in every compiler path, and ordinary
-> `Box(...)` is centred on the model origin.
+> Standard direct 3D primitives have a centred default, explicit cardinal
+> anchors have one world-space meaning, and native/CSG lowering agree.
