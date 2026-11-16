@@ -99,10 +99,16 @@ topology persistence or saved-design parameter associativity.
 
 ### Native primitive datum selection
 
-Box datum selection is implemented and qualified by
-[change 0022](changes/0022-native-box-origin.md): plain Box is centred, and a
-different Box datum is explicit through `anchor=`.
+Change 0022 standardises direct standard-solid datums:
 
-Cylinder and any other primitive datum changes remain separate follow-up work.
-Do not infer their behaviour from the Box contract; define and qualify each
-native primitive before changing its public default.
+- Box, Cylinder and Sphere default to CENTER;
+- `anchor=` selects a deliberate world-cardinal datum;
+- native and CSG lowering use the same datum calculation;
+- Box tapering measures from the actual Box bottom independently of constructor
+  datum.
+
+Dimension-defined 2D profiles already use semantic centering from change 0018.
+Polygon2D and Text2D keep authored coordinates.
+
+The implementation and qualification record is
+[change 0022](changes/0022-native-box-origin.md).
