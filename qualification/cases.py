@@ -339,14 +339,13 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "xz-anchor",
-        "blocked_reason": "SolidCraft 0.42 replay-first commands cannot explicitly address a later occurrence made by occurrence.copy. Forge does not guess Component:N names or use point-only lookup for attached copies.",
         "q5_required": True,
         "group": "anchors",
         "title": "Anchors on XZ-profile extrusion",
         "intent": "Verify standard corner anchors on geometry authored as an XZ polygon and extruded in Y.",
         "forge_api": "with Sketch(plane='XZ'): Polygon2D(..., plane='XZ', world=True); sketch.extrude(...); standard corner Anchors",
-        "forge_model": "Forge recovers rectangular bounds/topology from the XZ profile while preserving symbolic width and height.",
-        "lowering": "Blocked before both corner attachments can be generated. The second Marker is a copied occurrence and SolidCraft 0.42 provides no replay-first explicit reference for that copy.",
+        "forge_model": "Forge recovers rectangular bounds/topology from the XZ profile while preserving symbolic width and height. RightMarker and LeftMarker are separate small test parts so this case tests the board anchors, not copied-occurrence addressing.",
+        "lowering": "Two joint.create commands use the Board corner topology plus explicit RightMarker and LeftMarker occurrence references. No generated Component:N name is required.",
         "native_expectation": "Left and right markers attach to their respective front-top corners with mirrored spatial results.",
         "mutation": "Change board width/height from 40x20 to 80x40 mm; both markers follow their own corners.",
         "references": [
