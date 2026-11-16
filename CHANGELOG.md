@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-11-16
+
 ### Fixed
 
 - Reusable component definition identity now accepts Forge's own immutable
