@@ -301,11 +301,6 @@ def _corner_normal(anchor):
 
 def _anchor_origin(instance, anchor, occurrence, *, position=None):
     """Build one SolidCraft joint-origin reference for one known occurrence."""
-    if instance.placement.rotation is not None and anchor in _CORNER_ANCHORS:
-        raise ValueError(
-            "corner anchors on explicitly rotated occurrences are not supported yet"
-        )
-
     if position is None:
         position = instance.placement.position
 
