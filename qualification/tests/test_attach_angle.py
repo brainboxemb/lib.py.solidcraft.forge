@@ -1,6 +1,4 @@
 """Qualification contract for native attachment angle."""
-import json
-import os
 from pathlib import Path
 import unittest
 
@@ -8,7 +6,6 @@ from scpf.runner import run_script
 
 
 ROOT = Path(__file__).resolve().parents[2]
-NATIVE_ROOT = os.environ.get("SCPF_NATIVE_ROOT")
 
 
 class AttachAngleCommandTests(unittest.TestCase):
@@ -26,43 +23,6 @@ class AttachAngleCommandTests(unittest.TestCase):
         self.assertEqual(joints[0]["angle"], 90)
         self.assertEqual(joints[0]["a"]["occurrence"], "$base")
         self.assertEqual(joints[0]["b"]["occurrence"], "$arm")
-
-
-@unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
-class AttachAngleNativeTests(unittest.TestCase):
-    def test_native_quarter_turn_swaps_arm_footprint_axes(self):
-        data = _load(
-            Path(NATIVE_ROOT)
-            / "attach-angle"
-            / "measurements.json"
-        )
-        self.assertEqual(data["body_count"], 2)
-        self.assertEqual(
-            _bbox(_body(data, "Base")),
-            ([-30.0, -30.0, 0.0], [30.0, 30.0, 10.0]),
-        )
-        self.assertEqual(
-            _bbox(_body(data, "Arm")),
-            ([-5.0, -15.0, 10.0], [5.0, 15.0, 16.0]),
-        )
-
-
-def _load(path):
-    return json.loads(Path(path).read_text(encoding="utf-8"))
-
-
-def _body(data, prefix):
-    return next(
-        body for body in data["bodies"]
-        if body["name"].startswith(prefix)
-    )
-
-
-def _bbox(body):
-    return (
-        [round(value, 6) for value in body["bbox"]["min"]],
-        [round(value, 6) for value in body["bbox"]["max"]],
-    )
 
 
 if __name__ == "__main__":

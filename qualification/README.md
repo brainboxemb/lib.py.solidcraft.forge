@@ -19,8 +19,16 @@ qualification prose or scripts.
 | Q5 | Saved-design parametric mutation where required |
 | Q6 | Fixed-camera visual regression |
 
-Qualification cases are ordinary `unittest.TestCase` regressions plus native
-evidence. The workflow/runner orchestrates them; it is not a separate test
+Qualification uses three explicit test layers:
+
+1. `scpf/tests/` checks Forge objects, public API and compiler behaviour.
+2. `qualification/tests/` checks emitted SolidCraft commands and qualification
+   tooling.
+3. `qualification/native_validation.py` is the single Q4/Q5 source for native
+   geometry, saved-design mutation and native-history expectations.
+
+Do not copy native measurement expectations back into skipped unittest classes.
+The workflow/runner orchestrates these layers; it is not a separate test
 framework.
 
 ## Fast affected-case loop

@@ -1,6 +1,7 @@
 """Selected native qualification metadata must cover every Q5 case."""
 
 from pathlib import Path
+import re
 import unittest
 
 from qualification.case_selection import CASE_SLUGS
@@ -77,7 +78,13 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
                     yield from strings(item)
 
         text = "\n".join(strings(QUALIFICATION_CASES))
-        self.assertNotIn("SolidCraft 0.30.1", text)
+        documented_versions = set(
+            re.findall(r"SolidCraft (\\d+\\.\\d+\\.\\d+)", text)
+        )
+        self.assertLessEqual(
+            documented_versions,
+            {TESTED_SOLIDCRAFT_VERSION},
+        )
 
 
 if __name__ == "__main__":
