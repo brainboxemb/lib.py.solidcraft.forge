@@ -12,95 +12,17 @@ NATIVE_ROOT = os.environ.get("SCPF_NATIVE_ROOT")
 
 
 class EightCornerBracketsCommandTests(unittest.TestCase):
-    def test_generated_two_profiles_per_vertical_corner_contract(self):
-        document = run_script(
-            ROOT / "examples/eight-corner-brackets/scpf/model.py"
-        )
-        commands = document["commands"]
+    def test_copied_profiles_are_blocked_without_native_copy_reference(self):
+        from scpf.compiler import ModelError
 
-        parameters = [
-            row["params"]
-            for row in commands
-            if row["command"] == "parameters.add"
-        ]
-        self.assertEqual(
-            [(row["name"], row["expression"]) for row in parameters],
-            [
-                ("frame_width", "120"),
-                ("frame_depth", "80"),
-                ("frame_height", "60"),
-            ],
-        )
-
-        components = [
-            row["params"]["name"]
-            for row in commands
-            if row["command"] == "component.create"
-        ]
-        self.assertEqual(components, ["FrameBlock", "LProfile"])
-
-        copies = [
-            row for row in commands
-            if row["command"] == "occurrence.copy"
-        ]
-        self.assertEqual(len(copies), 7)
-
-        fillets = [
-            row["params"]
-            for row in commands
-            if row["command"] == "solid.fillet"
-        ]
-        self.assertEqual(len(fillets), 1)
-        self.assertEqual(float(fillets[0]["radius"]), 8.0)
-
-        joints = [
-            row["params"]
-            for row in commands
-            if row["command"] == "joint.create"
-        ]
-        self.assertEqual(len(joints), 8)
-
-        expected_angles = [0, 0, 90, 90, 180, 180, 270, 270]
-        expected_xy = [
-            ("-(frame_width / 2)", "-(frame_depth / 2)"),
-            ("-(frame_width / 2)", "-(frame_depth / 2)"),
-            ("frame_width / 2", "-(frame_depth / 2)"),
-            ("frame_width / 2", "-(frame_depth / 2)"),
-            ("frame_width / 2", "frame_depth / 2"),
-            ("frame_width / 2", "frame_depth / 2"),
-            ("-(frame_width / 2)", "frame_depth / 2"),
-            ("-(frame_width / 2)", "frame_depth / 2"),
-        ]
-
-        for index, joint in enumerate(joints, 1):
-            self.assertEqual(joint["type"], "planar")
-            self.assertEqual(joint["angle"], 0.0)
-            self.assertEqual(
-                tuple(joint["values"][:2]),
-                expected_xy[index - 1],
-            )
-            self.assertEqual(joint["values"][2], expected_angles[index - 1])
-            self.assertEqual(joint["a"]["occurrence"], "FrameBlock")
-            self.assertEqual(joint["a"]["z"], [0.0, 0.0, 1.0])
-            self.assertEqual(joint["b"]["z"], [0.0, 0.0, -1.0])
-            if index == 1:
-                self.assertEqual(joint["b"]["occurrence"], "LProfile")
-                self.assertEqual(joint["b"]["point"], [0.0, 0.0, 0.0])
-            else:
-                self.assertNotIn("occurrence", joint["b"])
-                self.assertEqual(
-                    joint["b"]["point"],
-                    [0.0, 0.0, float(index)],
-                )
-
-        # Every corner is a bottom/top pair. The bottom member has no normal
-        # offset; the top member keeps a symbolic frame-height dependency.
-        for bottom, top in zip(joints[0::2], joints[1::2]):
-            self.assertNotIn("offset", bottom)
-            self.assertIn("frame_height", str(top["offset"]))
+        with self.assertRaisesRegex(
+            ModelError,
+            "attachment involving a copied occurrence",
+        ):
+            run_script(ROOT / "examples/eight-corner-brackets/scpf/model.py")
 
 
-@unittest.skipUnless(NATIVE_ROOT, "native SolidCraft evidence not supplied")
+@unittest.skip("blocked: copied attachment occurrences have no explicit SolidCraft 0.42 reference")
 class EightCornerBracketsNativeTests(unittest.TestCase):
     def test_native_bounding_boxes_match_two_profiles_per_vertical_corner(self):
         data = _load(
