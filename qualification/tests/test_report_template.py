@@ -17,9 +17,11 @@ class QualificationReportTemplateTests(unittest.TestCase):
         self.assertIn("$image_sections", template)
 
         result = {
-            "schema_version": 1,
+            "schema_version": 2,
             "source_commit": "abc123",
-            "solidcraft_version": "0.30.1",
+            "forge_version": "0.3.4",
+            "solidcraft_version": "0.42.0",
+            "qualified_at": "2026-11-16T09:30:00Z",
             "cases": {
                 "demo": {
                     "title": "Demo case",
@@ -40,7 +42,9 @@ class QualificationReportTemplateTests(unittest.TestCase):
 
         self.assertIn("# SCPF Forge qualification", report)
         self.assertIn("abc123", report)
-        self.assertIn("0.30.1", report)
+        self.assertIn("0.3.4", report)
+        self.assertIn("0.42.0", report)
+        self.assertIn("2026-11-16T09:30:00Z", report)
         self.assertIn("| `demo` | PASS | PASS | PASS | PASS | PASS | N/R | PASS |", report)
         self.assertIn("../native/demo/model.png", report)
         self.assertIn("qualification/templates/report.md", report)
