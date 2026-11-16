@@ -9,6 +9,8 @@ from .core import (
     _NativeExpression,
     _native_expression,
     _box_corner_from_anchor,
+    _sphere_center_from_anchor,
+    _cylinder_base_from_anchor,
     _pv as pv,
     command_value,
     number_text,
@@ -87,21 +89,23 @@ def _csg_primitive(shape, body_name, operation, *, offset=(0, 0, 0)):
             ]
         command = "solid.box"
     elif kind == "sphere":
-        (radius,) = data
+        radius, anchor = data
         _require_positive(radius, "sphere radius")
+        center = _sphere_center_from_anchor(radius, offset, anchor)
         params = dict(
             radius=command_value(radius),
-            center=[command_value(value) for value in offset],
+            center=[command_value(value) for value in center],
             operation=operation,
         )
         command = "solid.sphere"
     elif kind == "cylinder":
-        height, diameter, axis = data
+        height, diameter, axis, anchor = data
         _require_positive(height, "cylinder height")
         _require_positive(diameter, "cylinder diameter")
+        base = _cylinder_base_from_anchor(height, diameter, axis, offset, anchor)
         params = dict(height=command_value(height),
                       diameter=command_value(diameter),
-                      base=[command_value(value) for value in offset],
+                      base=[command_value(value) for value in base],
                       axis=axis, operation=operation)
         command = "solid.cylinder"
     else:
