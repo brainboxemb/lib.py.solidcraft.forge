@@ -407,10 +407,9 @@ def compile_assembly(value, name):
                     "its native occurrence id only at runtime"
                 )
 
-            params = {
-                "component": component_name,
-                "parent": instance.group_name or "root",
-            }
+            params = {"component": component_name}
+            if instance.group_name != parent_name:
+                params["parent"] = instance.group_name or "root"
             position = instance.placement.position
             concrete_position = [pv(value) for value in position]
             if any(concrete_position):
