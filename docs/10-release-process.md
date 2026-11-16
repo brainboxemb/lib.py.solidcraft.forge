@@ -38,7 +38,9 @@ The release PR must:
 4. leave a fresh `[Unreleased]` section above it;
 5. keep `TESTED_SOLIDCRAFT_VERSION` unchanged unless SolidCraft compatibility
    has separately been requalified;
-6. pass the full Q1-Q6 qualification on the exact release-PR head.
+6. have no active non-comment lines in
+   `docs/design/release-blockers.txt`;
+7. pass the full Q1-Q6 qualification on the exact release-PR head.
 
 ## Publishing after merge
 
@@ -51,10 +53,12 @@ qualification completes successfully. It then:
 1. reads the package version from `scpf/pyproject.toml`;
 2. does nothing if that version already has a published GitHub Release;
 3. requires its target SHA to be the current `main` HEAD;
-4. requires a dated matching changelog section;
-5. records the currently qualified SolidCraft version;
-6. creates an annotated `vX.Y.Z` Git tag on that exact commit;
-7. creates the GitHub Release using that changelog section as release notes.
+4. refuses the release when `docs/design/release-blockers.txt` contains an
+   active non-comment blocker;
+5. requires a dated matching changelog section;
+6. records the currently qualified SolidCraft version;
+7. creates an annotated `vX.Y.Z` Git tag on that exact commit;
+8. creates the GitHub Release using that changelog section as release notes.
 
 A failed main qualification therefore cannot publish a release.
 
