@@ -8,6 +8,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Reusable component definition identity now accepts Forge's own immutable
+  cardinal, profile-edge, axis and fixed bound-offset selector values. This
+  restores valid build-only inputs such as
+  `fillet=(BOTTOM + LEFT, BOTTOM + RIGHT)` without weakening rejection of
+  arbitrary mutable/opaque Python objects.
+
 ## [0.4.1] - 2026-11-16
 
 ### Fixed
