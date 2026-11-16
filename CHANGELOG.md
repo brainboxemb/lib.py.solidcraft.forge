@@ -10,15 +10,15 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Added
 
-- `Box(..., origin=...)` now declares the native primitive datum directly.
-  The existing default remains `Anchor.BOTTOM`; `origin=CENTER` creates a
-  fully XYZ-centred native SolidCraft box.
+- `Box(..., anchor=...)` now selects the native primitive datum with the
+  existing Anchor vocabulary.
 
 ### Changed
 
-- Feature-history and direct CSG Box lowering now use the same origin contract.
-  CSG models that require a centred Box state that intent explicitly instead of
-  receiving an implicit CSG-only centre convention.
+- `Box()` is now fully centred around XYZ=0 by default. Use
+  `Box(..., anchor=BOTTOM)` when the bottom-face centre should be at Z=0.
+- Feature-history and direct CSG Box lowering now use the same centred default
+  and native SolidCraft datum semantics.
 
 ## [0.4.2] - 2026-11-16
 
