@@ -20,7 +20,7 @@ sys.path.insert(0, str(ROOT))
 from qualification.cases import QUALIFICATION_CASES
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 def _read_tsv(path: Path, key: str = "case") -> dict[str, dict[str, str]]:
@@ -52,7 +52,9 @@ def collect(
     qualification_dir: Path,
     native_root: Path,
     source_commit: str,
+    forge_version: str,
     solidcraft_version: str,
+    qualified_at: str,
 ) -> dict:
     q1_pass = _suite_passed(qualification_dir / "q1-python-tests.txt")
     q2_tests_pass = _suite_passed(qualification_dir / "q2-python-qualification-tests.txt")
@@ -66,7 +68,9 @@ def collect(
     aggregate = {
         "schema_version": SCHEMA_VERSION,
         "source_commit": source_commit,
+        "forge_version": forge_version,
         "solidcraft_version": solidcraft_version,
+        "qualified_at": qualified_at,
         "cases": {},
     }
 
@@ -190,7 +194,9 @@ def collect(
             "case": slug,
             "title": case["title"],
             "source_commit": source_commit,
+            "forge_version": forge_version,
             "solidcraft_version": solidcraft_version,
+            "qualified_at": qualified_at,
             "status": overall,
             "blocked_reason": blocked_reason,
             "levels": levels,
@@ -220,14 +226,18 @@ def main() -> int:
     parser.add_argument("--qualification-dir", type=Path, required=True)
     parser.add_argument("--native-root", type=Path, required=True)
     parser.add_argument("--source-sha", required=True)
+    parser.add_argument("--forge-version", required=True)
     parser.add_argument("--solidcraft-version", required=True)
+    parser.add_argument("--qualified-at", required=True)
     args = parser.parse_args()
 
     aggregate = collect(
         args.qualification_dir,
         args.native_root,
         args.source_sha,
+        args.forge_version,
         args.solidcraft_version,
+        args.qualified_at,
     )
     counts = {}
     for result in aggregate["cases"].values():
