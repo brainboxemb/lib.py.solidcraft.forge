@@ -12,6 +12,7 @@ from scpf import (
     SlotCenterToCenter2D,
 )
 from scpf.compiler import compile_model
+from scpf.core import Parameter
 
 
 class SketchPatternMirrorTests(unittest.TestCase):
@@ -20,7 +21,7 @@ class SketchPatternMirrorTests(unittest.TestCase):
 
         with Sketch(name="Dog holes", on=board, parent=Anchor.TOP) as sketch:
             seed = sketch.add(Circle2D(d=8), offset=(-30, -10))
-            sketch.rectangular_pattern(
+            patterned = sketch.rectangular_pattern(
                 seed,
                 count=4,
                 spacing=20,
@@ -29,6 +30,7 @@ class SketchPatternMirrorTests(unittest.TestCase):
                 spacing2=20,
                 direction2=Axis.Y,
             )
+            sketch.mirror(patterned, axis=Axis.Y)
 
         document = compile_model(
             board - sketch.extrude(Depth.THROUGH_ALL),
@@ -66,6 +68,7 @@ class SketchPatternMirrorTests(unittest.TestCase):
         self.assertEqual(names.count("sketch.create"), 1)
         self.assertEqual(names.count("sketch.circle.center"), 1)
         self.assertEqual(names.count("sketch.pattern.rectangular"), 1)
+        self.assertEqual(names.count("sketch.mirror"), 1)
         self.assertEqual(names.count("sketch.finish"), 1)
         self.assertEqual(names.count("solid.extrude"), 1)
 
@@ -136,6 +139,40 @@ class SketchPatternMirrorTests(unittest.TestCase):
         self.assertEqual(names.count("sketch.mirror"), 3)
         self.assertEqual(names.count("sketch.finish"), 1)
         self.assertEqual(names.count("solid.extrude"), 1)
+
+    def test_pattern_count_and_spacing_remain_native_parameters(self):
+        board = Box(120, 90, 5, anchor=Anchor.BOTTOM)
+        columns = Parameter("columns", 4)
+        pitch = Parameter("pitch", 20)
+
+        with Sketch(name="Parametric holes", on=board, parent=Anchor.TOP) as sketch:
+            seed = sketch.add(Circle2D(d=8), offset=(-30, 0))
+            sketch.rectangular_pattern(
+                seed,
+                count=columns,
+                spacing=pitch,
+                direction=Axis.X,
+            )
+
+        document = compile_model(
+            board - sketch.extrude(Depth.THROUGH_ALL),
+            "ParametricPatternBoard",
+        )
+        commands = document["commands"]
+        pattern = next(
+            command for command in commands
+            if command["command"] == "sketch.pattern.rectangular"
+        )
+        self.assertEqual(pattern["params"]["count"], "columns")
+        self.assertEqual(pattern["params"]["spacing"], "pitch")
+
+        units = {
+            command["params"]["name"]: command["params"]["unit"]
+            for command in commands
+            if command["command"] == "parameters.add"
+        }
+        self.assertEqual(units["columns"], "")
+        self.assertEqual(units["pitch"], "mm")
 
     def test_pattern_source_must_belong_to_same_sketch(self):
         foreign = Circle2D(d=8)
