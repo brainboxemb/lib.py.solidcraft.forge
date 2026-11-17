@@ -12,6 +12,7 @@ import argparse
 import csv
 import json
 from pathlib import Path
+import shutil
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,7 +22,7 @@ from qualification.cases import QUALIFICATION_CASES
 from qualification.native_cases import mutation_spec
 
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 
 def _read_tsv(path: Path, key: str = "case") -> dict[str, dict[str, str]]:
@@ -35,11 +36,48 @@ def _read_tsv(path: Path, key: str = "case") -> dict[str, dict[str, str]]:
         }
 
 
-def _suite_passed(path: Path) -> bool:
-    if not path.is_file():
-        return False
-    text = path.read_text(encoding="utf-8", errors="replace")
-    return any(line.strip().startswith("OK") for line in text.splitlines())
+def _parse_tests(row: dict[str, str] | None) -> list[dict[str, str]]:
+    if not row or not row.get("tests"):
+        return []
+    try:
+        value = json.loads(row["tests"])
+    except json.JSONDecodeError:
+        return []
+    return value if isinstance(value, list) else []
+
+
+def _copy_case_evidence(
+    qualification_dir: Path,
+    case_dir: Path,
+    level: str,
+    row: dict[str, str] | None,
+) -> str | None:
+    if not row or not row.get("evidence"):
+        return None
+    source = qualification_dir / row["evidence"]
+    if not source.is_file() or source.stat().st_size == 0:
+        return None
+    name = f"{level}-case-evidence.txt"
+    case_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(source, case_dir / name)
+    return name
+
+
+def _case_status(
+    row: dict[str, str] | None,
+    evidence_name: str | None,
+    *,
+    extra_status: str | None = None,
+) -> str:
+    if not row:
+        return "missing"
+    if row.get("status") == "FAIL" or extra_status == "FAIL":
+        return "fail"
+    if row.get("status") != "PASS" or evidence_name is None:
+        return "missing"
+    if extra_status is not None and extra_status != "PASS":
+        return "missing"
+    return "pass"
 
 
 def _existing_names(case_dir: Path, patterns: tuple[str, ...]) -> list[str]:
@@ -57,9 +95,8 @@ def collect(
     solidcraft_version: str,
     qualified_at: str,
 ) -> dict:
-    q1_pass = _suite_passed(qualification_dir / "q1-python-tests.txt")
-    q2_tests_pass = _suite_passed(qualification_dir / "q2-python-qualification-tests.txt")
-
+    q1_rows = _read_tsv(qualification_dir / "q1-case-evidence.tsv")
+    q2_case_rows = _read_tsv(qualification_dir / "q2-case-evidence.tsv")
     q2_rows = _read_tsv(qualification_dir / "q2-command-contract.tsv")
     native_rows = _read_tsv(qualification_dir / "q3-q4-q6-native.tsv")
     mutation_rows = _read_tsv(qualification_dir / "q5-parametric-mutation.tsv")
@@ -78,6 +115,10 @@ def collect(
     for case in QUALIFICATION_CASES:
         slug = case["slug"]
         case_dir = native_root / slug
+        case_dir.mkdir(parents=True, exist_ok=True)
+
+        q1 = q1_rows.get(slug)
+        q2_case = q2_case_rows.get(slug)
         q2 = q2_rows.get(slug, {})
         native = native_rows.get(slug, {})
         mutation = mutation_rows.get(slug)
@@ -105,7 +146,24 @@ def collect(
             ),
         )
 
-        q2_pass = q2_tests_pass and q2.get("status") == "PASS"
+        q1_evidence = _copy_case_evidence(
+            qualification_dir,
+            case_dir,
+            "q1",
+            q1,
+        )
+        q2_evidence = _copy_case_evidence(
+            qualification_dir,
+            case_dir,
+            "q2",
+            q2_case,
+        )
+        q1_status = _case_status(q1, q1_evidence)
+        q2_status = _case_status(
+            q2_case,
+            q2_evidence,
+            extra_status=q2.get("status"),
+        )
         q3_pass = native.get("build") == "PASS" and native.get("eval") == "PASS"
 
         q4_status = validation.get("q4", "MISSING").lower()
@@ -125,13 +183,19 @@ def collect(
 
         levels = {
             "q1": {
-                "status": "pass" if q1_pass else "missing",
-                "evidence": ["q1-python-tests.txt"] if q1_pass else [],
+                "status": q1_status,
+                "tests": _parse_tests(q1),
+                "evidence": [q1_evidence] if q1_evidence else [],
             },
             "q2": {
-                "status": "pass" if q2_pass else "missing",
-                "commands": int(q2["commands"]) if q2.get("commands", "").isdigit() else None,
-                "evidence": ["q2-python-qualification-tests.txt", "q2-command-contract.tsv"] if q2_pass else [],
+                "status": q2_status,
+                "tests": _parse_tests(q2_case),
+                "commands": (
+                    int(q2["commands"])
+                    if q2.get("commands", "").isdigit()
+                    else None
+                ),
+                "evidence": [q2_evidence] if q2_evidence else [],
             },
             "q3": {
                 "status": "pass" if q3_pass else "missing",
@@ -177,7 +241,6 @@ def collect(
 
         blocked_reason = case.get("blocked_reason")
         if blocked_reason:
-            levels["q1"]["status"] = "pass" if q1_pass else "missing"
             for key in ("q2", "q3", "q4", "q5", "q6"):
                 levels[key]["status"] = "blocked"
 
@@ -215,7 +278,6 @@ def collect(
         }
         aggregate["cases"][slug] = result
 
-        case_dir.mkdir(parents=True, exist_ok=True)
         (case_dir / "qualification-result.json").write_text(
             json.dumps(result, indent=2) + "\n",
             encoding="utf-8",
