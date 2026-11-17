@@ -19,6 +19,61 @@ class HeadlessReplayError(RuntimeError):
     """A replay could not be completed by solidcraft-cli."""
 
 
+def _phase_commands(chunk, variables, active_sketch):
+    """Resolve one replay phase and restore transient Sketch edit state.
+
+    A saved .sc file preserves the Sketch feature but not the session's
+    active-sketch flag. Headless replay starts a fresh CLI process for every
+    runtime-binding phase, so an unfinished Sketch must be explicitly reopened
+    before the next phase continues.
+    """
+    native = [resolved_command(item, variables) for item in chunk]
+    if active_sketch is None:
+        return native, 0
+    return [
+        {
+            "command": "sketch.edit",
+            "params": {"sketch": active_sketch},
+        },
+        *native,
+    ], 1
+
+
+def _active_sketch_after(items, results, active_sketch):
+    """Track the transient Sketch edit state represented by replay commands."""
+    if len(items) != len(results):
+        raise HeadlessReplayError(
+            "SolidCraft did not return one result per replay command"
+        )
+
+    active = active_sketch
+    for item, result in zip(items, results):
+        command = item["command"]
+        if command == "sketch.create":
+            sketch = result.get("sketch") if isinstance(result, dict) else None
+            if not isinstance(sketch, int):
+                raise HeadlessReplayError(
+                    f"sketch.create did not return a sketch id: {result!r}"
+                )
+            active = sketch
+        elif command == "sketch.edit":
+            target = item.get("params", {}).get("sketch")
+            if not isinstance(target, (int, str)):
+                raise HeadlessReplayError(
+                    f"sketch.edit has no usable sketch target: {target!r}"
+                )
+            active = target
+        elif command in (
+            "sketch.finish",
+            "sketch.finish_auto_constrain",
+            "sketch.cancel",
+        ):
+            active = None
+        elif command == "file.new":
+            active = None
+    return active
+
+
 def run_document(
     document,
     *,
@@ -60,6 +115,7 @@ def run_document(
     variables = {}
     entries = []
     all_results = []
+    active_sketch = None
 
     owned_tmp = None
     if work_dir is None:
@@ -73,15 +129,23 @@ def run_document(
     command_index = 0
     try:
         for phase_index, chunk in enumerate(chunks, start=1):
-            native = [
-                resolved_command(item, variables)
-                if is_replay_document(document)
-                else {
-                    "command": item["command"],
-                    "params": item.get("params", {}),
-                }
-                for item in chunk
-            ]
+            if is_replay_document(document):
+                native, transport_prefix = _phase_commands(
+                    chunk,
+                    variables,
+                    active_sketch,
+                )
+                replay_native = native[transport_prefix:]
+            else:
+                native = [
+                    {
+                        "command": item["command"],
+                        "params": item.get("params", {}),
+                    }
+                    for item in chunk
+                ]
+                transport_prefix = 0
+                replay_native = native
             script = work / f"phase-{phase_index}.json"
             result_path = work / f"phase-{phase_index}-results.json"
             last = phase_index == len(chunks)
@@ -133,26 +197,32 @@ def run_document(
                 raise HeadlessReplayError(
                     f"replay phase {phase_index} did not return a result list"
                 )
+            if len(results) != len(native):
+                raise HeadlessReplayError(
+                    "SolidCraft did not return one result per native phase command"
+                )
 
+            replay_results = results[transport_prefix:]
             if is_replay_document(document):
                 try:
                     bindings = apply_bindings(
                         chunk,
-                        results,
+                        replay_results,
                         variables,
                     )
                 except ValueError as exc:
                     raise HeadlessReplayError(str(exc)) from exc
+                active_sketch = _active_sketch_after(
+                    replay_native,
+                    replay_results,
+                    active_sketch,
+                )
             else:
-                if len(results) != len(chunk):
-                    raise HeadlessReplayError(
-                        "SolidCraft did not return one result per command"
-                    )
                 bindings = [{} for _ in chunk]
 
             for item, native_item, bound in zip(
                 chunk,
-                native,
+                replay_native,
                 bindings,
             ):
                 entry = {
@@ -165,7 +235,7 @@ def run_document(
                 entries.append(entry)
                 command_index += 1
 
-            all_results.extend(results)
+            all_results.extend(replay_results)
             previous = phase_save
 
         log = replay_log(document, variables, entries)
