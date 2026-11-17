@@ -8,6 +8,23 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-11-17
+
+### Changed
+
+- Qualification case pages now read as model examples for users: what the
+  example makes, Forge code, independent reference code, SolidCraft result,
+  and technical test details. Forge and reference implementations are shown
+  next to each other for direct comparison.
+- The API Guide now introduces positioning and orientation directly after
+  model objects and explains when to use `at()`, `on()`,
+  `Shape.attach()`, `Placement` and `Occurrence.attach()`.
+- Presentation-only Pages changes can reuse the latest compatible successful
+  qualification evidence instead of rerunning the full native/reference
+  qualification. The site records the page-build commit separately from the
+  qualification-evidence commit.
+
+
 ### Qualification
 
 - Added a focused repeated-parent attachment qualification for the foundational
