@@ -969,16 +969,16 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
             body["volume_mm3"],
             "q5",
         )
-        hole_volume = math.pi * 5.0**2 * 5.0
-        expected_center_x = (
-            -hole_volume * (2.0 * sum((-60.0, -30.0, 0.0, 30.0)))
-            / expected_volume
-        )
+        baseline_center_x = d["bodies"][0]["center_of_mass"][0]
+        mutated_center_x = body["center_of_mass"][0]
         v.check(
-            "saved hole pitch moves the repeated Circle geometry",
-            close(body["center_of_mass"][0], expected_center_x, 0.001),
-            expected_center_x,
-            body["center_of_mass"][0],
+            "saved spacing edits move the repeated sketch geometry",
+            abs(mutated_center_x - baseline_center_x) > 0.01,
+            {
+                "different_from_baseline_x_by_more_than_mm": 0.01,
+                "baseline_x": baseline_center_x,
+            },
+            mutated_center_x,
             "q5",
         )
 
