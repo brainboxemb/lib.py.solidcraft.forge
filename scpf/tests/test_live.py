@@ -357,7 +357,7 @@ class LiveProtocolTests(unittest.TestCase):
             send_document(document, directory=self.directory)
         server.join()
 
-    def test_replay_v1_string_bindings_remain_supported(self):
+    def test_replay_v1_document_is_rejected(self):
         document = {
             "format": "scpf-replay",
             "version": 1,
@@ -367,19 +367,8 @@ class LiveProtocolTests(unittest.TestCase):
                 "bind": {"$board": "occurrence"},
             }],
         }
-        server = FakeSolidCraft({
-            "id": 1,
-            "ok": True,
-            "result": {
-                "completed": 1,
-                "results": [{"component": 2, "occurrence": 9}],
-                "undone": 0,
-            },
-        })
-        self.configure(server)
-        result = send_document(document, directory=self.directory)
-        server.join()
-        self.assertEqual(result["variables"]["$board"], 9)
+        with self.assertRaisesRegex(LiveError, "expected 2"):
+            send_document(document, directory=self.directory)
 
     def test_replay_failure_restores_whole_checkpoint(self):
         document = replay_document([
