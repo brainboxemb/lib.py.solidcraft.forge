@@ -107,6 +107,33 @@ def check(
             elif member["kind"] == "constant":
                 assert member["value"] in page_text
 
+    slot_group = next(
+        spec for spec in GROUP_REFERENCES
+        if spec["slug"] == "sketch-slot-constructors"
+    )
+    slot_members = {member["name"]: member for member in group_members(slot_group)}
+    expected_slot_parameters = {
+        "SlotCenterToCenter2D": {"p0", "p1", "width"},
+        "SlotOverall2D": {"p0", "p1", "width"},
+        "SlotCenterPoint2D": {"center", "end", "width"},
+        "SlotArcThreePoint2D": {"start", "through", "end", "width"},
+        "SlotArcCenter2D": {"center", "start", "width", "end", "sweep"},
+    }
+    slot_page = (
+        site / "reference" / "sketch-slot-constructors" / "index.html"
+    ).read_text(encoding="utf-8")
+    geometry_guide = (
+        site / "guide" / "geometry" / "index.html"
+    ).read_text(encoding="utf-8")
+    for name, expected_parameters in expected_slot_parameters.items():
+        member = slot_members[name]
+        assert {row["name"] for row in member["parameters"]} == expected_parameters
+        assert member["example"], name
+        for parameter in expected_parameters:
+            assert f"<code>{parameter}</code>" in slot_page, (name, parameter)
+        assert f"#{name}" in geometry_guide, name
+    assert "Detailed parameter reference" in geometry_guide
+
     assert not unmapped_public_exports()
     assert set(export_reference_targets()) == set(scpf.__all__)
 

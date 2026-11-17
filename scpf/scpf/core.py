@@ -1441,7 +1441,20 @@ def _slot_width(width):
 
 
 def SlotCenterToCenter2D(p0, p1, width):
-    """Create a native straight Slot from the centres of its round ends."""
+    """Create a straight Slot from the centres of its two round ends.
+
+    Parameters:
+        p0: Centre of the first round end as (x, y) in sketch coordinates, in mm.
+        p1: Centre of the second round end as (x, y) in sketch coordinates, in mm.
+        width: Total Slot width in mm. This is also the diameter of each round end.
+
+    Limits:
+        p0 and p1 must be different points. The straight part runs between
+        these two end centres.
+
+    Example:
+        SlotCenterToCenter2D((-10, 0), (10, 0), 6)
+    """
     p0 = _slot_point("p0", p0)
     p1 = _slot_point("p1", p1)
     if p0 == p1:
@@ -1453,7 +1466,20 @@ def SlotCenterToCenter2D(p0, p1, width):
 
 
 def SlotOverall2D(p0, p1, width):
-    """Create a native straight Slot from its two overall end points."""
+    """Create a straight Slot from its two outermost end points.
+
+    Parameters:
+        p0: Outermost point of the first round end as (x, y) in sketch coordinates, in mm.
+        p1: Outermost point of the second round end as (x, y) in sketch coordinates, in mm.
+        width: Total Slot width in mm. This is also the diameter of each round end.
+
+    Limits:
+        The distance from p0 to p1 is the total Slot length, including both
+        round ends, and must be larger than width.
+
+    Example:
+        SlotOverall2D((-15, 0), (15, 0), 6)
+    """
     p0 = _slot_point("p0", p0)
     p1 = _slot_point("p1", p1)
     width = _slot_width(width)
@@ -1465,7 +1491,20 @@ def SlotOverall2D(p0, p1, width):
 
 
 def SlotCenterPoint2D(center, end, width):
-    """Create a native straight Slot from its centre and one end-arc centre."""
+    """Create a straight Slot from its centre and one round-end centre.
+
+    Parameters:
+        center: Centre of the complete Slot as (x, y) in sketch coordinates, in mm.
+        end: Centre of one round end as (x, y) in sketch coordinates, in mm.
+        width: Total Slot width in mm. This is also the diameter of each round end.
+
+    Limits:
+        center and end must differ. The other round-end centre is mirrored
+        through center.
+
+    Example:
+        SlotCenterPoint2D((0, 0), (10, 0), 6)
+    """
     center = _slot_point("center", center)
     end = _slot_point("end", end)
     if center == end:
@@ -1477,7 +1516,20 @@ def SlotCenterPoint2D(center, end, width):
 
 
 def SlotArcThreePoint2D(start, through, end, width):
-    """Create a native arc Slot through three points on its centre arc."""
+    """Create a curved Slot whose centre arc passes through three points.
+
+    Parameters:
+        start: Start point of the Slot centre arc as (x, y) in sketch coordinates, in mm.
+        through: A point that the centre arc must pass through, as (x, y) in mm.
+        end: End point of the Slot centre arc as (x, y) in sketch coordinates, in mm.
+        width: Total Slot width in mm, measured perpendicular to the centre arc.
+
+    Limits:
+        start, through and end must be three different points.
+
+    Example:
+        SlotArcThreePoint2D((-15, 0), (0, 10), (15, 0), 6)
+    """
     start = _slot_point("start", start)
     through = _slot_point("through", through)
     end = _slot_point("end", end)
@@ -1490,7 +1542,22 @@ def SlotArcThreePoint2D(start, through, end, width):
 
 
 def SlotArcCenter2D(center, start, width, *, end=None, sweep=None):
-    """Create a native arc Slot from its centre, start and end or sweep."""
+    """Create a curved Slot from an arc centre and start point.
+
+    Parameters:
+        center: Centre of the underlying circular arc as (x, y) in sketch coordinates, in mm.
+        start: Start point of the Slot centre arc as (x, y) in sketch coordinates, in mm.
+        width: Total Slot width in mm, measured perpendicular to the centre arc.
+        end: Optional end point of the centre arc as (x, y) in mm.
+        sweep: Optional positive sweep angle in degrees.
+
+    Limits:
+        Supply exactly one of end= or sweep=. center and start must differ.
+        sweep must be greater than 0 and less than 360 degrees.
+
+    Example:
+        SlotArcCenter2D((0, 0), (12, 0), 6, sweep=120)
+    """
     center = _slot_point("center", center)
     start = _slot_point("start", start)
     if center == start:
@@ -1508,7 +1575,6 @@ def SlotArcCenter2D(center, start, width, *, end=None, sweep=None):
     return register_profile(
         Shape("slot_arc_center", (center, start, end, sweep, _slot_width(width)))
     )
-
 
 def Circle2D(*, d=None, r=None):
     """Create a circular 2D profile by diameter or radius.
