@@ -59,7 +59,7 @@
         "description": "One face of a body.",
         "properties": {
           "area": {
-            "description": "Its area (mm²).",
+            "description": "Its area (mm\u00b2).",
             "format": "double",
             "type": "number"
           },
@@ -176,5 +176,5 @@
     "title": "ModelFaces",
     "type": "object"
   },
-  "params": "body: name → per face: index, name (what face.delete, sheet.convert `face`, solid.shell … take in place of a point), exact, area, centroid (not always on the face), plane_normal, point (a point on the face that picks it), cylinder? ({origin, axis, radius} of a cylindrical face), sheet_face? (a folded sheet's face: `sheet:<body>:<panel>:<side>`, panel base or a flange's tag F<feature>.<k>, side top | bottom | rim.<edge> | bend.inner | bend.outer; taken wherever a face name is, and it holds while sizes change and flanges come and go)"
+  "params": "body: name \u2192 per face: index, name (what face.delete, sheet.convert `face`, solid.shell \u2026 take in place of a point), exact, area, centroid (not always on the face), plane_normal, point (a point on the face that picks it), cylinder? ({origin, axis, radius} of a cylindrical face), sheet_face? (a folded sheet's face: `sheet:<body>:<panel>:<side>`, panel base or a flange's tag F<feature>.<k>, side top | bottom | rim.<edge> | bend.inner | bend.outer; taken wherever a face name is, and it holds while sizes change and flanges come and go)"
 }
