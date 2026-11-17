@@ -50,7 +50,7 @@ class NativeSlotFamilyTests(unittest.TestCase):
             command for command in commands
             if command["command"] == "model.faces"
         )
-        self.assertEqual(face_query["params"], {"body": "Body"})
+        self.assertEqual(face_query["params"], {"body": "SlotFamily"})
         self.assertEqual(
             set(face_query["bind"]),
             {"$face_point_1", "$face_index_1"},
@@ -63,7 +63,7 @@ class NativeSlotFamilyTests(unittest.TestCase):
             create["params"]["plane"],
             {
                 "face": "$face_point_1",
-                "body": "Body",
+                "body": "SlotFamily",
                 "index": "$face_index_1",
             },
         )
