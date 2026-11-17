@@ -1997,8 +1997,9 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             lowering=escape(case["lowering"]),
             native_expectation=escape(case["native_expectation"]),
             mutation_criterion=(
-                '<h3>Mutation criterion</h3><p>' + escape(case["mutation"]) + '</p>'
-                if case.get("q5_required") else ""
+                '<h3>Q5 applicability</h3><p><strong>'
+                + ("Required." if case.get("q5_required") else "Not required.")
+                + '</strong> ' + escape(case["mutation"]) + '</p>'
             ),
             mutation=escape(case["mutation"]),
             evidence_items="".join(evidence_items),
