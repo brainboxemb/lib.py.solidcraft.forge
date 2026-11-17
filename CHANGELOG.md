@@ -8,12 +8,7 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
-### Fixed
-
-- Attached explicit Sketch compilation no longer requires rectangular-body
-  metadata when using `Anchor.TOP` face lookup or an explicit
-  `plane=..., origin=(...)`. BOTTOM/CENTER relative attachment keeps its
-  existing rectangular-base requirement (issue #295).
+## [0.9.0] - 2026-11-17
 
 ### Added
 
@@ -22,6 +17,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
   feature. It supports principal/fixed XYZ axes, an optional axis origin,
   dimensionless count Parameters, optional degree-angle Parameters and native
   alignment/reversal settings (issue #293).
+
+### Fixed
+
+- Attached explicit Sketch compilation no longer requires rectangular-body
+  metadata when using `Anchor.TOP` face lookup or an explicit
+  `plane=..., origin=(...)`. BOTTOM/CENTER relative attachment keeps its
+  existing rectangular-base requirement (issue #295).
 
 ## [0.8.1] - 2026-11-17
 
