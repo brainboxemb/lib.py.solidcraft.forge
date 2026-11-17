@@ -8,6 +8,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Qualification
+
+- Renewed the SCPF v0.6.0 qualification under the corrected audit gates. All
+  24 supported cases pass Q1-Q4 and Q6; all 14 Q5-required cases pass saved-
+  design mutation. Post-tag package-source changes are documentation strings
+  only, so no corrective Forge runtime release is required by this audit.
+
 ### Changed
 
 - Q6 now separates independently declared expected-shape evidence from native
