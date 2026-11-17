@@ -49,9 +49,9 @@ class AnchorTopologyMutationCommandTests(unittest.TestCase):
             },
         )
         self.assertEqual(joint["b"]["occurrence"], "$marker")
-        # The first Marker occurrence is created at native identity. The
-        # joint owns the relationship, so its child frame stays local here.
-        self.assertEqual(joint["b"]["point"], [0.0, 0.0, 0.0])
+        # The Marker receives the computed seed Placement before joint.create,
+        # so the topology selector is the current world-space mating point.
+        self.assertEqual(joint["b"]["point"], [-20.0, -10.0, 20.0])
         self.assertEqual(joint["b"]["z"], [0.0, 0.0, 1.0])
         self.assertEqual(joint["b"]["x"], [1.0, 0.0, 0.0])
         self.assertEqual(joint["angle"], 0.0)

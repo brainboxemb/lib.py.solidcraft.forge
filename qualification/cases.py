@@ -151,6 +151,22 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "repeated-parent-attachments",
+        "q5_required": True,
+        "group": "associativity",
+        "title": "Attachments on repeated parent occurrences",
+        "intent": "Verify two disconnected rigid-joint graphs when two occurrences of one shared parent definition each own one attached child.",
+        "forge_api": "right = left.copy(placement=Placement(x=60)); marker_a = Marker().attach(left, parent=Anchor.TOP, child=Anchor.BOTTOM); marker_b = marker_a.copy().attach(right, parent=Anchor.TOP, child=Anchor.BOTTOM)",
+        "forge_model": "Two Parent occurrences share one definition and one parent_height dependency. Two Marker occurrences share one definition. Each Marker has exactly one rigid Attachment to a different Parent occurrence.",
+        "lowering": "Forge creates one Parent definition plus one translated copy and one Marker definition plus one copy. Each Marker receives its symbolic computed seed Placement through a replay-bound occurrence.move, followed by exactly one authored rigid joint.create to its replay-bound Parent occurrence. No generated placement joint is allowed.",
+        "native_expectation": "Both markers sit on their own parent TOP face. After parent_height changes in the saved design, both disconnected joint graphs must rebuild so both markers follow the changed top faces.",
+        "mutation": "Change parent_height from 40 to 60 mm in the saved .sc design; both Parent occurrences become 60 mm tall and both Marker occurrences move from Z=40..50 to Z=60..70 without rerunning Python.",
+        "references": [
+            ("SolidCraft", "This case isolates the 0.42 joint-solver behaviour for two disconnected graphs that share reusable component definitions."),
+            ("BOSL2", "Two independent TOP-to-BOTTOM attachments express the same parent/child intent without SolidCraft-specific replay identity."),
+        ],
+    },
+    {
         "slug": "assembly-decorator",
         "group": "components",
         "title": "Imported @assembly subassembly",
@@ -203,7 +219,7 @@ QUALIFICATION_CASES = [
         "intent": "Verify that distance along the attachment normal remains a native editable joint parameter.",
         "forge_api": "attach(..., gap=self.gap)",
         "forge_model": "Rigid Attachment with a symbolic gap expression; anchor identities are unchanged.",
-        "lowering": "joint.create(type='rigid', offset='gap'); gap is not flattened into occurrence.move.",
+        "lowering": "The child receives a symbolic seed pose so a floating graph starts at the authored mating position; joint.create(type='rigid', offset='gap') remains the relationship and the gap remains a native expression in both places rather than a flattened number.",
         "native_expectation": "The child sits 10 mm away from the parent's RIGHT face along the joint normal.",
         "mutation": "Change gap from 10 to 30 mm in the saved .sc design; the child must move another 20 mm without rerunning Python.",
         "references": [
@@ -218,7 +234,7 @@ QUALIFICATION_CASES = [
         "intent": "Verify the existing local (u,v) attachment-plane offset and make its coordinate semantics explicit.",
         "forge_api": "attach(..., offset=(u, v))",
         "forge_model": "Attachment stores two symbolic local planar values; these are not world X/Y/Z coordinates.",
-        "lowering": "A non-zero/symbolic local offset becomes joint.create(type='planar', values=[u,v,angle]).",
+        "lowering": "The computed child seed pose retains the symbolic local offset, then the actual relationship is joint.create(type='planar', values=[u,v,angle]). The seed move is not an additional joint.",
         "native_expectation": "The marker moves within the selected corner anchor's local attachment plane.",
         "mutation": "Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm.",
         "references": [

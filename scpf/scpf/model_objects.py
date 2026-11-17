@@ -16,6 +16,8 @@ from .core import (
     Shape,
     _DirectionSelector,
     _selector_anchor,
+    _dim_add,
+    _dim_sub,
     half,
     midpoint,
     parameters_in,
@@ -196,12 +198,10 @@ def _rectangular_bounds(instance):
                 "component attach requires a supported rectangular model"
             ) from exc
 
-    width, depth, height = map(pv, (width, depth, height))
-    x, y, z = map(pv, (x, y, z))
     return (
-        (x, x + width),
-        (y, y + depth),
-        (z, z + height),
+        (x, _dim_add(x, width)),
+        (y, _dim_add(y, depth)),
+        (z, _dim_add(z, height)),
     )
 
 
@@ -595,19 +595,32 @@ class ModelInstance:
             Anchor.BOTTOM,
             Anchor.CENTER,
         ):
-            tangent = _face_offset(parent, face_offset_values)
+            # Validation above reads concrete values, but the seed Placement
+            # itself must retain Parameter/Expression dependencies.
+            tangent = _face_offset(parent, face_offset)
             if parent is not Anchor.CENTER:
                 normal = parent.vector
 
+        normal_offset = tuple(
+            0
+            if component == 0
+            else gap
+            if component > 0
+            else -gap
+            for component in normal
+        )
         target_world = tuple(
-            target_local[i]
-            + target.placement.position[i]
-            + tangent[i]
-            + normal[i] * gap_value
+            _dim_add(
+                _dim_add(
+                    _dim_add(target_local[i], target.placement.position[i]),
+                    tangent[i],
+                ),
+                normal_offset[i],
+            )
             for i in range(3)
         )
         translation = tuple(
-            target_world[i] - child_local[i]
+            _dim_sub(target_world[i], child_local[i])
             for i in range(3)
         )
         angle_value = None

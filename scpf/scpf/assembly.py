@@ -495,11 +495,18 @@ def _compile_assembly_with_dependencies(value, name):
     # Placement is assembly-owned occurrence pose. SolidCraft can express some
     # copies directly with occurrence.copy.translate. The remaining cases use
     # the actual occurrence id returned by component.create/occurrence.copy.
+    #
+    # A normal attachment still gets its computed Placement as a seed move.
+    # SolidCraft 0.42 does not solve a disconnected floating joint graph toward
+    # an arbitrary intended pose, so a repeated parent/child graph needs the
+    # child to start at the authored mating position. The joint remains the
+    # only relationship; this move is occurrence creation state.
     for instance in assembly.instances:
         attachment = instance.attachment
-        if attachment is not None and not attachment.as_built:
-            # A normal joint determines this occurrence's pose.
-            continue
+        normal_attachment = (
+            attachment is not None
+            and not attachment.as_built
+        )
         if instance.occurrence_id in positioned_at_copy:
             continue
         if _identity_placement(instance):
@@ -522,6 +529,9 @@ def _compile_assembly_with_dependencies(value, name):
             "occurrence": occurrence_refs[instance.occurrence_id],
             "translate": list(position),
         }
+        if normal_attachment:
+            commands.append(_command("occurrence.move", **params))
+            continue
         if instance.placement.rotation is not None:
             axis, degrees = instance.placement.rotation
             params["axis"] = list(axis)
@@ -598,8 +608,13 @@ def _compile_assembly_with_dependencies(value, name):
             reference["occurrence"] = occurrence
             return reference
 
-        parent_position = (0.0, 0.0, 0.0)
-        child_position = (0.0, 0.0, 0.0)
+        # joint.create geometry picks are world coordinates. The parent may
+        # already be an ordinary placed/copied occurrence. A normal attached
+        # child has also received its computed seed Placement immediately
+        # above. Both selection points therefore include their current world
+        # Placement before SolidCraft stores the native topology reference.
+        parent_position = attachment.target.placement.position
+        child_position = instance.placement.position
 
         if isinstance(attachment.parent, Anchor):
             parent_origin = _anchor_origin(

@@ -145,6 +145,44 @@ class AssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "same Forge occurrence"):
             panel + panel
 
+    def test_repeated_parent_attachments_keep_distinct_targets(self):
+        from scpf import Anchor, Box, Placement, component
+
+        @component
+        class Parent:
+            def build(self):
+                return Box(20, 20, 40, anchor=Anchor.BOTTOM)
+
+        @component
+        class Marker:
+            def build(self):
+                return Box(10, 10, 10, anchor=Anchor.BOTTOM)
+
+        left = Parent()
+        right = left.copy(placement=Placement(x=60))
+        first = Marker().attach(
+            left,
+            parent=Anchor.TOP,
+            child=Anchor.BOTTOM,
+        )
+        second = first.copy().attach(
+            right,
+            parent=Anchor.TOP,
+            child=Anchor.BOTTOM,
+        )
+
+        self.assertNotEqual(left.occurrence_id, right.occurrence_id)
+        self.assertNotEqual(first.occurrence_id, second.occurrence_id)
+        self.assertEqual(first.definition.key, second.definition.key)
+        self.assertEqual(
+            first.attachment.target.occurrence_id,
+            left.occurrence_id,
+        )
+        self.assertEqual(
+            second.attachment.target.occurrence_id,
+            right.occurrence_id,
+        )
+
     def test_grouped_attachment_resolves_by_forge_occurrence_id(self):
         from scpf import Anchor, Box, component
         from scpf.assembly import compile_assembly
@@ -2472,7 +2510,7 @@ class AssemblyTests(unittest.TestCase):
             joint["b"],
             {
                 "occurrence": "$bracket",
-                "point": [0.0, 0.0, -5.0],
+                "point": [20.0, -20.0, 20.0],
                 "z": [0.0, 1.0, 0.0],
                 "x": [0.0, 0.0, -1.0],
             },
@@ -2617,7 +2655,9 @@ class AssemblyTests(unittest.TestCase):
         )
         self.assertEqual(joint["type"], "rigid")
         self.assertIn("corner", joint["a"])
-        self.assertEqual(joint["b"]["point"], [-20.0, -15.0, -5.0])
+        # The child has already received its seed Placement. joint.create
+        # therefore selects the mating datum at its current world position.
+        self.assertEqual(joint["b"]["point"], [-20.0, -15.0, 5.0])
         self.assertEqual(joint["b"]["z"], [0.0, -1.0, 0.0])
         self.assertEqual(joint["b"]["occurrence"], "$child")
 
@@ -2645,7 +2685,7 @@ class AssemblyTests(unittest.TestCase):
             joint["b"],
             {
                 "occurrence": "$marker",
-                "point": [5.0, 5.0, 10.0],
+                "point": [20.0, -15.0, 20.0],
                 "z": [0.0, 1.0, 0.0],
                 "x": [-1.0, 0.0, 0.0],
             },
@@ -2729,7 +2769,7 @@ class AssemblyTests(unittest.TestCase):
         self.assertEqual([joint["angle"] for joint in joints], [0, 90])
 
     def test_attach_seed_includes_current_offset_and_gap_values(self):
-        from scpf.core import Anchor, Box, Parameter
+        from scpf.core import Anchor, Box, Parameter, parameters_in, pv
         from scpf.model_objects import ModelDefinition, ModelInstance
 
         definition = ModelDefinition("Block", (), Box(40, 30, 10))
@@ -2744,13 +2784,20 @@ class AssemblyTests(unittest.TestCase):
             gap=gap,
         )
 
-        self.assertEqual(child.placement.position, (10.0, -2.0, 15.0))
+        self.assertEqual(child.placement.position[:2], (10.0, -2.0))
+        self.assertEqual(pv(child.placement.position[2]), 15.0)
+        self.assertEqual(
+            [parameter.name for parameter in parameters_in(
+                child.placement.position[2]
+            )],
+            ["gap"],
+        )
         self.assertIs(child.attachment.gap, gap)
         self.assertEqual(child.attachment.offset, (10, -2))
 
     def test_parametric_attach_keeps_in_plane_offset_expression(self):
         from scpf.assembly import compile_assembly
-        from scpf.core import Anchor, Box, Parameter
+        from scpf.core import Anchor, Box, Parameter, parameters_in, pv
         from scpf.model_objects import ModelDefinition, ModelInstance
 
         left_definition = ModelDefinition("LeftBlock", (), Box(40, 30, 10))
@@ -2763,9 +2810,27 @@ class AssemblyTests(unittest.TestCase):
             child=Anchor.LEFT,
             offset=(0, -wood + 12),
         )
-        self.assertEqual(right.placement.position, (40.0, 0.0, -6.0))
+        self.assertEqual(right.placement.position[:2], (40.0, 0))
+        self.assertEqual(pv(right.placement.position[2]), -6.0)
+        self.assertEqual(
+            [parameter.name for parameter in parameters_in(
+                right.placement.position[2]
+            )],
+            ["wood_thickness"],
+        )
 
         commands = compile_assembly(left + right, "ParametricOffset")["commands"]
+        seed = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "occurrence.move"
+            and command["params"]["occurrence"] == "$rightblock"
+        )
+        self.assertEqual(seed["translate"][:2], [40.0, 0])
+        self.assertEqual(
+            seed["translate"][2],
+            "-(wood_thickness) + 12 mm",
+        )
         parameter = next(
             command["params"]
             for command in commands

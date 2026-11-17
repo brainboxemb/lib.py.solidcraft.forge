@@ -92,6 +92,20 @@ CASE_EVIDENCE = {
             ),
         ],
     },
+    "repeated-parent-attachments": {
+        "q1": [
+            _target(
+                "scpf/tests/test_assembly.py",
+                "test_repeated_parent_attachments_keep_distinct_targets",
+            ),
+        ],
+        "q2": [
+            _target(
+                "qualification/tests/test_repeated_parent_attachments.py",
+                "test_two_authored_rigid_joints_use_bound_occurrences",
+            ),
+        ],
+    },
     "assembly-decorator": {
         "q1": [
             _target(

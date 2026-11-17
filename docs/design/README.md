@@ -29,6 +29,10 @@ facts available as [machine-readable JSON](requalification-v0.6.0.json).
 The target compiler boundaries and invariants are defined in
 [Forge compiler architecture and invariants](forge-architecture.md).
 
+The ten reusable-component foundation scenarios and their current executable
+qualification mapping are recorded in
+[the foundational component/occurrence contract closeout](foundation-contract-closeout.md).
+
 The audit is intentionally performed against `main`; exploratory PRs are
 evidence only and are not implementation sources.
 

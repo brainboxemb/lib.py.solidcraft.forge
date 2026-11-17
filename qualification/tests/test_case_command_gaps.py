@@ -131,7 +131,7 @@ class MissingCaseCommandContractTests(unittest.TestCase):
         )
         self.assertEqual(
             joint["b"],
-            {"face": [-10.0, 0.0, 5.0], "occurrence": "$block"},
+            {"face": [20.0, 0.0, 5.0], "occurrence": "$block"},
         )
 
     def test_corner_anchor_command_contract(self):
@@ -144,7 +144,7 @@ class MissingCaseCommandContractTests(unittest.TestCase):
         self.assertEqual(joint["a"]["occurrence"], "$base")
         self.assertEqual(joint["a"]["corner"], [20.0, -15.0, 20.0])
         self.assertEqual(joint["b"]["occurrence"], "$marker")
-        self.assertEqual(joint["b"]["point"], [5.0, 5.0, 10.0])
+        self.assertEqual(joint["b"]["point"], [20.0, -15.0, 20.0])
 
     def test_xz_anchor_command_contract(self):
         rows = commands("xz-anchor")

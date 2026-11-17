@@ -159,13 +159,23 @@ It does **not** identify either side using a SolidCraft browser name.
 
 For SolidCraft 0.42 we have proved this so far:
 
-- the component name can select that component's first occurrence in
-  `joint.create`, `joint.origin` and `joint.as_built`;
-- Forge does not yet have a proved way to refer to a later copy in every
-  relationship command;
-- do not move a copy or leave out `occurrence` only to work around that
-  missing reference. First prove that the method matches normal SolidCraft
-  joint selection and behaves correctly when the model changes.
+- `component.create` and `occurrence.copy` return the actual native
+  occurrence id; Forge replay binds those returned ids to replay variables;
+- `joint.create` accepts those replay-bound ids for first and copied
+  attachment endpoints;
+- joint geometry picks are world coordinates. Forge supplies the occurrence id
+  **and** the world pick, matching normal SolidCraft joint selection;
+- a normal attached child receives its computed Placement as a seed pose before
+  `joint.create`. This is required for a second disconnected floating rigid
+  graph in SolidCraft 0.42; the authored joint remains the only relationship;
+- that seed Placement retains symbolic parent-dimension, gap and offset
+  dependencies so saved `parameters.change` rebuilds both joint graphs;
+- the component name is still accepted for a component's first occurrence in
+  `joint.create`, `joint.origin` and `joint.as_built`, but Forge does not
+  use generated `Component:N` display names as identity;
+- Forge does not claim that every SolidCraft relationship command accepts every
+  copied-occurrence form. Each relationship family still needs its own
+  qualification.
 
 **Rule JT-2**
 

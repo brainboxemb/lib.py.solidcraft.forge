@@ -13,6 +13,12 @@ EXPECTED_MUTATION_BOUNDS = {
     "simple-box": [
         {"label": "SimpleBox", "min": [-25, -15, 0], "max": [25, 15, 10]},
     ],
+    "repeated-parent-attachments": [
+        {"label": "left Parent", "min": [-10, -10, 0], "max": [10, 10, 60]},
+        {"label": "right Parent", "min": [50, -10, 0], "max": [70, 10, 60]},
+        {"label": "left Marker", "min": [-5, -5, 60], "max": [5, 5, 70]},
+        {"label": "right Marker", "min": [55, -5, 60], "max": [65, 5, 70]},
+    ],
     "assembly-owned-anchor": [
         {"label": "Base", "min": [-40, -15, 0], "max": [40, 15, 40]},
         {"label": "Companion", "min": [65, -5, 0], "max": [75, 5, 10]},
