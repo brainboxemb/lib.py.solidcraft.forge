@@ -15,6 +15,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 MUTATIONS = {
+    "simple-box": {
+        "command": "qualification/commands/simple-box/change-length.json",
+        "save": "model-length-50.sc",
+        "measurements": "measurements-length-50.json",
+        "label": "length 40 -> 50 mm",
+    },
     "parameter-scope": {
         "command": "qualification/commands/parameter-scope/change-shared-width.json",
         "save": "model-shared-width-100.sc",

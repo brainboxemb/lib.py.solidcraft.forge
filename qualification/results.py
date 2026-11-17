@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from qualification.cases import QUALIFICATION_CASES
+from qualification.native_cases import mutation_spec
 
 
 SCHEMA_VERSION = 2
@@ -151,11 +152,17 @@ def collect(
                 "required": mutation_required,
                 "reason": case["mutation"],
                 "mutation": mutation.get("mutation") if mutation else None,
-                "evidence": [
-                    name for name in native_files
-                    if name.startswith("change-") or "size-" in name or "width-" in name
-                    or "gap-" in name or "shift-" in name or "shared-width-" in name
-                ],
+                "evidence": (
+                    [
+                        name
+                        for name in native_files
+                        if name in {
+                            mutation_spec(slug)["save"],
+                            mutation_spec(slug)["measurements"],
+                        }
+                    ]
+                    if mutation_required else []
+                ),
             },
             "q6": {
                 "status": q6_status,

@@ -10,6 +10,9 @@ from qualification.geometry_contracts import EXPECTED_BOUNDS, EXPECTED_VISUAL_BO
 
 
 EXPECTED_MUTATION_BOUNDS = {
+    "simple-box": [
+        {"label": "SimpleBox", "min": [-25, -15, 0], "max": [25, 15, 10]},
+    ],
     "assembly-owned-anchor": [
         {"label": "Base", "min": [-40, -15, 0], "max": [40, 15, 40]},
         {"label": "Companion", "min": [65, -5, 0], "max": [75, 5, 10]},

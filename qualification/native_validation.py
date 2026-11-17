@@ -186,6 +186,31 @@ def validate_simple_box(root: Path) -> Validation:
             {"min": [-20, -15, 0], "max": [20, 15, 10]}, b["bbox"])
     v.check("parameters", params(d) == {"length": 40.0, "width": 30.0, "height": 10.0},
             {"length": 40.0, "width": 30.0, "height": 10.0}, params(d))
+
+    m = load(root / "measurements-length-50.json")
+    _check_declared_bounds(
+        v,
+        m,
+        "simple-box",
+        level="q5",
+        mutation=True,
+    )
+    v.check(
+        "length parameter changed in saved design",
+        params(m) == {"length": 50.0, "width": 30.0, "height": 10.0},
+        {"length": 50.0, "width": 30.0, "height": 10.0},
+        params(m),
+        "q5",
+    )
+    v.check(
+        "native Box rebuilds after length mutation",
+        m["body_count"] == 1
+        and bbox_close(m["bodies"][0], [-25, -15, 0], [25, 15, 10]),
+        {"min": [-25, -15, 0], "max": [25, 15, 10]},
+        m["bodies"][0]["bbox"] if m.get("bodies") else None,
+        "q5",
+    )
+
     return v
 
 

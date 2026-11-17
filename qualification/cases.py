@@ -77,6 +77,7 @@ QUALIFICATION_GROUPS = [
 QUALIFICATION_CASES = [
     {
         "slug": "simple-box",
+        "q5_required": True,
         "group": "fundamentals",
         "title": "Parameterized Box",
         "intent": "Establish the smallest model/parameter contract: three public Python fields create one editable native box.",
@@ -84,7 +85,7 @@ QUALIFICATION_CASES = [
         "forge_model": "One root Shape with symbolic length, width and height; no occurrence or assembly layer.",
         "lowering": "parameters.add for the public dimensions, followed directly by native solid.box; no sketch is synthesized.",
         "native_expectation": "One rectangular solid with the requested 40 x 30 x 10 mm dimensions and an error-free timeline.",
-        "mutation": "Not required in this fixture; parameter-expression preservation is covered by focused Q1 tests and more specific native mutation cases.",
+        "mutation": "Required because this case explicitly claims an editable native Box. Change length from 40 to 50 mm in the saved .sc design; the Box must rebuild to 50 x 30 x 10 mm without rerunning Python.",
         "references": [
             ("OpenSCAD", "cube([40,30,10]) is the constructive-geometry baseline; Forge differs by preserving editable SolidCraft history."),
         ],
