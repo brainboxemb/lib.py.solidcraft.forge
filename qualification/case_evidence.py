@@ -302,6 +302,36 @@ CASE_EVIDENCE = {
             ),
         ],
     },
+    "sketch-pattern-mirror": {
+        "q1": [
+            _target(
+                "scpf/tests/test_sketch_patterns.py",
+                "test_circle_rectangular_pattern_uses_bound_native_curves",
+            ),
+            _target(
+                "scpf/tests/test_sketch_patterns.py",
+                "test_slot_pattern_and_mirrors_reuse_operation_results",
+            ),
+            _target(
+                "scpf/tests/test_sketch_patterns.py",
+                "test_pattern_count_and_spacing_remain_native_parameters",
+            ),
+        ],
+        "q2": [
+            _target(
+                "qualification/tests/test_sketch_pattern_mirror.py",
+                "test_circle_seed_stays_one_native_profile_with_pattern_and_mirror",
+            ),
+            _target(
+                "qualification/tests/test_sketch_pattern_mirror.py",
+                "test_slot_seed_stays_one_native_profile_with_pattern_and_mirrors",
+            ),
+            _target(
+                "qualification/tests/test_sketch_pattern_mirror.py",
+                "test_pattern_parameters_have_correct_native_units",
+            ),
+        ],
+    },
     "rectangular-pattern": {
         "q1": [
             _target(
