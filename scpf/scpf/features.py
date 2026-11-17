@@ -550,7 +550,14 @@ def _attached_commands(shape, original, feature, name, *, feature_name=None):
     return operations
 
 
-def _explicit_sketch_commands(shape, original, feature, name):
+def _explicit_sketch_commands(
+    shape,
+    original,
+    feature,
+    name,
+    *,
+    face_query_index=None,
+):
     """Compile an explicitly authored named sketch and its extrusion."""
     sketch_name, target, parent_anchor, plane_info, profiles, distance, direction = feature.data
     plane_name, sketch_origin = plane_info
@@ -581,26 +588,50 @@ def _explicit_sketch_commands(shape, original, feature, name):
         relative_origin = (0, 0)
     else:
         if parent_anchor is Anchor.TOP:
-            plane_z = _combine(z, thickness)
-        elif parent_anchor is Anchor.BOTTOM:
-            plane_z = z
-        elif parent_anchor is Anchor.INNER_BOTTOM:
-            wall = _shell_thickness(target)
-            if wall is None:
-                raise ModelError("Anchor.INNER_BOTTOM requires a shelled body")
-            plane_z = _combine(z, wall)
-        elif parent_anchor is Anchor.CENTER:
-            plane_z = _combine(z, half(thickness))
+            if face_query_index is None:
+                raise ModelError("attached TOP Sketch needs a face query index")
+            point_var = f"$face_point_{face_query_index}"
+            index_var = f"$face_index_{face_query_index}"
+            selector = {
+                "field": "faces",
+                "where": {"plane_normal": [0, 0, 1]},
+                "max": "area",
+            }
+            face_query = _command("model.faces", body=name)
+            face_query["bind"] = {
+                point_var: {**selector, "select": "point"},
+                index_var: {**selector, "select": "index"},
+            }
+            plane = dict(
+                plane={
+                    "face": point_var,
+                    "body": name,
+                    "index": index_var,
+                },
+                project_edges=False,
+                name=sketch_name,
+            )
+            relative_origin = (0, 0)
+            commands = [face_query, _command("sketch.create", **plane)]
         else:
-            raise ModelError("unsupported explicit Sketch anchor")
+            if parent_anchor is Anchor.BOTTOM:
+                plane_z = z
+            elif parent_anchor is Anchor.INNER_BOTTOM:
+                wall = _shell_thickness(target)
+                if wall is None:
+                    raise ModelError("Anchor.INNER_BOTTOM requires a shelled body")
+                plane_z = _combine(z, wall)
+            elif parent_anchor is Anchor.CENTER:
+                plane_z = _combine(z, half(thickness))
+            else:
+                raise ModelError("unsupported explicit Sketch anchor")
 
-        plane = dict(plane="XY", name=sketch_name)
-        if pv(plane_z):
-            plane["offset"] = command_value(plane_z)
-        center_x, center_y, _ = _base_rectangle_center(target)
-        relative_origin = (center_x, center_y)
-
-    commands = [_command("sketch.create", **plane)]
+            plane = dict(plane="XY", name=sketch_name)
+            if pv(plane_z):
+                plane["offset"] = command_value(plane_z)
+            center_x, center_y, _ = _base_rectangle_center(target)
+            relative_origin = (center_x, center_y)
+            commands = [_command("sketch.create", **plane)]
 
     for profile, profile_anchor, offset in profiles:
         ox = _combine(relative_origin[0], offset[0])
@@ -876,8 +907,16 @@ def _to_commands(shape, name):
             return steps + _attached_commands(
                 shape, original, added, name, feature_name=feature_name), base
         if added.kind == "explicit_sketch_extrusion":
+            face_query_index = 1 + sum(
+                command["command"] == "model.faces"
+                for command in steps
+            )
             return steps + _explicit_sketch_commands(
-                shape, original, added, name
+                shape,
+                original,
+                added,
+                name,
+                face_query_index=face_query_index,
             ), base
         if added.kind == "placed3d" and added.data[0].kind in (
                 "lip", "snap_fit", "boss", "rest"):
