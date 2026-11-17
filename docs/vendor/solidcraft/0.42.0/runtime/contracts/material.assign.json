@@ -1,0 +1,68 @@
+{
+  "id": "material.assign",
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Give bodies a physical material (a built-in one, or one made with `material.create`), which\ntheir mass and density come from. One undo step.",
+    "properties": {
+      "bodies": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 1,
+            "type": "array"
+          }
+        ],
+        "description": "The bodies, by name: one or a list, at least one, each an existing body."
+      },
+      "material": {
+        "description": "The material's name (Steel, Aluminum, ABS Plastic, \u2026, or one made with `material.create`;\n`material.list` lists them). Letter case and spaces at either end don't matter.",
+        "type": "string"
+      }
+    },
+    "required": [
+      "bodies",
+      "material"
+    ],
+    "title": "MaterialAssignParams",
+    "type": "object"
+  },
+  "label": "Physical Material",
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What `material.assign` returns.",
+    "properties": {
+      "bodies": {
+        "description": "The bodies that got the material.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "material": {
+        "description": "The material's name as the design has it.",
+        "type": "string"
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "bodies",
+      "material"
+    ],
+    "title": "MaterialAssignResult",
+    "type": "object"
+  },
+  "params": "bodies: [names]; material: name (Steel, Aluminum, ABS Plastic, \u2026, or one made with material.create; `material.list`)"
+}

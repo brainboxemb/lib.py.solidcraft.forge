@@ -1,0 +1,841 @@
+{
+  "id": "solid.extrude",
+  "input": {
+    "$defs": {
+      "AngleExpr": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "An angle: a number of degrees, or an expression such as \"30 deg\" or \"a / 2\"."
+      },
+      "Direction": {
+        "description": "Which way to extrude: positive (the default), negative, or symmetric (the distance is the total thickness, split evenly around the start plane). one_side is an alias of positive; reverse and flip of negative. Matching ignores case.",
+        "enum": [
+          "positive",
+          "negative",
+          "symmetric",
+          "one_side",
+          "reverse",
+          "flip"
+        ],
+        "type": "string"
+      },
+      "ExtentKeyword": {
+        "description": "\"through_all\" (any case) is the same as through_all: true.",
+        "enum": [
+          "through_all"
+        ],
+        "type": "string"
+      },
+      "ExtrudeConvention": {
+        "description": "total_distance (the default): a symmetric distance is the total thickness. legacy_per_side keeps older designs' per-side meaning.",
+        "enum": [
+          "total_distance",
+          "legacy_per_side"
+        ],
+        "type": "string"
+      },
+      "ExtrudeOperation": {
+        "description": "How the extrusion combines with existing bodies: auto (cut into a body, otherwise join; new in an empty component), new, join, cut or intersect. The others are aliases. Matching ignores case, spaces, '_' and '-' (only case for auto).",
+        "enum": [
+          "auto",
+          "new",
+          "join",
+          "cut",
+          "intersect",
+          "new_body",
+          "newbody",
+          "new_component",
+          "newcomponent",
+          "union",
+          "add",
+          "subtract",
+          "difference",
+          "intersection"
+        ],
+        "type": "string"
+      },
+      "Faces": {
+        "description": "Points in mm, one on each of the coplanar faces of one body to extrude together.",
+        "items": {
+          "$ref": "#/$defs/Point3"
+        },
+        "maxItems": 1024,
+        "minItems": 1,
+        "type": "array"
+      },
+      "IdOrName": {
+        "description": "A feature's id (a number) or its name.",
+        "type": [
+          "number",
+          "string"
+        ]
+      },
+      "LengthExpr": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "A length: a number in the design's length unit, or an expression such as \"w / 2\" or \"30 mm\"."
+      },
+      "Point2": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A sketch point in mm: [x, y] or {\"x\", \"y\"}."
+      },
+      "Point3": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "z": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A point in mm: [x, y, z] or {\"x\", \"y\", \"z\"}."
+      },
+      "Profiles": {
+        "anyOf": [
+          {
+            "pattern": "^[Aa][Ll][Ll]$",
+            "type": "string"
+          },
+          {
+            "maximum": 18446744073709551615,
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "items": {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "maxItems": 10000,
+            "minItems": 1,
+            "type": "array"
+          },
+          {
+            "items": {
+              "properties": {
+                "point": {
+                  "$ref": "#/$defs/Point2"
+                }
+              },
+              "required": [
+                "point"
+              ],
+              "type": "object"
+            },
+            "maxItems": 10000,
+            "minItems": 1,
+            "type": "array"
+          },
+          {
+            "items": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                {
+                  "properties": {
+                    "curves": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "items": {
+                            "type": "string"
+                          },
+                          "minItems": 1,
+                          "type": "array"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "curves"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "not": {
+                    "required": [
+                      "curves"
+                    ]
+                  },
+                  "properties": {
+                    "loops": {
+                      "items": {
+                        "properties": {
+                          "curves": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "minItems": 1,
+                                "type": "array"
+                              }
+                            ]
+                          },
+                          "outer": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "curves"
+                        ],
+                        "type": "object"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "loops"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 10000,
+            "minItems": 1,
+            "not": {
+              "items": {
+                "required": [
+                  "point"
+                ],
+                "type": "object"
+              }
+            },
+            "type": "array"
+          },
+          {
+            "anyOf": [
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "whole_boundaries"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              },
+              {
+                "not": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "whole_boundaries"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                "properties": {
+                  "offset_boundaries": {
+                    "items": {
+                      "maxLength": 512,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 128,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  }
+                },
+                "required": [
+                  "offset_boundaries"
+                ],
+                "type": "object"
+              },
+              {
+                "not": {
+                  "required": [
+                    "offset_boundaries"
+                  ]
+                },
+                "properties": {
+                  "associations": {
+                    "items": {
+                      "maxLength": 512,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 128,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "type": {
+                    "enum": [
+                      "offset_boundaries"
+                    ]
+                  }
+                },
+                "required": [
+                  "type",
+                  "associations"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Internal selections written by the app."
+          }
+        ],
+        "description": "Which sketch profiles to use: \"all\" (the default, any case), an index, or a list of indices, of {\"point\": [x, y]} inside a profile, or of curve selections (a list of curve ids, {\"curves\": [ids]} or {\"loops\": [...]}). Picks by index or point are stored by the curves around the profile."
+      },
+      "StringList": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "type": "array"
+          }
+        ],
+        "description": "A name, or a list of names."
+      },
+      "ThinSide": {
+        "description": "Which side of the curves the wall lies on: center (the default), inside, outside or two_sides. The others are aliases. Matching ignores case and surrounding spaces, and reads ' ' and '-' as '_'.",
+        "enum": [
+          "center",
+          "inside",
+          "outside",
+          "two_sides",
+          "centre",
+          "centered",
+          "centred",
+          "symmetric",
+          "side1",
+          "side_1",
+          "side2",
+          "side_2",
+          "both"
+        ],
+        "type": "string"
+      },
+      "Touching": {
+        "description": "What a join makes of pieces that share no face: separate (the default) makes each piece that touches another only along an edge or at a point a body of its own and keeps pieces that touch nothing in one body; one_body keeps every piece in one body.",
+        "enum": [
+          "separate",
+          "one_body"
+        ],
+        "type": "string"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Extrude sketch profiles (or a planar body face) into a solid.",
+    "properties": {
+      "body": {
+        "default": null,
+        "description": "With `face`, among placed instances: the body whose placement `face` is read in (read by\nthe engine's frame mapping, before the command runs). Default: `face_body`, else the\nbody nearest the point.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "body_name": {
+        "default": null,
+        "description": "The new body's name.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "body_names": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/StringList"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Names for the new bodies, in order."
+      },
+      "convention": {
+        "$ref": "#/$defs/ExtrudeConvention",
+        "description": "How a symmetric distance is read. Default: total_distance."
+      },
+      "curves": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/StringList"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "With `thin`: the curves the wall follows. Default: every drawn curve of the sketch."
+      },
+      "direction": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Direction"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Which way to extrude. Default: positive."
+      },
+      "distance": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "How far: the length one way; with `direction: symmetric`, the total thickness (per side\nwith `convention: legacy_per_side`); with `distance2`, the first side's length. Required\nunless `through_all` or `to` is given."
+      },
+      "distance2": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Two Sides: a second distance on the side `direction` leaves free; the first side may be\n`through_all` or `to`. With `direction: negative` the first side goes against the normal\nand `distance2` along it. A negative distance only turns its own side over."
+      },
+      "exact_regions": {
+        "default": null,
+        "description": "Each index or point pick is exactly the region it names. Without it, a pick on a drawn\nprofile that reference geometry (a face's projected outline) cuts into regions takes the\nwhole drawn profile. The dialogs send `true`: they highlight the regions they pick.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "extent": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ExtentKeyword"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "`\"through_all\"`, the same as `through_all: true`."
+      },
+      "face": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Point3"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "A point on a planar body face to extrude instead of a sketch profile."
+      },
+      "face_body": {
+        "default": null,
+        "description": "The body whose face to use, where faces of several bodies meet at `face` (or `faces`).",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "faces": {
+        "$ref": "#/$defs/Faces",
+        "description": "Several coplanar faces of one body to extrude together, by a point on each. Not with\n`face`, `sketch` or `profiles`."
+      },
+      "fixed": {
+        "default": null,
+        "description": "With `face` or `faces`: start on the face's plane as a fixed plane, which won't follow later\nchanges to the face (for a face whose history can't keep an attachment, such as a converted\nmesh's).",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "from": {
+        "$ref": "#/$defs/Point3",
+        "description": "Start at this face or point (From Object)."
+      },
+      "name": {
+        "default": null,
+        "description": "The feature's name in the timeline.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "operation": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ExtrudeOperation"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "How the extrusion combines with existing bodies. Default: new."
+      },
+      "participants": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/StringList"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The bodies taking part; overrides the default scope."
+      },
+      "profiles": {
+        "$ref": "#/$defs/Profiles",
+        "description": "Which of the sketch's profiles to extrude. Default: all of them. Ignored when `face` is\ngiven; not allowed with `thin`."
+      },
+      "side": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ThinSide"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "With `thin`: which side of the curves the wall lies on. Default: center."
+      },
+      "sketch": {
+        "$ref": "#/$defs/IdOrName",
+        "description": "The sketch to extrude, by id or name. Default: the active sketch, else the last one.\nIgnored when `face` is given."
+      },
+      "start_offset": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Start this far from the sketch plane, along its normal."
+      },
+      "taper": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/AngleExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Draft angle of the side walls (positive: outward, so the far end is larger along the\nextrusion direction; negative: inward, so the far end is smaller)."
+      },
+      "targets": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/StringList"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The bodies a join, cut or intersect works on. Default for a join from a body's face:\nthat body."
+      },
+      "thickness": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "With `thin`: the wall's thickness."
+      },
+      "thickness2": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "With `thin` and `side: two_sides`: the thickness outside."
+      },
+      "thin": {
+        "description": "A thin wall along sketch curves instead of solid profiles.",
+        "type": "boolean"
+      },
+      "through_all": {
+        "default": null,
+        "description": "Extrude through everything in the way.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "to": {
+        "$ref": "#/$defs/Point3",
+        "description": "Extrude up to this face, vertex or point (To Object)."
+      },
+      "to_offset": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "How far past `to` to go."
+      },
+      "touching": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Touching"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "What a join makes of pieces that share no face. Default: separate."
+      }
+    },
+    "title": "ExtrudeParams",
+    "type": "object"
+  },
+  "label": "Extrude",
+  "output": {
+    "$defs": {
+      "FeatureNotice": {
+        "description": "Something a feature's result tells the user without stopping them, with an action to take.",
+        "properties": {
+          "action": {
+            "$ref": "#/$defs/NoticeAction",
+            "description": "The command that changes the feature as the notice offers."
+          },
+          "contact": {
+            "description": "How the bodies split off touched the others: `along_edge`, `at_point` or `touching` (along\na line or at a point their boundaries don't hold).",
+            "type": "string"
+          },
+          "message": {
+            "description": "The text to show.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "contact",
+          "action"
+        ],
+        "type": "object"
+      },
+      "NoticeAction": {
+        "description": "A command a notice offers to run.",
+        "properties": {
+          "command": {
+            "description": "The command's id.",
+            "type": "string"
+          },
+          "label": {
+            "description": "The action's label.",
+            "type": "string"
+          },
+          "params": {
+            "description": "Its parameters."
+          }
+        },
+        "required": [
+          "label",
+          "command",
+          "params"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What a feature command returns.",
+    "properties": {
+      "bodies": {
+        "description": "Every body after the feature.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "changed_bodies": {
+        "description": "Bodies that were there before and now have other geometry.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "created_bodies": {
+        "description": "The bodies the feature made.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "feature": {
+        "description": "The new feature's id.",
+        "format": "uint64",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "ms": {
+        "description": "How long the feature took to evaluate, in milliseconds.",
+        "format": "double",
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "name": {
+        "description": "The new feature's name.",
+        "type": "string"
+      },
+      "notice": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FeatureNotice"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "A join that split pieces into bodies of their own because they touch the others only along\nan edge or at a point (its `touching: separate`): what to tell the user, and the edit that\nmakes them one body instead. Left out otherwise, also when the join kept pieces that touch\nnothing in one body."
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "removed_bodies": {
+        "description": "Bodies that are gone.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "warning": {
+        "description": "A warning from the evaluation (a Boolean that needed a retry, a reference found again\nelsewhere), or `null`.",
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "feature",
+      "name",
+      "bodies",
+      "created_bodies",
+      "changed_bodies",
+      "removed_bodies",
+      "warning",
+      "ms"
+    ],
+    "title": "FeatureResult",
+    "type": "object"
+  },
+  "params": "distance: expr (or through_all: true); taper?: angle expr (positive: outward, so the far end is larger along the extrusion direction; negative: inward, so the far end is smaller); corner?: preserve_curvature|tangent|round (how a taper closes a sharp corner its offset opens: each wall continues as itself, a line's plane or an arc's cone, until it meets its neighbour; each continues straight along its end tangent; or an arc about the corner. Without it, each profile preserves curvature where every curve is a line or an arc and takes tangent where another curve has a corner, and the feature's warning says so; a corner rule given is kept, and refused where the kernel cannot build it); sketch?: id|name (default: active or last sketch); profiles?: all | [index] | [{curves: [ids]}] (the profile whose outer loop is made of exactly these curves, or pieces of them; found again on every recompute, so it follows parameter changes; islands inside are its holes; an error when no profile or several match) | [{point:[x,y]}] (index and point picks are stored by their curves when that finds the same profile; a pick on a drawn profile that reference geometry, such as the projected outline of the face the sketch is on, cuts into regions takes the whole drawn profile); exact_regions?: bool (each index or point pick is exactly the region it names, as the dialogs send); default: every drawn profile, except that a loop inside another is its hole and a loop inside that hole is material again; face?: [x,y,z] (extrude a planar body face instead of a sketch profile); faces?: [[x,y,z],\u2026] (coplanar faces of one body); face_body?: name (whose face, where faces of several bodies meet at the point); fixed?: true (with face or faces: start on the face's plane as a fixed plane, which won't follow later changes to the face; for a face whose history can't keep an attachment, such as a converted mesh's); direction?: positive|negative|symmetric (distance is total thickness, split evenly around the start plane); convention?: total_distance|legacy_per_side (how a symmetric distance is read; default total_distance, split evenly around the start plane; legacy_per_side: the distance on each side, as older symmetric extrudes keep); distance2?: expr (Two Sides: a second distance on the side direction leaves free, the first side may be through_all or to; with direction: negative the first side goes against the normal and distance2 along it; a negative distance only turns its own side over); start_offset?: expr (along the sketch normal, also with direction: negative); to?: [x,y,z] (To Object: a face, vertex or point; to_offset?: expr past it); from?: [x,y,z] (From Object: start at that face or point); operation?: new|join|cut|intersect|auto (cut into a body, otherwise join existing solids; new in an empty component); touching?: separate|one_body (what a join makes of pieces that share no face: separate, the default, makes each piece that touches another only along an edge or at a point a body of its own and keeps pieces that touch nothing in one body; one_body keeps every piece in one body); targets?: [body] (Join from a face, or from a sketch on a body's face, defaults to that face's body; explicit targets or participants override); name?; body_name?; thin?: true (Thin: a wall along sketch curves instead of the profiles) with curves?: [curve ids] (open chains and closed loops, joined where they meet end to end; default: every drawn curve of the sketch), thickness: expr, side?: center|inside|outside|two_sides (a closed loop's inside is the area it encloses, an open chain's the side it bends toward, a straight line's the left of its first curve as drawn; default center), thickness2?: expr (two_sides: the thickness outside); corners are mitred, crossing walls are one"
+}

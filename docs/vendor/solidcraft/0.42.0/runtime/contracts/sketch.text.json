@@ -1,0 +1,278 @@
+{
+  "id": "sketch.text",
+  "input": {
+    "$defs": {
+      "LengthExpr": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "A length: a number in the design's length unit, or an expression such as \"w / 2\" or \"30 mm\"."
+      },
+      "Point2": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A sketch point in mm: [x, y] or {\"x\", \"y\"}."
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "anyOf": [
+      {
+        "required": [
+          "text"
+        ]
+      },
+      {
+        "required": [
+          "text_expression"
+        ]
+      }
+    ],
+    "description": "Make text in the sketch being edited: outlines that stay linked to their words and style, so a later sketch.edit_text can change them. Give `text` or `text_expression`, and `at`.",
+    "properties": {
+      "align": {
+        "description": "The lines against `at`, or along the path: left, center (or centre) or right, either case.\nDefault: left. When editing, kept when left out.",
+        "pattern": "^[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*([Ll][Ee][Ff][Tt]|[Cc][Ee][Nn][Tt][Ee][Rr]|[Cc][Ee][Nn][Tt][Rr][Ee]|[Rr][Ii][Gg][Hh][Tt])[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*$",
+        "type": "string"
+      },
+      "angle": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "The direction of the baseline, counter-clockwise from sketch X: a number of degrees or an\nexpression. Default: 0. When editing, kept when left out. Does not turn a text on a `path`."
+      },
+      "at": {
+        "anyOf": [
+          {
+            "items": {
+              "$ref": "#/$defs/LengthExpr"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          {
+            "$ref": "#/$defs/Point2"
+          }
+        ],
+        "description": "The baseline start, [x, y] in mm, or {x, y}; in `[x, y]` each is a number or an expression\nover the design's parameters as a string (`\"plate_width / 2\"`), which the text keeps and\nfollows. Needed to make a text; when editing, kept when left out (and moving a text\nreplaces its expressions with numbers). Does not place a text on a `path`."
+      },
+      "bold": {
+        "description": "An installed family's bold face. Default: false. When editing, kept when left out.",
+        "type": "boolean"
+      },
+      "font": {
+        "description": "An installed font's family or full name, or a .ttf or .otf file path (`~` and `%VAR%`\nexpand); empty: the built-in Liberation Sans. Default: the built-in font. When editing,\nkept when left out.",
+        "type": "string"
+      },
+      "height": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 100000.0,
+            "exclusiveMinimum": 1e-06,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "The capital height in mm (above 0, below 100 000), a number or an expression over the\ndesign's parameters. Default: 5. When editing, kept when left out."
+      },
+      "italic": {
+        "description": "An installed family's italic face (without one, the text is slanted). Default: false. When\nediting, kept when left out.",
+        "type": "boolean"
+      },
+      "letter_spacing": {
+        "description": "Extra space between letters, in mm. Default: 0. When editing, kept when left out.",
+        "exclusiveMaximum": 1000000000.0,
+        "exclusiveMinimum": -1000000000.0,
+        "type": "number"
+      },
+      "line_spacing": {
+        "description": "The line distance as a multiple of the font's (above 0). Default: 1. When editing, kept\nwhen left out.",
+        "exclusiveMaximum": 1000000000.0,
+        "exclusiveMinimum": 0,
+        "type": "number"
+      },
+      "path": {
+        "description": "A curve id of the sketch the baseline follows; empty: none. `at` and `angle` then do not\nplace the text, and the curve becomes construction, a guide the letters stand on. When\nediting, kept when left out.",
+        "type": "string"
+      },
+      "reverse": {
+        "description": "Run the text the other way along its `path`. Default: false. When editing, kept when left\nout.",
+        "type": "boolean"
+      },
+      "sketch": {
+        "description": "Only for the reply's `created`, which compares this sketch (default: the one being edited); the text always goes into the sketch being edited.",
+        "type": [
+          "integer",
+          "string"
+        ]
+      },
+      "text": {
+        "description": "The words, at most 4096 characters, `\\n` breaking lines; not blank. Not with\n`text_expression`. When editing, kept when left out.",
+        "maxLength": 1000,
+        "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+        "type": "string"
+      },
+      "text_expression": {
+        "description": "The words built from text parameters (`parameters.add` with unit text), number parameters\nand quoted texts joined by `+` (`\"Label + '-L'\"`, `\"'W' + Width\"`; `number(Width, 2)` is\na number with 2 decimals). The text keeps it and follows the parameters; the reply's\n`exprs` returns it as `text`. Not with `text`. When editing, typed words replace it.",
+        "type": "string"
+      }
+    },
+    "required": [
+      "at"
+    ],
+    "title": "SketchTextParams",
+    "type": "object"
+  },
+  "label": "Text",
+  "output": {
+    "$defs": {
+      "TextExpressions": {
+        "description": "The expressions behind a text's numbers and words.",
+        "properties": {
+          "angle": {
+            "description": "The angle.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "height": {
+            "description": "The height.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "text": {
+            "description": "The words (`text_expression`).",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x": {
+            "description": "`at`'s x.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "y": {
+            "description": "`at`'s y.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What `sketch.text` returns, and `sketch.edit_text` for one text.",
+    "properties": {
+      "created": {
+        "description": "What it added: `{points, curves, constraints, dimensions}`."
+      },
+      "curves": {
+        "description": "The ids of its curves.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "exprs": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/TextExpressions"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The expressions the text keeps; absent when it keeps none."
+      },
+      "guide": {
+        "description": "The curve the text follows that became construction, a guide the letters stand on; null\nwhen none did.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "link": {
+        "description": "The text's link id.",
+        "type": "string"
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "link",
+      "curves",
+      "guide"
+    ],
+    "title": "TextResult",
+    "type": "object"
+  },
+  "params": "text: string (\\n breaks lines), or text_expression: the words built from text parameters (parameters.add with unit text), number parameters and quoted texts joined by + (\"Label + '-L'\", \"'W' + Width\"; a number parameter shows its value in the design's units, \"85 mm\", an angle in degrees, \"30\u00b0\"; number(Width) is the number alone and number(Width, 2) has 2 decimals): the text keeps it, its words follow the parameters (a parameter edit or a configuration row relabels it) and `exprs` returns it as `text`; at: baseline start [x,y], height?: capital height mm (default 5), angle?: deg; at's x and y, height and angle each take a number or an expression over the design's parameters as a string (\"plate_width / 2\", \"label_size\"): the text keeps the expression, follows the parameters, and returns it in `exprs`; an expression naming no parameter is the number it comes to, a bare number in one is in the design's units, font?: an installed font's family or full name, or a .ttf/.otf file path (~ and %VAR% expand; default: the built-in Liberation Sans), bold?, italic?: bool (an installed family's bold or italic face; italic without one is slanted), align?: left|center|right (the lines against `at`, or along the path), vertical_align?: baseline|top|middle|bottom (the block of lines against `at` or the path: the first line's baseline (default), its capitals' tops, halfway between those and the last line's baseline, or the bottom of the last line's descenders), letter_spacing?: extra mm between letters, line_spacing?: times the font's line distance (default 1), path?: a curve id of the sketch the baseline follows (\"\": none; `at` and `angle` then do not place the text; the curve becomes construction, a guide the letters stand on), reverse?: bool (the other way along the path). Returns created: {points, curves, constraints, dimensions}: the ids of what it added (stable and never reused: usable right away in sketch.dimension, sketch.constraint.*, sketch.delete\u2026)"
+}

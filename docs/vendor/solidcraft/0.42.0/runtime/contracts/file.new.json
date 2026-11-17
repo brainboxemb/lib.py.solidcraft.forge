@@ -1,0 +1,44 @@
+{
+  "id": "file.new",
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Start a new, empty design and make it the current one, replacing the design that is open\n(save it first: this does not ask). A name you give is kept by Save As. Not an undo step.",
+    "properties": {
+      "name": {
+        "default": null,
+        "description": "The design's name. Default: \"Untitled\". A name other than \"Untitled\" (and not blank) is\nthe user's own, so Save As offers it as the file name.",
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "title": "NewDesignParams",
+    "type": "object"
+  },
+  "label": "New Design",
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What `file.new` returns.",
+    "properties": {
+      "name": {
+        "description": "The new design's name: the `name` given, else \"Untitled\".",
+        "type": "string"
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "title": "NewDesignResult",
+    "type": "object"
+  },
+  "params": "name?"
+}

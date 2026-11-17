@@ -1,0 +1,502 @@
+{
+  "id": "occurrence.move",
+  "input": {
+    "$defs": {
+      "BaseTransform": {
+        "description": "A 4x4 matrix as 4 columns of 4 numbers, as a placement's `transform` is given (the translation is the last column): finite, affine (the fourth number of the first three columns is 0, of the last column 1) and invertible.",
+        "items": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "maxItems": 4,
+        "minItems": 4,
+        "type": "array"
+      },
+      "LengthExpr": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "A length: a number in the design's length unit, or an expression such as \"w / 2\" or \"30 mm\"."
+      },
+      "MatrixTolerance": {
+        "description": "A number above 0 and at most 0.001.",
+        "exclusiveMinimum": 0,
+        "maximum": 0.001,
+        "type": "number"
+      },
+      "MoveAngle": {
+        "description": "An angle in radians (a number) or an angle expression such as \"30 deg\".",
+        "type": [
+          "number",
+          "string"
+        ]
+      },
+      "MoveMatrix": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 12,
+            "minItems": 12,
+            "type": "array"
+          },
+          {
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 16,
+            "minItems": 16,
+            "type": "array"
+          },
+          {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            },
+            "maxItems": 4,
+            "minItems": 3,
+            "type": "array"
+          }
+        ],
+        "description": "A rigid move as a row-major 3x4 (12 numbers) or 4x4 (16 numbers) matrix, flat or as 3 or 4 rows of 4."
+      },
+      "MoveSpace": {
+        "description": "Which frame `occurrence.move` reads its move in: `local` or `world`.",
+        "enum": [
+          "local",
+          "world"
+        ],
+        "type": "string"
+      },
+      "MoveTo": {
+        "additionalProperties": false,
+        "description": "`occurrence.move`'s `to`: a placement as a position and a turn about an axis through it.",
+        "properties": {
+          "angle": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/MoveAngle"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The turn about `axis`: radians, or an angle expression. Default: 0."
+          },
+          "axis": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Point3"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The axis of its turn from the frame's axes. Default: Z."
+          },
+          "position": {
+            "$ref": "#/$defs/Point3",
+            "description": "Where the occurrence's origin goes, in mm."
+          }
+        },
+        "required": [
+          "position"
+        ],
+        "type": "object"
+      },
+      "OccurrencePath": {
+        "description": "An exact placement path: 1 to 64 occurrence ids from the root down.",
+        "items": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "maxItems": 64,
+        "minItems": 1,
+        "type": "array"
+      },
+      "OccurrenceRef": {
+        "description": "An occurrence's id (a number) or its name.",
+        "type": [
+          "number",
+          "string"
+        ]
+      },
+      "Point3": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "z": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A point in mm: [x, y, z] or {\"x\", \"y\", \"z\"}."
+      },
+      "PointExpr3": {
+        "anyOf": [
+          {
+            "items": {
+              "$ref": "#/$defs/LengthExpr"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "$ref": "#/$defs/LengthExpr"
+              },
+              "y": {
+                "$ref": "#/$defs/LengthExpr"
+              },
+              "z": {
+                "$ref": "#/$defs/LengthExpr"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A point: [x, y, z] or {\"x\", \"y\", \"z\"}, each a number in mm or a length expression."
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "allOf": [
+      {
+        "not": {
+          "required": [
+            "matrix",
+            "translate"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "matrix",
+            "axis"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "matrix",
+            "angle"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "matrix",
+            "origin"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to",
+            "translate"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to",
+            "axis"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to",
+            "angle"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to",
+            "origin"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to",
+            "matrix"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to",
+            "base_transform"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to_matrix",
+            "translate"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to_matrix",
+            "axis"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to_matrix",
+            "angle"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to_matrix",
+            "origin"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to_matrix",
+            "matrix"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to_matrix",
+            "base_transform"
+          ]
+        }
+      },
+      {
+        "not": {
+          "required": [
+            "to",
+            "to_matrix"
+          ]
+        }
+      }
+    ],
+    "description": "Move an occurrence: by `translate`, or turned by `angle` about `axis` through `origin`, or by\na rigid `matrix` instead of those. Nested occurrences' definitions stay shared. A grounded\noccurrence refuses unless `move_grounded` is true. When joints hold it to something fixed and\nput it back, the reply says so (`reverted`).",
+    "properties": {
+      "angle": {
+        "$ref": "#/$defs/MoveAngle",
+        "description": "The turn about `axis`: radians, or an angle expression. Default: 0. Not with `matrix`."
+      },
+      "axis": {
+        "$ref": "#/$defs/Point3",
+        "description": "The axis to turn about, not zero when `angle` is. Default: Z. Not with `matrix`."
+      },
+      "base_transform": {
+        "$ref": "#/$defs/BaseTransform",
+        "description": "The transform the move starts from, in place of the occurrence's current one (what a drag\nin the Browser passes)."
+      },
+      "capture": {
+        "default": null,
+        "description": "`true` makes the move the occurrence's placement now; `false` keeps it pending until\n`component.capture_position`. Default: `true`.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "matrix": {
+        "$ref": "#/$defs/MoveMatrix",
+        "description": "A rigid move instead of `translate`, `axis`, `angle` and `origin`: a rotation and a\ntranslation. One that is a rotation only up to `tolerance` is made exact; a scale, shear or\nmirror is refused."
+      },
+      "move_grounded": {
+        "default": null,
+        "description": "`true` moves a grounded occurrence, which stays grounded. Default: `false`, which refuses.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "occurrence": {
+        "$ref": "#/$defs/OccurrenceRef",
+        "description": "The occurrence, by id or name."
+      },
+      "origin": {
+        "$ref": "#/$defs/Point3",
+        "description": "The point the turn is about, in mm. Default: the origin. Not with `matrix`."
+      },
+      "path": {
+        "$ref": "#/$defs/OccurrencePath",
+        "description": "The occurrence's exact placement, as occurrence ids from the top of the design (1 to 64),\nending in `occurrence`. Needed with `space: world` for a placement inside a component\nplaced more than once."
+      },
+      "space": {
+        "$ref": "#/$defs/MoveSpace",
+        "description": "The frame of the move: `local` is the parent's (the placement's own), `world` is world\ncoordinates. Default: `local`."
+      },
+      "to": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/MoveTo"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Absolute placement (#12150): where the occurrence goes in `space`, not a move. Not with\n`translate`, `axis`, `angle`, `origin`, `matrix`, `to_matrix` or `base_transform`."
+      },
+      "to_matrix": {
+        "$ref": "#/$defs/MoveMatrix",
+        "description": "Absolute placement as a rigid matrix, in the form `matrix` takes: where the occurrence goes\nin `space`, not a move. Not with `translate`, `axis`, `angle`, `origin`, `matrix`, `to` or\n`base_transform`."
+      },
+      "tolerance": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/MatrixTolerance"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "With `matrix` or `to_matrix`: the largest accepted |R\u1d40R \u2212 I| per entry. Default: 1e-9.\nRead only with those."
+      },
+      "translate": {
+        "$ref": "#/$defs/PointExpr3",
+        "description": "Move by this much, in mm. Default: no move. Not with `matrix`."
+      }
+    },
+    "required": [
+      "occurrence"
+    ],
+    "title": "MoveParams",
+    "type": "object"
+  },
+  "label": "Move Occurrence",
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What `occurrence.move` returns.",
+    "properties": {
+      "occurrence": {
+        "description": "The occurrence, by id.",
+        "format": "uint64",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "pending": {
+        "description": "Whether the move is pending, not captured.",
+        "type": "boolean"
+      },
+      "reverted": {
+        "description": "Present, and `true`, when joints hold the occurrence to something fixed and put it back:\n`transform` is where it is.",
+        "type": "boolean"
+      },
+      "transform": {
+        "description": "Its placement in its parent now, as a 4\u00d74 matrix (its pending one with `capture: false`).",
+        "items": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "maxItems": 4,
+        "minItems": 4,
+        "type": "array"
+      },
+      "warning": {
+        "description": "With `reverted`: the joint that holds it and what to change instead.",
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "occurrence",
+      "transform",
+      "pending"
+    ],
+    "title": "MoveResult",
+    "type": "object"
+  },
+  "params": "occurrence; path?: exact placement; space?: local|world (default local); translate?: [x,y,z] (numbers or length expressions: an occurrence moved by expressions that name parameters keeps them and moves with them when the parameters change, along the axes the move was given in; other moves of it stay; a parameter they use can't be deleted, and a renamed one carries into them); axis?: [x,y,z], angle?: radians or \"30 deg\", origin?: [x,y,z]; to?: {position: [x,y,z], axis?: [x,y,z], angle?} or to_matrix?: [12 or 16 numbers] (absolute placement: where it goes in space, not a move; not with translate/axis/angle/origin/matrix); matrix?: [12 or 16 numbers] (instead of translate/axis/angle/origin: a rigid move as a row-major 3x4 rotation-and-translation or 4x4 matrix, flat or as rows; one that is a rotation only up to rounding is orthonormalised, a scale, shear or mirror is refused); tolerance?: largest accepted |R\u1d40R \u2212 I| (default 1e-9, at most 1e-3); capture?: bool (default true; false keeps it pending until Capture Position); move_grounded?: bool (default false: a grounded occurrence refuses; true moves it and it stays grounded). Nested occurrence definitions remain shared. Replies {occurrence, transform, pending}; when joints hold it to something fixed and put it back, transform is where it is and the reply adds reverted: true and a warning naming the joint"
+}

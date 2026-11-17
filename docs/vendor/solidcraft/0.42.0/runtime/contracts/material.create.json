@@ -1,0 +1,395 @@
+{
+  "id": "material.create",
+  "input": {
+    "$defs": {
+      "Color": {
+        "anyOf": [
+          {
+            "pattern": "^[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*#*(?:[0-9A-Fa-f]{2}|\\+[0-9A-Fa-f]){3}[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*$",
+            "type": "string"
+          },
+          {
+            "items": {
+              "maximum": 255,
+              "minimum": 0,
+              "type": "number"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          }
+        ],
+        "description": "A colour: \"#rrggbb\" or [r, g, b] with values 0\u2013255."
+      },
+      "Density": {
+        "description": "The density in g/cm\u00b3: above 0 and at most 1000.",
+        "exclusiveMinimum": 0,
+        "maximum": 1000,
+        "type": "number"
+      },
+      "Opacity": {
+        "description": "0 (clear) to 1 (opaque).",
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+      },
+      "PbrParameters": {
+        "additionalProperties": false,
+        "description": "An opaque PBR response.",
+        "properties": {
+          "dielectric_ior": {
+            "maximum": 3,
+            "minimum": 1,
+            "type": "number"
+          },
+          "metallic": {
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "roughness": {
+            "maximum": 1,
+            "minimum": 0.045,
+            "type": "number"
+          }
+        },
+        "required": [
+          "metallic",
+          "roughness",
+          "dielectric_ior"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Define a physical material in this design: a name, a density and an optional default look\nand physical card. Assign it with `material.assign`. One undo step.",
+    "properties": {
+      "appearance": {
+        "default": null,
+        "description": "The look, a library appearance by name (see `appearance.library`). Not with `color`.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "color": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Color"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The look's colour, `\"#rrggbb\"` or [r, g, b] (0\u2013255), not with `appearance`. `null` clears the material's look, so its bodies show the default."
+      },
+      "density_g_cm3": {
+        "$ref": "#/$defs/Density"
+      },
+      "name": {
+        "description": "The new material's name: 1 to 128 characters, not a built-in material's or another of the\ndesign's (letter case doesn't matter). Spaces at either end are dropped.",
+        "type": "string"
+      },
+      "opacity": {
+        "$ref": "#/$defs/Opacity",
+        "description": "The look's opacity: needs `appearance` or `color`. Default: 1, or the appearance's own."
+      },
+      "pbr": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/PbrParameters"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The look's opaque PBR response; it needs `appearance` or `color`, and an opaque look. `null` selects scalar shading. Left out, a library appearance keeps its own response."
+      },
+      "physical_card": {
+        "anyOf": [
+          {
+            "description": "A schema_version 1 engineering material card in SI units (see docs/physical-material-cards.md).",
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "A validated physical material card in SI units (see docs/physical-material-cards.md). The card's density never changes the assigned density. `null`: no card (an edit clears it). Left out: none for a new material; an edit keeps the current one."
+      }
+    },
+    "required": [
+      "name",
+      "density_g_cm3"
+    ],
+    "title": "MaterialCreateParams",
+    "type": "object"
+  },
+  "label": "New Physical Material",
+  "output": {
+    "$defs": {
+      "CardModuli": {
+        "description": "The isotropic moduli a card's numbers imply.",
+        "properties": {
+          "bulk_pa": {
+            "format": "double",
+            "type": "number"
+          },
+          "shear_pa": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "shear_pa",
+          "bulk_pa"
+        ],
+        "type": "object"
+      },
+      "CardValidation": {
+        "description": "What checking a card found.",
+        "properties": {
+          "analysis_solver_available": {
+            "description": "Always false: there is no analysis solver.",
+            "type": "boolean"
+          },
+          "isotropic_moduli": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/CardModuli"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The shear and bulk moduli an isotropic card's numbers imply."
+          },
+          "missing_condition_fields": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "description": "Per property kind: the condition fields it lacks.",
+            "type": "object"
+          },
+          "property_kinds": {
+            "description": "The kinds of property the card gives.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "rendering_properties_available": {
+            "description": "Always false: a card holds no rendering properties.",
+            "type": "boolean"
+          },
+          "schema_version": {
+            "format": "uint32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "source_review_required": {
+            "description": "The sources the card's properties cite, which still need review.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "unspecified_conditions": {
+            "description": "The property kinds given without every condition they hold at (temperature, state, and\nmoisture for wood or strain rate for polymers).",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "schema_version",
+          "property_kinds",
+          "isotropic_moduli",
+          "unspecified_conditions",
+          "missing_condition_fields",
+          "source_review_required",
+          "analysis_solver_available",
+          "rendering_properties_available"
+        ],
+        "type": "object"
+      },
+      "DensityComparison": {
+        "description": "A card's measured density against the material's assigned one.",
+        "properties": {
+          "assigned_density_kg_m3": {
+            "format": "double",
+            "type": "number"
+          },
+          "card_density_kg_m3": {
+            "format": "double",
+            "type": "number"
+          },
+          "matches_within_relative_tolerance": {
+            "description": "Whether they agree within `relative_tolerance`.",
+            "type": "boolean"
+          },
+          "relative_difference": {
+            "description": "Their difference as a share of the larger.",
+            "format": "double",
+            "type": "number"
+          },
+          "relative_tolerance": {
+            "description": "Always 1e-9.",
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "assigned_density_kg_m3",
+          "card_density_kg_m3",
+          "relative_difference",
+          "matches_within_relative_tolerance",
+          "relative_tolerance"
+        ],
+        "type": "object"
+      },
+      "LookReply": {
+        "description": "A look, as the appearance commands report it.",
+        "properties": {
+          "color": {
+            "description": "`\"#rrggbb\"`.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The library appearance's or recipe's name, or the look's label (`Custom` for a plain\ncolour).",
+            "type": "string"
+          },
+          "opacity": {
+            "description": "0 (clear) to 1 (opaque).",
+            "format": "double",
+            "type": "number"
+          },
+          "pbr": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/PbrReply"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Its opaque PBR response, when it has one."
+          }
+        },
+        "required": [
+          "name",
+          "color",
+          "opacity"
+        ],
+        "type": "object"
+      },
+      "PbrReply": {
+        "description": "A look's PBR response, as the appearance commands report it.",
+        "properties": {
+          "dielectric_ior": {
+            "format": "double",
+            "type": "number"
+          },
+          "metallic": {
+            "format": "double",
+            "type": "number"
+          },
+          "roughness": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "metallic",
+          "roughness",
+          "dielectric_ior"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What `material.create` and `material.edit` return: the material as the design now defines it.",
+    "properties": {
+      "appearance": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LookReply"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The default look; `null` when it has none."
+      },
+      "bodies": {
+        "description": "After an edit: the bodies the material is assigned to.",
+        "items": {
+          "type": "string"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "density_comparison": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/DensityComparison"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "How the card's measured density compares with the assigned one, when the card gives one."
+      },
+      "density_g_cm3": {
+        "description": "The assigned density (g/cm\u00b3), the one masses use.",
+        "format": "double",
+        "type": "number"
+      },
+      "name": {
+        "type": "string"
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "physical_card": {
+        "description": "Its physical card, when it has one."
+      },
+      "physical_validation": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/CardValidation"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The card's check, when it has a card."
+      },
+      "user": {
+        "description": "Always true: a material this design defines.",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "name",
+      "density_g_cm3",
+      "appearance",
+      "user"
+    ],
+    "title": "MaterialReply",
+    "type": "object"
+  },
+  "params": "name (not a built-in material's); density_g_cm3: (0, 1000]; appearance?: library name (appearance.library) | color?: \"#rrggbb\" or [r, g, b] (0\u2013255), opacity? (0\u20131), pbr?: {metallic:0..1, roughness:0.045..1, dielectric_ior:1..3} (opaque only, needs color/appearance): the default look. A named appearance keeps its preset response when pbr is omitted; pbr: null selects scalar shading. Optical edits do not change density. physical_card?: validated SI candidate record (null/omitted means unknown); card density never changes assigned density. Assign it with material.assign"
+}

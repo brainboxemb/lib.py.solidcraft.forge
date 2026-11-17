@@ -1,0 +1,67 @@
+{
+  "id": "edit.restore_checkpoint",
+  "input": {
+    "$defs": {
+      "CheckpointId": {
+        "description": "A checkpoint's id, from edit.checkpoint.",
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Go back to a checkpoint, undo history included; or, with `forget`, drop it without going\nback. Going back uses it up and every later checkpoint with it: take a new one to go back\nagain. Forgetting drops only this one.",
+    "properties": {
+      "checkpoint": {
+        "$ref": "#/$defs/CheckpointId",
+        "description": "The checkpoint, by the id `edit.checkpoint` returned."
+      },
+      "forget": {
+        "default": null,
+        "description": "True to drop the checkpoint without going back; later checkpoints stay. Default: false.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "checkpoint"
+    ],
+    "title": "RestoreCheckpointParams",
+    "type": "object"
+  },
+  "label": "Restore Checkpoint",
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What `edit.checkpoint` and `edit.restore_checkpoint` return.",
+    "properties": {
+      "checkpoint": {
+        "description": "The checkpoint's id.",
+        "format": "uint64",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "restored": {
+        "description": "`edit.restore_checkpoint` only: true when the design went back to it, false when it was\ndropped (`forget`).",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "checkpoint"
+    ],
+    "title": "CheckpointResult",
+    "type": "object"
+  },
+  "params": "checkpoint: id; forget?: bool (true = drop it without going back). Goes back to it, undo history included. Restoring uses it and every later checkpoint up: take a new one to go back again. Forgetting drops only it"
+}

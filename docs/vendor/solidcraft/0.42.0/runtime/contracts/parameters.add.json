@@ -1,0 +1,176 @@
+{
+  "id": "parameters.add",
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "anyOf": [
+      {
+        "properties": {
+          "expression": {
+            "type": [
+              "number",
+              "string"
+            ]
+          }
+        },
+        "required": [
+          "expression"
+        ]
+      },
+      {
+        "properties": {
+          "value": {
+            "type": [
+              "number",
+              "string"
+            ]
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+    ],
+    "description": "Add a user parameter: a named number with a unit, or a named text. Features, sketches and\nother parameters can use it by name. One undo step.",
+    "properties": {
+      "comment": {
+        "default": null,
+        "description": "A note to show with it.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "expression": {
+        "default": null,
+        "description": "The value: a number, or an expression as text (`25 mm`, `W / 2`). For a text parameter, its text; quotes round it are optional.",
+        "type": [
+          "number",
+          "string",
+          "null"
+        ]
+      },
+      "favorite": {
+        "default": null,
+        "description": "List it with the favourites, first. Default: false.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "name": {
+        "description": "The new parameter's name: a letter or `_`, then letters, digits or `_`; not a unit's,\nfunction's or constant's name, nor another parameter's.",
+        "minLength": 1,
+        "type": "string"
+      },
+      "unit": {
+        "default": null,
+        "description": "The unit: `mm`, `cm`, `m`, `in`, `ft`, `deg`, `rad`, `\"\"` (no unit) or `text` (a text\nparameter, whose expression is its text). Default: the expression's own unit, a length\nin the design's units.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "value": {
+        "default": null,
+        "description": "Another name for `expression`, read when `expression` isn't a number or text.",
+        "type": [
+          "number",
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "title": "ParamAddParams",
+    "type": "object"
+  },
+  "label": "Add User Parameter",
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "anyOf": [
+      {
+        "description": "A text parameter.",
+        "properties": {
+          "text": {
+            "description": "Its text.",
+            "type": "string"
+          },
+          "unit": {
+            "description": "Always `text`.",
+            "type": "string"
+          },
+          "value": {
+            "description": "Always `null`: a text has no number.",
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "unit",
+          "text",
+          "value"
+        ],
+        "type": "object"
+      },
+      {
+        "description": "A number.",
+        "properties": {
+          "display_value": {
+            "description": "Its value in its own unit; `null` if it can't be worked out.",
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unit": {
+            "description": "Its unit; `\"\"` for none.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "value": {
+            "description": "Its value in mm for a length and degrees for an angle, as in every reply; `null` if\nit can't be worked out.",
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "unit",
+          "value",
+          "display_value"
+        ],
+        "type": "object"
+      }
+    ],
+    "description": "What `parameters.add` returns: the new parameter.",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "title": "ParamAdded",
+    "type": "object"
+  },
+  "params": "name, expression, unit?: as parameters.change (text: a text parameter, its expression the text), comment?, favorite?: bool"
+}

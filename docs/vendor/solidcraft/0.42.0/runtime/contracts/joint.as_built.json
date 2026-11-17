@@ -1,0 +1,621 @@
+{
+  "id": "joint.as_built",
+  "input": {
+    "$defs": {
+      "JointLimits": {
+        "description": "The limits of each value in order: [min, max] (degrees or mm, or expressions), or null for a value without limits. Not more pairs than the joint has values.",
+        "items": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "prefixItems": [
+                {
+                  "$ref": "#/$defs/JointValue"
+                },
+                {
+                  "$ref": "#/$defs/JointValue"
+                }
+              ],
+              "type": "array"
+            }
+          ]
+        },
+        "type": "array"
+      },
+      "JointOriginArg": {
+        "anyOf": [
+          {
+            "description": "The name of a joint origin.",
+            "type": "string"
+          },
+          {
+            "properties": {
+              "axis": {
+                "anyOf": [
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ],
+                "description": "The axis to sit on: \"X\", \"Y\" or \"Z\", \"o:<ids>/origin/<item>\" (a placement's origin axis), a construction axis's name, or an axis definition object."
+              },
+              "body": {
+                "description": "The body a face name is on.",
+                "type": "string"
+              },
+              "circle": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "items": {
+                          "type": "number"
+                        },
+                        "maxItems": 3,
+                        "minItems": 3,
+                        "type": "array"
+                      },
+                      {
+                        "properties": {
+                          "x": {
+                            "type": "number"
+                          },
+                          "y": {
+                            "type": "number"
+                          },
+                          "z": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y",
+                          "z"
+                        ],
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "description": "The centre of a round end: a point [x, y, z] on its wall, rim or centre, or the round face's name."
+              },
+              "corner": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
+                  },
+                  {
+                    "properties": {
+                      "x": {
+                        "type": "number"
+                      },
+                      "y": {
+                        "type": "number"
+                      },
+                      "z": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "x",
+                      "y",
+                      "z"
+                    ],
+                    "type": "object"
+                  }
+                ],
+                "description": "An edge origin: a point near one end of the edge, for the corner there."
+              },
+              "edge": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
+                  },
+                  {
+                    "properties": {
+                      "x": {
+                        "type": "number"
+                      },
+                      "y": {
+                        "type": "number"
+                      },
+                      "z": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "x",
+                      "y",
+                      "z"
+                    ],
+                    "type": "object"
+                  }
+                ],
+                "description": "A point [x, y, z] on an edge of a planar face."
+              },
+              "end": {
+                "description": "A circle's end: the name of the face across its rim there.",
+                "type": "string"
+              },
+              "face": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "items": {
+                          "type": "number"
+                        },
+                        "maxItems": 3,
+                        "minItems": 3,
+                        "type": "array"
+                      },
+                      {
+                        "properties": {
+                          "x": {
+                            "type": "number"
+                          },
+                          "y": {
+                            "type": "number"
+                          },
+                          "z": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y",
+                          "z"
+                        ],
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "description": "The centre of a planar face: a point on it [x, y, z], or its name."
+              },
+              "frame": {
+                "description": "An explicit frame {origin: [x, y, z], z: [x, y, z], x?: [x, y, z]}.",
+                "type": "object"
+              },
+              "occurrence": {
+                "description": "The occurrence the origin is on, by id or name. Default: found from the point, or the named face's component.",
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "on": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
+                  },
+                  {
+                    "properties": {
+                      "x": {
+                        "type": "number"
+                      },
+                      "y": {
+                        "type": "number"
+                      },
+                      "z": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "x",
+                      "y",
+                      "z"
+                    ],
+                    "type": "object"
+                  }
+                ],
+                "description": "An edge origin: a point on the face to use."
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/OccurrencePath"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "The placement picked, as occurrence ids from the top of the assembly down to occurrence: says which copy of a sub-assembly placed more than once."
+              },
+              "plane": {
+                "anyOf": [
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ],
+                "description": "The plane to sit on: \"XY\", \"XZ\" or \"YZ\" (the design's own), \"o:<ids>/origin/<item>\" (a placement's origin plane), a construction plane's name, or a plane definition object."
+              },
+              "point": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
+                  },
+                  {
+                    "properties": {
+                      "x": {
+                        "type": "number"
+                      },
+                      "y": {
+                        "type": "number"
+                      },
+                      "z": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "x",
+                      "y",
+                      "z"
+                    ],
+                    "type": "object"
+                  }
+                ],
+                "description": "A point [x, y, z]."
+              },
+              "x": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "items": {
+                          "type": "number"
+                        },
+                        "maxItems": 3,
+                        "minItems": 3,
+                        "type": "array"
+                      },
+                      {
+                        "properties": {
+                          "x": {
+                            "type": "number"
+                          },
+                          "y": {
+                            "type": "number"
+                          },
+                          "z": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y",
+                          "z"
+                        ],
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ],
+                "description": "The frame's turn about z: a direction [x, y, z], a face's name or {face: [x, y, z]}."
+              },
+              "z": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
+                  },
+                  {
+                    "properties": {
+                      "x": {
+                        "type": "number"
+                      },
+                      "y": {
+                        "type": "number"
+                      },
+                      "z": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "x",
+                      "y",
+                      "z"
+                    ],
+                    "type": "object"
+                  }
+                ],
+                "description": "The frame's z axis, a direction [x, y, z], where it is not the face's normal."
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "description": "A joint origin: the name of a joint origin made with joint.origin, or an object that says where it is, in world coordinates. Give one of face, circle, edge, point, plane or axis (a point [x, y, z]; for face and circle also a face's name; a plane or axis by name or definition object), or a frame {origin, z, x?}."
+      },
+      "JointType": {
+        "description": "A joint's type: rigid, revolute (turns), slider (slides), cylindrical (both), pin_slot, planar or ball; or a relation that ties only some directions or points, made where the parts are: parallel, perpendicular, angle, point_on_plane, point_on_line or line_on_plane. Case, spaces, `_` and `-` are ignored, and rotate, slide, square, point_on_face, point_on_axis and line_on_face are also taken.",
+        "examples": [
+          "rigid",
+          "revolute",
+          "slider",
+          "cylindrical",
+          "pin_slot",
+          "planar",
+          "ball",
+          "parallel",
+          "perpendicular",
+          "angle",
+          "point_on_plane",
+          "point_on_line",
+          "line_on_plane",
+          "rotate",
+          "slide",
+          "square",
+          "point_on_face",
+          "point_on_axis",
+          "line_on_face"
+        ],
+        "type": "string"
+      },
+      "JointValue": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "A number (degrees for an angle, mm for a distance; below 1e9 in size), or an expression (text) over the design's parameters, such as \"width / 2\" or \"30 deg\"."
+      },
+      "OccurrenceKey": {
+        "description": "An occurrence by id or name (0 or `root`: the root), or the name of a component: its first occurrence.",
+        "type": [
+          "number",
+          "string"
+        ]
+      },
+      "OccurrencePath": {
+        "description": "An exact placement path: 1 to 64 occurrence ids from the root down.",
+        "items": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "maxItems": 64,
+        "minItems": 1,
+        "type": "array"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Add a joint between two occurrences that stay where they are: its frame is a joint origin\n(`at`, default b's origin), and the joint starts with the origins coinciding as they are. An\norigin on a or b is kept on its face or hole there, so the joint follows it as the design\nchanges. One undo step.",
+    "properties": {
+      "a": {
+        "$ref": "#/$defs/OccurrenceKey",
+        "description": "Occurrence a, by id or name; it stays where it is."
+      },
+      "at": {
+        "$ref": "#/$defs/JointOriginArg",
+        "description": "The joint's frame: a joint origin, as joint.create takes one. Default: b's origin."
+      },
+      "b": {
+        "$ref": "#/$defs/OccurrenceKey",
+        "description": "Occurrence b, by id or name; it stays where it is."
+      },
+      "limits": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/JointLimits"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The limits of each value: [min, max] pairs, with null for a value without limits. Default:\nnone."
+      },
+      "name": {
+        "default": null,
+        "description": "The joint's name. Default: its type, `Joint` and the first number no joint's name has.\nBlank text gives the default.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "quiet": {
+        "default": null,
+        "description": "Leave out `dof` and `fixed` in the reply. Default: false.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "type": {
+        "$ref": "#/$defs/JointType",
+        "description": "The joint's type, as joint.create takes it."
+      },
+      "value": {
+        "default": null,
+        "description": "Like `values`: only whether it is given matters."
+      },
+      "values": {
+        "default": null,
+        "description": "Not a value of this joint, which starts at zero: only whether `values` is given matters.\nGiven, a relation type is not started from where its parts are."
+      }
+    },
+    "required": [
+      "type",
+      "a",
+      "b"
+    ],
+    "title": "AsBuiltJointParams",
+    "type": "object"
+  },
+  "label": "As-Built Joint",
+  "output": {
+    "$defs": {
+      "JointProblem": {
+        "description": "A joint the solve reports: its id, name and why.",
+        "properties": {
+          "joint": {
+            "description": "The joint, by id.",
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "name": {
+            "description": "The joint's name.",
+            "type": "string"
+          },
+          "why": {
+            "description": "Why it conflicts or could not be applied.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "joint",
+          "name",
+          "why"
+        ],
+        "type": "object"
+      },
+      "OccurrenceDof": {
+        "description": "The degrees of freedom one occurrence keeps (6 free, 0 fixed).",
+        "properties": {
+          "dof": {
+            "description": "Its remaining degrees of freedom.",
+            "format": "uint",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "occurrence": {
+            "description": "The occurrence, by id (0 is the root).",
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "occurrence",
+          "dof"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What `joint.create` and `joint.as_built` return: the solve after the joint is added.",
+    "properties": {
+      "conflicts": {
+        "description": "The joints that disagree with the placement found through others.",
+        "items": {
+          "$ref": "#/$defs/JointProblem"
+        },
+        "type": "array"
+      },
+      "dof": {
+        "description": "Each occurrence's remaining degrees of freedom (6 free, 0 fixed). Left out with `quiet`.",
+        "items": {
+          "$ref": "#/$defs/OccurrenceDof"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "errors": {
+        "description": "The joints that could not be applied (a lost origin, an expression that no longer works).",
+        "items": {
+          "$ref": "#/$defs/JointProblem"
+        },
+        "type": "array"
+      },
+      "fixed": {
+        "description": "The occurrences fixed in place (grounded, or the root), by id. Left out with `quiet`.",
+        "items": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "joint": {
+        "description": "The new joint, by id.",
+        "format": "uint64",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "name": {
+        "description": "Its name.",
+        "type": "string"
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "warnings": {
+        "description": "A value that starts inside its limits, not where it was given: the part moved there as it\nwas joined. Left out when there is none.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "conflicts",
+      "errors",
+      "joint",
+      "name"
+    ],
+    "title": "JointAddedResult",
+    "type": "object"
+  },
+  "params": "type, a: occurrence, b: occurrence (stay where they are); at?: joint origin (default: b's origin) \u2014 the joint's frame; one on a or b is kept on its face or hole there, so the joint follows it as the design changes; name?; limits?: [[min, max] | null\u2026]; quiet?: bool"
+}
