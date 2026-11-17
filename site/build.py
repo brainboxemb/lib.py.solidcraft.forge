@@ -583,6 +583,68 @@ def _render_validation_checks(native_case):
     )
 
 
+def _render_reference_checks(result):
+    """Render the measurements that made one external reference PASS."""
+    rows = []
+    for name, check in result.get("checks", {}).items():
+        label = name.replace("_", " ")
+        status = str(check.get("status", "missing")).upper()
+        if name == "bounds":
+            expected = check.get("expected")
+            actual = check.get("actual")
+            detail = (
+                f"max delta {check.get('max_delta_mm')} mm; "
+                f"tolerance {check.get('tolerance_mm')} mm"
+            )
+        elif name == "watertight":
+            expected = check.get("expected")
+            actual = check.get("actual")
+            detail = "closed mesh check"
+        elif name == "volume":
+            expected = f"{check.get('expected_mm3')} mm³"
+            actual = f"{check.get('actual_mm3')} mm³"
+            detail = (
+                f"delta {check.get('delta_mm3')} mm³; "
+                f"tolerance {check.get('tolerance_mm3')} mm³"
+            )
+        elif name == "surface_distance_probes":
+            probes = check.get("probes", [])
+            expected = f"{len(probes)} declared 3D probe distances"
+            actual = (
+                f"{sum(row.get('status') == 'pass' for row in probes)}/"
+                f"{len(probes)} within tolerance"
+            )
+            worst = max(
+                (float(row.get("delta_mm", 0.0)) for row in probes),
+                default=0.0,
+            )
+            detail = f"largest probe delta {worst:g} mm"
+        else:
+            expected = check.get("expected", "—")
+            actual = check.get("actual", "—")
+            detail = ""
+
+        rows.append(
+            "<tr>"
+            f"<td><strong>{escape(label)}</strong></td>"
+            f"<td>{escape(status)}</td>"
+            f"<td><code>{escape(expected)}</code></td>"
+            f"<td><code>{escape(actual)}</code></td>"
+            f"<td>{escape(detail)}</td>"
+            "</tr>"
+        )
+
+    if not rows:
+        return ""
+    return (
+        '<details class="qualification-reference-checks" open>'
+        '<summary>Reference geometry checks</summary>'
+        '<table><thead><tr><th>Check</th><th>Status</th>'
+        '<th>Expected</th><th>Measured</th><th>Detail</th></tr></thead>'
+        '<tbody>' + "".join(rows) + "</tbody></table></details>"
+    )
+
+
 def _render_native_results(native_case, solidcraft_version):
     measurement_files = sorted(native_case.glob("measurements*.json"))
     if not measurement_files:
@@ -1620,9 +1682,10 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                     f'alt="{escape(case["title"])} {label} reference render">'
                     '</a>'
                     f'<figcaption>Independently exported STL · '
-                    f'max bounds delta {escape(result.get("max_delta_mm"))} mm · '
-                    f'<a href="reference-{reference_name}/model.stl">Open STL</a></figcaption>'
-                    '</figure>'
+                    f'<a href="reference-{reference_name}/model.stl">Open STL</a> · '
+                    f'<a href="reference-{reference_name}/result.json">Open measurements</a>'
+                    '</figcaption></figure>'
+                    + _render_reference_checks(result)
                 )
 
         reference_rows = []
