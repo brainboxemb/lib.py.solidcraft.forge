@@ -291,6 +291,20 @@ def check(
             for entry in matches
         ), symbol
 
+    for symbol in ("Shape.fillet", "Shape.chamfer"):
+        matches = search_matches(symbol)
+        assert any(
+            entry["kind"] == "API Reference"
+            and entry["title"] == symbol
+            and entry["url"] == f"reference/{symbol}/"
+            for entry in matches
+        ), symbol
+        assert any(
+            entry["kind"] == "API Guide"
+            and entry["url"] == "guide/features/#fillet"
+            for entry in matches
+        ), symbol
+
     for heading, items in CHEATSHEET:
         for title, _description, _snippet, _linked in items:
             anchor = _cheatsheet_anchor(heading, title)
@@ -351,6 +365,14 @@ def check(
     features = (site / "guide" / "features" / "index.html").read_text(encoding="utf-8")
     assert 'href="../../reference/Faces/"' in features
     assert "API on this page" in features
+    for term in (
+        "Shape.fillet",
+        "Shape.chamfer",
+        "Edges.VERTICAL",
+        "FRONT + LEFT",
+        "use the same edge-selection",
+    ):
+        assert term in features, term
     css = (site / "style.css").read_text(encoding="utf-8")
     assert ".guide-api-grid{display:grid;grid-template-columns:1fr" in css
     assert ".code-block>pre{margin-top:0;padding-right:52px}" in css

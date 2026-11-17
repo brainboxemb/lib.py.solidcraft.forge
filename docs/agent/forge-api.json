@@ -507,6 +507,20 @@
       "reference": "reference/Sketch.mirror/",
       "guide": "guide/geometry/#pattern-mirror",
       "signature": "Sketch.mirror(self, source, *, axis)"
+    },
+    "Shape.fillet": {
+      "kind": "callable",
+      "summary": "Round selected solid edges with one radius.",
+      "reference": "reference/Shape.fillet/",
+      "guide": "guide/features/#fillet",
+      "signature": "Shape.fillet(self, radius, *, edges=<Edges.VERTICAL: 'vertical'>)"
+    },
+    "Shape.chamfer": {
+      "kind": "callable",
+      "summary": "Chamfer selected solid edges by one equal distance.",
+      "reference": "reference/Shape.chamfer/",
+      "guide": "guide/features/#fillet",
+      "signature": "Shape.chamfer(self, distance, *, edges=<Edges.VERTICAL: 'vertical'>)"
     }
   }
 }

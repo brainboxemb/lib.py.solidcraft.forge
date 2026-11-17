@@ -428,7 +428,8 @@ See [change 0016](changes/0016-parameter-dependency-diagnostics.md).
   to a cut.
 - `-` expresses subtraction/cut where supported.
 - `&` expresses intersection where supported.
-- `shell()` and `fillet()` are modifiers of supported feature trees.
+- `shell()`, `fillet()` and `chamfer()` are modifiers of supported feature trees.
+- `fillet(..., edges=...)` and `chamfer(..., edges=...)` use the same edge-selection vocabulary where SolidCraft accepts the same edge picks: `Edges.VERTICAL`, supported two-direction Box edge selectors, `Edges.from_profile(...)`, `Edges.from_vertices(...)` and explicit XYZ edge picks.
 - `Lip`, `SnapFit`, `Boss` and `Rest` are object-level feature intents;
   the compiler chooses the appropriate native SolidCraft representation.
 - `Anchor.INNER_BOTTOM` refers to the inner floor of a shelled body.

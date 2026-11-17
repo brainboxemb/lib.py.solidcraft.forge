@@ -130,6 +130,12 @@ semantically.
 7. Run Q1/Q2 first and only affected native cases while iterating.
 8. Run full Q1-Q6 before promotion/release.
 
+When sibling methods use the same public selector or option type, treat that as
+one API. Put shared validation/resolution in one code path where practical and
+cover every supported variant with unit tests for every applicable sibling
+method. A product-specific model or native qualification case does not replace
+that unit-test matrix.
+
 Forge describes CAD intent and lowers it to SolidCraft commands. SolidCraft is
 the BRep/feature-history engine; do not add a competing geometry or mating
 engine to Forge.

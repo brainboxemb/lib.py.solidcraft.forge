@@ -8,6 +8,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fillet and chamfer now use one edge-selection API. Both accept
+  `Edges.VERTICAL`, supported two-direction Box edge selectors, named
+  profile/vertex selectors and explicit XYZ picks; `chamfer()` now defaults
+  to `Edges.VERTICAL` like `fillet()`. Shared unit tests cover the selector
+  variants and compiler edge picks (issue #280).
+
 ### Documentation
 
 - Added normal API Reference, Guide, Cheatsheet and search documentation for

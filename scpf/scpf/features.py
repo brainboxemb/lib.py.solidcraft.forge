@@ -263,27 +263,38 @@ def _resolve_direction_edges(base, selection):
     return picks
 
 
-def _fillet_command(base, radius, edges, name):
+def _resolve_feature_edges(base, edges):
+    """Resolve the public fillet/chamfer edge selectors to SolidCraft picks."""
+    resolved = _resolve_profile_edges(base, edges)
+    resolved = _resolve_direction_edges(base, resolved)
+    if resolved is not Edges.VERTICAL:
+        return resolved
+
+    if base["profile"] != "rectangle":
+        raise ModelError("vertical-edge selection requires a rectangular base")
+    w, d, h = (pv(base[k]) for k in ("width", "depth", "thickness"))
+    x, y, z = (pv(v) for v in base["origin"])
+    return [
+        [x + dx, y + dy, z + half(h)]
+        for dx, dy in ((0, 0), (w, 0), (w, d), (0, d))
+    ]
+
+
+def _fillet_command(base, radius, edges, name, *, vertical=False):
     r = _require_positive(radius, "fillet radius")
-    if edges is Edges.VERTICAL:
-        if base["profile"] != "rectangle":
-            raise ModelError("vertical-edge selection requires a rectangular base")
-        w, d, h = (pv(base[k]) for k in ("width", "depth", "thickness"))
+    if vertical:
+        w, d = (pv(base[k]) for k in ("width", "depth"))
         if r * 2 >= min(w, d):
             raise ModelError("fillet radius exceeds rectangular base dimensions")
-        x, y, z = (pv(v) for v in base["origin"])
-        picks = [[x + dx, y + dy, z + half(h)]
-                 for dx, dy in ((0, 0), (w, 0), (w, d), (0, d))]
-        return _command(
-            "solid.fillet",
-            edges=picks,
-            radius=command_value(radius),
-            body=name,
-        )
     picks = [[pv(v) for v in point] for point in edges]
     if not all(isfinite(v) for point in picks for v in point):
         raise ModelError("fillet edge selection must be finite")
-    return _command("solid.fillet", edges=picks, radius=command_value(radius), body=name)
+    return _command(
+        "solid.fillet",
+        edges=picks,
+        radius=command_value(radius),
+        body=name,
+    )
 
 
 def _chamfer_command(distance, edges, name):
@@ -1035,13 +1046,21 @@ def _to_commands(shape, name):
     if shape.kind == "fillet":
         original, radius, edges = shape.data
         steps, base = _to_commands(original, name)
-        resolved = _resolve_profile_edges(base, edges)
-        resolved = _resolve_direction_edges(base, resolved)
-        return steps + [_fillet_command(base, radius, resolved, name)], base
+        resolved = _resolve_feature_edges(base, edges)
+        return steps + [
+            _fillet_command(
+                base,
+                radius,
+                resolved,
+                name,
+                vertical=(edges is Edges.VERTICAL),
+            )
+        ], base
     if shape.kind == "chamfer":
         original, distance, edges = shape.data
         steps, base = _to_commands(original, name)
-        return steps + [_chamfer_command(distance, _resolve_profile_edges(base, edges), name)], base
+        resolved = _resolve_feature_edges(base, edges)
+        return steps + [_chamfer_command(distance, resolved, name)], base
     if shape.kind in ("union", "difference"):
         original, added = shape.data
         steps, base = _to_commands(original, name)

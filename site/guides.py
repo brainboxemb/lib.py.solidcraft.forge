@@ -597,13 +597,20 @@ means adding the operation that <em>removes</em> material.
 <a href="../../reference/Faces/"><code>Faces.TOP</code></a> selects its entry face. Simple feature placement
 uses <code>on()</code>; assembly attachment uses explicit anchors.</p>
 <h2 id="fillet">Fillets and chamfers</h2>
-""" + code("""from scpf import Box, Edges
+""" + code("""from scpf import FRONT, LEFT, Box, Edges
+
 body = Box(80, 50, 15)
-rounded = body.fillet(3, edges=Edges.VERTICAL)""") + """
-<p>Edge selection can use supported named selectors or explicit pick
-coordinates. Named profile segment IDs are available for
-<code>Polygon2D</code> workflows. A topological edge cannot
-always be inferred reliably from a visual camera position.</p>
+rounded = body.fillet(3, edges=Edges.VERTICAL)
+bevelled = body.chamfer(3, edges=Edges.VERTICAL)
+one_edge = body.chamfer(3, edges=FRONT + LEFT)""") + """
+<p><code>fillet()</code> and <code>chamfer()</code> use the same edge-selection
+forms. Use <code>Edges.VERTICAL</code> for all vertical edges of a supported
+rectangular body, a two-direction selector such as <code>FRONT + LEFT</code>
+for one Box edge, <code>Edges.from_profile(...)</code> or
+<code>Edges.from_vertices(...)</code> for named Polygon2D geometry, or explicit
+XYZ pick coordinates. Both methods default to <code>Edges.VERTICAL</code>.
+A topological edge cannot always be inferred reliably from a visual camera
+position.</p>
 <h2 id="shell">Shells</h2>
 """ + code("""from scpf import Box, Faces
 case = Box(80, 50, 30).shell(2, open=Faces.TOP)""") + """
