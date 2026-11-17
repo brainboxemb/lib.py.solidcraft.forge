@@ -8,6 +8,15 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Reusable component compilation now preserves command-level replay metadata
+  such as `bind`, namespaces component-local replay variables per definition,
+  and rewrites their uses in command params and binding selectors. Attached
+  Sketches that rely on `model.faces` therefore keep valid replay bindings
+  when the component is embedded in an assembly (issues #279/#288, PR #289).
+
+
 ## [0.8.0] - 2026-11-17
 
 ### Added
