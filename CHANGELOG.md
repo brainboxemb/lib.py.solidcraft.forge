@@ -8,6 +8,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- Site-wide client-side documentation search indexes public API symbols,
+  signatures, parameter descriptions, enum members, Guide sections and
+  Cheatsheet entries. Exact symbols rank first and results link directly to
+  generated Reference/Guide/Cheatsheet sections.
+
 ### Changed
 
 - Generated API Reference pages now derive argument descriptions, units,
