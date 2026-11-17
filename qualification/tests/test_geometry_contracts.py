@@ -1,5 +1,6 @@
 """Geometry-reference checks must reject correct envelopes with wrong internals."""
 
+import math
 import unittest
 
 
@@ -20,6 +21,24 @@ class GeometryContractTests(unittest.TestCase):
         solid_plate_volume = 100.0 * 60.0 * 10.0
         self.assertGreater(
             abs(solid_plate_volume - contract["volume_mm3"]),
+            contract["volume_tolerance_mm3"],
+        )
+
+    def test_volume_tolerance_still_rejects_a_missing_pattern_slot(self):
+        contract = geometry_contract("rectangular-pattern")
+        one_slot_volume = (10.0 * 6.0 + math.pi * 3.0**2) * 4.0
+        self.assertGreater(
+            one_slot_volume,
+            contract["volume_tolerance_mm3"],
+        )
+
+    def test_volume_tolerance_still_rejects_a_missing_slot_family_cut(self):
+        contract = geometry_contract("slot-family")
+        smallest_straight_slot_volume = (
+            20.0 * 8.0 + math.pi * 4.0**2
+        ) * 5.0
+        self.assertGreater(
+            smallest_straight_slot_volume,
             contract["volume_tolerance_mm3"],
         )
 

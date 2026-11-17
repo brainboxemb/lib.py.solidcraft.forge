@@ -8,6 +8,15 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- External reference geometry qualification now welds duplicate STL triangle
+  vertices before watertightness checks, uses mesh-volume tolerances that match
+  the pinned PythonSCAD/pyBOSL2 tessellation while retaining per-feature 3D
+  probes, and uses build123d 0.12.0 `SlotArc` instead of the unavailable
+  later `SlotCurve` API.
+
+
 ### Added
 
 - Site-wide client-side documentation search indexes public API symbols,
