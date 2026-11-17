@@ -72,6 +72,8 @@ jobs:
           unset PYTHONPATH
           cd "$RUNNER_TEMP"
           python -m unittest discover -s "$GITHUB_WORKSPACE/scpf/tests" -v
+          python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
+            --level q1 --out "$GITHUB_WORKSPACE/output/qualification"
 
       - name: Run standard qualification tests
         shell: bash
@@ -82,6 +84,8 @@ jobs:
           python -m unittest discover \
             -s "$GITHUB_WORKSPACE/qualification/tests" \
             -t "$GITHUB_WORKSPACE" -v
+          python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
+            --level q2 --out "$GITHUB_WORKSPACE/output/qualification"
 
       - name: Install pinned comparison libraries
         run: |
