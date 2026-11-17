@@ -9,6 +9,12 @@ from .core import Anchor, Depth, Shape, _pv as pv
 
 _ACTIVE_SKETCH = ContextVar("scpf_active_sketch", default=None)
 
+# Native associative sketch operations planned by issue #272. Keeping these
+# command ids in runtime code also makes the pinned SolidCraft snapshot capture
+# their exact 0.42 command contracts before the public API is implemented.
+_SKETCH_RECTANGULAR_PATTERN_COMMAND = "sketch.pattern.rectangular"
+_SKETCH_MIRROR_COMMAND = "sketch.mirror"
+
 
 def register_profile(profile):
     """Capture authored 2D geometry only while an explicit Sketch is active."""
