@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-17
+
 ### Added
 
 - Added generic associative Sketch profile handles with
