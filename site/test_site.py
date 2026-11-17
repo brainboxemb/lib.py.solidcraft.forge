@@ -353,14 +353,38 @@ def check(
         assert term in assembly_basics, term
     transformations = (site / "guide" / "transformations" / "index.html").read_text(encoding="utf-8")
     for term in (
-        "Placement",
-        "occurrence.move",
-        "placement=Placement",
+        "Positioning and orientation",
+        "Which one do I use?",
+        "shape.at(...)",
+        "feature.on(...)",
+        "Shape.attach(...)",
+        "Placement(...)",
+        "Occurrence.attach(...)",
+        "The important distinction",
+        "Use at() to place or align geometry",
+        "Use on() for a feature on a face",
+        "Shape.attach() is lower-level within-part placement",
+        "Use Placement for a component occurrence",
+        "Use Occurrence.attach() for separate physical parts",
         "rotation=(Z, 180)",
     ):
         assert term in transformations, term
-    for removed in ("copy().move(", "copy().rotate(", "copy().at(", "Position"):
+    for removed in (
+        "copy().move(",
+        "copy().rotate(",
+        "copy().at(",
+        "<code>Position</code>",
+        "Shape.attach() and Occurrence.attach() are the same",
+    ):
         assert removed not in transformations, removed
+
+    guide_slugs = [chapter["slug"] for chapter in GUIDES]
+    assert guide_slugs[:4] == [
+        "getting-started",
+        "model-objects",
+        "transformations",
+        "assembly-basics",
+    ], guide_slugs
     components = (site / "guide" / "components" / "index.html").read_text(encoding="utf-8")
     for term in (
         "AnchorFrame",
@@ -382,6 +406,10 @@ def check(
     assert "AnchorTopology" in cheatsheet
     assert "assembly.with_anchor" in cheatsheet
     assert "attach(offset=(u, v))" in cheatsheet
+    assert "copy(placement=Placement(...))" in cheatsheet
+    assert "Placement(rotation=(axis, degrees))" in cheatsheet
+    assert "copy().move(" not in cheatsheet
+    assert "model.rotate(" not in cheatsheet
     qualification_index = (site / "qualification" / "index.html").read_text(encoding="utf-8")
     qualification_manifest = json.loads(
         (site / "qualification" / "manifest.json").read_text(encoding="utf-8")
@@ -827,7 +855,14 @@ def check(
     assert "Full SolidCraft CAD projects" in home
     assert "Cheatsheet" in home and "Cheatsheet" in cheatsheet
     assert "Qualification" in home
-    for concept in ("Box(", "Rectangle2D(", "Hole(", "copy()", "rotate(", "python -m scpf"):
+    for concept in (
+        "Box(",
+        "Rectangle2D(",
+        "Hole(",
+        "copy(placement=Placement(",
+        "Placement(rotation=",
+        "python -m scpf",
+    ):
         assert concept in cheatsheet, concept
     # The library page has only tiny fixtures. CAD models and native renders
     # MUST NOT be copied into this independent site.

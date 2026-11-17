@@ -53,12 +53,13 @@ empty one before the model batch is sent. Leave it off when you deliberately
 want to add commands to the current design. Neither form saves the design.
 The CAD project also provides a separate native CLI qualification workflow.</p>
 <h2 id="next">Where to continue</h2>
-<p>Read <a href="../model-objects/">Model objects</a> to understand the difference
-between a shape definition and a placed component occurrence. Then read
-<a href="../assembly-basics/">From one component to an assembly</a> before building
-multi-part models: it explains when to use placement, anchors, relationships and
-groups. The <a href="../transformations/">Transformations</a> chapter covers coordinate axes,
-rotation and the common “my panel is lying flat” problem.</p>""",
+<p>Read <a href="../model-objects/">Model objects</a> first. Then read
+<a href="../transformations/">Positioning and orientation</a>. That chapter explains
+the practical difference between <code>at()</code>, <code>on()</code>,
+<code>Shape.attach()</code>, <code>Placement</code> and
+<code>Occurrence.attach()</code>. After that,
+<a href="../assembly-basics/">From one component to an assembly</a> shows how
+separate physical parts are combined.</p>""",
     },
     {
         "slug": "model-objects",
@@ -161,7 +162,162 @@ At present one shared definition cannot be split among different groups.</p>
 <h2 id="limits">Important boundaries</h2>
 <p>Associative attachment is supported for a limited set of rectangular
 component faces. General mates, arbitrary face queries and rotational
-constraints are not implemented as a complete assembly solver.</p>""",
+constraints are not implemented as a complete assembly solver.</p>
+<p><strong>Next:</strong> <a href="../transformations/">Positioning and orientation</a>
+explains how to place geometry and component occurrences, and when
+<code>at()</code>, <code>on()</code> or <code>attach()</code> is the right choice.</p>""",
+    },
+    {
+        "slug": "transformations",
+        "title": "Positioning and orientation",
+        "summary": "Where geometry and component occurrences go, and when to use at(), on(), attach() or Placement.",
+        "body": """
+<h2 id="choose">Which one do I use?</h2>
+<p>These APIs all affect where something ends up, but they mean different things.
+Choose the one that matches the rule in the model.</p>
+<table><thead><tr><th>You want to…</th><th>Use</th><th>What it means</th></tr></thead><tbody>
+<tr><td>Place or align geometry inside one part</td><td><code>shape.at(...)</code></td><td>Geometric placement. No joint or assembly relationship is created.</td></tr>
+<tr><td>Put a feature on a face of another shape</td><td><code>feature.on(...)</code></td><td>Within-part feature placement. The selected <code>Faces</code> value chooses the support or entry face.</td></tr>
+<tr><td>Place a feature with explicit parent/child anchors</td><td><code>Shape.attach(...)</code></td><td>Lower-level within-part feature anchoring. Prefer <code>on()</code> when a simple face is enough.</td></tr>
+<tr><td>Give one component occurrence an absolute pose</td><td><code>Placement(...)</code></td><td>Position and optional orientation at occurrence creation/copy time. No joint is created.</td></tr>
+<tr><td>Relate two separate physical component occurrences</td><td><code>Occurrence.attach(...)</code></td><td>An assembly relationship that SolidCraft stores as a native joint.</td></tr>
+</tbody></table>
+<div class="notice"><strong>The important distinction:</strong>
+<code>Shape.attach()</code> and <code>Occurrence.attach()</code> have the same
+verb but work at different levels. The first places a feature inside one part.
+The second relates two separate component occurrences.</div>
+
+<h2 id="axes">Start with the coordinate system</h2>
+<p>X, Y and Z are model axes. A normal <code>Box</code> has its large base in
+XY and thickness along Z. A camera rotation changes only the view. It does not
+change the model coordinates.</p>
+<p>Also separate two levels: geometry inside one part has its own coordinates;
+a component occurrence has a pose in the assembly.</p>
+
+<h2 id="at">Use at() to place or align geometry</h2>
+""" + code("""from scpf import Anchor, Axis, Box, Cylinder
+
+pin = Cylinder(d=8, h=20, axis=Axis.X).at(
+    10, 0, 5,
+    anchor=Anchor.LEFT,
+)
+
+body = Box(80, 50, 12)
+centered_bore = Cylinder(d=8, h=30, axis=Axis.X).at(body)""") + """
+<p><code>shape.at(x, y, z)</code> places supported geometry at an absolute
+model coordinate. A primitive can use <code>anchor=...</code> to say which of
+its own datums belongs at that coordinate.</p>
+<p><code>shape.at(target)</code> currently aligns CENTER to CENTER. It does
+<strong>not</strong> mean “put this on the top face”. For a feature on a face,
+use <code>on()</code>.</p>
+
+<h2 id="on">Use on() for a feature on a face</h2>
+""" + code("""from scpf import Box, Depth, Faces, Hole
+
+plate = Box(100, 60, 10)
+hole = Hole(d=8, depth=Depth.THROUGH_ALL).on(
+    plate,
+    face=Faces.TOP,
+    offset=(20, 0),
+)
+plate = plate + hole""") + """
+<p><code>on()</code> is for a feature that belongs to an existing shape.
+<code>Faces.TOP</code> or <code>Faces.BOTTOM</code> selects the face where the
+feature starts or is supported. The offset is measured in that face.</p>
+<p>A sketch has the same idea in explicit form:
+<code>Sketch(on=body, parent=Anchor.TOP)</code> creates a named sketch on a
+selected body face.</p>
+
+<h2 id="shape-attach">Shape.attach() is lower-level within-part placement</h2>
+""" + code("""from scpf import Anchor, Boss, X, Y
+
+boss = Boss(d=7, h=12, hole_d=2.5).attach(
+    case,
+    parent=Anchor.INNER_BOTTOM,
+    offset=(X.MIN + 10, Y.MAX - 10),
+)""") + """
+<p>Use <code>Shape.attach()</code> only when a simple <code>on()</code> face
+does not express the required feature reference. It lets you choose explicit
+parent and child anchors.</p>
+<p>This does <strong>not</strong> create an assembly joint. The feature and
+target are still geometry inside one part.</p>
+
+<h2 id="placement">Use Placement for a component occurrence</h2>
+""" + code("""from scpf import Placement, X, Z, component
+
+@component
+class Panel:
+    def build(self):
+        return Box(160, 320, 14.5)
+
+first = Panel()
+second = first.copy(
+    placement=Placement(x=160, z=20)
+)
+
+upright = first.copy(
+    placement=Placement(
+        z=160,
+        rotation=(X, 90),
+    )
+)
+
+upside_down = first.copy(
+    placement=Placement(rotation=(Z, 180))
+)""") + """
+<p><code>Placement</code> describes the complete pose of one component
+occurrence in its parent coordinate frame. XYZ is absolute. The optional
+rotation is one axis-angle orientation.</p>
+<p><code>Placement</code> does not say that one component depends on another.
+It only says where this occurrence is.</p>
+
+<h2 id="occurrence-attach">Use Occurrence.attach() for separate physical parts</h2>
+""" + code("""from scpf import Anchor
+
+left = Block()
+right = Block().attach(
+    left,
+    parent=Anchor.RIGHT,
+    child=Anchor.LEFT,
+)
+
+assembly = left + right""") + """
+<p>Here <code>right</code> is a separate physical part. Its rule is not an
+absolute XYZ position; its left side belongs on the right side of
+<code>left</code>. That is an assembly relationship, so use
+<code>Occurrence.attach()</code>.</p>
+<p>SolidCraft stores this as a native joint. If the parent changes size, the
+relationship can still express which references belong together. The next
+chapter, <a href="../assembly-basics/">From one component to an assembly</a>,
+builds on this distinction.</p>
+
+<h2 id="move">Shape.move() is a local geometry translation</h2>
+""" + code("""body = Box(40, 20, 10)
+shifted = body.move(x=10, y=0, z=25)""") + """
+<p><code>move()</code> translates supported geometry inside its current shape
+expression. It is not the normal way to position a component occurrence.
+Use <code>Placement</code> for occurrences.</p>
+
+<h2 id="copies">Copies can have different placements</h2>
+""" + code("""first = Panel(
+    placement=Placement(z=160, rotation=(X, 90))
+)
+second = first.copy(
+    placement=Placement(x=160, z=160, rotation=(X, 90))
+)
+screen = first + second""") + """
+<p>The two occurrences reuse one component definition but have different
+placements. <code>copy()</code> without a placement override keeps the source
+Placement.</p>
+
+<h2 id="limits">Current limits</h2>
+<table><thead><tr><th>Operation</th><th>Current meaning</th></tr></thead><tbody>
+<tr><td><code>Shape.at(...)</code></td><td>Absolute geometry placement; shape-to-shape alignment is currently CENTER-to-CENTER.</td></tr>
+<tr><td><code>Shape.on(...)</code></td><td>Supported within-part feature placement on TOP or BOTTOM.</td></tr>
+<tr><td><code>Shape.attach(...)</code></td><td>Lower-level within-part feature anchoring.</td></tr>
+<tr><td><code>Placement(...)</code></td><td>Absolute occurrence pose with one optional axis-angle rotation.</td></tr>
+<tr><td><code>Occurrence.attach(...)</code></td><td>Assembly relationship between separate component occurrences.</td></tr>
+</tbody></table>""",
     },
     {
         "slug": "assembly-basics",
@@ -388,114 +544,6 @@ shared = body & tool       # intersection, where supported""") + """
 history and CSG trees are not interchangeable for every operation.
 For manufacturing features such as holes, prefer the native
 <a href="../features/">feature operations</a>.</p>""",
-    },
-    {
-        "slug": "transformations",
-        "title": "Transformations and orientation",
-        "summary": "Coordinate systems, movement, rotation, copies and what is not yet supported.",
-        "body": """
-<h2 id="axes">First choose the coordinate system</h2>
-<p>SolidCraft models are three-dimensional: X, Y and Z are axes, not
-synonyms for left, up and front in every project. The conventional
-<code>Box</code> base is in XY and its height extends along +Z.
-A portrait HUB75 module may be authored with its large face in XY, then
-placed upright in the assembly's XZ plane.</p>
-<p>Differentiate <strong>definition coordinates</strong> (how one component
-is built) from <strong>assembly coordinates</strong> (where an occurrence
-is placed). A camera rotation is only a change of view; it does not
-change any of these coordinates.</p>
-<h2 id="move">Move: translation</h2>
-""" + code("""from scpf import Box
-
-body = Box(40, 20, 10)
-shifted = body.move(x=10, y=0, z=25)""") + """
-<p>For supported CSG shapes, <code>move()</code> translates the local geometry
-expression. Occurrence placement is a different layer and is declared when the
-occurrence is created or copied.</p>
-""" + code("""from scpf import Placement, component
-
-class Panel:
-    def build(self):
-        return Box(160, 320, 14.5)
-
-PanelComponent = component(Panel)
-first = PanelComponent()
-right = first.copy(placement=Placement(x=160))""") + """
-<h2 id="rotate">Orientation is part of Placement</h2>
-<p>Occurrence orientation is declarative data in <code>Placement</code>, not a
-separate rotation action.</p>
-""" + code("""from scpf import Placement, X, Y, Z
-
-upside_down = first.copy(
-    placement=Placement(rotation=(Z, 180))
-)
-upright = first.copy(
-    placement=Placement(rotation=(X, 90))
-)
-
-sideways = first.copy(
-    placement=Placement(rotation=((0, 1, 0), 90))
-)""") + """
-<p>SCPF supports one absolute axis-angle orientation per occurrence.
-Orientation is part of the complete <code>Placement</code>; it is not a
-separate occurrence rotation action.</p>
-<h2 id="copies">Copies are independent placements</h2>
-<p>One <strong>component definition</strong> describes the shape and its
-editable features. Every <strong>occurrence</strong> says where one copy
-belongs in the assembly. Several occurrences reuse the same definition.</p>
-""" + code("""first = PanelComponent(
-    placement=Placement(z=160, rotation=(X, 90))
-)
-second = first.copy(
-    placement=Placement(x=160, z=160, rotation=(X, 90))
-)
-screen = first + second""") + """
-<p><code>copy()</code> without a placement override inherits the source
-Placement. Supplying <code>placement=...</code> gives the new occurrence its
-complete declared pose. The compiler then chooses the smallest native
-creation/copy plus placement fallback needed by SolidCraft 0.42.</p>
-<h2 id="json">What SCPF actually sends to SolidCraft</h2>
-<p>The sequence below is deliberately simple: create one component,
-copy it once, then ask SolidCraft to place both occurrences. The
-editable shape features are omitted here for clarity.</p>
-""" + code("""{
-  "commands": [
-    {"command":"component.create","params":{"name":"Panel"}},
-    {"command":"occurrence.copy","params":{
-      "component":"Panel",
-      "translate":[160,0,160]
-    }},
-    {"command":"occurrence.move","params":{
-      "occurrence":"Panel:1",
-      "translate":[0,0,160],
-      "axis":[1,0,0],
-      "angle":"90 deg",
-      "move_grounded":true
-    }},
-    {"command":"occurrence.move","params":{
-      "occurrence":"Panel:2",
-      "translate":[0,0,0],
-      "axis":[1,0,0],
-      "angle":"90 deg"
-    }}
-  ]
-}""") + """
-<p>SolidCraft 0.42.0 understands the native <code>translate</code>,
-<code>axis</code> and <code>angle</code> parameters. SCPF does
-<strong>not</strong> calculate transformation matrices. Forge uses the qualified 0.42.0 occurrence-placement contract directly; it
-does not invent transformation matrices or depend on an unqualified placement
-field.</p>
-<p>Passing a command-plan test is not enough to prove the CAD is right.
-The CAD project's native tests also inspect the rotations and
-positions saved in SolidCraft's own design, and front/rear screenshots
-help verify the result visually. A camera change does not rotate
-the actual panel geometry.</p>
-<h2 id="limitations">Current support summary</h2>
-<table><thead><tr><th>Operation</th><th>Scope</th><th>Limit</th></tr></thead><tbody>
-<tr><td><code>Shape.move(x,y,z)</code></td><td>Supported CSG shapes</td><td>Local geometry transform</td></tr>
-<tr><td><code>placement=Placement(...)</code></td><td>Component occurrences</td><td>Absolute parent-frame pose at create/copy time</td></tr>
-<tr><td><code>rotation=(axis,degrees)</code></td><td>Placement</td><td>One absolute axis-angle orientation</td></tr>
-</tbody></table>""",
     },
     {
         "slug": "features",
