@@ -196,6 +196,119 @@ class LiveProtocolTests(unittest.TestCase):
             102,
         )
 
+    def test_replay_v2_selects_one_result_record_and_resolves_fields(self):
+        document = replay_document([
+            {
+                "command": "model.faces",
+                "params": {"body": "Plate"},
+                "bind": {
+                    "$top_face": {
+                        "field": "faces",
+                        "where": {"plane_normal": [0, 0, 1]},
+                        "max": "area",
+                    },
+                },
+            },
+            {
+                "command": "sketch.create",
+                "params": {
+                    "name": "Top sketch",
+                    "plane": {
+                        "face": "$top_face.point",
+                        "body": "Plate",
+                        "index": "$top_face.index",
+                    },
+                },
+            },
+        ])
+        server = FakeSolidCraft([
+            {"id": 1, "ok": True, "result": {"checkpoint": 11}},
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 1,
+                    "results": [{
+                        "body": "Plate",
+                        "faces": [
+                            {
+                                "index": 1,
+                                "area": 200.0,
+                                "plane_normal": [0, 0, 1],
+                                "point": [10, 10, 5],
+                            },
+                            {
+                                "index": 4,
+                                "area": 9000.0,
+                                "plane_normal": [0, 0, 1],
+                                "point": [-30, -20, 5],
+                            },
+                            {
+                                "index": 5,
+                                "area": 9000.0,
+                                "plane_normal": [0, 0, -1],
+                                "point": [0, 0, 0],
+                            },
+                        ],
+                    }],
+                    "undone": 0,
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {
+                    "completed": 1,
+                    "results": [{
+                        "sketch": 30,
+                        "name": "Top sketch",
+                        "projected": None,
+                        "attachment": "exact_face",
+                    }],
+                    "undone": 0,
+                },
+            },
+            {
+                "id": 1,
+                "ok": True,
+                "result": {"checkpoint": 11, "restored": False},
+            },
+        ])
+        self.configure(server)
+
+        result = send_document(document, directory=self.directory)
+        server.join()
+
+        self.assertEqual(result["variables"]["$top_face"]["index"], 4)
+        plane = server.requests[2]["params"]["commands"][0]["params"]["plane"]
+        self.assertEqual(plane["face"], [-30, -20, 5])
+        self.assertEqual(plane["body"], "Plate")
+        self.assertEqual(plane["index"], 4)
+
+    def test_replay_v1_keeps_legacy_string_bindings(self):
+        document = {
+            "format": "scpf-replay",
+            "version": 1,
+            "commands": [{
+                "command": "component.create",
+                "params": {"name": "Board"},
+                "bind": {"$board": "occurrence"},
+            }],
+        }
+        server = FakeSolidCraft({
+            "id": 1,
+            "ok": True,
+            "result": {
+                "completed": 1,
+                "results": [{"component": 2, "occurrence": 9}],
+                "undone": 0,
+            },
+        })
+        self.configure(server)
+        result = send_document(document, directory=self.directory)
+        server.join()
+        self.assertEqual(result["variables"]["$board"], 9)
+
     def test_replay_failure_restores_whole_checkpoint(self):
         document = replay_document([
             {
