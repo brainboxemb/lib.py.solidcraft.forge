@@ -17,6 +17,12 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Added
 
+- Added associative attached-Sketch rectangular pattern and mirror operations.
+  Circle and Slot profiles can now drive native `sketch.pattern.rectangular`
+  and `sketch.mirror` commands through replay-bound curve results, while
+  pattern count and spacing can remain editable SolidCraft parameters
+  (issue #272).
+
 - Added a version-pinned SolidCraft runtime command-contract snapshot generated
   from the official command registry and `engine.describe`. CI now detects
   Forge commands missing from the saved snapshot and records incomplete typed
