@@ -83,7 +83,7 @@ def _validate_binding_spec(spec, *, version, variable, index):
         raise ValueError(
             f"invalid result binding for {variable} at command index {index}"
         )
-    allowed = {"field", "where", "max", "select"}
+    allowed = {"field", "where", "max", "select", "prepend"}
     unknown = set(spec) - allowed
     if unknown:
         raise ValueError(
@@ -100,7 +100,17 @@ def _validate_binding_spec(spec, *, version, variable, index):
         raise ValueError(
             f"binding selector where for {variable} must be an object"
         )
-    if not where and spec.get("max") is None and spec.get("select") is None:
+    prepend = spec.get("prepend")
+    if prepend is not None:
+        if not isinstance(prepend, str) or not _VARIABLE.fullmatch(prepend):
+            raise ValueError(
+                f"binding prepend for {variable} must be one replay variable"
+            )
+        if where or spec.get("max") is not None or spec.get("select") is not None:
+            raise ValueError(
+                f"binding prepend for {variable} cannot use record selectors"
+            )
+    elif not where and spec.get("max") is None and spec.get("select") is None:
         raise ValueError(
             f"binding selector for {variable} does not select a result record"
         )
@@ -165,6 +175,13 @@ def validate_replay_document(document):
                     variable=variable,
                     index=index,
                 )
+                unknown_bind = variables_in(spec) - declared
+                if unknown_bind:
+                    names = ", ".join(sorted(unknown_bind))
+                    raise ValueError(
+                        f"command index {index} binding uses replay "
+                        f"variable(s) before binding: {names}"
+                    )
 
         if replay:
             unknown = variables_in(item.get("params", {})) - declared
@@ -196,6 +213,8 @@ def replay_chunks(commands):
 
     for item in commands:
         needed = variables_in(item.get("params", {}))
+        for spec in item.get("bind", {}).values():
+            needed.update(variables_in(spec))
         if not needed <= available:
             if current:
                 chunks.append(current)
@@ -216,7 +235,7 @@ def replay_chunks(commands):
     return chunks
 
 
-def _binding_value(result, spec, *, command, variable):
+def _binding_value(result, spec, variables, *, command, variable):
     if not isinstance(result, dict):
         raise ValueError(f"{command} did not return an object for {variable}")
 
@@ -237,6 +256,15 @@ def _binding_value(result, spec, *, command, variable):
         raise ValueError(
             f"{command} field {field!r} is not a list for selector {variable}"
         )
+
+    prepend = spec.get("prepend")
+    if prepend is not None:
+        prefix = resolve_value(prepend, variables)
+        if not isinstance(prefix, list):
+            raise ValueError(
+                f"{command} prepend value for {variable} is not a list"
+            )
+        return [*prefix, *value]
 
     where = spec.get("where", {})
     candidates = [
@@ -299,6 +327,7 @@ def apply_bindings(items, results, variables):
             value = _binding_value(
                 result,
                 spec,
+                variables,
                 command=item["command"],
                 variable=variable,
             )

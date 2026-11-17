@@ -61,7 +61,12 @@ class SketchPatternMirrorTests(unittest.TestCase):
         self.assertEqual(pattern["params"]["dir2"], [0.0, 1.0])
         self.assertEqual(
             pattern["bind"],
-            {"$sketch_1_operation_1": "curves"},
+            {
+                "$sketch_1_operation_1": {
+                    "field": "curves",
+                    "prepend": "$sketch_1_profile_1",
+                }
+            },
         )
 
         names = [command["command"] for command in commands]
@@ -111,7 +116,12 @@ class SketchPatternMirrorTests(unittest.TestCase):
         self.assertEqual(pattern["params"]["dir"], [1.0, 1.0])
         self.assertEqual(
             pattern["bind"],
-            {"$sketch_1_operation_1": "curves"},
+            {
+                "$sketch_1_operation_1": {
+                    "field": "curves",
+                    "prepend": "$sketch_1_profile_1",
+                }
+            },
         )
 
         mirrors = [

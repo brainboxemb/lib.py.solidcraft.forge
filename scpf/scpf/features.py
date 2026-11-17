@@ -674,6 +674,14 @@ def _explicit_sketch_commands(
     def append_profile(command, profile):
         variable = profile_variables.get(id(profile))
         if variable is not None:
+            if operation.kind == "sketch_pattern_rectangular":
+            command["bind"] = {
+                variable: {
+                    "field": "curves",
+                    "prepend": source_variable(source),
+                }
+            }
+        else:
             command["bind"] = {variable: "curves"}
         commands.append(command)
 
