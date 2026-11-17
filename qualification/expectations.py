@@ -75,6 +75,9 @@ EXPECTED_MUTATION_BOUNDS = {
         {"label": "rear-left bottom", "min": [-84, 32, 0], "max": [-52, 64, 16]},
         {"label": "rear-left top", "min": [-84, 32, 74], "max": [-52, 64, 90]},
     ],
+    "rectangular-pattern": [
+        {"label": "RectangularPattern", "min": [-60, -40, 0], "max": [60, 40, 4]},
+    ],
     "xz-anchor": [
         {"label": "Board", "min": [-40, 0, 0], "max": [40, 12, 40]},
         {"label": "right Marker", "min": [30, -10, 30], "max": [40, 0, 40]},

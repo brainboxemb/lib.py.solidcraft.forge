@@ -470,6 +470,7 @@ def proof_contract(slug: str) -> dict:
             "native_expectation": case["native_expectation"],
             "generated_relationship": case["lowering"],
             "q5_required": bool(case.get("q5_required")),
+            "q5_reason": case["mutation"],
             "mutation": case["mutation"] if case.get("q5_required") else None,
         },
     }

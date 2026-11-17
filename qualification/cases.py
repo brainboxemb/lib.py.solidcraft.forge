@@ -368,6 +368,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "rectangular-pattern",
+        "q5_required": True,
         "group": "features",
         "title": "Native rectangular feature pattern",
         "intent": "Qualify a real SolidCraft rectangular History pattern over one existing cut feature, rather than Forge-expanded repeated geometry.",
@@ -375,7 +376,7 @@ QUALIFICATION_CASES = [
         "forge_model": "One 120 x 80 x 4 mm plate, one native straight Slot cut and one native 3 x 2 rectangular feature pattern.",
         "lowering": "Forge emits the source Sketch/cut once, then exactly one solid.pattern.rectangular with features=['Slot']; columns/rows are dimensionless native parameters and pitches remain millimetre parameters.",
         "native_expectation": "SolidCraft saves one plate with six slot cuts and one native rectangular pattern History feature that references the original Slot cut.",
-        "mutation": "No Q5 mutation is required in this first pattern case; native feature identity, measured geometry and visual result are qualified directly.",
+        "mutation": "Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature.",
         "references": [
             ("SolidCraft", "Native Q2-Q4 additionally prove one saved RectangularPatternFeature. The four comparison libraries independently prove the final 3 x 2 slot geometry."),
         ],

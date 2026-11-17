@@ -149,6 +149,7 @@ def collect(
             "q5": {
                 "status": q5_status,
                 "required": mutation_required,
+                "reason": case["mutation"],
                 "mutation": mutation.get("mutation") if mutation else None,
                 "evidence": [
                     name for name in native_files

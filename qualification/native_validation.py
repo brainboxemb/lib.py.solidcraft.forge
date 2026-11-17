@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 from typing import Any
 import sys
@@ -807,6 +808,104 @@ def validate_rectangular_pattern(root: Path) -> Validation:
         expected_timeline,
         timeline,
     )
+
+    # Q5: mutate the existing saved design, never rerun the Python model.
+    # Decreasing columns to 2 lets pitch grow to 30 mm while all four slots
+    # remain fully inside the 120 x 80 mm plate.
+    m = load(root / "measurements-columns-2-pitch-30.json")
+    _check_declared_bounds(
+        v,
+        m,
+        "rectangular-pattern",
+        level="q5",
+        mutation=True,
+        tol=0.01,
+    )
+    expected_parameters = {
+        "columns": 2.0,
+        "pitch": 30.0,
+        "rows": 2.0,
+        "row_pitch": 28.0,
+    }
+    v.check(
+        "pattern parameters changed in saved design",
+        params(m) == expected_parameters,
+        expected_parameters,
+        params(m),
+        "q5",
+    )
+    v.check(
+        "mutated pattern remains one body",
+        m["body_count"] == 1,
+        1,
+        m["body_count"],
+        "q5",
+    )
+    if m["bodies"]:
+        body = m["bodies"][0]
+        slot_volume = (10.0 * 6.0 + math.pi * 3.0**2) * 4.0
+        expected_volume = 120.0 * 80.0 * 4.0 - 4.0 * slot_volume
+        # 2 columns at X=0,30 and 2 rows at Y=0,28. The plate starts
+        # centred at the origin, so subtracting those four cuts shifts the
+        # remaining body's centre of mass by a calculable amount.
+        expected_center = [
+            -(4.0 * slot_volume * 15.0) / expected_volume,
+            -(4.0 * slot_volume * 14.0) / expected_volume,
+            2.0,
+        ]
+        faces = body.get("face_types", {})
+        v.check(
+            "2 x 2 pattern rebuilds four Slot cuts",
+            close(body["volume_mm3"], expected_volume, 0.01)
+            and body["faces"] == 22
+            and faces.get("cylinder") == 8
+            and faces.get("plane") == 14,
+            {
+                "volume_mm3": expected_volume,
+                "faces": 22,
+                "face_types": {"cylinder": 8, "plane": 14},
+            },
+            {
+                "volume_mm3": body["volume_mm3"],
+                "faces": body["faces"],
+                "face_types": faces,
+            },
+            "q5",
+        )
+        v.check(
+            "30 mm pitch moves the rebuilt Slot layout",
+            vector_close(body["center_of_mass"], expected_center, 0.001),
+            expected_center,
+            body["center_of_mass"],
+            "q5",
+        )
+
+    mutated_sketch = next(
+        (row for row in m.get("sketches", []) if row.get("name") == "Slot"),
+        None,
+    )
+    v.check(
+        "mutation keeps one solved source Slot profile",
+        mutated_sketch is not None
+        and mutated_sketch.get("curves") == 5
+        and mutated_sketch.get("profiles") == 1
+        and mutated_sketch.get("status") == "solved",
+        {"name": "Slot", "curves": 5, "profiles": 1, "status": "solved"},
+        mutated_sketch,
+        "q5",
+    )
+    mutated_timeline = [
+        (row.get("type"), row.get("name"))
+        for row in m.get("timeline", [])
+    ]
+    v.check(
+        "mutation keeps one source cut and one native pattern feature",
+        mutated_timeline == expected_timeline,
+        expected_timeline,
+        mutated_timeline,
+        "q5",
+    )
+
     return v
 
 

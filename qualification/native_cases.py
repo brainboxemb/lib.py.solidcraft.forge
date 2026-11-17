@@ -69,6 +69,12 @@ MUTATIONS = {
         "measurements": "measurements-size-80x40.json",
         "label": "board 40x20 -> 80x40 mm",
     },
+    "rectangular-pattern": {
+        "command": "qualification/commands/rectangular-pattern/change-columns-pitch.json",
+        "save": "model-columns-2-pitch-30.sc",
+        "measurements": "measurements-columns-2-pitch-30.json",
+        "label": "columns 3 -> 2; pitch 24 -> 30 mm",
+    },
     "four-corner-l": {
         "command": "qualification/commands/four-corner-l/change-size.json",
         "save": "model-size-160x120.sc",
