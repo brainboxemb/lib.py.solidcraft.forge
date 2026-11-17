@@ -1,8 +1,8 @@
 """Replay helpers for SCPF command documents.
 
-A replay variable such as $board_2 stands for a SolidCraft id that is only
-known while the file is being executed. The replay file keeps the variable;
-the per-run log records the concrete value returned by SolidCraft.
+A replay variable stands for a value returned by SolidCraft that a later
+SolidCraft command needs. The replay file keeps the variable symbolic; the
+per-run log records the concrete value returned by SolidCraft.
 """
 import hashlib
 import json
@@ -10,7 +10,8 @@ import re
 
 
 REPLAY_FORMAT = "scpf-replay"
-REPLAY_VERSION = 1
+REPLAY_VERSION = 2
+_SUPPORTED_REPLAY_VERSIONS = (1, 2)
 _VARIABLE = re.compile(r"^\$[A-Za-z_][A-Za-z0-9_]*$")
 
 
@@ -72,6 +73,51 @@ def resolve_value(value, variables):
     return value
 
 
+def _validate_binding_spec(spec, *, version, variable, index):
+    if isinstance(spec, str):
+        if not spec:
+            raise ValueError(
+                f"invalid result field for {variable} at command index {index}"
+            )
+        return
+    if version < 2 or not isinstance(spec, dict):
+        raise ValueError(
+            f"invalid result binding for {variable} at command index {index}"
+        )
+    allowed = {"field", "where", "max", "select"}
+    unknown = set(spec) - allowed
+    if unknown:
+        raise ValueError(
+            f"unknown binding selector key(s) for {variable}: "
+            + ", ".join(sorted(unknown))
+        )
+    field = spec.get("field")
+    if not isinstance(field, str) or not field:
+        raise ValueError(
+            f"binding selector for {variable} needs a non-empty field"
+        )
+    where = spec.get("where", {})
+    if not isinstance(where, dict):
+        raise ValueError(
+            f"binding selector where for {variable} must be an object"
+        )
+    if not where and spec.get("max") is None and spec.get("select") is None:
+        raise ValueError(
+            f"binding selector for {variable} does not select a result record"
+        )
+    for key in where:
+        if not isinstance(key, str) or not key:
+            raise ValueError(
+                f"binding selector where keys for {variable} must be text"
+            )
+    for key in ("max", "select"):
+        value = spec.get(key)
+        if value is not None and (not isinstance(value, str) or not value):
+            raise ValueError(
+                f"binding selector {key} for {variable} must be text"
+            )
+
+
 def validate_replay_document(document):
     """Validate native command JSON or the versioned SCPF replay extension."""
     if not isinstance(document, dict) or not isinstance(document.get("commands"), list):
@@ -80,11 +126,12 @@ def validate_replay_document(document):
         raise ValueError("SolidCraft JSON has no commands")
 
     replay = is_replay_document(document)
+    version = document.get("version")
     if replay:
-        if document.get("version") != REPLAY_VERSION:
+        if version not in _SUPPORTED_REPLAY_VERSIONS:
             raise ValueError(
-                f"unsupported SCPF replay version {document.get('version')!r}; "
-                f"expected {REPLAY_VERSION}"
+                f"unsupported SCPF replay version {version!r}; "
+                f"supported versions are {_SUPPORTED_REPLAY_VERSIONS}"
             )
     elif "format" in document or "version" in document:
         raise ValueError("unknown replay document format")
@@ -104,17 +151,21 @@ def validate_replay_document(document):
         if bind is not None:
             if not isinstance(bind, dict) or not bind:
                 raise ValueError(f"invalid bind map at command index {index}")
-            for variable, field in bind.items():
+            for variable, spec in bind.items():
                 if not isinstance(variable, str) or not _VARIABLE.fullmatch(variable):
                     raise ValueError(
                         f"invalid replay variable {variable!r} at command index {index}"
                     )
                 if variable in declared:
-                    raise ValueError(f"replay variable {variable} is bound more than once")
-                if not isinstance(field, str) or not field:
                     raise ValueError(
-                        f"invalid result field for {variable} at command index {index}"
+                        f"replay variable {variable} is bound more than once"
                     )
+                _validate_binding_spec(
+                    spec,
+                    version=version,
+                    variable=variable,
+                    index=index,
+                )
 
         if replay:
             unknown = variables_in(item.get("params", {})) - declared
@@ -135,7 +186,6 @@ def resolved_command(item, variables):
         "command": item["command"],
         "params": resolve_value(item.get("params", {}), variables),
     }
-
 
 
 def replay_chunks(commands):
@@ -167,6 +217,75 @@ def replay_chunks(commands):
     return chunks
 
 
+def _binding_value(result, spec, *, command, variable):
+    if not isinstance(result, dict):
+        raise ValueError(f"{command} did not return an object for {variable}")
+
+    if isinstance(spec, str):
+        if spec not in result:
+            raise ValueError(
+                f"{command} did not return field {spec!r} needed for {variable}"
+            )
+        return result[spec]
+
+    field = spec["field"]
+    if field not in result:
+        raise ValueError(
+            f"{command} did not return field {field!r} needed for {variable}"
+        )
+    value = result[field]
+    if not isinstance(value, list):
+        raise ValueError(
+            f"{command} field {field!r} is not a list for selector {variable}"
+        )
+
+    where = spec.get("where", {})
+    candidates = [
+        item
+        for item in value
+        if isinstance(item, dict)
+        and all(item.get(key) == expected for key, expected in where.items())
+    ]
+    if not candidates:
+        raise ValueError(
+            f"{command} selector for {variable} matched no {field!r} records"
+        )
+
+    maximum = spec.get("max")
+    if maximum is not None:
+        scored = [
+            (item.get(maximum), item)
+            for item in candidates
+            if isinstance(item.get(maximum), (int, float))
+        ]
+        if not scored:
+            raise ValueError(
+                f"{command} selector for {variable} has no numeric {maximum!r}"
+            )
+        best = max(score for score, _ in scored)
+        candidates = [item for score, item in scored if score == best]
+
+    if len(candidates) != 1:
+        raise ValueError(
+            f"{command} selector for {variable} matched {len(candidates)} records"
+        )
+
+    selected = candidates[0]
+    field_name = spec.get("select")
+    if field_name is not None:
+        if field_name not in selected:
+            raise ValueError(
+                f"{command} selected record has no field {field_name!r} "
+                f"needed for {variable}"
+            )
+        selected = selected[field_name]
+    if selected is None:
+        raise ValueError(
+            f"{command} selector for {variable} resolved to null"
+        )
+    return selected
+
+
 def apply_bindings(items, results, variables):
     """Bind replay variables from one completed native batch."""
     if not isinstance(results, list) or len(results) != len(items):
@@ -177,13 +296,13 @@ def apply_bindings(items, results, variables):
     bound_per_command = []
     for item, result in zip(items, results):
         bindings = {}
-        for variable, field in item.get("bind", {}).items():
-            if not isinstance(result, dict) or field not in result:
-                raise ValueError(
-                    f"{item['command']} did not return field {field!r} "
-                    f"needed for {variable}"
-                )
-            value = result[field]
+        for variable, spec in item.get("bind", {}).items():
+            value = _binding_value(
+                result,
+                spec,
+                command=item["command"],
+                variable=variable,
+            )
             variables[variable] = value
             bindings[variable] = value
         bound_per_command.append(bindings)
