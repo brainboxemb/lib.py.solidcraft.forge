@@ -29,6 +29,7 @@ sys.path.insert(0, str(ROOT))
 from qualification.case_selection import CASE_BY_SLUG, format_selection_help, parse_case_selection
 from qualification.cases import reference_implementations_for
 from qualification.expectations import EXPECTED_BOUNDS
+from qualification.geometry_contracts import geometry_contract
 VIEWS = {
     "front": (0, -90),
     "right": (0, 0),
@@ -149,7 +150,75 @@ def validate_one(slug: str, implementation: str, out: Path, tolerance: float) ->
     expected_min, expected_max = expected_envelope(slug)
     actual_min, actual_max = np.asarray(mesh.bounds[0]), np.asarray(mesh.bounds[1])
     delta = np.maximum(np.abs(actual_min - expected_min), np.abs(actual_max - expected_max))
-    status = "pass" if np.all(delta <= tolerance) else "fail"
+    checks = {
+        "bounds": {
+            "status": "pass" if np.all(delta <= tolerance) else "fail",
+            "actual": {"min": actual_min.tolist(), "max": actual_max.tolist()},
+            "expected": {"min": expected_min.tolist(), "max": expected_max.tolist()},
+            "max_delta_mm": float(np.max(delta)),
+            "tolerance_mm": tolerance,
+        }
+    }
+
+    contract = geometry_contract(slug)
+    if contract is not None:
+        expected_watertight = contract.get("watertight")
+        if expected_watertight is not None:
+            checks["watertight"] = {
+                "status": "pass" if mesh.is_watertight == expected_watertight else "fail",
+                "actual": bool(mesh.is_watertight),
+                "expected": bool(expected_watertight),
+            }
+
+        if "volume_mm3" in contract:
+            actual_volume = abs(float(mesh.volume))
+            expected_volume = float(contract["volume_mm3"])
+            volume_tolerance = float(contract.get("volume_tolerance_mm3", 1.0))
+            checks["volume"] = {
+                "status": (
+                    "pass"
+                    if abs(actual_volume - expected_volume) <= volume_tolerance
+                    else "fail"
+                ),
+                "actual_mm3": actual_volume,
+                "expected_mm3": expected_volume,
+                "delta_mm3": abs(actual_volume - expected_volume),
+                "tolerance_mm3": volume_tolerance,
+            }
+
+        probes = contract.get("surface_distance_probes", [])
+        if probes:
+            probe_points = np.asarray([probe["point"] for probe in probes], dtype=float)
+            _, probe_distances, _ = trimesh.proximity.closest_point_naive(
+                mesh, probe_points
+            )
+            probe_rows = []
+            probes_pass = True
+            for probe, actual_distance in zip(probes, probe_distances):
+                expected_distance = float(probe["distance_mm"])
+                probe_tolerance = float(probe.get("tolerance_mm", tolerance))
+                delta_distance = abs(float(actual_distance) - expected_distance)
+                passed = delta_distance <= probe_tolerance
+                probes_pass = probes_pass and passed
+                probe_rows.append({
+                    "label": probe["label"],
+                    "point": probe["point"],
+                    "actual_mm": float(actual_distance),
+                    "expected_mm": expected_distance,
+                    "delta_mm": delta_distance,
+                    "tolerance_mm": probe_tolerance,
+                    "status": "pass" if passed else "fail",
+                })
+            checks["surface_distance_probes"] = {
+                "status": "pass" if probes_pass else "fail",
+                "probes": probe_rows,
+            }
+
+    status = (
+        "pass"
+        if all(check["status"] == "pass" for check in checks.values())
+        else "fail"
+    )
 
     images = []
     for view in VIEWS:
@@ -170,6 +239,7 @@ def validate_one(slug: str, implementation: str, out: Path, tolerance: float) ->
         "expected": {"min": expected_min.tolist(), "max": expected_max.tolist()},
         "max_delta_mm": float(np.max(delta)),
         "tolerance_mm": tolerance,
+        "checks": checks,
     }
     (target / "result.json").write_text(
         json.dumps(result, indent=2) + "\n",
