@@ -838,23 +838,27 @@ def _explicit_sketch_commands(
             ) = operation.data
             params = {
                 "entities": source_variable(source),
-                "count": count,
+                "count": command_value(count),
                 "spacing": command_value(spacing),
                 "dir": list(dir1),
             }
-            if count2 != 1:
-                params["count2"] = count2
+            has_second_direction = (
+                pv(count2) != 1
+                or bool(parameters_in(count2))
+            )
+            if has_second_direction:
+                params["count2"] = command_value(count2)
                 if spacing2 is not None:
                     params["spacing2"] = command_value(spacing2)
                 if dir2 is not None:
                     params["dir2"] = list(dir2)
             if alignment != "right":
                 params["alignment"] = alignment
-            if count2 != 1 and alignment2 != "right":
+            if has_second_direction and alignment2 != "right":
                 params["alignment2"] = alignment2
             if reversed1:
                 params["reversed"] = True
-            if count2 != 1 and reversed2:
+            if has_second_direction and reversed2:
                 params["reversed2"] = True
             command = _command("sketch.pattern.rectangular", **params)
         elif operation.kind == "sketch_mirror":
@@ -907,6 +911,16 @@ def _pattern_count_parameter_names(node, found=None):
             found.update(param.name for param in parameters_in(count1, count2))
             _pattern_count_parameter_names(original, found)
             return found
+        if node.kind == "sketch_pattern_rectangular":
+            (
+                source, count1, _spacing1, _dir1,
+                count2, _spacing2, _dir2,
+                _alignment, _alignment2,
+                _reversed1, _reversed2,
+            ) = node.data
+            found.update(param.name for param in parameters_in(count1, count2))
+            _pattern_count_parameter_names(source, found)
+            return found
         _pattern_count_parameter_names(node.data, found)
     elif isinstance(node, (tuple, list)):
         for item in node:
@@ -928,6 +942,20 @@ def _non_count_parameter_names(node, found=None):
                 reversed1, reversed2,
             ) = node.data
             _non_count_parameter_names(original, found)
+            _non_count_parameter_names(
+                (dir1, spacing1, dir2, spacing2,
+                 alignment, alignment2, reversed1, reversed2),
+                found,
+            )
+            return found
+        if node.kind == "sketch_pattern_rectangular":
+            (
+                source, _count1, spacing1, dir1,
+                _count2, spacing2, dir2,
+                alignment, alignment2,
+                reversed1, reversed2,
+            ) = node.data
+            _non_count_parameter_names(source, found)
             _non_count_parameter_names(
                 (dir1, spacing1, dir2, spacing2,
                  alignment, alignment2, reversed1, reversed2),
