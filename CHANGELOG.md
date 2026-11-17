@@ -10,6 +10,11 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Qualification
 
+- Added a focused repeated-parent attachment qualification for the foundational
+  case where two occurrences of one Parent definition each own one rigidly
+  attached child. Saved-design mutation must move both children when the shared
+  parent height changes; exactly two authored attachment joints are allowed.
+
 - Renewed the SCPF v0.6.0 qualification under the corrected audit gates. All
   24 supported cases pass Q1-Q4 and Q6; all 14 Q5-required cases pass saved-
   design mutation. Post-tag package-source changes are documentation strings
@@ -61,6 +66,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 
 ### Fixed
+
+- Repeated parent attachments now preserve the computed child seed Placement
+  before `joint.create`. Seed moves use replay-bound occurrence ids and retain
+  symbolic parent-dimension, gap and offset dependencies; parent/child topology
+  picks are evaluated at their current world positions. This lets a second
+  floating rigid-joint graph start at the authored pose and continue following
+  saved parameter changes without generated placement joints or browser-name
+  identity guesses.
 
 - Attached `Sketch(..., on=body)` through-all cuts now emit the native
   `solid.extrude` direction explicitly. TOP support faces use `negative`

@@ -33,6 +33,12 @@ MUTATIONS = {
         "measurements": "measurements-size-160x120.json",
         "label": "parent 120x80 -> 160x120 mm; child follows 60x40 -> 80x60 mm",
     },
+    "repeated-parent-attachments": {
+        "command": "qualification/commands/repeated-parent-attachments/change-height.json",
+        "save": "model-height-60.sc",
+        "measurements": "measurements-height-60.json",
+        "label": "parent_height 40 -> 60 mm; both attached markers follow",
+    },
     "assembly-owned-anchor": {
         "command": "qualification/commands/assembly-owned-anchor/change-size.json",
         "save": "model-size-80x40.sc",

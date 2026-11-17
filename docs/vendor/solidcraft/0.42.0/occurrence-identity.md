@@ -117,25 +117,59 @@ usable by later relationship commands.
 
 ## What this means for Forge
 
-SolidCraft can return numeric occurrence ids at runtime.
+SolidCraft returns numeric occurrence ids at runtime, and Forge's normal
+replay-first document now has an explicit result-binding mechanism for them.
 
-That is useful SolidCraft information, but normal Forge output is replay-first
-and does not depend on values captured from an earlier command.
+A creation/copy command may bind its returned `occurrence` field:
 
-The important rule for the normal compiler is simpler:
+```json
+{
+  "command": "occurrence.copy",
+  "params": {
+    "component": "Board",
+    "translate": [100, 0, 0]
+  },
+  "bind": {
+    "$board_occurrence_2": "occurrence"
+  }
+}
+```
+
+A later command can use the replay variable as the complete occurrence value:
+
+```json
+{
+  "command": "occurrence.move",
+  "params": {
+    "occurrence": "$board_occurrence_2",
+    "translate": ["width", 0, 0]
+  }
+}
+```
+
+Every replay resolves the variable from the ids returned by that execution.
+The temporary native id is never written back into the replay document.
+
+The resulting rules are:
 
 - Forge must not guess generated names such as `Board:1` or `Board:2`;
-- ordinary Placement should be expressed in create/copy commands where
-  SolidCraft supports it;
-- later commands that need an existing occurrence need a separately qualified
-  replay-safe reference;
-- if Forge does not have such a reference yet, that case is unsupported.
+- ordinary numeric copy Placement stays in `occurrence.copy.translate` when
+  that is sufficient;
+- symbolic/rotated Placement uses a later `occurrence.move` addressed by the
+  replay-bound occurrence id;
+- copied endpoints of a qualified `joint.create` use the same replay-bound
+  occurrence ids;
+- `joint.create` geometry selectors are world picks combined with the explicit
+  occurrence id. A correct id with a stale local-coordinate pick is not a valid
+  selection;
+- a normal attached child may receive a replay-bound seed
+  `occurrence.move` before the authored joint. That seed is creation state,
+  not a second relationship, and its expressions remain associative;
+- unsupported command/reference combinations fail explicitly instead of
+  falling back to a generated display name or point-only occurrence guess.
 
-The following code is therefore not a valid normal Forge solution:
-
-```python
-native_name = f"{component_name}:{index}"
-```
+Change 0013 documents the replay-variable format and execution rules. Change
+0029 adds the copied-parent/floating-graph attachment qualification.
 
 ## Background experiment: two-phase execution
 

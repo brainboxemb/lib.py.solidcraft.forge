@@ -328,6 +328,75 @@ def validate_components(root: Path) -> Validation:
 
 
 
+def validate_repeated_parent_attachments(root: Path) -> Validation:
+    v = Validation("repeated-parent-attachments")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "repeated-parent-attachments")
+    v.check("four bodies", d["body_count"] == 4, 4, d["body_count"])
+    v.check(
+        "shared parent height parameter",
+        params(d).get("parent_height") == 40.0,
+        40.0,
+        params(d).get("parent_height"),
+    )
+    markers = bodies_named(d, "Marker")
+    baseline_marker_bounds = sorted(
+        (
+            round(body["bbox"]["min"][0], 6),
+            round(body["bbox"]["min"][2], 6),
+            round(body["bbox"]["max"][2], 6),
+        )
+        for body in markers
+    )
+    v.check(
+        "both baseline markers sit on parent top faces",
+        len(markers) == 2
+        and baseline_marker_bounds == [
+            (-5.0, 40.0, 50.0),
+            (55.0, 40.0, 50.0),
+        ],
+        [(-5.0, 40.0, 50.0), (55.0, 40.0, 50.0)],
+        baseline_marker_bounds,
+    )
+
+    m = load(root / "measurements-height-60.json")
+    _check_declared_bounds(
+        v,
+        m,
+        "repeated-parent-attachments",
+        level="q5",
+        mutation=True,
+    )
+    v.check(
+        "parent height changed in saved design",
+        params(m).get("parent_height") == 60.0,
+        60.0,
+        params(m).get("parent_height"),
+        "q5",
+    )
+    markers2 = bodies_named(m, "Marker")
+    mutated_marker_bounds = sorted(
+        (
+            round(body["bbox"]["min"][0], 6),
+            round(body["bbox"]["min"][2], 6),
+            round(body["bbox"]["max"][2], 6),
+        )
+        for body in markers2
+    )
+    v.check(
+        "both disconnected joint graphs follow height mutation",
+        len(markers2) == 2
+        and mutated_marker_bounds == [
+            (-5.0, 60.0, 70.0),
+            (55.0, 60.0, 70.0),
+        ],
+        [(-5.0, 60.0, 70.0), (55.0, 60.0, 70.0)],
+        mutated_marker_bounds,
+        "q5",
+    )
+    return v
+
+
 def validate_assembly_decorator(root: Path) -> Validation:
     v = Validation("assembly-decorator")
     d = load(root / "measurements.json")
@@ -1094,6 +1163,7 @@ VALIDATORS = {
     "parameter-scope": validate_parameter_scope,
     "parent-derived-child-size": validate_parent_derived_child_size,
     "components": validate_components,
+    "repeated-parent-attachments": validate_repeated_parent_attachments,
     "assembly-decorator": validate_assembly_decorator,
     "group-hierarchy": validate_group_hierarchy,
     "attach-angle": validate_attach_angle,

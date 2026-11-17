@@ -35,6 +35,12 @@ EXPECTED_BOUNDS = {
         {"label": "left", "min": [-20, -15, 0], "max": [20, 15, 10]},
         {"label": "right", "min": [20, -15, 0], "max": [60, 15, 10]},
     ],
+    "repeated-parent-attachments": [
+        {"label": "left Parent", "min": [-10, -10, 0], "max": [10, 10, 40]},
+        {"label": "right Parent", "min": [50, -10, 0], "max": [70, 10, 40]},
+        {"label": "left Marker", "min": [-5, -5, 40], "max": [5, 5, 50]},
+        {"label": "right Marker", "min": [55, -5, 40], "max": [65, 5, 50]},
+    ],
     "assembly-decorator": [
         {"label": "left Post", "min": [-20, -5, 0], "max": [-10, 5, 20]},
         {"label": "right Post", "min": [10, -5, 0], "max": [20, 5, 20]},
@@ -439,6 +445,10 @@ _BOUNDS_ASSESSMENTS = {
     "components": {
         "sufficient": True,
         "reason": "This case qualifies two rectangular occurrences and their placement. Shared native definition identity is a SolidCraft-only check.",
+    },
+    "repeated-parent-attachments": {
+        "sufficient": True,
+        "reason": "Four rectangular body bounds expose both parent heights and both child positions. Q5 mutation separately proves that both disconnected native joint graphs follow the shared parent-height change.",
     },
     "assembly-decorator": {
         "sufficient": True,
