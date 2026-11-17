@@ -10,6 +10,9 @@ from qualification.geometry_contracts import EXPECTED_BOUNDS, EXPECTED_VISUAL_BO
 
 
 EXPECTED_MUTATION_BOUNDS = {
+    "simple-box": [
+        {"label": "SimpleBox", "min": [-25, -15, 0], "max": [25, 15, 10]},
+    ],
     "assembly-owned-anchor": [
         {"label": "Base", "min": [-40, -15, 0], "max": [40, 15, 40]},
         {"label": "Companion", "min": [65, -5, 0], "max": [75, 5, 10]},
@@ -74,6 +77,9 @@ EXPECTED_MUTATION_BOUNDS = {
         {"label": "rear-right top", "min": [52, 32, 74], "max": [84, 64, 90]},
         {"label": "rear-left bottom", "min": [-84, 32, 0], "max": [-52, 64, 16]},
         {"label": "rear-left top", "min": [-84, 32, 74], "max": [-52, 64, 90]},
+    ],
+    "rectangular-pattern": [
+        {"label": "RectangularPattern", "min": [-60, -40, 0], "max": [60, 40, 4]},
     ],
     "xz-anchor": [
         {"label": "Board", "min": [-40, 0, 0], "max": [40, 12, 40]},

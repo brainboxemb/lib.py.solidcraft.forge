@@ -45,6 +45,24 @@ read the same geometry contract. A case must state whether bounds are sufficient
 for the geometry it is responsible for and explain why. If bounds are not
 sufficient, the contract must declare volume and/or 3D surface-distance checks.
 
+### Q5 applicability rule
+
+Q5 is required when the behaviour claimed by a case depends on a value stored
+in the saved native design that must recompute after `parameters.change`.
+Examples are parameter expressions, attachment values, topology-following
+relationships and native feature parameters such as rectangular-pattern count
+or spacing.
+
+Q5 is not automatically required merely because a model has parameters. A case
+may stay Q4/Q6-only when its qualification claim is fixed baseline geometry and
+saved-design recomputation is already outside that case's responsibility.
+
+Every qualification case must explain its Q5 decision in its `mutation`
+field. Cases marked `q5_required=True` must have a registered mutation in
+`qualification/native_cases.py`; the runtime metadata check fails otherwise.
+The published proof contract and structured results expose the decision and its
+reason for both required and not-required cases.
+
 ## Fast affected-case loop
 
 Use this while changing one case or one API area:

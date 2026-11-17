@@ -1,8 +1,11 @@
 """Q1/Q2 contract for native rectangular feature patterns."""
+import json
 import unittest
 from pathlib import Path
 
 from scpf.runner import run_script
+from qualification.cases import QUALIFICATION_CASES
+from qualification.native_cases import mutation_spec
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -65,6 +68,32 @@ class RectangularPatternQualificationTests(unittest.TestCase):
         self.assertEqual(params["rows"], "")
         self.assertEqual(params["pitch"], "mm")
         self.assertEqual(params["row_pitch"], "mm")
+
+    def test_q5_is_required_for_native_pattern_parameters(self):
+        case = next(
+            case for case in QUALIFICATION_CASES
+            if case["slug"] == "rectangular-pattern"
+        )
+        self.assertTrue(case["q5_required"])
+        self.assertIn("columns", case["mutation"])
+        self.assertIn("pitch", case["mutation"])
+
+    def test_q5_mutation_changes_count_and_spacing(self):
+        spec = mutation_spec("rectangular-pattern")
+        self.assertIsNotNone(spec)
+        command_path = ROOT / spec["command"]
+        document = json.loads(command_path.read_text(encoding="utf-8"))
+        changes = {
+            row["params"]["name"]: row["params"]["expression"]
+            for row in document["commands"]
+        }
+        self.assertEqual(
+            changes,
+            {
+                "columns": "2",
+                "pitch": "30 mm",
+            },
+        )
 
     def test_source_cut_is_not_expanded_in_python(self):
         commands = run_script(MODEL)["commands"]

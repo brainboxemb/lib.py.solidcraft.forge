@@ -507,6 +507,7 @@ def check(
             "1. Test setup",
             "Test goal",
             "Pass criteria",
+            "Q5 applicability",
             "2. Implementation under test",
             "Public Forge API used",
             "Forge model represented by this fixture",
@@ -520,6 +521,9 @@ def check(
         ):
             assert heading in page_text, (slug, heading)
         assert case["title"] in page_text
+        assert case["mutation"] in html.unescape(page_text), slug
+        q5_label = "Required." if case.get("q5_required") else "Not required."
+        assert q5_label in page_text, slug
         setup_name = case.get("diagram", "setup.svg")
         setup_image = site / "qualification" / slug / setup_name
         assert setup_image.is_file() and setup_image.stat().st_size > 0, slug

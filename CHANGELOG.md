@@ -10,6 +10,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Changed
 
+- Q5 applicability is now explicit for every qualification case. The editable
+  simple-box baseline now proves a saved dimension change, while native
+  rectangular-pattern qualification mutates saved pattern `columns` and
+  `pitch` parameters without rerunning Python and verifies the rebuilt cut
+  count, positions, source sketch and single native pattern feature.
+
+### Changed
+
 - Every qualification case now publishes one shared machine-readable proof
   contract. Native Q4 baseline checks, independent references and Q6 goal
   rendering use the same geometry declarations, while SolidCraft-only history,

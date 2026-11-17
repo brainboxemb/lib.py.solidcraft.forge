@@ -42,6 +42,19 @@ class GeometryContractTests(unittest.TestCase):
                 self.assertEqual(native["native_expectation"], case["native_expectation"])
                 self.assertEqual(native["generated_relationship"], case["lowering"])
                 self.assertEqual(native["q5_required"], bool(case.get("q5_required")))
+                self.assertEqual(native["q5_reason"], case["mutation"])
+                self.assertTrue(native["q5_reason"].strip())
+                self.assertEqual(
+                    native["mutation"],
+                    case["mutation"] if case.get("q5_required") else None,
+                )
+
+    def test_every_case_explains_q5_applicability(self):
+        for case in QUALIFICATION_CASES:
+            with self.subTest(case=case["slug"]):
+                self.assertIn("mutation", case)
+                self.assertIsInstance(case["mutation"], str)
+                self.assertTrue(case["mutation"].strip())
 
     def test_solid_plate_cannot_match_anchored_holes_volume(self):
         contract = geometry_contract("anchored-holes")

@@ -77,6 +77,7 @@ QUALIFICATION_GROUPS = [
 QUALIFICATION_CASES = [
     {
         "slug": "simple-box",
+        "q5_required": True,
         "group": "fundamentals",
         "title": "Parameterized Box",
         "intent": "Establish the smallest model/parameter contract: three public Python fields create one editable native box.",
@@ -84,7 +85,7 @@ QUALIFICATION_CASES = [
         "forge_model": "One root Shape with symbolic length, width and height; no occurrence or assembly layer.",
         "lowering": "parameters.add for the public dimensions, followed directly by native solid.box; no sketch is synthesized.",
         "native_expectation": "One rectangular solid with the requested 40 x 30 x 10 mm dimensions and an error-free timeline.",
-        "mutation": "Not required in this fixture; parameter-expression preservation is covered by focused Q1 tests and more specific native mutation cases.",
+        "mutation": "Required because this case explicitly claims an editable native Box. Change length from 40 to 50 mm in the saved .sc design; the Box must rebuild to 50 x 30 x 10 mm without rerunning Python.",
         "references": [
             ("OpenSCAD", "cube([40,30,10]) is the constructive-geometry baseline; Forge differs by preserving editable SolidCraft history."),
         ],
@@ -368,6 +369,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "rectangular-pattern",
+        "q5_required": True,
         "group": "features",
         "title": "Native rectangular feature pattern",
         "intent": "Qualify a real SolidCraft rectangular History pattern over one existing cut feature, rather than Forge-expanded repeated geometry.",
@@ -375,7 +377,7 @@ QUALIFICATION_CASES = [
         "forge_model": "One 120 x 80 x 4 mm plate, one native straight Slot cut and one native 3 x 2 rectangular feature pattern.",
         "lowering": "Forge emits the source Sketch/cut once, then exactly one solid.pattern.rectangular with features=['Slot']; columns/rows are dimensionless native parameters and pitches remain millimetre parameters.",
         "native_expectation": "SolidCraft saves one plate with six slot cuts and one native rectangular pattern History feature that references the original Slot cut.",
-        "mutation": "No Q5 mutation is required in this first pattern case; native feature identity, measured geometry and visual result are qualified directly.",
+        "mutation": "Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature.",
         "references": [
             ("SolidCraft", "Native Q2-Q4 additionally prove one saved RectangularPatternFeature. The four comparison libraries independently prove the final 3 x 2 slot geometry."),
         ],
