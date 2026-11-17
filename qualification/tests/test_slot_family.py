@@ -11,7 +11,10 @@ MODEL = ROOT / "examples/slot-family/scpf/model.py"
 
 class SlotFamilyQualificationTests(unittest.TestCase):
     def test_slot_family_command_contract(self):
-        commands = run_script(MODEL)["commands"]
+        document = run_script(MODEL)
+        self.assertEqual(document["format"], "scpf-replay")
+        self.assertEqual(document["version"], 2)
+        commands = document["commands"]
         native = [
             command["command"]
             for command in commands
@@ -31,6 +34,26 @@ class SlotFamilyQualificationTests(unittest.TestCase):
             "sketch.rectangle.rounded",
             [command["command"] for command in commands],
         )
+
+        face_query = next(
+            command for command in commands
+            if command["command"] == "model.faces"
+        )
+        self.assertEqual(face_query["params"], {"body": "SlotFamily"})
+        create = next(
+            command for command in commands
+            if command["command"] == "sketch.create"
+        )
+        self.assertEqual(
+            create["params"]["plane"],
+            {
+                "face": "$face_point_1",
+                "body": "SlotFamily",
+                "index": "$face_index_1",
+            },
+        )
+        self.assertFalse(create["params"]["project_edges"])
+        self.assertNotIn("offset", create["params"])
 
         box = next(
             command["params"]
