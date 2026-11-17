@@ -559,6 +559,21 @@ def check(
                     slug,
                     implementation,
                 )
+                assert "Reference geometry checks" in page_text, (
+                    slug,
+                    implementation,
+                )
+                checks = result.get("checks", {})
+                for check_name in checks:
+                    assert check_name.replace("_", " ") in page_text.lower(), (
+                        slug,
+                        implementation,
+                        check_name,
+                    )
+                if slug in {"anchored-holes", "rectangular-pattern", "slot-family"}:
+                    assert "volume" in checks, (slug, implementation)
+                    assert "surface_distance_probes" in checks, (slug, implementation)
+                    assert "surface distance probes" in page_text.lower(), slug
             if reference_names:
                 assert "independently exported stl" in page_text.lower(), slug
             else:

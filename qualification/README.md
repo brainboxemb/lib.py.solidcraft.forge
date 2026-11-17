@@ -113,5 +113,10 @@ technical mismatch and must contain a human-readable reason; it is not a
 migration or convenience mechanism.
 
 Reference implementations are comparison models, not Forge specifications.
+They are measured against independent case expectations. Bounds remain one
+check, but cases with internal holes/slots also require volume, watertightness
+and declared 3D surface-distance probes; the generated case page publishes the
+actual measurements used for PASS/FAIL.
+
 Start with `docs/agent/reference-libraries.md`; only consult upstream when
 that local cache does not cover the needed operation.

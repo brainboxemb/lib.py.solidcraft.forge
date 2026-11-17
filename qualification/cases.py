@@ -377,14 +377,8 @@ QUALIFICATION_CASES = [
         "native_expectation": "SolidCraft saves one plate with six slot cuts and one native rectangular pattern History feature that references the original Slot cut.",
         "mutation": "No Q5 mutation is required in this first pattern case; native feature identity, measured geometry and visual result are qualified directly.",
         "references": [
-            ("SolidCraft", "Native saved History is the source of truth because this case qualifies solid.pattern.rectangular itself, not only equivalent repeated geometry."),
+            ("SolidCraft", "Native Q2-Q4 additionally prove one saved RectangularPatternFeature. The four comparison libraries independently prove the final 3 x 2 slot geometry."),
         ],
-        "reference_exceptions": {
-            "pythonscad": "PythonSCAD can repeat equivalent geometry but cannot validate SolidCraft's saved rectangular History feature relationship.",
-            "pybosl2": "pyBOSL2 can repeat equivalent geometry but cannot provide evidence for SolidCraft's native solid.pattern.rectangular feature identity.",
-            "cadquery": "CadQuery can create an equivalent slot array but cannot validate the SolidCraft History pattern command and saved source-feature reference.",
-            "build123d": "build123d can create equivalent repeated geometry but cannot validate SolidCraft's native rectangular History pattern semantics.",
-        },
     },
     {
         "slug": "slot-family",
@@ -397,14 +391,8 @@ QUALIFICATION_CASES = [
         "native_expectation": "SolidCraft saves one plate, one Slot family sketch containing five closed profiles and one error-free cut extrusion. The native timeline must not contain sketch.rectangle.rounded as a substitute for Slot construction.",
         "mutation": "No Q5 mutation is required; this case isolates the five native sketch construction methods and their saved feature history.",
         "references": [
-            ("SolidCraft", "The native sketch.slot.* command family is the source of truth because this case qualifies construction-method identity, not only equivalent final geometry."),
+            ("SolidCraft", "Native Q2-Q4 additionally prove the five sketch.slot.* command identities. The four comparison libraries independently prove the resulting five cut shapes."),
         ],
-        "reference_exceptions": {
-            "pythonscad": "PythonSCAD can approximate the final outlines but cannot preserve SolidCraft's five distinct native Slot construction methods, which is the contract under test.",
-            "pybosl2": "pyBOSL2 can construct equivalent slot geometry but does not provide evidence for SolidCraft's five native sketch Slot command identities.",
-            "cadquery": "CadQuery can reproduce slot-shaped cuts but not the saved SolidCraft sketch-construction methods being qualified here.",
-            "build123d": "build123d can reproduce slot geometry but cannot validate one-to-one lowering to SolidCraft's five native sketch.slot.* commands.",
-        },
     },
     {
         "slug": "rounded-rectangle-sketch",
