@@ -839,6 +839,156 @@ def validate_circle_negative_extrude(root: Path) -> Validation:
     return v
 
 
+def validate_sketch_pattern_mirror(root: Path) -> Validation:
+    v = Validation("sketch-pattern-mirror")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "sketch-pattern-mirror", tol=0.01)
+    v.check("single patterned plate body", d["body_count"] == 1, 1, d["body_count"])
+
+    expected_parameters = {
+        "hole_columns": 4.0,
+        "hole_diameter": 8.0,
+        "hole_pitch": 25.0,
+        "slot_count": 2.0,
+        "slot_pitch": 50.0,
+    }
+    v.check(
+        "baseline seed/pattern parameters",
+        params(d) == expected_parameters,
+        expected_parameters,
+        params(d),
+    )
+
+    if d["bodies"]:
+        body = d["bodies"][0]
+        v.check(
+            "baseline associative cuts remove expected material",
+            close(
+                body["volume_mm3"],
+                geometry_contract("sketch-pattern-mirror")["volume_mm3"],
+                0.05,
+            ),
+            geometry_contract("sketch-pattern-mirror")["volume_mm3"],
+            body["volume_mm3"],
+        )
+
+    sketches = {
+        row.get("name"): row
+        for row in d.get("sketches", [])
+    }
+    v.check(
+        "one Dog holes and one Clamp slots sketch",
+        "Dog holes" in sketches
+        and "Clamp slots" in sketches
+        and len(sketches) == 2,
+        ["Dog holes", "Clamp slots"],
+        sorted(sketches),
+    )
+    v.check(
+        "both associative sketches solve",
+        all(
+            sketches.get(name, {}).get("status") == "solved"
+            for name in ("Dog holes", "Clamp slots")
+        ),
+        {"Dog holes": "solved", "Clamp slots": "solved"},
+        {
+            name: sketches.get(name, {}).get("status")
+            for name in ("Dog holes", "Clamp slots")
+        },
+    )
+
+    timeline = [
+        (row.get("type"), row.get("name"))
+        for row in d.get("timeline", [])
+    ]
+    expected_timeline = [
+        ("BoxFeature", "Box1"),
+        ("Sketch", "Dog holes"),
+        ("ExtrudeFeature", "Dog holes"),
+        ("Sketch", "Clamp slots"),
+        ("ExtrudeFeature", "Clamp slots"),
+    ]
+    v.check(
+        "pattern/mirror geometry stays inside two Sketch features",
+        timeline == expected_timeline,
+        expected_timeline,
+        timeline,
+    )
+
+    # Q5 mutates only the already-saved SolidCraft design. Python is not rerun.
+    m = load(root / "measurements-patterns-mutated.json")
+    _check_declared_bounds(
+        v,
+        m,
+        "sketch-pattern-mirror",
+        level="q5",
+        mutation=True,
+        tol=0.01,
+    )
+    mutated_parameters = {
+        "hole_columns": 3.0,
+        "hole_diameter": 10.0,
+        "hole_pitch": 30.0,
+        "slot_count": 3.0,
+        "slot_pitch": 30.0,
+    }
+    v.check(
+        "saved pattern parameters changed",
+        params(m) == mutated_parameters,
+        mutated_parameters,
+        params(m),
+        "q5",
+    )
+
+    if m["bodies"]:
+        body = m["bodies"][0]
+        slot_area = 20.0 * 8.0 + math.pi * 4.0**2
+        expected_volume = (
+            240.0 * 160.0 * 5.0
+            - 6.0 * math.pi * 5.0**2 * 5.0
+            - 12.0 * slot_area * 5.0
+        )
+        v.check(
+            "saved design rebuilds to 6 holes and 12 slots",
+            close(body["volume_mm3"], expected_volume, 0.05),
+            expected_volume,
+            body["volume_mm3"],
+            "q5",
+        )
+
+    mutated_sketches = {
+        row.get("name"): row
+        for row in m.get("sketches", [])
+    }
+    v.check(
+        "mutation keeps the same two solved Sketch features",
+        set(mutated_sketches) == {"Dog holes", "Clamp slots"}
+        and all(
+            mutated_sketches[name].get("status") == "solved"
+            for name in ("Dog holes", "Clamp slots")
+        ),
+        {"Dog holes": "solved", "Clamp slots": "solved"},
+        {
+            name: mutated_sketches.get(name, {}).get("status")
+            for name in ("Dog holes", "Clamp slots")
+        },
+        "q5",
+    )
+    mutated_timeline = [
+        (row.get("type"), row.get("name"))
+        for row in m.get("timeline", [])
+    ]
+    v.check(
+        "mutation preserves the two-sketch history",
+        mutated_timeline == expected_timeline,
+        expected_timeline,
+        mutated_timeline,
+        "q5",
+    )
+
+    return v
+
+
 def validate_rectangular_pattern(root: Path) -> Validation:
     v = Validation("rectangular-pattern")
     d = load(root / "measurements.json")
@@ -1178,6 +1328,7 @@ VALIDATORS = {
     "eight-corner-brackets": validate_eight_corner_brackets,
     "xz-anchor": validate_xz_anchor,
     "circle-negative-extrude": validate_circle_negative_extrude,
+    "sketch-pattern-mirror": validate_sketch_pattern_mirror,
     "rectangular-pattern": validate_rectangular_pattern,
     "slot-family": validate_slot_family,
     "rounded-rectangle-sketch": validate_rounded_rectangle_sketch,
