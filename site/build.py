@@ -233,6 +233,195 @@ def escape(value):
     return html.escape(str(value), quote=True)
 
 
+def _plain_search_text(value):
+    """Return compact visible text from generated HTML or plain strings."""
+    text = re.sub(r"<[^>]+>", " ", str(value))
+    return " ".join(html.unescape(text).split())
+
+
+def _search_entry(title, kind, url, summary, *, symbol=None, aliases=(), keywords=()):
+    entry = {
+        "title": title,
+        "kind": kind,
+        "url": url,
+        "summary": _plain_search_text(summary),
+        "aliases": sorted({str(value) for value in aliases if value}),
+        "keywords": _plain_search_text(" ".join(str(value) for value in keywords if value)),
+    }
+    if symbol:
+        entry["symbol"] = symbol
+    return entry
+
+
+def _api_search_fields(row):
+    keywords = [
+        row.get("signature", ""),
+        row.get("use_when", ""),
+        row.get("limits", ""),
+        row.get("example", ""),
+    ]
+    aliases = [row.get("name", "")]
+    name = row.get("name", "")
+    if "." in name:
+        aliases.append(name.rsplit(".", 1)[-1])
+    for parameter in row.get("parameters", ()):
+        aliases.append(parameter["name"])
+        keywords.extend((parameter["name"], parameter["description"]))
+    return aliases, keywords
+
+
+def _api_search_entries():
+    entries = []
+    for reference in api_manifest()["references"]:
+        if reference["kind"] == "group":
+            members = reference["members"]
+            guide = reference.get("guide")
+        else:
+            members = (reference,)
+            guide = reference.get("guide")
+
+        for member in members:
+            name = member["name"]
+            aliases, keywords = _api_search_fields(member)
+            entries.append(_search_entry(
+                name,
+                "API Reference",
+                member["reference"],
+                member.get("summary", ""),
+                symbol=name,
+                aliases=aliases,
+                keywords=keywords,
+            ))
+            if guide:
+                entries.append(_search_entry(
+                    f"{name} · API Guide",
+                    "API Guide",
+                    guide,
+                    member.get("summary", ""),
+                    aliases=aliases,
+                    keywords=keywords,
+                ))
+
+            if member["kind"] == "enum":
+                for enum_member in member.get("members", ()):
+                    enum_name = f"{name}.{enum_member['name']}"
+                    entries.append(_search_entry(
+                        enum_name,
+                        "API Reference",
+                        f"reference/{name}/#{enum_name}",
+                        f"{enum_name} has value {enum_member['value']}.",
+                        aliases=(enum_member["name"],),
+                        keywords=(member.get("summary", ""), enum_member["value"]),
+                    ))
+                    if guide:
+                        entries.append(_search_entry(
+                            f"{enum_name} · API Guide",
+                            "API Guide",
+                            guide,
+                            member.get("summary", ""),
+                            aliases=(enum_name, enum_member["name"]),
+                            keywords=(enum_member["value"],),
+                        ))
+
+            if name == "Anchor":
+                for alias in member.get("aliases", ()):
+                    entries.append(_search_entry(
+                        alias,
+                        "API Reference",
+                        "reference/Anchor/",
+                        f"Convenience alias for Anchor.{alias}.",
+                        symbol=alias,
+                        aliases=(f"Anchor.{alias}",),
+                        keywords=(member.get("summary", ""),),
+                    ))
+    return entries
+
+
+_GUIDE_HEADING = re.compile(
+    r'<h([23])\s+id="([^"]+)">(.*?)</h\1>',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _guide_search_entries():
+    entries = []
+    for chapter in GUIDES:
+        body = chapter["body"]
+        entries.append(_search_entry(
+            chapter["title"],
+            "API Guide",
+            f"guide/{chapter['slug']}/",
+            chapter["summary"],
+            aliases=(chapter["slug"],),
+            keywords=(_plain_search_text(body),),
+        ))
+        headings = list(_GUIDE_HEADING.finditer(body))
+        for index, match in enumerate(headings):
+            next_start = (
+                headings[index + 1].start()
+                if index + 1 < len(headings)
+                else len(body)
+            )
+            heading = _plain_search_text(match.group(3))
+            section = _plain_search_text(body[match.end():next_start])
+            entries.append(_search_entry(
+                heading,
+                "API Guide",
+                f"guide/{chapter['slug']}/#{match.group(2)}",
+                chapter["title"],
+                aliases=(match.group(2),),
+                keywords=(chapter["summary"], section),
+            ))
+    return entries
+
+
+def _search_slug(value):
+    slug = re.sub(r"[^a-z0-9]+", "-", str(value).lower()).strip("-")
+    return slug or "item"
+
+
+def _cheatsheet_anchor(heading, title):
+    return f"cheat-{_search_slug(heading)}-{_search_slug(title)}"
+
+
+def _cheatsheet_search_entries():
+    entries = []
+    for heading, items in CHEATSHEET:
+        for title, description, snippet, _linked in items:
+            anchor = _cheatsheet_anchor(heading, title)
+            entries.append(_search_entry(
+                title,
+                "Cheatsheet",
+                f"cheatsheet/#{anchor}",
+                description,
+                aliases=(heading,),
+                keywords=(snippet,),
+            ))
+    return entries
+
+
+def build_search_index():
+    """Build the client-side documentation search index from site sources."""
+    entries = (
+        _api_search_entries()
+        + _guide_search_entries()
+        + _cheatsheet_search_entries()
+    )
+    seen = set()
+    unique = []
+    for entry in entries:
+        key = (entry["kind"], entry["url"], entry["title"])
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(entry)
+    return {
+        "schema": 1,
+        "generated_from": "public API docstrings, API Guide and Cheatsheet",
+        "entries": unique,
+    }
+
+
 def _format_vector(values):
     return "[" + ", ".join(f"{float(value):g}" for value in values) + "]"
 
@@ -527,6 +716,175 @@ COPY_SCRIPT = r"""(() => {
 """
 
 
+
+SEARCH_SCRIPT = r"""
+(() => {
+  const root = document.querySelector('.site-search');
+  if (!root) return;
+
+  const input = root.querySelector('.site-search-input');
+  const results = root.querySelector('.site-search-results');
+  const indexUrl = root.dataset.searchIndex;
+  let indexPromise = null;
+  let visible = [];
+
+  const normal = (value) => String(value || '')
+    .toLowerCase()
+    .replace(/[_.:/-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const raw = (value) => String(value || '').toLowerCase().trim();
+
+  function loadIndex() {
+    if (!indexPromise) {
+      indexPromise = fetch(indexUrl)
+        .then((response) => {
+          if (!response.ok) throw new Error('Search index unavailable');
+          return response.json();
+        })
+        .then((data) => data.entries || []);
+    }
+    return indexPromise;
+  }
+
+  function score(entry, query) {
+    const qRaw = raw(query);
+    const q = normal(query);
+    if (!q) return -1;
+
+    const titleRaw = raw(entry.title);
+    const title = normal(entry.title);
+    const aliases = entry.aliases || [];
+    const aliasRaw = aliases.map(raw);
+    const aliasText = normal(aliases.join(' '));
+    const haystack = normal([
+      entry.title,
+      entry.summary,
+      entry.keywords,
+      aliases.join(' '),
+    ].join(' '));
+
+    if (titleRaw === qRaw) return 1000;
+    if (aliasRaw.includes(qRaw)) return 920;
+    if (title.startsWith(q)) return 820;
+    if (aliasText.startsWith(q)) return 760;
+    if (title.includes(q)) return 680;
+    if (aliasText.includes(q)) return 620;
+    if (haystack.includes(q)) return 500;
+
+    const words = q.split(' ').filter(Boolean);
+    if (words.length && words.every((word) => haystack.includes(word))) {
+      return 380 + words.length * 10;
+    }
+    return -1;
+  }
+
+  function closeResults() {
+    results.hidden = true;
+    results.replaceChildren();
+    input.setAttribute('aria-expanded', 'false');
+    visible = [];
+  }
+
+  function render(entries, query) {
+    const ranked = entries
+      .map((entry, order) => ({entry, order, score: score(entry, query)}))
+      .filter((row) => row.score >= 0)
+      .sort((a, b) => b.score - a.score || a.order - b.order)
+      .slice(0, 10);
+
+    results.replaceChildren();
+    visible = ranked.map((row) => row.entry);
+    if (!ranked.length) {
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'No documentation found.';
+      results.appendChild(empty);
+    } else {
+      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
+      ranked.forEach(({entry}) => {
+        const link = document.createElement('a');
+        link.className = 'site-search-result';
+        link.href = new URL(entry.url, indexBase).href;
+
+        const heading = document.createElement('span');
+        heading.className = 'site-search-result-title';
+        heading.textContent = entry.title;
+
+        const kind = document.createElement('span');
+        kind.className = 'site-search-result-kind';
+        kind.textContent = entry.kind;
+
+        const summary = document.createElement('span');
+        summary.className = 'site-search-result-summary';
+        summary.textContent = entry.summary;
+
+        link.append(heading, kind, summary);
+        results.appendChild(link);
+      });
+    }
+    results.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+  }
+
+  async function search() {
+    const query = input.value.trim();
+    if (!query) {
+      closeResults();
+      return;
+    }
+    try {
+      render(await loadIndex(), query);
+    } catch (_error) {
+      results.replaceChildren();
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'Search is unavailable.';
+      results.appendChild(empty);
+      results.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  input.addEventListener('input', search);
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) search();
+  });
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeResults();
+      input.blur();
+    } else if (event.key === 'Enter' && visible.length) {
+      event.preventDefault();
+      results.querySelector('.site-search-result')?.click();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!root.contains(event.target)) closeResults();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const typing = target instanceof HTMLInputElement
+      || target instanceof HTMLTextAreaElement
+      || target instanceof HTMLSelectElement
+      || target?.isContentEditable;
+    const shortcut = (event.ctrlKey || event.metaKey)
+      && event.key.toLowerCase() === 'k';
+    const slash = event.key === '/' && !typing && !event.ctrlKey
+      && !event.metaKey && !event.altKey;
+    if (shortcut || slash) {
+      event.preventDefault();
+      input.focus();
+      input.select();
+    }
+  });
+})();
+"""
+
+
 def page(title, body, *, stylesheet, home, cheatsheet):
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -535,6 +893,14 @@ def page(title, body, *, stylesheet, home, cheatsheet):
 <link rel="stylesheet" href="{escape(stylesheet)}"></head>
 <body><header class="top"><div class="wrap nav">
 <a class="brand" href="{escape(home)}">SCPF <span>Python library</span></a>
+<div class="site-search" data-search-index="{escape(home)}search-index.json">
+<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
+       placeholder="Search API…" aria-label="Search SCPF documentation"
+       aria-expanded="false" aria-controls="site-search-results">
+<span class="site-search-shortcut" aria-hidden="true">/</span>
+<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+</div>
 <nav aria-label="Main"><a href="{escape(home)}">Examples</a><a href="{escape(home)}guide/">API Guide</a><a href="{escape(home)}reference/">API Reference</a><a href="{escape(home)}qualification/">Qualification</a><a href="{escape(cheatsheet)}">Cheatsheet</a>\n<a href="{LIBRARY_URL}">Source</a></nav></div></header>
 <div class="development-banner" role="status"><div class="wrap">
 <strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
@@ -543,6 +909,7 @@ def page(title, body, *, stylesheet, home, cheatsheet):
 <footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
 <a href="{CAD_SITE}">Full SolidCraft CAD projects →</a></div></footer>
 <script>{COPY_SCRIPT}</script>
+<script>{SEARCH_SCRIPT}</script>
 </body></html>"""
 
 
@@ -597,6 +964,10 @@ def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root
 
     out.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / "site" / "style.css", out / "style.css")
+    (out / "search-index.json").write_text(
+        json.dumps(build_search_index(), indent=2) + "\n",
+        encoding="utf-8",
+    )
     (out / ".nojekyll").write_text("", encoding="utf-8")
     cards = []
     manifest = {"library_commit": sha, "qualifier": "command-generation", "examples": {}}
@@ -978,7 +1349,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         dest = reference_root / slug
         dest.mkdir(exist_ok=True)
         rows = "".join(
-            "<tr>"
+            f'<tr id="{escape(slug + "." + name)}">'
             f"<td><code>{escape(slug)}.{escape(name)}</code></td>"
             f"<td><code>{escape(str(value))}</code></td>"
             "</tr>"
@@ -1844,7 +2215,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         for title, description, snippet, linked in items:
             ref = (f'<p class="tip"><a href="../examples/{linked}/">View working example →</a></p>'
                    if linked in EXAMPLES else "")
-            boxes.append(f"""<article class="reference"><h3><code>{escape(title)}</code></h3>
+            anchor = _cheatsheet_anchor(heading, title)
+            boxes.append(f"""<article class="reference" id="{escape(anchor)}"><h3><code>{escape(title)}</code></h3>
 <p>{escape(description)}</p><pre><code>{escape(snippet)}</code></pre>{ref}</article>""")
         sections.append(f'<section><h2>{escape(heading)}</h2><div class="reference-grid">{"".join(boxes)}</div></section>')
     cheat = f"""<main class="wrap"><div class="crumb"><a href="../">← Library</a> / Cheatsheet</div>

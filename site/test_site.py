@@ -3,16 +3,19 @@
 import html
 import inspect
 import json
+import re
 from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "site"))
 from build import (
+    CHEATSHEET,
     EXAMPLES,
     QUALIFICATION_CASES,
     QUALIFICATION_GROUPS,
     REFERENCE_IMPLEMENTATION_LABELS,
+    _cheatsheet_anchor,
     reference_implementations_for,
 )
 from api_coverage import EXPORT_COVERAGE, CAPABILITY_COVERAGE
@@ -183,6 +186,94 @@ def check(
         (site / "reference" / "api.json").read_text(encoding="utf-8")
     )
     assert generated_api == api_manifest()
+
+    search_index = json.loads(
+        (site / "search-index.json").read_text(encoding="utf-8")
+    )
+    assert search_index["schema"] == 1
+    search_entries = search_index["entries"]
+    indexed_symbols = {
+        entry.get("symbol")
+        for entry in search_entries
+        if entry.get("symbol")
+    }
+    assert set(scpf.__all__) <= indexed_symbols
+
+    def search_matches(query):
+        raw_query = query.lower().strip()
+        folded_query = re.sub(r"[_.:/-]+", " ", raw_query)
+        words = folded_query.split()
+        matches = []
+        for entry in search_entries:
+            aliases = [alias.lower() for alias in entry.get("aliases", ())]
+            raw_title = entry["title"].lower()
+            haystack = " ".join((
+                entry["title"],
+                entry.get("summary", ""),
+                entry.get("keywords", ""),
+                " ".join(entry.get("aliases", ())),
+            )).lower()
+            folded_haystack = re.sub(r"[_.:/-]+", " ", haystack)
+            if (
+                raw_title == raw_query
+                or raw_query in aliases
+                or raw_query in haystack
+                or (words and all(word in folded_haystack for word in words))
+            ):
+                matches.append(entry)
+        return matches
+
+    slot_exact = search_matches("SlotCenterToCenter2D")
+    assert any(
+        entry["kind"] == "API Reference"
+        and entry["url"] == "reference/sketch-slot-constructors/#SlotCenterToCenter2D"
+        for entry in slot_exact
+    )
+    for query in ("p0", "slot centre"):
+        assert any(
+            "sketch-slot-constructors/#" in entry["url"]
+            for entry in search_matches(query)
+        ), query
+
+    faces_top = search_matches("Faces.TOP")
+    assert any(
+        entry["title"] == "Faces.TOP"
+        and entry["url"] == "reference/Faces/#Faces.TOP"
+        for entry in faces_top
+    )
+    faces_page = (
+        site / "reference" / "Faces" / "index.html"
+    ).read_text(encoding="utf-8")
+    assert 'id="Faces.TOP"' in faces_page
+
+    pattern_matches = search_matches("rectangular_pattern")
+    assert any(
+        entry["kind"] == "API Reference"
+        and "Shape.rectangular_pattern" in entry["title"]
+        for entry in pattern_matches
+    )
+    assert any(
+        entry["kind"] == "API Guide"
+        and "Shape.rectangular_pattern" in entry["title"]
+        for entry in pattern_matches
+    )
+
+    for heading, items in CHEATSHEET:
+        for title, _description, _snippet, _linked in items:
+            anchor = _cheatsheet_anchor(heading, title)
+            assert f'id="{anchor}"' in cheatsheet
+            assert any(
+                entry["kind"] == "Cheatsheet"
+                and entry["url"] == f"cheatsheet/#{anchor}"
+                for entry in search_entries
+            )
+
+    for page_text in (home, guide_index, reference_index, cheatsheet):
+        assert 'class="site-search"' in page_text
+        assert "search-index.json" in page_text
+        assert "Search SCPF documentation" in page_text
+    assert "event.key === '/'" in home
+    assert "event.key.toLowerCase() === 'k'" in home
     local_agent_api = json.loads(
         (ROOT / "docs" / "agent" / "forge-api.json").read_text(encoding="utf-8")
     )
