@@ -190,7 +190,7 @@ class Sketch:
         """Extrude a completed Sketch using a signed distance.
 
         Parameters:
-            distance: Extrusion distance in mm, or Depth.THROUGH_ALL for an attached Sketch. Positive follows the plane normal; negative reverses it.
+            distance: Extrusion distance in mm, or Depth.THROUGH_ALL for an attached Sketch. Positive finite distances follow the plane normal; negative reverses it. THROUGH_ALL cuts through the attached target from the selected support face.
             sym: When True, split a positive distance equally across both sides of the sketch plane. Defaults to False.
 
         Use when:
@@ -214,7 +214,16 @@ class Sketch:
             if sym:
                 raise ValueError("Depth.THROUGH_ALL cannot be combined with sym=True")
             native_distance = distance
-            direction = "positive"
+            # SolidCraft defaults through-all extrusion to the positive sketch
+            # normal. A TOP support face points away from the target body, so
+            # that cut must explicitly run in the negative direction.
+            direction = (
+                "negative"
+                if self.on is not None
+                and self.plane is None
+                and self.parent is Anchor.TOP
+                else "positive"
+            )
         else:
             value = pv(distance)
             if value == 0:

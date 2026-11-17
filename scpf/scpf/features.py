@@ -737,6 +737,7 @@ def _explicit_sketch_commands(shape, original, feature, name):
         if shape.kind != "difference":
             raise ModelError("Depth.THROUGH_ALL is only supported for Sketch cuts")
         extrude["through_all"] = True
+        extrude["direction"] = direction
     else:
         extrude["distance"] = command_value(distance)
         extrude["direction"] = direction

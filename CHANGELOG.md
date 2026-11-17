@@ -62,6 +62,11 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Fixed
 
+- Attached `Sketch(..., on=body)` through-all cuts now emit the native
+  `solid.extrude` direction explicitly. TOP support faces use `negative`
+  and BOTTOM support faces use `positive`, preventing an error-free no-op
+  cut when SolidCraft's positive default points away from the target body.
+
 - External reference geometry qualification now welds duplicate STL triangle
   vertices before watertightness checks, uses mesh-volume tolerances that match
   the pinned PythonSCAD/pyBOSL2 tessellation while retaining per-feature 3D

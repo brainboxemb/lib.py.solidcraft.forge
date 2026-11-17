@@ -42,3 +42,6 @@ Current records:
 - [0023-build123d-fourth-reference.md](0023-build123d-fourth-reference.md) — add build123d 0.12.0 as the fourth independently executed qualification reference.
 - [0024-signed-sketch-extrude.md](0024-signed-sketch-extrude.md) — replace Extrude Direction with signed distance and `sym=True`.
 - [0025-build123d-builder-references.md](0025-build123d-builder-references.md) — make build123d qualification references builder-first and allow reusable custom part objects where useful.
+- [0026-native-rectangular-feature-patterns.md](0026-native-rectangular-feature-patterns.md) — add native SolidCraft rectangular feature-pattern lowering and reserve Pattern terminology for native history features.
+- [0027-native-sketch-slot-family.md](0027-native-sketch-slot-family.md) — expose all five native SolidCraft Slot sketch constructors and keep their through-all cut-direction finding separate.
+- [0028-attached-through-all-direction.md](0028-attached-through-all-direction.md) — make attached Sketch through-all cuts emit the support-face direction explicitly so TOP cuts cannot silently miss the target body.
