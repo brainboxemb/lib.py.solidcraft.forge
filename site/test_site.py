@@ -730,7 +730,7 @@ def check(
             assert structured_result["solidcraft_version"] == TESTED_SOLIDCRAFT_VERSION, slug
             assert structured_result["qualified_at"] == qualification_manifest["qualified_at"], slug
             assert manifest_case["levels"] == structured_result["levels"], slug
-            assert "Native runtime:" in page_text, slug
+            assert "<h2>SolidCraft result</h2>" in page_text, slug
             assert f"SolidCraft {TESTED_SOLIDCRAFT_VERSION}" in page_text, slug
             assert "Semantic validation" in page_text, slug
             assert '<details class="qualification-detail-block qualification-semantic-checks">' in page_text, slug
@@ -760,10 +760,12 @@ def check(
                         required_image,
                     )
 
-            assert "<h2>1. Test setup</h2>" in page_text, slug
-            assert "<h3>Test goal</h3>" in page_text, slug
-            assert "<h3>Pass criteria</h3>" in page_text, slug
-            assert "<h3>Case-specific Q1/Q2 evidence</h3>" in page_text, slug
+            assert "<h2>Visual result</h2>" in page_text, slug
+            assert "<h2>Reference code</h2>" in page_text, slug
+            assert "<strong>Technical test details</strong>" in page_text, slug
+            assert "<h3>Q1 and Q2 tests</h3>" in page_text, slug
+            assert "<h3>Geometry checks</h3>" in page_text, slug
+            assert "<h3>Saved-design test</h3>" in page_text, slug
             assert "q1-case-evidence.txt" in page_text, slug
             assert "q2-case-evidence.txt" in page_text, slug
             for level in ("q1", "q2"):
@@ -774,27 +776,34 @@ def check(
                 for target in level_result["tests"]:
                     assert target["file"] in page_text, (slug, level, target)
                     assert target["test"] in page_text, (slug, level, target)
-            assert "<h3>Shared geometry contract</h3>" in page_text, slug
-            assert "<h3>SolidCraft-only checks</h3>" in page_text, slug
-            assert "<h2>2. Implementation under test</h2>" in page_text, slug
-            assert "<h2>4. Machine verification</h2>" in page_text, slug
-            assert "<h2>5. Visual verification</h2>" in page_text, slug
-            machine_pos = page_text.index("<h2>4. Machine verification</h2>")
-            visual_pos = page_text.index("<h2>5. Visual verification</h2>")
-            evidence_pos = page_text.index("<h2>6. Evidence and references</h2>")
-            assert command_pos < machine_pos < visual_pos < evidence_pos, slug
+
+            for removed_heading in (
+                "1. Test setup",
+                "Test goal",
+                "Pass criteria",
+                "Case-specific Q1/Q2 evidence",
+                "Shared geometry contract",
+                "SolidCraft-only checks",
+                "Implementation under test",
+                "Machine verification",
+                "Visual verification",
+                "Evidence and references",
+            ):
+                assert removed_heading not in page_text, (slug, removed_heading)
+
+            visual_pos = page_text.index("<h2>Visual result</h2>")
+            preview_pos = page_text.index('class="qualification-case-preview"')
+            assert model_pos < preview_pos < forge_pos, slug
+            assert result_pos < visual_pos < reference_pos < technical_pos, slug
+
             assert 'class="panel qualification-visual-check"' in page_text, slug
             assert 'class="qualification-image-link"' in page_text, slug
             assert 'href="model-iso.png"' in page_text, slug
             assert 'href="goal-iso.png"' in page_text, slug
             assert 'href="overlay-iso.png"' in page_text, slug
             assert f'src="{slug}/model-iso.png"' in qualification_index, slug
-            assert 'class="qualification-case-preview"' in page_text, slug
             assert 'href="model-iso.png"' in page_text, slug
             assert 'src="model-iso.png"' in page_text, slug
-            preview_pos = page_text.index('class="qualification-case-preview"')
-            setup_pos = page_text.index("<h2>1. Test setup</h2>")
-            assert preview_pos < setup_pos, slug
             q6 = structured_result["levels"]["q6"]
             visual_result = json.loads(
                 (
@@ -815,7 +824,9 @@ def check(
                     visual_result["expected_shape"]["required_views"]
                     == geometry["required_views"]
                 ), slug
-                assert "Both must pass for Q6 PASS." in page_text, slug
+                assert "<strong>Image checks:</strong>" in page_text, slug
+                assert "expected shape PASS" in page_text, slug
+                assert "saved render PASS" in page_text, slug
 
             if slug in {
                 "anchored-holes",
@@ -827,7 +838,7 @@ def check(
                 assert 'href="model-top.png"' in page_text, slug
                 assert 'href="goal-top.png"' in page_text, slug
                 assert 'href="overlay-top.png"' in page_text, slug
-                assert "Declared internal visual features" in page_text, slug
+                assert "Internal features" in page_text, slug
 
             native_evidence = qualification_manifest["cases"][slug]["native_evidence"]
             assert "measurements.json" in native_evidence, slug
