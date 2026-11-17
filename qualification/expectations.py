@@ -84,6 +84,9 @@ EXPECTED_MUTATION_BOUNDS = {
         {"label": "rear-left bottom", "min": [-84, 32, 0], "max": [-52, 64, 16]},
         {"label": "rear-left top", "min": [-84, 32, 74], "max": [-52, 64, 90]},
     ],
+    "sketch-pattern-mirror": [
+        {"label": "SketchPatternMirror", "min": [-120, -80, 0], "max": [120, 80, 5]},
+    ],
     "rectangular-pattern": [
         {"label": "RectangularPattern", "min": [-60, -40, 0], "max": [60, 40, 4]},
     ],
