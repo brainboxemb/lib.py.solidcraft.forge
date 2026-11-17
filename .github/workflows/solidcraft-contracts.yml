@@ -20,7 +20,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   contracts:
@@ -57,24 +57,6 @@ jobs:
             --out output/solidcraft-snapshot \
             --version "$SOLIDCRAFT_VERSION" \
             --source-ref "v$SOLIDCRAFT_VERSION"
-      - name: Backfill pinned snapshot for issue 272 branch
-        if: github.head_ref == 'feature/272-sketch-pattern-mirror' || github.ref_name == 'feature/272-sketch-pattern-mirror'
-        shell: bash
-        run: |
-          set -euo pipefail
-          dest="docs/vendor/solidcraft/$SOLIDCRAFT_VERSION/runtime"
-          rm -rf "$dest"
-          mkdir -p "$dest"
-          cp -R output/solidcraft-snapshot/. "$dest/"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$dest"
-          if git diff --cached --quiet; then
-            echo "Pinned snapshot already matches runtime."
-          else
-            git commit -m "Pin sketch pattern and mirror command contracts (#272)"
-            git push origin "HEAD:$GITHUB_REF_NAME"
-          fi
       - name: Require checked-in snapshot to match the runtime exactly
         shell: bash
         run: |
