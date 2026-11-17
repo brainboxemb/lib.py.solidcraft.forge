@@ -28,7 +28,6 @@ sys.path.insert(0, str(ROOT))
 
 from qualification.case_selection import CASE_BY_SLUG, format_selection_help, parse_case_selection
 from qualification.cases import reference_implementations_for
-from qualification.expectations import EXPECTED_BOUNDS
 from qualification.geometry_contracts import geometry_contract
 VIEWS = {
     "front": (0, -90),
@@ -38,7 +37,7 @@ VIEWS = {
 
 
 def expected_envelope(slug: str) -> tuple[np.ndarray, np.ndarray]:
-    boxes = EXPECTED_BOUNDS[slug]
+    boxes = geometry_contract(slug)["bounds"]
     lo = np.min(np.asarray([row["min"] for row in boxes], dtype=float), axis=0)
     hi = np.max(np.asarray([row["max"] for row in boxes], dtype=float), axis=0)
     return lo, hi
@@ -139,9 +138,6 @@ def validate_one(slug: str, implementation: str, out: Path, tolerance: float) ->
     if not stl.is_file() or stl.stat().st_size == 0:
         raise RuntimeError(f"{implementation} did not export a non-empty STL for {slug}")
 
-    # STL writers usually duplicate vertices per triangle. Processing welds
-    # geometrically identical vertices before topology checks such as
-    # is_watertight; it does not change the measured bounds or volume.
     loaded = trimesh.load_mesh(stl, process=True)
     if isinstance(loaded, trimesh.Scene):
         mesh = loaded.dump(concatenate=True)
@@ -164,12 +160,29 @@ def validate_one(slug: str, implementation: str, out: Path, tolerance: float) ->
     }
 
     contract = geometry_contract(slug)
-    if contract is not None:
+    if not contract["bounds_sufficient"] and not (
+        "volume_mm3" in contract or contract.get("surface_distance_probes")
+    ):
+        raise RuntimeError(
+            f"{slug}: bounds are declared insufficient but no detailed geometry check exists"
+        )
+    if contract:
         expected_watertight = contract.get("watertight")
         if expected_watertight is not None:
+            # STL commonly duplicates vertices and may contain duplicate
+            # or degenerate facets at Boolean seams. Normalize only a copy used
+            # for the topology check; bounds, volume and probes still use the
+            # original exported mesh.
+            topology_mesh = mesh.copy()
+            topology_mesh.process(validate=True)
+            actual_watertight = bool(topology_mesh.is_watertight)
             checks["watertight"] = {
-                "status": "pass" if mesh.is_watertight == expected_watertight else "fail",
-                "actual": bool(mesh.is_watertight),
+                "status": (
+                    "pass"
+                    if actual_watertight == expected_watertight
+                    else "fail"
+                ),
+                "actual": actual_watertight,
                 "expected": bool(expected_watertight),
             }
 
@@ -243,6 +256,8 @@ def validate_one(slug: str, implementation: str, out: Path, tolerance: float) ->
         "max_delta_mm": float(np.max(delta)),
         "tolerance_mm": tolerance,
         "checks": checks,
+        "bounds_sufficient": contract["bounds_sufficient"],
+        "bounds_reason": contract["bounds_reason"],
     }
     (target / "result.json").write_text(
         json.dumps(result, indent=2) + "\n",

@@ -19,7 +19,8 @@ sys.path.insert(0, str(ROOT))
 
 from qualification.case_selection import parse_case_selection
 from qualification.cases import supported_case_slugs
-from qualification.expectations import EXPECTED_BOUNDS, EXPECTED_MUTATION_BOUNDS
+from qualification.expectations import EXPECTED_MUTATION_BOUNDS
+from qualification.geometry_contracts import geometry_contract
 
 
 TOL = 1e-3
@@ -91,8 +92,11 @@ def _check_declared_bounds(
     mutation: bool = False,
     tol: float = TOL,
 ):
-    source = EXPECTED_MUTATION_BOUNDS if mutation else EXPECTED_BOUNDS
-    expected = source.get(case)
+    expected = (
+        EXPECTED_MUTATION_BOUNDS.get(case)
+        if mutation
+        else geometry_contract(case)["bounds"]
+    )
     if expected is None:
         return
     validation.check(
@@ -105,6 +109,25 @@ def _check_declared_bounds(
             if body.get("bbox")
         ],
         level,
+    )
+
+
+def _check_contract_volume(validation, body: dict, case: str, *, tol: float | None = None):
+    contract = geometry_contract(case)
+    if "volume_mm3" not in contract:
+        return
+    expected = float(contract["volume_mm3"])
+    tolerance = (
+        float(tol)
+        if tol is not None
+        else float(contract.get("volume_tolerance_mm3", TOL))
+    )
+    actual = float(body["volume_mm3"])
+    validation.check(
+        "shared geometry volume",
+        close(actual, expected, tolerance),
+        {"volume_mm3": expected, "tolerance_mm3": tolerance},
+        {"volume_mm3": actual},
     )
 
 
@@ -175,9 +198,7 @@ def validate_anchored_holes(root: Path) -> Validation:
             {"min": [0, 0, 0], "max": [100, 60, 10]}, b["bbox"])
     cylinders = b.get("face_types", {}).get("cylinder", 0)
     v.check("two cylindrical hole walls", cylinders == 2, 2, cylinders)
-    expected_volume = 100 * 60 * 10 - 2 * 3.141592653589793 * 4 * 4 * 10
-    v.check("two through holes remove expected volume", close(b["volume_mm3"], expected_volume, 0.5),
-            expected_volume, b["volume_mm3"])
+    _check_contract_volume(v, b, "anchored-holes", tol=0.5)
     return v
 
 
@@ -698,6 +719,7 @@ def validate_circle_negative_extrude(root: Path) -> Validation:
             {"min": [-10, -10, -30], "max": [10, 10, 0]},
             b["bbox"],
         )
+        _check_contract_volume(v, b, "circle-negative-extrude", tol=0.5)
         v.check(
             "one cylindrical side face",
             b.get("face_types", {}).get("cylinder") == 1,
@@ -739,12 +761,12 @@ def validate_rectangular_pattern(root: Path) -> Validation:
         faces = body.get("face_types", {})
         v.check(
             "3 x 2 rectangular Slot pattern has qualified native geometry",
-            close(body["volume_mm3"], 36281.4159864975, 0.01)
+            close(body["volume_mm3"], geometry_contract("rectangular-pattern")["volume_mm3"], 0.01)
             and body["faces"] == 30
             and faces.get("cylinder") == 12
             and faces.get("plane") == 18,
             {
-                "volume_mm3": 36281.4159864975,
+                "volume_mm3": geometry_contract("rectangular-pattern")["volume_mm3"],
                 "faces": 30,
                 "face_types": {"cylinder": 12, "plane": 18},
             },
@@ -804,12 +826,12 @@ def validate_slot_family(root: Path) -> Validation:
         faces = body.get("face_types", {})
         v.check(
             "five slot cuts remove the qualified amount of material",
-            close(body["volume_mm3"], 89526.65799650521, 0.01)
+            close(body["volume_mm3"], geometry_contract("slot-family")["volume_mm3"], 0.01)
             and body["faces"] == 26
             and faces.get("cylinder") == 14
             and faces.get("plane") == 12,
             {
-                "volume_mm3": 89526.65799650521,
+                "volume_mm3": geometry_contract("slot-family")["volume_mm3"],
                 "faces": 26,
                 "face_types": {"cylinder": 14, "plane": 12},
             },
@@ -870,6 +892,7 @@ def validate_rounded_rectangle_sketch(root: Path) -> Validation:
             {"min": [-40, -30, 0], "max": [40, 30, 13]},
             b["bbox"],
         )
+        _check_contract_volume(v, b, "rounded-rectangle-sketch", tol=0.5)
         v.check(
             "four true rounded corner faces",
             b.get("face_types", {}).get("cylinder") == 4,
@@ -937,7 +960,7 @@ def validate_bracket(root: Path) -> Validation:
     v.check("single L body", d["body_count"] == 1, 1, d["body_count"])
     v.check("L-profile bounds", bbox_close(b, [0, -12, -40], [40, 12, 0]),
             {"min": [0, -12, -40], "max": [40, 12, 0]}, b["bbox"])
-    v.check("L-profile volume", close(b["volume_mm3"], 19584.0), 19584.0, b["volume_mm3"])
+    _check_contract_volume(v, b, "bracket")
     return v
 
 

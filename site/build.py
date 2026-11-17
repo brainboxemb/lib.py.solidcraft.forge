@@ -50,6 +50,7 @@ try:
         supported_case_slugs,
     )
     from qualification.expectations import EXPECTED_VISUAL_BOXES
+    from qualification.geometry_contracts import proof_contract
 finally:
     sys.path.pop(0)
 
@@ -587,6 +588,57 @@ def _render_validation_checks(native_case):
         '<th>Status</th><th>Level</th><th>Check</th><th>Expected</th><th>Actual</th>'
         '</tr></thead><tbody>' + "".join(rows) + "</tbody></table>"
     )
+
+
+def _render_proof_contract(slug):
+    proof = proof_contract(slug)
+    geometry = proof["geometry"]
+    rows = "".join(
+        "<tr>"
+        f"<td>{escape(body['label'])}</td>"
+        f"<td><code>{escape(body['min'])}</code></td>"
+        f"<td><code>{escape(body['max'])}</code></td>"
+        "</tr>"
+        for body in geometry["bounds"]
+    )
+    sufficiency = "Yes" if geometry["bounds_sufficient"] else "No"
+    details = [
+        f"<li><strong>Are bounds sufficient for this case?</strong> "
+        f"{escape(sufficiency)} — {escape(geometry['bounds_reason'])}</li>"
+    ]
+    if "volume_mm3" in geometry:
+        details.append(
+            "<li><strong>Expected volume:</strong> "
+            f"{escape(geometry['volume_mm3'])} mm³ "
+            f"(tolerance {escape(geometry.get('volume_tolerance_mm3', 0))} mm³)</li>"
+        )
+    if "watertight" in geometry:
+        details.append(
+            f"<li><strong>Watertight mesh:</strong> {escape(geometry['watertight'])}</li>"
+        )
+    probes = geometry.get("surface_distance_probes", ())
+    if probes:
+        probe_items = "".join(
+            "<li>"
+            f"{escape(probe['label'])}: point <code>{escape(probe['point'])}</code> → "
+            f"{escape(probe['distance_mm'])} mm "
+            f"(±{escape(probe.get('tolerance_mm', 0))} mm)"
+            "</li>"
+            for probe in probes
+        )
+        details.append(
+            "<li><strong>3D surface-distance probes:</strong><ul>"
+            + probe_items + "</ul></li>"
+        )
+    return (
+        '<div class="qualification-proof-contract">'
+        '<table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead>'
+        f"<tbody>{rows}</tbody></table>"
+        "<ul>" + "".join(details) + "</ul>"
+        '<p><a href="proof-contract.json">Open machine-readable proof contract →</a></p>'
+        "</div>"
+    )
+
 
 
 def _render_reference_checks(result):
@@ -1607,6 +1659,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             commands = run_script(source_path)
         case_dir = qualification_root / slug
         case_dir.mkdir(exist_ok=True)
+        case_proof = proof_contract(slug)
+        (case_dir / "proof-contract.json").write_text(
+            json.dumps(case_proof, indent=2) + "\n",
+            encoding="utf-8",
+        )
         source = text(source_path)
         (case_dir / "model.py").write_text(source, encoding="utf-8")
 
@@ -1933,6 +1990,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             case_preview=case_preview_html,
             setup_diagram=diagram_html,
             intent=escape(case["intent"]),
+            geometry_contract=_render_proof_contract(slug),
             gallery=preview_html,
             forge_api=escape(case["forge_api"]),
             forge_model=escape(case["forge_model"]),
@@ -1964,6 +2022,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
 
         qualification_manifest[slug] = {
             "title": case["title"],
+            "proof_contract": case_proof,
             "status": status,
             "status_detail": status_detail,
             "command_count": len(commands["commands"]),
