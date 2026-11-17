@@ -19,7 +19,11 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from qualification.case_selection import CASE_BY_SLUG, format_selection_help, parse_case_selection
+from qualification.case_selection import (
+    CASE_BY_SLUG,
+    format_selection_help,
+    parse_case_selection,
+)
 from qualification.native_cases import (
     POST_BUILD_INSPECTIONS,
     mutation_spec,
@@ -359,10 +363,24 @@ def main() -> int:
 
     print("Affected qualification: " + ", ".join(selected))
 
-    timings["q1"], _ = _run(
+    q1_global, _ = _run(
         [sys.executable, "-m", "unittest", "discover", "-s", "scpf/tests", "-v"]
     )
-    timings["q2"], _ = _run(
+    q1_case, _ = _run(
+        [
+            sys.executable,
+            "qualification/run_case_evidence.py",
+            "--level",
+            "q1",
+            "--cases",
+            ",".join(selected),
+            "--out",
+            str(out / "qualification"),
+        ]
+    )
+    timings["q1"] = q1_global + q1_case
+
+    q2_global, _ = _run(
         [
             sys.executable,
             "-m",
@@ -375,6 +393,19 @@ def main() -> int:
             "-v",
         ]
     )
+    q2_case, _ = _run(
+        [
+            sys.executable,
+            "qualification/run_case_evidence.py",
+            "--level",
+            "q2",
+            "--cases",
+            ",".join(selected),
+            "--out",
+            str(out / "qualification"),
+        ]
+    )
+    timings["q2"] = q2_global + q2_case
 
     env = _solidcraft_env()
     timings["startup"], version = _run(
