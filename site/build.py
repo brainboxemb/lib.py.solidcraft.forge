@@ -682,9 +682,13 @@ def _render_validation_checks(native_case):
         return ""
     data = json.loads(path.read_text(encoding="utf-8"))
     rows = []
-    for check in data.get("checks", []):
+    checks = data.get("checks", [])
+    passed = 0
+    for check in checks:
         status = check.get("status", "missing").upper()
         cls = "pass" if status == "PASS" else "fail"
+        if status == "PASS":
+            passed += 1
         expected = json.dumps(check.get("expected"), ensure_ascii=False)
         actual = json.dumps(check.get("actual"), ensure_ascii=False)
         rows.append(
@@ -698,13 +702,16 @@ def _render_validation_checks(native_case):
         )
     if not rows:
         return ""
+    overall = "PASS" if passed == len(checks) else "CHECK"
     return (
-        '<h3>Semantic validation</h3>'
+        '<details class="qualification-detail-block qualification-semantic-checks">'
+        f'<summary><strong>Semantic validation</strong> · {escape(overall)} · '
+        f'{passed}/{len(checks)} checks passed</summary>'
+        '<div class="qualification-table-scroll">'
         '<table class="qualification-checks"><thead><tr>'
         '<th>Status</th><th>Level</th><th>Check</th><th>Expected</th><th>Actual</th>'
-        '</tr></thead><tbody>' + "".join(rows) + "</tbody></table>"
+        '</tr></thead><tbody>' + "".join(rows) + "</tbody></table></div></details>"
     )
-
 
 def _render_proof_contract(slug):
     proof = proof_contract(slug)
@@ -718,14 +725,36 @@ def _render_proof_contract(slug):
         for body in geometry["bounds"]
     )
     sufficiency = "Yes" if geometry["bounds_sufficient"] else "No"
-    details = [
-        f"<li><strong>Are bounds sufficient for this case?</strong> "
+    visual_features = geometry.get("visual_features", ())
+    probes = geometry.get("surface_distance_probes", ())
+
+    summary = [
+        "<li><strong>Bounds sufficient?</strong> "
         f"{escape(sufficiency)} — {escape(geometry['bounds_reason'])}</li>",
-        "<li><strong>Required Q6 expected-shape views:</strong> "
+        "<li><strong>Required views:</strong> "
         + escape(", ".join(geometry["required_views"]))
         + "</li>",
     ]
-    visual_features = geometry.get("visual_features", ())
+    if visual_features:
+        summary.append(
+            f"<li><strong>Internal features:</strong> {len(visual_features)} declared</li>"
+        )
+    if "volume_mm3" in geometry:
+        summary.append(
+            "<li><strong>Expected volume:</strong> "
+            f"{escape(geometry['volume_mm3'])} mm³ "
+            f"(±{escape(geometry.get('volume_tolerance_mm3', 0))} mm³)</li>"
+        )
+    if "watertight" in geometry:
+        summary.append(
+            f"<li><strong>Watertight:</strong> {escape(geometry['watertight'])}</li>"
+        )
+    if probes:
+        summary.append(
+            f"<li><strong>3D probes:</strong> {len(probes)} declared</li>"
+        )
+
+    detail_sections = []
     if visual_features:
         feature_items = "".join(
             "<li>"
@@ -744,22 +773,10 @@ def _render_proof_contract(slug):
             + "</li>"
             for feature in visual_features
         )
-        details.append(
-            "<li><strong>Declared internal visual features:</strong><ul>"
-            + feature_items
-            + "</ul></li>"
+        detail_sections.append(
+            "<h4>Declared internal visual features</h4><ul>"
+            + feature_items + "</ul>"
         )
-    if "volume_mm3" in geometry:
-        details.append(
-            "<li><strong>Expected volume:</strong> "
-            f"{escape(geometry['volume_mm3'])} mm³ "
-            f"(tolerance {escape(geometry.get('volume_tolerance_mm3', 0))} mm³)</li>"
-        )
-    if "watertight" in geometry:
-        details.append(
-            f"<li><strong>Watertight mesh:</strong> {escape(geometry['watertight'])}</li>"
-        )
-    probes = geometry.get("surface_distance_probes", ())
     if probes:
         probe_items = "".join(
             "<li>"
@@ -769,27 +786,40 @@ def _render_proof_contract(slug):
             "</li>"
             for probe in probes
         )
-        details.append(
-            "<li><strong>3D surface-distance probes:</strong><ul>"
-            + probe_items + "</ul></li>"
+        detail_sections.append(
+            "<h4>3D surface-distance probes</h4><ul>"
+            + probe_items + "</ul>"
         )
+
+    detail_html = (
+        '<details class="qualification-detail-block qualification-proof-details">'
+        '<summary>Show full geometry proof details</summary>'
+        + "".join(detail_sections)
+        + "</details>"
+        if detail_sections else ""
+    )
+
     return (
         '<div class="qualification-proof-contract">'
+        '<div class="qualification-table-scroll">'
         '<table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead>'
-        f"<tbody>{rows}</tbody></table>"
-        "<ul>" + "".join(details) + "</ul>"
-        '<p><a href="proof-contract.json">Open machine-readable proof contract →</a></p>'
+        f"<tbody>{rows}</tbody></table></div>"
+        '<ul class="qualification-proof-summary">' + "".join(summary) + "</ul>"
+        + detail_html
+        + '<p class="meta"><a href="proof-contract.json">Open machine-readable proof contract →</a></p>'
         "</div>"
     )
 
-
-
 def _render_reference_checks(result):
-    """Render the measurements that made one external reference PASS."""
+    """Render a compact summary with optional detailed reference measurements."""
     rows = []
-    for name, check in result.get("checks", {}).items():
+    checks = result.get("checks", {})
+    passed = 0
+    for name, check in checks.items():
         label = name.replace("_", " ")
         status = str(check.get("status", "missing")).upper()
+        if status == "PASS":
+            passed += 1
         if name == "bounds":
             expected = check.get("expected")
             actual = check.get("actual")
@@ -837,14 +867,16 @@ def _render_reference_checks(result):
 
     if not rows:
         return ""
+    overall = "PASS" if passed == len(checks) else "CHECK"
     return (
-        '<details class="qualification-reference-checks" open>'
-        '<summary>Reference geometry checks</summary>'
+        '<details class="qualification-reference-checks qualification-detail-block">'
+        f'<summary>Reference geometry checks · {escape(overall)} · '
+        f'{passed}/{len(checks)} passed</summary>'
+        '<div class="qualification-table-scroll">'
         '<table><thead><tr><th>Check</th><th>Status</th>'
         '<th>Expected</th><th>Measured</th><th>Detail</th></tr></thead>'
-        '<tbody>' + "".join(rows) + "</tbody></table></details>"
+        '<tbody>' + "".join(rows) + "</tbody></table></div></details>"
     )
-
 
 def _render_native_results(native_case, solidcraft_version):
     measurement_files = sorted(native_case.glob("measurements*.json"))

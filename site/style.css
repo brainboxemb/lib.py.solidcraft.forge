@@ -201,3 +201,27 @@ background:linear-gradient(135deg,#f1f5fb,#e5eff8)}
 @media(max-width:1050px){.site-search{order:3;max-width:none;flex-basis:100%}.nav{flex-wrap:wrap}}
 @media(max-width:700px){.site-search{width:100%;min-width:0}.site-search-results{width:100%}nav{gap:14px}}
 
+
+
+/* Qualification case sheets: human summary first, machine detail on demand. */
+.panel,.qualification-reference-row,.qualification-reference-source,.qualification-reference-output,
+.qualification-proof-contract,.qualification-detail-block{min-width:0}
+.qualification-proof-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px;
+margin:14px 0 10px;padding-left:20px}
+.qualification-proof-summary li{line-height:1.45}
+.qualification-detail-block{margin:12px 0;border:1px solid var(--line);border-radius:9px;background:#fafcff}
+.qualification-detail-block>summary{cursor:pointer;padding:10px 12px;font-weight:700;color:#284e78}
+.qualification-detail-block[open]>summary{border-bottom:1px solid var(--line)}
+.qualification-detail-block>h4,.qualification-detail-block>ul,.qualification-detail-block>div{margin-left:12px;margin-right:12px}
+.qualification-detail-block>ul{padding-left:22px}
+.qualification-table-scroll{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.qualification-table-scroll table{width:max-content;min-width:100%;max-width:none}
+.qualification-table-scroll td,.qualification-table-scroll th{vertical-align:top}
+.qualification-table-scroll td code{white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+.qualification-reference-checks{margin-top:10px}
+.qualification-reference-checks table,.qualification-checks{font-size:.82rem}
+.qualification-semantic-checks{margin-top:18px}
+@media(max-width:700px){
+  .qualification-proof-summary{grid-template-columns:1fr}
+  .qualification-detail-block>summary{padding:10px}
+}

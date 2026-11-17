@@ -560,8 +560,13 @@ def check(
         assert qualification_manifest["cases"][slug]["proof_contract"] == rendered_proof
         assert "Shared geometry contract" in page_text, slug
         assert "SolidCraft-only checks" in page_text, slug
-        assert "Are bounds sufficient for this case?" in page_text, slug
+        assert "Bounds sufficient?" in page_text, slug
         assert html.escape(rendered_proof["geometry"]["bounds_reason"]) in page_text, slug
+        assert 'class="qualification-table-scroll"' in page_text, slug
+        geometry = rendered_proof["geometry"]
+        if geometry.get("visual_features") or geometry.get("surface_distance_probes"):
+            assert "Show full geometry proof details" in page_text, slug
+            assert '<details class="qualification-detail-block qualification-proof-details">' in page_text, slug
         reference_names = reference_implementations_for(case)
         for implementation in reference_names:
             source_name = f"reference-{implementation}.py"
@@ -598,6 +603,14 @@ def check(
                     implementation,
                 )
                 assert "Reference geometry checks" in page_text, (
+                    slug,
+                    implementation,
+                )
+                assert '<details class="qualification-reference-checks qualification-detail-block">' in page_text, (
+                    slug,
+                    implementation,
+                )
+                assert '<details class="qualification-reference-checks qualification-detail-block" open>' not in page_text, (
                     slug,
                     implementation,
                 )
@@ -672,6 +685,8 @@ def check(
             assert manifest_case["levels"] == structured_result["levels"], slug
             assert "Native runtime:" in page_text, slug
             assert f"SolidCraft {TESTED_SOLIDCRAFT_VERSION}" in page_text, slug
+            assert "Semantic validation" in page_text, slug
+            assert '<details class="qualification-detail-block qualification-semantic-checks">' in page_text, slug
 
             image = site / "qualification" / slug / "model.png"
             assert image.is_file() and image.stat().st_size > 0, slug
