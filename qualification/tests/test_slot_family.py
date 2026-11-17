@@ -32,6 +32,31 @@ class SlotFamilyQualificationTests(unittest.TestCase):
             [command["command"] for command in commands],
         )
 
+        box = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "solid.box"
+        )
+        self.assertEqual(box["length"], "width")
+        self.assertEqual(box["width"], "depth")
+        self.assertEqual(box["height"], "thickness")
+
+        slot_commands = [
+            command
+            for command in commands
+            if command["command"].startswith("sketch.slot.")
+        ]
+        point_keys = ("p0", "p1", "center", "end", "start", "through")
+        for command in slot_commands:
+            for key in point_keys:
+                if key not in command["params"]:
+                    continue
+                self.assertTrue(
+                    all(isinstance(value, (int, float))
+                        for value in command["params"][key]),
+                    (command["command"], key, command["params"][key]),
+                )
+
         extrude = next(
             command["params"]
             for command in commands
