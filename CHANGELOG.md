@@ -8,6 +8,16 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Changed
+
+- Qualification coverage now validates every evidence slug against the real
+  qualification catalog, rejects Q5 claims backed by non-mutation cases, and
+  checks published current Q claims against native PASS results when full
+  qualification evidence is available. Stale `custom-anchor`,
+  `parametric-move`, `as-built-attach` and pseudo-case references were
+  corrected, and SolidCraft version text now uses the tested-version constant.
+
+
 ### Fixed
 
 - External reference geometry qualification now welds duplicate STL triangle
