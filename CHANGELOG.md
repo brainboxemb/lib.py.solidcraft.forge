@@ -8,6 +8,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed native `Slot*2D` lowering on parametrically sized attached Sketches.
+  A fixed sketch-local Slot position now stays numeric when the selected
+  rectangular face centre is fixed, instead of inheriting cancelling
+  width/depth expressions from the parent Box (issue #266).
+
 ## [0.6.1] - 2026-11-17
 
 ### Changed

@@ -2,10 +2,19 @@
 
 
 class SlotFamily:
+    width = 160.0
+    depth = 120.0
+    thickness = 5.0
+
     SLOT_WIDTH = 8.0
 
     def build(self):
-        body = Box(160, 120, 5, anchor=Anchor.BOTTOM)
+        body = Box(
+            self.width,
+            self.depth,
+            self.thickness,
+            anchor=Anchor.BOTTOM,
+        )
 
         with Sketch(name="Slot family", on=body) as slots:
             SlotCenterToCenter2D((-60, -35), (-40, -35), self.SLOT_WIDTH)

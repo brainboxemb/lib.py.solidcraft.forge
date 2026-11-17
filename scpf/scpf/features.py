@@ -24,7 +24,11 @@ from .core import (
 )
 from .compiler import ModelError, _command, _collect, _param_commands, _require_positive
 from .placement import (
-    _anchored_features, _base_rectangle, _combine, _shell_thickness,
+    _anchored_features,
+    _base_rectangle,
+    _base_rectangle_center,
+    _combine,
+    _shell_thickness,
 )
 from .sketches import compile_base
 
@@ -593,7 +597,8 @@ def _explicit_sketch_commands(shape, original, feature, name):
         plane = dict(plane="XY", name=sketch_name)
         if pv(plane_z):
             plane["offset"] = command_value(plane_z)
-        relative_origin = (_combine(x, half(width)), _combine(y, half(depth)))
+        center_x, center_y, _ = _base_rectangle_center(target)
+        relative_origin = (center_x, center_y)
 
     commands = [_command("sketch.create", **plane)]
 

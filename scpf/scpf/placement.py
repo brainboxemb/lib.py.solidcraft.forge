@@ -8,6 +8,7 @@ from .core import (
     Anchor,
     _BoundOffset,
     _box_corner_from_anchor,
+    _primitive_center_from_anchor,
     half,
     _pv as pv,
     command_value,
@@ -99,6 +100,78 @@ def _base_rectangle(shape):
     if shape.kind in ("union", "difference"):
         return _base_rectangle(shape.data[0])
     raise ValueError("anchor target must be a supported Box or explicit rectangular Sketch extrusion")
+
+
+def _base_rectangle_center(shape):
+    """Return the rectangular base centre without inventing cancelling expressions.
+
+    Attached Sketch coordinates are relative to the centre of the target face.
+    Preserve that datum directly when the primitive anchor already defines it,
+    instead of rebuilding it as corner + half-size.
+    """
+    if shape.kind == "rectangle":
+        width, depth = shape.data
+        return (half(width), half(depth), 0)
+    if shape.kind == "box":
+        length, width, height, anchor = shape.data
+        return _primitive_center_from_anchor(
+            (length, width, height),
+            (0, 0, 0),
+            anchor,
+        )
+    if shape.kind == "placed_box":
+        box, x, y, z, anchor = shape.data
+        if box.kind != "box":
+            raise ValueError("placed_box must wrap a Box")
+        length, width, height, _anchor = box.data
+        return _primitive_center_from_anchor(
+            (length, width, height),
+            (x, y, z),
+            anchor,
+        )
+    if shape.kind == "tapered_box":
+        return _base_rectangle_center(shape.data[0])
+    if shape.kind == "positioned":
+        child, x, y, z = shape.data
+        if child.kind == "rectangle":
+            width, depth = child.data
+            return (
+                _combine(x, half(width)),
+                _combine(y, half(depth)),
+                z,
+            )
+    if shape.kind == "sketch_base_extrusion":
+        _, plane, origin, plane_offset, profiles, _, direction = shape.data
+        if (
+            plane != "XY"
+            or origin is not None
+            or plane_offset is not None
+            or direction != "positive"
+        ):
+            raise ValueError(
+                "anchoring requires a positive XY rectangular Sketch"
+            )
+        if len(profiles) != 1 or profiles[0][0].kind != "rectangle":
+            raise ValueError(
+                "anchoring requires one rectangular Sketch profile"
+            )
+        profile, profile_anchor, offset = profiles[0]
+        width, depth = profile.data
+        if profile_anchor is Anchor.CENTER:
+            return (offset[0], offset[1], 0)
+        return (
+            _combine(offset[0], half(width)),
+            _combine(offset[1], half(depth)),
+            0,
+        )
+    if shape.kind in (
+        "fillet", "chamfer", "shell", "rectangular_pattern",
+        "union", "difference",
+    ):
+        return _base_rectangle_center(shape.data[0])
+    raise ValueError(
+        "anchor target must be a supported Box or explicit rectangular Sketch extrusion"
+    )
 
 
 def _shell_thickness(shape):

@@ -29,6 +29,23 @@ class NativeSlotFamilyTests(unittest.TestCase):
         self.assertTrue(all(command["params"]["width"] == 8.0
                             for command in slot_commands))
         self.assertEqual(slot_commands[-1]["params"]["sweep"], 120)
+
+        # The parent Box dimensions are editable Parameters. Fixed Slot-local
+        # coordinates must remain numeric instead of inheriting symbolic
+        # width/depth expressions from the attached Sketch target.
+        point_keys = ("p0", "p1", "center", "end", "start", "through")
+        for command in slot_commands:
+            for key in point_keys:
+                if key not in command["params"]:
+                    continue
+                self.assertTrue(
+                    all(isinstance(value, (int, float))
+                        for value in command["params"][key]),
+                    (command["command"], key, command["params"][key]),
+                )
+        self.assertEqual(slot_commands[0]["params"]["p0"], [-60, -35])
+        self.assertEqual(slot_commands[0]["params"]["p1"], [-40, -35])
+
         self.assertNotIn(
             "sketch.rectangle.rounded",
             [command["command"] for command in commands],
