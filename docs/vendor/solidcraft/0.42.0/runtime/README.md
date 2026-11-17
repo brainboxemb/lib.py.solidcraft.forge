@@ -2,7 +2,7 @@
 
 Generated from the pinned SolidCraft runtime command registry.
 
-Forge-referenced commands: **39**
+Forge-referenced commands: **40**
 
 - `browser.visibility` → `contracts/browser.visibility.json`
 - `component.activate` → `contracts/component.activate.json`
@@ -14,6 +14,7 @@ Forge-referenced commands: **39**
 - `joint.create` → `contracts/joint.create.json`
 - `material.assign` → `contracts/material.assign.json`
 - `material.create` → `contracts/material.create.json`
+- `model.faces` → `contracts/model.faces.json`
 - `occurrence.copy` → `contracts/occurrence.copy.json`
 - `occurrence.move` → `contracts/occurrence.move.json`
 - `parameters.add` → `contracts/parameters.add.json`
