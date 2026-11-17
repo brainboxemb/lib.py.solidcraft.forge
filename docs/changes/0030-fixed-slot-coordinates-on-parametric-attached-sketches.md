@@ -1,6 +1,6 @@
 # 0030 — fixed Slot coordinates on parametric attached Sketches
 
-Status: **implemented; qualification required before merge**  
+Status: **implemented; Q1-Q6 qualified on commit `1947168b5773bbe58e5f1f3713c72c97ebe4b51e`**  
 Issue: **#266**  
 SolidCraft target: **0.42.0**
 
@@ -87,3 +87,16 @@ Q1/Q2 must prove:
 
 Native qualification must continue to prove the Slot sketch cuts the body in
 SolidCraft 0.42 without feature errors.
+
+
+## Qualification result
+
+Full Forge Q1-Q6 qualification passed on
+`1947168b5773bbe58e5f1f3713c72c97ebe4b51e`, which contains the same compiler,
+Slot fixture and regression-test changes as PR #267 plus qualification-only
+trigger metadata.
+
+The native SolidCraft 0.42 stage built, evaluated, saved and rendered the
+parameter-backed `slot-family` case without feature errors. The complete
+qualification gate also passed independent references, command-contract tests,
+native semantic validation and expected-shape/render validation.
