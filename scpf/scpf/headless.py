@@ -63,11 +63,7 @@ def _active_sketch_after(items, results, active_sketch):
                     f"sketch.edit has no usable sketch target: {target!r}"
                 )
             active = target
-        elif command in (
-            "sketch.finish",
-            "sketch.finish_auto_constrain",
-            "sketch.cancel",
-        ):
+        elif command == "sketch.finish":
             active = None
         elif command == "file.new":
             active = None
