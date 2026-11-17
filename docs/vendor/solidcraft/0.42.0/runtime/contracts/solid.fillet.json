@@ -1,0 +1,557 @@
+{
+  "id": "solid.fillet",
+  "input": {
+    "$defs": {
+      "EdgeRef": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Point3"
+          },
+          {
+            "properties": {
+              "point": {
+                "$ref": "#/$defs/Point3"
+              }
+            },
+            "required": [
+              "point"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "body": {
+                "type": "string"
+              },
+              "index": {
+                "maximum": 18446744073709551615,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "body",
+              "index"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "An edge: a point in mm on it ([x, y, z], {\"x\", \"y\", \"z\"} or {\"point\": [x, y, z]}), or {\"body\", \"index\"} in the body's edge order (an index written without a fraction)."
+      },
+      "EdgeRefs": {
+        "description": "The edges, 1 to 1000.",
+        "items": {
+          "$ref": "#/$defs/EdgeRef"
+        },
+        "maxItems": 1000,
+        "minItems": 1,
+        "type": "array"
+      },
+      "FilletCornerParam": {
+        "description": "What fills a corner where three rounded edges meet: rolling (the default), the rolling ball's sphere, or g2, a set-back patch meeting the rounds to the second order (type: constant, fit: exact only). Matching ignores case.",
+        "enum": [
+          "rolling",
+          "g2"
+        ],
+        "type": "string"
+      },
+      "FilletFitParam": {
+        "description": "What a radius too large for the geometry around the edges does: exact (the default) refuses it naming the largest that fits, reduce reduces it where it doesn't fit, taper follows the room along straight edges between planar faces. reduce and taper take type: constant. Matching ignores case.",
+        "enum": [
+          "exact",
+          "reduce",
+          "taper"
+        ],
+        "type": "string"
+      },
+      "FilletTurnParam": {
+        "description": "How two rounds turn round a sharp, straight, convex side edge square to both on a plane (the rounds along a boss's base, at its upright edges): mitre (the default) runs them on to meet in a mitre; swept ends them at the side edge and fills the corner with their section revolved about it, a torus. swept takes type: constant, corner: rolling, no setbacks and fit: exact or reduce, and is refused with the reason where the rounds are unequal or the side edge is concave, curved or tangent. Matching ignores case.",
+        "enum": [
+          "mitre",
+          "swept"
+        ],
+        "type": "string"
+      },
+      "FilletTypeParam": {
+        "description": "The round's section: constant (the default; rolling_ball is an alias), chord (`radius` is the width across; alias chord_length), curvature (alias g2: curvature-continuous between planar faces along straight edges, `radius` the equivalent circular setback), variable (`radius` at the end nearest `start`, `radius2` at the other) or spline (the radius a clamped B-spline from `start`: `radius`, then `radii`, over `knots`). Matching ignores case.",
+        "enum": [
+          "constant",
+          "rolling_ball",
+          "chord",
+          "chord_length",
+          "curvature",
+          "g2",
+          "variable",
+          "spline"
+        ],
+        "type": "string"
+      },
+      "LengthExpr": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "A length: a number in the design's length unit, or an expression such as \"w / 2\" or \"30 mm\"."
+      },
+      "Point3": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "z": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A point in mm: [x, y, z] or {\"x\", \"y\", \"z\"}."
+      },
+      "SetbackParam": {
+        "description": "A fillet corner set back.",
+        "properties": {
+          "distance": {
+            "$ref": "#/$defs/LengthExpr",
+            "description": "How far along each edge there the corner's patch starts."
+          },
+          "vertex": {
+            "$ref": "#/$defs/Point3",
+            "description": "A point at the corner's vertex."
+          }
+        },
+        "required": [
+          "vertex",
+          "distance"
+        ],
+        "type": "object"
+      },
+      "StringList": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "type": "array"
+          }
+        ],
+        "description": "A name, or a list of names."
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Round edges of a body: a constant radius by default, or a chord, a curvature-continuous\nsection or a radius varying along each edge (`type`).",
+    "properties": {
+      "body": {
+        "default": null,
+        "description": "The body whose edges the points pick. Default: each point is looked up on every placed\nbody, shown or hidden, and a point on edges of 2 bodies is refused, naming them.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "body_name": {
+        "default": null,
+        "description": "The new body's name.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "body_names": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/StringList"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Names for the new bodies, in order."
+      },
+      "corner": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FilletCornerParam"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "edges": {
+        "$ref": "#/$defs/EdgeRefs",
+        "description": "The edges to round: a point on each, or `{body, index}`."
+      },
+      "fit": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FilletFitParam"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "knots": {
+        "default": null,
+        "description": "`type: spline`: the knot vector from 0 to 1, as many knots as all control radii, the\ndegree (1 to 3) and one more.",
+        "items": {
+          "format": "double",
+          "type": "number"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "mid": {
+        "description": "`type: variable`: radii between the ends, each `[position, radius]`, the position between 0\nand 1 from the start end. At most 100 are read.",
+        "items": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "format": "double",
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/LengthExpr"
+            }
+          ],
+          "type": "array"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "name": {
+        "default": null,
+        "description": "The feature's name in the timeline.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "participants": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/StringList"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The bodies taking part, each an existing body or `*`; what that changes depends on the\nfeature."
+      },
+      "radii": {
+        "description": "`type: spline`: the control radii after `radius`. At most 100 are read.",
+        "items": {
+          "$ref": "#/$defs/LengthExpr"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "radius": {
+        "$ref": "#/$defs/LengthExpr",
+        "description": "The radius; the chord's width with `type: chord`, the equivalent circular setback with\n`type: curvature`, the start radius with `type: variable` or `spline`."
+      },
+      "radius2": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "`type: variable`: the radius at the end away from `start`; it or `radius` may be 0, where\nthe round closes to the corner."
+      },
+      "setbacks": {
+        "description": "Corner setbacks: the corner at the vertex nearest each `vertex`, where every edge meeting it\nis rounded, starts its patch `distance` along each of those edges from the vertex, past\nwhere the rounds would meet. Constant-radius exact fillets only.",
+        "items": {
+          "$ref": "#/$defs/SetbackParam"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "smooth": {
+        "default": null,
+        "description": "`type: variable`: smooth instead of straight between the radii. Default: false.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "start": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Point3"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "`type: variable` or `spline`: a point near the end the radius starts from."
+      },
+      "tangent_chain": {
+        "default": null,
+        "description": "Round each picked edge's tangent chain with it. Default: true; false rounds exactly the\npicked edges.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "turn": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FilletTurnParam"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "type": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FilletTypeParam"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "edges",
+      "radius"
+    ],
+    "title": "FilletParams",
+    "type": "object"
+  },
+  "label": "Fillet",
+  "output": {
+    "$defs": {
+      "AppliedRadius": {
+        "description": "The radius `fit: reduce` gave one edge.",
+        "properties": {
+          "edge": {
+            "description": "A point on the edge.",
+            "items": {
+              "format": "double",
+              "type": "number"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          "radius": {
+            "description": "The radius it was rounded at.",
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "edge",
+          "radius"
+        ],
+        "type": "object"
+      },
+      "FeatureNotice": {
+        "description": "Something a feature's result tells the user without stopping them, with an action to take.",
+        "properties": {
+          "action": {
+            "$ref": "#/$defs/NoticeAction",
+            "description": "The command that changes the feature as the notice offers."
+          },
+          "contact": {
+            "description": "How the bodies split off touched the others: `along_edge`, `at_point` or `touching` (along\na line or at a point their boundaries don't hold).",
+            "type": "string"
+          },
+          "message": {
+            "description": "The text to show.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "contact",
+          "action"
+        ],
+        "type": "object"
+      },
+      "NoticeAction": {
+        "description": "A command a notice offers to run.",
+        "properties": {
+          "command": {
+            "description": "The command's id.",
+            "type": "string"
+          },
+          "label": {
+            "description": "The action's label.",
+            "type": "string"
+          },
+          "params": {
+            "description": "Its parameters."
+          }
+        },
+        "required": [
+          "label",
+          "command",
+          "params"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What `solid.fillet` returns: a feature command's reply, with the radii `fit: reduce` used.",
+    "properties": {
+      "bodies": {
+        "description": "Every body after the feature.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "changed_bodies": {
+        "description": "Bodies that were there before and now have other geometry.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "created_bodies": {
+        "description": "The bodies the feature made.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "feature": {
+        "description": "The new feature's id.",
+        "format": "uint64",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "ms": {
+        "description": "How long the feature took to evaluate, in milliseconds.",
+        "format": "double",
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "name": {
+        "description": "The new feature's name.",
+        "type": "string"
+      },
+      "notice": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FeatureNotice"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "A join that split pieces into bodies of their own because they touch the others only along\nan edge or at a point (its `touching: separate`): what to tell the user, and the edit that\nmakes them one body instead. Left out otherwise, also when the join kept pieces that touch\nnothing in one body."
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "radii_applied": {
+        "description": "With `fit: reduce` where it reduced the radius: each edge's radius.",
+        "items": {
+          "$ref": "#/$defs/AppliedRadius"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "radius_applied": {
+        "description": "With `fit: reduce` where it reduced the radius: the smallest radius used.",
+        "format": "double",
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "removed_bodies": {
+        "description": "Bodies that are gone.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "warning": {
+        "description": "A warning from the evaluation (a Boolean that needed a retry, a reference found again\nelsewhere), or `null`.",
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "feature",
+      "name",
+      "bodies",
+      "created_bodies",
+      "changed_bodies",
+      "removed_bodies",
+      "warning",
+      "ms"
+    ],
+    "title": "FilletResult",
+    "type": "object"
+  },
+  "params": "edges: [[x,y,z] point on edge | {body, index}] ; radius: expr; tangent_chain?: bool (default true: each picked edge's tangent chain is rounded with it; false: exactly the picked edges); body?: the body the edges are on (without it, each point is looked up on every placed body, shown or hidden, and a point on edges of 2 bodies is refused, naming them); type?: constant|curvature (alias g2: curvature-continuous quintic between planar faces along straight edges, one planar end face at each end (including sloped ends); radius sets the equivalent circular setback, not constant curvature; exact fit only)|chord (radius is the width across)|variable (radius at the end nearest start, radius2 at the other; one end may be 0, where the round closes to the corner)|spline (the radius along the edge is a clamped B-spline from the end nearest start: radius is its first control radius, radii the rest, knots its knot vector from 0 to 1; one end may be 0); radius2?; start?: [x,y,z]; radii?: [expr, \u2026]; knots?: [number, \u2026]; mid?: [[position 0\u20261 from start, radius expr], \u2026] (variable radii between the ends); smooth?: bool (smooth instead of straight between the radii); corner?: rolling|g2 (rolling, the default: the corners where three blended edges meet are pieces of the rolling ball's sphere, tangent to each blend; a curvature round's corners are always g2 patches, between its own sections; g2: each corner where three or more rounded edges meet, and every edge there is rounded, is set back (1.5 \u00d7 the radius along each edge unless `setbacks` names it) and filled with a patch meeting the rounds and the faces round it to the second order (curvature-continuous seams, clear of the points where a round's section ends on a face), constant-radius exact fillets only, refused where it cannot be built); setbacks?: [{vertex: [x,y,z], distance: expr}, \u2026] (corner setbacks: the corner at the vertex nearest `vertex`, where every edge meeting it is rounded, starts its patch `distance` along each of those edges from the vertex, past where the rounds would meet (past the radius at a square corner), so the rounds blend through a larger patch; one distance for all of a corner's edges; constant-radius exact fillets only; with `corner: g2`, the G2 patch's corners); turn?: mitre|swept (where two rounds turn round a sharp, straight, convex side edge square to both on a plane, such as the rounds along a boss's base at its upright edges: mitre, the default, runs them on to meet in a mitre; swept ends them at the side edge and fills the corner with their section revolved about it, a torus; swept takes type: constant, corner: rolling, no setbacks and fit: exact or reduce, and is refused with the reason where the rounds are unequal or the side edge is concave, curved or tangent); fit?: exact|reduce|taper (exact, the default: a radius too large for the geometry around the edges is refused, naming the largest that fits; reduce: where it doesn't fit it is reduced to the largest that does, one radius for edges sharing a face; the smallest used is returned as `radius_applied`, each edge's as `radii_applied: [{edge: [x,y,z], radius}]`, and noted in the feature's warning; taper: along each straight edge between planar faces where it doesn't fit, the radius follows the room there as a smooth spline, down to 0 where a face closes to a point, noted in the feature's warning)"
+}

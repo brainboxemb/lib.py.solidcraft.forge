@@ -1,0 +1,85 @@
+{
+  "id": "component.activate",
+  "input": {
+    "$defs": {
+      "ComponentRef": {
+        "description": "A component's id (a number) or its name.",
+        "type": [
+          "number",
+          "string"
+        ]
+      },
+      "OccurrencePath": {
+        "description": "An exact placement path: 1 to 64 occurrence ids from the root down.",
+        "items": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "maxItems": 64,
+        "minItems": 1,
+        "type": "array"
+      },
+      "OccurrenceRef": {
+        "description": "An occurrence's id (a number) or its name.",
+        "type": [
+          "number",
+          "string"
+        ]
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "dependentRequired": {
+      "path": [
+        "occurrence"
+      ]
+    },
+    "description": "Make a component the active one: new sketches and features go into it, authored in its\nframe. With `occurrence` (and `path`), the placement that shared geometry is authored\nthrough. A change of what is active, not an undo step.",
+    "properties": {
+      "component": {
+        "$ref": "#/$defs/ComponentRef",
+        "description": "The component to make active, by id or name (0 or `\"root\"` for the design)."
+      },
+      "occurrence": {
+        "$ref": "#/$defs/OccurrenceRef",
+        "description": "The placement the component is authored in, by id or name, for a component placed more\nthan once. Needed when `path` is given."
+      },
+      "path": {
+        "$ref": "#/$defs/OccurrencePath",
+        "description": "The occurrence's exact placement, as occurrence ids from the top of the design (1 to 64),\nending in `occurrence`, and a placement of the component. Default: the occurrence's\nfirst placement."
+      }
+    },
+    "required": [
+      "component"
+    ],
+    "title": "ActivateParams",
+    "type": "object"
+  },
+  "label": "Activate Component",
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What `component.activate` returns.",
+    "properties": {
+      "active": {
+        "description": "The active component now, by id.",
+        "format": "uint64",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "active"
+    ],
+    "title": "ActivateResult",
+    "type": "object"
+  },
+  "params": "component: id or name (0 or \"root\" for the design); occurrence?, path?: exact placement used to author shared geometry"
+}

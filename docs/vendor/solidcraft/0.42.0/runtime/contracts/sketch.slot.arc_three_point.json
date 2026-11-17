@@ -1,0 +1,157 @@
+{
+  "id": "sketch.slot.arc_three_point",
+  "input": {
+    "$defs": {
+      "Point2": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A sketch point in mm: [x, y] or {\"x\", \"y\"}."
+      },
+      "SketchTarget": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "The sketch: its feature id or its name (default: the one being edited)."
+      },
+      "SlotWidth": {
+        "description": "The slot's width in mm: more than 0.000000001 and below 1 000 000 000.",
+        "exclusiveMaximum": 1000000000.0,
+        "exclusiveMinimum": 1e-09,
+        "type": "number"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Draw a slot along an arc through three points on its centre arc. Returns `centre_arc`: the\nconstruction arc along the slot's middle.",
+    "properties": {
+      "end": {
+        "$ref": "#/$defs/Point2",
+        "description": "The centre arc's end, [x, y] in mm."
+      },
+      "sketch": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SketchTarget"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The sketch (default: the one being edited)."
+      },
+      "start": {
+        "$ref": "#/$defs/Point2",
+        "description": "The centre arc's start, [x, y] in mm."
+      },
+      "through": {
+        "$ref": "#/$defs/Point2",
+        "description": "A point the centre arc passes through, [x, y] in mm."
+      },
+      "width": {
+        "$ref": "#/$defs/SlotWidth",
+        "description": "The slot's width, in mm."
+      }
+    },
+    "required": [
+      "start",
+      "through",
+      "end",
+      "width"
+    ],
+    "title": "ArcSlotThreePointParams",
+    "type": "object"
+  },
+  "label": "Three Point Arc Slot",
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What `sketch.slot.arc_three_point` and `sketch.slot.arc_center` return.",
+    "properties": {
+      "centre_arc": {
+        "description": "The id of the construction arc along the slot's middle.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "constraints": {
+        "description": "The ids of the constraints made.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "created": {
+        "description": "What it added: `{points, curves, constraints, dimensions}`."
+      },
+      "curves": {
+        "description": "The ids of the curves made.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "middle": {
+        "description": "The point held halfway along the construction centre arc.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "sketch": {
+        "description": "The sketch's solve: `{solved, dof}`."
+      }
+    },
+    "required": [
+      "curves",
+      "constraints",
+      "sketch",
+      "centre_arc",
+      "middle"
+    ],
+    "title": "ArcSlotResult",
+    "type": "object"
+  },
+  "params": "start, through, end: points on the centre arc, width; returns centre_arc and middle. Returns created: {points, curves, constraints, dimensions}: the ids of what it added (stable and never reused: usable right away in sketch.dimension, sketch.constraint.*, sketch.delete\u2026)"
+}

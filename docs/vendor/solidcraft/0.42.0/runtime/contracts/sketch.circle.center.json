@@ -1,0 +1,359 @@
+{
+  "id": "sketch.circle.center",
+  "input": {
+    "$defs": {
+      "DrawId": {
+        "description": "An id for the new geometry, such as \"base\". It may not hold `|`, `,`, `~`, `#` or `]`, which a face name made from it would read as its own.",
+        "type": "string"
+      },
+      "LengthExpr": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "A length: a number in the design's length unit, or an expression such as \"w / 2\" or \"30 mm\"."
+      },
+      "Point2": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A sketch point in mm: [x, y] or {\"x\", \"y\"}."
+      },
+      "Point3": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "z": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A point in mm: [x, y, z] or {\"x\", \"y\", \"z\"}."
+      },
+      "SketchTarget": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "The sketch: its feature id or its name (default: the one being edited)."
+      },
+      "SnapPoint": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Point2"
+          },
+          {
+            "description": "[x, y] where a coordinate may be an expression over the design's parameters, such as [\"w / 2\", 5]: a point that follows the parameters and is fixed; text naming no parameter, such as \"5\", is just that number, in the design's length unit (a JSON number is mm), and does not itself fix the point.",
+            "items": {
+              "$ref": "#/$defs/LengthExpr"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          {
+            "description": "An existing point's id such as \"l1.end\" or \"p3\", or a snap such as \"mid:l1\".",
+            "type": "string"
+          },
+          {
+            "description": "An existing point by id.",
+            "properties": {
+              "ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ref"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "A point by place.",
+            "properties": {
+              "at": {
+                "$ref": "#/$defs/Point2"
+              }
+            },
+            "required": [
+              "at"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "A model vertex [x, y, z] in mm, projected into the sketch.",
+            "properties": {
+              "vertex": {
+                "$ref": "#/$defs/Point3"
+              }
+            },
+            "required": [
+              "vertex"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "A point on a model edge [x, y, z] in mm, projected into the sketch.",
+            "properties": {
+              "on_edge": {
+                "$ref": "#/$defs/Point3"
+              }
+            },
+            "required": [
+              "on_edge"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A sketch point: [x, y] in mm (a coordinate may be an expression), an existing point's id (\"l1.end\"), {ref} or {at}, a snap as text (\"mid:<line>\", \"on:<curve>:x,y\", \"x:<a>+<b>:x,y\", \"vertex:x,y,z\"), or a model {vertex} or {on_edge}."
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Draw a circle from its centre and its radius or diameter.",
+    "properties": {
+      "center": {
+        "$ref": "#/$defs/SnapPoint",
+        "description": "The centre. A point's id or `{ref}` makes that point the centre, so the circle follows it."
+      },
+      "connect": {
+        "default": null,
+        "description": "Make a new point that lands exactly on an existing point (the origin too) coincident with\nit. Default: true.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "construction": {
+        "default": null,
+        "description": "Draw construction geometry, which is not part of a profile. Default: false.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "diameter": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The diameter, in mm, as `radius` is given. Used when `radius` is not."
+      },
+      "id": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/DrawId"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "An id for the circle. Default: one of the sketch's own."
+      },
+      "radius": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The radius, in mm: a number, or an expression over the design's parameters, which makes\nthe radius a dimension driven by them. Wins over `diameter`. Give one of the two."
+      },
+      "sketch": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SketchTarget"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The sketch to draw in: its feature id or name. Default: the one being edited."
+      },
+      "through": {
+        "$ref": "#/$defs/SnapPoint",
+        "description": "A point the circle passes through, kept on it. With a placed centre and an existing\npoint, that point and `radius` both fix the radius."
+      }
+    },
+    "required": [
+      "center"
+    ],
+    "title": "CircleCenterParams",
+    "type": "object"
+  },
+  "label": "Center Diameter Circle",
+  "output": {
+    "$defs": {
+      "Created": {
+        "description": "What a command added to its sketch: the ids that the sketch has now and did not before.",
+        "properties": {
+          "constraints": {
+            "description": "Constraint ids, dimensions not among them.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "curves": {
+            "description": "Curve ids.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "dimensions": {
+            "description": "Dimension ids.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "points": {
+            "description": "Point ids.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "wires": {
+            "description": "The ids of 3D curves, when the command made any.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "points",
+          "curves",
+          "constraints",
+          "dimensions"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What a drawing command returns for a line, a circle, an arc or a slot.",
+    "properties": {
+      "constraints": {
+        "description": "The ids of the constraints added besides the curves' own: a coincident for a point that\nlanded on an existing one, a point on the curve for a point that was given by id, a radius\nfor a size given as an expression, what `infer` added.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "created": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Created"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Everything the call added to the sketch: `{points, curves, constraints, dimensions}`, and\n`wires` when there are any."
+      },
+      "curves": {
+        "description": "The ids of the curves drawn, in order.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "sketch": {
+        "description": "The sketch's solve: `{solved, dof}`."
+      }
+    },
+    "required": [
+      "curves",
+      "constraints",
+      "sketch"
+    ],
+    "title": "DrawResult",
+    "type": "object"
+  },
+  "params": "center: [x,y] or point ref (a coordinate may be an expression over the design's parameters: the centre is fixed and follows them; text naming no parameter, such as \"5\", is just that number, in the design's length unit (a JSON number is mm), and does not itself fix the centre), radius | diameter: number or expression (an expression naming a parameter is a dimension driven by it; with `through` a point ref, that and the point both fix the radius); through?: point ref (a point the circle passes through, kept on it: where the tool's second click snapped); construction?: bool; connect?: bool (default true: a new point landing exactly on an existing point, the origin too, is made coincident with it). Returns created: {points, curves, constraints, dimensions}: the ids of what it added (stable and never reused: usable right away in sketch.dimension, sketch.constraint.*, sketch.delete\u2026)"
+}

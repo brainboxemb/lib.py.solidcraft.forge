@@ -1,7 +1,7 @@
 # Agent reference: SolidCraft
 
-Purpose: answer normal Forge/SolidCraft command questions without external
-documentation lookup.
+Purpose: answer Forge/SolidCraft command questions from the exact SolidCraft
+version Forge targets, without rediscovering the command API upstream.
 
 ## Version
 
@@ -14,121 +14,109 @@ v0.42.0
 commit 1b1e940cc48e4d1d5d01971a4be20e2e55647066
 ```
 
-Full local command catalog:
+## Primary command reference
+
+For commands Forge emits, the primary local reference is generated from the
+official pinned SolidCraft runtime:
+
+```text
+docs/vendor/solidcraft/0.42.0/runtime/manifest.json
+docs/vendor/solidcraft/0.42.0/runtime/contracts/<command-id>.json
+```
+
+Each contract file is the raw result of:
+
+```text
+solidcraft-cli exec engine.describe '{"command":"<command-id>"}'
+```
+
+The complete runtime command catalog used to discover those commands is kept as:
+
+```text
+docs/vendor/solidcraft/0.42.0/runtime/commands.json
+```
+
+Do not maintain a second handwritten list of commands Forge emits. The generated
+`manifest.json` is derived from the current Forge runtime source and CI fails
+when Forge starts using another command without refreshing the snapshot.
+
+The older human-readable command catalog remains useful for browsing:
 
 ```text
 docs/vendor/solidcraft/0.42.0/commands.md
 ```
 
-Version-pinned occurrence/joint evidence:
+Version-pinned occurrence/joint evidence remains available at:
 
 ```text
 docs/vendor/solidcraft/0.42.0/occurrence-identity.md
 docs/vendor/solidcraft/0.42.0/joint-occurrence-references.md
 ```
 
-Read the full catalog only when the command is not listed below.
+## SolidCraft 0.42 typed-contract gaps
 
-## Commands currently emitted by Forge
+SolidCraft 0.42 itself does not publish typed input/output JSON Schemas through
+`engine.describe` for four commands Forge currently uses:
 
 ```text
-component.activate
-component.create
-
-file.new
-
-joint.as_built
-joint.create
-joint.origin
-
-material.assign
-material.create
-
-occurrence.copy
-occurrence.move
-
-parameters.add
-
-sketch.circle.center
-sketch.create
-sketch.finish
-sketch.line
-sketch.rectangle.rounded
-sketch.rectangle.two_point
-sketch.slot.arc_center
-sketch.slot.arc_three_point
-sketch.slot.center_point
-sketch.slot.center_to_center
-sketch.slot.overall
-sketch.text
-
-solid.box
-solid.chamfer
-solid.cylinder
-solid.extrude
-solid.fillet
 solid.hole
 solid.loft
 solid.pattern.rectangular
 solid.shell
-solid.sphere
 ```
 
-This list is a quick routing index, not a second command specification. The
-exact runtime contract belongs to SolidCraft 0.42.0.
+Their pinned contract files deliberately retain `input: null` and
+`output: null`. The same files still preserve SolidCraft's runtime `params`
+documentation, including the accepted parameter names and forms.
 
-## Local-data requirement
+Do not pretend these four commands have a complete typed contract. When work
+depends on a detail not present in their pinned `params` text, use
+version-pinned supplemental evidence and native qualification, and record the
+missing contract information explicitly.
 
-The version-pinned local data must be sufficient for ordinary command lookup,
-not just command discovery. For Forge-relevant commands it should preserve the
-parameter names, alternatives, defaults and placement semantics needed to answer
-normal modelling questions without opening upstream source or a website.
+## Lookup order
 
-For example, SolidCraft 0.42 `solid.box` accepts `length`, `width` and
-`height`, plus either `corner:[x,y,z]` or `center:[x,y,z]`. A box authored
-with `center` remains centre-placed when its dimensions change; `corner`
-keeps the corner datum instead. This is native SolidCraft placement semantics,
-not a Forge translation convention.
+1. For a SolidCraft command Forge emits, read
+   `runtime/contracts/<command-id>.json`.
+2. To see exactly which commands Forge currently references and which contracts
+   are incomplete, read `runtime/manifest.json`.
+3. For another SolidCraft command, search `runtime/commands.json`.
+4. If the pinned runtime contract is one of the explicit gaps and its `params`
+   text does not answer the question, use pinned supplemental evidence.
+5. Only then inspect upstream source/runtime for the same pinned release.
+6. Do not use a website or a newer SolidCraft version to fill a 0.42 contract
+   gap silently.
 
-## Minimal lookup order
+The local snapshot is intended to make ordinary compiler work possible without
+repeating SolidCraft API research.
 
-1. Need to know whether a command exists or its common Forge-relevant semantics?
-   Check this file first.
-2. Need another SolidCraft command?
-   Search `docs/vendor/solidcraft/0.42.0/commands.md` locally.
-3. Need exact parameters or JSON schema not cached locally yet?
-   Query the pinned local CLI:
-   `solidcraft-cli exec engine.describe '{"command":"<id>"}'`.
-   When that information is useful for repeated Forge work, add it to the
-   version-pinned local cache so the next lookup does not require introspection.
-4. Only use upstream/web documentation when the pinned local snapshot/runtime
-   cannot answer the question.
+## Refreshing the snapshot
 
-Do not fetch the SolidCraft website for ordinary compiler/qualification work.
-
-## Runtime introspection
-
-SolidCraft 0.42 exposes the registry directly:
+The snapshot is produced by:
 
 ```text
-solidcraft-cli commands
+python scripts/solidcraft_snapshot.py \
+  --out docs/vendor/solidcraft/0.42.0/runtime \
+  --version 0.42.0 \
+  --source-ref v0.42.0
 ```
 
-It also exposes one command's typed input/output schema through:
+CI regenerates it with the checksum-verified official release and compares the
+result byte-for-byte with the checked-in snapshot.
+
+A local source-only audit does not require SolidCraft:
 
 ```text
-solidcraft-cli exec engine.describe '{"command":"joint.create"}'
+python scripts/solidcraft_snapshot.py \
+  --check-pinned docs/vendor/solidcraft/0.42.0/runtime
 ```
-
-Use the second form whenever only one command is relevant; it is much smaller
-than loading the complete catalog.
 
 ## Qualification rule
 
-During a SolidCraft-version qualification, existing Forge behaviour is tested
-against the pinned runtime first. Do not adopt newly discovered commands merely
-because they exist in the new catalog. New capability adoption is a separate
-API/design change after compatibility has been established.
+During a SolidCraft-version qualification, first capture the candidate runtime
+contract snapshot. Existing Forge behaviour is then tested against that pinned
+contract. Do not adopt new commands merely because the new release contains
+them; capability adoption is a separate design change.
 
-If the runtime behaviour differs from this local snapshot, verify the runtime
+If runtime behaviour differs from the checked-in snapshot, verify the runtime
 version first. A version mismatch is not a Forge API decision.

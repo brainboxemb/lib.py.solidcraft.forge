@@ -1,0 +1,178 @@
+{
+  "id": "sketch.slot.arc_center",
+  "input": {
+    "$defs": {
+      "Point2": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A sketch point in mm: [x, y] or {\"x\", \"y\"}."
+      },
+      "SketchTarget": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "The sketch: its feature id or its name (default: the one being edited)."
+      },
+      "SlotWidth": {
+        "description": "The slot's width in mm: more than 0.000000001 and below 1 000 000 000.",
+        "exclusiveMaximum": 1000000000.0,
+        "exclusiveMinimum": 1e-09,
+        "type": "number"
+      },
+      "Sweep": {
+        "description": "The sweep in degrees, counter-clockwise from `start`; the sketch refuses one that is not above 0 and below 360.",
+        "exclusiveMaximum": 1000000000.0,
+        "exclusiveMinimum": -1000000000.0,
+        "type": "number"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "anyOf": [
+      {
+        "required": [
+          "sweep"
+        ]
+      },
+      {
+        "required": [
+          "end"
+        ]
+      }
+    ],
+    "description": "Draw a slot along an arc from its centre, the start of its centre arc and its end or sweep.\nReturns `centre_arc`: the construction arc along the slot's middle.",
+    "properties": {
+      "center": {
+        "$ref": "#/$defs/Point2",
+        "description": "The centre of the arcs, [x, y] in mm."
+      },
+      "end": {
+        "$ref": "#/$defs/Point2",
+        "description": "Without `sweep`: a point in the direction of the centre arc's end from `center` (the arc\nruns counter-clockwise from `start` to it), [x, y] in mm."
+      },
+      "sketch": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SketchTarget"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The sketch (default: the one being edited)."
+      },
+      "start": {
+        "$ref": "#/$defs/Point2",
+        "description": "The centre arc's start, [x, y] in mm; its distance from `center` is the arc's radius."
+      },
+      "sweep": {
+        "$ref": "#/$defs/Sweep",
+        "description": "How far the centre arc turns counter-clockwise, in degrees (0 to 360, not including\neither). Wins over `end`, which is then not read."
+      },
+      "width": {
+        "$ref": "#/$defs/SlotWidth",
+        "description": "The slot's width, in mm."
+      }
+    },
+    "required": [
+      "center",
+      "start",
+      "width"
+    ],
+    "title": "ArcSlotCenterParams",
+    "type": "object"
+  },
+  "label": "Center Point Arc Slot",
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What `sketch.slot.arc_three_point` and `sketch.slot.arc_center` return.",
+    "properties": {
+      "centre_arc": {
+        "description": "The id of the construction arc along the slot's middle.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "constraints": {
+        "description": "The ids of the constraints made.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "created": {
+        "description": "What it added: `{points, curves, constraints, dimensions}`."
+      },
+      "curves": {
+        "description": "The ids of the curves made.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "middle": {
+        "description": "The point held halfway along the construction centre arc.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "sketch": {
+        "description": "The sketch's solve: `{solved, dof}`."
+      }
+    },
+    "required": [
+      "curves",
+      "constraints",
+      "sketch",
+      "centre_arc",
+      "middle"
+    ],
+    "title": "ArcSlotResult",
+    "type": "object"
+  },
+  "params": "center, start: centre arc start, end: direction of the centre arc end (counter-clockwise) or sweep: degrees (0 < sweep < 360), width; returns centre_arc and middle. Returns created: {points, curves, constraints, dimensions}: the ids of what it added (stable and never reused: usable right away in sketch.dimension, sketch.constraint.*, sketch.delete\u2026)"
+}

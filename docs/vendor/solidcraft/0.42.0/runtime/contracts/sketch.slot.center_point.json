@@ -1,0 +1,215 @@
+{
+  "id": "sketch.slot.center_point",
+  "input": {
+    "$defs": {
+      "Point2": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A sketch point in mm: [x, y] or {\"x\", \"y\"}."
+      },
+      "SketchTarget": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "The sketch: its feature id or its name (default: the one being edited)."
+      },
+      "SlotWidth": {
+        "description": "The slot's width in mm: more than 0.000000001 and below 1 000 000 000.",
+        "exclusiveMaximum": 1000000000.0,
+        "exclusiveMinimum": 1e-09,
+        "type": "number"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Draw a slot from its centre and the centre of one end arc; the other end is the mirror\nimage. Four tangent constraints and an equal one hold it.",
+    "properties": {
+      "center": {
+        "$ref": "#/$defs/Point2",
+        "description": "The slot's centre, [x, y] in mm."
+      },
+      "connect": {
+        "default": null,
+        "description": "Join the new points to the existing points they land on. Default: true.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "end": {
+        "$ref": "#/$defs/Point2",
+        "description": "The centre of one end arc, [x, y] in mm; the other end is its mirror image through `center`."
+      },
+      "sketch": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SketchTarget"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The sketch (default: the one being edited)."
+      },
+      "width": {
+        "$ref": "#/$defs/SlotWidth",
+        "description": "The slot's width, in mm."
+      }
+    },
+    "required": [
+      "center",
+      "end",
+      "width"
+    ],
+    "title": "SlotCenterPointParams",
+    "type": "object"
+  },
+  "label": "Center Point Slot",
+  "output": {
+    "$defs": {
+      "Created": {
+        "description": "What a command added to its sketch: the ids that the sketch has now and did not before.",
+        "properties": {
+          "constraints": {
+            "description": "Constraint ids, dimensions not among them.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "curves": {
+            "description": "Curve ids.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "dimensions": {
+            "description": "Dimension ids.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "points": {
+            "description": "Point ids.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "wires": {
+            "description": "The ids of 3D curves, when the command made any.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "points",
+          "curves",
+          "constraints",
+          "dimensions"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What a straight slot returns, including its construction centre and middle point.",
+    "properties": {
+      "centre_line": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "constraints": {
+        "description": "The ids of the constraints added besides the curves' own: a coincident for a point that\nlanded on an existing one, a point on the curve for a point that was given by id, a radius\nfor a size given as an expression, what `infer` added.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "created": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Created"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Everything the call added to the sketch: `{points, curves, constraints, dimensions}`, and\n`wires` when there are any."
+      },
+      "curves": {
+        "description": "The ids of the curves drawn, in order.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "middle": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "sketch": {
+        "description": "The sketch's solve: `{solved, dof}`."
+      }
+    },
+    "required": [
+      "curves",
+      "constraints",
+      "sketch",
+      "centre_line",
+      "middle"
+    ],
+    "title": "SlotResult",
+    "type": "object"
+  },
+  "params": "center: slot centre, end: one arc centre, width; returns centre_line and middle. Returns created: {points, curves, constraints, dimensions}: the ids of what it added (stable and never reused: usable right away in sketch.dimension, sketch.constraint.*, sketch.delete\u2026)"
+}

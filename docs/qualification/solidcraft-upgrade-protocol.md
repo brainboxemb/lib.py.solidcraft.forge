@@ -53,7 +53,39 @@ Before changing the version:
 
 Existing failures are fixed before an engine upgrade starts.
 
-## 2. Change only the version first
+## 2. Capture the candidate command API first
+
+Before changing Forge compiler behaviour, generate a new sibling runtime
+snapshot from the candidate SolidCraft release.
+
+For example, when moving from 0.42 to 0.44:
+
+```text
+docs/vendor/solidcraft/0.42.0/runtime/
+docs/vendor/solidcraft/0.44.0/runtime/
+```
+
+Never overwrite the older snapshot.
+
+The generator records the complete command catalog and `engine.describe`
+results for every SolidCraft command referenced by Forge. Review
+`manifest.json` before compatibility work starts. In particular:
+
+- added or removed commands must be understood;
+- changed input/output schemas must be reviewed;
+- `contract_gaps` must be explicit;
+- a command with a null typed contract must not be treated as fully specified
+  merely because it worked in an older qualification.
+
+The dedicated `solidcraft-contracts.yml` workflow installs the official
+checksum-verified release, regenerates the snapshot and requires it to match the
+checked-in version. Its artifact is also the bootstrap source when a new version
+snapshot does not exist yet.
+
+Only after the candidate command API is stored locally does compatibility
+qualification continue.
+
+## 3. Change only the version first
 
 Change only `TESTED_SOLIDCRAFT_VERSION`.
 
@@ -80,7 +112,7 @@ separate:
 1. does existing Forge behaviour remain compatible with the new engine?
 2. can Forge later make better use of new engine capabilities?
 
-## 3. Run Forge's own qualification projects
+## 4. Run Forge's own qualification projects
 
 The candidate is tested only with Forge's self-contained examples and
 qualification cases. The downstream CAD repository is not part of this stage.
@@ -104,7 +136,7 @@ Additionally:
 
 Command acceptance alone is not qualification.
 
-## 4. Visible review result
+## 5. Visible review result
 
 Every `qualify/**` run that reaches the review stage publishes its generated
 site to a separate GitHub Pages preview **before** the final qualification
@@ -143,7 +175,7 @@ published. A candidate is not promoted solely because the workflow icon is
 green; the published qualification results are reviewed as part of the
 protocol.
 
-## 5. Investigate a failure
+## 6. Investigate a failure
 
 When the candidate fails:
 
@@ -156,7 +188,7 @@ When the candidate fails:
 
 Do not weaken assertions merely to make a newer release pass.
 
-## 6. Forge acceptance criteria
+## 7. Forge acceptance criteria
 
 Forge is qualified only when:
 
@@ -171,7 +203,7 @@ Forge is qualified only when:
 
 At this point the branch is a qualified Forge candidate.
 
-## 7. Promote Forge
+## 8. Promote Forge
 
 1. Merge the qualified branch to Forge `main`.
 2. Run the complete Forge qualification once more on the resulting `main`

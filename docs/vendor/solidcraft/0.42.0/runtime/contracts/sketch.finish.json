@@ -1,0 +1,47 @@
+{
+  "id": "sketch.finish",
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "properties": {
+      "restore_marker": {
+        "description": "Restore the temporary editor marker (default true). False transfers it directly to\nanother editor without rebuilding the intermediate timeline.",
+        "type": "boolean"
+      }
+    },
+    "title": "ExitParams",
+    "type": "object"
+  },
+  "label": "Finish Sketch",
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "properties": {
+      "param_warnings": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "profiles": {
+        "format": "uint",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "sketch": {
+        "format": "uint64",
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "sketch",
+      "profiles"
+    ],
+    "title": "FinishResult",
+    "type": "object"
+  },
+  "params": "restore_marker?: bool (default true); false transfers the temporary marker directly to another editor without rebuilding the intervening timeline"
+}

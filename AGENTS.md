@@ -97,8 +97,10 @@ objects/docstrings as the human API reference. It is intentionally a first-read
 index rather than a full manual: use its exact signature/value and short summary,
 then read the linked local guide or relevant implementation/docstring only when
 more semantics are needed. Do not edit the snapshot by hand.
-For SolidCraft, use the version-pinned local vendor snapshot or local CLI
-introspection before any website lookup. Only consult upstream/external
+For SolidCraft, start with `docs/agent/solidcraft.md` and the generated
+version-pinned `docs/vendor/solidcraft/<version>/runtime/` command contracts.
+Use local CLI introspection only to regenerate or investigate an explicitly
+recorded contract gap, before any website lookup. Only consult upstream/external
 PythonSCAD, pyBOSL2, CadQuery or build123d documentation when the local agent reference
 does not cover the required operation or when intentionally refreshing that reference.
 
