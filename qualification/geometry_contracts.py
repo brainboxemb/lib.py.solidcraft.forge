@@ -116,6 +116,9 @@ EXPECTED_BOUNDS = {
     "circle-negative-extrude": [
         {"label": "NegativeCircleExtrude", "min": [-10, -10, -30], "max": [10, 10, 0]},
     ],
+    "sketch-pattern-mirror": [
+        {"label": "SketchPatternMirror", "min": [-120, -80, 0], "max": [120, 80, 5]},
+    ],
     "rectangular-pattern": [
         {"label": "RectangularPattern", "min": [-60, -40, 0], "max": [60, 40, 4]},
     ],
@@ -241,6 +244,18 @@ def _through_probes(points, z_values, distance):
     ]
 
 
+_SKETCH_PATTERN_HOLE_CENTERS = [
+    (f"hole {column + 1},{row + 1}", x, y)
+    for row, y in enumerate((-45.0, 45.0))
+    for column, x in enumerate((-60.0, -35.0, -10.0, 15.0))
+]
+
+_SKETCH_PATTERN_SLOT_CENTERS = [
+    (f"slot {column + 1},{row + 1}", x, y)
+    for row, y in enumerate((-20.0, 20.0))
+    for column, x in enumerate((-80.0, -30.0, 30.0, 80.0))
+]
+
 _RECTANGULAR_SLOT_CENTERS = [
     (f"slot {column + 1},{row + 1}", x, y)
     for row, y in enumerate((0.0, 28.0))
@@ -272,6 +287,7 @@ REQUIRED_VISUAL_VIEWS.update({
     "anchored-holes": ("top", "right", "iso"),
     # Pattern/slot cases need a normal profile view plus an orthogonal view
     # that makes the through-cut depth visible.
+    "sketch-pattern-mirror": ("top", "front", "iso"),
     "rectangular-pattern": ("top", "right", "iso"),
     "slot-family": ("top", "front", "iso"),
     "rounded-rectangle-sketch": ("top", "front", "iso"),
@@ -369,6 +385,23 @@ EXPECTED_VISUAL_FEATURES = {
 EXPECTED_VISUAL_FEATURES["anchored-holes"] = [
     _through_hole("front hole Ø8 through", 50, 10, 8, 0, 10),
     _through_hole("rear hole Ø8 through", 50, 50, 8, 0, 10),
+]
+
+EXPECTED_VISUAL_FEATURES["sketch-pattern-mirror"] = [
+    *[
+        _through_hole(label, x, y, 8.0, 0.0, 5.0)
+        for label, x, y in _SKETCH_PATTERN_HOLE_CENTERS
+    ],
+    *[
+        _through_slot(
+            label,
+            ((x - 10.0, y), (x + 10.0, y)),
+            8.0,
+            0.0,
+            5.0,
+        )
+        for label, x, y in _SKETCH_PATTERN_SLOT_CENTERS
+    ],
 ]
 
 EXPECTED_VISUAL_FEATURES["rectangular-pattern"] = [
@@ -506,6 +539,10 @@ _BOUNDS_ASSESSMENTS = {
         "sufficient": False,
         "reason": "A box can share the same envelope as this cylinder. Circular volume and a radial surface probe are required.",
     },
+    "sketch-pattern-mirror": {
+        "sufficient": False,
+        "reason": "The Circle and Slot cuts do not change the plate envelope. Volume, 3D wall probes and saved-design mutation are required to prove the associative sketch pattern/mirror result.",
+    },
     "rectangular-pattern": {
         "sufficient": False,
         "reason": "The six slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.",
@@ -549,6 +586,27 @@ _GEOMETRY_DETAILS = {
             "distance_mm": math.sqrt(8.0**2 + 8.0**2) - 10.0,
             "tolerance_mm": 0.30,
         }],
+    },
+    "sketch-pattern-mirror": {
+        "volume_mm3": (
+            240.0 * 160.0 * 5.0
+            - 8.0 * math.pi * 4.0**2 * 5.0
+            - 8.0 * (20.0 * 8.0 + math.pi * 4.0**2) * 5.0
+        ),
+        "volume_tolerance_mm3": 100.0,
+        "watertight": True,
+        "surface_distance_probes": [
+            *_through_probes(
+                _SKETCH_PATTERN_HOLE_CENTERS,
+                (0.5, 2.5, 4.5),
+                4.0,
+            ),
+            *_through_probes(
+                _SKETCH_PATTERN_SLOT_CENTERS,
+                (0.5, 2.5, 4.5),
+                4.0,
+            ),
+        ],
     },
     "rectangular-pattern": {
         "volume_mm3": 120.0 * 80.0 * 4.0 - 6.0 * (10.0 * 6.0 + math.pi * 3.0**2) * 4.0,
