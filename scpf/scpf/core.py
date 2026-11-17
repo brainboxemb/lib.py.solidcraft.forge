@@ -1071,6 +1071,48 @@ def _pattern_count(value, label):
     return value
 
 
+def _pattern_angle(value, label):
+    """Validate an optional circular-pattern angle in degrees."""
+    if value is None:
+        return None
+    if isinstance(value, Parameter):
+        numeric = value.value
+    elif isinstance(value, Expression):
+        raise TypeError(
+            f"{label} expressions are not supported yet; use a direct model "
+            "parameter or a fixed number of degrees"
+        )
+    elif isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"{label} must be a number of degrees or direct Parameter")
+    else:
+        numeric = value
+    if not isfinite(numeric) or not 0 < numeric <= 360:
+        raise ValueError(f"{label} must be above 0 and at most 360 degrees")
+    return value
+
+
+def _circular_pattern_axis(axis, origin):
+    """Validate one fixed circular-pattern axis."""
+    try:
+        principal = Axis(axis)
+    except (TypeError, ValueError):
+        principal = None
+    if principal is not None and origin is None:
+        return principal.value
+
+    direction = _pattern_direction(axis, "circular_pattern axis")
+    if origin is None:
+        origin = (0, 0, 0)
+    if not isinstance(origin, (tuple, list)) or len(origin) != 3:
+        raise ValueError("circular_pattern origin must be an XYZ point")
+    for coordinate in origin:
+        if isinstance(coordinate, bool) or not isfinite(_pv(coordinate)):
+            raise ValueError(
+                "circular_pattern origin must contain finite numeric dimensions"
+            )
+    return (tuple(origin), direction)
+
+
 def _shape_contains(root, needle):
     """Return whether the exact source Shape is already in a feature tree."""
     if root is needle:
@@ -1080,6 +1122,29 @@ def _shape_contains(root, needle):
     if isinstance(root, (tuple, list)):
         return any(_shape_contains(item, needle) for item in root)
     return False
+
+
+def _feature_pattern_sources(root, feature, operation):
+    """Validate shared source-feature rules for native feature patterns."""
+    if isinstance(feature, Shape):
+        sources = (feature,)
+    elif isinstance(feature, (tuple, list)) and feature:
+        if not all(isinstance(item, Shape) for item in feature):
+            raise TypeError(f"{operation} feature list must contain Shapes")
+        sources = tuple(feature)
+    else:
+        raise TypeError(f"{operation} requires a source feature Shape")
+
+    if any(source.kind != "explicit_sketch_extrusion" for source in sources):
+        raise ValueError(
+            f"{operation} currently supports features produced by "
+            "Sketch.extrude()"
+        )
+    if any(not _shape_contains(root, source) for source in sources):
+        raise ValueError(
+            f"{operation} source feature must already be applied to this Shape"
+        )
+    return sources
 
 
 @dataclass(frozen=True)
@@ -1152,7 +1217,7 @@ class Shape:
         offsets = (_pv(x), _pv(y), _pv(z))
         if not all(isfinite(v) for v in offsets):
             raise ValueError("move() requires finite coordinates")
-        if self.kind in ("fillet", "shell", "rectangular_pattern"):
+        if self.kind in ("fillet", "shell", "rectangular_pattern", "circular_pattern"):
             raise ValueError("move() currently supports only primitive and CSG shapes")
         return Shape("translated", (self, offsets))
 
@@ -1425,25 +1490,7 @@ class Shape:
         Example:
             plate.rectangular_pattern(cut, count=3, spacing=24, direction=Axis.X, count2=2, spacing2=28)
         """
-        if isinstance(feature, Shape):
-            sources = (feature,)
-        elif isinstance(feature, (tuple, list)) and feature:
-            if not all(isinstance(item, Shape) for item in feature):
-                raise TypeError("rectangular_pattern feature list must contain Shapes")
-            sources = tuple(feature)
-        else:
-            raise TypeError("rectangular_pattern requires a source feature Shape")
-
-        if any(source.kind != "explicit_sketch_extrusion" for source in sources):
-            raise ValueError(
-                "rectangular_pattern currently supports features produced by "
-                "Sketch.extrude()"
-            )
-        if any(not _shape_contains(self, source) for source in sources):
-            raise ValueError(
-                "rectangular_pattern source feature must already be applied "
-                "to this Shape"
-            )
+        sources = _feature_pattern_sources(self, feature, "rectangular_pattern")
 
         count = _pattern_count(count, "rectangular_pattern count")
         if _pv(spacing) <= 0:
@@ -1478,6 +1525,64 @@ class Shape:
                 dir2, count2, spacing2,
                 alignment, alignment2,
                 reversed, reversed2,
+            ),
+        )
+
+    def circular_pattern(
+        self,
+        feature,
+        *,
+        count,
+        axis=Axis.Z,
+        angle=None,
+        origin=None,
+        alignment="right",
+        reversed=False,
+    ):
+        """Pattern an existing native history feature around a fixed axis.
+
+        Parameters:
+            feature: Existing Sketch.extrude() feature already applied to this Shape, or a non-empty sequence of such features.
+            count: Total number of instances including the original. Use a positive integer or direct Parameter.
+            axis: Rotation axis as Axis.X/Y/Z or a non-zero fixed XYZ direction. Defaults to Axis.Z.
+            angle: Optional total pattern angle in degrees, as a fixed number or direct Parameter. Omit it for SolidCraft's native 360-degree default.
+            origin: Optional XYZ point for a shifted fixed axis. With an Axis value and no origin, Forge emits the native principal-axis name directly.
+            alignment: Native alignment: "left", "center" or "right". Defaults to "right".
+            reversed: Reverse the native pattern direction. Defaults to False.
+
+        Use when:
+            Repeat an already-created native sketch extrusion around an axis
+            while keeping one editable SolidCraft circular-pattern history
+            feature, for example a bolt circle.
+
+        Limits:
+            The source feature must already be part of this Shape. Axis values
+            cover principal or fixed XYZ axes. Native construction-axis,
+            edge-axis and face-axis selectors are not exposed yet.
+
+        Example:
+            flange.circular_pattern(bolt_cut, count=6, axis=Axis.Z)
+        """
+        sources = _feature_pattern_sources(self, feature, "circular_pattern")
+        count = _pattern_count(count, "circular_pattern count")
+        axis_spec = _circular_pattern_axis(axis, origin)
+        angle = _pattern_angle(angle, "circular_pattern angle")
+        if alignment not in ("left", "center", "right"):
+            raise ValueError(
+                "circular_pattern alignment must be left, center or right"
+            )
+        if not isinstance(reversed, bool):
+            raise TypeError("circular_pattern reversed must be bool")
+        return Shape(
+            "circular_pattern",
+            (
+                self,
+                sources,
+                axis_spec,
+                count,
+                angle,
+                alignment,
+                reversed,
             ),
         )
 

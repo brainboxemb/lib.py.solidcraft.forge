@@ -1,0 +1,7 @@
+{
+  "id": "solid.pattern.circular",
+  "input": null,
+  "label": "Circular Pattern",
+  "output": null,
+  "params": "features: [names] | bodies: [names] | components: [names]; axis: X|Y|Z | {origin,dir} | {edge:[x,y,z]} | {face:[x,y,z]}; count; angle? (default 360 deg); alignment?: left|center|right (default right); reversed?: bool"
+}

@@ -1,5 +1,5 @@
 {
-  "command_count": 43,
+  "command_count": 44,
   "commands": [
     "browser.visibility",
     "component.activate",
@@ -41,6 +41,7 @@
     "solid.fillet",
     "solid.hole",
     "solid.loft",
+    "solid.pattern.circular",
     "solid.pattern.rectangular",
     "solid.shell",
     "solid.sphere"
@@ -55,6 +56,13 @@
     },
     {
       "command": "solid.loft",
+      "missing": [
+        "input",
+        "output"
+      ]
+    },
+    {
+      "command": "solid.pattern.circular",
       "missing": [
         "input",
         "output"

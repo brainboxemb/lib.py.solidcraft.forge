@@ -269,6 +269,131 @@ class SCPFExamples(unittest.TestCase):
             1,
         )
 
+    def test_circular_pattern_emits_one_native_feature_pattern(self):
+        from scpf.compiler import compile_model
+        from scpf.core import Anchor, Axis, Box, Circle2D, Depth, Parameter
+
+        plate = Box(100, 80, 6, anchor=Anchor.BOTTOM)
+        with Sketch(name="BoltHole", on=plate, parent=Anchor.TOP) as bolt:
+            bolt.add(Circle2D(d=8), offset=(30, 0))
+        cut = bolt.extrude(Depth.THROUGH_ALL)
+        plate = plate - cut
+
+        bolts = Parameter("bolts", 6)
+        patterned = plate.circular_pattern(
+            cut,
+            axis=Axis.Z,
+            count=bolts,
+        )
+        commands = compile_model(patterned, "Flange")["commands"]
+
+        parameter = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "parameters.add"
+            and row["params"]["name"] == "bolts"
+        )
+        self.assertEqual(parameter["unit"], "")
+
+        patterns = [
+            row for row in commands
+            if row["command"] == "solid.pattern.circular"
+        ]
+        self.assertEqual(len(patterns), 1)
+        self.assertEqual(
+            patterns[0]["params"],
+            {
+                "features": ["BoltHole"],
+                "axis": "Z",
+                "count": "bolts",
+                "alignment": "right",
+                "reversed": False,
+            },
+        )
+
+    def test_circular_pattern_supports_shifted_axis_and_angle_parameter(self):
+        from scpf.compiler import compile_model
+        from scpf.core import Anchor, Box, Circle2D, Depth, Parameter
+
+        plate = Box(100, 80, 6, anchor=Anchor.BOTTOM)
+        with Sketch(name="BoltHole", on=plate, parent=Anchor.TOP) as bolt:
+            bolt.add(Circle2D(d=8), offset=(30, 0))
+        cut = bolt.extrude(Depth.THROUGH_ALL)
+        plate = plate - cut
+
+        axis_x = Parameter("axis_x", 10)
+        sweep = Parameter("sweep", 180)
+        patterned = plate.circular_pattern(
+            [cut],
+            count=4,
+            axis=(0, 0, 1),
+            origin=(axis_x, 0, 0),
+            angle=sweep,
+            alignment="center",
+            reversed=True,
+        )
+        commands = compile_model(patterned, "Flange")["commands"]
+
+        units = {
+            row["params"]["name"]: row["params"]["unit"]
+            for row in commands
+            if row["command"] == "parameters.add"
+        }
+        self.assertEqual(units["axis_x"], "mm")
+        self.assertEqual(units["sweep"], "deg")
+
+        pattern = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.pattern.circular"
+        )
+        self.assertEqual(
+            pattern,
+            {
+                "features": ["BoltHole"],
+                "axis": {
+                    "origin": ["axis_x", 0, 0],
+                    "dir": [0.0, 0.0, 1.0],
+                },
+                "count": 4,
+                "angle": "sweep",
+                "alignment": "center",
+                "reversed": True,
+            },
+        )
+
+    def test_circular_pattern_validates_shared_feature_and_axis_options(self):
+        from scpf.core import Anchor, Axis, Box, Circle2D, Depth
+
+        plate = Box(100, 80, 6, anchor=Anchor.BOTTOM)
+        with Sketch(name="BoltHole", on=plate, parent=Anchor.TOP) as bolt:
+            bolt.add(Circle2D(d=8), offset=(30, 0))
+        cut = bolt.extrude(Depth.THROUGH_ALL)
+
+        with self.assertRaisesRegex(ValueError, "already be applied"):
+            plate.circular_pattern(cut, count=6)
+
+        plate = plate - cut
+        with self.assertRaisesRegex(ValueError, "positive integer"):
+            plate.circular_pattern(cut, count=0)
+        with self.assertRaisesRegex(ValueError, "above 0"):
+            plate.circular_pattern(cut, count=6, angle=0)
+        with self.assertRaisesRegex(ValueError, "at most 360"):
+            plate.circular_pattern(cut, count=6, angle=361)
+        with self.assertRaisesRegex(ValueError, "non-zero"):
+            plate.circular_pattern(cut, count=6, axis=(0, 0, 0))
+        with self.assertRaisesRegex(ValueError, "XYZ point"):
+            plate.circular_pattern(
+                cut,
+                count=6,
+                axis=Axis.Z,
+                origin=(0, 0),
+            )
+        with self.assertRaisesRegex(ValueError, "alignment"):
+            plate.circular_pattern(cut, count=6, alignment="outside")
+        with self.assertRaisesRegex(TypeError, "reversed"):
+            plate.circular_pattern(cut, count=6, reversed=1)
+
     def test_rectangular_pattern_requires_applied_extrude_feature(self):
         from scpf.core import Anchor, Box, Rectangle2D
 
