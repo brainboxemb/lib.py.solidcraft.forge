@@ -1015,6 +1015,208 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
     return v
 
 
+def validate_selective_profile_extrude(root: Path) -> Validation:
+    v = Validation("selective-profile-extrude")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(
+        v,
+        d,
+        "selective-profile-extrude",
+        tol=0.01,
+    )
+    v.check(
+        "single selectively cut plate body",
+        d["body_count"] == 1,
+        1,
+        d["body_count"],
+    )
+
+    expected_parameters = {
+        "hole_diameter": 8.0,
+        "hole_pitch": 20.0,
+    }
+    actual_parameters = params(d)
+    v.check(
+        "baseline seed and pattern parameters",
+        all(
+            actual_parameters.get(name) == value
+            for name, value in expected_parameters.items()
+        ),
+        expected_parameters,
+        {
+            name: actual_parameters.get(name)
+            for name in expected_parameters
+        },
+    )
+
+    if d["bodies"]:
+        body = d["bodies"][0]
+        expected_volume = geometry_contract(
+            "selective-profile-extrude"
+        )["volume_mm3"]
+        removed_volume = math.pi * 4.0**2 * 5.0
+        expected_center_x = -(
+            removed_volume * (-30.0 - 10.0 + 30.0)
+        ) / expected_volume
+        v.check(
+            "baseline cuts exactly three selected profiles",
+            close(body["volume_mm3"], expected_volume, 0.05)
+            and body.get("face_types", {}).get("cylinder") == 3,
+            {
+                "volume_mm3": expected_volume,
+                "cylindrical_faces": 3,
+            },
+            {
+                "volume_mm3": body["volume_mm3"],
+                "cylindrical_faces": body.get(
+                    "face_types", {}
+                ).get("cylinder"),
+            },
+        )
+        v.check(
+            "baseline omits the +10 mm pattern profile",
+            close(
+                body["center_of_mass"][0],
+                expected_center_x,
+                0.001,
+            ),
+            expected_center_x,
+            body["center_of_mass"][0],
+        )
+
+    sketches = {
+        row.get("name"): row
+        for row in d.get("sketches", [])
+    }
+    selected = sketches.get("Selected holes")
+    v.check(
+        "selected-hole Sketch stays solved",
+        selected is not None
+        and selected.get("status") == "solved"
+        and len(sketches) == 1,
+        {"Selected holes": "solved"},
+        {
+            name: row.get("status")
+            for name, row in sketches.items()
+        },
+    )
+
+    timeline = [
+        (row.get("type"), row.get("name"))
+        for row in d.get("timeline", [])
+    ]
+    expected_timeline = [
+        ("BoxFeature", "Box1"),
+        ("Sketch", "Selected holes"),
+        ("ExtrudeFeature", "Selected holes"),
+    ]
+    v.check(
+        "one Sketch and one selective extrusion remain in history",
+        timeline == expected_timeline,
+        expected_timeline,
+        timeline,
+    )
+
+    m = load(root / "measurements-pattern-mutated.json")
+    _check_declared_bounds(
+        v,
+        m,
+        "selective-profile-extrude",
+        level="q5",
+        mutation=True,
+        tol=0.01,
+    )
+    mutated_parameters = {
+        "hole_diameter": 10.0,
+        "hole_pitch": 24.0,
+    }
+    actual_mutated_parameters = params(m)
+    v.check(
+        "saved seed and pattern parameters changed",
+        all(
+            actual_mutated_parameters.get(name) == value
+            for name, value in mutated_parameters.items()
+        ),
+        mutated_parameters,
+        {
+            name: actual_mutated_parameters.get(name)
+            for name in mutated_parameters
+        },
+        "q5",
+    )
+
+    if m["bodies"]:
+        body = m["bodies"][0]
+        expected_volume = (
+            120.0 * 60.0 * 5.0
+            - 3.0 * math.pi * 5.0**2 * 5.0
+        )
+        removed_volume = math.pi * 5.0**2 * 5.0
+        # Pattern centres become -30, -6, 18, 42 mm. The saved extrusion
+        # must keep the originally selected profiles 1, 2 and 4, so +18
+        # remains uncut.
+        expected_center_x = -(
+            removed_volume * (-30.0 - 6.0 + 42.0)
+        ) / expected_volume
+        v.check(
+            "saved profile selections still cut exactly three circles",
+            close(body["volume_mm3"], expected_volume, 0.05)
+            and body.get("face_types", {}).get("cylinder") == 3,
+            {
+                "volume_mm3": expected_volume,
+                "cylindrical_faces": 3,
+            },
+            {
+                "volume_mm3": body["volume_mm3"],
+                "cylindrical_faces": body.get(
+                    "face_types", {}
+                ).get("cylinder"),
+            },
+            "q5",
+        )
+        v.check(
+            "saved selection follows moved profiles and leaves +18 mm uncut",
+            close(
+                body["center_of_mass"][0],
+                expected_center_x,
+                0.001,
+            ),
+            expected_center_x,
+            body["center_of_mass"][0],
+            "q5",
+        )
+
+    mutated_sketches = {
+        row.get("name"): row
+        for row in m.get("sketches", [])
+    }
+    mutated_selected = mutated_sketches.get("Selected holes")
+    v.check(
+        "mutation keeps one solved associative Sketch",
+        mutated_selected is not None
+        and mutated_selected.get("status") == "solved"
+        and len(mutated_sketches) == 1,
+        {"Selected holes": "solved"},
+        {
+            name: row.get("status")
+            for name, row in mutated_sketches.items()
+        },
+        "q5",
+    )
+    mutated_timeline = [
+        (row.get("type"), row.get("name"))
+        for row in m.get("timeline", [])
+    ]
+    v.check(
+        "mutation preserves one Sketch and one extrusion",
+        mutated_timeline == expected_timeline,
+        expected_timeline,
+        mutated_timeline,
+        "q5",
+    )
+    return v
+
+
 def validate_rectangular_pattern(root: Path) -> Validation:
     v = Validation("rectangular-pattern")
     d = load(root / "measurements.json")
@@ -1355,6 +1557,7 @@ VALIDATORS = {
     "xz-anchor": validate_xz_anchor,
     "circle-negative-extrude": validate_circle_negative_extrude,
     "sketch-pattern-mirror": validate_sketch_pattern_mirror,
+    "selective-profile-extrude": validate_selective_profile_extrude,
     "rectangular-pattern": validate_rectangular_pattern,
     "slot-family": validate_slot_family,
     "rounded-rectangle-sketch": validate_rounded_rectangle_sketch,

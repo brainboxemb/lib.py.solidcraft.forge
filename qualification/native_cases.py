@@ -87,6 +87,12 @@ MUTATIONS = {
         "measurements": "measurements-patterns-mutated.json",
         "label": "Circle diameter and sketch pattern spacing mutate through existing pattern/mirror relationships",
     },
+    "selective-profile-extrude": {
+        "command": "qualification/commands/selective-profile-extrude/change-pattern.json",
+        "save": "model-pattern-mutated.sc",
+        "measurements": "measurements-pattern-mutated.json",
+        "label": "hole diameter 8 -> 10 mm; pattern pitch 20 -> 24 mm; selected profiles remain associated",
+    },
     "rectangular-pattern": {
         "command": "qualification/commands/rectangular-pattern/change-columns-pitch.json",
         "save": "model-columns-2-pitch-30.sc",

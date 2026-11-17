@@ -119,6 +119,9 @@ EXPECTED_BOUNDS = {
     "sketch-pattern-mirror": [
         {"label": "SketchPatternMirror", "min": [-120, -80, 0], "max": [120, 80, 5]},
     ],
+    "selective-profile-extrude": [
+        {"label": "SelectiveProfileExtrude", "min": [-60, -30, 0], "max": [60, 30, 5]},
+    ],
     "rectangular-pattern": [
         {"label": "RectangularPattern", "min": [-60, -40, 0], "max": [60, 40, 4]},
     ],
@@ -256,6 +259,12 @@ _SKETCH_PATTERN_SLOT_CENTERS = [
     for column, x in enumerate((-80.0, -30.0, 30.0, 80.0))
 ]
 
+_SELECTIVE_PROFILE_HOLE_CENTERS = [
+    ("selected hole 1", -30.0, 0.0),
+    ("selected hole 2", -10.0, 0.0),
+    ("selected hole 4", 30.0, 0.0),
+]
+
 _RECTANGULAR_SLOT_CENTERS = [
     (f"slot {column + 1},{row + 1}", x, y)
     for row, y in enumerate((0.0, 28.0))
@@ -288,6 +297,7 @@ REQUIRED_VISUAL_VIEWS.update({
     # Pattern/slot cases need a normal profile view plus an orthogonal view
     # that makes the through-cut depth visible.
     "sketch-pattern-mirror": ("top", "front", "iso"),
+    "selective-profile-extrude": ("top", "front", "iso"),
     "rectangular-pattern": ("top", "right", "iso"),
     "slot-family": ("top", "front", "iso"),
     "rounded-rectangle-sketch": ("top", "front", "iso"),
@@ -402,6 +412,11 @@ EXPECTED_VISUAL_FEATURES["sketch-pattern-mirror"] = [
         )
         for label, x, y in _SKETCH_PATTERN_SLOT_CENTERS
     ],
+]
+
+EXPECTED_VISUAL_FEATURES["selective-profile-extrude"] = [
+    _through_hole(label, x, y, 8.0, 0.0, 5.0)
+    for label, x, y in _SELECTIVE_PROFILE_HOLE_CENTERS
 ]
 
 EXPECTED_VISUAL_FEATURES["rectangular-pattern"] = [
@@ -543,6 +558,10 @@ _BOUNDS_ASSESSMENTS = {
         "sufficient": False,
         "reason": "The Circle and Slot cuts do not change the plate envelope. Volume, 3D wall probes and saved-design mutation are required to prove the associative sketch pattern/mirror result.",
     },
+    "selective-profile-extrude": {
+        "sufficient": False,
+        "reason": "The selected cuts do not change the plate envelope. Volume, cylindrical wall probes and saved-design mutation are required to prove that exactly the chosen patterned profiles are cut.",
+    },
     "rectangular-pattern": {
         "sufficient": False,
         "reason": "The six slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.",
@@ -610,6 +629,16 @@ _GEOMETRY_DETAILS = {
                 4.0,
             ),
         ],
+    },
+    "selective-profile-extrude": {
+        "volume_mm3": 120.0 * 60.0 * 5.0 - 3.0 * math.pi * 4.0**2 * 5.0,
+        "volume_tolerance_mm3": 40.0,
+        "watertight": True,
+        "surface_distance_probes": _through_probes(
+            _SELECTIVE_PROFILE_HOLE_CENTERS,
+            (0.5, 2.5, 4.5),
+            4.0,
+        ),
     },
     "rectangular-pattern": {
         "volume_mm3": 120.0 * 80.0 * 4.0 - 6.0 * (10.0 * 6.0 + math.pi * 3.0**2) * 4.0,

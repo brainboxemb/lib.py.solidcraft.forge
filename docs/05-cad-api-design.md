@@ -200,6 +200,18 @@ omitted-anchor rule that preserves coordinate-defined Text2D placement is
 recorded in
 [change 0020](changes/0020-coordinate-profile-default-anchor.md).
 
+Selective Sketch extrusion uses SolidCraft's own profile selection. Pass fixed
+sketch-local points with `Sketch.extrude(..., profiles=[(x, y), ...])`.
+Forge sends those points as native `solid.extrude profiles` selections; it
+does not expose profile indices or generated curve ids. SolidCraft 0.42 stores
+successful point selections by their surrounding curves where possible, so the
+selected profile can be found again when the saved design recomputes.
+`exact_regions=True` requests the exact region containing each point.
+
+Profile pick points are fixed numeric authoring picks, not editable Forge
+Parameters. SolidCraft 0.42's point-selection command field accepts numeric
+Sketch coordinates rather than parameter expressions.
+
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
 

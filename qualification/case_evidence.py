@@ -332,6 +332,24 @@ CASE_EVIDENCE = {
             ),
         ],
     },
+    "selective-profile-extrude": {
+        "q1": [
+            _target(
+                "scpf/tests/test_sketch_patterns.py",
+                "test_pattern_can_feed_one_selective_profile_extrusion",
+            ),
+        ],
+        "q2": [
+            _target(
+                "qualification/tests/test_selective_profile_extrude.py",
+                "test_one_pattern_and_one_selective_native_extrusion",
+            ),
+            _target(
+                "qualification/tests/test_selective_profile_extrude.py",
+                "test_saved_design_mutation_changes_seed_and_pattern_spacing",
+            ),
+        ],
+    },
     "rectangular-pattern": {
         "q1": [
             _target(

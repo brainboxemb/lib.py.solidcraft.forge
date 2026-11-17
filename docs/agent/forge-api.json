@@ -178,10 +178,10 @@
     },
     "Sketch.extrude": {
       "kind": "callable",
-      "summary": "Extrude a completed Sketch using a signed distance.",
+      "summary": "Extrude selected profiles from a completed Sketch.",
       "reference": "reference/Sketch.extrude/",
-      "guide": "guide/geometry/#profiles",
-      "signature": "Sketch.extrude(self, distance, *, sym=False)"
+      "guide": "guide/geometry/#profile-selection",
+      "signature": "Sketch.extrude(self, distance, *, sym=False, profiles=None, exact_regions=False)"
     },
     "Box": {
       "kind": "callable",
