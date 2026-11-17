@@ -2312,7 +2312,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     )
     qualification_index = render_template(
         "index.html",
-        source_sha=escape(sha),
+        source_sha=escape(evidence_sha),
+        site_sha=escape(sha),
         forge_version=escape(forge_version),
         solidcraft_version=escape(
             metadata.get("solidcraft_version") if verified else TESTED_SOLIDCRAFT_VERSION
