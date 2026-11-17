@@ -86,6 +86,8 @@ jobs:
           cd "$RUNNER_TEMP"
           python -m unittest discover -s "$GITHUB_WORKSPACE/scpf/tests" -v 2>&1 \
             | tee "$GITHUB_WORKSPACE/output/qualification/q1-python-tests.txt"
+          python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
+            --level q1 --out "$GITHUB_WORKSPACE/output/qualification"
       - name: Compile release tooling
         run: python -m py_compile scripts/release/validate_release.py
 
@@ -100,6 +102,8 @@ jobs:
             -s "$GITHUB_WORKSPACE/qualification/tests" \
             -t "$GITHUB_WORKSPACE" -v 2>&1 \
             | tee "$GITHUB_WORKSPACE/output/qualification/q2-python-qualification-tests.txt"
+          python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
+            --level q2 --out "$GITHUB_WORKSPACE/output/qualification"
       - name: Check abstract model-authoring fixture
         shell: bash
         run: |

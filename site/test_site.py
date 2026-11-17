@@ -28,6 +28,7 @@ from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 import scpf
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from qualification.geometry_contracts import proof_contract
+from qualification.case_evidence import evidence_for
 
 
 def check(
@@ -507,6 +508,7 @@ def check(
             "1. Test setup",
             "Test goal",
             "Pass criteria",
+            "Case-specific Q1/Q2 evidence",
             "Q5 applicability",
             "2. Implementation under test",
             "Public Forge API used",
@@ -521,6 +523,10 @@ def check(
         ):
             assert heading in page_text, (slug, heading)
         assert case["title"] in page_text
+        for level in ("q1", "q2"):
+            for target in evidence_for(slug, level):
+                assert target["file"] in page_text, (slug, level, target)
+                assert target["test"] in page_text, (slug, level, target)
         assert case["mutation"] in html.unescape(page_text), slug
         q5_label = "Required." if case.get("q5_required") else "Not required."
         assert q5_label in page_text, slug
@@ -541,6 +547,7 @@ def check(
             "$status",
             "$gallery",
             "$results",
+            "$case_test_evidence",
             "$source",
             "$reference_rows",
         ):
@@ -681,6 +688,17 @@ def check(
             assert "<h2>1. Test setup</h2>" in page_text, slug
             assert "<h3>Test goal</h3>" in page_text, slug
             assert "<h3>Pass criteria</h3>" in page_text, slug
+            assert "<h3>Case-specific Q1/Q2 evidence</h3>" in page_text, slug
+            assert "q1-case-evidence.txt" in page_text, slug
+            assert "q2-case-evidence.txt" in page_text, slug
+            for level in ("q1", "q2"):
+                level_result = structured_result["levels"][level]
+                assert level_result["status"] == "pass", (slug, level)
+                assert level_result["tests"], (slug, level)
+                assert level_result["evidence"], (slug, level)
+                for target in level_result["tests"]:
+                    assert target["file"] in page_text, (slug, level, target)
+                    assert target["test"] in page_text, (slug, level, target)
             assert "<h3>Shared geometry contract</h3>" in page_text, slug
             assert "<h3>SolidCraft-only checks</h3>" in page_text, slug
             assert "<h2>2. Implementation under test</h2>" in page_text, slug

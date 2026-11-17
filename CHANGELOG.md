@@ -10,6 +10,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Changed
 
+- Q1 and Q2 qualification status is now case-specific. Every supported case
+  declares concrete proving unittest targets, CI runs them per case, structured
+  results retain the test targets and logs, and the qualification site links to
+  the exact tests on the qualified commit. Global suite success no longer
+  assigns Q1/Q2 PASS to every case.
+
+### Changed
+
 - Q5 applicability is now explicit for every qualification case. The editable
   simple-box baseline now proves a saved dimension change, while native
   rectangular-pattern qualification mutates saved pattern `columns` and
