@@ -241,11 +241,25 @@ class Sketch:
         if self._closed or self._token is None:
             raise ValueError("sketch pattern must be authored inside the Sketch scope")
         source = self._require_entity_source(source)
-        if isinstance(count, bool) or not isinstance(count, int) or not 1 <= count <= 500:
-            raise ValueError("sketch pattern count must be an integer from 1 to 500")
-        if isinstance(count2, bool) or not isinstance(count2, int) or not 1 <= count2 <= 500:
-            raise ValueError("sketch pattern count2 must be an integer from 1 to 500")
-        if count * count2 > 500:
+        if isinstance(count, bool):
+            raise ValueError("sketch pattern count must be a whole number from 1 to 500")
+        if isinstance(count2, bool):
+            raise ValueError("sketch pattern count2 must be a whole number from 1 to 500")
+        count_value = pv(count)
+        count2_value = pv(count2)
+        if (
+            not isfinite(count_value)
+            or not 1 <= count_value <= 500
+            or not count_value.is_integer()
+        ):
+            raise ValueError("sketch pattern count must be a whole number from 1 to 500")
+        if (
+            not isfinite(count2_value)
+            or not 1 <= count2_value <= 500
+            or not count2_value.is_integer()
+        ):
+            raise ValueError("sketch pattern count2 must be a whole number from 1 to 500")
+        if count_value * count2_value > 500:
             raise ValueError("sketch pattern supports at most 500 total instances")
         if not isfinite(pv(spacing)):
             raise ValueError("sketch pattern spacing must be finite")
