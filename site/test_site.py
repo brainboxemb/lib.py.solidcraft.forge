@@ -681,6 +681,17 @@ def check(
             assert "<h2>1. Test setup</h2>" in page_text, slug
             assert "<h3>Test goal</h3>" in page_text, slug
             assert "<h3>Pass criteria</h3>" in page_text, slug
+            assert "<h3>Case-specific Q1/Q2 evidence</h3>" in page_text, slug
+            assert "q1-case-evidence.txt" in page_text, slug
+            assert "q2-case-evidence.txt" in page_text, slug
+            for level in ("q1", "q2"):
+                level_result = structured_result["levels"][level]
+                assert level_result["status"] == "pass", (slug, level)
+                assert level_result["tests"], (slug, level)
+                assert level_result["evidence"], (slug, level)
+                for target in level_result["tests"]:
+                    assert target["file"] in page_text, (slug, level, target)
+                    assert target["test"] in page_text, (slug, level, target)
             assert "<h3>Shared geometry contract</h3>" in page_text, slug
             assert "<h3>SolidCraft-only checks</h3>" in page_text, slug
             assert "<h2>2. Implementation under test</h2>" in page_text, slug

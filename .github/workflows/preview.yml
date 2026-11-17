@@ -125,6 +125,8 @@ jobs:
             qualification/run_affected.py \
             qualification/case_selection.py \
             qualification/native_cases.py \
+            qualification/case_evidence.py \
+            qualification/run_case_evidence.py \
             qualification/results.py \
             qualification/report.py \
             qualification/visual_validation.py \

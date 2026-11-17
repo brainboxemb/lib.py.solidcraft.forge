@@ -31,6 +31,20 @@ Do not copy native measurement expectations back into skipped unittest classes.
 The workflow/runner orchestrates these layers; it is not a separate test
 framework.
 
+### Case-specific Q1 and Q2 evidence
+
+A qualification case reports Q1 or Q2 PASS only when its explicit test targets
+in `qualification/case_evidence.py` pass. Q1 targets point to focused API or
+compiler tests under `scpf/tests/`; Q2 targets point to focused command-
+contract tests under `qualification/tests/`.
+
+`qualification/run_case_evidence.py` executes those targets separately per
+case and writes a per-case log plus `q1-case-evidence.tsv` or
+`q2-case-evidence.tsv`. The complete Q1/Q2 unittest suites still run as
+regression gates, but their global success does not assign PASS to individual
+cases. Compiling JSON with a non-zero command count remains a useful fixture
+check but is not Q2 evidence by itself.
+
 ## Shared proof contract
 
 Every case has one machine-readable proof contract in

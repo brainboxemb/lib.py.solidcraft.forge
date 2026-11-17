@@ -51,6 +51,7 @@ try:
     )
     from qualification.expectations import EXPECTED_VISUAL_BOXES
     from qualification.geometry_contracts import proof_contract
+    from qualification.case_evidence import evidence_for
 finally:
     sys.path.pop(0)
 
@@ -471,6 +472,78 @@ def _qualification_status_html(overall, detail):
         f'<span class="qualification-status {status_class}">{escape(overall)}</span>'
         f'<span class="qualification-levels">{escape(detail)}</span>'
         '</div>'
+    )
+
+
+def _test_target_url(source_sha, target):
+    source = ROOT / target["file"]
+    line_number = 1
+    if source.is_file():
+        needle = f"def {target['test']}("
+        for index, line in enumerate(
+            source.read_text(encoding="utf-8").splitlines(),
+            start=1,
+        ):
+            if needle in line:
+                line_number = index
+                break
+    return (
+        f"{LIBRARY_URL}/blob/{source_sha}/{target['file']}"
+        f"#L{line_number}"
+    )
+
+
+def _render_case_test_evidence(slug, result, source_sha):
+    rows = []
+    for level in ("q1", "q2"):
+        level_result = (
+            result.get("levels", {}).get(level, {})
+            if result is not None
+            else {}
+        )
+        status = level_result.get("status", "not-run")
+        label = {
+            "pass": "PASS",
+            "fail": "FAIL",
+            "missing": "MISSING",
+            "blocked": "BLOCKED",
+            "not-run": "NOT RUN",
+        }.get(status, status.upper())
+
+        targets = level_result.get("tests") or list(evidence_for(slug, level))
+        target_links = ", ".join(
+            (
+                f'<a href="{escape(_test_target_url(source_sha, target))}">'
+                f'<code>{escape(target["file"])}::{escape(target["test"])}</code>'
+                '</a>'
+            )
+            for target in targets
+        )
+        evidence_links = " ".join(
+            f'<a href="{escape(name)}">{escape(name)}</a>'
+            for name in level_result.get("evidence", [])
+        )
+        evidence_html = (
+            f'<div class="meta">Run evidence: {evidence_links}</div>'
+            if evidence_links
+            else ""
+        )
+        rows.append(
+            '<li>'
+            f'<strong>{level.upper()} {escape(label)}</strong>'
+            f'<div>{target_links}</div>'
+            f'{evidence_html}'
+            '</li>'
+        )
+
+    return (
+        '<div class="qualification-case-test-evidence">'
+        '<h3>Case-specific Q1/Q2 evidence</h3>'
+        '<p>These tests are the evidence for this case. The full global '
+        'test suites remain regression gates but do not create a per-case PASS.</p>'
+        '<ul>'
+        + "".join(rows)
+        + '</ul></div>'
     )
 
 
@@ -1918,6 +1991,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 "validation.json",
                 "visual-validation.json",
                 "camera-*.json",
+                "q1-case-evidence.txt",
+                "q2-case-evidence.txt",
             ):
                 for evidence in sorted(native_case.glob(pattern)):
                     shutil.copyfile(evidence, case_dir / evidence.name)
@@ -1991,6 +2066,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             setup_diagram=diagram_html,
             intent=escape(case["intent"]),
             geometry_contract=_render_proof_contract(slug),
+            case_test_evidence=_render_case_test_evidence(
+                slug,
+                qualification_result,
+                sha,
+            ),
             gallery=preview_html,
             forge_api=escape(case["forge_api"]),
             forge_model=escape(case["forge_model"]),

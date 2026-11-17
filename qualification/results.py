@@ -158,6 +158,11 @@ def collect(
             "q2",
             q2_case,
         )
+        for evidence_name in (q1_evidence, q2_evidence):
+            if evidence_name and evidence_name not in native_files:
+                native_files.append(evidence_name)
+        native_files.sort()
+
         q1_status = _case_status(q1, q1_evidence)
         q2_status = _case_status(
             q2_case,
