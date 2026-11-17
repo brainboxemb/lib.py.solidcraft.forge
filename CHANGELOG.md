@@ -8,6 +8,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- `Shape.circular_pattern(...)` now lowers an already-applied
+  `Sketch.extrude()` feature to one native `solid.pattern.circular` history
+  feature. It supports principal/fixed XYZ axes, an optional axis origin,
+  dimensionless count Parameters, optional degree-angle Parameters and native
+  alignment/reversal settings (issue #293).
+
 ## [0.8.1] - 2026-11-17
 
 ### Fixed

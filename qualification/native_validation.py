@@ -1265,6 +1265,158 @@ def validate_selective_profile_extrude(root: Path) -> Validation:
     return v
 
 
+def validate_circular_feature_pattern(root: Path) -> Validation:
+    v = Validation("circular-feature-pattern")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(
+        v,
+        d,
+        "circular-feature-pattern",
+        tol=0.01,
+    )
+    v.check(
+        "single circular-patterned plate body",
+        d["body_count"] == 1,
+        1,
+        d["body_count"],
+    )
+
+    expected_parameters = {
+        "bolts": 6.0,
+        "pcd": 60.0,
+    }
+    v.check(
+        "baseline pattern parameters",
+        params(d) == expected_parameters,
+        expected_parameters,
+        params(d),
+    )
+
+    if d["bodies"]:
+        body = d["bodies"][0]
+        faces = body.get("face_types", {})
+        v.check(
+            "six Ø8 through holes have qualified native geometry",
+            close(
+                body["volume_mm3"],
+                geometry_contract("circular-feature-pattern")["volume_mm3"],
+                0.01,
+            )
+            and faces.get("cylinder") == 6,
+            {
+                "volume_mm3": geometry_contract(
+                    "circular-feature-pattern"
+                )["volume_mm3"],
+                "cylindrical_faces": 6,
+            },
+            {
+                "volume_mm3": body["volume_mm3"],
+                "cylindrical_faces": faces.get("cylinder"),
+            },
+        )
+
+    sketch = next(
+        (
+            row for row in d.get("sketches", [])
+            if row.get("name") == "BoltHole"
+        ),
+        None,
+    )
+    v.check(
+        "source BoltHole stays one solved circle profile",
+        sketch is not None
+        and sketch.get("curves") == 1
+        and sketch.get("profiles") == 1
+        and sketch.get("status") == "solved",
+        {
+            "name": "BoltHole",
+            "curves": 1,
+            "profiles": 1,
+            "status": "solved",
+        },
+        sketch,
+    )
+
+    timeline = [
+        (row.get("type"), row.get("name"))
+        for row in d.get("timeline", [])
+    ]
+    expected_timeline = [
+        ("BoxFeature", "Box1"),
+        ("Sketch", "BoltHole"),
+        ("ExtrudeFeature", "BoltHole"),
+        ("CircularPatternFeature", "CircularPattern1"),
+    ]
+    v.check(
+        "source cut stays single and pattern is one native History feature",
+        timeline == expected_timeline,
+        expected_timeline,
+        timeline,
+    )
+
+    m = load(root / "measurements-bolts-4.json")
+    _check_declared_bounds(
+        v,
+        m,
+        "circular-feature-pattern",
+        level="q5",
+        mutation=True,
+        tol=0.01,
+    )
+    expected_mutated_parameters = {
+        "bolts": 4.0,
+        "pcd": 60.0,
+    }
+    v.check(
+        "saved bolt count changed",
+        params(m) == expected_mutated_parameters,
+        expected_mutated_parameters,
+        params(m),
+        "q5",
+    )
+    v.check(
+        "mutated pattern remains one body",
+        m["body_count"] == 1,
+        1,
+        m["body_count"],
+        "q5",
+    )
+    if m["bodies"]:
+        body = m["bodies"][0]
+        expected_volume = (
+            100.0 * 100.0 * 6.0
+            - 4.0 * math.pi * 4.0**2 * 6.0
+        )
+        faces = body.get("face_types", {})
+        v.check(
+            "saved pattern rebuilds to four holes",
+            close(body["volume_mm3"], expected_volume, 0.01)
+            and faces.get("cylinder") == 4,
+            {
+                "volume_mm3": expected_volume,
+                "cylindrical_faces": 4,
+            },
+            {
+                "volume_mm3": body["volume_mm3"],
+                "cylindrical_faces": faces.get("cylinder"),
+            },
+            "q5",
+        )
+
+    mutated_timeline = [
+        (row.get("type"), row.get("name"))
+        for row in m.get("timeline", [])
+    ]
+    v.check(
+        "mutation keeps one source cut and one circular pattern feature",
+        mutated_timeline == expected_timeline,
+        expected_timeline,
+        mutated_timeline,
+        "q5",
+    )
+    return v
+
+
 def validate_rectangular_pattern(root: Path) -> Validation:
     v = Validation("rectangular-pattern")
     d = load(root / "measurements.json")
@@ -1607,6 +1759,7 @@ VALIDATORS = {
     "circle-negative-extrude": validate_circle_negative_extrude,
     "sketch-pattern-mirror": validate_sketch_pattern_mirror,
     "selective-profile-extrude": validate_selective_profile_extrude,
+    "circular-feature-pattern": validate_circular_feature_pattern,
     "rectangular-pattern": validate_rectangular_pattern,
     "slot-family": validate_slot_family,
     "rounded-rectangle-sketch": validate_rounded_rectangle_sketch,

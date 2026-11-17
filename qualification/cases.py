@@ -436,6 +436,21 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "circular-feature-pattern",
+        "q5_required": True,
+        "group": "features",
+        "title": "Native circular feature pattern",
+        "intent": "Qualify one real SolidCraft circular History pattern over an existing cut feature, rather than Forge-expanded repeated holes.",
+        "forge_api": "source = bolt.extrude(Depth.THROUGH_ALL); body = body - source; body.circular_pattern(source, count=bolts, axis=Axis.Z)",
+        "forge_model": "One 100 x 100 x 6 mm plate, one native Ø8 source cut on a 60 mm pitch circle and one native six-instance circular feature pattern.",
+        "lowering": "Forge emits the source Sketch/cut once, then exactly one solid.pattern.circular with features=['BoltHole']; bolts is a dimensionless native count parameter and pcd remains a millimetre parameter used by the source profile position.",
+        "native_expectation": "SolidCraft saves one plate with six through holes and one native CircularPatternFeature that references the original BoltHole cut.",
+        "mutation": "Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature.",
+        "references": [
+            ("SolidCraft", "Native Q2-Q5 prove one saved CircularPatternFeature and count mutation. The four comparison libraries independently prove the baseline six-hole geometry."),
+        ],
+    },
+    {
         "slug": "rectangular-pattern",
         "q5_required": True,
         "group": "features",

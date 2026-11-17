@@ -125,6 +125,9 @@ EXPECTED_BOUNDS = {
     "selective-profile-extrude": [
         {"label": "SelectiveProfileExtrude", "min": [-60, -30, 0], "max": [60, 30, 5]},
     ],
+    "circular-feature-pattern": [
+        {"label": "CircularFeaturePattern", "min": [-50, -50, 0], "max": [50, 50, 6]},
+    ],
     "rectangular-pattern": [
         {"label": "RectangularPattern", "min": [-60, -40, 0], "max": [60, 40, 4]},
     ],
@@ -268,6 +271,15 @@ _SELECTIVE_PROFILE_HOLE_CENTERS = [
     ("selected hole 4", 30.0, 0.0),
 ]
 
+_CIRCULAR_PATTERN_HOLE_CENTERS = [
+    (
+        f"hole {index + 1}",
+        30.0 * math.cos(index * 2.0 * math.pi / 6.0),
+        30.0 * math.sin(index * 2.0 * math.pi / 6.0),
+    )
+    for index in range(6)
+]
+
 _RECTANGULAR_SLOT_CENTERS = [
     (f"slot {column + 1},{row + 1}", x, y)
     for row, y in enumerate((0.0, 28.0))
@@ -302,6 +314,7 @@ REQUIRED_VISUAL_VIEWS.update({
     # that makes the through-cut depth visible.
     "sketch-pattern-mirror": ("top", "front", "iso"),
     "selective-profile-extrude": ("top", "front", "iso"),
+    "circular-feature-pattern": ("top", "front", "iso"),
     "rectangular-pattern": ("top", "right", "iso"),
     "slot-family": ("top", "front", "iso"),
     "rounded-rectangle-sketch": ("top", "front", "iso"),
@@ -425,6 +438,11 @@ EXPECTED_VISUAL_FEATURES["sketch-pattern-mirror"] = [
 EXPECTED_VISUAL_FEATURES["selective-profile-extrude"] = [
     _through_hole(label, x, y, 8.0, 0.0, 5.0)
     for label, x, y in _SELECTIVE_PROFILE_HOLE_CENTERS
+]
+
+EXPECTED_VISUAL_FEATURES["circular-feature-pattern"] = [
+    _through_hole(label, x, y, 8.0, 0.0, 6.0)
+    for label, x, y in _CIRCULAR_PATTERN_HOLE_CENTERS
 ]
 
 EXPECTED_VISUAL_FEATURES["rectangular-pattern"] = [
@@ -574,6 +592,10 @@ _BOUNDS_ASSESSMENTS = {
         "sufficient": False,
         "reason": "The selected cuts do not change the plate envelope. Volume, cylindrical wall probes and saved-design mutation are required to prove that exactly the chosen patterned profiles are cut.",
     },
+    "circular-feature-pattern": {
+        "sufficient": False,
+        "reason": "The six bolt holes do not change the plate envelope. Volume, cylindrical-wall probes and native pattern-history checks are required.",
+    },
     "rectangular-pattern": {
         "sufficient": False,
         "reason": "The six slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.",
@@ -663,6 +685,16 @@ _GEOMETRY_DETAILS = {
         "surface_distance_probes": _through_probes(
             _SELECTIVE_PROFILE_HOLE_CENTERS,
             (0.5, 2.5, 4.5),
+            4.0,
+        ),
+    },
+    "circular-feature-pattern": {
+        "volume_mm3": 100.0 * 100.0 * 6.0 - 6.0 * math.pi * 4.0**2 * 6.0,
+        "volume_tolerance_mm3": 80.0,
+        "watertight": True,
+        "surface_distance_probes": _through_probes(
+            _CIRCULAR_PATTERN_HOLE_CENTERS,
+            (0.5, 3.0, 5.5),
             4.0,
         ),
     },

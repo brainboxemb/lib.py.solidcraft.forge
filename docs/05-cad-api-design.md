@@ -441,6 +441,7 @@ See [change 0016](changes/0016-parameter-dependency-diagnostics.md).
 - `-` expresses subtraction/cut where supported.
 - `&` expresses intersection where supported.
 - `shell()`, `fillet()` and `chamfer()` are modifiers of supported feature trees.
+- `rectangular_pattern()` and `circular_pattern()` repeat already-applied native history features. Both keep one native SolidCraft pattern feature instead of expanding independent Python copies. Circular patterns support principal or fixed XYZ axes plus an optional fixed axis origin; native construction/edge/face axis selectors are separate future extensions.
 - `fillet(..., edges=...)` and `chamfer(..., edges=...)` use the same edge-selection vocabulary where SolidCraft accepts the same edge picks: `Edges.VERTICAL`, supported two-direction Box edge selectors, `Edges.from_profile(...)`, `Edges.from_vertices(...)` and explicit XYZ edge picks.
 - `Lip`, `SnapFit`, `Boss` and `Rest` are object-level feature intents;
   the compiler chooses the appropriate native SolidCraft representation.

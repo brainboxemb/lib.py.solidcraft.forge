@@ -368,6 +368,28 @@ CASE_EVIDENCE = {
             ),
         ],
     },
+    "circular-feature-pattern": {
+        "q1": [
+            _target(
+                "scpf/tests/test_models.py",
+                "test_circular_pattern_emits_one_native_feature_pattern",
+            ),
+            _target(
+                "scpf/tests/test_models.py",
+                "test_circular_pattern_validates_shared_feature_and_axis_options",
+            ),
+        ],
+        "q2": [
+            _target(
+                "qualification/tests/test_circular_feature_pattern.py",
+                "test_emits_one_native_circular_feature_pattern",
+            ),
+            _target(
+                "qualification/tests/test_circular_feature_pattern.py",
+                "test_count_parameter_is_dimensionless_and_pcd_is_length",
+            ),
+        ],
+    },
     "rectangular-pattern": {
         "q1": [
             _target(

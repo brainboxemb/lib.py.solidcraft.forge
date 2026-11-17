@@ -93,6 +93,12 @@ MUTATIONS = {
         "measurements": "measurements-pattern-mutated.json",
         "label": "hole diameter 8 -> 10 mm; pattern pitch 20 -> 24 mm; selected profiles remain associated",
     },
+    "circular-feature-pattern": {
+        "command": "qualification/commands/circular-feature-pattern/change-count.json",
+        "save": "model-bolts-4.sc",
+        "measurements": "measurements-bolts-4.json",
+        "label": "bolt count 6 -> 4",
+    },
     "rectangular-pattern": {
         "command": "qualification/commands/rectangular-pattern/change-columns-pitch.json",
         "save": "model-columns-2-pitch-30.sc",

@@ -20,6 +20,7 @@ from .core import (
     midpoint,
     _pv as pv,
     command_value,
+    number_text,
     parameters_in,
 )
 from .compiler import ModelError, _command, _collect, _param_commands, _require_positive
@@ -40,7 +41,7 @@ def _is_feature_tree(shape):
         return True
     if shape.kind in (
         "fillet", "chamfer", "shell", "union", "difference",
-        "material_assignment", "rectangular_pattern",
+        "material_assignment", "rectangular_pattern", "circular_pattern",
     ):
         return _is_feature_tree(shape.data[0])
     return False
@@ -923,6 +924,14 @@ def _pattern_count_parameter_names(node, found=None):
             found.update(param.name for param in parameters_in(count1, count2))
             _pattern_count_parameter_names(original, found)
             return found
+        if node.kind == "circular_pattern":
+            (
+                original, _sources, _axis, count, _angle,
+                _alignment, _reversed,
+            ) = node.data
+            found.update(param.name for param in parameters_in(count))
+            _pattern_count_parameter_names(original, found)
+            return found
         if node.kind == "sketch_pattern_rectangular":
             (
                 source, count1, _spacing1, _dir1,
@@ -960,6 +969,14 @@ def _non_count_parameter_names(node, found=None):
                 found,
             )
             return found
+        if node.kind == "circular_pattern":
+            (
+                original, _sources, axis, _count, _angle,
+                alignment, reversed,
+            ) = node.data
+            _non_count_parameter_names(original, found)
+            _non_count_parameter_names((axis, alignment, reversed), found)
+            return found
         if node.kind == "sketch_pattern_rectangular":
             (
                 source, _count1, spacing1, dir1,
@@ -983,12 +1000,32 @@ def _non_count_parameter_names(node, found=None):
     return found
 
 
+def _pattern_angle_parameter_names(node, found=None):
+    """Collect direct Parameters used as circular-pattern angles in degrees."""
+    if found is None:
+        found = set()
+    if isinstance(node, Shape):
+        if node.kind == "circular_pattern":
+            (
+                original, _sources, _axis, _count, angle,
+                _alignment, _reversed,
+            ) = node.data
+            found.update(param.name for param in parameters_in(angle))
+            _pattern_angle_parameter_names(original, found)
+            return found
+        _pattern_angle_parameter_names(node.data, found)
+    elif isinstance(node, (tuple, list)):
+        for item in node:
+            _pattern_angle_parameter_names(item, found)
+    return found
+
+
 def _native_feature_name(feature):
     """Resolve the native history feature referenced by a pattern source."""
     if feature.kind == "explicit_sketch_extrusion":
         return feature.data[0]
     raise ModelError(
-        "rectangular_pattern currently supports features produced by "
+        "feature patterns currently support features produced by "
         "Sketch.extrude()"
     )
 
@@ -996,6 +1033,34 @@ def _native_feature_name(feature):
 def _to_commands(shape, name):
     if shape.kind in ("box", "placed_box", "tapered_box", "sketch_base_extrusion"):
         return compile_base(shape, name)
+    if shape.kind == "circular_pattern":
+        (
+            original, sources, axis, count, angle,
+            alignment, reversed,
+        ) = shape.data
+        steps, base = _to_commands(original, name)
+        if isinstance(axis, str):
+            native_axis = axis
+        else:
+            origin, direction = axis
+            native_axis = {
+                "origin": [command_value(value) for value in origin],
+                "dir": list(direction),
+            }
+        params = dict(
+            features=[_native_feature_name(source) for source in sources],
+            axis=native_axis,
+            count=command_value(count),
+            alignment=alignment,
+            reversed=reversed,
+        )
+        if angle is not None:
+            params["angle"] = (
+                command_value(angle)
+                if isinstance(angle, Parameter)
+                else f"{number_text(angle)} deg"
+            )
+        return steps + [_command("solid.pattern.circular", **params)], base
     if shape.kind == "rectangular_pattern":
         (
             original, sources,
@@ -1142,12 +1207,34 @@ def compile_features(shape, name):
         parameters = _collect(shape)
 
     count_parameters = _pattern_count_parameter_names(shape)
-    mixed_units = count_parameters & _non_count_parameter_names(shape)
-    if mixed_units:
-        names = ", ".join(sorted(mixed_units))
+    angle_parameters = _pattern_angle_parameter_names(shape)
+    normal_parameters = _non_count_parameter_names(shape)
+
+    shared_roles = count_parameters & angle_parameters
+    if shared_roles:
+        names = ", ".join(sorted(shared_roles))
+        raise ModelError(
+            "pattern parameter(s) used as both count and angle: "
+            f"{names}; use separate model parameters"
+        )
+
+    mixed_counts = count_parameters & normal_parameters
+    if mixed_counts:
+        names = ", ".join(sorted(mixed_counts))
         raise ModelError(
             "pattern count parameter(s) also used as millimetre dimensions: "
             f"{names}; use separate model parameters for count and length"
         )
+
+    mixed_angles = angle_parameters & normal_parameters
+    if mixed_angles:
+        names = ", ".join(sorted(mixed_angles))
+        raise ModelError(
+            "circular pattern angle parameter(s) also used as millimetre "
+            f"dimensions: {names}; use separate model parameters for angle "
+            "and length"
+        )
+
     units = {parameter: "" for parameter in count_parameters}
+    units.update({parameter: "deg" for parameter in angle_parameters})
     return _param_commands(parameters, units=units) + steps

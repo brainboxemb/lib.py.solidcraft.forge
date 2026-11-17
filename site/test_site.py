@@ -179,6 +179,8 @@ def check(
         assert term in geometry_guide, term
     assert "Sketch.rectangular_pattern(...)" in cheatsheet
     assert "Sketch.mirror(...)" in cheatsheet
+    assert "shape.rectangular_pattern(...)" in cheatsheet
+    assert "shape.circular_pattern(...)" in cheatsheet
     assert "sketch.extrude(..., profiles=[...])" in cheatsheet
 
     for spec in METHOD_REFERENCES:
@@ -269,17 +271,19 @@ def check(
     ).read_text(encoding="utf-8")
     assert 'id="Faces.TOP"' in faces_page
 
-    pattern_matches = search_matches("rectangular_pattern")
-    assert any(
-        entry["kind"] == "API Reference"
-        and "Shape.rectangular_pattern" in entry["title"]
-        for entry in pattern_matches
-    )
-    assert any(
-        entry["kind"] == "API Guide"
-        and "Shape.rectangular_pattern" in entry["title"]
-        for entry in pattern_matches
-    )
+    for symbol in ("Shape.rectangular_pattern", "Shape.circular_pattern"):
+        pattern_matches = search_matches(symbol)
+        assert any(
+            entry["kind"] == "API Reference"
+            and entry["title"] == symbol
+            for entry in pattern_matches
+        ), symbol
+        assert any(
+            entry["kind"] == "API Guide"
+            and entry["title"] == f"{symbol} · API Guide"
+            and entry["url"] == "guide/features/#feature-patterns"
+            for entry in pattern_matches
+        ), symbol
     extrude_matches = search_matches("Sketch.extrude profiles")
     assert any(
         entry["kind"] == "API Reference"

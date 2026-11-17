@@ -491,7 +491,7 @@
       "kind": "callable",
       "summary": "Pattern an existing native history feature in one or two directions.",
       "reference": "reference/Shape.rectangular_pattern/",
-      "guide": "guide/features/#features",
+      "guide": "guide/features/#feature-patterns",
       "signature": "Shape.rectangular_pattern(self, feature, *, count, spacing, direction=<Axis.X: 'X'>, count2=None, spacing2=None, direction2=<Axis.Y: 'Y'>, alignment='right', alignment2='right', reversed=False, reversed2=False)"
     },
     "Sketch.rectangular_pattern": {
@@ -521,6 +521,13 @@
       "reference": "reference/Shape.chamfer/",
       "guide": "guide/features/#fillet",
       "signature": "Shape.chamfer(self, distance, *, edges=<Edges.VERTICAL: 'vertical'>)"
+    },
+    "Shape.circular_pattern": {
+      "kind": "callable",
+      "summary": "Pattern an existing native history feature around a fixed axis.",
+      "reference": "reference/Shape.circular_pattern/",
+      "guide": "guide/features/#feature-patterns",
+      "signature": "Shape.circular_pattern(self, feature, *, count, axis=<Axis.Z: 'Z'>, angle=None, origin=None, alignment='right', reversed=False)"
     }
   }
 }

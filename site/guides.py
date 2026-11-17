@@ -624,6 +624,44 @@ plate = plate + hole.on(plate, face=Faces.TOP)""") + """
 means adding the operation that <em>removes</em> material.
 <a href="../../reference/Faces/"><code>Faces.TOP</code></a> selects its entry face. Simple feature placement
 uses <code>on()</code>; assembly attachment uses explicit anchors.</p>
+<h2 id="feature-patterns">Native feature patterns</h2>
+<p>Pattern an already-applied native feature when the copies should remain one
+editable SolidCraft history operation. Rectangular and circular patterns share
+the same source-feature rules: the source is a <code>Sketch.extrude()</code>
+feature that is already part of the body, and a direct count Parameter remains
+editable in the saved design.</p>
+""" + code("""from scpf import Anchor, Axis, Box, Circle2D, Depth, Sketch
+
+plate = Box(100, 80, 6, anchor=Anchor.BOTTOM)
+with Sketch(name="BoltHole", on=plate, parent=Anchor.TOP) as bolt:
+    bolt.add(Circle2D(d=8), offset=(30, 0))
+
+cut = bolt.extrude(Depth.THROUGH_ALL)
+plate = plate - cut
+
+bolt_circle = plate.circular_pattern(
+    cut,
+    count=6,
+    axis=Axis.Z,
+)""") + """
+<p><code>circular_pattern()</code> omits <code>angle</code> by default so
+SolidCraft uses its native 360-degree full-circle behaviour. Supply a fixed
+degree value or direct Parameter for a partial arc. <code>origin=(x, y, z)</code>
+moves a fixed axis; a fixed non-zero XYZ vector can be used instead of
+<code>Axis.X/Y/Z</code>. Construction-axis and geometry-axis selectors are not
+yet exposed by Forge.</p>
+""" + code("""grid = plate.rectangular_pattern(
+    cut,
+    count=4,
+    spacing=20,
+    direction=Axis.X,
+    count2=3,
+    spacing2=18,
+    direction2=Axis.Y,
+)""") + """
+<p><code>rectangular_pattern()</code> and <code>circular_pattern()</code> both
+emit one native feature-pattern command rather than expanding independent
+copies in Python.</p>
 <h2 id="fillet">Fillets and chamfers</h2>
 """ + code("""from scpf import FRONT, LEFT, Box, Edges
 

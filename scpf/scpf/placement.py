@@ -16,7 +16,7 @@ from .core import (
 
 def _is_unshifted_rectangular_base(shape):
     """Return whether the original rectangular base keeps its declared datum."""
-    while shape.kind in ("fillet", "shell", "union", "difference", "rectangular_pattern"):
+    while shape.kind in ("fillet", "shell", "union", "difference", "rectangular_pattern", "circular_pattern"):
         shape = shape.data[0]
     if shape.kind == "box":
         return True
@@ -101,7 +101,7 @@ def _base_rectangle(shape):
         else:
             corner = (offset[0], offset[1], 0)
         return (width, depth), corner, height
-    if shape.kind in ("fillet", "chamfer", "shell", "rectangular_pattern"):
+    if shape.kind in ("fillet", "chamfer", "shell", "rectangular_pattern", "circular_pattern"):
         return _base_rectangle(shape.data[0])
     if shape.kind in ("union", "difference"):
         return _base_rectangle(shape.data[0])
@@ -174,7 +174,7 @@ def _base_rectangle_center(shape):
             0,
         )
     if shape.kind in (
-        "fillet", "chamfer", "shell", "rectangular_pattern",
+        "fillet", "chamfer", "shell", "rectangular_pattern", "circular_pattern",
         "union", "difference",
     ):
         return _base_rectangle_center(shape.data[0])
@@ -188,7 +188,7 @@ def _shell_thickness(shape):
     if shape.kind == "shell":
         return shape.data[1]
     if shape.kind in (
-        "fillet", "chamfer", "union", "difference", "rectangular_pattern"
+        "fillet", "chamfer", "union", "difference", "rectangular_pattern", "circular_pattern"
     ):
         return _shell_thickness(shape.data[0])
     return None
