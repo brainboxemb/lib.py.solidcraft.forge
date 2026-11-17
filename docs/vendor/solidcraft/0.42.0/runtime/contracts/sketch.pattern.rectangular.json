@@ -1,0 +1,333 @@
+{
+  "id": "sketch.pattern.rectangular",
+  "input": {
+    "$defs": {
+      "Point2": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A sketch point in mm: [x, y] or {\"x\", \"y\"}."
+      },
+      "SketchTarget": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "The sketch: its feature id or its name (default: the one being edited)."
+      },
+      "StringList": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "type": "array"
+          }
+        ],
+        "description": "A name, or a list of names."
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "anyOf": [
+      {
+        "required": [
+          "pattern"
+        ]
+      },
+      {
+        "required": [
+          "entities",
+          "count",
+          "spacing"
+        ]
+      }
+    ],
+    "description": "Make copies of sketch curves and points in a grid, as an associative pattern: one row along\n`direction` (or `dir`) and, with `count2`, more rows along `direction2` (or `dir2`). The\ncopies follow the originals, and the pattern keeps its own constraints. Quantities include the\noriginal, at most 500 copies in all; a negative spacing reverses its direction. With\n`pattern`, edit the pattern that id names instead of making a new one: keys left out keep\ntheir values, surviving instance ids are kept, and the pattern's type cannot change. A changed\n`entities` list rebuilds every copy with fresh ids. One undo step.",
+    "properties": {
+      "alignment": {
+        "description": "Where the original stands along the first direction: `left`, `center` or `right`.\nDefault: right.",
+        "enum": [
+          "left",
+          "center",
+          "right"
+        ],
+        "type": "string"
+      },
+      "alignment2": {
+        "description": "The same along the second direction. Default: right.",
+        "enum": [
+          "left",
+          "center",
+          "right"
+        ],
+        "type": "string"
+      },
+      "count": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "How many along the first direction, the original included: a whole number from 1 to 500\nor a unitless expression. Left out only with `pattern`."
+      },
+      "count2": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "How many along the second direction, a whole number from 1 to 500 or a unitless\nexpression. Default: 1."
+      },
+      "dir": {
+        "$ref": "#/$defs/Point2",
+        "description": "The first direction as a vector [x, y] (finite, not zero; it is normalised). Default:\nsketch x."
+      },
+      "dir2": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Point2"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The second direction as a vector [x, y]. Default: perpendicular to the first."
+      },
+      "direction": {
+        "default": null,
+        "description": "A sketch line the first direction follows (a live reference), by id.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "direction2": {
+        "default": null,
+        "description": "A sketch line the second direction follows (a live reference), by id.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "entities": {
+        "$ref": "#/$defs/StringList",
+        "description": "The curves and points to copy, by id (one id is taken as a list of one). Left out only\nwith `pattern`."
+      },
+      "pattern": {
+        "default": null,
+        "description": "The id of an existing rectangular pattern to edit instead of making a new one.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "reversed": {
+        "description": "Reverse the placement along the first direction, and the extra side of an even total with\n`center`. Default: false.",
+        "type": "boolean"
+      },
+      "reversed2": {
+        "description": "The same along the second direction. Default: false.",
+        "type": "boolean"
+      },
+      "sketch": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SketchTarget"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The sketch (default: the one being edited)."
+      },
+      "spacing": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "The distance between copies along the first direction, in mm: a number or a length\nexpression. Left out only with `pattern`."
+      },
+      "spacing2": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "The distance between copies along the second direction, in mm. Default: `spacing`."
+      }
+    },
+    "title": "RectangularPatternParams",
+    "type": "object"
+  },
+  "label": "Rectangular Pattern",
+  "output": {
+    "$defs": {
+      "Created": {
+        "description": "What a command added to its sketch: the ids that the sketch has now and did not before.",
+        "properties": {
+          "constraints": {
+            "description": "Constraint ids, dimensions not among them.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "curves": {
+            "description": "Curve ids.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "dimensions": {
+            "description": "Dimension ids.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "points": {
+            "description": "Point ids.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "wires": {
+            "description": "The ids of 3D curves, when the command made any.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "points",
+          "curves",
+          "constraints",
+          "dimensions"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What the `sketch.pattern.*` commands return.",
+    "properties": {
+      "center": {
+        "description": "A circular pattern's centre point id; `null` for a rectangular one.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "constraints": {
+        "description": "The constraints of every instance.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "created": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Created"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Everything the call added to the sketch: `{points, curves, constraints, dimensions}`."
+      },
+      "curves": {
+        "description": "The curves of every instance.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "pattern": {
+        "description": "The pattern's id: give it as `pattern` to edit it.",
+        "type": "string"
+      },
+      "sketch": {
+        "description": "The sketch's solve: `{solved, dof}`."
+      }
+    },
+    "required": [
+      "pattern",
+      "center",
+      "curves",
+      "constraints",
+      "sketch"
+    ],
+    "title": "PatternResult",
+    "type": "object"
+  },
+  "params": "entities: [ids], count, spacing; count2?, spacing2?; counts: positive integer numbers or expressions, at most 500 instances total; spacings: length numbers or expressions; direction?, direction2?: sketch line ids (live references); dir?, dir2?: [x,y] vectors (defaults: sketch x, perpendicular to direction 1); alignment?, alignment2?: left|center|right (default right). Signed spacings reverse each direction. reversed?, reversed2?: bool (default false); reverses placement and the extra side of even centered totals. Quantities include the original. Adds associative pattern constraints. Returns pattern id. pattern?: existing pattern id to edit (omitted values retained; surviving instance ids retained). Returns created: {points, curves, constraints, dimensions}: the ids of what it added (stable and never reused: usable right away in sketch.dimension, sketch.constraint.*, sketch.delete…)"
+}
