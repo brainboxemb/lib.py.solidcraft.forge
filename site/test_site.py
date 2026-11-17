@@ -505,31 +505,48 @@ def check(
             site / "qualification" / slug / "index.html"
         ).read_text(encoding="utf-8")
         for heading in (
-            "1. Test setup",
-            "Test goal",
-            "Pass criteria",
-            "Case-specific Q1/Q2 evidence",
-            "Q5 applicability",
-            "2. Implementation under test",
-            "Public Forge API used",
-            "Forge model represented by this fixture",
-            "Reference implementations",
+            "What this example makes",
+            "Forge code",
+            "API used",
+            "How Forge builds it in SolidCraft",
+            "SolidCraft result",
+            "Reference code",
+            "Technical test details",
+            "Q1 and Q2 tests",
+            "Geometry checks",
+            "Saved-design test",
+            "Raw test files",
+            "Reference documentation",
             "PythonSCAD",
             "pyBOSL2",
             "CadQuery",
             "build123d",
-            "3. Generated SolidCraft relationship",
-            "6. Evidence and references",
         ):
             assert heading in page_text, (slug, heading)
+        for old_heading in (
+            "Case-specific Q1/Q2 evidence",
+            "Shared geometry contract",
+            "SolidCraft-only checks",
+            "Q5 applicability",
+            "Pass criteria",
+            "Implementation under test",
+            "Generated SolidCraft relationship",
+        ):
+            assert old_heading not in page_text, (slug, old_heading)
+        assert '<details class="panel qualification-technical-details">' in page_text, slug
+        assert '<details class="panel qualification-technical-details" open>' not in page_text, slug
         assert case["title"] in page_text
         for level in ("q1", "q2"):
             for target in evidence_for(slug, level):
                 assert target["file"] in page_text, (slug, level, target)
                 assert target["test"] in page_text, (slug, level, target)
         assert case["mutation"] in html.unescape(page_text), slug
-        q5_label = "Required." if case.get("q5_required") else "Not required."
-        assert q5_label in page_text, slug
+        saved_label = (
+            "Checked in the saved model."
+            if case.get("q5_required")
+            else "No saved-model change is required."
+        )
+        assert saved_label in page_text, slug
         setup_name = case.get("diagram", "setup.svg")
         setup_image = site / "qualification" / slug / setup_name
         assert setup_image.is_file() and setup_image.stat().st_size > 0, slug
@@ -537,10 +554,13 @@ def check(
         assert f'href="{setup_name}"' in page_text, slug
         assert 'target="_blank"' in page_text, slug
 
-        setup_pos = page_text.index("<h2>1. Test setup</h2>")
-        implementation_pos = page_text.index("<h2>2. Implementation under test</h2>")
-        command_pos = page_text.index("<h2>3. Generated SolidCraft relationship</h2>")
-        assert setup_pos < implementation_pos < command_pos, slug
+        model_pos = page_text.index("<h2>What this example makes</h2>")
+        forge_pos = page_text.index("<h2>Forge code</h2>")
+        solidcraft_pos = page_text.index("<h2>How Forge builds it in SolidCraft</h2>")
+        result_pos = page_text.index("<h2>SolidCraft result</h2>")
+        reference_pos = page_text.index("<h2>Reference code</h2>")
+        technical_pos = page_text.index("Technical test details")
+        assert model_pos < forge_pos < solidcraft_pos < result_pos < reference_pos < technical_pos, slug
 
         for placeholder in (
             "$title",
@@ -558,14 +578,13 @@ def check(
         rendered_proof = json.loads(proof_path.read_text(encoding="utf-8"))
         assert rendered_proof == proof_contract(slug), slug
         assert qualification_manifest["cases"][slug]["proof_contract"] == rendered_proof
-        assert "Shared geometry contract" in page_text, slug
-        assert "SolidCraft-only checks" in page_text, slug
-        assert "Bounds sufficient?" in page_text, slug
+        assert "Geometry checks" in page_text, slug
+        assert "Is the size check enough for this model?" in page_text, slug
         assert html.escape(rendered_proof["geometry"]["bounds_reason"]) in page_text, slug
         assert 'class="qualification-table-scroll"' in page_text, slug
         geometry = rendered_proof["geometry"]
         if geometry.get("visual_features") or geometry.get("surface_distance_probes"):
-            assert "Show full geometry proof details" in page_text, slug
+            assert "Show all geometry check points" in page_text, slug
             assert '<details class="qualification-detail-block qualification-proof-details">' in page_text, slug
         reference_names = reference_implementations_for(case)
         for implementation in reference_names:
@@ -573,7 +592,7 @@ def check(
             assert (site / "qualification" / slug / source_name).is_file()
             assert f'href="{source_name}"' in page_text
             assert REFERENCE_IMPLEMENTATION_LABELS[implementation] in page_text
-        assert "Rendered comparison" in page_text
+        assert "Reference code" in page_text
         assert "qualification-reference-list" in page_text
         assert page_text.count("qualification-reference-row") == len(reference_names)
         assert (site / "qualification" / slug / "commands.json").is_file()
@@ -602,7 +621,7 @@ def check(
                     slug,
                     implementation,
                 )
-                assert "Reference geometry checks" in page_text, (
+                assert "Reference result checks" in page_text, (
                     slug,
                     implementation,
                 )

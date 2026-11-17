@@ -458,6 +458,22 @@ def _qualification_status(result):
     return labels.get(overall_state, overall_state.upper()), " · ".join(details)
 
 
+def _qualification_badge_html(overall):
+    status_class = {
+        "PASS": "pass",
+        "FAIL": "fail",
+        "REVIEW": "review",
+        "INCOMPLETE": "incomplete",
+        "NOT RUN": "not-run",
+        "BLOCKED": "blocked",
+    }.get(overall, "incomplete")
+    return (
+        '<div class="qualification-status-line">'
+        f'<span class="qualification-status {status_class}">{escape(overall)}</span>'
+        '</div>'
+    )
+
+
 def _qualification_status_html(overall, detail):
     status_class = {
         "PASS": "pass",
@@ -524,7 +540,7 @@ def _render_case_test_evidence(slug, result, source_sha):
             for name in level_result.get("evidence", [])
         )
         evidence_html = (
-            f'<div class="meta">Run evidence: {evidence_links}</div>'
+            f'<div class="meta">Test run files: {evidence_links}</div>'
             if evidence_links
             else ""
         )
@@ -538,14 +554,12 @@ def _render_case_test_evidence(slug, result, source_sha):
 
     return (
         '<div class="qualification-case-test-evidence">'
-        '<h3>Case-specific Q1/Q2 evidence</h3>'
-        '<p>These tests are the evidence for this case. The full global '
-        'test suites remain regression gates but do not create a per-case PASS.</p>'
+        '<h3>Q1 and Q2 tests</h3>'
+        '<p>These are the exact automated tests used for this example.</p>'
         '<ul>'
         + "".join(rows)
         + '</ul></div>'
     )
-
 
 def _image_sort_key(name):
     if name == "model.png":
@@ -618,48 +632,34 @@ def _render_visual_evidence(case, native_images, native_case=None):
         result_path = native_case / "visual-validation.json"
         if result_path.is_file():
             result = json.loads(result_path.read_text(encoding="utf-8"))
-            regression_status = result.get(
-                "regression",
-                {},
-            ).get("status", "missing")
-            expected_status = result.get(
-                "expected_shape",
-                {},
-            ).get("status", "missing")
+            render_status = result.get("regression", {}).get("status", "missing")
+            shape_status = result.get("expected_shape", {}).get("status", "missing")
             status_html = (
-                '<p class="meta"><strong>Q6 evidence:</strong> '
-                f'expected shape {escape(expected_status.upper())}; '
-                f'render regression {escape(regression_status.upper())}. '
-                'Both must pass for Q6 PASS.</p>'
+                '<p class="meta"><strong>Image checks:</strong> '
+                f'expected shape {escape(shape_status.upper())}; '
+                f'saved render {escape(render_status.upper())}.</p>'
             )
 
     extra = (
         '<details class="qualification-extra-views">'
-        '<summary>Additional render-regression views</summary>'
+        '<summary>Show extra saved-render views</summary>'
         + regression_only
         + '</details>'
         if regression_only
         else ""
     )
-    required_labels = ", ".join(
-        view.title()
-        for view in required_views
-    )
+    required_labels = ", ".join(view.title() for view in required_views)
     return (
         '<section class="panel qualification-visual-check">'
-        '<h2>5. Visual verification</h2>'
-        '<p class="meta">The required views below are chosen for this case. '
-        'Goal is the independently declared expected shape; red outlines mark '
-        'declared internal holes/slots where applicable. Overlay puts that '
-        'expectation over the actual SolidCraft render.</p>'
-        f'<p class="meta"><strong>Required expected-shape views:</strong> '
-        f'{escape(required_labels)}</p>'
+        '<h2>Visual result</h2>'
+        '<p>Actual is the SolidCraft render. Goal shows the expected shape. '
+        'Overlay places both on top of each other so differences are easy to see.</p>'
+        f'<p class="meta"><strong>Views checked:</strong> {escape(required_labels)}</p>'
         + status_html
         + required
         + extra
         + '</section>'
     )
-
 
 def _image_caption(name):
     if name == "model.png":
@@ -724,20 +724,20 @@ def _render_proof_contract(slug):
         "</tr>"
         for body in geometry["bounds"]
     )
-    sufficiency = "Yes" if geometry["bounds_sufficient"] else "No"
+    sufficient = "Yes" if geometry["bounds_sufficient"] else "No"
     visual_features = geometry.get("visual_features", ())
     probes = geometry.get("surface_distance_probes", ())
 
     summary = [
-        "<li><strong>Bounds sufficient?</strong> "
-        f"{escape(sufficiency)} — {escape(geometry['bounds_reason'])}</li>",
-        "<li><strong>Required views:</strong> "
+        "<li><strong>Is the size check enough for this model?</strong> "
+        f"{escape(sufficient)} — {escape(geometry['bounds_reason'])}</li>",
+        "<li><strong>Views checked:</strong> "
         + escape(", ".join(geometry["required_views"]))
         + "</li>",
     ]
     if visual_features:
         summary.append(
-            f"<li><strong>Internal features:</strong> {len(visual_features)} declared</li>"
+            f"<li><strong>Internal features checked:</strong> {len(visual_features)}</li>"
         )
     if "volume_mm3" in geometry:
         summary.append(
@@ -747,35 +747,33 @@ def _render_proof_contract(slug):
         )
     if "watertight" in geometry:
         summary.append(
-            f"<li><strong>Watertight:</strong> {escape(geometry['watertight'])}</li>"
+            f"<li><strong>Closed solid expected:</strong> {escape(geometry['watertight'])}</li>"
         )
     if probes:
         summary.append(
-            f"<li><strong>3D probes:</strong> {len(probes)} declared</li>"
+            f"<li><strong>Surface points checked:</strong> {len(probes)}</li>"
         )
 
     detail_sections = []
     if visual_features:
         feature_items = "".join(
             "<li>"
-            f"<strong>{escape(feature['label'])}</strong> "
-            f"(<code>{escape(feature['type'])}</code>): "
+            f"<strong>{escape(feature['label'])}</strong>: "
             + (
-                f"center <code>{escape(feature['center'])}</code>, "
+                f"centre <code>{escape(feature['center'])}</code>, "
                 f"diameter {escape(feature['diameter'])} mm, "
                 f"Z <code>{escape(feature['z'])}</code>"
                 if feature["type"] == "through_hole"
                 else
                 f"width {escape(feature['width'])} mm, "
-                f"centerline points {escape(len(feature['centerline']))}, "
+                f"{escape(len(feature['centerline']))} centre-line points, "
                 f"Z <code>{escape(feature['z'])}</code>"
             )
             + "</li>"
             for feature in visual_features
         )
         detail_sections.append(
-            "<h4>Declared internal visual features</h4><ul>"
-            + feature_items + "</ul>"
+            "<h4>Internal features</h4><ul>" + feature_items + "</ul>"
         )
     if probes:
         probe_items = "".join(
@@ -787,13 +785,13 @@ def _render_proof_contract(slug):
             for probe in probes
         )
         detail_sections.append(
-            "<h4>3D surface-distance probes</h4><ul>"
+            "<h4>Surface measurement points</h4><ul>"
             + probe_items + "</ul>"
         )
 
     detail_html = (
         '<details class="qualification-detail-block qualification-proof-details">'
-        '<summary>Show full geometry proof details</summary>'
+        '<summary>Show all geometry check points</summary>'
         + "".join(detail_sections)
         + "</details>"
         if detail_sections else ""
@@ -806,7 +804,7 @@ def _render_proof_contract(slug):
         f"<tbody>{rows}</tbody></table></div>"
         '<ul class="qualification-proof-summary">' + "".join(summary) + "</ul>"
         + detail_html
-        + '<p class="meta"><a href="proof-contract.json">Open machine-readable proof contract →</a></p>'
+        + '<p class="meta"><a href="proof-contract.json">Open geometry check data →</a></p>'
         "</div>"
     )
 
@@ -824,23 +822,23 @@ def _render_reference_checks(result):
             expected = check.get("expected")
             actual = check.get("actual")
             detail = (
-                f"max delta {check.get('max_delta_mm')} mm; "
-                f"tolerance {check.get('tolerance_mm')} mm"
+                f"max difference {check.get('max_delta_mm')} mm; "
+                f"allowed {check.get('tolerance_mm')} mm"
             )
         elif name == "watertight":
             expected = check.get("expected")
             actual = check.get("actual")
-            detail = "closed mesh check"
+            detail = "closed mesh"
         elif name == "volume":
             expected = f"{check.get('expected_mm3')} mm³"
             actual = f"{check.get('actual_mm3')} mm³"
             detail = (
-                f"delta {check.get('delta_mm3')} mm³; "
-                f"tolerance {check.get('tolerance_mm3')} mm³"
+                f"difference {check.get('delta_mm3')} mm³; "
+                f"allowed {check.get('tolerance_mm3')} mm³"
             )
         elif name == "surface_distance_probes":
             probes = check.get("probes", [])
-            expected = f"{len(probes)} declared 3D probe distances"
+            expected = f"{len(probes)} surface measurements"
             actual = (
                 f"{sum(row.get('status') == 'pass' for row in probes)}/"
                 f"{len(probes)} within tolerance"
@@ -849,7 +847,7 @@ def _render_reference_checks(result):
                 (float(row.get("delta_mm", 0.0)) for row in probes),
                 default=0.0,
             )
-            detail = f"largest probe delta {worst:g} mm"
+            detail = f"largest difference {worst:g} mm"
         else:
             expected = check.get("expected", "—")
             actual = check.get("actual", "—")
@@ -870,7 +868,7 @@ def _render_reference_checks(result):
     overall = "PASS" if passed == len(checks) else "CHECK"
     return (
         '<details class="qualification-reference-checks qualification-detail-block">'
-        f'<summary>Reference geometry checks · {escape(overall)} · '
+        f'<summary>Reference result checks · {escape(overall)} · '
         f'{passed}/{len(checks)} passed</summary>'
         '<div class="qualification-table-scroll">'
         '<table><thead><tr><th>Check</th><th>Status</th>'
@@ -882,8 +880,8 @@ def _render_native_results(native_case, solidcraft_version):
     measurement_files = sorted(native_case.glob("measurements*.json"))
     if not measurement_files:
         return (
-            '<section class="panel"><h2>4. Machine verification</h2>'
-            '<p>No measurement JSON was produced.</p></section>',
+            '<section class="panel"><h2>SolidCraft result</h2>'
+            '<p>No saved-model measurements were produced.</p></section>',
             None,
             None,
         )
@@ -895,7 +893,7 @@ def _render_native_results(native_case, solidcraft_version):
     for measurement in measurement_files:
         data = json.loads(measurement.read_text(encoding="utf-8"))
         label = (
-            "Baseline"
+            "Original model"
             if measurement.name == "measurements.json"
             else measurement.stem.replace("measurements-", "").replace("-", " ")
         )
@@ -912,9 +910,9 @@ def _render_native_results(native_case, solidcraft_version):
             for row in params
         )
         parameter_table = (
-            '<h4>Parameters</h4><table><thead><tr><th>Name</th><th>Value</th>'
+            '<h4>Editable parameters</h4><table><thead><tr><th>Name</th><th>Value</th>'
             f'</tr></thead><tbody>{parameter_rows}</tbody></table>'
-            if parameter_rows else "<p>No editable parameters in this result.</p>"
+            if parameter_rows else "<p>This result has no editable parameters.</p>"
         )
 
         body_rows = "".join(
@@ -925,24 +923,23 @@ def _render_native_results(native_case, solidcraft_version):
             if body.get("bbox")
         )
         body_table = (
-            '<h4>Bodies</h4><table><thead><tr><th>Body</th><th>BBox min</th>'
-            f'<th>BBox max</th></tr></thead><tbody>{body_rows}</tbody></table>'
-            if body_rows else "<p>No body measurements in this result.</p>"
+            '<h4>Body size</h4><table><thead><tr><th>Body</th><th>Minimum</th>'
+            f'<th>Maximum</th></tr></thead><tbody>{body_rows}</tbody></table>'
+            if body_rows else "<p>No body measurements were recorded.</p>"
         )
 
         sections.append(
-            f'<details{" open" if measurement.name == "measurements.json" else ""}>'
+            '<details class="qualification-detail-block">'
             f'<summary><strong>{escape(label)}</strong> · '
-            f'{escape(data.get("body_count", len(bodies)))} bodies · '
-            f'<a href="{escape(measurement.name)}">{escape(measurement.name)}</a>'
-            f'</summary>{parameter_table}{body_table}</details>'
+            f'{escape(data.get("body_count", len(bodies)))} bodies</summary>'
+            f'{parameter_table}{body_table}</details>'
         )
 
     return (
-        '<section class="panel"><h2>4. Machine verification</h2>'
-        f'<p class="meta">Native runtime: <strong>SolidCraft '
-        f'{escape(solidcraft_version)}</strong>. These values come from the '
-        'saved native design, not from Python-side estimates.</p>'
+        '<section class="panel"><h2>SolidCraft result</h2>'
+        f'<p>Built and measured with <strong>SolidCraft '
+        f'{escape(solidcraft_version)}</strong>. Open the measurement details '
+        'to inspect body sizes and editable parameters.</p>'
         + "".join(sections)
         + _render_validation_checks(native_case)
         + "</section>",
@@ -2025,21 +2022,19 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         body_count = None
         parameter_count = None
         results_html = (
-            '<section class="panel"><h2>3. Results</h2>'
-            '<div class="notice">Native result data was not supplied to this '
-            'site build. Run the native qualification for measured results.</div>'
-            '</section>'
+            '<section class="panel"><h2>SolidCraft result</h2>'
+            '<div class="notice">No native SolidCraft result was supplied to this '
+            'site build.</div></section>'
         )
         preview_html = (
-            '<div class="notice">No source-matched native verification was supplied '
-            'to this site build. The case sheet and command contract are still shown.</div>'
+            '<div class="notice">No native SolidCraft render was supplied to this site build.</div>'
         )
         case_preview_html = ""
         status = "BLOCKED" if blocked_reason else "NOT RUN"
         status_detail = blocked_reason or "Q1 Q2 documented"
         if blocked_reason:
             results_html = (
-                '<section class="panel"><h2>3. Results</h2>'
+                '<section class="panel"><h2>SolidCraft result</h2>'
                 '<div class="notice"><strong>BLOCKED</strong><p>'
                 + escape(blocked_reason)
                 + '</p><p>Forge stops before generating SolidCraft commands for '
@@ -2167,7 +2162,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         case_body = render_template(
             "case.html",
             title=escape(case["title"]),
-            status_badge=_qualification_status_html(status, status_detail),
+            status_badge=_qualification_badge_html(status),
+            technical_status=_qualification_status_html(status, status_detail),
             case_preview=case_preview_html,
             setup_diagram=diagram_html,
             intent=escape(case["intent"]),
@@ -2183,9 +2179,9 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             lowering=escape(case["lowering"]),
             native_expectation=escape(case["native_expectation"]),
             mutation_criterion=(
-                '<h3>Q5 applicability</h3><p><strong>'
-                + ("Required." if case.get("q5_required") else "Not required.")
-                + '</strong> ' + escape(case["mutation"]) + '</p>'
+                '<h3>Saved-design test</h3><p><strong>'
+                + ("Checked in the saved model. " if case.get("q5_required") else "No saved-model change is required. ")
+                + escape(case["mutation"]) + '</p>'
             ),
             mutation=escape(case["mutation"]),
             evidence_items="".join(evidence_items),
