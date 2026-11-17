@@ -152,6 +152,27 @@ def check(
     ).read_text(encoding="utf-8")
     assert "Detailed parameter reference" in geometry_guide
 
+    for spec in METHOD_REFERENCES:
+        signature = inspect.signature(spec["object"])
+        expected_parameters = {
+            name
+            for name, parameter in signature.parameters.items()
+            if name != "self"
+            and parameter.kind not in {
+                inspect.Parameter.VAR_POSITIONAL,
+                inspect.Parameter.VAR_KEYWORD,
+            }
+        }
+        documented_parameters = {
+            row["name"] for row in spec["parameters"]
+        }
+        assert documented_parameters == expected_parameters, (
+            spec["slug"],
+            documented_parameters,
+            expected_parameters,
+        )
+        assert spec["example"], spec["slug"]
+
     assert not unmapped_public_exports()
     assert set(export_reference_targets()) == set(scpf.__all__)
 

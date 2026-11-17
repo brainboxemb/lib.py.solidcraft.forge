@@ -457,6 +457,9 @@ class ModelInstance:
     def group(self, name):
         """Place this occurrence in a named native subassembly component.
 
+        Parameters:
+            name: Native group/subassembly name.
+
         Use when:
             Give one occurrence a useful native browser/subassembly parent.
 
@@ -464,6 +467,9 @@ class ModelInstance:
             Grouping changes hierarchy only. It does not align, attach or
             otherwise create a mechanical relationship. One occurrence cannot
             belong to several different groups.
+
+        Example:
+            grouped = bracket.group("Mounting brackets")
         """
         if not isinstance(name, str) or not name.strip():
             raise ValueError("group name must be non-empty text")
@@ -474,9 +480,18 @@ class ModelInstance:
     def copy(self, *, name=None, placement=None):
         """Create another occurrence of the same reusable definition.
 
-        The copy inherits the source Placement unless placement= is supplied.
-        Attachment state is occurrence-specific and is not inherited. name=
-        optionally gives the new occurrence an explicit Forge object name.
+        Parameters:
+            name: Optional explicit Forge name for the new occurrence.
+            placement: Optional absolute Placement for the new occurrence. When omitted, the source placement is inherited.
+
+        Use when:
+            Reuse one component definition for another physical occurrence.
+
+        Limits:
+            Attachment state is occurrence-specific and is not copied.
+
+        Example:
+            right = left.copy(name="right", placement=Placement(x=160))
         """
         if placement is not None and not isinstance(placement, Placement):
             raise TypeError("copy placement must be a Placement")
@@ -490,7 +505,16 @@ class ModelInstance:
 
     def attach(self, target, *, parent=Anchor.RIGHT, child=Anchor.LEFT,
                offset=(0, 0), gap=0, angle=None, as_built=False):
-        """Create a rigid relationship from this occurrence to another component.
+        """Create a rigid or planar relationship from this occurrence to another component.
+
+        Parameters:
+            target: Parent component occurrence to attach to.
+            parent: Attachment reference on target. Defaults to Anchor.RIGHT.
+            child: Attachment reference on this occurrence. Defaults to Anchor.LEFT.
+            offset: In-plane (u, v) offset on the parent attachment plane, in mm. Defaults to (0, 0).
+            gap: Separation along the parent anchor normal, in mm. Defaults to 0.
+            angle: Optional joint rotation in degrees.
+            as_built: When True, keep the occurrences at their existing poses and create an as-built rigid joint.
 
         Use when:
             Placement should be expressed semantically between component
@@ -501,8 +525,11 @@ class ModelInstance:
             The target must be another component occurrence. Supported standard
             anchors currently focus on rectangular component geometry; custom
             AnchorFrame/AnchorTopology references cover more specific datums.
-            as_built=True records the existing pose and takes no anchor/offset
-            relationship arguments.
+            as_built=True requires all other relationship arguments to remain
+            at their defaults.
+
+        Example:
+            right = right.attach(left, parent=Anchor.RIGHT, child=Anchor.LEFT, gap=2)
         """
         if not isinstance(target, ModelInstance):
             raise TypeError("component attach target must be another model object")
@@ -626,6 +653,9 @@ class Assembly:
     def group(self, name):
         """Wrap these assembly occurrences in a real nested native component.
 
+        Parameters:
+            name: Native subassembly/browser component name.
+
         Use when:
             The collection should appear as one named subassembly/browser unit
             in SolidCraft.
@@ -633,6 +663,9 @@ class Assembly:
         Limits:
             Grouping changes native hierarchy, not placement or relationships.
             Use attach() for mechanical relationships between occurrences.
+
+        Example:
+            frame = (left + right).group("Frame")
         """
         grouped = tuple(instance.group(name) for instance in self.instances)
         remap = {
@@ -680,14 +713,22 @@ class Assembly:
     def with_anchor(self, name, target, reference, *, offset=(0, 0)):
         """Expose one named attachment datum owned by this assembly.
 
+        Parameters:
+            name: Public name for the assembly-owned attachment datum.
+            target: Component occurrence in this Assembly that owns the real attachment reference.
+            reference: Anchor, named component anchor, AnchorFrame or AnchorTopology on target.
+            offset: Optional in-plane (u, v) correction passed through when attaching, in mm.
+
         Use when:
             A mounting/reference name belongs to the meaning of the larger
             assembly rather than to the generic reusable component itself.
 
         Limits:
-            target must be an occurrence already in this Assembly. offset is an
-            optional in-plane correction to pass through to attach(); this does
-            not create the attachment by itself.
+            target must already belong to this Assembly. with_anchor() exposes a
+            reference; it does not create an attachment by itself.
+
+        Example:
+            frame = (left + right).with_anchor("front_mount", left, Anchor.FRONT_TOP_LEFT)
         """
         if not isinstance(name, str) or not name.strip():
             raise ValueError("assembly anchor name must be non-empty text")
@@ -719,12 +760,18 @@ class Assembly:
     def anchor(self, name):
         """Return one named assembly-owned attachment datum.
 
+        Parameters:
+            name: Name previously registered with with_anchor().
+
         Use when:
             A consumer needs the target/reference pair previously exposed with
             with_anchor() in order to create an attachment.
 
         Limits:
             The name must resolve to exactly one assembly-owned anchor.
+
+        Example:
+            mount = frame.anchor("front_mount")
         """
         matches = [anchor for anchor_name, anchor in self.anchors
                    if anchor_name == name]

@@ -963,6 +963,10 @@ def _shape_contains(root, needle):
 class Shape:
     """Represent Forge geometry/feature intent before SolidCraft executes it.
 
+    Parameters:
+        kind: Forge node type. Public constructors set this; normal model code should not invent kind values.
+        data: Data stored for that node type. Public constructors and methods build this payload.
+
     Use when:
         Shape values are normally returned by constructors such as Box(),
         Cylinder(), Hole() and Sketch.extrude(), then transformed or combined
@@ -972,6 +976,9 @@ class Shape:
         Shape is Forge's model-intent node, not a second geometry kernel.
         SolidCraft owns the final BRep and native feature history; users normally
         do not instantiate Shape(kind, data) directly.
+
+    Example:
+        body = Box(80, 50, 12)
     """
 
     kind: str
@@ -1093,6 +1100,10 @@ class Shape:
     def shell(self, thickness, *, open=Faces.TOP):
         """Hollow a supported solid and leave selected Faces open.
 
+        Parameters:
+            thickness: Wall thickness in mm.
+            open: Face to remove, or a non-empty sequence of Faces values. Defaults to Faces.TOP.
+
         Use when:
             Create an enclosure-like body with an even wall thickness while
             removing one or more named planar faces.
@@ -1100,6 +1111,9 @@ class Shape:
         Limits:
             open= must be one Faces value or a non-empty sequence of Faces
             values. Support still depends on the underlying feature tree.
+
+        Example:
+            Box(80, 50, 30).shell(2, open=Faces.TOP)
         """
         _pv(thickness)
         if isinstance(open, Faces):
@@ -1128,15 +1142,26 @@ class Shape:
     def at(self, x=0, y=0, z=0, *, anchor=Anchor.CENTER, child=Anchor.CENTER):
         """Place a shape at absolute coordinates or align it to another Shape.
 
+        Parameters:
+            x: Absolute X coordinate in mm, or a target Shape for shape-to-shape alignment.
+            y: Absolute Y coordinate in mm. Leave at 0 when x is a target Shape.
+            z: Absolute Z coordinate in mm. Leave at 0 when x is a target Shape.
+            anchor: Datum on this primitive that is placed at the requested coordinate. Defaults to Anchor.CENTER.
+            child: Child datum for shape-to-shape alignment. Currently only Anchor.CENTER is supported.
+
         Use when:
-            Use shape.at(x, y, z) for geometric placement. A Box may additionally
-            use a cardinal anchor. Use shape.at(target) for the supported
-            shape-to-shape CENTER alignment.
+            Use shape.at(x, y, z) for geometric placement. A Box, Cylinder or
+            Sphere may use a cardinal anchor. Use shape.at(target) for the
+            supported shape-to-shape CENTER alignment.
 
         Limits:
             Shape-to-shape alignment currently supports CENTER-to-CENTER only.
             at() is geometric placement/alignment; selecting a support face for
             a feature is the job of Shape.on().
+
+        Example:
+            pin = Cylinder(d=8, h=20, axis=Axis.X).at(10, 0, 5, anchor=Anchor.LEFT)
+            centered = Sphere(5).at(body)
         """
         if isinstance(x, Shape):
             if y != 0 or z != 0:
@@ -1200,7 +1225,24 @@ class Shape:
         )
 
     def repeat_linear(self, *, count, spacing, axis):
-        """Repeat a Hole or Cylinder before native feature lowering."""
+        """Repeat a Hole or Cylinder in one centred linear row.
+
+        Parameters:
+            count: Number of repeated features. Must be a positive integer.
+            spacing: Centre-to-centre distance between adjacent features, in mm.
+            axis: Pattern direction. Currently Axis.X or Axis.Y.
+
+        Use when:
+            Repeat a Hole or Cylinder before placing it on a supported parent
+            face. The row is centred around the feature placement point.
+
+        Limits:
+            Only Hole and Cylinder are supported. count must be a fixed positive
+            integer and spacing must be positive.
+
+        Example:
+            Hole(d=8).repeat_linear(count=3, spacing=24, axis=Axis.X)
+        """
         if self.kind not in ("cylinder", "hole"):
             raise ValueError("repeat_linear() supports Cylinder or Hole")
         if not isinstance(count, int) or isinstance(count, bool) or count < 1:
@@ -1230,7 +1272,32 @@ class Shape:
         reversed=False,
         reversed2=False,
     ):
-        """Pattern an existing native history feature in one or two directions."""
+        """Pattern an existing native history feature in one or two directions.
+
+        Parameters:
+            feature: Existing Sketch.extrude() feature already applied to this Shape, or a non-empty sequence of such features.
+            count: Number of instances in the first direction. Use a positive integer or direct Parameter.
+            spacing: Instance spacing in the first direction, in mm.
+            direction: First pattern direction as Axis.X/Y/Z or a non-zero XYZ vector. Defaults to Axis.X.
+            count2: Optional instance count for the second direction.
+            spacing2: Optional spacing for the second direction, in mm.
+            direction2: Second pattern direction as Axis.X/Y/Z or a non-zero XYZ vector. Defaults to Axis.Y.
+            alignment: First-direction native alignment: "left", "center" or "right". Defaults to "right".
+            alignment2: Second-direction native alignment: "left", "center" or "right". Defaults to "right".
+            reversed: Reverse the first native pattern direction. Defaults to False.
+            reversed2: Reverse the second native pattern direction. Defaults to False.
+
+        Use when:
+            Repeat an already-created native sketch extrusion while keeping one
+            editable SolidCraft rectangular-pattern history feature.
+
+        Limits:
+            The source feature must already be part of this Shape. Supplying a
+            second direction requires both count2 and spacing2.
+
+        Example:
+            plate.rectangular_pattern(cut, count=3, spacing=24, direction=Axis.X, count2=2, spacing2=28)
+        """
         if isinstance(feature, Shape):
             sources = (feature,)
         elif isinstance(feature, (tuple, list)) and feature:
@@ -1290,6 +1357,11 @@ class Shape:
     def on(self, target, *, face=Faces.TOP, offset=(0, 0)):
         """Place a supported within-component feature on a target face.
 
+        Parameters:
+            target: Existing Shape that receives the feature.
+            face: Target surface. Currently Faces.TOP or Faces.BOTTOM. Defaults to Faces.TOP.
+            offset: In-plane (x, y) offset from the target face centre, in mm. Defaults to (0, 0).
+
         Use when:
             Put a Hole or another supported feature on an existing Shape and
             select its entry/support surface with Faces.
@@ -1298,6 +1370,9 @@ class Shape:
             Shape.on() currently accepts Faces.TOP and Faces.BOTTOM. This is
             feature placement; component assembly attachment uses Anchor and
             the component occurrence attach() API.
+
+        Example:
+            Hole(d=8).on(plate, face=Faces.TOP, offset=(20, 0))
         """
         try:
             face = Faces(face)
@@ -1315,6 +1390,12 @@ class Shape:
                offset=(0, 0)):
         """Anchor a supported feature explicitly to another Shape.
 
+        Parameters:
+            target: Existing parent Shape that receives the feature.
+            parent: Anchor on the target Shape. Defaults to Anchor.TOP.
+            child: Anchor on the feature being placed. Defaults to Anchor.BOTTOM.
+            offset: In-plane (x, y) offset on the parent anchor surface, in mm. Defaults to (0, 0).
+
         Use when:
             Use this lower-level feature-placement form when parent/child
             Anchor references are required explicitly.
@@ -1323,6 +1404,9 @@ class Shape:
             This is legacy within-component feature anchoring. Prefer on() for
             simple face placement. It is separate from component occurrence
             attachment used by assemblies.
+
+        Example:
+            Boss(d=7, h=12).attach(case, parent=Anchor.INNER_BOTTOM, offset=(10, 10))
         """
         return self._anchor_to(target, parent, child, offset)
 
