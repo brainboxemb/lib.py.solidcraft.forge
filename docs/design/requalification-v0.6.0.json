@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "release": "0.6.0",
+  "tag": "v0.6.0",
+  "release_commit": "d0cadaa9af5952979d689b4b19184ff89a0da18b",
+  "corrected_qualification_commit": "7ae925fd4bb0541f78a97a4710144043de117f9a",
+  "workflow_run_id": 44042448381,
+  "qualification_artifact": {
+    "id": 14309587952,
+    "name": "scpf-qualification-7ae925fd4bb0541f78a97a4710144043de117f9a"
+  },
+  "qualified_at": "2026-11-17T07:58:39Z",
+  "solidcraft_version": "0.42.0",
+  "result": {
+    "cases": 24,
+    "overall": {
+      "pass": 24
+    },
+    "q1": {
+      "pass": 24
+    },
+    "q2": {
+      "pass": 24
+    },
+    "q3": {
+      "pass": 24
+    },
+    "q4": {
+      "pass": 24
+    },
+    "q5": {
+      "pass": 14,
+      "not-required": 10
+    },
+    "q6": {
+      "pass": 24
+    },
+    "q6_expected_shape": {
+      "pass": 24
+    },
+    "q6_render_regression": {
+      "pass": 24
+    }
+  },
+  "runtime_equivalence": {
+    "conclusion": "same executable Forge modelling/lowering/replay behaviour as tagged v0.6.0",
+    "post_tag_package_code_commits": [
+      {
+        "commit": "33e3172f7f45e5a69b941e1a4e44f6120f16433d",
+        "pull_request": 235,
+        "classification": "docstrings/examples only"
+      }
+    ],
+    "changed_package_files": [
+      "scpf/scpf/compiler.py",
+      "scpf/scpf/core.py",
+      "scpf/scpf/explicit_sketch.py",
+      "scpf/scpf/model_objects.py",
+      "scpf/scpf/runner.py"
+    ],
+    "verification": "For every changed package file, source outside complete triple-quoted strings is identical between the tagged release commit and corrected qualification commit."
+  },
+  "discrepancies": {
+    "forge_runtime": [],
+    "geometry": [],
+    "api_semantics": [],
+    "qualification_evidence": [
+      "Independent reference and internal-geometry evidence was incomplete.",
+      "Q1/Q2 PASS was not case-specific.",
+      "Q5 applicability missed editable simple-box and rectangular-pattern behaviour.",
+      "Q6 expected-shape evidence was weaker than the public PASS wording implied.",
+      "Coverage metadata contained stale/non-existent evidence references."
+    ]
+  },
+  "corrective_release_required": false,
+  "downstream_action": "Pin CAD repository to exact v0.6.0 release commit and require CAD command-plan/native CI to pass."
+}
