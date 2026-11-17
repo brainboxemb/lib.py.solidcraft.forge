@@ -19,10 +19,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from qualification.cases import QUALIFICATION_CASES
+from qualification.geometry_contracts import geometry_contract
 from qualification.native_cases import mutation_spec
 
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 
 def _read_tsv(path: Path, key: str = "case") -> dict[str, dict[str, str]]:
@@ -140,6 +141,12 @@ def collect(
         mutation = mutation_rows.get(slug)
         validation = validation_rows.get(slug, {})
         visual = visual_rows.get(slug, {})
+        visual_detail_path = case_dir / "visual-validation.json"
+        visual_detail = (
+            json.loads(visual_detail_path.read_text(encoding="utf-8"))
+            if visual_detail_path.is_file()
+            else {}
+        )
         mutation_required = bool(case.get("q5_required", False))
 
         images = _existing_names(case_dir, ("*.png",))
@@ -206,7 +213,34 @@ def collect(
             q5_status = "not-required"
 
         q6_status = visual.get("status", "MISSING").lower()
-        if q6_status not in {"pass", "fail", "review"}:
+        visual_detail_status = str(
+            visual_detail.get("status", "missing")
+        ).lower()
+        regression_status = str(
+            visual_detail.get("regression", {}).get("status", "missing")
+        ).lower()
+        expected_shape_status = str(
+            visual_detail.get("expected_shape", {}).get("status", "missing")
+        ).lower()
+        required_views = visual_detail.get(
+            "expected_shape",
+            {},
+        ).get(
+            "required_views",
+            geometry_contract(slug)["required_views"],
+        )
+        if (
+            q6_status not in {"pass", "fail", "review"}
+            or visual_detail_status != q6_status
+        ):
+            q6_status = "missing"
+        elif (
+            q6_status == "pass"
+            and (
+                regression_status != "pass"
+                or expected_shape_status != "pass"
+            )
+        ):
             q6_status = "missing"
 
         levels = {
@@ -258,11 +292,17 @@ def collect(
             },
             "q6": {
                 "status": q6_status,
+                "regression_status": regression_status,
+                "expected_shape_status": expected_shape_status,
+                "required_views": required_views,
                 "images": images,
                 "evidence": [
-                    name for name in native_files
+                    name
+                    for name in native_files
                     if name == "visual-validation.json"
                     or name.startswith("visual-diff-")
+                    or name.startswith("goal-")
+                    or name.startswith("overlay-")
                 ],
             },
         }

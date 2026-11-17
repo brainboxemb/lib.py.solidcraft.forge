@@ -685,6 +685,19 @@ def check(
             ):
                 assert required_image in native_images, (slug, required_image)
 
+            geometry = proof_contract(slug)["geometry"]
+            for view in geometry["required_views"]:
+                for prefix in ("model", "goal", "overlay"):
+                    required_image = f"{prefix}-{view}.png"
+                    assert required_image in native_images, (
+                        slug,
+                        required_image,
+                    )
+                    assert f'href="{required_image}"' in page_text, (
+                        slug,
+                        required_image,
+                    )
+
             assert "<h2>1. Test setup</h2>" in page_text, slug
             assert "<h3>Test goal</h3>" in page_text, slug
             assert "<h3>Pass criteria</h3>" in page_text, slug
@@ -720,6 +733,40 @@ def check(
             preview_pos = page_text.index('class="qualification-case-preview"')
             setup_pos = page_text.index("<h2>1. Test setup</h2>")
             assert preview_pos < setup_pos, slug
+            q6 = structured_result["levels"]["q6"]
+            visual_result = json.loads(
+                (
+                    site
+                    / "qualification"
+                    / slug
+                    / "visual-validation.json"
+                ).read_text(encoding="utf-8")
+            )
+            if structured_result["status"] == "pass":
+                assert q6["status"] == "pass", slug
+                assert q6["regression_status"] == "pass", slug
+                assert q6["expected_shape_status"] == "pass", slug
+                assert q6["required_views"] == geometry["required_views"], slug
+                assert visual_result["regression"]["status"] == "pass", slug
+                assert visual_result["expected_shape"]["status"] == "pass", slug
+                assert (
+                    visual_result["expected_shape"]["required_views"]
+                    == geometry["required_views"]
+                ), slug
+                assert "Both must pass for Q6 PASS." in page_text, slug
+
+            if slug in {
+                "anchored-holes",
+                "rectangular-pattern",
+                "slot-family",
+            }:
+                assert "top" in geometry["required_views"], slug
+                assert 'data-view="top"' in page_text, slug
+                assert 'href="model-top.png"' in page_text, slug
+                assert 'href="goal-top.png"' in page_text, slug
+                assert 'href="overlay-top.png"' in page_text, slug
+                assert "Declared internal visual features" in page_text, slug
+
             native_evidence = qualification_manifest["cases"][slug]["native_evidence"]
             assert "measurements.json" in native_evidence, slug
             assert "results.json" in native_evidence, slug
