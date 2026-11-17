@@ -1,10 +1,11 @@
-"""Generate a version-pinned SolidCraft command-contract snapshot.
+"""Generate and audit a version-pinned SolidCraft command-contract snapshot.
 
-The SolidCraft command registry is the source of truth.  Forge source is scanned
-for literal command ids that occur in that registry; every matching command is
-then described through engine.describe.
+The SolidCraft runtime registry is the primary source of truth. Forge source is
+scanned for command ids and every Forge-used command is captured with
+engine.describe.
 
-This deliberately avoids maintaining a second handwritten list of commands.
+The pinned audit does not need SolidCraft installed. It proves that the checked
+in snapshot still covers the commands referenced by the current Forge source.
 """
 
 from __future__ import annotations
@@ -12,12 +13,16 @@ from __future__ import annotations
 import argparse
 import ast
 import json
+import re
+import shutil
 import subprocess
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 FORGE_SOURCE = ROOT / "scpf" / "scpf"
+VERSION_SOURCE = FORGE_SOURCE / "version.py"
+COMMAND_ID = re.compile(r"^[a-z][a-z0-9_]*(?:\.[a-z0-9_]+)+$")
 
 
 def run_json(*args: str):
@@ -39,46 +44,162 @@ def catalog_commands(value) -> list[dict]:
     raise ValueError("unexpected SolidCraft command-catalog shape")
 
 
-def command_ids_from_source(known_ids: set[str]) -> list[str]:
-    """Return SolidCraft command ids literally referenced by Forge runtime code."""
+def tested_version() -> str:
+    text = VERSION_SOURCE.read_text(encoding="utf-8")
+    match = re.search(
+        r'^TESTED_SOLIDCRAFT_VERSION = "([^"]+)"$',
+        text,
+        re.MULTILINE,
+    )
+    if match is None:
+        raise ValueError("cannot read TESTED_SOLIDCRAFT_VERSION")
+    return match.group(1)
+
+
+def source_string_literals() -> set[str]:
     found: set[str] = set()
     for path in sorted(FORGE_SOURCE.rglob("*.py")):
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         for node in ast.walk(tree):
             if isinstance(node, ast.Constant) and isinstance(node.value, str):
-                if node.value in known_ids:
-                    found.add(node.value)
-    return sorted(found)
+                found.add(node.value)
+    return found
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--version", required=True)
-    parser.add_argument("--source-ref", default="")
-    parser.add_argument(
-        "--strict",
-        action="store_true",
-        help="fail when a Forge-used command has no typed input/output contract",
+def command_ids_from_source(known_ids: set[str]) -> list[str]:
+    return sorted(source_string_literals() & known_ids)
+
+
+def unknown_command_like_ids(known_ids: set[str]) -> list[str]:
+    """Find command-looking Forge strings in known SolidCraft namespaces."""
+    prefixes = {command_id.split(".", 1)[0] for command_id in known_ids}
+    return sorted(
+        value
+        for value in source_string_literals()
+        if COMMAND_ID.fullmatch(value)
+        and value.split(".", 1)[0] in prefixes
+        and value not in known_ids
     )
-    args = parser.parse_args()
 
-    catalog_raw = run_json("solidcraft-cli", "commands")
+
+def gaps_from_contracts(snapshot: Path, command_ids: list[str]) -> list[dict]:
+    gaps = []
+    for command_id in command_ids:
+        path = snapshot / "contracts" / f"{command_id}.json"
+        if not path.is_file():
+            raise ValueError(f"missing SolidCraft contract snapshot: {path}")
+        contract = json.loads(path.read_text(encoding="utf-8"))
+        if contract.get("id") != command_id:
+            raise ValueError(
+                f"{path}: expected id {command_id!r}, found {contract.get('id')!r}"
+            )
+        missing = [
+            key for key in ("input", "output")
+            if contract.get(key) is None
+        ]
+        if missing:
+            gaps.append({"command": command_id, "missing": missing})
+    return gaps
+
+
+def check_pinned(snapshot: Path) -> int:
+    manifest_path = snapshot / "manifest.json"
+    catalog_path = snapshot / "commands.json"
+    if not manifest_path.is_file() or not catalog_path.is_file():
+        raise SystemExit(
+            f"{snapshot}: expected manifest.json and commands.json"
+        )
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    catalog_raw = json.loads(catalog_path.read_text(encoding="utf-8"))
     catalog = catalog_commands(catalog_raw)
-    by_id = {
-        entry["id"]: entry
+    known_ids = {
+        entry["id"]
         for entry in catalog
         if isinstance(entry, dict) and isinstance(entry.get("id"), str)
     }
-    used = command_ids_from_source(set(by_id))
+
+    expected_version = tested_version()
+    if manifest.get("solidcraft_version") != expected_version:
+        raise SystemExit(
+            "SolidCraft snapshot version mismatch: "
+            f"Forge targets {expected_version}, snapshot has "
+            f"{manifest.get('solidcraft_version')!r}"
+        )
+
+    unknown = unknown_command_like_ids(known_ids)
+    if unknown:
+        raise SystemExit(
+            "Forge contains command-looking SolidCraft ids absent from the "
+            "pinned registry: " + ", ".join(unknown)
+        )
+
+    actual = command_ids_from_source(known_ids)
+    recorded = manifest.get("commands")
+    if recorded != actual:
+        missing = sorted(set(actual) - set(recorded or []))
+        stale = sorted(set(recorded or []) - set(actual))
+        raise SystemExit(
+            "SolidCraft snapshot does not match Forge source; "
+            f"missing={missing}, stale={stale}"
+        )
+
+    contract_files = {
+        path.stem
+        for path in (snapshot / "contracts").glob("*.json")
+    }
+    if contract_files != set(actual):
+        raise SystemExit(
+            "SolidCraft contract-file set does not match Forge source; "
+            f"missing={sorted(set(actual) - contract_files)}, "
+            f"stale={sorted(contract_files - set(actual))}"
+        )
+
+    actual_gaps = gaps_from_contracts(snapshot, actual)
+    if manifest.get("contract_gaps", []) != actual_gaps:
+        raise SystemExit(
+            "SolidCraft typed-contract gap list is stale; "
+            f"expected {actual_gaps}, recorded {manifest.get('contract_gaps', [])}"
+        )
+
+    print(
+        f"SolidCraft {expected_version}: pinned snapshot covers "
+        f"{len(actual)} Forge-used commands"
+    )
+    for gap in actual_gaps:
+        print(
+            f"TYPED GAP {gap['command']}: "
+            + ", ".join(gap["missing"])
+        )
+    return 0
+
+
+def generate(out: Path, version: str, source_ref: str, strict: bool) -> int:
+    catalog_raw = run_json("solidcraft-cli", "commands")
+    catalog = catalog_commands(catalog_raw)
+    known_ids = {
+        entry["id"]
+        for entry in catalog
+        if isinstance(entry, dict) and isinstance(entry.get("id"), str)
+    }
+
+    unknown = unknown_command_like_ids(known_ids)
+    if unknown:
+        raise SystemExit(
+            "Forge contains command-looking SolidCraft ids absent from runtime "
+            "registry: " + ", ".join(unknown)
+        )
+
+    used = command_ids_from_source(known_ids)
     if not used:
         raise SystemExit("no SolidCraft command ids found in Forge runtime source")
 
-    contracts: dict[str, dict] = {}
-    gaps: list[dict[str, object]] = []
-    contracts_dir = args.out / "contracts"
-    contracts_dir.mkdir(parents=True, exist_ok=True)
+    if out.exists():
+        shutil.rmtree(out)
+    contracts_dir = out / "contracts"
+    contracts_dir.mkdir(parents=True)
 
+    gaps: list[dict[str, object]] = []
     for command_id in used:
         description = run_json(
             "solidcraft-cli",
@@ -86,7 +207,6 @@ def main() -> int:
             "engine.describe",
             json.dumps({"command": command_id}, separators=(",", ":")),
         )
-        contracts[command_id] = description
         missing = [
             key for key in ("input", "output")
             if description.get(key) is None
@@ -100,25 +220,25 @@ def main() -> int:
         )
 
     manifest = {
-        "solidcraft_version": args.version,
-        "source_ref": args.source_ref or None,
+        "solidcraft_version": version,
+        "source_ref": source_ref or None,
         "generator": "solidcraft-cli commands + engine.describe",
         "forge_source": "scpf/scpf/**/*.py",
         "command_count": len(used),
         "commands": used,
         "contract_gaps": gaps,
     }
-    (args.out / "manifest.json").write_text(
+    (out / "manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    (args.out / "commands.json").write_text(
+    (out / "commands.json").write_text(
         json.dumps(catalog_raw, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
 
     index_lines = [
-        f"# SolidCraft {args.version} command contracts",
+        f"# SolidCraft {version} command contracts",
         "",
         "Generated from the pinned SolidCraft runtime command registry.",
         "",
@@ -135,24 +255,46 @@ def main() -> int:
             f"- `{command_id}` → `contracts/{command_id}.json`{suffix}"
         )
     index_lines.append("")
-    (args.out / "README.md").write_text(
+    (out / "README.md").write_text(
         "\n".join(index_lines),
         encoding="utf-8",
     )
 
     print(
-        f"SolidCraft {args.version}: captured {len(used)} Forge-referenced "
+        f"SolidCraft {version}: captured {len(used)} Forge-referenced "
         f"command contracts; typed-contract gaps: {len(gaps)}"
     )
     for gap in gaps:
         print(f"GAP {gap['command']}: {', '.join(gap['missing'])}")
 
-    if args.strict and gaps:
+    if strict and gaps:
         raise SystemExit(
             f"{len(gaps)} Forge-referenced SolidCraft command(s) lack a complete "
             "typed input/output contract"
         )
     return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--out", type=Path)
+    mode.add_argument("--check-pinned", type=Path)
+    parser.add_argument("--version")
+    parser.add_argument("--source-ref", default="")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="fail generation when a Forge-used command has no typed input/output contract",
+    )
+    args = parser.parse_args()
+
+    if args.check_pinned is not None:
+        return check_pinned(args.check_pinned)
+
+    if not args.version:
+        parser.error("--version is required with --out")
+    return generate(args.out, args.version, args.source_ref, args.strict)
 
 
 if __name__ == "__main__":

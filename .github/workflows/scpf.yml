@@ -28,48 +28,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  solidcraft-contracts:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Read qualified SolidCraft version from Forge
-        shell: bash
-        run: |
-          version="$(PYTHONPATH=scpf python -c 'from scpf.version import TESTED_SOLIDCRAFT_VERSION; print(TESTED_SOLIDCRAFT_VERSION)')"
-          echo "SOLIDCRAFT_VERSION=$version" >> "$GITHUB_ENV"
-          echo "SolidCraft contract snapshot target: $version"
-      - name: Install official SolidCraft release (checksum-verified)
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd "$RUNNER_TEMP"
-          base="https://github.com/tangency-labs/solidcraft/releases/download/v${SOLIDCRAFT_VERSION}"
-          archive="solidcraft-${SOLIDCRAFT_VERSION}-linux-x86_64.tar.gz"
-          curl --fail --location --retry 3 --silent --show-error "$base/SHA256SUMS.txt" --output SHA256SUMS.txt
-          curl --fail --location --retry 3 --silent --show-error "$base/$archive" --output "$archive"
-          grep -F " $archive" SHA256SUMS.txt | sha256sum --check
-          tar -xzf "$archive"
-          echo "$RUNNER_TEMP/solidcraft-${SOLIDCRAFT_VERSION}-linux-x86_64/bin" >> "$GITHUB_PATH"
-      - name: Capture Forge-used SolidCraft command contracts
-        shell: bash
-        run: |
-          set -euo pipefail
-          solidcraft-cli --version
-          python scripts/solidcraft_snapshot.py \
-            --out output/solidcraft-snapshot \
-            --version "$SOLIDCRAFT_VERSION" \
-            --source-ref "v$SOLIDCRAFT_VERSION"
-      - name: Upload SolidCraft command-contract snapshot
-        uses: actions/upload-artifact@v4
-        with:
-          name: solidcraft-contract-snapshot-${{ github.sha }}
-          path: output/solidcraft-snapshot
-          if-no-files-found: error
-          retention-days: 30
-
   package:
     runs-on: ubuntu-latest
     steps:
@@ -206,14 +164,6 @@ jobs:
           grep -F " $archive" SHA256SUMS.txt | sha256sum --check
           tar -xzf "$archive"
           echo "$RUNNER_TEMP/solidcraft-${SOLIDCRAFT_VERSION}-linux-x86_64/bin" >> "$GITHUB_PATH"
-      - name: Capture SolidCraft command contracts used by Forge
-        shell: bash
-        run: |
-          set -euo pipefail
-          python scripts/solidcraft_snapshot.py \\
-            --out output/solidcraft-snapshot \\
-            --version "$SOLIDCRAFT_VERSION" \\
-            --source-ref "v$SOLIDCRAFT_VERSION"
       - name: Render each tiny API example in native SolidCraft
         shell: bash
         env:
