@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-11-17
+
 ### Fixed
 
 - Fixed native `Slot*2D` lowering on parametrically sized attached Sketches.
