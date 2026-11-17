@@ -116,6 +116,9 @@ EXPECTED_BOUNDS = {
         {"label": "right Marker", "min": [10, -10, 10], "max": [20, 0, 20]},
         {"label": "left Marker", "min": [-20, -10, 10], "max": [-10, 0, 20]},
     ],
+    "round-top-sketch": [
+        {"label": "RoundTopSketch", "min": [-50, -50, 0], "max": [50, 50, 26]},
+    ],
     "circle-negative-extrude": [
         {"label": "NegativeCircleExtrude", "min": [-10, -10, -30], "max": [10, 10, 0]},
     ],
@@ -580,6 +583,10 @@ _BOUNDS_ASSESSMENTS = {
         "sufficient": True,
         "reason": "The board and marker positions describe the visible XZ placement. After resizing the saved model, the markers must still use the same selected anchors.",
     },
+    "round-top-sketch": {
+        "sufficient": False,
+        "reason": "The outer bounds alone do not prove the two circular radii. Volume, radial surface probes and native Sketch history are required.",
+    },
     "circle-negative-extrude": {
         "sufficient": False,
         "reason": "A box can share the same envelope as this cylinder. Circular volume and a radial surface probe are required.",
@@ -642,6 +649,31 @@ _GEOMETRY_DETAILS = {
             (1.0, 5.0, 9.0),
             6.0,
         ),
+    },
+    "round-top-sketch": {
+        "volume_mm3": (
+            math.pi * 50.0**2 * 10.0
+            + math.pi * 22.0**2 * 16.0
+        ),
+        # PythonSCAD/pyBOSL2 use coarse facets for the Ø100 disc and Ø44 hub.
+        # Their mesh volume is about 750 mm³ low (~0.73%) while bounds and
+        # radial surface probes remain correct.
+        "volume_tolerance_mm3": 800.0,
+        "watertight": True,
+        "surface_distance_probes": [
+            {
+                "label": "disc radial outside",
+                "point": [55.0, 0.0, 5.0],
+                "distance_mm": 5.0,
+                "tolerance_mm": 0.35,
+            },
+            {
+                "label": "hub radial inside step",
+                "point": [30.0, 0.0, 18.0],
+                "distance_mm": 8.0,
+                "tolerance_mm": 0.35,
+            },
+        ],
     },
     "circle-negative-extrude": {
         "volume_mm3": math.pi * 10.0**2 * 30.0,

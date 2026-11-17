@@ -306,6 +306,24 @@ CASE_EVIDENCE = {
             ),
         ],
     },
+    "round-top-sketch": {
+        "q1": [
+            _target(
+                "scpf/tests/test_explicit_sketch_primitives.py",
+                "test_top_attached_sketch_supports_circular_extrusion_body",
+            ),
+            _target(
+                "scpf/tests/test_explicit_sketch_primitives.py",
+                "test_explicit_plane_origin_sketch_supports_circular_body",
+            ),
+        ],
+        "q2": [
+            _target(
+                "qualification/tests/test_round_top_sketch.py",
+                "test_top_face_query_is_used_after_circular_base_extrusion",
+            ),
+        ],
+    },
     "circle-negative-extrude": {
         "q1": [
             _target(

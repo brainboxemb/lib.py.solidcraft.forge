@@ -590,10 +590,6 @@ def _explicit_sketch_commands(
     if shape.kind not in ("union", "difference"):
         raise ModelError("explicit Sketch extrusion must be added or subtracted")
 
-    (width, depth), (x, y, z), thickness = _base_rectangle(target)
-    if thickness is None:
-        raise ModelError("explicit Sketch requires a rectangular solid")
-
     if plane_name is not None:
         if sketch_origin is not None:
             orientation = {
@@ -639,6 +635,18 @@ def _explicit_sketch_commands(
             relative_origin = (0, 0)
             commands = [face_query, _command("sketch.create", **plane)]
         else:
+            try:
+                (width, depth), (x, y, z), thickness = _base_rectangle(target)
+            except ValueError as exc:
+                raise ModelError(
+                    "BOTTOM/CENTER attached Sketch currently requires "
+                    "a rectangular solid"
+                ) from exc
+            if thickness is None:
+                raise ModelError(
+                    "BOTTOM/CENTER attached Sketch currently requires "
+                    "a rectangular solid"
+                )
             if parent_anchor is Anchor.BOTTOM:
                 plane_z = z
             elif parent_anchor is Anchor.INNER_BOTTOM:

@@ -8,6 +8,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Attached explicit Sketch compilation no longer requires rectangular-body
+  metadata when using `Anchor.TOP` face lookup or an explicit
+  `plane=..., origin=(...)`. BOTTOM/CENTER relative attachment keeps its
+  existing rectangular-base requirement (issue #295).
+
 ### Added
 
 - `Shape.circular_pattern(...)` now lowers an already-applied

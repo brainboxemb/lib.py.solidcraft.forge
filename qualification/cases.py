@@ -385,6 +385,23 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "round-top-sketch",
+        "group": "fundamentals",
+        "title": "TOP Sketch on circular body",
+        "intent": "Verify that a TOP-attached explicit Sketch can select the largest +Z planar face of a circular extrusion without rectangular-body metadata.",
+        "forge_api": "disc = Sketch(... Circle2D ...).extrude(10); with Sketch(on=disc, parent=Anchor.TOP): Circle2D(d=44); body + hub.extrude(16)",
+        "forge_model": "One Ø100 x 10 mm circular base plus one Ø44 x 16 mm hub joined from the selected top face.",
+        "lowering": "Forge emits the circular base extrusion, model.faces with plane_normal=[0,0,1] and max=area, then a face-attached Hub Sketch and join extrusion. No rectangular base lookup is required.",
+        "native_expectation": "One stepped cylindrical body spans Z=0..26 mm. Disc and Hub remain two solved native Sketch/Extrude feature pairs and the Hub is attached to the actual top face of the Disc.",
+        "mutation": "No saved-design mutation; this fixture isolates support-face lookup on a non-rectangular feature body.",
+        "references": [
+            ("SolidCraft", "Native Q4 proves the face-attached Hub Sketch builds on the circular Disc and stays solved."),
+            ("PythonSCAD", "Independent CSG reference proves the stepped-cylinder geometry."),
+            ("CadQuery", "Independent union reference proves the same two-radius stepped body."),
+            ("build123d", "Independent builder reference proves the same baseline geometry."),
+        ],
+    },
+    {
         "slug": "circle-negative-extrude",
         "group": "fundamentals",
         "title": "Negative circle profile extrusion",

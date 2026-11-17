@@ -12,7 +12,7 @@ from scpf import (
     Sketch,
     Parameter,
 )
-from scpf.compiler import compile_model
+from scpf.compiler import ModelError, compile_model
 
 
 class NativePrimitiveTests(unittest.TestCase):
@@ -361,6 +361,97 @@ class NativePrimitiveTests(unittest.TestCase):
                     top_sketch["params"]["plane"]["body"],
                     f"{operation.title()}Plate",
                 )
+
+    def test_top_attached_sketch_supports_circular_extrusion_body(self):
+        with Sketch(name="Disc", plane="XY") as disc:
+            Circle2D(d=100)
+        body = disc.extrude(10)
+
+        with Sketch(name="Hub", on=body, parent=Anchor.TOP) as hub:
+            Circle2D(d=44)
+
+        commands = compile_model(
+            body + hub.extrude(16),
+            "Flange",
+        )["commands"]
+
+        face_query = next(
+            row for row in commands
+            if row["command"] == "model.faces"
+        )
+        self.assertEqual(face_query["params"], {"body": "Flange"})
+        for spec in face_query["bind"].values():
+            self.assertEqual(
+                spec["where"],
+                {"plane_normal": [0, 0, 1]},
+            )
+            self.assertEqual(spec["max"], "area")
+
+        sketch = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.create"
+            and row["params"]["name"] == "Hub"
+        )
+        self.assertEqual(sketch["plane"]["body"], "Flange")
+
+    def test_explicit_plane_origin_sketch_supports_circular_body(self):
+        with Sketch(name="Disc", plane="XY") as disc:
+            Circle2D(d=100)
+        body = disc.extrude(10)
+
+        with Sketch(
+            name="Bore",
+            on=body,
+            plane="XY",
+            origin=(0, 0, 0),
+        ) as bore:
+            Circle2D(d=24)
+
+        commands = compile_model(
+            body - bore.extrude(10),
+            "Flange",
+        )["commands"]
+
+        sketch = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.create"
+            and row["params"]["name"] == "Bore"
+        )
+        self.assertEqual(
+            sketch["plane"],
+            {
+                "origin": [0, 0, 0],
+                "x_dir": [1, 0, 0],
+                "y_dir": [0, 1, 0],
+            },
+        )
+        self.assertNotIn(
+            "model.faces",
+            [row["command"] for row in commands],
+        )
+
+    def test_bottom_attached_sketch_keeps_rectangular_body_requirement(self):
+        with Sketch(name="Disc", plane="XY") as disc:
+            Circle2D(d=100)
+        body = disc.extrude(10)
+
+        with Sketch(
+            name="Bottom",
+            on=body,
+            parent=Anchor.BOTTOM,
+        ) as bottom:
+            Circle2D(d=10)
+
+        with self.assertRaisesRegex(
+            ModelError,
+            "BOTTOM/CENTER attached Sketch currently requires",
+        ):
+            compile_model(
+                body - bottom.extrude(5),
+                "DiscBody",
+            )
 
     def test_empty_sketch_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "at least one profile"):
