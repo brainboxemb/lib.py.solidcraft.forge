@@ -93,7 +93,17 @@
       "negative Sketch extrusion -> negative signed distance",
       "symmetric Sketch extrusion -> sym=True",
       "remove obsolete Direction imports"
-    ]
+    ],
+    "main_runs": {
+      "cad_models": {
+        "id": 44044740923,
+        "status": "success"
+      },
+      "native_solidcraft": {
+        "id": 44044740913,
+        "status": "success"
+      }
+    }
   },
   "audit_completion": {
     "umbrella_issue": 220,
