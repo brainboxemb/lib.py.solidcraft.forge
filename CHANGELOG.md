@@ -8,6 +8,22 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- Added generic associative Sketch profile handles with
+  `Sketch.rectangular_pattern(...)` and `Sketch.mirror(...)`. Circle and
+  native Slot profiles can now seed SolidCraft sketch patterns/mirrors without
+  exposing or predicting native curve ids; pattern/mirror results can feed later
+  sketch operations, and pattern count/spacing remain editable native
+  parameters (issue #272).
+
+### Changed
+
+- Replay documents now use version 2 only. Replay bindings represent
+  SolidCraft-returned runtime values needed by later commands; old replay-v1
+  files are intentionally no longer accepted.
+
+
 ### Changed
 
 - TOP-attached `Sketch(on=..., parent=Anchor.TOP)` now uses SolidCraft's
