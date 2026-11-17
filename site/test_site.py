@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate that the library Pages site is not a duplicate CAD model gallery."""
 import html
+import inspect
 import json
 from pathlib import Path
 import sys
@@ -107,31 +108,47 @@ def check(
             elif member["kind"] == "constant":
                 assert member["value"] in page_text
 
-    slot_group = next(
-        spec for spec in GROUP_REFERENCES
-        if spec["slug"] == "sketch-slot-constructors"
-    )
-    slot_members = {member["name"]: member for member in group_members(slot_group)}
-    expected_slot_parameters = {
-        "SlotCenterToCenter2D": {"p0", "p1", "width"},
-        "SlotOverall2D": {"p0", "p1", "width"},
-        "SlotCenterPoint2D": {"center", "end", "width"},
-        "SlotArcThreePoint2D": {"start", "through", "end", "width"},
-        "SlotArcCenter2D": {"center", "start", "width", "end", "sweep"},
+    documented_constructor_groups = {
+        "geometry-constructors",
+        "sketch-slot-constructors",
     }
-    slot_page = (
-        site / "reference" / "sketch-slot-constructors" / "index.html"
-    ).read_text(encoding="utf-8")
+    for spec in GROUP_REFERENCES:
+        if spec["slug"] not in documented_constructor_groups:
+            continue
+        page_text = (
+            site / "reference" / spec["slug"] / "index.html"
+        ).read_text(encoding="utf-8")
+        for member in group_members(spec):
+            if member["kind"] != "callable":
+                continue
+            signature = inspect.signature(member["object"])
+            expected_parameters = {
+                name
+                for name, parameter in signature.parameters.items()
+                if parameter.kind not in {
+                    inspect.Parameter.VAR_POSITIONAL,
+                    inspect.Parameter.VAR_KEYWORD,
+                }
+            }
+            documented_parameters = {
+                row["name"] for row in member["parameters"]
+            }
+            assert documented_parameters == expected_parameters, (
+                member["name"],
+                documented_parameters,
+                expected_parameters,
+            )
+            assert member["example"], member["name"]
+            assert f'id="{member["name"]}"' in page_text, member["name"]
+            for parameter in expected_parameters:
+                assert f"<code>{parameter}</code>" in page_text, (
+                    member["name"],
+                    parameter,
+                )
+
     geometry_guide = (
         site / "guide" / "geometry" / "index.html"
     ).read_text(encoding="utf-8")
-    for name, expected_parameters in expected_slot_parameters.items():
-        member = slot_members[name]
-        assert {row["name"] for row in member["parameters"]} == expected_parameters
-        assert member["example"], name
-        for parameter in expected_parameters:
-            assert f"<code>{parameter}</code>" in slot_page, (name, parameter)
-        assert f"#{name}" in geometry_guide, name
     assert "Detailed parameter reference" in geometry_guide
 
     assert not unmapped_public_exports()

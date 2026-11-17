@@ -1380,6 +1380,10 @@ def Text2D(text, *, height=6.0, font="DejaVu Sans Bold"):
 def Rectangle2D(width, depth):
     """Create a rectangular 2D profile.
 
+    Parameters:
+        width: Rectangle size along the first local sketch axis, in mm. On XY this is X.
+        depth: Rectangle size along the second local sketch axis, in mm. On XY this is Y.
+
     Use when:
         Author a simple rectangle inside an explicit Sketch before extrusion.
 
@@ -1387,6 +1391,9 @@ def Rectangle2D(width, depth):
         The dimension-defined profile is centred on the Sketch origin by
         default. Use Sketch.add(..., offset=(u, v)) for a deliberate local
         displacement.
+
+    Example:
+        Rectangle2D(80, 50)
     """
     from .explicit_sketch import register_profile
     return register_profile(Shape("rectangle", (width, depth)))
@@ -1395,13 +1402,21 @@ def Rectangle2D(width, depth):
 def RoundedRectangle2D(width, depth, radius):
     """Create a native rounded-rectangle 2D profile.
 
+    Parameters:
+        width: Rectangle size along the first local sketch axis, in mm.
+        depth: Rectangle size along the second local sketch axis, in mm.
+        radius: Radius of each corner arc, in mm.
+
     Use when:
         A sketch needs a rectangle with true circular corner arcs rather than a
         polygonal approximation.
 
     Limits:
-        Current support is inside an explicit Sketch. The radius must be below
-        half the shorter side.
+        Current support is inside an explicit Sketch. width and depth must be
+        positive. radius must be positive and below half the shorter side.
+
+    Example:
+        RoundedRectangle2D(80, 50, 6)
     """
     if _pv(width) <= 0 or _pv(depth) <= 0:
         raise ValueError("RoundedRectangle2D width and depth must be positive")
@@ -1579,11 +1594,18 @@ def SlotArcCenter2D(center, start, width, *, end=None, sweep=None):
 def Circle2D(*, d=None, r=None):
     """Create a circular 2D profile by diameter or radius.
 
+    Parameters:
+        d: Circle diameter in mm. Supply d or r, not both.
+        r: Circle radius in mm. Supply r or d, not both.
+
     Use when:
         Author a circular profile inside an explicit Sketch.
 
     Limits:
-        Supply exactly one of d= or r=; the Sketch determines the plane.
+        Supply exactly one of d= or r=. The Sketch determines the plane.
+
+    Example:
+        Circle2D(d=8)
     """
     if (d is None) == (r is None):
         raise ValueError("Circle2D requires exactly one of d= or r=")
@@ -1594,14 +1616,22 @@ def Circle2D(*, d=None, r=None):
 def Polygon2D(points, *, plane="XY", ids=None, world=False):
     """Create a closed named or unnamed polygon profile.
 
+    Parameters:
+        points: Polygon vertices in order. Use (u, v) pairs, or (name, (u, v)) pairs when naming vertices, in mm.
+        plane: Sketch plane: "XY", "XZ" or "YZ". Defaults to "XY".
+        ids: Optional segment names, one per polygon edge in vertex order.
+        world: When True with plane="XZ", read each input point as world (x, z) instead of native sketch coordinates.
+
     Use when:
         A 2D profile needs arbitrary straight segments or named vertices and
         segments that later drive selectors such as Edges.from_profile().
 
     Limits:
-        At least three 2D points are required. plane is XY, XZ or YZ.
-        world=True currently supports only XZ and lets input use intuitive
-        world (x, z) coordinates.
+        At least three 2D points are required. Named and unnamed points cannot
+        be mixed. world=True currently supports only plane="XZ".
+
+    Example:
+        Polygon2D([(0, 0), (40, 0), (40, 20), (0, 20)], plane="XY")
     """
     rows = tuple(points)
     named = [
@@ -1646,21 +1676,33 @@ def Polygon2D(points, *, plane="XY", ids=None, world=False):
 def Box(length, width, thickness, *, anchor=Anchor.CENTER):
     """Create a native rectangular solid around a declared anchor datum.
 
+    Parameters:
+        length: Box size along X, in mm.
+        width: Box size along Y, in mm.
+        thickness: Box size along Z, in mm.
+        anchor: Box datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER.
+
     Use when:
         Model a simple rectangular part directly without introducing a Sketch.
-        anchor selects which Box anchor starts at model coordinate (0, 0, 0).
 
     Limits:
         The default anchor is CENTER, so an unplaced Box is centred around the
         model origin in X, Y and Z. Use anchor=BOTTOM for a box whose bottom
         face centre is at Z=0. Use at() for later placement.
+
+    Example:
+        Box(80, 50, 12, anchor=Anchor.BOTTOM)
     """
     selector = _direction_selector(anchor)
     return Shape("box", (length, width, thickness, selector))
 
 
 def Sphere(radius, *, anchor=Anchor.CENTER):
-    """Create a sphere, centered on the origin unless another anchor is given.
+    """Create a sphere centred on the origin unless another anchor is given.
+
+    Parameters:
+        radius: Sphere radius in mm.
+        anchor: Sphere datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER.
 
     Use when:
         Model a spherical primitive, optionally with a tangent-point anchor.
@@ -1668,12 +1710,21 @@ def Sphere(radius, *, anchor=Anchor.CENTER):
     Limits:
         Cardinal anchors select points on the sphere's world-aligned bounds.
         Sphere has no separate orientation axis; use at() for placement.
+
+    Example:
+        Sphere(12, anchor=Anchor.BOTTOM)
     """
     return Shape("sphere", (radius, _direction_selector(anchor)))
 
 
 def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
-    """Create a cylindrical solid centered around the origin by default.
+    """Create a cylindrical solid centred around the origin by default.
+
+    Parameters:
+        d: Cylinder diameter in mm.
+        h: Cylinder length along the selected axis, in mm.
+        axis: Cylinder axis. Use Axis.X, Axis.Y or Axis.Z. Defaults to Axis.Z.
+        anchor: Cylinder datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER.
 
     Use when:
         Model a cylinder along Axis.X, Axis.Y or Axis.Z. Use BOTTOM for a
@@ -1682,6 +1733,9 @@ def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
     Limits:
         Anchors refer to world XYZ bounds after choosing the cylinder axis.
         at() places the selected anchor at the requested coordinate.
+
+    Example:
+        Cylinder(d=8, h=20, axis=Axis.X, anchor=Anchor.LEFT)
     """
     try:
         axis = Axis(axis)
