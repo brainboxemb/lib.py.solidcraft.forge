@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-17
+
 ### Added
 
 - `Sketch.extrude(..., profiles=[(x, y), ...], exact_regions=True)` can now
