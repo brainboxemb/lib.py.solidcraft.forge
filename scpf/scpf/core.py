@@ -144,6 +144,11 @@ def _selector_anchor(value):
 class AnchorFrame:
     """Describe one local attachment point and orientation.
 
+    Parameters:
+        origin: Component-local XYZ attachment point in mm. Defaults to (0, 0, 0).
+        z: Attachment-normal direction as an XYZ vector or Anchor. Defaults to Anchor.UP.
+        x: Local X/clocking direction as an XYZ vector or Anchor. Defaults to Anchor.RIGHT.
+
     Use when:
         A standard face or corner Anchor is not enough and the mounting datum
         needs its own local origin plus orientation. A reusable component may
@@ -151,10 +156,12 @@ class AnchorFrame:
         one directly to attach().
 
     Limits:
-        origin is component-local. z is the attachment normal and x fixes the
-        clocking around that normal; both directions must be non-zero and not
-        parallel. Direct frames on explicitly rotated occurrences have limited
-        support as documented by the assembly guide.
+        z and x must be non-zero and must not be parallel. Direct frames on
+        explicitly rotated occurrences have limited support as documented by
+        the assembly guide.
+
+    Example:
+        mount = AnchorFrame(origin=(20, 0, 10), z=Anchor.FRONT, x=Anchor.RIGHT)
     """
 
     origin: tuple[float, float, float] = (0.0, 0.0, 0.0)
@@ -204,15 +211,25 @@ class AnchorFrame:
 class AnchorTopology:
     """Describe an attachment datum that follows native SolidCraft topology.
 
+    Parameters:
+        edge: XYZ pick point on the target edge, in component-local mm.
+        on: XYZ pick point on the adjacent planar face, in component-local mm.
+        corner: Optional XYZ endpoint/corner pick in component-local mm.
+        z: Optional non-zero XYZ attachment-normal override.
+        x: Optional non-zero XYZ clocking-direction override.
+
     Use when:
         A relationship should follow a particular edge, adjacent planar face
         and optionally one endpoint as dimensions change, rather than freezing
         one XYZ coordinate.
 
     Limits:
-        edge and on are native selection pick points; corner is optional. z and
-        x may override frame orientation. Current Forge support focuses on
-        planar-face edges and non-rotated occurrences.
+        edge and on are native selection pick points. Current Forge support
+        focuses on planar-face edges and non-rotated occurrences. z and x, when
+        both supplied, must not be parallel.
+
+    Example:
+        mount = AnchorTopology(edge=(0, 25, 10), on=(0, 20, 10), corner=(0, 25, 0))
     """
 
     edge: tuple[float, float, float]
@@ -447,15 +464,21 @@ def _plain_command_value(value):
 class Parameter:
     """Represent one named editable CAD dimension.
 
+    Parameters:
+        name: SolidCraft parameter name. It must be a valid Python identifier.
+        value: Current numeric value of the parameter.
+
     Use when:
         Keep a value symbolic so generated SolidCraft commands can retain an
         editable dependency instead of baking in the current Python number.
 
     Limits:
-        Names must be valid Python identifiers and values finite numbers.
-        Normal public lower-case model fields are usually promoted to
-        parameters automatically, so explicit Parameter() is mainly useful in
-        lower-level or assembly code.
+        value must be finite. Normal public lower-case model fields are usually
+        promoted to parameters automatically, so explicit Parameter() is mainly
+        useful in lower-level or assembly code.
+
+    Example:
+        wall = Parameter("wall", 2.4)
     """
 
     name: str
@@ -597,12 +620,18 @@ def _scaled_direction(direction, distance):
 def up(distance):
     """Return a symbolic-safe XYZ offset in the +Z direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = up(12)
     """
     return _scaled_direction(Anchor.TOP, distance)
 
@@ -610,12 +639,18 @@ def up(distance):
 def down(distance):
     """Return a symbolic-safe XYZ offset in the -Z direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = down(12)
     """
     return _scaled_direction(Anchor.BOTTOM, distance)
 
@@ -623,12 +658,18 @@ def down(distance):
 def left(distance):
     """Return a symbolic-safe XYZ offset in the -X direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = left(12)
     """
     return _scaled_direction(Anchor.LEFT, distance)
 
@@ -636,12 +677,18 @@ def left(distance):
 def right(distance):
     """Return a symbolic-safe XYZ offset in the +X direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = right(12)
     """
     return _scaled_direction(Anchor.RIGHT, distance)
 
@@ -649,12 +696,18 @@ def right(distance):
 def front(distance):
     """Return a symbolic-safe XYZ offset in the -Y direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = front(12)
     """
     return _scaled_direction(Anchor.FRONT, distance)
 
@@ -662,12 +715,18 @@ def front(distance):
 def back(distance):
     """Return a symbolic-safe XYZ offset in the +Y direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = back(12)
     """
     return _scaled_direction(Anchor.BACK, distance)
 
@@ -675,12 +734,18 @@ def back(distance):
 def half(value):
     """Return half of a numeric or symbolic CAD dimension.
 
+    Parameters:
+        value: Numeric, Parameter or Expression value to divide by two.
+
     Use when:
         Keep midpoint-style arithmetic readable without converting a symbolic
         CAD dimension to a concrete Python value.
 
     Limits:
         Equivalent to value / 2; the input must support that operation.
+
+    Example:
+        centre = half(width)
     """
     return value / 2
 
@@ -688,11 +753,18 @@ def half(value):
 def midpoint(start, end):
     """Return the midpoint between two numeric or symbolic dimensions.
 
+    Parameters:
+        start: First numeric or symbolic coordinate/dimension.
+        end: Second numeric or symbolic coordinate/dimension.
+
     Use when:
         Express a centre position while preserving symbolic CAD dependencies.
 
     Limits:
         Equivalent to (start + end) / 2; inputs must support symbolic arithmetic.
+
+    Example:
+        centre_x = midpoint(left_x, right_x)
     """
     return (start + end) / 2
 
@@ -727,6 +799,9 @@ def _track_pv_reads(parameters):
 def pv(dim) -> float:
     """Return the concrete Python value of a symbolic CAD dimension.
 
+    Parameters:
+        dim: Numeric value, Parameter or Expression to read as a Python float.
+
     Use when:
         Python itself genuinely needs a number for validation or control flow.
 
@@ -734,6 +809,10 @@ def pv(dim) -> float:
         Calling pv() intentionally removes the symbolic dependency at that
         point. Geometry and placement should normally keep Parameter/Expression
         objects symbolic so SolidCraft remains editable and associative.
+
+    Example:
+        if pv(clearance) < 0:
+            raise ValueError("clearance must not be negative")
     """
     for parameter in parameters_in(dim):
         parameter_id = id(parameter)

@@ -777,6 +777,9 @@ def _model_import_context(path: Path):
 def run_script(path: str | Path) -> dict:
     """Execute a trusted SCPF model source file and return its command document.
 
+    Parameters:
+        path: Path to the trusted Python model source file.
+
     Use when:
         Programmatic tooling needs the same model-loading/root-selection and
         compilation behaviour as the SCPF CLI.
@@ -785,6 +788,9 @@ def run_script(path: str | Path) -> dict:
         The source is executed as trusted Python. A file must either end in an
         explicit root model call or define exactly one unambiguous public model
         class with build().
+
+    Example:
+        document = run_script("models/panel/scpf/model.py")
     """
     path = Path(path).resolve()
     syntax = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))

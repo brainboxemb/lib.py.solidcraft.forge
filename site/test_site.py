@@ -108,13 +108,16 @@ def check(
             elif member["kind"] == "constant":
                 assert member["value"] in page_text
 
-    documented_constructor_groups = {
+    documented_callable_groups = {
         "geometry-constructors",
         "sketch-slot-constructors",
         "feature-constructors",
+        "parameters-positioning",
+        "attachment-references",
+        "execution-api",
     }
     for spec in GROUP_REFERENCES:
-        if spec["slug"] not in documented_constructor_groups:
+        if spec["slug"] not in documented_callable_groups:
             continue
         page_text = (
             site / "reference" / spec["slug"] / "index.html"

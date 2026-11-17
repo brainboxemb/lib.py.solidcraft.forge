@@ -384,9 +384,21 @@ def _normalize_rotation(axis, degrees):
 class Placement:
     """Absolute pose of one occurrence in its parent coordinate frame.
 
-    XYZ coordinates may be numbers, Parameters or Expressions. Rotation is one
-    optional absolute axis-angle orientation. Placement is occurrence creation
-    state, not a relative move action.
+    Parameters:
+        x: Absolute X position in mm. May be numeric, Parameter or Expression.
+        y: Absolute Y position in mm. May be numeric, Parameter or Expression.
+        z: Absolute Z position in mm. May be numeric, Parameter or Expression.
+        rotation: Optional (axis, degrees) absolute rotation. axis may be X/Y/Z, Axis, or a non-zero XYZ vector.
+
+    Use when:
+        Declare the pose of a component occurrence at creation or copy time.
+
+    Limits:
+        Placement is occurrence creation state, not a relative move action.
+        Coordinates, rotation axis and angle must evaluate to finite values.
+
+    Example:
+        Placement(x=160, z=20, rotation=(Axis.Z, 90))
     """
 
     x: object = 0
