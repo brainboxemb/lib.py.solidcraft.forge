@@ -134,6 +134,8 @@ CHEATSHEET = [
          "Box(80, 50, 12).at(0, 0, 0, anchor=FRONT + BOTTOM)", None),
         ("shape.fillet(...)", "Round selected edges of a feature-based body.",
          "body.fillet(2, edges=Edges.VERTICAL)", None),
+        ("shape.chamfer(...)", "Bevel selected edges using the same edge selectors as fillet.",
+         "body.chamfer(2, edges=Edges.VERTICAL)", None),
         ("shape.shell(...)", "Create an open-sided shell (supported feature trees only).",
          "Box(80, 50, 30).shell(2, open=Faces.TOP)", None),
         ("a + b / a - b / a & b", "Join, cut or intersect supported shapes; operation support depends on the shape types.",

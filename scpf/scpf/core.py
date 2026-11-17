@@ -347,6 +347,50 @@ class _ProfileEdgeSelection:
     kind: str = "segments"
 
 
+def _feature_edge_selection(edges, *, operation):
+    """Validate one public fillet/chamfer edge selection."""
+    if edges is Edges.VERTICAL or isinstance(edges, _ProfileEdgeSelection):
+        return edges
+
+    directional = (
+        isinstance(edges, (_DirectionSelector, Anchor))
+        or (
+            isinstance(edges, (list, tuple))
+            and edges
+            and all(
+                isinstance(edge, (_DirectionSelector, Anchor))
+                for edge in edges
+            )
+        )
+    )
+    if directional:
+        selectors = (
+            (edges,)
+            if isinstance(edges, (_DirectionSelector, Anchor))
+            else tuple(edges)
+        )
+        if any(_selector_rank(edge) != 2 for edge in selectors):
+            raise ValueError(
+                f"{operation} Box edge selectors must combine exactly two "
+                "cardinal directions"
+            )
+        return selectors
+
+    if not isinstance(edges, (list, tuple)) or not edges:
+        raise ValueError(
+            f"{operation} edges must use Edges.VERTICAL, supported named "
+            "selectors or a non-empty sequence of 3D edge points"
+        )
+    for point in edges:
+        if not isinstance(point, (list, tuple)) or len(point) != 3:
+            raise ValueError(
+                f"each {operation} edge point must have x, y and z"
+            )
+        for coordinate in point:
+            _pv(coordinate)
+    return edges
+
+
 class Faces(Enum):
     """Select named planar faces for within-component feature operations.
 
@@ -1129,52 +1173,56 @@ class Shape:
         return Shape("tapered_box", (self, from_z, inset))
 
     def fillet(self, radius, *, edges=Edges.VERTICAL):
-        if edges is Edges.VERTICAL or isinstance(edges, _ProfileEdgeSelection):
-            return Shape("fillet", (self, radius, edges))
+        """Round selected solid edges with one radius.
 
-        directional = (
-            isinstance(edges, (_DirectionSelector, Anchor))
-            or (
-                isinstance(edges, (list, tuple))
-                and edges
-                and all(isinstance(edge, (_DirectionSelector, Anchor)) for edge in edges)
-            )
+        Parameters:
+            radius: Fillet radius in mm.
+            edges: Edge selection. Use Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(...), Edges.from_vertices(...) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL.
+
+        Use when:
+            Round one or more edges of a supported feature-based body. Fillet
+            and chamfer use the same edge-selection forms.
+
+        Limits:
+            Edges.VERTICAL and cardinal Box edge selectors require a supported
+            rectangular body. Named profile/vertex selectors require matching
+            Polygon2D ids in a supported extrusion.
+
+        Example:
+            body = Box(80, 50, 15)
+            rounded = body.fillet(3, edges=Edges.VERTICAL)
+        """
+        _pv(radius)
+        return Shape(
+            "fillet",
+            (self, radius, _feature_edge_selection(edges, operation="fillet")),
         )
-        if directional:
-            selectors = (
-                (edges,)
-                if isinstance(edges, (_DirectionSelector, Anchor))
-                else tuple(edges)
-            )
-            if any(_selector_rank(edge) != 2 for edge in selectors):
-                raise ValueError(
-                    "a Box edge selector must combine exactly two cardinal directions"
-                )
-            return Shape("fillet", (self, radius, selectors))
 
-        if not isinstance(edges, (list, tuple)) or not edges:
-            raise ValueError(
-                "fillet edges must be directional selectors, Edges.VERTICAL "
-                "or 3D edge points"
-            )
-        for point in edges:
-            if len(point) != 3:
-                raise ValueError("each fillet edge point must have x, y and z")
-        return Shape("fillet", (self, radius, edges))
+    def chamfer(self, distance, *, edges=Edges.VERTICAL):
+        """Chamfer selected solid edges by one equal distance.
 
-    def chamfer(self, distance, *, edges):
-        """Chamfer explicitly selected solid edges by an equal distance."""
+        Parameters:
+            distance: Chamfer distance in mm.
+            edges: Edge selection. Use Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(...), Edges.from_vertices(...) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL.
+
+        Use when:
+            Bevel one or more edges of a supported feature-based body. Chamfer
+            and fillet use the same edge-selection forms.
+
+        Limits:
+            Edges.VERTICAL and cardinal Box edge selectors require a supported
+            rectangular body. Named profile/vertex selectors require matching
+            Polygon2D ids in a supported extrusion.
+
+        Example:
+            body = Box(80, 50, 15)
+            bevelled = body.chamfer(3, edges=Edges.VERTICAL)
+        """
         _pv(distance)
-        if isinstance(edges, _ProfileEdgeSelection):
-            return Shape("chamfer", (self, distance, edges))
-        if not isinstance(edges, (list, tuple)) or not edges:
-            raise ValueError("chamfer edges must be a non-empty sequence of 3D edge points")
-        for point in edges:
-            if not isinstance(point, (list, tuple)) or len(point) != 3:
-                raise ValueError("each chamfer edge point must have x, y and z")
-            for coordinate in point:
-                _pv(coordinate)
-        return Shape("chamfer", (self, distance, tuple(tuple(p) for p in edges)))
+        return Shape(
+            "chamfer",
+            (self, distance, _feature_edge_selection(edges, operation="chamfer")),
+        )
 
     def shell(self, thickness, *, open=Faces.TOP):
         """Hollow a supported solid and leave selected Faces open.

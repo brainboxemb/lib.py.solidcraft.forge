@@ -240,6 +240,8 @@ METHOD_REFERENCES = (
         guide="features",
         guide_anchor="anchors",
     ),
+    _method("Shape.fillet", "Shape.fillet()", Shape.fillet, guide="features", guide_anchor="fillet"),
+    _method("Shape.chamfer", "Shape.chamfer()", Shape.chamfer, guide="features", guide_anchor="fillet"),
     _method("Shape.shell", "Shape.shell()", Shape.shell, guide="features", guide_anchor="shell"),
     _method(
         "Shape.repeat_linear",
