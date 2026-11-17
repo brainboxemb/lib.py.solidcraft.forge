@@ -43,7 +43,18 @@ def _parse_tests(row: dict[str, str] | None) -> list[dict[str, str]]:
         value = json.loads(row["tests"])
     except json.JSONDecodeError:
         return []
-    return value if isinstance(value, list) else []
+    if not isinstance(value, list):
+        return []
+    if not all(
+        isinstance(target, dict)
+        and isinstance(target.get("file"), str)
+        and target["file"]
+        and isinstance(target.get("test"), str)
+        and target["test"]
+        for target in value
+    ):
+        return []
+    return value
 
 
 def _copy_case_evidence(
@@ -66,6 +77,7 @@ def _copy_case_evidence(
 def _case_status(
     row: dict[str, str] | None,
     evidence_name: str | None,
+    tests: list[dict[str, str]],
     *,
     extra_status: str | None = None,
 ) -> str:
@@ -73,7 +85,11 @@ def _case_status(
         return "missing"
     if row.get("status") == "FAIL" or extra_status == "FAIL":
         return "fail"
-    if row.get("status") != "PASS" or evidence_name is None:
+    if (
+        row.get("status") != "PASS"
+        or evidence_name is None
+        or not tests
+    ):
         return "missing"
     if extra_status is not None and extra_status != "PASS":
         return "missing"
@@ -163,10 +179,17 @@ def collect(
                 native_files.append(evidence_name)
         native_files.sort()
 
-        q1_status = _case_status(q1, q1_evidence)
+        q1_tests = _parse_tests(q1)
+        q2_tests = _parse_tests(q2_case)
+        q1_status = _case_status(
+            q1,
+            q1_evidence,
+            q1_tests,
+        )
         q2_status = _case_status(
             q2_case,
             q2_evidence,
+            q2_tests,
             extra_status=q2.get("status"),
         )
         q3_pass = native.get("build") == "PASS" and native.get("eval") == "PASS"
@@ -189,12 +212,12 @@ def collect(
         levels = {
             "q1": {
                 "status": q1_status,
-                "tests": _parse_tests(q1),
+                "tests": q1_tests,
                 "evidence": [q1_evidence] if q1_evidence else [],
             },
             "q2": {
                 "status": q2_status,
-                "tests": _parse_tests(q2_case),
+                "tests": q2_tests,
                 "commands": (
                     int(q2["commands"])
                     if q2.get("commands", "").isdigit()

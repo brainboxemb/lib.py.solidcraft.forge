@@ -62,6 +62,31 @@ class CaseSpecificResultTests(unittest.TestCase):
             self.assertEqual(case["levels"]["q2"]["status"], "missing")
             self.assertEqual(case["status"], "incomplete")
 
+    def test_pass_row_without_test_targets_is_still_missing(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            qualification_dir = root / "qualification"
+            native_root = root / "native"
+            q1_log = qualification_dir / "case-evidence" / "q1" / "case-one.txt"
+            q1_log.parent.mkdir(parents=True)
+            q1_log.write_text("Q1 target PASS\n", encoding="utf-8")
+            _write_tsv(
+                qualification_dir / "q1-case-evidence.tsv",
+                ("case", "status", "tests", "evidence"),
+                [{
+                    "case": "case-one",
+                    "status": "PASS",
+                    "tests": "[]",
+                    "evidence": "case-evidence/q1/case-one.txt",
+                }],
+            )
+
+            case = self._collect(
+                qualification_dir,
+                native_root,
+            )["cases"]["case-one"]
+            self.assertEqual(case["levels"]["q1"]["status"], "missing")
+
     def test_case_pass_requires_target_list_and_run_log(self):
         with TemporaryDirectory() as temp:
             root = Path(temp)
