@@ -258,6 +258,20 @@ METHOD_REFERENCES = (
     _method("Sketch", "Sketch", Sketch, guide="geometry", guide_anchor="profiles"),
     _method("Sketch.add", "Sketch.add()", Sketch.add, guide="geometry", guide_anchor="profiles"),
     _method(
+        "Sketch.rectangular_pattern",
+        "Sketch.rectangular_pattern()",
+        Sketch.rectangular_pattern,
+        guide="geometry",
+        guide_anchor="pattern-mirror",
+    ),
+    _method(
+        "Sketch.mirror",
+        "Sketch.mirror()",
+        Sketch.mirror,
+        guide="geometry",
+        guide_anchor="pattern-mirror",
+    ),
+    _method(
         "Sketch.extrude",
         "Sketch.extrude()",
         Sketch.extrude,

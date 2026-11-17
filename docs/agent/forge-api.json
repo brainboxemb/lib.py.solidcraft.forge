@@ -493,6 +493,20 @@
       "reference": "reference/Shape.rectangular_pattern/",
       "guide": "guide/features/#features",
       "signature": "Shape.rectangular_pattern(self, feature, *, count, spacing, direction=<Axis.X: 'X'>, count2=None, spacing2=None, direction2=<Axis.Y: 'Y'>, alignment='right', alignment2='right', reversed=False, reversed2=False)"
+    },
+    "Sketch.rectangular_pattern": {
+      "kind": "callable",
+      "summary": "Repeat a profile or earlier Sketch result with a native rectangular pattern.",
+      "reference": "reference/Sketch.rectangular_pattern/",
+      "guide": "guide/geometry/#pattern-mirror",
+      "signature": "Sketch.rectangular_pattern(self, source, *, count, spacing, direction=<Axis.X: 'X'>, count2=1, spacing2=None, direction2=None, alignment='right', alignment2='right', reversed=False, reversed2=False)"
+    },
+    "Sketch.mirror": {
+      "kind": "callable",
+      "summary": "Mirror a profile or earlier Sketch result over the sketch X or Y axis.",
+      "reference": "reference/Sketch.mirror/",
+      "guide": "guide/geometry/#pattern-mirror",
+      "signature": "Sketch.mirror(self, source, *, axis)"
     }
   }
 }

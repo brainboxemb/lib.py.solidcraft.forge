@@ -232,17 +232,48 @@ class Sketch:
         reversed=False,
         reversed2=False,
     ):
-        """Repeat authored sketch geometry with a native associative pattern.
+        """Repeat a profile or earlier Sketch result with a native rectangular pattern.
 
-        count/count2 include the original. direction and direction2 are fixed
-        sketch-local vectors or Axis.X/Axis.Y. The returned value represents
-        the complete pattern (source plus copies) and can be used by mirror()
-        or another supported sketch operation.
+        Parameters:
+            source: A profile already in this Sketch, or a result returned by rectangular_pattern() or mirror() in the same Sketch.
+            count: Number of instances in the first direction, including the original. Use a whole number from 1 to 500; a dimensionless Parameter may remain editable in SolidCraft.
+            spacing: Distance between instances in the first direction, in mm. A length Parameter may remain editable in SolidCraft.
+            direction: First sketch-local direction: Axis.X, Axis.Y or a fixed non-zero (x, y) vector. Defaults to Axis.X.
+            count2: Number of instances in the second direction, including the original. Use a whole number from 1 to 500. Defaults to 1.
+            spacing2: Optional distance between instances in the second direction, in mm. When omitted, SolidCraft uses the first spacing.
+            direction2: Optional second sketch-local direction: Axis.X, Axis.Y or a fixed non-zero (x, y) vector. When omitted, SolidCraft uses the direction perpendicular to the first.
+            alignment: Position of the original along the first direction: "left", "center" or "right". Defaults to "right".
+            alignment2: Position of the original along the second direction: "left", "center" or "right". Defaults to "right".
+            reversed: Reverse placement along the first direction. Defaults to False.
+            reversed2: Reverse placement along the second direction. Defaults to False.
 
-        SolidCraft 0.42 mirror relationships keep the entity set selected when
-        the mirror is authored. Changing an upstream pattern count later still
-        edits the native pattern, but newly added pattern entities are not
-        automatically added to an already-authored downstream mirror.
+        Use when:
+            Repeat one Circle, Slot or other supported profile without drawing
+            every copy separately. The returned Sketch result represents the
+            source plus its copies and may be passed to mirror() or another
+            supported Sketch operation.
+
+        Limits:
+            The operation must be authored inside the active Sketch. Current
+            native qualification covers attached Sketch(on=...) use. The two
+            counts may create at most 500 instances in total. Per-instance
+            suppression is not supported. SolidCraft 0.42 stores the curves
+            selected by a mirror when that mirror is created. If a pattern
+            later creates extra curves after its count changes, those new
+            curves are not added to that existing mirror automatically.
+
+        Example:
+            with Sketch(name="Holes", on=board, parent=Anchor.TOP) as sketch:
+                circle = Circle2D(d=8)
+                row = sketch.rectangular_pattern(
+                    circle, count=4, spacing=25, direction=Axis.X
+                )
+
+            with Sketch(name="Slots", on=board, parent=Anchor.TOP) as sketch:
+                slot = SlotCenterToCenter2D((0, 0), (20, 0), 8)
+                pair = sketch.rectangular_pattern(
+                    slot, count=2, spacing=30, direction=Axis.Y
+                )
         """
         if self._closed or self._token is None:
             raise ValueError("sketch pattern must be authored inside the Sketch scope")
@@ -304,7 +335,38 @@ class Sketch:
         return operation
 
     def mirror(self, source, *, axis):
-        """Mirror authored sketch geometry over the sketch X or Y origin axis."""
+        """Mirror a profile or earlier Sketch result over the sketch X or Y axis.
+
+        Parameters:
+            source: A profile already in this Sketch, or a result returned by rectangular_pattern() or mirror() in the same Sketch.
+            axis: Mirror axis. Use Axis.X, Axis.Y, "x" or "y".
+
+        Use when:
+            Create symmetric sketch geometry from a Circle, Slot, pattern result
+            or earlier mirror result. The returned Sketch result contains the
+            mirrored copies and may be used by a later supported Sketch
+            operation.
+
+        Limits:
+            The operation must be authored inside the active Sketch. Current
+            native qualification covers attached Sketch(on=...) use. Only the
+            sketch X and Y origin axes are supported. SolidCraft 0.42 stores
+            the curves selected when the mirror is created. If an upstream
+            pattern later creates extra curves after its count changes, those
+            new curves are not added to that existing mirror automatically.
+
+        Example:
+            with Sketch(name="Holes", on=board, parent=Anchor.TOP) as sketch:
+                circle = Circle2D(d=8)
+                sketch.mirror(circle, axis=Axis.Y)
+
+            with Sketch(name="Slots", on=board, parent=Anchor.TOP) as sketch:
+                slot = SlotCenterToCenter2D((0, 0), (20, 0), 8)
+                pair = sketch.rectangular_pattern(
+                    slot, count=2, spacing=30, direction=Axis.X
+                )
+                sketch.mirror(pair, axis=Axis.X)
+        """
         if self._closed or self._token is None:
             raise ValueError("sketch mirror must be authored inside the Sketch scope")
         source = self._require_entity_source(source)

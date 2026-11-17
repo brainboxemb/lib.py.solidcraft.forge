@@ -8,6 +8,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Documentation
+
+- Added normal API Reference, Guide, Cheatsheet and search documentation for
+  `Sketch.rectangular_pattern(...)` and `Sketch.mirror(...)`, including
+  supported sources, parameters, returned Sketch results, Circle/Slot examples
+  and current limits (issue #277).
+
 ## [0.7.0] - 2026-11-17
 
 ### Added
