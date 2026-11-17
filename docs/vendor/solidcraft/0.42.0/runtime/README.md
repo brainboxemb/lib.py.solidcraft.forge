@@ -2,7 +2,7 @@
 
 Generated from the pinned SolidCraft runtime command registry.
 
-Forge-referenced commands: **42**
+Forge-referenced commands: **43**
 
 - `browser.visibility` → `contracts/browser.visibility.json`
 - `component.activate` → `contracts/component.activate.json`
@@ -24,6 +24,7 @@ Forge-referenced commands: **42**
 - `plastic.snap_fit` → `contracts/plastic.snap_fit.json`
 - `sketch.circle.center` → `contracts/sketch.circle.center.json`
 - `sketch.create` → `contracts/sketch.create.json`
+- `sketch.edit` → `contracts/sketch.edit.json`
 - `sketch.finish` → `contracts/sketch.finish.json`
 - `sketch.line` → `contracts/sketch.line.json`
 - `sketch.mirror` → `contracts/sketch.mirror.json`
