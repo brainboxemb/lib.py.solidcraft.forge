@@ -59,6 +59,23 @@ read the same geometry contract. A case must state whether bounds are sufficient
 for the geometry it is responsible for and explain why. If bounds are not
 sufficient, the contract must declare volume and/or 3D surface-distance checks.
 
+### Q6 expected shape and render regression
+
+Q6 has two separate evidence requirements. First, each case declares
+`required_views` in its geometry contract. The goal/overlay renderer must
+produce the independently declared expected shape in every required view.
+Cases with internal cuts can also declare 3D `visual_features` such as
+`through_hole` and `through_slot`; these include profile dimensions and
+the Z range so a normal view and an orthogonal/isometric view can show both
+placement and depth.
+
+Second, the existing front/right/isometric renders are compared with approved
+native render baselines. Baseline agreement alone is not Q6 proof. Q6 is PASS
+only when both `expected_shape.status` and `regression.status` are PASS.
+The native renderer creates the union of regression views and each case's
+required expected-shape views, so internal-feature cases can add a top view
+without weakening the existing regression history.
+
 ### Q5 applicability rule
 
 Q5 is required when the behaviour claimed by a case depends on a value stored

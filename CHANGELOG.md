@@ -10,6 +10,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Changed
 
+- Q6 now separates independently declared expected-shape evidence from native
+  render regression. Qualification cases declare required visual views; hole
+  and Slot cases add 3D through-cut feature outlines and top views, while the
+  existing front/right/isometric baselines remain the regression layer. Q6
+  passes only when both evidence layers pass.
+
+### Changed
+
 - Q1 and Q2 qualification status is now case-specific. Every supported case
   declares concrete proving unittest targets, CI runs them per case, structured
   results retain the test targets and logs, and the qualification site links to

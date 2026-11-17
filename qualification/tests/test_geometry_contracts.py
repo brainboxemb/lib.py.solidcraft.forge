@@ -4,6 +4,7 @@ import math
 import unittest
 
 from qualification.cases import QUALIFICATION_CASES
+from qualification.camera import VIEWS
 from qualification.geometry_contracts import geometry_contract, proof_contract
 
 
@@ -17,6 +18,57 @@ class GeometryContractTests(unittest.TestCase):
                 self.assertTrue(contract["visual_boxes"])
                 self.assertIsInstance(contract["bounds_sufficient"], bool)
                 self.assertTrue(contract["bounds_reason"].strip())
+
+    def test_every_case_declares_supported_required_views(self):
+        for case in QUALIFICATION_CASES:
+            slug = case["slug"]
+            contract = geometry_contract(slug)
+            with self.subTest(case=slug):
+                self.assertTrue(contract["required_views"])
+                self.assertTrue(
+                    set(contract["required_views"]) <= set(VIEWS),
+                )
+                self.assertIsInstance(contract["visual_features"], list)
+
+    def test_internal_cut_cases_have_feature_shape_evidence(self):
+        holes = geometry_contract("anchored-holes")
+        self.assertIn("top", holes["required_views"])
+        self.assertIn("right", holes["required_views"])
+        self.assertEqual(
+            [feature["type"] for feature in holes["visual_features"]],
+            ["through_hole", "through_hole"],
+        )
+        self.assertEqual(
+            [feature["diameter"] for feature in holes["visual_features"]],
+            [8.0, 8.0],
+        )
+        self.assertTrue(
+            all(feature["z"] == [0.0, 10.0] for feature in holes["visual_features"])
+        )
+
+        pattern = geometry_contract("rectangular-pattern")
+        self.assertIn("top", pattern["required_views"])
+        self.assertEqual(len(pattern["visual_features"]), 6)
+        self.assertTrue(
+            all(
+                feature["type"] == "through_slot"
+                and feature["width"] == 6.0
+                and feature["z"] == [0.0, 4.0]
+                for feature in pattern["visual_features"]
+            )
+        )
+
+        slots = geometry_contract("slot-family")
+        self.assertIn("top", slots["required_views"])
+        self.assertEqual(len(slots["visual_features"]), 5)
+        self.assertTrue(
+            all(
+                feature["type"] == "through_slot"
+                and feature["width"] == 8.0
+                and feature["z"] == [0.0, 5.0]
+                for feature in slots["visual_features"]
+            )
+        )
 
     def test_non_bounds_cases_require_detailed_geometry_checks(self):
         for case in QUALIFICATION_CASES:

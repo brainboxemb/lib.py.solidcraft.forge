@@ -550,7 +550,7 @@ def _render_case_test_evidence(slug, result, source_sha):
 def _image_sort_key(name):
     if name == "model.png":
         return (0, "", 0)
-    for view_index, view in enumerate(("front", "right", "iso"), 1):
+    for view_index, view in enumerate(("top", "front", "right", "iso"), 1):
         order = {
             f"model-{view}.png": 0,
             f"goal-{view}.png": 1,
@@ -593,35 +593,78 @@ def _visual_view_html(case, view, native_images):
     )
 
 
-def _render_visual_evidence(case, native_images):
-    iso = _visual_view_html(case, "iso", native_images)
-    additional = "".join(
+def _render_visual_evidence(case, native_images, native_case=None):
+    geometry = proof_contract(case["slug"])["geometry"]
+    required_views = geometry["required_views"]
+    required = "".join(
         _visual_view_html(case, view, native_images)
-        for view in ("front", "right")
+        for view in required_views
     )
-    if not iso and not additional:
+
+    regression_only_views = [
+        view
+        for view in ("front", "right", "iso")
+        if view not in required_views
+    ]
+    regression_only = "".join(
+        _visual_view_html(case, view, native_images)
+        for view in regression_only_views
+    )
+    if not required and not regression_only:
         return ""
+
+    status_html = ""
+    if native_case is not None:
+        result_path = native_case / "visual-validation.json"
+        if result_path.is_file():
+            result = json.loads(result_path.read_text(encoding="utf-8"))
+            regression_status = result.get(
+                "regression",
+                {},
+            ).get("status", "missing")
+            expected_status = result.get(
+                "expected_shape",
+                {},
+            ).get("status", "missing")
+            status_html = (
+                '<p class="meta"><strong>Q6 evidence:</strong> '
+                f'expected shape {escape(expected_status.upper())}; '
+                f'render regression {escape(regression_status.upper())}. '
+                'Both must pass for Q6 PASS.</p>'
+            )
+
     extra = (
         '<details class="qualification-extra-views">'
-        '<summary>Additional front/right views</summary>'
-        + additional
+        '<summary>Additional render-regression views</summary>'
+        + regression_only
         + '</details>'
-        if additional else ""
+        if regression_only
+        else ""
+    )
+    required_labels = ", ".join(
+        view.title()
+        for view in required_views
     )
     return (
         '<section class="panel qualification-visual-check">'
         '<h2>5. Visual verification</h2>'
-        '<p class="meta">Actual is the current SolidCraft result. Goal is the independent expected geometry. '
-        'Overlay shows both together. Click any image for the full-size PNG.</p>'
-        + iso + extra +
-        '</section>'
+        '<p class="meta">The required views below are chosen for this case. '
+        'Goal is the independently declared expected shape; red outlines mark '
+        'declared internal holes/slots where applicable. Overlay puts that '
+        'expectation over the actual SolidCraft render.</p>'
+        f'<p class="meta"><strong>Required expected-shape views:</strong> '
+        f'{escape(required_labels)}</p>'
+        + status_html
+        + required
+        + extra
+        + '</section>'
     )
 
 
 def _image_caption(name):
     if name == "model.png":
         return "Native baseline render."
-    for view in ("front", "right", "iso"):
+    for view in ("top", "front", "right", "iso"):
         if name == f"model-{view}.png":
             return f"Actual SolidCraft {view} view."
         if name == f"goal-{view}.png":
@@ -677,8 +720,35 @@ def _render_proof_contract(slug):
     sufficiency = "Yes" if geometry["bounds_sufficient"] else "No"
     details = [
         f"<li><strong>Are bounds sufficient for this case?</strong> "
-        f"{escape(sufficiency)} — {escape(geometry['bounds_reason'])}</li>"
+        f"{escape(sufficiency)} — {escape(geometry['bounds_reason'])}</li>",
+        "<li><strong>Required Q6 expected-shape views:</strong> "
+        + escape(", ".join(geometry["required_views"]))
+        + "</li>",
     ]
+    visual_features = geometry.get("visual_features", ())
+    if visual_features:
+        feature_items = "".join(
+            "<li>"
+            f"<strong>{escape(feature['label'])}</strong> "
+            f"(<code>{escape(feature['type'])}</code>): "
+            + (
+                f"center <code>{escape(feature['center'])}</code>, "
+                f"diameter {escape(feature['diameter'])} mm, "
+                f"Z <code>{escape(feature['z'])}</code>"
+                if feature["type"] == "through_hole"
+                else
+                f"width {escape(feature['width'])} mm, "
+                f"centerline points {escape(len(feature['centerline']))}, "
+                f"Z <code>{escape(feature['z'])}</code>"
+            )
+            + "</li>"
+            for feature in visual_features
+        )
+        details.append(
+            "<li><strong>Declared internal visual features:</strong><ul>"
+            + feature_items
+            + "</ul></li>"
+        )
     if "volume_mm3" in geometry:
         details.append(
             "<li><strong>Expected volume:</strong> "
@@ -1997,7 +2067,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 for evidence in sorted(native_case.glob(pattern)):
                     shutil.copyfile(evidence, case_dir / evidence.name)
                     native_files.append(evidence.name)
-            preview_html = _render_visual_evidence(case, native_images)
+            preview_html = _render_visual_evidence(
+                case,
+                native_images,
+                native_case,
+            )
             case_preview = (
                 "model-iso.png" if "model-iso.png" in native_images
                 else "model.png" if "model.png" in native_images

@@ -195,7 +195,8 @@ jobs:
               --out "output/native/$model/model.png" --no-grid --no-axes
             test -s "output/native/$model/model.png"
 
-            for view in front right iso; do
+            views="$(python -c 'import sys; from qualification.visual_validation import render_views; print(" ".join(render_views(sys.argv[1])))' "$model")"
+            for view in $views; do
               camera="$(python qualification/camera.py \
                 "output/native/$model/measurements.json" "$view")"
               printf '%s\n' "$camera" > "output/native/$model/camera-$view.json"
@@ -251,7 +252,7 @@ jobs:
               qualified_at:$qualified_at,verified:true,
               levels:{q1:"python-api",q2:"command-contract",q3:"native-build",
                       q4:"native-semantic-validation",q5:"parametric-mutation",
-                      q6:"visual-regression"}}' \
+                      q6:"expected-shape-plus-render-regression"}}' \
             > output/native/verification.json
       - name: Collect structured qualification results
         shell: bash

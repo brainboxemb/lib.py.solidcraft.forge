@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Visual regression checks for fixed-camera native qualification renders."""
+"""Q6 visual checks: approved render regression plus expected-shape evidence."""
 
 from __future__ import annotations
 
@@ -19,11 +19,20 @@ sys.path.insert(0, str(ROOT))
 
 from qualification.case_selection import parse_case_selection
 from qualification.cases import supported_case_slugs
+from qualification.geometry_contracts import geometry_contract
+
+
 BASELINES = ROOT / "qualification" / "visual_baselines.json"
-VIEWS = ("front", "right", "iso")
+REGRESSION_VIEWS = ("front", "right", "iso")
 REFERENCE_SIZE = (96, 72)
 DEFAULT_MEAN_ABS_THRESHOLD = 6.0
 DEFAULT_CHANGED_PIXEL_FRACTION = 0.08
+
+
+def render_views(slug: str) -> tuple[str, ...]:
+    """Return every native view needed by Q6 for one case."""
+    required = tuple(geometry_contract(slug)["required_views"])
+    return tuple(dict.fromkeys(REGRESSION_VIEWS + required))
 
 
 def normalized_gray(path: Path) -> Image.Image:
@@ -38,11 +47,13 @@ def encode_reference(image: Image.Image) -> str:
 
 def decode_reference(data: dict) -> Image.Image:
     if data.get("pixels_zlib_base64"):
-        raw = zlib.decompress(base64.b64decode(data["pixels_zlib_base64"]))
+        raw = zlib.decompress(
+            base64.b64decode(data["pixels_zlib_base64"])
+        )
         expected = REFERENCE_SIZE[0] * REFERENCE_SIZE[1]
         if len(raw) != expected:
             raise ValueError(
-                f"invalid compressed visual baseline byte count: "
+                "invalid compressed visual baseline byte count: "
                 f"{len(raw)} != {expected}"
             )
         return Image.frombytes("L", REFERENCE_SIZE, raw)
@@ -50,13 +61,18 @@ def decode_reference(data: dict) -> Image.Image:
     if data.get("png_base64"):
         raw = base64.b64decode(data["png_base64"])
         image = Image.open(BytesIO(raw)).convert("RGB")
-        image = image.resize(REFERENCE_SIZE, Image.Resampling.LANCZOS)
+        image = image.resize(
+            REFERENCE_SIZE,
+            Image.Resampling.LANCZOS,
+        )
         return image.convert("L")
 
     raw = base64.b64decode(data["pixels"])
     expected = REFERENCE_SIZE[0] * REFERENCE_SIZE[1]
     if len(raw) != expected:
-        raise ValueError(f"invalid visual baseline byte count: {len(raw)} != {expected}")
+        raise ValueError(
+            f"invalid visual baseline byte count: {len(raw)} != {expected}"
+        )
     return Image.frombytes("L", REFERENCE_SIZE, raw)
 
 
@@ -64,20 +80,36 @@ def metrics(current: Image.Image, reference: Image.Image) -> dict:
     diff = ImageChops.difference(current, reference)
     pixels = list(diff.getdata())
     mean_abs = sum(pixels) / len(pixels)
-    changed = sum(1 for value in pixels if value >= 12) / len(pixels)
+    changed = (
+        sum(1 for value in pixels if value >= 12)
+        / len(pixels)
+    )
     return {
         "mean_abs": round(mean_abs, 4),
         "changed_pixel_fraction": round(changed, 6),
     }
 
 
-def overlay(current: Image.Image, reference: Image.Image, out: Path) -> None:
-    # Green = current luminance, magenta = reference luminance.
+def overlay(
+    current: Image.Image,
+    reference: Image.Image,
+    out: Path,
+) -> None:
     zero = Image.new("L", REFERENCE_SIZE, 0)
-    rgb = Image.merge("RGB", (reference, current, reference))
-    rgb = rgb.resize((REFERENCE_SIZE[0] * 6, REFERENCE_SIZE[1] * 6), Image.Resampling.NEAREST)
+    rgb = Image.merge(
+        "RGB",
+        (reference, current, reference),
+    )
+    rgb = rgb.resize(
+        (REFERENCE_SIZE[0] * 6, REFERENCE_SIZE[1] * 6),
+        Image.Resampling.NEAREST,
+    )
     draw = ImageDraw.Draw(rgb)
-    draw.rectangle((0, 0, rgb.width - 1, rgb.height - 1), outline=(255, 255, 255), width=2)
+    draw.rectangle(
+        (0, 0, rgb.width - 1, rgb.height - 1),
+        outline=(255, 255, 255),
+        width=2,
+    )
     rgb.save(out)
 
 
@@ -87,13 +119,16 @@ def load_baselines() -> dict:
     return json.loads(BASELINES.read_text(encoding="utf-8"))
 
 
-def validate_case(case_dir: Path, slug: str, baseline: dict | None) -> dict:
+def _regression_result(
+    case_dir: Path,
+    baseline: dict | None,
+) -> dict:
     views = {}
     missing = []
     review = False
     failed = False
 
-    for view in VIEWS:
+    for view in REGRESSION_VIEWS:
         path = case_dir / f"model-{view}.png"
         if not path.is_file() or path.stat().st_size == 0:
             missing.append(path.name)
@@ -112,17 +147,28 @@ def validate_case(case_dir: Path, slug: str, baseline: dict | None) -> dict:
 
         reference = decode_reference(reference_data)
         result = metrics(current, reference)
-        mean_limit = float(reference_data.get("mean_abs_threshold", DEFAULT_MEAN_ABS_THRESHOLD))
-        changed_limit = float(reference_data.get(
-            "changed_pixel_fraction_threshold",
-            DEFAULT_CHANGED_PIXEL_FRACTION,
-        ))
+        mean_limit = float(
+            reference_data.get(
+                "mean_abs_threshold",
+                DEFAULT_MEAN_ABS_THRESHOLD,
+            )
+        )
+        changed_limit = float(
+            reference_data.get(
+                "changed_pixel_fraction_threshold",
+                DEFAULT_CHANGED_PIXEL_FRACTION,
+            )
+        )
         passed = (
             result["mean_abs"] <= mean_limit
             and result["changed_pixel_fraction"] <= changed_limit
         )
         diff_name = f"visual-diff-{view}.png"
-        overlay(current, reference, case_dir / diff_name)
+        overlay(
+            current,
+            reference,
+            case_dir / diff_name,
+        )
         views[view] = {
             "status": "pass" if passed else "fail",
             "image": path.name,
@@ -145,31 +191,122 @@ def validate_case(case_dir: Path, slug: str, baseline: dict | None) -> dict:
         status = "pass"
 
     return {
-        "case": slug,
         "status": status,
         "views": views,
         "missing": missing,
     }
 
 
+def _expected_shape_result(case_dir: Path, slug: str) -> dict:
+    contract = geometry_contract(slug)
+    required_views = list(contract["required_views"])
+    visual_features = contract["visual_features"]
+    missing = []
+    views = {}
+
+    if not required_views:
+        return {
+            "status": "missing",
+            "required_views": [],
+            "feature_count": len(visual_features),
+            "views": {},
+            "missing": ["required_views"],
+        }
+
+    for view in required_views:
+        evidence = {
+            "actual": f"model-{view}.png",
+            "camera": f"camera-{view}.json",
+            "goal": f"goal-{view}.png",
+            "overlay": f"overlay-{view}.png",
+        }
+        missing_view = [
+            name
+            for name in evidence.values()
+            if not (case_dir / name).is_file()
+            or (case_dir / name).stat().st_size == 0
+        ]
+        if missing_view:
+            missing.extend(missing_view)
+            views[view] = {
+                "status": "missing",
+                **evidence,
+                "missing": missing_view,
+            }
+        else:
+            views[view] = {
+                "status": "pass",
+                **evidence,
+            }
+
+    return {
+        "status": "missing" if missing else "pass",
+        "required_views": required_views,
+        "feature_count": len(visual_features),
+        "features": visual_features,
+        "views": views,
+        "missing": sorted(set(missing)),
+    }
+
+
+def validate_case(
+    case_dir: Path,
+    slug: str,
+    baseline: dict | None,
+) -> dict:
+    regression = _regression_result(case_dir, baseline)
+    expected_shape = _expected_shape_result(case_dir, slug)
+
+    states = (
+        regression["status"],
+        expected_shape["status"],
+    )
+    if "fail" in states:
+        status = "fail"
+    elif "missing" in states:
+        status = "missing"
+    elif "review" in states:
+        status = "review"
+    else:
+        status = "pass"
+
+    missing = sorted(
+        set(regression["missing"] + expected_shape["missing"])
+    )
+    return {
+        "case": slug,
+        "status": status,
+        # Keep the old top-level fields for existing report/site consumers.
+        "views": regression["views"],
+        "missing": missing,
+        "regression": regression,
+        "expected_shape": expected_shape,
+    }
+
+
 def baseline_entry(case_dir: Path, slug: str) -> dict:
     views = {}
-    for view in VIEWS:
+    for view in REGRESSION_VIEWS:
         path = case_dir / f"model-{view}.png"
         image = normalized_gray(path)
         views[view] = {
             "pixels": encode_reference(image),
             "mean_abs_threshold": DEFAULT_MEAN_ABS_THRESHOLD,
-            "changed_pixel_fraction_threshold": DEFAULT_CHANGED_PIXEL_FRACTION,
+            "changed_pixel_fraction_threshold": (
+                DEFAULT_CHANGED_PIXEL_FRACTION
+            ),
         }
     return {"case": slug, "views": views}
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--native-root", type=Path, required=True)
-    parser.add_argument("--qualification-dir", type=Path, required=True)
-    parser.add_argument("--baseline-case", help="print a baseline JSON entry for one approved case")
+    parser.add_argument("--native-root", type=Path)
+    parser.add_argument("--qualification-dir", type=Path)
+    parser.add_argument(
+        "--baseline-case",
+        help="print a baseline JSON entry for one approved case",
+    )
     parser.add_argument(
         "--cases",
         default="all",
@@ -178,11 +315,21 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.baseline_case:
-        print(json.dumps(
-            baseline_entry(args.native_root / args.baseline_case, args.baseline_case),
-            indent=2,
-        ))
+        if args.native_root is None:
+            parser.error("--baseline-case requires --native-root")
+        print(
+            json.dumps(
+                baseline_entry(
+                    args.native_root / args.baseline_case,
+                    args.baseline_case,
+                ),
+                indent=2,
+            )
+        )
         return 0
+
+    if args.native_root is None or args.qualification_dir is None:
+        parser.error("--native-root and --qualification-dir are required")
 
     baselines = load_baselines().get("cases", {})
     rows = ["case\tstatus\n"]
@@ -190,31 +337,52 @@ def main() -> int:
 
     requested = parse_case_selection(args.cases)
     supported = set(supported_case_slugs())
-    selected = tuple(case for case in requested if case in supported)
+    selected = tuple(
+        case
+        for case in requested
+        if case in supported
+    )
     for slug in selected:
         case_dir = args.native_root / slug
-        result = validate_case(case_dir, slug, baselines.get(slug))
+        result = validate_case(
+            case_dir,
+            slug,
+            baselines.get(slug),
+        )
         summary[slug] = result
         (case_dir / "visual-validation.json").write_text(
             json.dumps(result, indent=2) + "\n",
             encoding="utf-8",
         )
-        rows.append(f"{slug}\t{result['status'].upper()}\n")
+        rows.append(
+            f"{slug}\t{result['status'].upper()}\n"
+        )
 
-    args.qualification_dir.mkdir(parents=True, exist_ok=True)
+    args.qualification_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
     (args.qualification_dir / "visual-validation.tsv").write_text(
-        "".join(rows), encoding="utf-8"
+        "".join(rows),
+        encoding="utf-8",
     )
     (args.qualification_dir / "visual-validation.json").write_text(
-        json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+        json.dumps(summary, indent=2) + "\n",
+        encoding="utf-8",
     )
 
     counts = {}
     for result in summary.values():
-        counts[result["status"]] = counts.get(result["status"], 0) + 1
-    print("Visual qualification: " + ", ".join(
-        f"{key}={value}" for key, value in sorted(counts.items())
-    ))
+        counts[result["status"]] = (
+            counts.get(result["status"], 0) + 1
+        )
+    print(
+        "Visual qualification: "
+        + ", ".join(
+            f"{key}={value}"
+            for key, value in sorted(counts.items())
+        )
+    )
     return 0
 
 
