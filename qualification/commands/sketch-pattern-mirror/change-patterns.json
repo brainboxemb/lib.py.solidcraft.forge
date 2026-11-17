@@ -1,0 +1,39 @@
+{
+  "commands": [
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "hole_diameter",
+        "expression": "10 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "hole_columns",
+        "expression": "3"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "hole_pitch",
+        "expression": "30 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "slot_count",
+        "expression": "3"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "slot_pitch",
+        "expression": "30 mm"
+      }
+    }
+  ]
+}
