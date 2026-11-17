@@ -221,6 +221,96 @@ class AssemblyTests(unittest.TestCase):
         ]
         self.assertEqual(len(joints), 1)
 
+    def test_component_definition_preserves_and_namespaces_replay_bindings(self):
+        from scpf import Anchor, Box, Circle2D, Depth, Sketch, component
+        from scpf.assembly import compile_assembly
+
+        @component
+        class LeftPanel:
+            def build(self):
+                body = Box(30, 20, 4, anchor=Anchor.BOTTOM)
+                with Sketch(name="Left cut", on=body, parent=Anchor.TOP) as cut:
+                    Circle2D(d=6)
+                return body - cut.extrude(Depth.THROUGH_ALL)
+
+        @component
+        class RightPanel:
+            def build(self):
+                body = Box(40, 25, 5, anchor=Anchor.BOTTOM)
+                with Sketch(name="Right cut", on=body, parent=Anchor.TOP) as cut:
+                    Circle2D(d=8)
+                return body - cut.extrude(Depth.THROUGH_ALL)
+
+        commands = compile_assembly(
+            LeftPanel() + RightPanel(),
+            "Panels",
+        )["commands"]
+
+        face_queries = [
+            command
+            for command in commands
+            if command["command"] == "model.faces"
+        ]
+        self.assertEqual(len(face_queries), 2)
+
+        self.assertEqual(
+            face_queries[0]["bind"],
+            {
+                "$d1_LeftPanel_face_point_1": {
+                    "field": "faces",
+                    "where": {"plane_normal": [0, 0, 1]},
+                    "max": "area",
+                    "select": "point",
+                },
+                "$d1_LeftPanel_face_index_1": {
+                    "field": "faces",
+                    "where": {"plane_normal": [0, 0, 1]},
+                    "max": "area",
+                    "select": "index",
+                },
+            },
+        )
+        self.assertEqual(
+            face_queries[1]["bind"],
+            {
+                "$d2_RightPanel_face_point_1": {
+                    "field": "faces",
+                    "where": {"plane_normal": [0, 0, 1]},
+                    "max": "area",
+                    "select": "point",
+                },
+                "$d2_RightPanel_face_index_1": {
+                    "field": "faces",
+                    "where": {"plane_normal": [0, 0, 1]},
+                    "max": "area",
+                    "select": "index",
+                },
+            },
+        )
+
+        sketches = [
+            command
+            for command in commands
+            if command["command"] == "sketch.create"
+        ]
+        self.assertEqual(len(sketches), 2)
+        self.assertEqual(
+            sketches[0]["params"]["plane"],
+            {
+                "face": "$d1_LeftPanel_face_point_1",
+                "body": "LeftPanel",
+                "index": "$d1_LeftPanel_face_index_1",
+            },
+        )
+        self.assertEqual(
+            sketches[1]["params"]["plane"],
+            {
+                "face": "$d2_RightPanel_face_point_1",
+                "body": "RightPanel",
+                "index": "$d2_RightPanel_face_index_1",
+            },
+        )
+
     def test_replay_variable_names_do_not_depend_on_process_occurrence_ids(self):
         from scpf import Box, Placement, Z, component
         from scpf.assembly import compile_assembly
