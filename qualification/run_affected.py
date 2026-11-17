@@ -29,6 +29,7 @@ from qualification.native_cases import (
     mutation_spec,
     validate_runtime_metadata,
 )
+from qualification.visual_validation import render_views
 from scpf.headless import run_document
 
 
@@ -195,7 +196,7 @@ def _build_case(slug: str, out: Path, env: dict[str, str]) -> tuple[float, float
     )
     snapshot_total += elapsed
 
-    for view in ("front", "right", "iso"):
+    for view in render_views(slug):
         camera = _camera(case_dir / "measurements.json", view)
         (case_dir / f"camera-{view}.json").write_text(camera + "\n", encoding="utf-8")
         elapsed, _ = _run(

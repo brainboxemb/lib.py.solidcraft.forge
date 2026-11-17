@@ -254,6 +254,171 @@ _SLOT_FAMILY_CENTERS = [
 ]
 
 
+DEFAULT_REQUIRED_VISUAL_VIEWS = ("iso", "front", "right")
+
+REQUIRED_VISUAL_VIEWS = {
+    case["slug"]: DEFAULT_REQUIRED_VISUAL_VIEWS
+    for case in QUALIFICATION_CASES
+}
+REQUIRED_VISUAL_VIEWS.update({
+    # Hole profiles are clearest normal to the plate; the right view separates
+    # both Y positions and exposes the full Z depth.
+    "anchored-holes": ("top", "right", "iso"),
+    # Pattern/slot cases need a normal profile view plus an orthogonal view
+    # that makes the through-cut depth visible.
+    "rectangular-pattern": ("top", "right", "iso"),
+    "slot-family": ("top", "front", "iso"),
+    "rounded-rectangle-sketch": ("top", "front", "iso"),
+})
+
+
+def _through_hole(label, x, y, diameter, z_min, z_max):
+    return {
+        "type": "through_hole",
+        "label": label,
+        "center": [float(x), float(y)],
+        "diameter": float(diameter),
+        "z": [float(z_min), float(z_max)],
+    }
+
+
+def _through_slot(label, centerline, width, z_min, z_max):
+    return {
+        "type": "through_slot",
+        "label": label,
+        "centerline": [
+            [float(point[0]), float(point[1])]
+            for point in centerline
+        ],
+        "width": float(width),
+        "z": [float(z_min), float(z_max)],
+    }
+
+
+def _sample_arc(center, start, sweep_degrees, segments=20):
+    cx, cy = center
+    sx, sy = start
+    radius = math.hypot(sx - cx, sy - cy)
+    start_angle = math.atan2(sy - cy, sx - cx)
+    sweep = math.radians(sweep_degrees)
+    return [
+        [
+            cx + radius * math.cos(start_angle + sweep * index / segments),
+            cy + radius * math.sin(start_angle + sweep * index / segments),
+        ]
+        for index in range(segments + 1)
+    ]
+
+
+def _sample_three_point_arc(p0, pm, p1, segments=20):
+    x1, y1 = p0
+    x2, y2 = pm
+    x3, y3 = p1
+    denominator = 2.0 * (
+        x1 * (y2 - y3)
+        + x2 * (y3 - y1)
+        + x3 * (y1 - y2)
+    )
+    if abs(denominator) < 1e-12:
+        raise ValueError("three-point visual slot arc is collinear")
+
+    ux = (
+        (x1 * x1 + y1 * y1) * (y2 - y3)
+        + (x2 * x2 + y2 * y2) * (y3 - y1)
+        + (x3 * x3 + y3 * y3) * (y1 - y2)
+    ) / denominator
+    uy = (
+        (x1 * x1 + y1 * y1) * (x3 - x2)
+        + (x2 * x2 + y2 * y2) * (x1 - x3)
+        + (x3 * x3 + y3 * y3) * (x2 - x1)
+    ) / denominator
+
+    center = (ux, uy)
+    a0 = math.atan2(y1 - uy, x1 - ux)
+    am = math.atan2(y2 - uy, x2 - ux)
+    a1 = math.atan2(y3 - uy, x3 - ux)
+
+    def ccw(a, b):
+        return (b - a) % (2.0 * math.pi)
+
+    forward = ccw(a0, a1)
+    if ccw(a0, am) <= forward + 1e-9:
+        sweep = forward
+    else:
+        sweep = -ccw(a1, a0)
+
+    return _sample_arc(
+        center,
+        p0,
+        math.degrees(sweep),
+        segments=segments,
+    )
+
+
+EXPECTED_VISUAL_FEATURES = {
+    case["slug"]: []
+    for case in QUALIFICATION_CASES
+}
+
+EXPECTED_VISUAL_FEATURES["anchored-holes"] = [
+    _through_hole("front hole Ø8 through", 50, 10, 8, 0, 10),
+    _through_hole("rear hole Ø8 through", 50, 50, 8, 0, 10),
+]
+
+EXPECTED_VISUAL_FEATURES["rectangular-pattern"] = [
+    _through_slot(
+        label,
+        ((x - 5.0, y), (x + 5.0, y)),
+        6.0,
+        0.0,
+        4.0,
+    )
+    for label, x, y in _RECTANGULAR_SLOT_CENTERS
+]
+
+EXPECTED_VISUAL_FEATURES["slot-family"] = [
+    _through_slot(
+        "center-to-center slot",
+        ((-60, -35), (-40, -35)),
+        8,
+        0,
+        5,
+    ),
+    _through_slot(
+        "overall slot",
+        ((-6, -35), (16, -35)),
+        8,
+        0,
+        5,
+    ),
+    _through_slot(
+        "center-point slot",
+        ((45, -35), (65, -35)),
+        8,
+        0,
+        5,
+    ),
+    _through_slot(
+        "three-point arc slot",
+        _sample_three_point_arc(
+            (-50, 25),
+            (-35, 38),
+            (-20, 25),
+        ),
+        8,
+        0,
+        5,
+    ),
+    _through_slot(
+        "center arc slot",
+        _sample_arc((40, 25), (52, 25), 120),
+        8,
+        0,
+        5,
+    ),
+]
+
+
 _BOUNDS_ASSESSMENTS = {
     "simple-box": {
         "sufficient": True,
@@ -452,7 +617,12 @@ def geometry_contract(slug: str) -> dict:
     assessment = _BOUNDS_ASSESSMENTS[slug]
     contract = {
         "bounds": EXPECTED_BOUNDS[slug],
-        "visual_boxes": EXPECTED_VISUAL_BOXES.get(slug, EXPECTED_BOUNDS[slug]),
+        "visual_boxes": EXPECTED_VISUAL_BOXES.get(
+            slug,
+            EXPECTED_BOUNDS[slug],
+        ),
+        "required_views": list(REQUIRED_VISUAL_VIEWS[slug]),
+        "visual_features": EXPECTED_VISUAL_FEATURES[slug],
         "bounds_sufficient": assessment["sufficient"],
         "bounds_reason": assessment["reason"],
     }

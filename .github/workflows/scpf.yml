@@ -195,7 +195,8 @@ jobs:
               --out "output/native/$model/model.png" --no-grid --no-axes
             test -s "output/native/$model/model.png"
 
-            for view in front right iso; do
+            views="$(python -c 'import sys; from qualification.visual_validation import render_views; print(" ".join(render_views(sys.argv[1])))' "$model")"
+            for view in $views; do
               camera="$(python qualification/camera.py \
                 "output/native/$model/measurements.json" "$view")"
               printf '%s\n' "$camera" > "output/native/$model/camera-$view.json"
