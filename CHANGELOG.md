@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-11-17
+
 ### Fixed
 
 - TOP-attached Sketch replay now compares numeric vector selector values with
