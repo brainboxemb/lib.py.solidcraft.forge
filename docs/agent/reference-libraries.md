@@ -127,6 +127,10 @@ renders front/right/iso images.
 STL output compares visible geometry only. It does not prove SolidCraft native
 assembly identities, persisted joints or saved-design parameter mutation.
 
+For build123d 0.12.0 curved slots, use `SlotArc(edge_or_wire, height)`.
+`SlotCurve` is a later API and must not be used by the pinned 0.12.0
+qualification environment.
+
 For operations not listed above, consult the **installed pinned** version and
 refresh this cache before relying on new behaviour; do not repeatedly browse
 the build123d Git repository for ordinary modelling tasks.

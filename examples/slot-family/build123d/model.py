@@ -12,7 +12,7 @@ from build123d import (
     Mode,
     SlotCenterPoint,
     SlotCenterToCenter,
-    SlotCurve,
+    SlotArc,
     SlotOverall,
     ThreePointArc,
     extrude,
@@ -32,10 +32,10 @@ with BuildPart() as model:
 
         with BuildLine(mode=Mode.PRIVATE) as three_point:
             ThreePointArc((-50, 25), (-35, 38), (-20, 25))
-        SlotCurve(three_point.edges()[0], 8)
+        SlotArc(three_point.edges()[0], 8)
 
         with BuildLine(mode=Mode.PRIVATE) as center_arc:
             CenterArc((40, 25), 12, 0, 120)
-        SlotCurve(center_arc.edges()[0], 8)
+        SlotArc(center_arc.edges()[0], 8)
 
     extrude(amount=-5, mode=Mode.SUBTRACT)

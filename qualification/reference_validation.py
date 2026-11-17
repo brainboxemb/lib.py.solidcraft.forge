@@ -139,7 +139,10 @@ def validate_one(slug: str, implementation: str, out: Path, tolerance: float) ->
     if not stl.is_file() or stl.stat().st_size == 0:
         raise RuntimeError(f"{implementation} did not export a non-empty STL for {slug}")
 
-    loaded = trimesh.load_mesh(stl, process=False)
+    # STL writers usually duplicate vertices per triangle. Processing welds
+    # geometrically identical vertices before topology checks such as
+    # is_watertight; it does not change the measured bounds or volume.
+    loaded = trimesh.load_mesh(stl, process=True)
     if isinstance(loaded, trimesh.Scene):
         mesh = loaded.dump(concatenate=True)
     else:
