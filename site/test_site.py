@@ -18,7 +18,12 @@ from build import (
     _cheatsheet_anchor,
     reference_implementations_for,
 )
-from api_coverage import EXPORT_COVERAGE, CAPABILITY_COVERAGE
+from api_coverage import (
+    EXPORT_COVERAGE,
+    CAPABILITY_COVERAGE,
+    validate_coverage_cases,
+    validate_coverage_results,
+)
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 import scpf
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
@@ -393,6 +398,18 @@ def check(
     assert set(scpf.__all__) == set(EXPORT_COVERAGE), (
         "Every public scpf.__all__ symbol must have a declared qualification row"
     )
+    validate_coverage_cases(QUALIFICATION_CASES)
+    coverage_source = (ROOT / "site" / "api_coverage.py").read_text(encoding="utf-8")
+    assert "0.30.1" not in coverage_source
+    case_slugs = {case["slug"] for case in QUALIFICATION_CASES}
+    for _name, (_target, _current, cases, _note) in EXPORT_COVERAGE.items():
+        assert set(cases) <= case_slugs
+        for slug in cases:
+            assert f'href="../{slug}/"' in coverage_page
+    for _group, _capability, _target, _current, cases, _note in CAPABILITY_COVERAGE:
+        assert set(cases) <= case_slugs
+        for slug in cases:
+            assert f'href="../{slug}/"' in coverage_page
     assert "SolidCraft functionality coverage" in coverage_page
     for api_name in scpf.__all__:
         assert f"<code>{api_name}</code>" in coverage_page, api_name
@@ -416,7 +433,7 @@ def check(
     assert "At target" in coverage_page
     assert "Below target" in coverage_page
     assert "Basic vertical-edge fillet is command-, native- and visual-qualified" in coverage_page
-    assert "Native joint.as_built preserves an already translated and rotated child pose" in coverage_page
+    assert "no dedicated native qualification case currently proves Q3-Q6" in coverage_page
     assert "<code>Edges</code>" in coverage_page
     for status_class in (
         "coverage-status supported",
@@ -600,6 +617,7 @@ def check(
                     )
                     assert html.escape(reason) in page_text, (slug, implementation)
         if require_native:
+            validate_coverage_results(qualification_manifest)
             manifest_case = qualification_manifest["cases"][slug]
             result_path = site / "qualification" / slug / "qualification-result.json"
             assert result_path.is_file(), slug

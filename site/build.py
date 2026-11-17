@@ -19,7 +19,13 @@ ROOT = Path(__file__).resolve().parents[1]
 from scpf.runner import run_script
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from guides import GUIDES
-from api_coverage import EXPORT_COVERAGE, CAPABILITY_COVERAGE
+from api_coverage import (
+    EXPORT_COVERAGE,
+    CAPABILITY_COVERAGE,
+    qualification_number,
+    validate_coverage_cases,
+    validate_coverage_results,
+)
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 from api_reference import (
     ENUM_REFERENCES,
@@ -2067,14 +2073,16 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     coverage_root = qualification_root / "coverage"
     coverage_root.mkdir(exist_ok=True)
     case_slugs = {case["slug"] for case in QUALIFICATION_CASES}
+    validate_coverage_cases(QUALIFICATION_CASES)
+    if verified:
+        validate_coverage_results({"cases": qualification_manifest})
 
     def coverage_case_links(cases):
         links = []
         for name in cases:
-            if name in case_slugs:
-                links.append(f'<a href="../{escape(name)}/">{escape(name)}</a>')
-            else:
-                links.append(escape(name))
+            if name not in case_slugs:
+                raise ValueError(f"Unknown qualification evidence case: {name}")
+            links.append(f'<a href="../{escape(name)}/">{escape(name)}</a>')
         return ", ".join(links) if links else "—"
 
     def coverage_status_badge(label):
@@ -2126,11 +2134,6 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             f"<td>{escape(target)}</td><td><strong>{escape(current)}</strong></td>"
             f"<td>{coverage_case_links(cases)}</td><td>{escape(note)}</td></tr>"
         )
-
-    def qualification_number(value):
-        if value.startswith("Q") and value[1:].isdigit():
-            return int(value[1:])
-        return None
 
     capability_rows = []
     qualification_counts = {"At target": 0, "Below target": 0, "Gap": 0}

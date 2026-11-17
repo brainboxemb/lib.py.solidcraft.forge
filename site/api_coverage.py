@@ -5,10 +5,13 @@ declares the appropriate target qualification level for that kind of API and
 the highest dedicated coverage currently available.
 """
 
+from scpf.version import TESTED_SOLIDCRAFT_VERSION
+
+
 EXPORT_COVERAGE = {
     "Box": ("Q6", "Q6", ["simple-box"], "Native primitive and parameter baseline."),
-    "Cylinder": ("Q6", "Q6", ["primitive-csg"], "Native principal-axis Cylinder is qualified with explicit Axis.X in SolidCraft 0.30.1; Axis.Y/Z use the same primitive field."),
-    "Sphere": ("Q6", "Q6", ["primitive-csg"], "Primitive CSG creation is native-qualified in SolidCraft 0.30.1."),
+    "Cylinder": ("Q6", "Q6", ["primitive-csg"], f"Native principal-axis Cylinder is qualified with explicit Axis.X in SolidCraft {TESTED_SOLIDCRAFT_VERSION}; Axis.Y/Z use the same primitive field."),
+    "Sphere": ("Q6", "Q6", ["primitive-csg"], f"Primitive CSG creation is native-qualified in SolidCraft {TESTED_SOLIDCRAFT_VERSION}."),
     "Hole": ("Q6", "Q6", ["anchored-holes"], "Through-hole feature is native-qualified; directional/countersink variants need separate capability rows."),
     "Lip": ("Q6", "GAP", [], "Plastic feature needs a dedicated native fixture."),
     "SnapFit": ("Q6", "GAP", [], "Plastic feature needs a dedicated native fixture."),
@@ -25,14 +28,14 @@ EXPORT_COVERAGE = {
     "Circle2D": ("Q6", "Q6", ["circle-negative-extrude"], "Circle2D is native- and visual-qualified inside an explicit Sketch scope with negative extrusion."),
     "Polygon2D": ("Q6", "Q6", ["xz-anchor", "bracket"], "XZ Polygon2D authored inside explicit Sketch scopes is native-qualified for symmetric and positive extrusion."),
     "Shape": ("Q2", "Q6", ["simple-box", "anchored-holes", "bracket"], "Core composition node is exercised by many native cases."),
-    "Parameter": ("Q5", "Q5", ["simple-box", "parameter-scope", "parent-derived-child-size", "parametric-attach", "parametric-offset", "parametric-anchor"], "Implicit component-local parameters, inherited bindings and parent-derived child expressions are native-qualified through saved-design mutation."),
-    "Placement": ("Q6", "Q2", [], "Foundational occurrence-placement API. Numeric copy-time lowering has command-level regression coverage; native create/place/replay qualification is required before the next release."),
+    "Parameter": ("Q5", "Q5", ["parameter-scope", "parent-derived-child-size", "parametric-attach", "parametric-offset", "parametric-anchor"], "Component-local parameters, inherited bindings and parent-derived child expressions are qualified through saved-design mutation."),
+    "Placement": ("Q6", "Q6", ["components", "four-corner-l"], "Numeric Placement is native-qualified by components; symbolic parameter-driven Placement and replay-safe occurrence.move lowering are mutation-qualified by four-corner-l."),
     "Edges": ("Q6", "Q6", ["four-corner-l", "eight-corner-brackets", "eight-flightcase-corners"], "Edges.VERTICAL is native-qualified through rounded reference frames; profile-derived and explicit edge selections still need separate coverage."),
     "Faces": ("Q6", "Q6", ["anchored-holes"], "TOP face placement is qualified; other face selections need capability coverage."),
-    "Anchor": ("Q6", "Q6", ["components", "parametric-anchor", "corner-anchor", "custom-anchor", "xz-anchor"], "Face/corner selectors and cardinal direction vectors are qualified through semantic anchors and AnchorFrame."),
-    "AnchorFrame": ("Q6", "Q6", ["custom-anchor"], "Named oriented local frame on a rotated occurrence."),
+    "Anchor": ("Q6", "Q6", ["parametric-anchor", "corner-anchor", "xz-anchor"], "Face and corner selectors are qualified by real native anchor cases; AnchorFrame is tracked separately."),
+    "AnchorFrame": ("Q6", "Q2", ["anchor-topology-mutation"], "The public AnchorFrame command path is covered with a real qualification fixture, but arbitrary oriented-frame native/Q6 coverage is still missing."),
     "AnchorTopology": ("Q5", "Q5", ["anchor-topology-mutation"], "Explicit edge/on/corner topology is native-qualified through saved-design parent resize; explicitly rotated occurrences remain unsupported."),
-    "Axis": ("Q2", "Q6", ["anchored-holes", "custom-anchor"], "Pattern and occurrence rotation use Axis values."),
+    "Axis": ("Q2", "Q6", ["anchored-holes", "primitive-csg"], "Axis values are exercised by linear repetition and principal-axis Cylinder geometry."),
     "X": ("Q2", "Q1", [], "Covered as an occurrence-rotation and parent-bound token; dedicated command-contract coverage remains."),
     "Y": ("Q2", "Q1", [], "Covered as an occurrence-rotation and parent-bound token; dedicated command-contract coverage remains."),
     "Z": ("Q2", "Q1", [], "Covered as an occurrence-rotation token; dedicated command-contract coverage remains."),
@@ -53,9 +56,9 @@ EXPORT_COVERAGE = {
     "midpoint": ("Q1", "Q1", [], "Numeric/symbolic geometry helper; Python-level arithmetic qualification is appropriate."),
     "pv": ("Q1", "Q1", [], "Build-time numeric extraction/validation helper; native coverage is not appropriate."),
     "Sketch": ("Q6", "Q6", ["anchored-holes", "circle-negative-extrude", "rounded-rectangle-sketch", "xz-anchor", "bracket"], "Explicit Sketch is Q6-qualified with Rectangle2D, Circle2D, Polygon2D and RoundedRectangle2D; Text2D remains a capability-level gap."),
-    "compile_model": ("Q2", "Q2", ["all command fixtures"], "Compiler entry point is a command-contract API."),
-    "run_script": ("Q2", "Q2", ["all command fixtures"], "Runner entry point is exercised by every compiled fixture."),
-    "component": ("Q6", "Q6", ["components", "custom-anchor", "parameter-scope"], "Reusable definitions/occurrences and implicit component-parameter semantics are native-qualified."),
+    "compile_model": ("Q2", "Q2", ["simple-box"], "Compiler entry point is a command-contract API; simple-box provides a concrete generated-command fixture."),
+    "run_script": ("Q2", "Q2", ["simple-box"], "Runner entry point is exercised by the concrete simple-box command fixture and the wider qualification suite."),
+    "component": ("Q6", "Q6", ["components", "parameter-scope"], "Reusable definitions/occurrences and component-parameter semantics are native-qualified."),
     "assembly": ("Q6", "Q6", ["assembly-decorator"], "Imported @assembly subassembly construction is command-, native- and visual-qualified."),
     "ModelParameterWarning": ("Q1", "Q1", [], "Warning contract belongs to Python-level qualification."),
     "ModelError": ("Q1", "Q1", [], "Compiler validation/error contract belongs to Python-level qualification."),
@@ -93,26 +96,105 @@ CAPABILITY_COVERAGE = [
     ("Explicit Sketch", "Sketch.add(..., anchor=CENTER)", "Q6", "Q6", ["anchored-holes", "rounded-rectangle-sketch"], "Dimension-defined profiles are centred semantically; offset is reserved for deliberate local displacement."),
     ("Explicit Sketch", "Text2D in Sketch / extrude()", "Q6", "GAP", [], "Text2D explicit-sketch path still needs dedicated native coverage."),
     ("Occurrences", "Placement / absolute at()", "Q6", "Q2", [], "Public placement state is separated from native lowering; numeric extra occurrences lower directly through occurrence.copy translate. Native identity/replay qualification remains required."),
-    ("Occurrences", "parametric move()", "Q5", "Q5", ["parametric-move"], "Native occurrence.move expression is saved without an implicit joint and follows parameters.change."),
-    ("Occurrences", "copy + move + rotate", "Q6", "Q6", ["custom-anchor"], "Rotation plus attachment is native-qualified; broader placement fixture remains useful."),
+    ("Occurrences", "parameter-driven Placement / occurrence.move lowering", "Q5", "Q5", ["four-corner-l"], "Symbolic Placement lowers to replay-safe occurrence.move values and follows saved-design frame dimension changes."),
+    ("Occurrences", "copy + Placement rotation", "Q6", "Q6", ["eight-flightcase-corners"], "Repeated copies with absolute 3D Placement and rotation are native- and visually qualified on all eight case corners."),
     ("Occurrences", "group()", "Q6", "Q6", ["group-hierarchy"], "Native top/flat BOM inspection proves the named subassembly hierarchy and repeated child occurrences."),
     ("Assemblies", "rigid attach()", "Q6", "Q6", ["components"], "Native rigid relationship."),
     ("Assemblies", "@assembly imported subassembly", "Q6", "Q6", ["assembly-decorator"], "An imported @assembly factory returns reusable occurrences that compile and build natively."),
     ("Assemblies", "gap", "Q5", "Q6", ["parametric-attach"], "Saved-design mutation qualified."),
     ("Assemblies", "local planar offset=(u,v)", "Q5", "Q6", ["parametric-offset"], "Current semantics explicitly local to joint frame."),
     ("Assemblies", "angle", "Q6", "Q6", ["attach-angle"], "A non-square child is quarter-turned by the native rigid-joint angle and verified by bounds plus visual regression."),
-    ("Assemblies", "as_built=True", "Q6", "Q6", ["as-built-attach"], "Native joint.as_built preserves an already translated and rotated child pose without re-solving attachment geometry."),
+    ("Assemblies", "as_built=True", "Q6", "Q2", [], "Command-level tests cover joint.as_built, but no dedicated native qualification case currently proves Q3-Q6."),
     ("Assemblies", "standard face anchors", "Q5", "Q6", ["parametric-anchor"], "Parent topology mutation qualified."),
     ("Assemblies", "standard corner anchors", "Q5", "Q6", ["corner-anchor", "xz-anchor"], "Width/height mutation and mirrored corners qualified."),
     ("Assemblies", "eight profiles as two per vertical side corner", "Q6", "Q6", ["eight-corner-brackets"], "The 4-profile baseline is duplicated in Z so each rounded vertical side corner has one lower and one upper angle profile."),
     ("Assemblies", "four centred vertical side-corner L-profiles", "Q6", "Q6", ["four-corner-l"], "One neutral vertical angle profile wraps each rounded side corner and is centred in height through symbolic native joint placement."),
     ("Assemblies", "four-profile placement follows parent width/depth", "Q5", "Q5", ["four-corner-l"], "Saved-design 120x80 -> 160x120 mutation moves all four XY side corners while the fixed-height profiles remain centred vertically."),
-    ("Assemblies", "AnchorFrame", "Q6", "Q6", ["custom-anchor"], "Position + orientation on rotated parent."),
+    ("Assemblies", "AnchorFrame", "Q6", "Q2", ["anchor-topology-mutation"], "A real fixture exercises AnchorFrame as the child reference at command-contract level; arbitrary oriented-frame native qualification remains open."),
     ("Assemblies", "AnchorTopology", "Q5", "Q5", ["anchor-topology-mutation"], "A fixed explicit topology pick follows the selected parent corner after native saved-design resize."),
     ("Assemblies", "assembly.with_anchor()/anchor()", "Q5", "Q5", ["assembly-owned-anchor"], "Assembly-owned semantic names lower to ordinary native topology-backed relationships and remain associative after saved-design mutation."),
     ("Parameters", "implicit component parameters and inherited bindings", "Q5", "Q5", ["parameter-scope"], "Native SolidCraft mutation proves local independence, shared bindings and derived expressions."),
     ("Parameters", "child dimensions derived from parent geometry", "Q5", "Q5", ["parent-derived-child-size"], "A reusable child keeps width/depth expressions derived from parent parameters and rebuilds natively after saved-design mutation."),
-    ("CLI", "--out command generation", "Q2", "Q2", ["all command fixtures"], "Every CI fixture uses --out."),
-    ("CLI", "native solidcraft-cli run/eval/snapshot", "Q6", "Q6", ["native qualification job"], "Official 0.30.1 is checksum-verified in CI."),
+    ("CLI", "--out command generation", "Q2", "Q2", ["simple-box"], "The simple-box fixture provides concrete command-generation evidence; the wider CI suite repeats the same path."),
+    ("CLI", "native solidcraft-cli run/eval/snapshot", "Q6", "Q6", ["simple-box"], f"Native run/eval/snapshot is exercised by the qualification cases against SolidCraft {TESTED_SOLIDCRAFT_VERSION}; simple-box is the concrete baseline link."),
     ("CLI", "live --connect / replay", "Q2", "Q1", [], "Transport/argument behavior should be tested separately from headless geometry."),
 ]
+
+
+def _coverage_rows():
+    for name, (target, current, cases, note) in EXPORT_COVERAGE.items():
+        yield f"export {name}", target, current, cases, note
+    for _group, capability, target, current, cases, note in CAPABILITY_COVERAGE:
+        yield f"capability {capability}", target, current, cases, note
+
+
+def qualification_number(value):
+    if value.startswith("Q") and value[1:].isdigit():
+        return int(value[1:])
+    return None
+
+
+def validate_coverage_cases(qualification_cases):
+    """Reject stale case links and structurally impossible Q claims."""
+    case_by_slug = {case["slug"]: case for case in qualification_cases}
+    errors = []
+    for label, _target, current, cases, _note in _coverage_rows():
+        unknown = [slug for slug in cases if slug not in case_by_slug]
+        if unknown:
+            errors.append(f"{label}: unknown qualification case(s): {', '.join(unknown)}")
+            continue
+
+        if current == "GAP":
+            if cases:
+                errors.append(f"{label}: GAP rows cannot claim qualification cases")
+            continue
+
+        level = qualification_number(current)
+        if level is None:
+            errors.append(f"{label}: invalid current level {current!r}")
+            continue
+
+        if level >= 3 and not cases:
+            errors.append(
+                f"{label}: {current} requires at least one concrete qualification case"
+            )
+
+        if level == 5:
+            non_mutation = [
+                slug
+                for slug in cases
+                if not case_by_slug[slug].get("q5_required", False)
+            ]
+            if non_mutation:
+                errors.append(
+                    f"{label}: Q5 evidence must use mutation cases, not "
+                    + ", ".join(non_mutation)
+                )
+
+    if errors:
+        raise ValueError("Invalid qualification coverage:\n- " + "\n- ".join(errors))
+
+
+def validate_coverage_results(qualification_manifest):
+    """Reject current Q claims that the linked native results did not PASS."""
+    errors = []
+    cases = qualification_manifest["cases"]
+    for label, _target, current, evidence_cases, _note in _coverage_rows():
+        level = qualification_number(current)
+        if level is None or not evidence_cases:
+            continue
+        key = f"q{level}"
+        for slug in evidence_cases:
+            case = cases.get(slug)
+            if case is None:
+                errors.append(f"{label}: result for {slug} is missing")
+                continue
+            status = case.get("levels", {}).get(key, {}).get("status")
+            if status != "pass":
+                errors.append(
+                    f"{label}: claims {current} from {slug}, but {key.upper()} is {status!r}"
+                )
+
+    if errors:
+        raise ValueError("Coverage exceeds qualification evidence:\n- " + "\n- ".join(errors))
+
