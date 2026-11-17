@@ -79,6 +79,13 @@ command.
 
 The temporary SolidCraft id is never written back into the replay file.
 
+The replay mechanism itself is not typed as "id only": a binding stores the
+value of a returned SolidCraft result field and a later command receives that
+value during the same replay. Change 0013 introduced this with occurrence ids
+because Placement needed them. Other SolidCraft-returned execution values may
+use the same mechanism when a later native command requires them. Replay
+variables remain execution plumbing; they are not public modelling objects.
+
 ## Replay file
 
 A replay file is explicitly identified as Forge replay data:

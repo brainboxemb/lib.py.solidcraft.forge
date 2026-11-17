@@ -46,6 +46,30 @@ class NativeSlotFamilyTests(unittest.TestCase):
         self.assertEqual(slot_commands[0]["params"]["p0"], [-60, -35])
         self.assertEqual(slot_commands[0]["params"]["p1"], [-40, -35])
 
+        face_query = next(
+            command for command in commands
+            if command["command"] == "model.faces"
+        )
+        self.assertEqual(face_query["params"], {"body": "SlotFamily"})
+        self.assertEqual(
+            set(face_query["bind"]),
+            {"$face_point_1", "$face_index_1"},
+        )
+        create = next(
+            command for command in commands
+            if command["command"] == "sketch.create"
+        )
+        self.assertEqual(
+            create["params"]["plane"],
+            {
+                "face": "$face_point_1",
+                "body": "SlotFamily",
+                "index": "$face_index_1",
+            },
+        )
+        self.assertFalse(create["params"]["project_edges"])
+        self.assertNotIn("offset", create["params"])
+
         self.assertNotIn(
             "sketch.rectangle.rounded",
             [command["command"] for command in commands],
@@ -54,6 +78,7 @@ class NativeSlotFamilyTests(unittest.TestCase):
     def test_slot_family_is_one_editable_sketch_and_cut(self):
         commands = run_script(MODEL)["commands"]
         names = [command["command"] for command in commands]
+        self.assertEqual(names.count("model.faces"), 1)
         self.assertEqual(names.count("sketch.create"), 1)
         self.assertEqual(names.count("sketch.finish"), 1)
         self.assertEqual(names.count("solid.extrude"), 1)

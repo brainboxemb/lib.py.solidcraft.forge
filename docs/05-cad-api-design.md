@@ -67,7 +67,7 @@ and **assembly attachment**. These operations are deliberately not synonyms.
 | absolute placement | `shape.at(x, y, z)` | Place a supported shape at an absolute model coordinate. |
 | shape-relative alignment | `shape.at(target)` | Align the supported child CENTER to the target CENTER. Explicit anchor forms may extend this contract where documented. It does not select a support face. |
 | feature on a surface | `feature.on(target, face=Faces.TOP)` | Put a within-component feature on a selected target surface. |
-| explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch supported by the selected target face. The local 2D sketch origin is the centre of that target face. |
+| explicit sketch on a body | `Sketch(on=target, parent=Anchor.TOP)` | Create a named sketch attached to the selected native SolidCraft target face. Profile coordinates are authored in that native sketch frame; Forge does not reconstruct a separate face-centre coordinate system. |
 | profile inside a sketch | `sketch.add(profile, anchor=None)` | Use the profile's natural placement default. Dimension-defined Circle2D/Rectangle2D/RoundedRectangle2D resolve the omitted anchor to CENTER; coordinate-defined Text2D/Polygon2D keep their own coordinates. |
 | deliberate sketch-local shift | `sketch.add(profile, offset=(u, v))` | Apply an explicit local 2D displacement. For dimension-defined profiles this shifts the centred profile; for Text2D it sets the native insertion-point displacement. |
 | occurrence position/pose | `Component(..., placement=Placement(...))`, `copy(placement=...)` | Declare the occurrence pose at creation/copy time in the parent coordinate frame. Placement itself does not create a joint. Forge replay variables bind the real SolidCraft occurrence ids when a later native move is needed. |
@@ -171,9 +171,11 @@ body = body + pad.extrude(8)
 
 For `Sketch(on=target, parent=Anchor.TOP)`:
 
-- the target and face choose the support plane;
-- the sketch's local `(0, 0)` is at the centre of that target face;
-- profile placement is relative to that local sketch coordinate system;
+- Forge asks SolidCraft for the current body faces and selects the unique largest planar +Z face;
+- Forge passes SolidCraft's returned face pick and face index to native `sketch.create`;
+- SolidCraft owns the persistent face attachment and the sketch's local coordinate frame;
+- Forge passes authored profile coordinates directly in that native sketch frame instead of adding a reconstructed face-centre offset;
+- `project_edges=False` is explicit so the result does not depend on a session setting;
 - `anchor=None` means use the profile type's defined default;
 - for Circle2D, Rectangle2D and RoundedRectangle2D that default is CENTER;
 - explicit `anchor=CENTER` centres a dimension-defined profile on the sketch origin;

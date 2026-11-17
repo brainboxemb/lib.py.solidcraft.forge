@@ -36,12 +36,6 @@ jobs:
           version="$(PYTHONPATH=scpf python -c 'from scpf.version import TESTED_SOLIDCRAFT_VERSION; print(TESTED_SOLIDCRAFT_VERSION)')"
           echo "SOLIDCRAFT_VERSION=$version" >> "$GITHUB_ENV"
           echo "SolidCraft contract snapshot target: $version"
-      - name: Check saved snapshot against Forge source
-        shell: bash
-        run: |
-          set -euo pipefail
-          python scripts/solidcraft_snapshot.py \
-            --check-pinned "docs/vendor/solidcraft/$SOLIDCRAFT_VERSION/runtime"
       - name: Install official SolidCraft release (checksum-verified)
         shell: bash
         run: |
@@ -78,3 +72,9 @@ jobs:
           path: output/solidcraft-snapshot
           if-no-files-found: warn
           retention-days: 30
+      - name: Check saved snapshot against Forge source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/solidcraft_snapshot.py \
+            --check-pinned "docs/vendor/solidcraft/$SOLIDCRAFT_VERSION/runtime"

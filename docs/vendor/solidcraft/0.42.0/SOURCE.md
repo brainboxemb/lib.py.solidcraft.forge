@@ -28,7 +28,7 @@ registry and command descriptions. The checked-in runtime snapshot therefore
 stores the machine-readable API surface Forge compiles against rather than
 reconstructing it from SolidCraft implementation source.
 
-At the time of this snapshot Forge references 39 SolidCraft commands. SolidCraft
+The current generated snapshot contains 40 Forge-referenced SolidCraft commands. SolidCraft
 0.42 reports typed input/output schemas for 35 of them. Four commands expose
 parameter prose but still return null typed schemas:
 

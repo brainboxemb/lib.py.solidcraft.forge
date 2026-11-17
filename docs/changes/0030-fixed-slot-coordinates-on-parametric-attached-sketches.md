@@ -1,8 +1,22 @@
 # 0030 — fixed Slot coordinates on parametric attached Sketches
 
-Status: **implemented; Q1-Q6 qualified on commit `1947168b5773bbe58e5f1f3713c72c97ebe4b51e`**  
+Status: **superseded by change 0032**  
 Issue: **#266**  
 SolidCraft target: **0.42.0**
+
+## Superseded
+
+This change records the first #266 repair that shipped in 0.6.2. It fixed the
+immediate symbolic-cancellation failure by preserving a Forge-owned rectangular
+face centre.
+
+After reviewing the pinned SolidCraft 0.42 command API, #266 was reopened:
+SolidCraft already owns native face-attached `sketch.create`, so Forge should
+not maintain a second attachment/frame calculation. Change 0032 replaces this
+workaround with native face lookup and attachment.
+
+The historical qualification result below remains evidence for the 0.6.2
+workaround; it is not the final design for #266.
 
 ## Problem
 

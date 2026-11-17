@@ -8,6 +8,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Changed
+
+- TOP-attached `Sketch(on=..., parent=Anchor.TOP)` now uses SolidCraft's
+  native face lookup and face-attached `sketch.create` instead of a Forge-owned
+  XY offset/face-centre reconstruction. Replay v2 can select fields from one
+  returned list record while replay v1 files remain supported (issue #266).
+
 ### Added
 
 - Added a version-pinned SolidCraft runtime command-contract snapshot generated

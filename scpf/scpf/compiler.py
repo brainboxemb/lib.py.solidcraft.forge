@@ -9,6 +9,7 @@ from .core import (
     Shape, Parameter, number_text, parameters_in, _pv as pv,
     _native_dependencies, _plain_command_value,
 )
+from .replay import replay_document
 
 
 class ModelError(ValueError):
@@ -83,7 +84,12 @@ def _compile_model_commands(shape: Shape, name: str) -> list[dict]:
 def _compile_model_with_dependencies(shape: Shape, name: str):
     """Compile one Shape and retain actual native parameter dependencies."""
     commands = _compile_model_commands(shape, name)
-    document = {"commands": _plain_command_value(commands)}
+    plain_commands = _plain_command_value(commands)
+    document = (
+        replay_document(plain_commands)
+        if any("bind" in command for command in plain_commands)
+        else {"commands": plain_commands}
+    )
     return document, _native_dependencies(commands)
 
 
