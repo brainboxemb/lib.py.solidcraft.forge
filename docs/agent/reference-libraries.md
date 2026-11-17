@@ -190,6 +190,7 @@ from pybosl2 import Anchor, cuboid, cyl, sphere, rect, circle
 cuboid([x, y, z])
 cuboid([x, y, z], anchor=Anchor.BOTTOM)
 cyl(diameter=d, height=h)
+cyl(diameter=d, height=h, anchor=Anchor.TOP)  # top face at Z=0; body extends toward -Z
 sphere(radius=r)
 ```
 
@@ -309,6 +310,13 @@ Extrusion:
 
 ```python
 solid = profile.linear_extrude(height=8)
+```
+
+For a simple final cylinder whose top face must stay at Z=0, prefer the native
+anchor form over an extrude-plus-translate sequence:
+
+```python
+solid = cyl(diameter=20, height=30, anchor=Anchor.TOP)
 ```
 
 
