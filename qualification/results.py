@@ -19,7 +19,6 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from qualification.cases import QUALIFICATION_CASES
-from qualification.geometry_contracts import geometry_contract
 from qualification.native_cases import mutation_spec
 
 
@@ -225,10 +224,7 @@ def collect(
         required_views = visual_detail.get(
             "expected_shape",
             {},
-        ).get(
-            "required_views",
-            geometry_contract(slug)["required_views"],
-        )
+        ).get("required_views", [])
         if (
             q6_status not in {"pass", "fail", "review"}
             or visual_detail_status != q6_status
