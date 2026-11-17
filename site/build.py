@@ -1214,13 +1214,21 @@ def render_template(name, **values):
     return Template(text(template_path)).substitute(values)
 
 
-def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root=None):
-    """Compile the public examples and attach verified native screenshots if available.
+def build(
+    out,
+    sha,
+    native_root=None,
+    diagram_root=None,
+    reference_evidence_root=None,
+    evidence_sha=None,
+):
+    """Compile the public site and attach verified qualification evidence.
 
-    A .png is accepted only when the native verification file identifies the
-    exact source SHA and the expected SolidCraft runtime. Outside native CI,
-    emit plainly labelled SVG schematics rather than pretending a render.
+    sha is the current site/source commit. evidence_sha is the already
+    qualified Forge/API commit that produced native/reference evidence.
+    They are normally equal; site-only rebuilds may reuse older evidence.
     """
+    evidence_sha = evidence_sha or sha
     verified = False
     metadata = {}
     if native_root is not None:
@@ -1228,11 +1236,11 @@ def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root
         if not meta_file.is_file():
             raise ValueError("Native directory is missing verification.json")
         metadata = json.loads(meta_file.read_text(encoding="utf-8"))
-        verified = (metadata.get("source_commit") == sha
+        verified = (metadata.get("source_commit") == evidence_sha
                     and metadata.get("verified") is True
                     and metadata.get("solidcraft_version") == TESTED_SOLIDCRAFT_VERSION)
         if not verified:
-            raise ValueError("Native screenshots do not match this source commit")
+            raise ValueError("Native screenshots do not match the qualification evidence commit")
         if not metadata.get("forge_version") or not metadata.get("qualified_at"):
             raise ValueError("Native verification is missing Forge version or qualification time")
 
@@ -1243,9 +1251,9 @@ def build(out, sha, native_root=None, diagram_root=None, reference_evidence_root
         if not summary_file.is_file():
             raise ValueError("Reference directory is missing summary.json")
         reference_summary = json.loads(summary_file.read_text(encoding="utf-8"))
-        reference_verified = reference_summary.get("source_commit") == sha
+        reference_verified = reference_summary.get("source_commit") == evidence_sha
         if not reference_verified:
-            raise ValueError("Reference renders do not match this source commit")
+            raise ValueError("Reference renders do not match the qualification evidence commit")
 
     forge_version = (
         metadata["forge_version"] if verified else package_version("scpf")
@@ -2056,7 +2064,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 raise ValueError(f"Structured qualification result missing: {result_file}")
             qualification_result = json.loads(result_file.read_text(encoding="utf-8"))
             if (
-                qualification_result.get("source_commit") != sha
+                qualification_result.get("source_commit") != evidence_sha
                 or qualification_result.get("solidcraft_version") != metadata.get("solidcraft_version")
             ):
                 raise ValueError(f"Qualification result does not match this build: {result_file}")
@@ -2171,7 +2179,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             case_test_evidence=_render_case_test_evidence(
                 slug,
                 qualification_result,
-                sha,
+                evidence_sha,
             ),
             gallery=preview_html,
             forge_api=escape(case["forge_api"]),
@@ -2271,7 +2279,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         )
     results_body = render_template(
         "results.html",
-        source_sha=escape(sha),
+        source_sha=escape(evidence_sha),
+        site_sha=escape(sha),
         forge_version=escape(forge_version),
         solidcraft_version=escape(
             metadata.get("solidcraft_version") if verified else TESTED_SOLIDCRAFT_VERSION
@@ -2303,7 +2312,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     )
     qualification_index = render_template(
         "index.html",
-        source_sha=escape(sha),
+        source_sha=escape(evidence_sha),
+        site_sha=escape(sha),
         forge_version=escape(forge_version),
         solidcraft_version=escape(
             metadata.get("solidcraft_version") if verified else TESTED_SOLIDCRAFT_VERSION
@@ -2503,6 +2513,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         json.dumps(
             {
                 "library_commit": sha,
+                "qualification_commit": evidence_sha,
                 "forge_version": forge_version,
                 "solidcraft_version": (
                     metadata.get("solidcraft_version")
@@ -2565,6 +2576,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=ROOT / "output" / "site")
     parser.add_argument("--source-sha", required=True)
+    parser.add_argument("--evidence-sha", help="Qualified source commit for reused evidence")
     parser.add_argument("--native", type=Path, help="Source-matched native screenshot directory")
     parser.add_argument("--diagram-root", type=Path, help="Generated qualification setup diagrams")
     parser.add_argument("--references", type=Path, help="Source-matched qualification reference evidence")
@@ -2575,5 +2587,6 @@ if __name__ == "__main__":
         native_root=options.native,
         diagram_root=options.diagram_root,
         reference_evidence_root=options.references,
+        evidence_sha=options.evidence_sha,
     )
     print(f"Built independent SCPF library site: {options.out}")
