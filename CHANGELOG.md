@@ -8,6 +8,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Reusable component compilation now preserves and namespaces replay bindings
+  emitted by component-local geometry. Native face-attached Sketch lookups no
+  longer lose their `model.faces` bindings when the component is used inside
+  an assembly, and replay-variable names stay collision-safe across component
+  definitions (issue #279).
+
 ## [0.7.0] - 2026-11-17
 
 ### Added
