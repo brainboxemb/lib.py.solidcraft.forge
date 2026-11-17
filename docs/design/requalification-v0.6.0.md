@@ -135,5 +135,12 @@ result-site build.
 CAD PR #99 merged as
 `f8ae58dc017e5fcb1fcde3936065cabb36dfa48e`.
 
+The same merged commit then passed both workflows on CAD `main`:
+
+| Post-merge CAD main gate | Run | Result |
+| --- | --- | --- |
+| Models, regressions and site smoke | `44044740923` | PASS |
+| Native SolidCraft CAD verification | `44044740913` | PASS |
+
 This completes issue #227 and the downstream requirement of qualification audit
 #220.
