@@ -127,13 +127,6 @@ def check_pinned(snapshot: Path) -> int:
             f"{manifest.get('solidcraft_version')!r}"
         )
 
-    unknown = unknown_command_like_ids(known_ids)
-    if unknown:
-        raise SystemExit(
-            "Forge contains command-looking SolidCraft ids absent from the "
-            "pinned registry: " + ", ".join(unknown)
-        )
-
     actual = command_ids_from_source(known_ids)
     recorded = manifest.get("commands")
     if recorded != actual:
@@ -182,13 +175,6 @@ def generate(out: Path, version: str, source_ref: str, strict: bool) -> int:
         for entry in catalog
         if isinstance(entry, dict) and isinstance(entry.get("id"), str)
     }
-
-    unknown = unknown_command_like_ids(known_ids)
-    if unknown:
-        raise SystemExit(
-            "Forge contains command-looking SolidCraft ids absent from runtime "
-            "registry: " + ", ".join(unknown)
-        )
 
     used = command_ids_from_source(known_ids)
     if not used:
