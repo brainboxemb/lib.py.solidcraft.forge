@@ -1187,6 +1187,191 @@ class AssemblyTests(unittest.TestCase):
             "width",
         )
 
+    def test_component_namespacing_preserves_and_rewrites_replay_bindings(self):
+        from scpf.assembly import _namespace_commands
+
+        commands = [
+            {
+                "command": "model.faces",
+                "params": {"body": "Panel"},
+                "bind": {
+                    "$face_point_1": {
+                        "field": "faces",
+                        "where": {"plane_normal": [0, 0, 1]},
+                        "max": "area",
+                        "select": "point",
+                    },
+                    "$face_index_1": {
+                        "field": "faces",
+                        "where": {"plane_normal": [0, 0, 1]},
+                        "max": "area",
+                        "select": "index",
+                    },
+                },
+            },
+            {
+                "command": "sketch.create",
+                "params": {
+                    "plane": {
+                        "face": "$face_point_1",
+                        "body": "Panel",
+                        "index": "$face_index_1",
+                    },
+                    "name": "Top sketch",
+                },
+            },
+        ]
+
+        namespaced = _namespace_commands(
+            commands,
+            "Panel",
+            definition_number=1,
+        )
+
+        self.assertEqual(
+            set(namespaced[0]["bind"]),
+            {
+                "$d1_Panel_face_point_1",
+                "$d1_Panel_face_index_1",
+            },
+        )
+        self.assertEqual(
+            namespaced[1]["params"]["plane"]["face"],
+            "$d1_Panel_face_point_1",
+        )
+        self.assertEqual(
+            namespaced[1]["params"]["plane"]["index"],
+            "$d1_Panel_face_index_1",
+        )
+
+    def test_component_namespacing_rewrites_replay_binding_prepend(self):
+        from scpf.assembly import _namespace_commands
+
+        commands = [
+            {
+                "command": "sketch.circle.center",
+                "params": {"center": [0, 0], "diameter": 8},
+                "bind": {"$sketch_1_profile_1": "curves"},
+            },
+            {
+                "command": "sketch.pattern.rectangular",
+                "params": {
+                    "entities": "$sketch_1_profile_1",
+                    "count": 2,
+                    "spacing": 20,
+                    "dir": [1, 0],
+                },
+                "bind": {
+                    "$sketch_1_operation_1": {
+                        "field": "curves",
+                        "prepend": "$sketch_1_profile_1",
+                    },
+                },
+            },
+        ]
+
+        namespaced = _namespace_commands(
+            commands,
+            "PatternPart",
+            definition_number=2,
+        )
+
+        self.assertEqual(
+            namespaced[0]["bind"],
+            {"$d2_PatternPart_sketch_1_profile_1": "curves"},
+        )
+        self.assertEqual(
+            namespaced[1]["params"]["entities"],
+            "$d2_PatternPart_sketch_1_profile_1",
+        )
+        self.assertEqual(
+            namespaced[1]["bind"],
+            {
+                "$d2_PatternPart_sketch_1_operation_1": {
+                    "field": "curves",
+                    "prepend": "$d2_PatternPart_sketch_1_profile_1",
+                },
+            },
+        )
+
+    def test_component_replay_namespaces_are_distinct_per_definition(self):
+        from scpf.assembly import _namespace_commands
+
+        commands = [
+            {
+                "command": "model.faces",
+                "params": {"body": "Part"},
+                "bind": {"$face_point_1": "faces"},
+            },
+        ]
+
+        first = _namespace_commands(
+            commands,
+            "Part",
+            definition_number=1,
+        )
+        second = _namespace_commands(
+            commands,
+            "Part",
+            definition_number=2,
+        )
+
+        self.assertEqual(
+            first[0]["bind"],
+            {"$d1_Part_face_point_1": "faces"},
+        )
+        self.assertEqual(
+            second[0]["bind"],
+            {"$d2_Part_face_point_1": "faces"},
+        )
+
+    def test_attached_sketch_component_assembly_is_valid_replay(self):
+        from scpf import Anchor, Box, Circle2D, Depth, Sketch, component
+        from scpf.assembly import compile_assembly
+        from scpf.replay import validate_replay_document
+
+        @component
+        class FaceCut:
+            def build(self):
+                body = Box(40, 30, 4)
+                with Sketch(
+                    name="Top cut",
+                    on=body,
+                    parent=Anchor.TOP,
+                ) as sketch:
+                    Circle2D(d=8)
+                return body - sketch.extrude(Depth.THROUGH_ALL)
+
+        document = compile_assembly(FaceCut(), "FaceCutAssembly")
+        validate_replay_document(document)
+
+        faces = next(
+            command
+            for command in document["commands"]
+            if command["command"] == "model.faces"
+        )
+        self.assertEqual(
+            set(faces["bind"]),
+            {
+                "$d1_FaceCut_face_point_1",
+                "$d1_FaceCut_face_index_1",
+            },
+        )
+        sketch = next(
+            command
+            for command in document["commands"]
+            if command["command"] == "sketch.create"
+            and command["params"].get("name") == "Top cut"
+        )
+        self.assertEqual(
+            sketch["params"]["plane"]["face"],
+            "$d1_FaceCut_face_point_1",
+        )
+        self.assertEqual(
+            sketch["params"]["plane"]["index"],
+            "$d1_FaceCut_face_index_1",
+        )
+
     def test_reusable_text_component_keeps_literal_strings_opaque(self):
         from scpf import Anchor, Box, Sketch
         from scpf.core import Text2D
