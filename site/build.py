@@ -136,8 +136,8 @@ CHEATSHEET = [
          "body + Hole(d=8).at(0, 0, 10)", None),
     ]),
     ("Reusable components", [
-        ("model.copy().move(x=...)", "Copy an occurrence of one definition; preserve editable feature history.",
-         "second = first.copy().move(x=40)", "components"),
+        ("copy(placement=Placement(...))", "Create another occurrence of the same component definition at a declared pose.",
+         "second = first.copy(placement=Placement(x=40))", "components"),
         ("model.attach(...)", "Fix one reusable component to another through explicit attachment references.",
          "right = Block().attach(left, parent=Anchor.RIGHT, child=Anchor.LEFT)", "components"),
         ("attach(offset=(u, v))", "Keep an in-plane attachment offset associative; parameter expressions become native planar-joint values.",
@@ -150,8 +150,8 @@ CHEATSHEET = [
          "mount = AnchorFrame(origin=(0,0,-12), z=(0,1,0), x=(0,0,-1))\npart.attach(base, parent=Anchor.FRONT_TOP_LEFT, child=mount)", "custom-anchor"),
         ("AnchorTopology", "Keep a named or assembly-local attachment reference on a planar-face edge or one of its endpoints so SolidCraft can follow changing geometry.",
          "def anchors(self):\n    return {\"mount\": AnchorTopology(edge=(0,10,5), on=(0,10,10), corner=(0,0,5))}", "custom-anchor"),
-        ("model.rotate(axis=..., degrees=...)", "Orient a native occurrence; rotation does not alter the shared component.",
-         "second = first.copy().move(x=40).rotate(axis=(0,0,1), degrees=180)", None),
+        ("Placement(rotation=(axis, degrees))", "Give a component occurrence one absolute axis-angle orientation.",
+         "second = first.copy(placement=Placement(x=40, rotation=(Z, 180)))", None),
     ]),
     ("Compile and inspect", [
         ("python -m scpf ... --out", "Compile a model to SolidCraft command JSON; no SolidCraft app needed.",
