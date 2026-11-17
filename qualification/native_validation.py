@@ -887,7 +887,7 @@ def validate_round_top_sketch(root: Path) -> Validation:
     ]
     expected = [
         ("Sketch", "Disc"),
-        ("ExtrudeFeature", "Disc"),
+        ("ExtrudeFeature", "Extrude1"),
         ("Sketch", "Hub"),
         ("ExtrudeFeature", "Hub"),
     ]
