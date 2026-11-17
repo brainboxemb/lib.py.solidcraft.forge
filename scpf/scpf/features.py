@@ -557,9 +557,31 @@ def _explicit_sketch_commands(
     name,
     *,
     face_query_index=None,
+    sketch_index=1,
 ):
     """Compile an explicitly authored named sketch and its extrusion."""
-    sketch_name, target, parent_anchor, plane_info, profiles, distance, direction = feature.data
+    if len(feature.data) == 8:
+        (
+            sketch_name,
+            target,
+            parent_anchor,
+            plane_info,
+            profiles,
+            distance,
+            direction,
+            sketch_operations,
+        ) = feature.data
+    else:
+        (
+            sketch_name,
+            target,
+            parent_anchor,
+            plane_info,
+            profiles,
+            distance,
+            direction,
+        ) = feature.data
+        sketch_operations = ()
     plane_name, sketch_origin = plane_info
     if target != original:
         raise ModelError("explicit Sketch must target the body being modified")
@@ -634,6 +656,37 @@ def _explicit_sketch_commands(
             relative_origin = (center_x, center_y)
             commands = [_command("sketch.create", **plane)]
 
+    referenced_sources = {
+        id(operation.data[0])
+        for operation in sketch_operations
+        if operation.kind in ("sketch_pattern_rectangular", "sketch_mirror")
+    }
+    profile_variables = {
+        id(profile): f"$sketch_{sketch_index}_profile_{index}"
+        for index, (profile, _anchor, _offset) in enumerate(profiles, start=1)
+        if id(profile) in referenced_sources
+    }
+    operation_variables = {
+        id(operation): f"$sketch_{sketch_index}_operation_{index}"
+        for index, operation in enumerate(sketch_operations, start=1)
+    }
+
+    def append_profile(command, profile):
+        variable = profile_variables.get(id(profile))
+        if variable is not None:
+            command["bind"] = {variable: "curves"}
+        commands.append(command)
+
+    def source_variable(source):
+        variable = profile_variables.get(id(source))
+        if variable is None:
+            variable = operation_variables.get(id(source))
+        if variable is None:
+            raise ModelError(
+                "sketch pattern/mirror source is not available in this Sketch"
+            )
+        return variable
+
     for profile, profile_anchor, offset in profiles:
         ox = _combine(relative_origin[0], offset[0])
         oy = _combine(relative_origin[1], offset[1])
@@ -643,12 +696,13 @@ def _explicit_sketch_commands(
                 raise ModelError("Circle2D sketch anchor must be CENTER")
             diameter = profile.data[0]
             _require_positive(diameter, "sketch circle diameter")
-            commands.append(
+            append_profile(
                 _command(
                     "sketch.circle.center",
                     center=[command_value(ox), command_value(oy)],
                     diameter=command_value(diameter),
-                )
+                ),
+                profile,
             )
             continue
 
@@ -679,7 +733,7 @@ def _explicit_sketch_commands(
                 command = "sketch.rectangle.rounded"
             else:
                 command = "sketch.rectangle.two_point"
-            commands.append(_command(command, **params))
+            append_profile(_command(command, **params), profile)
             continue
 
         if profile.kind == "text":
@@ -690,11 +744,14 @@ def _explicit_sketch_commands(
                 )
             text, height, font = profile.data
             _require_positive(height, "sketch text height")
-            commands.append(_command(
-                "sketch.text", text=text,
-                at=[command_value(ox), command_value(oy)],
-                height=command_value(height), font=font,
-            ))
+            append_profile(
+                _command(
+                    "sketch.text", text=text,
+                    at=[command_value(ox), command_value(oy)],
+                    height=command_value(height), font=font,
+                ),
+                profile,
+            )
             continue
 
         if profile.kind in (
@@ -755,13 +812,64 @@ def _explicit_sketch_commands(
                     params["sweep"] = sweep
                 command = "sketch.slot.arc_center"
 
-            commands.append(_command(command, **params))
+            append_profile(_command(command, **params), profile)
             continue
 
         raise ModelError(
             "explicit Sketch supports Circle2D, Rectangle2D, RoundedRectangle2D, "
             "Text2D or native Slot*2D profiles"
         )
+
+    for operation in sketch_operations:
+        variable = operation_variables[id(operation)]
+        if operation.kind == "sketch_pattern_rectangular":
+            (
+                source,
+                count,
+                spacing,
+                dir1,
+                count2,
+                spacing2,
+                dir2,
+                alignment,
+                alignment2,
+                reversed1,
+                reversed2,
+            ) = operation.data
+            params = {
+                "entities": source_variable(source),
+                "count": count,
+                "spacing": command_value(spacing),
+                "dir": list(dir1),
+            }
+            if count2 != 1:
+                params["count2"] = count2
+                if spacing2 is not None:
+                    params["spacing2"] = command_value(spacing2)
+                if dir2 is not None:
+                    params["dir2"] = list(dir2)
+            if alignment != "right":
+                params["alignment"] = alignment
+            if count2 != 1 and alignment2 != "right":
+                params["alignment2"] = alignment2
+            if reversed1:
+                params["reversed"] = True
+            if count2 != 1 and reversed2:
+                params["reversed2"] = True
+            command = _command("sketch.pattern.rectangular", **params)
+        elif operation.kind == "sketch_mirror":
+            source, line = operation.data
+            command = _command(
+                "sketch.mirror",
+                entities=source_variable(source),
+                line=line,
+            )
+        else:
+            raise ModelError(
+                f"unsupported explicit Sketch operation {operation.kind}"
+            )
+        command["bind"] = {variable: "curves"}
+        commands.append(command)
 
     commands.append(_command("sketch.finish"))
 
@@ -912,12 +1020,17 @@ def _to_commands(shape, name):
                 command["command"] == "model.faces"
                 for command in steps
             )
+            sketch_index = 1 + sum(
+                command["command"] == "sketch.create"
+                for command in steps
+            )
             return steps + _explicit_sketch_commands(
                 shape,
                 original,
                 added,
                 name,
                 face_query_index=face_query_index,
+                sketch_index=sketch_index,
             ), base
         if added.kind == "placed3d" and added.data[0].kind in (
                 "lip", "snap_fit", "boss", "rest"):
