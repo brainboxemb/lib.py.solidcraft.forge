@@ -73,5 +73,44 @@
     ]
   },
   "corrective_release_required": false,
-  "downstream_action": "Pin CAD repository to exact v0.6.0 release commit and require CAD command-plan/native CI to pass."
+  "downstream_action": "completed",
+  "downstream": {
+    "repository": "brainboxemb/2026-011-02.cad.solidcraft",
+    "pull_request": 99,
+    "release_commit": "d0cadaa9af5952979d689b4b19184ff89a0da18b",
+    "pr_head": "873bed09ba3b567316c34e7eef7b480ce4665d1c",
+    "merge_commit": "f8ae58dc017e5fcb1fcde3936065cabb36dfa48e",
+    "cad_models_run": {
+      "id": 44044529488,
+      "status": "success"
+    },
+    "native_solidcraft_run": {
+      "id": 44044529348,
+      "status": "success"
+    },
+    "api_migration": [
+      "Hole.pattern -> Hole.repeat_linear",
+      "negative Sketch extrusion -> negative signed distance",
+      "symmetric Sketch extrusion -> sym=True",
+      "remove obsolete Direction imports"
+    ]
+  },
+  "audit_completion": {
+    "umbrella_issue": 220,
+    "requalification_issue": 227,
+    "focused_issues": [
+      221,
+      222,
+      223,
+      224,
+      225,
+      226,
+      227,
+      228,
+      229,
+      230,
+      231
+    ],
+    "status": "complete"
+  }
 }

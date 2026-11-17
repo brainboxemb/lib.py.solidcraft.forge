@@ -17,11 +17,12 @@ For the SCPF 0.3.0 occurrence-placement redesign, use
 
 ## Foundational audit
 
-The current compiler/object-model audit is recorded in
-[the 2026-11 foundational audit](audit-2026-11.md).
+The 2026-11 compiler/object-model audit is recorded in
+[the foundational audit](audit-2026-11.md).
 
-The renewed qualification of the published SCPF v0.6.0 behaviour under the
-corrected Q1-Q6 gates is recorded in
+The qualification-integrity remediation is complete. The renewed qualification
+of the published SCPF v0.6.0 behaviour under the corrected Q1-Q6 gates, plus the
+successful downstream CAD pin, is recorded in
 [SCPF v0.6.0 renewed qualification](requalification-v0.6.0.md), with the same
 facts available as [machine-readable JSON](requalification-v0.6.0.json).
 

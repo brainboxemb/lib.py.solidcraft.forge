@@ -13,7 +13,10 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 - Renewed the SCPF v0.6.0 qualification under the corrected audit gates. All
   24 supported cases pass Q1-Q4 and Q6; all 14 Q5-required cases pass saved-
   design mutation. Post-tag package-source changes are documentation strings
-  only, so no corrective Forge runtime release is required by this audit.
+  only, so no corrective Forge runtime release is required by this audit. The
+  downstream CAD repository now pins the exact v0.6.0 tag commit and passes its
+  model/site and native SolidCraft gates after the documented 0.6.0 API
+  migration.
 
 ### Changed
 
