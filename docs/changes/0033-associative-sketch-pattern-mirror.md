@@ -76,7 +76,11 @@ This issue qualifies only what the current models need:
 - native rectangular sketch pattern;
 - fixed 2D direction vectors or `Axis.X` / `Axis.Y`;
 - mirror over the Sketch X or Y origin axis;
-- no per-instance pattern suppression.
+- no per-instance pattern suppression;
+- a downstream SolidCraft 0.42 mirror keeps the entity set selected when it was
+  authored. Changing an upstream pattern count remains a native pattern edit,
+  but newly added pattern entities are not automatically added to that existing
+  mirror.
 
 Circular sketch patterns and arbitrary mirror-line support are separate future
 capabilities.
@@ -90,8 +94,8 @@ The focused `sketch-pattern-mirror` case proves:
   native mirrors;
 - one cut per Sketch;
 - independent PythonSCAD, pyBOSL2, CadQuery and build123d reference geometry;
-- saved-design mutation of seed diameter, pattern count and pattern spacing
-  under SolidCraft 0.42 without rerunning Python.
+- saved-design mutation of seed diameter and pattern spacing under SolidCraft
+  0.42 without rerunning Python.
 
 The Simple MFT conversion is a downstream CAD-model follow-up and is not part
 of this Forge issue.

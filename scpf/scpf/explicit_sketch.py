@@ -235,8 +235,14 @@ class Sketch:
         """Repeat authored sketch geometry with a native associative pattern.
 
         count/count2 include the original. direction and direction2 are fixed
-        sketch-local vectors or Axis.X/Axis.Y. The returned value can be used
-        as the source of mirror() or another supported sketch operation.
+        sketch-local vectors or Axis.X/Axis.Y. The returned value represents
+        the complete pattern (source plus copies) and can be used by mirror()
+        or another supported sketch operation.
+
+        SolidCraft 0.42 mirror relationships keep the entity set selected when
+        the mirror is authored. Changing an upstream pattern count later still
+        edits the native pattern, but newly added pattern entities are not
+        automatically added to an already-authored downstream mirror.
         """
         if self._closed or self._token is None:
             raise ValueError("sketch pattern must be authored inside the Sketch scope")

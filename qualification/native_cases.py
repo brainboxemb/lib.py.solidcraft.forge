@@ -85,7 +85,7 @@ MUTATIONS = {
         "command": "qualification/commands/sketch-pattern-mirror/change-patterns.json",
         "save": "model-patterns-mutated.sc",
         "measurements": "measurements-patterns-mutated.json",
-        "label": "Circle/Slot seed and associative sketch pattern/mirror parameters mutate in the saved design",
+        "label": "Circle diameter and sketch pattern spacing mutate through existing pattern/mirror relationships",
     },
     "rectangular-pattern": {
         "command": "qualification/commands/rectangular-pattern/change-columns-pitch.json",

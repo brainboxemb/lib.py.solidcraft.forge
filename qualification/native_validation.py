@@ -933,10 +933,10 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
         tol=0.01,
     )
     mutated_parameters = {
-        "hole_columns": 3.0,
+        "hole_columns": 4.0,
         "hole_diameter": 10.0,
         "hole_pitch": 30.0,
-        "slot_count": 3.0,
+        "slot_count": 2.0,
         "slot_pitch": 30.0,
     }
     actual_mutated_parameters = params(m)
@@ -959,14 +959,26 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
         slot_area = 20.0 * 8.0 + math.pi * 4.0**2
         expected_volume = (
             240.0 * 160.0 * 5.0
-            - 6.0 * math.pi * 5.0**2 * 5.0
-            - 12.0 * slot_area * 5.0
+            - 8.0 * math.pi * 5.0**2 * 5.0
+            - 8.0 * slot_area * 5.0
         )
         v.check(
-            "saved design rebuilds to 6 holes and 12 slots",
+            "saved design keeps 8 holes and 8 slots after associative edits",
             close(body["volume_mm3"], expected_volume, 0.05),
             expected_volume,
             body["volume_mm3"],
+            "q5",
+        )
+        hole_volume = math.pi * 5.0**2 * 5.0
+        expected_center_x = (
+            -hole_volume * (2.0 * sum((-60.0, -30.0, 0.0, 30.0)))
+            / expected_volume
+        )
+        v.check(
+            "saved hole pitch moves the repeated Circle geometry",
+            close(body["center_of_mass"][0], expected_center_x, 0.001),
+            expected_center_x,
+            body["center_of_mass"][0],
             "q5",
         )
 

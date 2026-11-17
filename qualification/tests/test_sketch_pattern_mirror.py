@@ -107,9 +107,7 @@ class SketchPatternMirrorQualificationTests(unittest.TestCase):
             changes,
             {
                 "hole_diameter": "10 mm",
-                "hole_columns": "3",
                 "hole_pitch": "30 mm",
-                "slot_count": "3",
                 "slot_pitch": "30 mm",
             },
         )
