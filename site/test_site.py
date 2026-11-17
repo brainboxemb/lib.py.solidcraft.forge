@@ -591,7 +591,7 @@ def check(
         result_pos = page_text.index("<h2>SolidCraft result</h2>")
         reference_pos = page_text.index("<h2>Reference code</h2>")
         technical_pos = page_text.index("Technical test details")
-        assert model_pos < forge_pos < solidcraft_pos < result_pos < reference_pos < technical_pos, slug
+        assert model_pos < forge_pos < reference_pos < solidcraft_pos < result_pos < technical_pos, slug
 
         for placeholder in (
             "$title",
@@ -797,7 +797,7 @@ def check(
             visual_pos = page_text.index("<h2>Visual result</h2>")
             preview_pos = page_text.index('class="qualification-case-preview"')
             assert model_pos < preview_pos < forge_pos, slug
-            assert result_pos < visual_pos < reference_pos < technical_pos, slug
+            assert result_pos < visual_pos < technical_pos, slug
 
             assert 'class="panel qualification-visual-check"' in page_text, slug
             assert 'class="qualification-image-link"' in page_text, slug
