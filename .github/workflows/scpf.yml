@@ -164,6 +164,14 @@ jobs:
           grep -F " $archive" SHA256SUMS.txt | sha256sum --check
           tar -xzf "$archive"
           echo "$RUNNER_TEMP/solidcraft-${SOLIDCRAFT_VERSION}-linux-x86_64/bin" >> "$GITHUB_PATH"
+      - name: Capture SolidCraft command contracts used by Forge
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/solidcraft_snapshot.py \\
+            --out output/solidcraft-snapshot \\
+            --version "$SOLIDCRAFT_VERSION" \\
+            --source-ref "v$SOLIDCRAFT_VERSION"
       - name: Render each tiny API example in native SolidCraft
         shell: bash
         env:
