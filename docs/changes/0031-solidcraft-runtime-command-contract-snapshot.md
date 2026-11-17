@@ -37,7 +37,7 @@ checksum-verified official release and compares it byte-for-byte with Git.
 
 ## 0.42 result
 
-The generated 0.42 snapshot contains 39 Forge-referenced commands.
+At the introduction of this change the generated 0.42 snapshot contained 39 Forge-referenced commands. The live count is intentionally derived from Forge source; `runtime/manifest.json` is the current source of truth.
 
 SolidCraft 0.42 supplies typed input/output schemas for 35. Four commands expose
 their parameter documentation but no typed schemas:
