@@ -7,6 +7,7 @@ from scpf.headless import (
     _active_sketch_after,
     _phase_commands,
 )
+from scpf.replay import apply_bindings
 
 
 class HeadlessSketchReplayTests(unittest.TestCase):
@@ -63,6 +64,70 @@ class HeadlessSketchReplayTests(unittest.TestCase):
                 [{"name": "Pattern"}],
                 None,
             )
+
+
+class ReplaySelectorTests(unittest.TestCase):
+    def test_numeric_vector_selector_tolerates_kernel_float_noise(self):
+        items = [{
+            "command": "model.faces",
+            "params": {"body": "Plate"},
+            "bind": {
+                "$top_point": {
+                    "field": "faces",
+                    "where": {"plane_normal": [0, 0, 1]},
+                    "max": "area",
+                    "select": "point",
+                },
+            },
+        }]
+        results = [{
+            "faces": [
+                {
+                    "area": 7000.0,
+                    "plane_normal": [2e-12, -3e-12, 0.9999999999997],
+                    "point": [0.0, 0.0, 10.0],
+                },
+                {
+                    "area": 7000.0,
+                    "plane_normal": [0.0, 0.0, -1.0],
+                    "point": [0.0, 0.0, 0.0],
+                },
+            ],
+        }]
+        variables = {}
+
+        bindings = apply_bindings(items, results, variables)
+
+        self.assertEqual(variables["$top_point"], [0.0, 0.0, 10.0])
+        self.assertEqual(
+            bindings,
+            [{"$top_point": [0.0, 0.0, 10.0]}],
+        )
+
+    def test_numeric_vector_selector_rejects_a_different_direction(self):
+        items = [{
+            "command": "model.faces",
+            "params": {"body": "Plate"},
+            "bind": {
+                "$top_point": {
+                    "field": "faces",
+                    "where": {"plane_normal": [0, 0, 1]},
+                    "max": "area",
+                    "select": "point",
+                },
+            },
+        }]
+        results = [{
+            "faces": [{
+                "area": 7000.0,
+                "plane_normal": [0.0, 0.0, 0.999],
+                "point": [0.0, 0.0, 10.0],
+            }],
+        }]
+
+        with self.assertRaisesRegex(ValueError, "matched no 'faces' records"):
+            apply_bindings(items, results, {})
+
 
 
 if __name__ == "__main__":

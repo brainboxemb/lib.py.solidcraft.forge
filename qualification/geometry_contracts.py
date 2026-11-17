@@ -20,6 +20,9 @@ EXPECTED_BOUNDS = {
     "anchored-holes": [
         {"label": "AnchoredHoles", "min": [0, 0, 0], "max": [100, 60, 10]},
     ],
+    "top-sketch-after-chamfer": [
+        {"label": "TopSketchAfterChamfer", "min": [-50, -35, 0], "max": [50, 35, 10]},
+    ],
     "parameter-scope": [
         {"label": "local", "min": [-20, -10, 0], "max": [20, 10, 10]},
         {"label": "override", "min": [70, -10, 0], "max": [130, 10, 10]},
@@ -294,6 +297,7 @@ REQUIRED_VISUAL_VIEWS.update({
     # Hole profiles are clearest normal to the plate; the right view separates
     # both Y positions and exposes the full Z depth.
     "anchored-holes": ("top", "right", "iso"),
+    "top-sketch-after-chamfer": ("top", "front", "iso"),
     # Pattern/slot cases need a normal profile view plus an orthogonal view
     # that makes the through-cut depth visible.
     "sketch-pattern-mirror": ("top", "front", "iso"),
@@ -397,6 +401,10 @@ EXPECTED_VISUAL_FEATURES["anchored-holes"] = [
     _through_hole("rear hole Ø8 through", 50, 50, 8, 0, 10),
 ]
 
+EXPECTED_VISUAL_FEATURES["top-sketch-after-chamfer"] = [
+    _through_hole("center hole Ø12 through", 0, 0, 12, 0, 10),
+]
+
 EXPECTED_VISUAL_FEATURES["sketch-pattern-mirror"] = [
     *[
         _through_hole(label, x, y, 8.0, 0.0, 5.0)
@@ -481,6 +489,10 @@ _BOUNDS_ASSESSMENTS = {
     "anchored-holes": {
         "sufficient": False,
         "reason": "The holes do not change the outer plate bounds. Volume and 3D hole-wall probes are required.",
+    },
+    "top-sketch-after-chamfer": {
+        "sufficient": False,
+        "reason": "The outer bounds do not prove the four corner chamfers or the through hole. Volume, cylindrical-wall probes and native timeline/sketch checks are required.",
     },
     "parameter-scope": {
         "sufficient": True,
@@ -593,6 +605,20 @@ _GEOMETRY_DETAILS = {
         "surface_distance_probes": _through_probes(
             [("front hole", 50.0, 10.0), ("rear hole", 50.0, 50.0)],
             (1.0, 5.0, 9.0), 4.0,
+        ),
+    },
+    "top-sketch-after-chamfer": {
+        "volume_mm3": (
+            100.0 * 70.0 * 10.0
+            - 4.0 * 0.5 * 8.0 * 8.0 * 10.0
+            - math.pi * 6.0**2 * 10.0
+        ),
+        "volume_tolerance_mm3": 45.0,
+        "watertight": True,
+        "surface_distance_probes": _through_probes(
+            [("center hole", 0.0, 0.0)],
+            (1.0, 5.0, 9.0),
+            6.0,
         ),
     },
     "circle-negative-extrude": {

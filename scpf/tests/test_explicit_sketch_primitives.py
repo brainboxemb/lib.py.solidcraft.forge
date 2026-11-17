@@ -8,6 +8,7 @@ from scpf import (
     Rectangle2D,
     Circle2D,
     Depth,
+    Edges,
     Sketch,
     Parameter,
 )
@@ -309,6 +310,57 @@ class NativePrimitiveTests(unittest.TestCase):
         self.assertEqual(
             [c["command"] for c in commands].count("sketch.create"), 1
         )
+
+    def test_top_attached_sketch_uses_same_face_query_after_edge_features(self):
+        for operation in ("chamfer", "fillet"):
+            with self.subTest(operation=operation):
+                base = Box(100, 70, 10, anchor=Anchor.BOTTOM)
+                featured = getattr(base, operation)(
+                    2,
+                    edges=Edges.VERTICAL,
+                )
+                with Sketch(
+                    name="Top cut",
+                    on=featured,
+                    parent=Anchor.TOP,
+                ) as sketch:
+                    Circle2D(d=12)
+
+                commands = compile_model(
+                    featured - sketch.extrude(Depth.THROUGH_ALL),
+                    f"{operation.title()}Plate",
+                )["commands"]
+
+                feature_index = next(
+                    index
+                    for index, row in enumerate(commands)
+                    if row["command"] == f"solid.{operation}"
+                )
+                face_index = next(
+                    index
+                    for index, row in enumerate(commands)
+                    if row["command"] == "model.faces"
+                )
+                self.assertLess(feature_index, face_index)
+
+                face_query = commands[face_index]
+                self.assertEqual(
+                    face_query["params"],
+                    {"body": f"{operation.title()}Plate"},
+                )
+                for spec in face_query["bind"].values():
+                    self.assertEqual(
+                        spec["where"],
+                        {"plane_normal": [0, 0, 1]},
+                    )
+                    self.assertEqual(spec["max"], "area")
+
+                top_sketch = commands[face_index + 1]
+                self.assertEqual(top_sketch["command"], "sketch.create")
+                self.assertEqual(
+                    top_sketch["params"]["plane"]["body"],
+                    f"{operation.title()}Plate",
+                )
 
     def test_empty_sketch_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "at least one profile"):

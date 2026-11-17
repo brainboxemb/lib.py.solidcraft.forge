@@ -50,6 +50,24 @@ CASE_EVIDENCE = {
             ),
         ],
     },
+    "top-sketch-after-chamfer": {
+        "q1": [
+            _target(
+                "scpf/tests/test_headless.py",
+                "test_numeric_vector_selector_tolerates_kernel_float_noise",
+            ),
+            _target(
+                "scpf/tests/test_explicit_sketch_primitives.py",
+                "test_top_attached_sketch_uses_same_face_query_after_edge_features",
+            ),
+        ],
+        "q2": [
+            _target(
+                "qualification/tests/test_top_sketch_after_chamfer.py",
+                "test_chamfer_precedes_native_face_query_and_attached_sketch",
+            ),
+        ],
+    },
     "parameter-scope": {
         "q1": [
             _target(

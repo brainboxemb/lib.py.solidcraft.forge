@@ -6,6 +6,7 @@ per-run log records the concrete value returned by SolidCraft.
 """
 import hashlib
 import json
+from math import isclose
 import re
 
 
@@ -235,6 +236,34 @@ def replay_chunks(commands):
     return chunks
 
 
+def _selector_value_matches(actual, expected):
+    """Match selector values without exact float equality for numeric vectors."""
+    if isinstance(actual, (list, tuple)) and isinstance(expected, (list, tuple)):
+        if len(actual) != len(expected):
+            return False
+        numeric = (
+            all(
+                isinstance(value, (int, float)) and not isinstance(value, bool)
+                for value in actual
+            )
+            and all(
+                isinstance(value, (int, float)) and not isinstance(value, bool)
+                for value in expected
+            )
+        )
+        if numeric:
+            return all(
+                isclose(
+                    float(left),
+                    float(right),
+                    rel_tol=0.0,
+                    abs_tol=1e-9,
+                )
+                for left, right in zip(actual, expected)
+            )
+    return actual == expected
+
+
 def _binding_value(result, spec, variables, *, command, variable):
     if not isinstance(result, dict):
         raise ValueError(f"{command} did not return an object for {variable}")
@@ -271,7 +300,10 @@ def _binding_value(result, spec, variables, *, command, variable):
         item
         for item in value
         if isinstance(item, dict)
-        and all(item.get(key) == expected for key, expected in where.items())
+        and all(
+            _selector_value_matches(item.get(key), expected)
+            for key, expected in where.items()
+        )
     ]
     if not candidates:
         raise ValueError(

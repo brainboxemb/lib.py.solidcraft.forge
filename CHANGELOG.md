@@ -10,6 +10,12 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Fixed
 
+- TOP-attached Sketch replay now compares numeric vector selector values with
+  a small absolute tolerance instead of exact list equality. Planar top faces
+  therefore remain selectable after native feature operations such as chamfer
+  even when SolidCraft returns tiny floating-point noise in `plane_normal`
+  (issue #278).
+
 - Reusable component compilation now preserves command-level replay metadata
   such as `bind`, namespaces component-local replay variables per definition,
   and rewrites their uses in command params and binding selectors. Attached

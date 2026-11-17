@@ -228,6 +228,54 @@ def validate_anchored_holes(root: Path) -> Validation:
     return v
 
 
+def validate_top_sketch_after_chamfer(root: Path) -> Validation:
+    v = Validation("top-sketch-after-chamfer")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "top-sketch-after-chamfer", tol=0.01)
+    v.check("one chamfered plate body", d["body_count"] == 1, 1, d["body_count"])
+
+    if d["bodies"]:
+        body = d["bodies"][0]
+        cylinders = body.get("face_types", {}).get("cylinder", 0)
+        v.check(
+            "one cylindrical through-hole wall",
+            cylinders == 1,
+            1,
+            cylinders,
+        )
+        _check_contract_volume(v, body, "top-sketch-after-chamfer", tol=0.5)
+
+    sketches = {
+        row.get("name"): row
+        for row in d.get("sketches", [])
+    }
+    top_hole = sketches.get("Top hole")
+    v.check(
+        "post-chamfer TOP Sketch stays solved",
+        top_hole is not None
+        and top_hole.get("status") == "solved"
+        and len(sketches) == 1,
+        {"Top hole": "solved"},
+        {
+            name: row.get("status")
+            for name, row in sketches.items()
+        },
+    )
+
+    timeline_types = [
+        row.get("type")
+        for row in d.get("timeline", [])
+    ]
+    v.check(
+        "native history keeps chamfer before attached Sketch",
+        timeline_types
+        == ["BoxFeature", "ChamferFeature", "Sketch", "ExtrudeFeature"],
+        ["BoxFeature", "ChamferFeature", "Sketch", "ExtrudeFeature"],
+        timeline_types,
+    )
+    return v
+
+
 def validate_parameter_scope(root: Path) -> Validation:
     v = Validation("parameter-scope")
     d = load(root / "measurements.json")
@@ -1538,6 +1586,7 @@ def validate_bracket(root: Path) -> Validation:
 VALIDATORS = {
     "simple-box": validate_simple_box,
     "anchored-holes": validate_anchored_holes,
+    "top-sketch-after-chamfer": validate_top_sketch_after_chamfer,
     "parameter-scope": validate_parameter_scope,
     "parent-derived-child-size": validate_parent_derived_child_size,
     "components": validate_components,
