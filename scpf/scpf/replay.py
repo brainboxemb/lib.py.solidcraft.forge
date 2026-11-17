@@ -11,7 +11,6 @@ import re
 
 REPLAY_FORMAT = "scpf-replay"
 REPLAY_VERSION = 2
-_SUPPORTED_REPLAY_VERSIONS = (1, 2)
 _VARIABLE = re.compile(r"^\$[A-Za-z_][A-Za-z0-9_]*$")
 
 
@@ -80,7 +79,7 @@ def _validate_binding_spec(spec, *, version, variable, index):
                 f"invalid result field for {variable} at command index {index}"
             )
         return
-    if version < 2 or not isinstance(spec, dict):
+    if not isinstance(spec, dict):
         raise ValueError(
             f"invalid result binding for {variable} at command index {index}"
         )
@@ -128,10 +127,10 @@ def validate_replay_document(document):
     replay = is_replay_document(document)
     version = document.get("version")
     if replay:
-        if version not in _SUPPORTED_REPLAY_VERSIONS:
+        if version != REPLAY_VERSION:
             raise ValueError(
                 f"unsupported SCPF replay version {version!r}; "
-                f"supported versions are {_SUPPORTED_REPLAY_VERSIONS}"
+                f"expected {REPLAY_VERSION}"
             )
     elif "format" in document or "version" in document:
         raise ValueError("unknown replay document format")
