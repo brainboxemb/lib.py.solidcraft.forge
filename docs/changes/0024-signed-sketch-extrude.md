@@ -36,3 +36,10 @@ The existing circle-negative-extrude geometry remains unchanged and now uses
 `sketch.extrude(-self.height)`. The bracket case uses `sym=True`.
 Focused Q1/Q2 tests cover positive, negative, symmetric, zero and invalid
 symmetric distances.
+
+The comparison models express the same final geometry in each library's own
+idiom rather than mirroring Forge mechanically. In particular pyBOSL2 uses
+`cyl(diameter=20, height=30, anchor=Anchor.TOP)` for the cylinder spanning
+Z=-30..0. PythonSCAD keeps its native `linear_extrude(...).down(...)` style,
+CadQuery uses a negative `.extrude(-30)`, and build123d uses a negative
+Builder `extrude(amount=-30)`.
