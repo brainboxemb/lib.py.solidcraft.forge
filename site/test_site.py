@@ -36,7 +36,9 @@ def check(
     sha: str,
     require_native: bool = False,
     require_references: bool = False,
+    evidence_sha: str | None = None,
 ):
+    evidence_sha = evidence_sha or sha
     template_dir = ROOT / "qualification" / "templates"
     for template_name in (
         "case.html",
@@ -512,6 +514,7 @@ def check(
     assert "Q1" in qualification_index and "Q6" in qualification_index
     assert 'class="reference-grid qualification-grid"' in qualification_index
     assert qualification_manifest["library_commit"] == sha
+    assert qualification_manifest["qualification_commit"] == evidence_sha
     assert qualification_manifest["forge_version"]
     assert qualification_manifest["solidcraft_version"] == TESTED_SOLIDCRAFT_VERSION
     assert qualification_manifest["qualified_at"]
@@ -725,7 +728,7 @@ def check(
             }[structured_result["status"]]
             assert f">{badge}</span>" in page_text, slug
 
-            assert structured_result["source_commit"] == sha, slug
+            assert structured_result["source_commit"] == evidence_sha, slug
             assert structured_result["forge_version"] == qualification_manifest["forge_version"], slug
             assert structured_result["solidcraft_version"] == TESTED_SOLIDCRAFT_VERSION, slug
             assert structured_result["qualified_at"] == qualification_manifest["qualified_at"], slug
@@ -928,9 +931,15 @@ def check(
 
 
 if __name__ == "__main__":
+    extra = sys.argv[3:]
+    evidence_sha = next(
+        (arg.split("=", 1)[1] for arg in extra if arg.startswith("--evidence-sha=")),
+        None,
+    )
     check(
         Path(sys.argv[1]),
         sys.argv[2],
-        require_native="--require-native" in sys.argv[3:],
-        require_references="--require-references" in sys.argv[3:],
+        require_native="--require-native" in extra,
+        require_references="--require-references" in extra,
+        evidence_sha=evidence_sha,
     )
