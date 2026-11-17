@@ -100,6 +100,22 @@ def _rewrite_value(value, mapping):
     return value
 
 
+def _rewrite_replay_variables(value, mapping):
+    """Rewrite exact replay-variable values without touching ordinary strings."""
+    if isinstance(value, str):
+        return mapping.get(value, value)
+    if isinstance(value, list):
+        return [_rewrite_replay_variables(item, mapping) for item in value]
+    if isinstance(value, tuple):
+        return [_rewrite_replay_variables(item, mapping) for item in value]
+    if isinstance(value, dict):
+        return {
+            key: _rewrite_replay_variables(item, mapping)
+            for key, item in value.items()
+        }
+    return value
+
+
 def _namespace_commands(
     commands,
     component_name,
@@ -118,6 +134,16 @@ def _namespace_commands(
     prefix = f"d{definition_number}_{_component_slug(component_name)}"
     mapping = {name: f"{prefix}_{name}" for name in local_names}
 
+    replay_variables = [
+        variable
+        for command in commands
+        for variable in command.get("bind", {})
+    ]
+    replay_mapping = {
+        variable: f"${prefix}_{variable[1:]}"
+        for variable in replay_variables
+    }
+
     result = []
     for command in commands:
         params = dict(command["params"])
@@ -126,7 +152,19 @@ def _namespace_commands(
                 params["name"] = mapping[params["name"]]
         else:
             params = _rewrite_value(params, mapping)
-        result.append({"command": command["command"], "params": params})
+        params = _rewrite_replay_variables(params, replay_mapping)
+
+        namespaced = {
+            "command": command["command"],
+            "params": params,
+        }
+        if "bind" in command:
+            namespaced["bind"] = {
+                replay_mapping.get(variable, variable):
+                    _rewrite_replay_variables(spec, replay_mapping)
+                for variable, spec in command["bind"].items()
+            }
+        result.append(namespaced)
     return result
 
 
