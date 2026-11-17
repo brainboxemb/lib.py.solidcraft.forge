@@ -38,8 +38,8 @@ class Sketch:
         name: Native sketch name. Defaults to "Profile".
         on: Optional existing Shape whose surface supports the sketch.
         parent: Anchor selecting the supporting surface when on= is used. Defaults to Anchor.TOP.
-        plane: Standalone sketch plane: "XY", "XZ" or "YZ". Defaults to "XY" when on= is not used.
-        origin: Optional explicit 3D origin for a standalone sketch with an explicit plane, in mm.
+        plane: Explicit sketch plane: "XY", "XZ" or "YZ". Defaults to "XY" when on= is not used. With on=, an explicit plane is world-based while on= still selects the body modified by the extrusion.
+        origin: Optional explicit 3D origin for an explicit plane, in mm. May be used with on= when the Sketch should modify an existing body from a fixed world plane.
         offset: Optional signed offset from a standalone origin plane, in mm.
 
     Use when:
@@ -47,9 +47,12 @@ class Sketch:
         Sketch may be standalone on XY/XZ/YZ or supported by an existing Shape.
 
     Limits:
-        Sketch(on=target) selects the supporting shape; profile placement
-        inside the sketch is a separate operation. origin and offset are
-        standalone-plane options. Leave the with-scope before extruding.
+        Sketch(on=target) selects the body modified by the later extrusion.
+        With the default parent=Anchor.TOP, Forge selects the largest +Z planar
+        face at replay time. An explicit plane/origin bypasses face lookup.
+        BOTTOM/CENTER relative placement still requires supported base metadata.
+        offset remains a standalone-plane option. Leave the with-scope before
+        extruding.
 
     Example:
         with Sketch(name="Base", plane="XY") as sketch:

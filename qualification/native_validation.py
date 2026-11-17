@@ -849,6 +849,57 @@ def validate_xz_anchor(root: Path) -> Validation:
 
 
 
+def validate_round_top_sketch(root: Path) -> Validation:
+    v = Validation("round-top-sketch")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "round-top-sketch", tol=0.01)
+    v.check("one joined stepped body", d["body_count"] == 1, 1, d["body_count"])
+
+    if d["bodies"]:
+        body = d["bodies"][0]
+        _check_contract_volume(v, body, "round-top-sketch", tol=0.5)
+        cylinders = body.get("face_types", {}).get("cylinder", 0)
+        v.check(
+            "disc and hub cylindrical walls remain",
+            cylinders == 2,
+            2,
+            cylinders,
+        )
+
+    sketches = {
+        row.get("name"): row
+        for row in d.get("sketches", [])
+    }
+    v.check(
+        "Disc and Hub Sketches stay solved",
+        set(sketches) == {"Disc", "Hub"}
+        and all(row.get("status") == "solved" for row in sketches.values()),
+        {"Disc": "solved", "Hub": "solved"},
+        {
+            name: row.get("status")
+            for name, row in sketches.items()
+        },
+    )
+
+    timeline = [
+        (row.get("type"), row.get("name"))
+        for row in d.get("timeline", [])
+    ]
+    expected = [
+        ("Sketch", "Disc"),
+        ("ExtrudeFeature", "Disc"),
+        ("Sketch", "Hub"),
+        ("ExtrudeFeature", "Hub"),
+    ]
+    v.check(
+        "circular base keeps native Sketch/Extrude history",
+        timeline == expected,
+        expected,
+        timeline,
+    )
+    return v
+
+
 def validate_circle_negative_extrude(root: Path) -> Validation:
     v = Validation("circle-negative-extrude")
     d = load(root / "measurements.json")
@@ -1756,6 +1807,7 @@ VALIDATORS = {
     "eight-flightcase-corners": validate_eight_flightcase_corners,
     "eight-corner-brackets": validate_eight_corner_brackets,
     "xz-anchor": validate_xz_anchor,
+    "round-top-sketch": validate_round_top_sketch,
     "circle-negative-extrude": validate_circle_negative_extrude,
     "sketch-pattern-mirror": validate_sketch_pattern_mirror,
     "selective-profile-extrude": validate_selective_profile_extrude,
