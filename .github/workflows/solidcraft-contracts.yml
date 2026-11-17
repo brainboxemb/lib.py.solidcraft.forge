@@ -58,7 +58,7 @@ jobs:
             --version "$SOLIDCRAFT_VERSION" \
             --source-ref "v$SOLIDCRAFT_VERSION"
       - name: Backfill pinned snapshot for issue 272 branch
-        if: github.ref_name == 'feature/272-sketch-pattern-mirror'
+        if: github.head_ref == 'feature/272-sketch-pattern-mirror' || github.ref_name == 'feature/272-sketch-pattern-mirror'
         shell: bash
         run: |
           set -euo pipefail
