@@ -586,6 +586,7 @@ def _explicit_sketch_commands(
         else:
             plane = dict(plane=plane_name, name=sketch_name)
         relative_origin = (0, 0)
+        commands = [_command("sketch.create", **plane)]
     else:
         if parent_anchor is Anchor.TOP:
             if face_query_index is None:
