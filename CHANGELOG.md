@@ -12,32 +12,29 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 - Added generic associative Sketch profile handles with
   `Sketch.rectangular_pattern(...)` and `Sketch.mirror(...)`. Circle and
-  native Slot profiles can now seed SolidCraft sketch patterns/mirrors without
-  exposing or predicting native curve ids; pattern/mirror results can feed later
-  sketch operations, and pattern count/spacing remain editable native
-  parameters (issue #272).
+  native Slot profiles can now seed native SolidCraft sketch patterns/mirrors
+  without exposing generated curve ids. Pattern and mirror results can feed
+  later Sketch operations, while pattern counts and spacing remain editable
+  native parameters (issue #272).
 
 ### Changed
 
-- Replay documents now use version 2 only. Replay bindings represent
-  SolidCraft-returned runtime values needed by later commands; old replay-v1
-  files are intentionally no longer accepted.
+- Replay documents now use version 2 only. Replay bindings may carry any
+  SolidCraft-returned runtime value needed by a later command; replay-v1 files
+  are intentionally no longer supported.
 
+
+## [0.6.3] - 2026-11-17
 
 ### Changed
 
 - TOP-attached `Sketch(on=..., parent=Anchor.TOP)` now uses SolidCraft's
-  native face lookup and face-attached `sketch.create` instead of a Forge-owned
-  XY offset/face-centre reconstruction. Replay v2 can select fields from one
-  returned list record while replay v1 files remain supported (issue #266).
+  native face lookup and face-attached `sketch.create` instead of the
+  Forge-owned XY offset/face-centre workaround from 0.6.2. Replay v2 can select
+  fields from one returned list record while replay v1 files remain supported
+  (issue #266).
 
 ### Added
-
-- Added associative attached-Sketch rectangular pattern and mirror operations.
-  Circle and Slot profiles can now drive native `sketch.pattern.rectangular`
-  and `sketch.mirror` commands through replay-bound curve results, while
-  pattern count and spacing can remain editable SolidCraft parameters
-  (issue #272).
 
 - Added a version-pinned SolidCraft runtime command-contract snapshot generated
   from the official command registry and `engine.describe`. CI now detects
