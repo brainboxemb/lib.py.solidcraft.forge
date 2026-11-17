@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from qualification.expectations import EXPECTED_BOUNDS, EXPECTED_VISUAL_BOXES
+from qualification.geometry_contracts import geometry_contract
 
 
 BOX_EDGES = (
@@ -129,14 +129,13 @@ def _draw_expected(image, camera, expected, *, labels=True, fill_boxes=False):
 
 
 def render(case, camera_path, actual_path, goal_path, overlay_path):
-    if case not in EXPECTED_BOUNDS:
-        raise ValueError(f"no expected bounds declared for {case}")
+    contract = geometry_contract(case)
 
     camera = json.loads(camera_path.read_text(encoding="utf-8"))
     actual = Image.open(actual_path).convert("RGBA")
 
     goal = Image.new("RGBA", actual.size, (248, 250, 253, 255))
-    expected = EXPECTED_VISUAL_BOXES.get(case, EXPECTED_BOUNDS[case])
+    expected = contract["visual_boxes"]
     _draw_expected(goal, camera, expected, labels=True, fill_boxes=True)
     goal.convert("RGB").save(goal_path)
 

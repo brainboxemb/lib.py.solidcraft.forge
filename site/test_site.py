@@ -27,6 +27,7 @@ from api_coverage import (
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 import scpf
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
+from qualification.geometry_contracts import proof_contract
 
 
 def check(
@@ -541,6 +542,15 @@ def check(
         ):
             assert placeholder not in page_text, (slug, placeholder)
         assert (site / "qualification" / slug / "model.py").is_file()
+        proof_path = site / "qualification" / slug / "proof-contract.json"
+        assert proof_path.is_file(), slug
+        rendered_proof = json.loads(proof_path.read_text(encoding="utf-8"))
+        assert rendered_proof == proof_contract(slug), slug
+        assert qualification_manifest["cases"][slug]["proof_contract"] == rendered_proof
+        assert "Shared geometry contract" in page_text, slug
+        assert "SolidCraft-only checks" in page_text, slug
+        assert "Are bounds sufficient for this case?" in page_text, slug
+        assert html.escape(rendered_proof["geometry"]["bounds_reason"]) in page_text, slug
         reference_names = reference_implementations_for(case)
         for implementation in reference_names:
             source_name = f"reference-{implementation}.py"
@@ -667,6 +677,8 @@ def check(
             assert "<h2>1. Test setup</h2>" in page_text, slug
             assert "<h3>Test goal</h3>" in page_text, slug
             assert "<h3>Pass criteria</h3>" in page_text, slug
+            assert "<h3>Shared geometry contract</h3>" in page_text, slug
+            assert "<h3>SolidCraft-only checks</h3>" in page_text, slug
             assert "<h2>2. Implementation under test</h2>" in page_text, slug
             assert "<h2>4. Machine verification</h2>" in page_text, slug
             assert "<h2>5. Visual verification</h2>" in page_text, slug

@@ -10,6 +10,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Changed
 
+- Every qualification case now publishes one shared machine-readable proof
+  contract. Native Q4 baseline checks, independent references and Q6 goal
+  rendering use the same geometry declarations, while SolidCraft-only history,
+  relationship and mutation checks remain separate.
+
+
+### Changed
+
 - Qualification coverage now validates every evidence slug against the real
   qualification catalog, rejects Q5 claims backed by non-mutation cases, and
   checks published current Q claims against native PASS results when full

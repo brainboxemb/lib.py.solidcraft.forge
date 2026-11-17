@@ -31,6 +31,20 @@ Do not copy native measurement expectations back into skipped unittest classes.
 The workflow/runner orchestrates these layers; it is not a separate test
 framework.
 
+## Shared proof contract
+
+Every case has one machine-readable proof contract in
+`qualification/geometry_contracts.py`. Its `geometry` section is independent
+of SolidCraft and supplies baseline body bounds, Q6 visual boxes and any
+stronger measurements needed when bounds do not prove the shape. Its
+`solidcraft_only` section records native history/relationship expectations and
+whether saved-design mutation is required.
+
+Q4 baseline bounds, external reference validation and Q6 goal rendering all
+read the same geometry contract. A case must state whether bounds are sufficient
+for the geometry it is responsible for and explain why. If bounds are not
+sufficient, the contract must declare volume and/or 3D surface-distance checks.
+
 ## Fast affected-case loop
 
 Use this while changing one case or one API area:
