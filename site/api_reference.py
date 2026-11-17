@@ -32,23 +32,51 @@ def _signature(obj, name):
 
 
 def _doc_sections(obj):
-    """Split one public docstring into summary, use-when and limits sections."""
+    """Split one public docstring into generated reference sections."""
     doc = inspect.getdoc(obj) or ""
-    sections = {"summary": [], "use_when": [], "limits": []}
+    sections = {
+        "summary": [],
+        "use_when": [],
+        "limits": [],
+        "parameters": [],
+        "example": [],
+    }
     current = "summary"
+    headings = {
+        "Use when:": "use_when",
+        "Limits:": "limits",
+        "Parameters:": "parameters",
+        "Example:": "example",
+    }
     for raw_line in doc.splitlines():
         line = raw_line.strip()
-        if line == "Use when:":
-            current = "use_when"
-            continue
-        if line == "Limits:":
-            current = "limits"
+        if line in headings:
+            current = headings[line]
             continue
         if line:
             sections[current].append(line)
+
+    parameters = []
+    for line in sections["parameters"]:
+        if ":" in line:
+            name, description = line.split(":", 1)
+            parameters.append({
+                "name": name.strip(),
+                "description": description.strip(),
+            })
+        elif parameters:
+            parameters[-1]["description"] += " " + line
+        else:
+            raise ValueError(
+                "parameter documentation must use 'name: description': " + line
+            )
+
     return {
-        key: " ".join(lines).strip()
-        for key, lines in sections.items()
+        "summary": " ".join(sections["summary"]).strip(),
+        "use_when": " ".join(sections["use_when"]).strip(),
+        "limits": " ".join(sections["limits"]).strip(),
+        "parameters": parameters,
+        "example": "\n".join(sections["example"]).strip(),
     }
 
 
@@ -366,6 +394,8 @@ def public_reference(spec):
 
     result["use_when"] = spec["use_when"]
     result["limits"] = spec["limits"]
+    result["parameters"] = spec["parameters"]
+    result["example"] = spec["example"]
     if spec["kind"] == "enum":
         result["members"] = [
             {"name": name, "value": value}

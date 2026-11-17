@@ -90,12 +90,19 @@ def _compile_model_with_dependencies(shape: Shape, name: str):
 def compile_model(shape: Shape, name: str) -> dict:
     """Compile one Shape tree to a native SolidCraft command document.
 
+    Parameters:
+        shape: Final Shape tree to compile.
+        name: Model/body name used for generated SolidCraft commands. It must be a valid identifier.
+
     Use when:
         Lower-level tooling already has a final Shape object and needs the JSON
         command plan without executing a model source file.
 
     Limits:
-        The final value must be a Shape and name must be a valid identifier.
-        Normal user workflows usually call the scpf runner/CLI instead.
+        The final value must be a Shape. Normal user workflows usually call the
+        scpf runner/CLI instead.
+
+    Example:
+        document = compile_model(Box(80, 50, 12), "Panel")
     """
     return _compile_model_with_dependencies(shape, name)[0]

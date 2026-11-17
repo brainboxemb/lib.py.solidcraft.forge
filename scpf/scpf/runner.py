@@ -657,6 +657,10 @@ def _model_factory(cls, include=()):
 def component(cls=None, *, include=()):
     """Declare one reusable physical component definition.
 
+    Parameters:
+        cls: Model class whose build() returns one physical part. Omit when using @component(...) as a decorator factory.
+        include: Child default parameters to publish. Use names, "*", or a mapping for renamed shared parameters.
+
     Use when:
         Decorate a model class whose build() result represents one reusable
         physical part. Child defaults stay fixed unless explicitly published
@@ -664,9 +668,11 @@ def component(cls=None, *, include=()):
 
     Limits:
         build() must produce one Shape when reused as a component.
-        include=("radius",) publishes selected defaults, include="*" publishes
-        all public defaults, and a mapping publishes a selected child default
-        under a chosen shared model parameter name.
+
+    Example:
+        @component(include=("inside_corner_radius",))
+        class CornerBracket:
+            pass
     """
     def decorate(model_cls):
         if not isinstance(model_cls, type) or not callable(
@@ -700,6 +706,9 @@ def _assembly_factory(cls):
 def assembly(cls):
     """Declare a reusable class that composes component occurrences.
 
+    Parameters:
+        cls: Model class whose build() returns a component occurrence or Assembly.
+
     Use when:
         Decorate a class when the class itself represents a reusable assembly
         or subassembly built from component occurrences and their relationships.
@@ -708,6 +717,11 @@ def assembly(cls):
         build() must return a component occurrence or Assembly. The decorator
         does not itself create grouping or attachment relationships; those come
         from the objects returned by build().
+
+    Example:
+        @assembly
+        class Frame:
+            pass
     """
     if not isinstance(cls, type) or not callable(getattr(cls, "build", None)):
         raise TypeError("assembly() expects a model class with build()")
@@ -763,6 +777,9 @@ def _model_import_context(path: Path):
 def run_script(path: str | Path) -> dict:
     """Execute a trusted SCPF model source file and return its command document.
 
+    Parameters:
+        path: Path to the trusted Python model source file.
+
     Use when:
         Programmatic tooling needs the same model-loading/root-selection and
         compilation behaviour as the SCPF CLI.
@@ -771,6 +788,9 @@ def run_script(path: str | Path) -> dict:
         The source is executed as trusted Python. A file must either end in an
         explicit root model call or define exactly one unambiguous public model
         class with build().
+
+    Example:
+        document = run_script("models/panel/scpf/model.py")
     """
     path = Path(path).resolve()
     syntax = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))

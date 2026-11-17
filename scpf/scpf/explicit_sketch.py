@@ -33,14 +33,26 @@ def register_profile(profile):
 class Sketch:
     """Create an explicit named 2D sketch scope.
 
+    Parameters:
+        name: Native sketch name. Defaults to "Profile".
+        on: Optional existing Shape whose surface supports the sketch.
+        parent: Anchor selecting the supporting surface when on= is used. Defaults to Anchor.TOP.
+        plane: Standalone sketch plane: "XY", "XZ" or "YZ". Defaults to "XY" when on= is not used.
+        origin: Optional explicit 3D origin for a standalone sketch with an explicit plane, in mm.
+        offset: Optional signed offset from a standalone origin plane, in mm.
+
     Use when:
         Author one or more 2D profiles before creating a 3D extrusion. A
         Sketch may be standalone on XY/XZ/YZ or supported by an existing Shape.
 
     Limits:
         Sketch(on=target) selects the supporting shape; profile placement
-        inside the sketch is a separate operation. Leave the with-scope before
-        extruding.
+        inside the sketch is a separate operation. origin and offset are
+        standalone-plane options. Leave the with-scope before extruding.
+
+    Example:
+        with Sketch(name="Base", plane="XY") as sketch:
+            Rectangle2D(80, 50)
     """
 
     def __init__(self, *, name="Profile", on=None, parent=Anchor.TOP, plane=None, origin=None, offset=None):
@@ -103,6 +115,11 @@ class Sketch:
     def add(self, profile, *, anchor=None, offset=(0, 0)):
         """Add and place a supported 2D profile in this Sketch.
 
+        Parameters:
+            profile: Supported 2D Shape such as Rectangle2D, Circle2D, Polygon2D or a Slot constructor result.
+            anchor: Optional profile datum. Dimension-defined profiles default to Anchor.CENTER; coordinate-defined profiles keep their own coordinates.
+            offset: Sketch-local (u, v) displacement in mm. Defaults to (0, 0).
+
         Use when:
             Add a profile explicitly or apply a deliberate sketch-local
             offset. Dimension-defined profiles default to semantic CENTER.
@@ -112,6 +129,9 @@ class Sketch:
             Explicit Anchor.CENTER is supported for Circle2D, Rectangle2D and
             RoundedRectangle2D. Polygon2D and Text2D do not have a qualified
             semantic centre yet; leave anchor=None for those profile types.
+
+        Example:
+            sketch.add(Circle2D(d=8), anchor=Anchor.CENTER, offset=(20, 0))
         """
         if self._closed:
             raise ValueError("cannot add geometry after leaving the Sketch scope")
@@ -169,16 +189,21 @@ class Sketch:
     def extrude(self, distance, *, sym=False):
         """Extrude a completed Sketch using a signed distance.
 
+        Parameters:
+            distance: Extrusion distance in mm, or Depth.THROUGH_ALL for an attached Sketch. Positive follows the plane normal; negative reverses it.
+            sym: When True, split a positive distance equally across both sides of the sketch plane. Defaults to False.
+
         Use when:
-            Leave the Sketch context and create material normal to the sketch
-            plane. Positive distance follows the plane normal; negative distance
-            extrudes in the opposite direction. Use sym=True to split a positive
-            distance equally across both sides of the sketch plane.
+            Leave the Sketch context and create or cut material normal to the
+            sketch plane.
 
         Limits:
             A standalone Sketch requires a finite non-zero distance.
             Depth.THROUGH_ALL is only meaningful for a Sketch attached to an
             existing Shape and cannot be combined with sym=True.
+
+        Example:
+            body = sketch.extrude(12)
         """
         if not self._closed:
             raise ValueError("leave the Sketch scope before extruding it")

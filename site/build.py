@@ -758,6 +758,29 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             return f'<pre{css}><code>{escape(member["signature"])}</code></pre>'
         return ""
 
+    def _parameter_details(member, *, heading="Parameters"):
+        parameters = member.get("parameters") or []
+        if not parameters:
+            return ""
+        rows = "".join(
+            "<tr>"
+            f"<td><code>{escape(row['name'])}</code></td>"
+            f"<td>{escape(row['description'])}</td>"
+            "</tr>"
+            for row in parameters
+        )
+        return (
+            f"<h3>{escape(heading)}</h3>"
+            '<table class="api-table"><thead><tr><th>Argument</th><th>Meaning</th></tr></thead>'
+            f"<tbody>{rows}</tbody></table>"
+        )
+
+    def _example_details(member):
+        example = member.get("example") or ""
+        if not example:
+            return ""
+        return "<h3>Example</h3>" + f"<pre><code>{escape(example)}</code></pre>"
+
     def _guide_group_details(spec):
         rows = []
         for member in group_members(spec):
@@ -773,6 +796,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 + (
                     f'<p><strong>Current limits:</strong> {escape(member["limits"])}</p>'
                     if member["limits"] else ""
+                )
+                + (
+                    f'<p><a href="../../reference/{escape(spec["slug"])}/#{escape(member["name"])}">'
+                    'Detailed parameter reference →</a></p>'
+                    if member.get("parameters") else ""
                 )
                 + '</div>'
             )
@@ -975,6 +1003,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 + '</p>'
                 if spec["slug"] == "Anchor" else ""
             )
+            + _parameter_details(spec, heading="Parameters")
+            + _example_details(spec)
             + (
                 f'<h2>Current limits</h2><p>{escape(spec["limits"])}</p>'
                 if spec["limits"] else ""
@@ -1035,6 +1065,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                     f'<h3>When to use it</h3><p>{escape(member["use_when"])}</p>'
                     if member["use_when"] else ""
                 )
+                + _parameter_details(member)
+                + _example_details(member)
                 + (
                     f'<h3>Current limits</h3><p>{escape(member["limits"])}</p>'
                     if member["limits"] else ""

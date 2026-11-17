@@ -144,6 +144,11 @@ def _selector_anchor(value):
 class AnchorFrame:
     """Describe one local attachment point and orientation.
 
+    Parameters:
+        origin: Component-local XYZ attachment point in mm. Defaults to (0, 0, 0).
+        z: Attachment-normal direction as an XYZ vector or Anchor. Defaults to Anchor.UP.
+        x: Local X/clocking direction as an XYZ vector or Anchor. Defaults to Anchor.RIGHT.
+
     Use when:
         A standard face or corner Anchor is not enough and the mounting datum
         needs its own local origin plus orientation. A reusable component may
@@ -151,10 +156,12 @@ class AnchorFrame:
         one directly to attach().
 
     Limits:
-        origin is component-local. z is the attachment normal and x fixes the
-        clocking around that normal; both directions must be non-zero and not
-        parallel. Direct frames on explicitly rotated occurrences have limited
-        support as documented by the assembly guide.
+        z and x must be non-zero and must not be parallel. Direct frames on
+        explicitly rotated occurrences have limited support as documented by
+        the assembly guide.
+
+    Example:
+        mount = AnchorFrame(origin=(20, 0, 10), z=Anchor.FRONT, x=Anchor.RIGHT)
     """
 
     origin: tuple[float, float, float] = (0.0, 0.0, 0.0)
@@ -204,15 +211,25 @@ class AnchorFrame:
 class AnchorTopology:
     """Describe an attachment datum that follows native SolidCraft topology.
 
+    Parameters:
+        edge: XYZ pick point on the target edge, in component-local mm.
+        on: XYZ pick point on the adjacent planar face, in component-local mm.
+        corner: Optional XYZ endpoint/corner pick in component-local mm.
+        z: Optional non-zero XYZ attachment-normal override.
+        x: Optional non-zero XYZ clocking-direction override.
+
     Use when:
         A relationship should follow a particular edge, adjacent planar face
         and optionally one endpoint as dimensions change, rather than freezing
         one XYZ coordinate.
 
     Limits:
-        edge and on are native selection pick points; corner is optional. z and
-        x may override frame orientation. Current Forge support focuses on
-        planar-face edges and non-rotated occurrences.
+        edge and on are native selection pick points. Current Forge support
+        focuses on planar-face edges and non-rotated occurrences. z and x, when
+        both supplied, must not be parallel.
+
+    Example:
+        mount = AnchorTopology(edge=(0, 25, 10), on=(0, 20, 10), corner=(0, 25, 0))
     """
 
     edge: tuple[float, float, float]
@@ -447,15 +464,21 @@ def _plain_command_value(value):
 class Parameter:
     """Represent one named editable CAD dimension.
 
+    Parameters:
+        name: SolidCraft parameter name. It must be a valid Python identifier.
+        value: Current numeric value of the parameter.
+
     Use when:
         Keep a value symbolic so generated SolidCraft commands can retain an
         editable dependency instead of baking in the current Python number.
 
     Limits:
-        Names must be valid Python identifiers and values finite numbers.
-        Normal public lower-case model fields are usually promoted to
-        parameters automatically, so explicit Parameter() is mainly useful in
-        lower-level or assembly code.
+        value must be finite. Normal public lower-case model fields are usually
+        promoted to parameters automatically, so explicit Parameter() is mainly
+        useful in lower-level or assembly code.
+
+    Example:
+        wall = Parameter("wall", 2.4)
     """
 
     name: str
@@ -597,12 +620,18 @@ def _scaled_direction(direction, distance):
 def up(distance):
     """Return a symbolic-safe XYZ offset in the +Z direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = up(12)
     """
     return _scaled_direction(Anchor.TOP, distance)
 
@@ -610,12 +639,18 @@ def up(distance):
 def down(distance):
     """Return a symbolic-safe XYZ offset in the -Z direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = down(12)
     """
     return _scaled_direction(Anchor.BOTTOM, distance)
 
@@ -623,12 +658,18 @@ def down(distance):
 def left(distance):
     """Return a symbolic-safe XYZ offset in the -X direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = left(12)
     """
     return _scaled_direction(Anchor.LEFT, distance)
 
@@ -636,12 +677,18 @@ def left(distance):
 def right(distance):
     """Return a symbolic-safe XYZ offset in the +X direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = right(12)
     """
     return _scaled_direction(Anchor.RIGHT, distance)
 
@@ -649,12 +696,18 @@ def right(distance):
 def front(distance):
     """Return a symbolic-safe XYZ offset in the -Y direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = front(12)
     """
     return _scaled_direction(Anchor.FRONT, distance)
 
@@ -662,12 +715,18 @@ def front(distance):
 def back(distance):
     """Return a symbolic-safe XYZ offset in the +Y direction.
 
+    Parameters:
+        distance: Numeric or symbolic CAD distance in mm.
+
     Use when:
         Express a readable placement offset while preserving Parameter or
         Expression values.
 
     Limits:
         This returns an XYZ tuple; it does not create an Anchor relationship.
+
+    Example:
+        offset = back(12)
     """
     return _scaled_direction(Anchor.BACK, distance)
 
@@ -675,12 +734,18 @@ def back(distance):
 def half(value):
     """Return half of a numeric or symbolic CAD dimension.
 
+    Parameters:
+        value: Numeric, Parameter or Expression value to divide by two.
+
     Use when:
         Keep midpoint-style arithmetic readable without converting a symbolic
         CAD dimension to a concrete Python value.
 
     Limits:
         Equivalent to value / 2; the input must support that operation.
+
+    Example:
+        centre = half(width)
     """
     return value / 2
 
@@ -688,11 +753,18 @@ def half(value):
 def midpoint(start, end):
     """Return the midpoint between two numeric or symbolic dimensions.
 
+    Parameters:
+        start: First numeric or symbolic coordinate/dimension.
+        end: Second numeric or symbolic coordinate/dimension.
+
     Use when:
         Express a centre position while preserving symbolic CAD dependencies.
 
     Limits:
         Equivalent to (start + end) / 2; inputs must support symbolic arithmetic.
+
+    Example:
+        centre_x = midpoint(left_x, right_x)
     """
     return (start + end) / 2
 
@@ -727,6 +799,9 @@ def _track_pv_reads(parameters):
 def pv(dim) -> float:
     """Return the concrete Python value of a symbolic CAD dimension.
 
+    Parameters:
+        dim: Numeric value, Parameter or Expression to read as a Python float.
+
     Use when:
         Python itself genuinely needs a number for validation or control flow.
 
@@ -734,6 +809,10 @@ def pv(dim) -> float:
         Calling pv() intentionally removes the symbolic dependency at that
         point. Geometry and placement should normally keep Parameter/Expression
         objects symbolic so SolidCraft remains editable and associative.
+
+    Example:
+        if pv(clearance) < 0:
+            raise ValueError("clearance must not be negative")
     """
     for parameter in parameters_in(dim):
         parameter_id = id(parameter)
@@ -961,7 +1040,11 @@ def _shape_contains(root, needle):
 
 @dataclass(frozen=True)
 class Shape:
-    """Represent Forge geometry/feature intent before SolidCraft executes it.
+    """Store Forge geometry and feature operations before SolidCraft executes them.
+
+    Parameters:
+        kind: Forge node type. Public constructors set this; normal model code should not invent kind values.
+        data: Data stored for that node type. Public constructors and methods build this payload.
 
     Use when:
         Shape values are normally returned by constructors such as Box(),
@@ -969,9 +1052,12 @@ class Shape:
         with the supported Shape methods/operators.
 
     Limits:
-        Shape is Forge's model-intent node, not a second geometry kernel.
-        SolidCraft owns the final BRep and native feature history; users normally
-        do not instantiate Shape(kind, data) directly.
+        Shape is only Forge's description of the model. SolidCraft owns the final
+        BRep and feature history; users normally do not instantiate
+        Shape(kind, data) directly.
+
+    Example:
+        body = Box(80, 50, 12)
     """
 
     kind: str
@@ -1093,6 +1179,10 @@ class Shape:
     def shell(self, thickness, *, open=Faces.TOP):
         """Hollow a supported solid and leave selected Faces open.
 
+        Parameters:
+            thickness: Wall thickness in mm.
+            open: Face to remove, or a non-empty sequence of Faces values. Defaults to Faces.TOP.
+
         Use when:
             Create an enclosure-like body with an even wall thickness while
             removing one or more named planar faces.
@@ -1100,6 +1190,9 @@ class Shape:
         Limits:
             open= must be one Faces value or a non-empty sequence of Faces
             values. Support still depends on the underlying feature tree.
+
+        Example:
+            Box(80, 50, 30).shell(2, open=Faces.TOP)
         """
         _pv(thickness)
         if isinstance(open, Faces):
@@ -1128,15 +1221,26 @@ class Shape:
     def at(self, x=0, y=0, z=0, *, anchor=Anchor.CENTER, child=Anchor.CENTER):
         """Place a shape at absolute coordinates or align it to another Shape.
 
+        Parameters:
+            x: Absolute X coordinate in mm, or a target Shape for shape-to-shape alignment.
+            y: Absolute Y coordinate in mm. Leave at 0 when x is a target Shape.
+            z: Absolute Z coordinate in mm. Leave at 0 when x is a target Shape.
+            anchor: Datum on this primitive that is placed at the requested coordinate. Defaults to Anchor.CENTER.
+            child: Child datum for shape-to-shape alignment. Currently only Anchor.CENTER is supported.
+
         Use when:
-            Use shape.at(x, y, z) for geometric placement. A Box may additionally
-            use a cardinal anchor. Use shape.at(target) for the supported
-            shape-to-shape CENTER alignment.
+            Use shape.at(x, y, z) for geometric placement. A Box, Cylinder or
+            Sphere may use a cardinal anchor. Use shape.at(target) for the
+            supported shape-to-shape CENTER alignment.
 
         Limits:
             Shape-to-shape alignment currently supports CENTER-to-CENTER only.
             at() is geometric placement/alignment; selecting a support face for
             a feature is the job of Shape.on().
+
+        Example:
+            pin = Cylinder(d=8, h=20, axis=Axis.X).at(10, 0, 5, anchor=Anchor.LEFT)
+            centered = Sphere(5).at(body)
         """
         if isinstance(x, Shape):
             if y != 0 or z != 0:
@@ -1200,7 +1304,24 @@ class Shape:
         )
 
     def repeat_linear(self, *, count, spacing, axis):
-        """Repeat a Hole or Cylinder before native feature lowering."""
+        """Repeat a Hole or Cylinder in one centred linear row.
+
+        Parameters:
+            count: Number of repeated features. Must be a positive integer.
+            spacing: Centre-to-centre distance between adjacent features, in mm.
+            axis: Pattern direction. Currently Axis.X or Axis.Y.
+
+        Use when:
+            Repeat a Hole or Cylinder before placing it on a supported parent
+            face. The row is centred around the feature placement point.
+
+        Limits:
+            Only Hole and Cylinder are supported. count must be a fixed positive
+            integer and spacing must be positive.
+
+        Example:
+            Hole(d=8).repeat_linear(count=3, spacing=24, axis=Axis.X)
+        """
         if self.kind not in ("cylinder", "hole"):
             raise ValueError("repeat_linear() supports Cylinder or Hole")
         if not isinstance(count, int) or isinstance(count, bool) or count < 1:
@@ -1230,7 +1351,32 @@ class Shape:
         reversed=False,
         reversed2=False,
     ):
-        """Pattern an existing native history feature in one or two directions."""
+        """Pattern an existing native history feature in one or two directions.
+
+        Parameters:
+            feature: Existing Sketch.extrude() feature already applied to this Shape, or a non-empty sequence of such features.
+            count: Number of instances in the first direction. Use a positive integer or direct Parameter.
+            spacing: Instance spacing in the first direction, in mm.
+            direction: First pattern direction as Axis.X/Y/Z or a non-zero XYZ vector. Defaults to Axis.X.
+            count2: Optional instance count for the second direction.
+            spacing2: Optional spacing for the second direction, in mm.
+            direction2: Second pattern direction as Axis.X/Y/Z or a non-zero XYZ vector. Defaults to Axis.Y.
+            alignment: First-direction native alignment: "left", "center" or "right". Defaults to "right".
+            alignment2: Second-direction native alignment: "left", "center" or "right". Defaults to "right".
+            reversed: Reverse the first native pattern direction. Defaults to False.
+            reversed2: Reverse the second native pattern direction. Defaults to False.
+
+        Use when:
+            Repeat an already-created native sketch extrusion while keeping one
+            editable SolidCraft rectangular-pattern history feature.
+
+        Limits:
+            The source feature must already be part of this Shape. Supplying a
+            second direction requires both count2 and spacing2.
+
+        Example:
+            plate.rectangular_pattern(cut, count=3, spacing=24, direction=Axis.X, count2=2, spacing2=28)
+        """
         if isinstance(feature, Shape):
             sources = (feature,)
         elif isinstance(feature, (tuple, list)) and feature:
@@ -1290,6 +1436,11 @@ class Shape:
     def on(self, target, *, face=Faces.TOP, offset=(0, 0)):
         """Place a supported within-component feature on a target face.
 
+        Parameters:
+            target: Existing Shape that receives the feature.
+            face: Target surface. Currently Faces.TOP or Faces.BOTTOM. Defaults to Faces.TOP.
+            offset: In-plane (x, y) offset from the target face centre, in mm. Defaults to (0, 0).
+
         Use when:
             Put a Hole or another supported feature on an existing Shape and
             select its entry/support surface with Faces.
@@ -1298,6 +1449,9 @@ class Shape:
             Shape.on() currently accepts Faces.TOP and Faces.BOTTOM. This is
             feature placement; component assembly attachment uses Anchor and
             the component occurrence attach() API.
+
+        Example:
+            Hole(d=8).on(plate, face=Faces.TOP, offset=(20, 0))
         """
         try:
             face = Faces(face)
@@ -1315,6 +1469,12 @@ class Shape:
                offset=(0, 0)):
         """Anchor a supported feature explicitly to another Shape.
 
+        Parameters:
+            target: Existing parent Shape that receives the feature.
+            parent: Anchor on the target Shape. Defaults to Anchor.TOP.
+            child: Anchor on the feature being placed. Defaults to Anchor.BOTTOM.
+            offset: In-plane (x, y) offset on the parent anchor surface, in mm. Defaults to (0, 0).
+
         Use when:
             Use this lower-level feature-placement form when parent/child
             Anchor references are required explicitly.
@@ -1323,6 +1483,9 @@ class Shape:
             This is legacy within-component feature anchoring. Prefer on() for
             simple face placement. It is separate from component occurrence
             attachment used by assemblies.
+
+        Example:
+            Boss(d=7, h=12).attach(case, parent=Anchor.INNER_BOTTOM, offset=(10, 10))
         """
         return self._anchor_to(target, parent, child, offset)
 
@@ -1380,6 +1543,10 @@ def Text2D(text, *, height=6.0, font="DejaVu Sans Bold"):
 def Rectangle2D(width, depth):
     """Create a rectangular 2D profile.
 
+    Parameters:
+        width: Rectangle size along the first local sketch axis, in mm. On XY this is X.
+        depth: Rectangle size along the second local sketch axis, in mm. On XY this is Y.
+
     Use when:
         Author a simple rectangle inside an explicit Sketch before extrusion.
 
@@ -1387,6 +1554,9 @@ def Rectangle2D(width, depth):
         The dimension-defined profile is centred on the Sketch origin by
         default. Use Sketch.add(..., offset=(u, v)) for a deliberate local
         displacement.
+
+    Example:
+        Rectangle2D(80, 50)
     """
     from .explicit_sketch import register_profile
     return register_profile(Shape("rectangle", (width, depth)))
@@ -1395,13 +1565,21 @@ def Rectangle2D(width, depth):
 def RoundedRectangle2D(width, depth, radius):
     """Create a native rounded-rectangle 2D profile.
 
+    Parameters:
+        width: Rectangle size along the first local sketch axis, in mm.
+        depth: Rectangle size along the second local sketch axis, in mm.
+        radius: Radius of each corner arc, in mm.
+
     Use when:
         A sketch needs a rectangle with true circular corner arcs rather than a
         polygonal approximation.
 
     Limits:
-        Current support is inside an explicit Sketch. The radius must be below
-        half the shorter side.
+        Current support is inside an explicit Sketch. width and depth must be
+        positive. radius must be positive and below half the shorter side.
+
+    Example:
+        RoundedRectangle2D(80, 50, 6)
     """
     if _pv(width) <= 0 or _pv(depth) <= 0:
         raise ValueError("RoundedRectangle2D width and depth must be positive")
@@ -1441,7 +1619,20 @@ def _slot_width(width):
 
 
 def SlotCenterToCenter2D(p0, p1, width):
-    """Create a native straight Slot from the centres of its round ends."""
+    """Create a straight Slot from the centres of its two round ends.
+
+    Parameters:
+        p0: Centre of the first round end as (x, y) in sketch coordinates, in mm.
+        p1: Centre of the second round end as (x, y) in sketch coordinates, in mm.
+        width: Total Slot width in mm. This is also the diameter of each round end.
+
+    Limits:
+        p0 and p1 must be different points. The straight part runs between
+        these two end centres.
+
+    Example:
+        SlotCenterToCenter2D((-10, 0), (10, 0), 6)
+    """
     p0 = _slot_point("p0", p0)
     p1 = _slot_point("p1", p1)
     if p0 == p1:
@@ -1453,7 +1644,20 @@ def SlotCenterToCenter2D(p0, p1, width):
 
 
 def SlotOverall2D(p0, p1, width):
-    """Create a native straight Slot from its two overall end points."""
+    """Create a straight Slot from its two outermost end points.
+
+    Parameters:
+        p0: Outermost point of the first round end as (x, y) in sketch coordinates, in mm.
+        p1: Outermost point of the second round end as (x, y) in sketch coordinates, in mm.
+        width: Total Slot width in mm. This is also the diameter of each round end.
+
+    Limits:
+        The distance from p0 to p1 is the total Slot length, including both
+        round ends, and must be larger than width.
+
+    Example:
+        SlotOverall2D((-15, 0), (15, 0), 6)
+    """
     p0 = _slot_point("p0", p0)
     p1 = _slot_point("p1", p1)
     width = _slot_width(width)
@@ -1465,7 +1669,20 @@ def SlotOverall2D(p0, p1, width):
 
 
 def SlotCenterPoint2D(center, end, width):
-    """Create a native straight Slot from its centre and one end-arc centre."""
+    """Create a straight Slot from its centre and one round-end centre.
+
+    Parameters:
+        center: Centre of the complete Slot as (x, y) in sketch coordinates, in mm.
+        end: Centre of one round end as (x, y) in sketch coordinates, in mm.
+        width: Total Slot width in mm. This is also the diameter of each round end.
+
+    Limits:
+        center and end must differ. The other round-end centre is mirrored
+        through center.
+
+    Example:
+        SlotCenterPoint2D((0, 0), (10, 0), 6)
+    """
     center = _slot_point("center", center)
     end = _slot_point("end", end)
     if center == end:
@@ -1477,7 +1694,20 @@ def SlotCenterPoint2D(center, end, width):
 
 
 def SlotArcThreePoint2D(start, through, end, width):
-    """Create a native arc Slot through three points on its centre arc."""
+    """Create a curved Slot whose centre arc passes through three points.
+
+    Parameters:
+        start: Start point of the Slot centre arc as (x, y) in sketch coordinates, in mm.
+        through: A point that the centre arc must pass through, as (x, y) in mm.
+        end: End point of the Slot centre arc as (x, y) in sketch coordinates, in mm.
+        width: Total Slot width in mm, measured perpendicular to the centre arc.
+
+    Limits:
+        start, through and end must be three different points.
+
+    Example:
+        SlotArcThreePoint2D((-15, 0), (0, 10), (15, 0), 6)
+    """
     start = _slot_point("start", start)
     through = _slot_point("through", through)
     end = _slot_point("end", end)
@@ -1490,7 +1720,22 @@ def SlotArcThreePoint2D(start, through, end, width):
 
 
 def SlotArcCenter2D(center, start, width, *, end=None, sweep=None):
-    """Create a native arc Slot from its centre, start and end or sweep."""
+    """Create a curved Slot from an arc centre and start point.
+
+    Parameters:
+        center: Centre of the underlying circular arc as (x, y) in sketch coordinates, in mm.
+        start: Start point of the Slot centre arc as (x, y) in sketch coordinates, in mm.
+        width: Total Slot width in mm, measured perpendicular to the centre arc.
+        end: Optional end point of the centre arc as (x, y) in mm.
+        sweep: Optional positive sweep angle in degrees.
+
+    Limits:
+        Supply exactly one of end= or sweep=. center and start must differ.
+        sweep must be greater than 0 and less than 360 degrees.
+
+    Example:
+        SlotArcCenter2D((0, 0), (12, 0), 6, sweep=120)
+    """
     center = _slot_point("center", center)
     start = _slot_point("start", start)
     if center == start:
@@ -1509,15 +1754,21 @@ def SlotArcCenter2D(center, start, width, *, end=None, sweep=None):
         Shape("slot_arc_center", (center, start, end, sweep, _slot_width(width)))
     )
 
-
 def Circle2D(*, d=None, r=None):
     """Create a circular 2D profile by diameter or radius.
+
+    Parameters:
+        d: Circle diameter in mm. Supply d or r, not both.
+        r: Circle radius in mm. Supply r or d, not both.
 
     Use when:
         Author a circular profile inside an explicit Sketch.
 
     Limits:
-        Supply exactly one of d= or r=; the Sketch determines the plane.
+        Supply exactly one of d= or r=. The Sketch determines the plane.
+
+    Example:
+        Circle2D(d=8)
     """
     if (d is None) == (r is None):
         raise ValueError("Circle2D requires exactly one of d= or r=")
@@ -1528,14 +1779,22 @@ def Circle2D(*, d=None, r=None):
 def Polygon2D(points, *, plane="XY", ids=None, world=False):
     """Create a closed named or unnamed polygon profile.
 
+    Parameters:
+        points: Polygon vertices in order. Use (u, v) pairs, or (name, (u, v)) pairs when naming vertices, in mm.
+        plane: Sketch plane: "XY", "XZ" or "YZ". Defaults to "XY".
+        ids: Optional segment names, one per polygon edge in vertex order.
+        world: When True with plane="XZ", read each input point as world (x, z) instead of native sketch coordinates.
+
     Use when:
         A 2D profile needs arbitrary straight segments or named vertices and
         segments that later drive selectors such as Edges.from_profile().
 
     Limits:
-        At least three 2D points are required. plane is XY, XZ or YZ.
-        world=True currently supports only XZ and lets input use intuitive
-        world (x, z) coordinates.
+        At least three 2D points are required. Named and unnamed points cannot
+        be mixed. world=True currently supports only plane="XZ".
+
+    Example:
+        Polygon2D([(0, 0), (40, 0), (40, 20), (0, 20)], plane="XY")
     """
     rows = tuple(points)
     named = [
@@ -1580,21 +1839,33 @@ def Polygon2D(points, *, plane="XY", ids=None, world=False):
 def Box(length, width, thickness, *, anchor=Anchor.CENTER):
     """Create a native rectangular solid around a declared anchor datum.
 
+    Parameters:
+        length: Box size along X, in mm.
+        width: Box size along Y, in mm.
+        thickness: Box size along Z, in mm.
+        anchor: Box datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER.
+
     Use when:
         Model a simple rectangular part directly without introducing a Sketch.
-        anchor selects which Box anchor starts at model coordinate (0, 0, 0).
 
     Limits:
         The default anchor is CENTER, so an unplaced Box is centred around the
         model origin in X, Y and Z. Use anchor=BOTTOM for a box whose bottom
         face centre is at Z=0. Use at() for later placement.
+
+    Example:
+        Box(80, 50, 12, anchor=Anchor.BOTTOM)
     """
     selector = _direction_selector(anchor)
     return Shape("box", (length, width, thickness, selector))
 
 
 def Sphere(radius, *, anchor=Anchor.CENTER):
-    """Create a sphere, centered on the origin unless another anchor is given.
+    """Create a sphere centred on the origin unless another anchor is given.
+
+    Parameters:
+        radius: Sphere radius in mm.
+        anchor: Sphere datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER.
 
     Use when:
         Model a spherical primitive, optionally with a tangent-point anchor.
@@ -1602,12 +1873,21 @@ def Sphere(radius, *, anchor=Anchor.CENTER):
     Limits:
         Cardinal anchors select points on the sphere's world-aligned bounds.
         Sphere has no separate orientation axis; use at() for placement.
+
+    Example:
+        Sphere(12, anchor=Anchor.BOTTOM)
     """
     return Shape("sphere", (radius, _direction_selector(anchor)))
 
 
 def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
-    """Create a cylindrical solid centered around the origin by default.
+    """Create a cylindrical solid centred around the origin by default.
+
+    Parameters:
+        d: Cylinder diameter in mm.
+        h: Cylinder length along the selected axis, in mm.
+        axis: Cylinder axis. Use Axis.X, Axis.Y or Axis.Z. Defaults to Axis.Z.
+        anchor: Cylinder datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER.
 
     Use when:
         Model a cylinder along Axis.X, Axis.Y or Axis.Z. Use BOTTOM for a
@@ -1616,6 +1896,9 @@ def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
     Limits:
         Anchors refer to world XYZ bounds after choosing the cylinder axis.
         at() places the selected anchor at the requested coordinate.
+
+    Example:
+        Cylinder(d=8, h=20, axis=Axis.X, anchor=Anchor.LEFT)
     """
     try:
         axis = Axis(axis)
@@ -1626,7 +1909,15 @@ def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
 
 def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
          countersink_d=None, countersink_angle=90, countersink_recess=0):
-    """Create hole feature intent, optionally directional and countersunk.
+    """Create a hole feature, optionally directional and countersunk.
+
+    Parameters:
+        d: Finished hole diameter in mm.
+        depth: Hole depth in mm, or Depth.THROUGH_ALL. Defaults to Depth.THROUGH_ALL.
+        direction: Optional non-zero XYZ direction vector for the hole axis.
+        countersink_d: Optional countersink diameter in mm. It must be larger than d.
+        countersink_angle: Included countersink angle in degrees. Defaults to 90.
+        countersink_recess: Optional straight recess before the countersink starts, in mm. Defaults to 0.
 
     Use when:
         Remove a manufacturing-style hole from a supported body. Simple holes
@@ -1634,8 +1925,11 @@ def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
         native Hole path with explicit placement.
 
     Limits:
-        Diameter must be positive. depth is a positive distance or
-        Depth.THROUGH_ALL. Countersink diameter must exceed the hole diameter.
+        d and finite depth values must be positive. A recessed countersink
+        requires countersink_d and, when compiled, an explicit hole direction.
+
+    Example:
+        Hole(d=8, depth=Depth.THROUGH_ALL)
     """
     if _pv(d) <= 0:
         raise ValueError("hole diameter must be positive")
@@ -1668,28 +1962,48 @@ def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
 
 
 def Lip(*, width, height):
-    """Create plastic enclosure lip feature intent.
+    """Create a plastic enclosure lip feature.
+
+    Parameters:
+        width: Lip width in mm.
+        height: Lip height in mm.
 
     Use when:
         Add a lip to a supported shelled enclosure rim using feature placement.
 
     Limits:
-        Placement and parent-shape support follow the feature-placement API.
+        width and height must be positive when compiled. Placement and
+        parent-shape support follow the feature-placement API.
+
+    Example:
+        Lip(width=2, height=3)
     """
     return Shape("lip", (width, height))
 
 
 def SnapFit(*, length, thickness, width, catch_depth, catch_length,
             hook, direction=None):
-    """Create cantilever snap-fit feature intent.
+    """Create a cantilever snap-fit feature.
+
+    Parameters:
+        length: Cantilever length in mm.
+        thickness: Cantilever thickness in mm.
+        width: Cantilever width in mm.
+        catch_depth: Catch projection depth in mm.
+        catch_length: Catch length in mm.
+        hook: Non-zero XYZ direction vector for the hook direction.
+        direction: Optional non-zero XYZ direction vector for the feature direction.
 
     Use when:
         Add a plastic snap feature to a supported face with an explicit hook
         direction.
 
     Limits:
-        hook must be one 3D direction; optional direction must also be an XYZ
-        triple. Placement uses the supported feature-placement API.
+        All five dimensions must be positive when compiled. hook must contain
+        three coordinates; direction, when supplied, must also contain three.
+
+    Example:
+        SnapFit(length=20, thickness=2, width=8, catch_depth=1.5, catch_length=4, hook=(1, 0, 0))
     """
     hook = tuple(hook)
     if len(hook) != 3:
@@ -1705,16 +2019,24 @@ def SnapFit(*, length, thickness, width, catch_depth, catch_length,
 
 
 def Boss(*, d, h, hole_d=None, direction=None):
-    """Create plastic screw-boss feature intent.
+    """Create a plastic screw-boss feature.
+
+    Parameters:
+        d: Boss outside diameter in mm.
+        h: Boss height in mm.
+        hole_d: Optional central-hole diameter in mm.
+        direction: Optional non-zero XYZ direction vector for the boss axis.
 
     Use when:
         Add a cylindrical support boss, optionally with a central hole, to a
         supported face.
 
     Limits:
-        Optional direction is an XYZ triple. Boss intent lowers through the
-        native plastic.boss feature path; use Sketch explicitly when sketch
-        history is part of the design intent.
+        d and h must be positive when compiled. hole_d, when supplied, must be
+        positive. direction, when supplied, must contain three coordinates.
+
+    Example:
+        Boss(d=7, h=12, hole_d=2.5)
     """
     if direction is not None:
         direction = tuple(direction)
@@ -1727,14 +2049,24 @@ def Boss(*, d, h, hole_d=None, direction=None):
 
 
 def Rest(*, width, height, length=None, along=None, direction=None):
-    """Create plastic support/rest feature intent.
+    """Create a plastic support/rest feature.
+
+    Parameters:
+        width: Rest width in mm.
+        height: Rest height in mm.
+        length: Optional rest length in mm for an elongated support.
+        along: Optional non-zero XYZ vector that sets the long direction.
+        direction: Optional non-zero XYZ vector that sets the feature direction.
 
     Use when:
         Add a support pad or elongated rest to a supported face.
 
     Limits:
-        Optional along and direction values are XYZ triples. Placement uses the
-        supported feature-placement API.
+        width and height must be positive when compiled. length, when supplied,
+        must be positive. along and direction must contain three coordinates.
+
+    Example:
+        Rest(width=12, height=4, length=30, along=(1, 0, 0))
     """
     if along is not None:
         along = tuple(along)

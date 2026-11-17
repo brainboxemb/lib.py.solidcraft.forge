@@ -73,7 +73,7 @@
     },
     "Shape": {
       "kind": "callable",
-      "summary": "Represent Forge geometry/feature intent before SolidCraft executes it.",
+      "summary": "Store Forge geometry and feature operations before SolidCraft executes them.",
       "reference": "reference/Shape/",
       "guide": "guide/model-objects/#shape",
       "signature": "Shape(kind: str, data: Any) -> None"
@@ -94,14 +94,14 @@
     },
     "Occurrence.copy": {
       "kind": "callable",
-      "summary": "Create another occurrence of the same reusable definition. The copy inherits the source Placement unless placement= is supplied. Attachment state is occurrence-specific and is not inherited. name= optionally gives the new occurrence an explicit Forge object name.",
+      "summary": "Create another occurrence of the same reusable definition.",
       "reference": "reference/Occurrence.copy/",
       "guide": "guide/assembly-basics/#collection",
       "signature": "Occurrence.copy(self, *, name=None, placement=None)"
     },
     "Occurrence.attach": {
       "kind": "callable",
-      "summary": "Create a rigid relationship from this occurrence to another component.",
+      "summary": "Create a rigid or planar relationship from this occurrence to another component.",
       "reference": "reference/Occurrence.attach/",
       "guide": "guide/assembly-basics/#relationship",
       "signature": "Occurrence.attach(self, target, *, parent=<Anchor.RIGHT: 'right'>, child=<Anchor.LEFT: 'left'>, offset=(0, 0), gap=0, angle=None, as_built=False)"
@@ -192,14 +192,14 @@
     },
     "Cylinder": {
       "kind": "callable",
-      "summary": "Create a cylindrical solid centered around the origin by default.",
+      "summary": "Create a cylindrical solid centred around the origin by default.",
       "reference": "reference/geometry-constructors/#Cylinder",
       "guide": "guide/geometry/#solids",
       "signature": "Cylinder(*, d, h, axis=<Axis.Z: 'Z'>, anchor=<Anchor.CENTER: 'center'>)"
     },
     "Sphere": {
       "kind": "callable",
-      "summary": "Create a sphere, centered on the origin unless another anchor is given.",
+      "summary": "Create a sphere centred on the origin unless another anchor is given.",
       "reference": "reference/geometry-constructors/#Sphere",
       "guide": "guide/geometry/#solids",
       "signature": "Sphere(radius, *, anchor=<Anchor.CENTER: 'center'>)"
@@ -234,35 +234,35 @@
     },
     "Hole": {
       "kind": "callable",
-      "summary": "Create hole feature intent, optionally directional and countersunk.",
+      "summary": "Create a hole feature, optionally directional and countersunk.",
       "reference": "reference/feature-constructors/#Hole",
       "guide": "guide/features/#features",
       "signature": "Hole(*, d, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None, countersink_d=None, countersink_angle=90, countersink_recess=0)"
     },
     "Lip": {
       "kind": "callable",
-      "summary": "Create plastic enclosure lip feature intent.",
+      "summary": "Create a plastic enclosure lip feature.",
       "reference": "reference/feature-constructors/#Lip",
       "guide": "guide/features/#features",
       "signature": "Lip(*, width, height)"
     },
     "SnapFit": {
       "kind": "callable",
-      "summary": "Create cantilever snap-fit feature intent.",
+      "summary": "Create a cantilever snap-fit feature.",
       "reference": "reference/feature-constructors/#SnapFit",
       "guide": "guide/features/#features",
       "signature": "SnapFit(*, length, thickness, width, catch_depth, catch_length, hook, direction=None)"
     },
     "Boss": {
       "kind": "callable",
-      "summary": "Create plastic screw-boss feature intent.",
+      "summary": "Create a plastic screw-boss feature.",
       "reference": "reference/feature-constructors/#Boss",
       "guide": "guide/features/#features",
       "signature": "Boss(*, d, h, hole_d=None, direction=None)"
     },
     "Rest": {
       "kind": "callable",
-      "summary": "Create plastic support/rest feature intent.",
+      "summary": "Create a plastic support/rest feature.",
       "reference": "reference/feature-constructors/#Rest",
       "guide": "guide/features/#features",
       "signature": "Rest(*, width, height, length=None, along=None, direction=None)"
@@ -434,7 +434,7 @@
     },
     "Placement": {
       "kind": "callable",
-      "summary": "Absolute pose of one occurrence in its parent coordinate frame. XYZ coordinates may be numbers, Parameters or Expressions. Rotation is one optional absolute axis-angle orientation. Placement is occurrence creation state, not a relative move action.",
+      "summary": "Absolute pose of one occurrence in its parent coordinate frame.",
       "reference": "reference/parameters-positioning/#Placement",
       "guide": "guide/model-objects/#parameter-intent",
       "signature": "Placement(x: object = 0, y: object = 0, z: object = 0, rotation: tuple[object, object] | None = None) -> None"
@@ -447,42 +447,42 @@
     },
     "SlotArcCenter2D": {
       "kind": "callable",
-      "summary": "Create a native arc Slot from its centre, start and end or sweep.",
+      "summary": "Create a curved Slot from an arc centre and start point.",
       "reference": "reference/sketch-slot-constructors/#SlotArcCenter2D",
       "guide": "guide/geometry/#profiles",
       "signature": "SlotArcCenter2D(center, start, width, *, end=None, sweep=None)"
     },
     "SlotArcThreePoint2D": {
       "kind": "callable",
-      "summary": "Create a native arc Slot through three points on its centre arc.",
+      "summary": "Create a curved Slot whose centre arc passes through three points.",
       "reference": "reference/sketch-slot-constructors/#SlotArcThreePoint2D",
       "guide": "guide/geometry/#profiles",
       "signature": "SlotArcThreePoint2D(start, through, end, width)"
     },
     "SlotCenterPoint2D": {
       "kind": "callable",
-      "summary": "Create a native straight Slot from its centre and one end-arc centre.",
+      "summary": "Create a straight Slot from its centre and one round-end centre.",
       "reference": "reference/sketch-slot-constructors/#SlotCenterPoint2D",
       "guide": "guide/geometry/#profiles",
       "signature": "SlotCenterPoint2D(center, end, width)"
     },
     "SlotCenterToCenter2D": {
       "kind": "callable",
-      "summary": "Create a native straight Slot from the centres of its round ends.",
+      "summary": "Create a straight Slot from the centres of its two round ends.",
       "reference": "reference/sketch-slot-constructors/#SlotCenterToCenter2D",
       "guide": "guide/geometry/#profiles",
       "signature": "SlotCenterToCenter2D(p0, p1, width)"
     },
     "SlotOverall2D": {
       "kind": "callable",
-      "summary": "Create a native straight Slot from its two overall end points.",
+      "summary": "Create a straight Slot from its two outermost end points.",
       "reference": "reference/sketch-slot-constructors/#SlotOverall2D",
       "guide": "guide/geometry/#profiles",
       "signature": "SlotOverall2D(p0, p1, width)"
     },
     "Shape.repeat_linear": {
       "kind": "callable",
-      "summary": "Repeat a Hole or Cylinder before native feature lowering.",
+      "summary": "Repeat a Hole or Cylinder in one centred linear row.",
       "reference": "reference/Shape.repeat_linear/",
       "guide": "guide/features/#features",
       "signature": "Shape.repeat_linear(self, *, count, spacing, axis)"

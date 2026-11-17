@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate that the library Pages site is not a duplicate CAD model gallery."""
 import html
+import inspect
 import json
 from pathlib import Path
 import sys
@@ -106,6 +107,74 @@ def check(
                     assert f'{member["name"]}.{row["name"]}' in page_text
             elif member["kind"] == "constant":
                 assert member["value"] in page_text
+
+    documented_callable_groups = {
+        "geometry-constructors",
+        "sketch-slot-constructors",
+        "feature-constructors",
+        "parameters-positioning",
+        "attachment-references",
+        "execution-api",
+    }
+    for spec in GROUP_REFERENCES:
+        if spec["slug"] not in documented_callable_groups:
+            continue
+        page_text = (
+            site / "reference" / spec["slug"] / "index.html"
+        ).read_text(encoding="utf-8")
+        for member in group_members(spec):
+            if member["kind"] != "callable":
+                continue
+            signature = inspect.signature(member["object"])
+            expected_parameters = {
+                name
+                for name, parameter in signature.parameters.items()
+                if parameter.kind not in {
+                    inspect.Parameter.VAR_POSITIONAL,
+                    inspect.Parameter.VAR_KEYWORD,
+                }
+            }
+            documented_parameters = {
+                row["name"] for row in member["parameters"]
+            }
+            assert documented_parameters == expected_parameters, (
+                member["name"],
+                documented_parameters,
+                expected_parameters,
+            )
+            assert member["example"], member["name"]
+            assert f'id="{member["name"]}"' in page_text, member["name"]
+            for parameter in expected_parameters:
+                assert f"<code>{parameter}</code>" in page_text, (
+                    member["name"],
+                    parameter,
+                )
+
+    geometry_guide = (
+        site / "guide" / "geometry" / "index.html"
+    ).read_text(encoding="utf-8")
+    assert "Detailed parameter reference" in geometry_guide
+
+    for spec in METHOD_REFERENCES:
+        signature = inspect.signature(spec["object"])
+        expected_parameters = {
+            name
+            for name, parameter in signature.parameters.items()
+            if name != "self"
+            and parameter.kind not in {
+                inspect.Parameter.VAR_POSITIONAL,
+                inspect.Parameter.VAR_KEYWORD,
+            }
+        }
+        documented_parameters = {
+            row["name"] for row in spec["parameters"]
+        }
+        assert documented_parameters == expected_parameters, (
+            spec["slug"],
+            documented_parameters,
+            expected_parameters,
+        )
+        assert spec["example"], spec["slug"]
 
     assert not unmapped_public_exports()
     assert set(export_reference_targets()) == set(scpf.__all__)

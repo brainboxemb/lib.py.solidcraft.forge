@@ -8,6 +8,15 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Changed
+
+- Generated API Reference pages now derive argument descriptions, units,
+  constraints and examples from the public Python docstrings. The API Guide
+  links to the detailed parameter reference, and site tests compare documented
+  argument names with the current Python signatures so new API arguments cannot
+  silently appear without documentation.
+
+
 ## [0.6.0] - 2026-11-16
 
 ### Added
