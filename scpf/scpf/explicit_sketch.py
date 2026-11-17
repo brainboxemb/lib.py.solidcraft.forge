@@ -382,29 +382,82 @@ class Sketch:
         self._operations.append(operation)
         return operation
 
-    def extrude(self, distance, *, sym=False):
-        """Extrude a completed Sketch using a signed distance.
+    def extrude(
+        self,
+        distance,
+        *,
+        sym=False,
+        profiles=None,
+        exact_regions=False,
+    ):
+        """Extrude selected profiles from a completed Sketch.
 
         Parameters:
             distance: Extrusion distance in mm, or Depth.THROUGH_ALL for an attached Sketch. Positive finite distances follow the plane normal; negative reverses it. THROUGH_ALL cuts through the attached target from the selected support face.
             sym: When True, split a positive distance equally across both sides of the sketch plane. Defaults to False.
+            profiles: Optional non-empty sequence of fixed sketch-local (x, y) points. Each point selects the closed profile containing it. Leave None to extrude every profile.
+            exact_regions: When True, each profile point selects exactly the SolidCraft region containing that point. Only valid together with profiles=. Defaults to False.
 
         Use when:
             Leave the Sketch context and create or cut material normal to the
-            sketch plane.
+            sketch plane. Use profiles= when the Sketch contains more closed
+            regions than the extrusion should use.
 
         Limits:
             A standalone Sketch requires a finite non-zero distance.
             Depth.THROUGH_ALL is only meaningful for a Sketch attached to an
-            existing Shape and cannot be combined with sym=True.
+            existing Shape and cannot be combined with sym=True. Profile pick
+            points must be fixed finite numbers; Parameters and expressions are
+            not accepted because SolidCraft 0.42 profile points are numeric.
 
         Example:
-            body = sketch.extrude(12)
+            cut = sketch.extrude(
+                Depth.THROUGH_ALL,
+                profiles=[(-30, 0), (-10, 0), (30, 0)],
+                exact_regions=True,
+            )
         """
         if not self._closed:
             raise ValueError("leave the Sketch scope before extruding it")
         if not isinstance(sym, bool):
             raise TypeError("Sketch extrusion sym must be True or False")
+        if not isinstance(exact_regions, bool):
+            raise TypeError(
+                "Sketch extrusion exact_regions must be True or False"
+            )
+
+        if profiles is None:
+            profile_picks = None
+            if exact_regions:
+                raise ValueError(
+                    "Sketch extrusion exact_regions requires profiles="
+                )
+        else:
+            if not isinstance(profiles, (list, tuple)) or not profiles:
+                raise ValueError(
+                    "Sketch extrusion profiles must be a non-empty sequence "
+                    "of (x, y) points"
+                )
+            normalized = []
+            for point in profiles:
+                if not isinstance(point, (list, tuple)) or len(point) != 2:
+                    raise ValueError(
+                        "each Sketch extrusion profile point must have x and y"
+                    )
+                values = []
+                for coordinate in point:
+                    if (
+                        isinstance(coordinate, bool)
+                        or not isinstance(coordinate, (int, float))
+                        or not isfinite(coordinate)
+                    ):
+                        raise ValueError(
+                            "Sketch extrusion profile points must contain "
+                            "fixed finite numbers"
+                        )
+                    values.append(float(coordinate))
+                normalized.append(tuple(values))
+            profile_picks = tuple(normalized)
 
         if distance is Depth.THROUGH_ALL:
             if sym:
@@ -449,9 +502,10 @@ class Sketch:
                 tuple(self._profiles),
                 native_distance,
                 direction,
+                tuple(self._operations),
+                profile_picks,
+                exact_regions,
             )
-            if self._operations:
-                data = (*data, tuple(self._operations))
             return Shape("sketch_base_extrusion", data)
 
         data = (
@@ -462,7 +516,8 @@ class Sketch:
             tuple(self._profiles),
             native_distance,
             direction,
+            tuple(self._operations),
+            profile_picks,
+            exact_regions,
         )
-        if self._operations:
-            data = (*data, tuple(self._operations))
         return Shape("explicit_sketch_extrusion", data)

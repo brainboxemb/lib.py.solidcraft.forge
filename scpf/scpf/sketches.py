@@ -36,6 +36,21 @@ def _combine_dimension(a, b):
 from .compiler import ModelError, _command, _require_positive
 from .csg import _half
 
+def _extrude_profile_params(profile_picks, exact_regions):
+    """Lower normalized Sketch profile picks to SolidCraft extrude parameters."""
+    if profile_picks is None:
+        return {}
+    params = {
+        "profiles": [
+            {"point": [x, y]}
+            for x, y in profile_picks
+        ],
+    }
+    if exact_regions:
+        params["exact_regions"] = True
+    return params
+
+
 def compile_base(shape, name):
     """Create a native editable base body, regardless of example/model name."""
     if shape.kind in ("box", "placed_box"):
@@ -100,23 +115,22 @@ def compile_base(shape, name):
         }
 
     if shape.kind == "sketch_base_extrusion":
-        if len(shape.data) == 8:
-            (
-                sketch_name,
-                plane,
-                origin,
-                plane_offset,
-                profiles,
-                distance,
-                direction,
-                operations,
-            ) = shape.data
-            if operations:
-                raise ModelError(
-                    "sketch pattern/mirror currently requires an attached Sketch"
-                )
-        else:
-            sketch_name, plane, origin, plane_offset, profiles, distance, direction = shape.data
+        (
+            sketch_name,
+            plane,
+            origin,
+            plane_offset,
+            profiles,
+            distance,
+            direction,
+            operations,
+            profile_picks,
+            exact_regions,
+        ) = shape.data
+        if operations:
+            raise ModelError(
+                "sketch pattern/mirror currently requires an attached Sketch"
+            )
         _require_positive(distance, "sketch extrusion distance")
         if plane not in ("XY", "XZ", "YZ"):
             raise ModelError("standalone Sketch requires an XY, XZ or YZ plane")
@@ -194,9 +208,18 @@ def compile_base(shape, name):
                     "profile_points": points, "profile_ids": ids}
         else:
             raise ModelError("standalone Sketch supports Rectangle2D, Circle2D and Polygon2D")
-        sketch.extend([_command("sketch.finish"),
-            _command("solid.extrude", distance=command_value(distance),
-                     direction=direction, body_name=name)])
+        extrude = dict(
+            distance=command_value(distance),
+            direction=direction,
+            body_name=name,
+        )
+        extrude.update(
+            _extrude_profile_params(profile_picks, exact_regions)
+        )
+        sketch.extend([
+            _command("sketch.finish"),
+            _command("solid.extrude", **extrude),
+        ])
         return sketch, meta
 
     if shape.kind == "tapered_box":

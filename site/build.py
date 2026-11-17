@@ -116,6 +116,8 @@ CHEATSHEET = [
     ("Features and placement", [
         ("sketch.extrude(distance)", "Extrude an explicitly authored Sketch into editable native solid history.",
          "with Sketch(plane='XY') as sketch:\n    Rectangle2D(80, 50)\nplate = sketch.extrude(8)", "anchored-holes"),
+        ("sketch.extrude(..., profiles=[...])", "Extrude or cut only the closed Sketch regions selected by fixed sketch-local points.",
+         "cut = sketch.extrude(Depth.THROUGH_ALL, profiles=[(-30, 0), (30, 0)], exact_regions=True)", None),
         ("Sketch.rectangular_pattern(...)", "Repeat a profile or earlier Sketch result as a native rectangular sketch pattern.",
          "row = sketch.rectangular_pattern(seed, count=4, spacing=25, direction=Axis.X)", None),
         ("Sketch.mirror(...)", "Mirror a profile, pattern result or earlier mirror result over the Sketch X or Y axis.",

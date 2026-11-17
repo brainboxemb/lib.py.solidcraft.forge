@@ -184,6 +184,52 @@ class SketchPatternMirrorTests(unittest.TestCase):
         self.assertEqual(units["columns"], "")
         self.assertEqual(units["pitch"], "mm")
 
+    def test_pattern_can_feed_one_selective_profile_extrusion(self):
+        board = Box(120, 80, 5, anchor=Anchor.BOTTOM)
+
+        with Sketch(name="Selected holes", on=board, parent=Anchor.TOP) as sketch:
+            seed = sketch.add(Circle2D(d=8), offset=(-30, 0))
+            sketch.rectangular_pattern(
+                seed,
+                count=4,
+                spacing=20,
+                direction=Axis.X,
+            )
+
+        commands = compile_model(
+            board - sketch.extrude(
+                Depth.THROUGH_ALL,
+                profiles=[(-30, 0), (-10, 0), (30, 0)],
+                exact_regions=True,
+            ),
+            "SelectedPatternBoard",
+        )["commands"]
+
+        self.assertEqual(
+            [row["command"] for row in commands].count(
+                "sketch.pattern.rectangular"
+            ),
+            1,
+        )
+        self.assertEqual(
+            [row["command"] for row in commands].count("sketch.circle.center"),
+            1,
+        )
+        extrude = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.extrude"
+        )
+        self.assertEqual(
+            extrude["profiles"],
+            [
+                {"point": [-30.0, 0.0]},
+                {"point": [-10.0, 0.0]},
+                {"point": [30.0, 0.0]},
+            ],
+        )
+        self.assertTrue(extrude["exact_regions"])
+
     def test_pattern_source_must_belong_to_same_sketch(self):
         foreign = Circle2D(d=8)
         board = Box(80, 60, 5)

@@ -30,7 +30,7 @@ from .placement import (
     _combine,
     _shell_thickness,
 )
-from .sketches import compile_base
+from .sketches import compile_base, _extrude_profile_params
 
 
 def _is_feature_tree(shape):
@@ -571,28 +571,18 @@ def _explicit_sketch_commands(
     sketch_index=1,
 ):
     """Compile an explicitly authored named sketch and its extrusion."""
-    if len(feature.data) == 8:
-        (
-            sketch_name,
-            target,
-            parent_anchor,
-            plane_info,
-            profiles,
-            distance,
-            direction,
-            sketch_operations,
-        ) = feature.data
-    else:
-        (
-            sketch_name,
-            target,
-            parent_anchor,
-            plane_info,
-            profiles,
-            distance,
-            direction,
-        ) = feature.data
-        sketch_operations = ()
+    (
+        sketch_name,
+        target,
+        parent_anchor,
+        plane_info,
+        profiles,
+        distance,
+        direction,
+        sketch_operations,
+        profile_picks,
+        exact_regions,
+    ) = feature.data
     plane_name, sketch_origin = plane_info
     if target != original:
         raise ModelError("explicit Sketch must target the body being modified")
@@ -910,6 +900,9 @@ def _explicit_sketch_commands(
         extrude["distance"] = command_value(distance)
         extrude["direction"] = direction
 
+    extrude.update(
+        _extrude_profile_params(profile_picks, exact_regions)
+    )
     commands.append(_command("solid.extrude", **extrude))
     return commands
 

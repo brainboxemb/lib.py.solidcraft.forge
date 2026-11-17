@@ -172,10 +172,14 @@ def check(
         "Circle2D",
         "SlotCenterToCenter2D",
         "Per-instance pattern suppression is not supported",
+        "Select profiles when extruding a Sketch",
+        "profiles=[(x, y), ...]",
+        "exact_regions=True",
     ):
         assert term in geometry_guide, term
     assert "Sketch.rectangular_pattern(...)" in cheatsheet
     assert "Sketch.mirror(...)" in cheatsheet
+    assert "sketch.extrude(..., profiles=[...])" in cheatsheet
 
     for spec in METHOD_REFERENCES:
         signature = inspect.signature(spec["object"])
@@ -276,6 +280,19 @@ def check(
         and "Shape.rectangular_pattern" in entry["title"]
         for entry in pattern_matches
     )
+    extrude_matches = search_matches("Sketch.extrude profiles")
+    assert any(
+        entry["kind"] == "API Reference"
+        and entry["title"] == "Sketch.extrude"
+        and entry["url"] == "reference/Sketch.extrude/"
+        for entry in extrude_matches
+    )
+    assert any(
+        entry["kind"] == "API Guide"
+        and entry["url"] == "guide/geometry/#profile-selection"
+        for entry in extrude_matches
+    )
+
     for symbol in ("Sketch.rectangular_pattern", "Sketch.mirror"):
         matches = search_matches(symbol)
         assert any(

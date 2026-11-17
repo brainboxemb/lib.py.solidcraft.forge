@@ -534,6 +534,34 @@ side = side_sketch.extrude(10)
 backward = plate_sketch.extrude(-8)
 centered = plate_sketch.extrude(8, sym=True)""") + """
 <p>A sketch plane affects where its axes go; changing the camera does not rotate its geometry. Leave the <code>with Sketch(...)</code> scope, then call <code>sketch.extrude(...)</code> to create 3D material. A positive distance follows the sketch-plane normal, a negative distance goes the other way, and <code>sym=True</code> divides a positive distance equally over both sides. Direct <code>Rectangle2D(...).extrude(...)</code> syntax is intentionally not supported.</p>
+<h2 id="profile-selection">Select profiles when extruding a Sketch</h2>
+<p>By default <code>Sketch.extrude()</code> uses every closed profile in the
+Sketch. Use <code>profiles=[(x, y), ...]</code> when only some closed regions
+should be extruded or cut. The points are fixed coordinates in the Sketch
+itself; users do not need SolidCraft profile indices or curve ids.</p>
+""" + code("""from scpf import Anchor, Axis, Box, Circle2D, Depth, Sketch
+
+board = Box(120, 80, 5, anchor=Anchor.BOTTOM)
+with Sketch(name="Selected holes", on=board, parent=Anchor.TOP) as holes:
+    seed = holes.add(Circle2D(d=8), offset=(-30, 0))
+    holes.rectangular_pattern(
+        seed,
+        count=4,
+        spacing=20,
+        direction=Axis.X,
+    )
+
+board = board - holes.extrude(
+    Depth.THROUGH_ALL,
+    profiles=[(-30, 0), (-10, 0), (30, 0)],
+    exact_regions=True,
+)""") + """
+<p>SolidCraft 0.42 stores a successful point selection using the curves around
+the selected profile where possible. That lets the selection follow the profile
+when the saved design recomputes. <code>exact_regions=True</code> asks
+SolidCraft to use exactly the region containing each point. Profile points must
+be fixed finite numbers; Forge Parameters and expressions are not accepted in
+this field.</p>
 <h2 id="pattern-mirror">Repeat and mirror profiles inside one Sketch</h2>
 <p><code>Sketch.rectangular_pattern()</code> makes a native SolidCraft sketch pattern from a profile that already belongs to the Sketch. <code>Sketch.mirror()</code> mirrors a profile, a pattern result or an earlier mirror result. Both methods return a Sketch result that can be passed to another supported Sketch operation.</p>
 """ + code("""from scpf import Anchor, Axis, Box, Circle2D, Depth, Sketch

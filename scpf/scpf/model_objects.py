@@ -137,7 +137,10 @@ def _xz_polygon_rectangle_bounds(shape):
     if shape.kind != "sketch_base_extrusion":
         raise ValueError("not an XZ Sketch extrusion")
 
-    _, plane, origin, plane_offset, profiles, distance, direction = shape.data
+    (
+        _, plane, origin, plane_offset, profiles, distance, direction,
+        _operations, _profile_picks, _exact_regions,
+    ) = shape.data
     if plane != "XZ" or origin is not None:
         raise ValueError("not a supported XZ Sketch extrusion")
     if len(profiles) != 1:

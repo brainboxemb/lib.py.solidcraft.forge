@@ -87,6 +87,9 @@ EXPECTED_MUTATION_BOUNDS = {
     "sketch-pattern-mirror": [
         {"label": "SketchPatternMirror", "min": [-120, -80, 0], "max": [120, 80, 5]},
     ],
+    "selective-profile-extrude": [
+        {"label": "SelectiveProfileExtrude", "min": [-60, -30, 0], "max": [60, 30, 5]},
+    ],
     "rectangular-pattern": [
         {"label": "RectangularPattern", "min": [-60, -40, 0], "max": [60, 40, 4]},
     ],

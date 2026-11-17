@@ -278,7 +278,7 @@ METHOD_REFERENCES = (
         "Sketch.extrude()",
         Sketch.extrude,
         guide="geometry",
-        guide_anchor="profiles",
+        guide_anchor="profile-selection",
     ),
 )
 

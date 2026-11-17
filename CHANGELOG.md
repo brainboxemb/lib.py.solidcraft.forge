@@ -8,6 +8,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- `Sketch.extrude(..., profiles=[(x, y), ...], exact_regions=True)` can now
+  select closed Sketch regions by fixed sketch-local points. Forge lowers the
+  selection directly to SolidCraft `solid.extrude profiles` data without
+  exposing native profile indices or curve ids (issue #282).
+
 ### Fixed
 
 - Fillet and chamfer now use one edge-selection API. Both accept
