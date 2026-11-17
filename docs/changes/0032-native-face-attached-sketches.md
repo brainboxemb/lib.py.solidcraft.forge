@@ -1,6 +1,6 @@
 # 0032 — native face-attached explicit Sketches
 
-Status: **implementation / native qualification in progress**  
+Status: **implemented; Q1-Q6 qualified on qualification commit `7918c437ebeaea95fa9936d90797c34648656215`**  
 Issue: **#266**  
 SolidCraft target: **0.42.0**
 
@@ -78,3 +78,27 @@ The Slot-family fixture must prove:
 
 The Simple MFT model is the downstream model that exposed the problem; it is
 not special-cased in Forge.
+
+
+## Qualification result
+
+The full Forge qualification workflow passed the native SolidCraft 0.42 build
+for the implementation on commit `09a74905a0b70ebc65c427304ad5bb5930b0286b`;
+the qualification branch adds only trigger metadata at
+`7918c437ebeaea95fa9936d90797c34648656215`.
+
+Native evidence confirms:
+
+- `slot-family` resolves the TOP face from `model.faces`, then
+  `sketch.create` returns `attachment: "exact_face"`;
+- its five Slot profiles retain the expected coordinates, body bounds, volume,
+  face counts and visual result;
+- `rectangular-pattern` also returns `attachment: "exact_face"`, passes Q4
+  and its required Q5 saved-design mutation;
+- `rounded-rectangle-sketch` returns `attachment: "exact_face"` and passes
+  Q4 plus visual validation;
+- all native timelines in these cases contain no feature errors.
+
+For the Slot fixture, SolidCraft selected the exact TOP face
+`F1:+z` (face index 0) and supplied a valid pick point. Forge did not calculate
+that point.
