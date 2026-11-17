@@ -116,6 +116,10 @@ CHEATSHEET = [
     ("Features and placement", [
         ("sketch.extrude(distance)", "Extrude an explicitly authored Sketch into editable native solid history.",
          "with Sketch(plane='XY') as sketch:\n    Rectangle2D(80, 50)\nplate = sketch.extrude(8)", "anchored-holes"),
+        ("Sketch.rectangular_pattern(...)", "Repeat a profile or earlier Sketch result as a native rectangular sketch pattern.",
+         "row = sketch.rectangular_pattern(seed, count=4, spacing=25, direction=Axis.X)", None),
+        ("Sketch.mirror(...)", "Mirror a profile, pattern result or earlier mirror result over the Sketch X or Y axis.",
+         "sketch.mirror(row, axis=Axis.Y)", None),
         ("Hole(d=..., depth=...)", "A native hole. THROUGH_ALL follows the target body.",
          "Hole(d=8, depth=Depth.THROUGH_ALL)", "anchored-holes"),
         ("shape.at(target, anchor=..., child=...)", "Place a direct CSG shape anchor on another shape anchor; CENTER-to-CENTER is supported first.",

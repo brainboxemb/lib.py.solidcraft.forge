@@ -534,6 +534,38 @@ side = side_sketch.extrude(10)
 backward = plate_sketch.extrude(-8)
 centered = plate_sketch.extrude(8, sym=True)""") + """
 <p>A sketch plane affects where its axes go; changing the camera does not rotate its geometry. Leave the <code>with Sketch(...)</code> scope, then call <code>sketch.extrude(...)</code> to create 3D material. A positive distance follows the sketch-plane normal, a negative distance goes the other way, and <code>sym=True</code> divides a positive distance equally over both sides. Direct <code>Rectangle2D(...).extrude(...)</code> syntax is intentionally not supported.</p>
+<h2 id="pattern-mirror">Repeat and mirror profiles inside one Sketch</h2>
+<p><code>Sketch.rectangular_pattern()</code> makes a native SolidCraft sketch pattern from a profile that already belongs to the Sketch. <code>Sketch.mirror()</code> mirrors a profile, a pattern result or an earlier mirror result. Both methods return a Sketch result that can be passed to another supported Sketch operation.</p>
+""" + code("""from scpf import Anchor, Axis, Box, Circle2D, Depth, Sketch
+
+board = Box(200, 120, 8)
+with Sketch(name="Dog holes", on=board, parent=Anchor.TOP) as holes:
+    seed = holes.add(Circle2D(d=8), offset=(-40, 20))
+    row = holes.rectangular_pattern(
+        seed,
+        count=4,
+        spacing=25,
+        direction=Axis.X,
+    )
+    holes.mirror(row, axis=Axis.X)
+
+board = board - holes.extrude(Depth.THROUGH_ALL)""") + """
+<p>The same operations work with native Slot profiles. A pattern or mirror result can be used as the source of the next operation.</p>
+""" + code("""from scpf import Anchor, Axis, Sketch, SlotCenterToCenter2D
+
+with Sketch(name="Clamp slots", on=board, parent=Anchor.TOP) as slots:
+    seed = SlotCenterToCenter2D((20, 20), (40, 20), 8)
+    arm = slots.rectangular_pattern(
+        seed,
+        count=2,
+        spacing=50,
+        direction=Axis.X,
+    )
+    opposite = slots.mirror(arm, axis=Axis.Y)
+    slots.mirror(arm, axis=Axis.X)
+    slots.mirror(opposite, axis=Axis.X)""") + """
+<p><code>count</code>, <code>count2</code>, <code>spacing</code> and <code>spacing2</code> may use suitable model Parameters, so those values remain editable in the saved SolidCraft design. Current native qualification covers attached <code>Sketch(on=...)</code> use. Pattern directions support <code>Axis.X</code>, <code>Axis.Y</code> or a fixed 2D vector. Mirrors currently support the Sketch X or Y origin axis. Per-instance pattern suppression is not supported.</p>
+<p>SolidCraft 0.42 stores the curves selected when a mirror is created. If a pattern later creates extra curves after its count changes, those new curves are not added to that existing mirror automatically.</p>
 <h2 id="boolean">Add, subtract and intersect</h2>
 """ + code("""body = Box(50, 50, 20)
 tool = Cylinder(d=12, h=22).at(0, 0, 0)

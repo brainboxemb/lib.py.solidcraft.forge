@@ -166,6 +166,16 @@ def check(
         site / "guide" / "geometry" / "index.html"
     ).read_text(encoding="utf-8")
     assert "Detailed parameter reference" in geometry_guide
+    for term in (
+        "Sketch.rectangular_pattern",
+        "Sketch.mirror",
+        "Circle2D",
+        "SlotCenterToCenter2D",
+        "Per-instance pattern suppression is not supported",
+    ):
+        assert term in geometry_guide, term
+    assert "Sketch.rectangular_pattern(...)" in cheatsheet
+    assert "Sketch.mirror(...)" in cheatsheet
 
     for spec in METHOD_REFERENCES:
         signature = inspect.signature(spec["object"])
@@ -266,6 +276,20 @@ def check(
         and "Shape.rectangular_pattern" in entry["title"]
         for entry in pattern_matches
     )
+    for symbol in ("Sketch.rectangular_pattern", "Sketch.mirror"):
+        matches = search_matches(symbol)
+        assert any(
+            entry["kind"] == "API Reference"
+            and entry["title"] == symbol
+            and entry["url"] == f"reference/{symbol}/"
+            for entry in matches
+        ), symbol
+        assert any(
+            entry["kind"] == "API Guide"
+            and entry["title"] == f"{symbol} · API Guide"
+            and entry["url"] == "guide/geometry/#pattern-mirror"
+            for entry in matches
+        ), symbol
 
     for heading, items in CHEATSHEET:
         for title, _description, _snippet, _linked in items:
