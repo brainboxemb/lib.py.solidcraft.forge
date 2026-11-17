@@ -7,6 +7,7 @@ from scpf import (
     CENTER,
     Rectangle2D,
     Circle2D,
+    Depth,
     Sketch,
     Parameter,
 )
@@ -198,6 +199,34 @@ class NativePrimitiveTests(unittest.TestCase):
             sketch.extrude(-10, sym=True)
         with self.assertRaisesRegex(TypeError, "True or False"):
             sketch.extrude(10, sym="yes")
+
+    def test_attached_through_all_uses_support_face_direction(self):
+        for parent, expected_direction in (
+            (Anchor.TOP, "negative"),
+            (Anchor.BOTTOM, "positive"),
+        ):
+            with self.subTest(parent=parent):
+                base = Box(80, 60, 5, anchor=Anchor.BOTTOM)
+                with Sketch(name="Cut", on=base, parent=parent) as sketch:
+                    Circle2D(d=10)
+
+                commands = compile_model(
+                    base - sketch.extrude(Depth.THROUGH_ALL),
+                    "Part",
+                )["commands"]
+                extrude = next(
+                    row["params"]
+                    for row in commands
+                    if row["command"] == "solid.extrude"
+                )
+
+                self.assertTrue(extrude["through_all"])
+                self.assertEqual(
+                    extrude["direction"],
+                    expected_direction,
+                )
+                self.assertEqual(extrude["operation"], "cut")
+                self.assertNotIn("distance", extrude)
 
     def test_existing_attached_sketch_still_works(self):
         base = Box(80, 60, 5)

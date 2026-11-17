@@ -32,6 +32,16 @@ class SlotFamilyQualificationTests(unittest.TestCase):
             [command["command"] for command in commands],
         )
 
+        extrude = next(
+            command["params"]
+            for command in commands
+            if command["command"] == "solid.extrude"
+        )
+        self.assertTrue(extrude["through_all"])
+        self.assertEqual(extrude["direction"], "negative")
+        self.assertEqual(extrude["operation"], "cut")
+        self.assertNotIn("distance", extrude)
+
 
 if __name__ == "__main__":
     unittest.main()
