@@ -8,6 +8,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- Added a version-pinned SolidCraft runtime command-contract snapshot generated
+  from the official command registry and `engine.describe`. CI now detects
+  Forge commands missing from the saved snapshot and records incomplete typed
+  contracts explicitly, so a future SolidCraft upgrade such as 0.44 starts by
+  creating a new preserved command-API snapshot (issue #268).
+
 ## [0.6.2] - 2026-11-17
 
 ### Fixed
