@@ -111,6 +111,7 @@ def check(
     documented_constructor_groups = {
         "geometry-constructors",
         "sketch-slot-constructors",
+        "feature-constructors",
     }
     for spec in GROUP_REFERENCES:
         if spec["slug"] not in documented_constructor_groups:

@@ -1748,14 +1748,25 @@ def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
          countersink_d=None, countersink_angle=90, countersink_recess=0):
     """Create hole feature intent, optionally directional and countersunk.
 
+    Parameters:
+        d: Finished hole diameter in mm.
+        depth: Hole depth in mm, or Depth.THROUGH_ALL. Defaults to Depth.THROUGH_ALL.
+        direction: Optional non-zero XYZ direction vector for the hole axis.
+        countersink_d: Optional countersink diameter in mm. It must be larger than d.
+        countersink_angle: Included countersink angle in degrees. Defaults to 90.
+        countersink_recess: Optional straight recess before the countersink starts, in mm. Defaults to 0.
+
     Use when:
         Remove a manufacturing-style hole from a supported body. Simple holes
         can be placed with on(); directional or countersunk holes can use the
         native Hole path with explicit placement.
 
     Limits:
-        Diameter must be positive. depth is a positive distance or
-        Depth.THROUGH_ALL. Countersink diameter must exceed the hole diameter.
+        d and finite depth values must be positive. A recessed countersink
+        requires countersink_d and, when compiled, an explicit hole direction.
+
+    Example:
+        Hole(d=8, depth=Depth.THROUGH_ALL)
     """
     if _pv(d) <= 0:
         raise ValueError("hole diameter must be positive")
@@ -1790,11 +1801,19 @@ def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
 def Lip(*, width, height):
     """Create plastic enclosure lip feature intent.
 
+    Parameters:
+        width: Lip width in mm.
+        height: Lip height in mm.
+
     Use when:
         Add a lip to a supported shelled enclosure rim using feature placement.
 
     Limits:
-        Placement and parent-shape support follow the feature-placement API.
+        width and height must be positive when compiled. Placement and
+        parent-shape support follow the feature-placement API.
+
+    Example:
+        Lip(width=2, height=3)
     """
     return Shape("lip", (width, height))
 
@@ -1803,13 +1822,25 @@ def SnapFit(*, length, thickness, width, catch_depth, catch_length,
             hook, direction=None):
     """Create cantilever snap-fit feature intent.
 
+    Parameters:
+        length: Cantilever length in mm.
+        thickness: Cantilever thickness in mm.
+        width: Cantilever width in mm.
+        catch_depth: Catch projection depth in mm.
+        catch_length: Catch length in mm.
+        hook: Non-zero XYZ direction vector for the hook direction.
+        direction: Optional non-zero XYZ direction vector for the feature direction.
+
     Use when:
         Add a plastic snap feature to a supported face with an explicit hook
         direction.
 
     Limits:
-        hook must be one 3D direction; optional direction must also be an XYZ
-        triple. Placement uses the supported feature-placement API.
+        All five dimensions must be positive when compiled. hook must contain
+        three coordinates; direction, when supplied, must also contain three.
+
+    Example:
+        SnapFit(length=20, thickness=2, width=8, catch_depth=1.5, catch_length=4, hook=(1, 0, 0))
     """
     hook = tuple(hook)
     if len(hook) != 3:
@@ -1827,14 +1858,22 @@ def SnapFit(*, length, thickness, width, catch_depth, catch_length,
 def Boss(*, d, h, hole_d=None, direction=None):
     """Create plastic screw-boss feature intent.
 
+    Parameters:
+        d: Boss outside diameter in mm.
+        h: Boss height in mm.
+        hole_d: Optional central-hole diameter in mm.
+        direction: Optional non-zero XYZ direction vector for the boss axis.
+
     Use when:
         Add a cylindrical support boss, optionally with a central hole, to a
         supported face.
 
     Limits:
-        Optional direction is an XYZ triple. Boss intent lowers through the
-        native plastic.boss feature path; use Sketch explicitly when sketch
-        history is part of the design intent.
+        d and h must be positive when compiled. hole_d, when supplied, must be
+        positive. direction, when supplied, must contain three coordinates.
+
+    Example:
+        Boss(d=7, h=12, hole_d=2.5)
     """
     if direction is not None:
         direction = tuple(direction)
@@ -1849,12 +1888,22 @@ def Boss(*, d, h, hole_d=None, direction=None):
 def Rest(*, width, height, length=None, along=None, direction=None):
     """Create plastic support/rest feature intent.
 
+    Parameters:
+        width: Rest width in mm.
+        height: Rest height in mm.
+        length: Optional rest length in mm for an elongated support.
+        along: Optional non-zero XYZ vector that sets the long direction.
+        direction: Optional non-zero XYZ vector that sets the feature direction.
+
     Use when:
         Add a support pad or elongated rest to a supported face.
 
     Limits:
-        Optional along and direction values are XYZ triples. Placement uses the
-        supported feature-placement API.
+        width and height must be positive when compiled. length, when supplied,
+        must be positive. along and direction must contain three coordinates.
+
+    Example:
+        Rest(width=12, height=4, length=30, along=(1, 0, 0))
     """
     if along is not None:
         along = tuple(along)
