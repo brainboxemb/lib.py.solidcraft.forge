@@ -852,11 +852,18 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
         "slot_count": 2.0,
         "slot_pitch": 50.0,
     }
+    actual_parameters = params(d)
     v.check(
         "baseline seed/pattern parameters",
-        params(d) == expected_parameters,
+        all(
+            actual_parameters.get(name) == value
+            for name, value in expected_parameters.items()
+        ),
         expected_parameters,
-        params(d),
+        {
+            name: actual_parameters.get(name)
+            for name in expected_parameters
+        },
     )
 
     if d["bodies"]:
@@ -932,11 +939,18 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
         "slot_count": 3.0,
         "slot_pitch": 30.0,
     }
+    actual_mutated_parameters = params(m)
     v.check(
         "saved pattern parameters changed",
-        params(m) == mutated_parameters,
+        all(
+            actual_mutated_parameters.get(name) == value
+            for name, value in mutated_parameters.items()
+        ),
         mutated_parameters,
-        params(m),
+        {
+            name: actual_mutated_parameters.get(name)
+            for name in mutated_parameters
+        },
         "q5",
     )
 

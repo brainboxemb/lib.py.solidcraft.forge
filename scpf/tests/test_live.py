@@ -13,7 +13,7 @@ import unittest
 from unittest.mock import patch
 
 from scpf.live import LiveError, new_design, send_commands, send_document
-from scpf.replay import replay_document
+from scpf.replay import apply_bindings, replay_document
 from scpf.__main__ import read_command_file, main
 from scpf.runner import run_script
 
@@ -194,6 +194,33 @@ class LiveProtocolTests(unittest.TestCase):
         self.assertEqual(
             result["replay_log"]["commands"][2]["resolved_params"]["occurrence"],
             102,
+        )
+
+    def test_replay_v2_can_prepend_existing_runtime_list_to_result(self):
+        variables = {"$seed_curves": ["c1"]}
+        items = [{
+            "command": "sketch.pattern.rectangular",
+            "params": {"entities": "$seed_curves", "count": 3, "spacing": 20},
+            "bind": {
+                "$pattern_curves": {
+                    "field": "curves",
+                    "prepend": "$seed_curves",
+                }
+            },
+        }]
+        bound = apply_bindings(
+            items,
+            [{"curves": ["c2", "c3"]}],
+            variables,
+        )
+
+        self.assertEqual(
+            variables["$pattern_curves"],
+            ["c1", "c2", "c3"],
+        )
+        self.assertEqual(
+            bound,
+            [{"$pattern_curves": ["c1", "c2", "c3"]}],
         )
 
     def test_replay_v2_selects_face_result_fields(self):
