@@ -104,6 +104,43 @@ pin the exact tagged release commit
 `d0cadaa9af5952979d689b4b19184ff89a0da18b` after their own project CI passes
 with that dependency.
 
-At the time of this requalification, the CAD repository still pins SCPF 0.5.0.
-Updating that downstream pin and running its command-plan and native SolidCraft
-verification is the final downstream acceptance step for issue #227.
+## Downstream acceptance
+
+Downstream acceptance is complete.
+
+CAD PR `brainboxemb/2026-011-02.cad.solidcraft#99` updated the project from
+SCPF 0.5.0 to the exact v0.6.0 release-tag commit
+`d0cadaa9af5952979d689b4b19184ff89a0da18b`.
+
+The CAD source needed the intentional v0.6.0 authoring migration:
+
+- `Hole.pattern(...)` became `Hole.repeat_linear(...)`;
+- negative Sketch extrusion became a negative signed distance;
+- symmetric Sketch extrusion became `sym=True`;
+- obsolete `Direction` imports were removed.
+
+No Forge workaround or post-tag Forge runtime code was used.
+
+On exact CAD PR head `873bed09ba3b567316c34e7eef7b480ce4665d1c`:
+
+| CAD gate | Run | Result |
+| --- | --- | --- |
+| Models, regressions and site smoke | `44044529488` | PASS |
+| Native SolidCraft CAD verification | `44044529348` | PASS |
+
+The native gate built/evaluated all ten project models against SolidCraft
+0.42.0 and completed the independent SCPF/SCPC comparison and source-matched
+result-site build.
+
+CAD PR #99 merged as
+`f8ae58dc017e5fcb1fcde3936065cabb36dfa48e`.
+
+The same merged commit then passed both workflows on CAD `main`:
+
+| Post-merge CAD main gate | Run | Result |
+| --- | --- | --- |
+| Models, regressions and site smoke | `44044740923` | PASS |
+| Native SolidCraft CAD verification | `44044740913` | PASS |
+
+This completes issue #227 and the downstream requirement of qualification audit
+#220.
