@@ -428,7 +428,7 @@ EXPECTED_VISUAL_FEATURES["slot-family"] = [
 _BOUNDS_ASSESSMENTS = {
     "simple-box": {
         "sufficient": True,
-        "reason": "This case is one rectangular solid. Its declared body bounds fully describe the geometry being qualified; parameter publication is a SolidCraft-only check.",
+        "reason": "This case is one rectangular solid. Its body size fully describes the visible geometry. The saved SolidCraft model is checked separately to confirm that the dimensions remain editable parameters.",
     },
     "anchored-holes": {
         "sufficient": False,
@@ -436,7 +436,7 @@ _BOUNDS_ASSESSMENTS = {
     },
     "parameter-scope": {
         "sufficient": True,
-        "reason": "This case qualifies sizes and positions of rectangular bodies. Parameter ownership and dependency reuse are SolidCraft-only checks.",
+        "reason": "The body sizes and positions describe the visible result. The saved SolidCraft model is checked separately to confirm that shared parameters are reused instead of duplicated.",
     },
     "parent-derived-child-size": {
         "sufficient": True,
@@ -444,7 +444,7 @@ _BOUNDS_ASSESSMENTS = {
     },
     "components": {
         "sufficient": True,
-        "reason": "This case qualifies two rectangular occurrences and their placement. Shared native definition identity is a SolidCraft-only check.",
+        "reason": "The two body sizes and positions describe the visible result. The saved SolidCraft model is checked separately to confirm that both occurrences reuse one component definition.",
     },
     "repeated-parent-attachments": {
         "sufficient": True,
@@ -456,11 +456,11 @@ _BOUNDS_ASSESSMENTS = {
     },
     "group-hierarchy": {
         "sufficient": True,
-        "reason": "This case qualifies hierarchy around simple rectangular parts. Native grouping and BOM structure are SolidCraft-only checks.",
+        "reason": "The body sizes describe the visible parts. The saved SolidCraft model is checked separately to confirm the expected group and BOM structure.",
     },
     "attach-angle": {
         "sufficient": True,
-        "reason": "The non-square arm bounds expose the required quarter-turn, while the persisted joint angle/history is a SolidCraft-only check.",
+        "reason": "The non-square arm size shows whether the quarter-turn is correct. The saved SolidCraft model is also checked for the expected joint angle.",
     },
     "parametric-attach": {
         "sufficient": True,
@@ -468,23 +468,23 @@ _BOUNDS_ASSESSMENTS = {
     },
     "parametric-offset": {
         "sufficient": True,
-        "reason": "The base and marker bounds describe the local-offset result. The persisted planar-joint relationship and recompute are SolidCraft-only checks.",
+        "reason": "The base and marker sizes and positions show the local offset. The saved SolidCraft model is then changed to confirm that the planar joint updates correctly.",
     },
     "parametric-anchor": {
         "sufficient": True,
-        "reason": "The two rectangular body bounds describe the baseline face-relative placement. Native anchor identity and recompute are SolidCraft-only checks.",
+        "reason": "The two body sizes and positions show the initial face-relative placement. The saved SolidCraft model is then changed to confirm that the same anchor is still used.",
     },
     "corner-anchor": {
         "sufficient": True,
-        "reason": "The rectangular base and marker bounds identify the intended corner placement. Native topology identity and recompute are SolidCraft-only checks.",
+        "reason": "The base and marker positions show the intended corner placement. The saved SolidCraft model is then changed to confirm that the marker keeps following that corner.",
     },
     "anchor-topology-mutation": {
         "sufficient": True,
-        "reason": "The board and marker bounds describe the visible result. Following the selected native edge/corner after resize is a SolidCraft-only mutation check.",
+        "reason": "The board and marker positions describe the visible result. After resizing the saved model, the marker must still follow the same selected edge and corner.",
     },
     "assembly-owned-anchor": {
         "sufficient": True,
-        "reason": "The three rectangular body bounds describe the visible assembly result. Anchor ownership and the native relationship are SolidCraft-only checks.",
+        "reason": "The three body sizes and positions describe the visible assembly. The saved SolidCraft model is checked separately to confirm which assembly owns the anchor and which parts are related.",
     },
     "four-corner-l": {
         "sufficient": True,
@@ -500,7 +500,7 @@ _BOUNDS_ASSESSMENTS = {
     },
     "xz-anchor": {
         "sufficient": True,
-        "reason": "The board and two marker bounds describe the visible XZ placement. Native anchor selection and resize behaviour are SolidCraft-only checks.",
+        "reason": "The board and marker positions describe the visible XZ placement. After resizing the saved model, the markers must still use the same selected anchors.",
     },
     "circle-negative-extrude": {
         "sufficient": False,

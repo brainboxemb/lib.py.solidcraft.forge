@@ -225,3 +225,9 @@ margin:14px 0 10px;padding-left:20px}
   .qualification-proof-summary{grid-template-columns:1fr}
   .qualification-detail-block>summary{padding:10px}
 }
+
+.qualification-example-overview>p:first-of-type{font-size:1.03rem;line-height:1.65}
+.qualification-technical-details{margin-top:22px}
+.qualification-technical-details>summary{cursor:pointer;font-size:1.05rem;padding:2px 0}
+.qualification-technical-details-body{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.qualification-technical-details-body>h3{margin-top:26px}
