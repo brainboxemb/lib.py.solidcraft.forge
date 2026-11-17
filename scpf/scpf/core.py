@@ -1040,7 +1040,7 @@ def _shape_contains(root, needle):
 
 @dataclass(frozen=True)
 class Shape:
-    """Represent Forge geometry/feature intent before SolidCraft executes it.
+    """Store Forge geometry and feature operations before SolidCraft executes them.
 
     Parameters:
         kind: Forge node type. Public constructors set this; normal model code should not invent kind values.
@@ -1052,9 +1052,9 @@ class Shape:
         with the supported Shape methods/operators.
 
     Limits:
-        Shape is Forge's model-intent node, not a second geometry kernel.
-        SolidCraft owns the final BRep and native feature history; users normally
-        do not instantiate Shape(kind, data) directly.
+        Shape is only Forge's description of the model. SolidCraft owns the final
+        BRep and feature history; users normally do not instantiate
+        Shape(kind, data) directly.
 
     Example:
         body = Box(80, 50, 12)
@@ -1909,7 +1909,7 @@ def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
 
 def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
          countersink_d=None, countersink_angle=90, countersink_recess=0):
-    """Create hole feature intent, optionally directional and countersunk.
+    """Create a hole feature, optionally directional and countersunk.
 
     Parameters:
         d: Finished hole diameter in mm.
@@ -1962,7 +1962,7 @@ def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
 
 
 def Lip(*, width, height):
-    """Create plastic enclosure lip feature intent.
+    """Create a plastic enclosure lip feature.
 
     Parameters:
         width: Lip width in mm.
@@ -1983,7 +1983,7 @@ def Lip(*, width, height):
 
 def SnapFit(*, length, thickness, width, catch_depth, catch_length,
             hook, direction=None):
-    """Create cantilever snap-fit feature intent.
+    """Create a cantilever snap-fit feature.
 
     Parameters:
         length: Cantilever length in mm.
@@ -2019,7 +2019,7 @@ def SnapFit(*, length, thickness, width, catch_depth, catch_length,
 
 
 def Boss(*, d, h, hole_d=None, direction=None):
-    """Create plastic screw-boss feature intent.
+    """Create a plastic screw-boss feature.
 
     Parameters:
         d: Boss outside diameter in mm.
@@ -2049,7 +2049,7 @@ def Boss(*, d, h, hole_d=None, direction=None):
 
 
 def Rest(*, width, height, length=None, along=None, direction=None):
-    """Create plastic support/rest feature intent.
+    """Create a plastic support/rest feature.
 
     Parameters:
         width: Rest width in mm.

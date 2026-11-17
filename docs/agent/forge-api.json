@@ -73,7 +73,7 @@
     },
     "Shape": {
       "kind": "callable",
-      "summary": "Represent Forge geometry/feature intent before SolidCraft executes it.",
+      "summary": "Store Forge geometry and feature operations before SolidCraft executes them.",
       "reference": "reference/Shape/",
       "guide": "guide/model-objects/#shape",
       "signature": "Shape(kind: str, data: Any) -> None"
@@ -234,35 +234,35 @@
     },
     "Hole": {
       "kind": "callable",
-      "summary": "Create hole feature intent, optionally directional and countersunk.",
+      "summary": "Create a hole feature, optionally directional and countersunk.",
       "reference": "reference/feature-constructors/#Hole",
       "guide": "guide/features/#features",
       "signature": "Hole(*, d, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None, countersink_d=None, countersink_angle=90, countersink_recess=0)"
     },
     "Lip": {
       "kind": "callable",
-      "summary": "Create plastic enclosure lip feature intent.",
+      "summary": "Create a plastic enclosure lip feature.",
       "reference": "reference/feature-constructors/#Lip",
       "guide": "guide/features/#features",
       "signature": "Lip(*, width, height)"
     },
     "SnapFit": {
       "kind": "callable",
-      "summary": "Create cantilever snap-fit feature intent.",
+      "summary": "Create a cantilever snap-fit feature.",
       "reference": "reference/feature-constructors/#SnapFit",
       "guide": "guide/features/#features",
       "signature": "SnapFit(*, length, thickness, width, catch_depth, catch_length, hook, direction=None)"
     },
     "Boss": {
       "kind": "callable",
-      "summary": "Create plastic screw-boss feature intent.",
+      "summary": "Create a plastic screw-boss feature.",
       "reference": "reference/feature-constructors/#Boss",
       "guide": "guide/features/#features",
       "signature": "Boss(*, d, h, hole_d=None, direction=None)"
     },
     "Rest": {
       "kind": "callable",
-      "summary": "Create plastic support/rest feature intent.",
+      "summary": "Create a plastic support/rest feature.",
       "reference": "reference/feature-constructors/#Rest",
       "guide": "guide/features/#features",
       "signature": "Rest(*, width, height, length=None, along=None, direction=None)"
