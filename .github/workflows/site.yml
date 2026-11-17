@@ -1,0 +1,158 @@
+name: SCPF site-only deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "site/**"
+      - "qualification/templates/**"
+      - ".github/workflows/site.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: scpf-site-main
+  cancel-in-progress: true
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Confirm presentation-only change
+        id: scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          before="${{ github.event.before }}"
+          if test -z "$before" || test "$before" = "0000000000000000000000000000000000000000"; then
+            before="$(git rev-parse HEAD^)"
+          fi
+
+          changed="$(git diff --name-only "$before" "$GITHUB_SHA")"
+          printf '%s\n' "$changed"
+
+          invalid="$(
+            printf '%s\n' "$changed" |
+              grep -Ev '^(site/|qualification/templates/|\.github/workflows/site\.yml$)' || true
+          )"
+          if test -n "$invalid"; then
+            echo "site_only=false" >> "$GITHUB_OUTPUT"
+            echo "Non-presentation paths also changed:"
+            printf '%s\n' "$invalid"
+          else
+            echo "site_only=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install SCPF for site generation
+        if: steps.scope.outputs.site_only == 'true'
+        run: python -m pip install -e ./scpf pillow
+
+      - name: Find reusable qualification evidence
+        if: steps.scope.outputs.site_only == 'true'
+        id: evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          runs="$(
+            gh api --method GET               "repos/$GITHUB_REPOSITORY/actions/workflows/scpf.yml/runs"               -f branch=main -f status=success -f per_page=30
+          )"
+
+          selected_run=""
+          selected_sha=""
+          while IFS=$'\t' read -r run_id candidate; do
+            test -n "$candidate" || continue
+            git merge-base --is-ancestor "$candidate" "$GITHUB_SHA" || continue
+
+            non_presentation="$(
+              git diff --name-only "$candidate" "$GITHUB_SHA" |
+                grep -Ev '^(site/|qualification/templates/|\.github/workflows/site\.yml$)' || true
+            )"
+            if test -z "$non_presentation"; then
+              selected_run="$run_id"
+              selected_sha="$candidate"
+              break
+            fi
+          done < <(
+            printf '%s' "$runs" |
+              jq -r '.workflow_runs[] | [.id, .head_sha] | @tsv'
+          )
+
+          if test -z "$selected_run"; then
+            echo "No reusable successful qualification run found." >&2
+            exit 1
+          fi
+
+          echo "run_id=$selected_run" >> "$GITHUB_OUTPUT"
+          echo "sha=$selected_sha" >> "$GITHUB_OUTPUT"
+          echo "Reusing qualification $selected_sha from run $selected_run"
+
+      - name: Download qualification evidence
+        if: steps.scope.outputs.site_only == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p reused
+          gh run download "${{ steps.evidence.outputs.run_id }}"             --repo "$GITHUB_REPOSITORY"             --name "scpf-qualification-${{ steps.evidence.outputs.sha }}"             --dir reused
+          test -f reused/native/verification.json
+          test -f reused/references/summary.json
+
+      - name: Restore rendered CADCraft diagrams
+        if: steps.scope.outputs.site_only == 'true'
+        id: cadcraft_diagrams
+        uses: actions/cache@v4
+        with:
+          path: output/diagrams
+          key: cadcraft-diagrams-v0.20.1-${{ hashFiles('qualification/diagrams/*.cadcraft.json', 'qualification/render_cadcraft_diagram.sh') }}
+
+      - name: Cache CADCraft CLI
+        if: steps.scope.outputs.site_only == 'true' && steps.cadcraft_diagrams.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/cadcraft/0.20.1-linux-x86_64
+          key: cadcraft-0.20.1-linux-x86_64
+
+      - name: Build missing diagrams
+        if: steps.scope.outputs.site_only == 'true' && steps.cadcraft_diagrams.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash qualification/setup_cadcraft.sh
+          mkdir -p output/diagrams
+          for plan in qualification/diagrams/*.cadcraft.json; do
+            bash qualification/render_cadcraft_diagram.sh "$plan" output/diagrams
+          done
+
+      - name: Build and test site with reused qualification evidence
+        if: steps.scope.outputs.site_only == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          evidence_sha="${{ steps.evidence.outputs.sha }}"
+          python site/build.py             --out output/site             --source-sha "$GITHUB_SHA"             --evidence-sha "$evidence_sha"             --native reused/native             --references reused/references             --diagram-root output/diagrams
+          python site/test_site.py output/site "$GITHUB_SHA"             --evidence-sha="$evidence_sha"             --require-native --require-references
+
+      - name: Publish current library site
+        if: steps.scope.outputs.site_only == 'true'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./output/site
+          keep_files: true
+          commit_message: "SCPF site-only build at ${{ github.sha }} using qualification ${{ steps.evidence.outputs.sha }}"

@@ -10,7 +10,7 @@ on:
       - "scpf/**"
       - "examples/**"
       - "qualification/**"
-      - "site/**"
+      - "!qualification/templates/**"
       - "scripts/release/**"
       - "CHANGELOG.md"
       - ".github/workflows/scpf.yml"
