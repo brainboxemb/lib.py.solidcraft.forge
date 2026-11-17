@@ -16,7 +16,7 @@
             "type": "object"
           }
         ],
-        "description": "A straight curve's id, or x / y for a sketch axis, or {"axis": "X" | "Y" | "Z"} for an origin axis (its projection into the sketch plane; an axis perpendicular to the plane is refused)."
+        "description": "A straight curve's id, or x / y for a sketch axis, or {\"axis\": \"X\" | \"Y\" | \"Z\"} for an origin axis (its projection into the sketch plane; an axis perpendicular to the plane is refused)."
       },
       "SketchTarget": {
         "anyOf": [
@@ -175,5 +175,5 @@
     "title": "MirrorResult",
     "type": "object"
   },
-  "params": "entities: [curve/point ids], line: straight curve id, x / y for a sketch axis, or {axis: X|Y|Z} for an origin axis (the mirror line is the axis's projection into the sketch plane; an axis perpendicular to the plane is refused) (symmetry constraints are added). Returns created: {points, curves, constraints, dimensions}: the ids of what it added (stable and never reused: usable right away in sketch.dimension, sketch.constraint.*, sketch.delete…)"
+  "params": "entities: [curve/point ids], line: straight curve id, x / y for a sketch axis, or {axis: X|Y|Z} for an origin axis (the mirror line is the axis's projection into the sketch plane; an axis perpendicular to the plane is refused) (symmetry constraints are added). Returns created: {points, curves, constraints, dimensions}: the ids of what it added (stable and never reused: usable right away in sketch.dimension, sketch.constraint.*, sketch.delete\u2026)"
 }
