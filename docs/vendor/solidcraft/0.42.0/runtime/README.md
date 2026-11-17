@@ -44,7 +44,7 @@ Forge-referenced commands: **44**
 - `solid.fillet` → `contracts/solid.fillet.json`
 - `solid.hole` → `contracts/solid.hole.json` — MISSING TYPED input, output
 - `solid.loft` → `contracts/solid.loft.json` — MISSING TYPED input, output
-- `solid.pattern.circular` → `contracts/solid.pattern.circular.json` — MISSING TYPED input, output
+- `solid.pattern.circular` → `contracts/solid.pattern.circular.json`
 - `solid.pattern.rectangular` → `contracts/solid.pattern.rectangular.json` — MISSING TYPED input, output
 - `solid.shell` → `contracts/solid.shell.json` — MISSING TYPED input, output
 - `solid.sphere` → `contracts/solid.sphere.json`
