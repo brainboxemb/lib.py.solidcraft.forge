@@ -81,6 +81,12 @@ MUTATIONS = {
         "measurements": "measurements-size-80x40.json",
         "label": "board 40x20 -> 80x40 mm",
     },
+    "sketch-pattern-mirror": {
+        "command": "qualification/commands/sketch-pattern-mirror/change-patterns.json",
+        "save": "model-patterns-mutated.sc",
+        "measurements": "measurements-patterns-mutated.json",
+        "label": "Circle diameter and sketch pattern spacing mutate through existing pattern/mirror relationships",
+    },
     "rectangular-pattern": {
         "command": "qualification/commands/rectangular-pattern/change-columns-pitch.json",
         "save": "model-columns-2-pitch-30.sc",

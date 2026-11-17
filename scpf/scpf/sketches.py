@@ -100,7 +100,23 @@ def compile_base(shape, name):
         }
 
     if shape.kind == "sketch_base_extrusion":
-        sketch_name, plane, origin, plane_offset, profiles, distance, direction = shape.data
+        if len(shape.data) == 8:
+            (
+                sketch_name,
+                plane,
+                origin,
+                plane_offset,
+                profiles,
+                distance,
+                direction,
+                operations,
+            ) = shape.data
+            if operations:
+                raise ModelError(
+                    "sketch pattern/mirror currently requires an attached Sketch"
+                )
+        else:
+            sketch_name, plane, origin, plane_offset, profiles, distance, direction = shape.data
         _require_positive(distance, "sketch extrusion distance")
         if plane not in ("XY", "XZ", "YZ"):
             raise ModelError("standalone Sketch requires an XY, XZ or YZ plane")

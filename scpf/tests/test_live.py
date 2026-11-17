@@ -13,7 +13,7 @@ import unittest
 from unittest.mock import patch
 
 from scpf.live import LiveError, new_design, send_commands, send_document
-from scpf.replay import replay_document
+from scpf.replay import apply_bindings, replay_document
 from scpf.__main__ import read_command_file, main
 from scpf.runner import run_script
 
@@ -196,6 +196,33 @@ class LiveProtocolTests(unittest.TestCase):
             102,
         )
 
+    def test_replay_v2_can_prepend_existing_runtime_list_to_result(self):
+        variables = {"$seed_curves": ["c1"]}
+        items = [{
+            "command": "sketch.pattern.rectangular",
+            "params": {"entities": "$seed_curves", "count": 3, "spacing": 20},
+            "bind": {
+                "$pattern_curves": {
+                    "field": "curves",
+                    "prepend": "$seed_curves",
+                }
+            },
+        }]
+        bound = apply_bindings(
+            items,
+            [{"curves": ["c2", "c3"]}],
+            variables,
+        )
+
+        self.assertEqual(
+            variables["$pattern_curves"],
+            ["c1", "c2", "c3"],
+        )
+        self.assertEqual(
+            bound,
+            [{"$pattern_curves": ["c1", "c2", "c3"]}],
+        )
+
     def test_replay_v2_selects_face_result_fields(self):
         document = replay_document([
             {
@@ -357,7 +384,7 @@ class LiveProtocolTests(unittest.TestCase):
             send_document(document, directory=self.directory)
         server.join()
 
-    def test_replay_v1_string_bindings_remain_supported(self):
+    def test_replay_v1_document_is_rejected(self):
         document = {
             "format": "scpf-replay",
             "version": 1,
@@ -367,19 +394,8 @@ class LiveProtocolTests(unittest.TestCase):
                 "bind": {"$board": "occurrence"},
             }],
         }
-        server = FakeSolidCraft({
-            "id": 1,
-            "ok": True,
-            "result": {
-                "completed": 1,
-                "results": [{"component": 2, "occurrence": 9}],
-                "undone": 0,
-            },
-        })
-        self.configure(server)
-        result = send_document(document, directory=self.directory)
-        server.join()
-        self.assertEqual(result["variables"]["$board"], 9)
+        with self.assertRaisesRegex(LiveError, "expected 2"):
+            send_document(document, directory=self.directory)
 
     def test_replay_failure_restores_whole_checkpoint(self):
         document = replay_document([

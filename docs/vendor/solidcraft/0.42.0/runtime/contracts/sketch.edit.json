@@ -1,0 +1,79 @@
+{
+  "id": "sketch.edit",
+  "input": {
+    "$defs": {
+      "EditMarker": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          },
+          {
+            "const": false
+          }
+        ],
+        "description": "A timeline position to restore when the edit ends (null: the end), or false to leave the timeline in place."
+      },
+      "IdOrName": {
+        "description": "A feature's id (a number) or its name.",
+        "type": [
+          "number",
+          "string"
+        ]
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "properties": {
+      "restore_marker": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/EditMarker"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "A position (or null, the end of the timeline): temporarily roll to this sketch and\nrestore that position when the edit ends. Left out, a sketch with features after it is\nrolled to and the current position restored, so those features rebuild once, when the\nedit ends (#14010). `false` leaves the timeline in place, rebuilding them after every\nsketch command."
+      },
+      "sketch": {
+        "$ref": "#/$defs/IdOrName"
+      }
+    },
+    "required": [
+      "sketch"
+    ],
+    "title": "EditParams",
+    "type": "object"
+  },
+  "label": "Edit Sketch",
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "param_warnings": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "sketch": {
+        "format": "uint64",
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "sketch",
+      "name"
+    ],
+    "title": "EditResult",
+    "type": "object"
+  },
+  "params": "sketch: id or name; restore_marker?: nonnegative timeline position, null (end) or false. A position or null: temporarily roll to this sketch and restore that position on Finish or Cancel; Finish groups the edit into one Undo step. Omitted: the same with the current position when features come after the sketch, so they rebuild once at Finish rather than after every sketch command. false: leave the timeline in place (later features rebuild after every sketch command)"
+}

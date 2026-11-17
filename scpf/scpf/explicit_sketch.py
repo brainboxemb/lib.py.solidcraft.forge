@@ -4,8 +4,9 @@ The scope owns editable 2D profiles. 3D operations are applied afterwards,
 so authoring a sketch remains distinct from extruding/cutting it.
 """
 from contextvars import ContextVar
+from math import isfinite
 
-from .core import Anchor, Depth, Shape, _pv as pv
+from .core import Anchor, Axis, Depth, Shape, _pv as pv
 
 _ACTIVE_SKETCH = ContextVar("scpf_active_sketch", default=None)
 
@@ -86,6 +87,7 @@ class Sketch:
         self.offset = offset
         self.plane = plane
         self._profiles = []
+        self._operations = []
         self._closed = False
         self._token = None
 
@@ -186,6 +188,138 @@ class Sketch:
         )
         return profile
 
+    def _require_entity_source(self, source):
+        """Require one profile or sketch-operation result from this Sketch."""
+        if not isinstance(source, Shape):
+            raise TypeError("sketch pattern/mirror source must be sketch geometry")
+        if any(profile is source for profile, _anchor, _offset in self._profiles):
+            return source
+        if any(operation is source for operation in self._operations):
+            return source
+        raise ValueError("sketch pattern/mirror source must belong to this Sketch")
+
+    @staticmethod
+    def _pattern_direction(direction, label):
+        if isinstance(direction, Axis):
+            if direction is Axis.X:
+                return (1.0, 0.0)
+            if direction is Axis.Y:
+                return (0.0, 1.0)
+            raise ValueError(f"{label} supports Axis.X or Axis.Y in a 2D Sketch")
+        if not isinstance(direction, (tuple, list)) or len(direction) != 2:
+            raise ValueError(
+                f"{label} must be Axis.X, Axis.Y or a fixed (x, y) vector"
+            )
+        vector = tuple(float(pv(value)) for value in direction)
+        if not all(isfinite(value) for value in vector):
+            raise ValueError(f"{label} must contain finite numeric values")
+        if sum(value * value for value in vector) <= 0:
+            raise ValueError(f"{label} must be non-zero")
+        return vector
+
+    def rectangular_pattern(
+        self,
+        source,
+        *,
+        count,
+        spacing,
+        direction=Axis.X,
+        count2=1,
+        spacing2=None,
+        direction2=None,
+        alignment="right",
+        alignment2="right",
+        reversed=False,
+        reversed2=False,
+    ):
+        """Repeat authored sketch geometry with a native associative pattern.
+
+        count/count2 include the original. direction and direction2 are fixed
+        sketch-local vectors or Axis.X/Axis.Y. The returned value represents
+        the complete pattern (source plus copies) and can be used by mirror()
+        or another supported sketch operation.
+
+        SolidCraft 0.42 mirror relationships keep the entity set selected when
+        the mirror is authored. Changing an upstream pattern count later still
+        edits the native pattern, but newly added pattern entities are not
+        automatically added to an already-authored downstream mirror.
+        """
+        if self._closed or self._token is None:
+            raise ValueError("sketch pattern must be authored inside the Sketch scope")
+        source = self._require_entity_source(source)
+        if isinstance(count, bool):
+            raise ValueError("sketch pattern count must be a whole number from 1 to 500")
+        if isinstance(count2, bool):
+            raise ValueError("sketch pattern count2 must be a whole number from 1 to 500")
+        count_value = pv(count)
+        count2_value = pv(count2)
+        if (
+            not isfinite(count_value)
+            or not 1 <= count_value <= 500
+            or not count_value.is_integer()
+        ):
+            raise ValueError("sketch pattern count must be a whole number from 1 to 500")
+        if (
+            not isfinite(count2_value)
+            or not 1 <= count2_value <= 500
+            or not count2_value.is_integer()
+        ):
+            raise ValueError("sketch pattern count2 must be a whole number from 1 to 500")
+        if count_value * count2_value > 500:
+            raise ValueError("sketch pattern supports at most 500 total instances")
+        if not isfinite(pv(spacing)):
+            raise ValueError("sketch pattern spacing must be finite")
+        if spacing2 is not None and not isfinite(pv(spacing2)):
+            raise ValueError("sketch pattern spacing2 must be finite")
+        if alignment not in ("left", "center", "right"):
+            raise ValueError("sketch pattern alignment must be left, center or right")
+        if alignment2 not in ("left", "center", "right"):
+            raise ValueError("sketch pattern alignment2 must be left, center or right")
+        if not isinstance(reversed, bool) or not isinstance(reversed2, bool):
+            raise TypeError("sketch pattern reversed flags must be True or False")
+
+        dir1 = self._pattern_direction(direction, "sketch pattern direction")
+        dir2 = (
+            None
+            if direction2 is None
+            else self._pattern_direction(direction2, "sketch pattern direction2")
+        )
+        operation = Shape(
+            "sketch_pattern_rectangular",
+            (
+                source,
+                count,
+                spacing,
+                dir1,
+                count2,
+                spacing2,
+                dir2,
+                alignment,
+                alignment2,
+                reversed,
+                reversed2,
+            ),
+        )
+        self._operations.append(operation)
+        return operation
+
+    def mirror(self, source, *, axis):
+        """Mirror authored sketch geometry over the sketch X or Y origin axis."""
+        if self._closed or self._token is None:
+            raise ValueError("sketch mirror must be authored inside the Sketch scope")
+        source = self._require_entity_source(source)
+        if isinstance(axis, Axis):
+            if axis not in (Axis.X, Axis.Y):
+                raise ValueError("sketch mirror axis must be Axis.X or Axis.Y")
+            line = axis.value.lower()
+        elif isinstance(axis, str) and axis.lower() in ("x", "y"):
+            line = axis.lower()
+        else:
+            raise ValueError("sketch mirror axis must be Axis.X, Axis.Y, 'x' or 'y'")
+        operation = Shape("sketch_mirror", (source, line))
+        self._operations.append(operation)
+        return operation
+
     def extrude(self, distance, *, sym=False):
         """Extrude a completed Sketch using a signed distance.
 
@@ -245,19 +379,28 @@ class Sketch:
         if self.on is None:
             if distance is Depth.THROUGH_ALL:
                 raise ValueError("standalone Sketch requires a finite extrusion distance")
-            return Shape(
-                "sketch_base_extrusion",
-                (self.name, self.plane, self.origin, self.offset, tuple(self._profiles), native_distance, direction),
-            )
-        return Shape(
-            "explicit_sketch_extrusion",
-            (
+            data = (
                 self.name,
-                self.on,
-                self.parent,
-                (self.plane, self.origin),
+                self.plane,
+                self.origin,
+                self.offset,
                 tuple(self._profiles),
                 native_distance,
                 direction,
-            ),
+            )
+            if self._operations:
+                data = (*data, tuple(self._operations))
+            return Shape("sketch_base_extrusion", data)
+
+        data = (
+            self.name,
+            self.on,
+            self.parent,
+            (self.plane, self.origin),
+            tuple(self._profiles),
+            native_distance,
+            direction,
         )
+        if self._operations:
+            data = (*data, tuple(self._operations))
+        return Shape("explicit_sketch_extrusion", data)
