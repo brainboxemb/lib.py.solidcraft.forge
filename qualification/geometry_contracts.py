@@ -578,10 +578,7 @@ _GEOMETRY_DETAILS = {
     },
     "circle-negative-extrude": {
         "volume_mm3": math.pi * 10.0**2 * 30.0,
-        # PythonSCAD/pyBOSL2 use coarser circular facets for both the
-        # eight holes and the Slot end-arcs. Their measured volume differs by
-        # about 155 mm³ while all 3D wall probes remain within 0.12 mm.
-        "volume_tolerance_mm3": 180.0,
+        "volume_tolerance_mm3": 100.0,
         "watertight": True,
         "surface_distance_probes": [{
             "label": "circular side outside the diagonal",
@@ -596,7 +593,10 @@ _GEOMETRY_DETAILS = {
             - 8.0 * math.pi * 4.0**2 * 5.0
             - 8.0 * (20.0 * 8.0 + math.pi * 4.0**2) * 5.0
         ),
-        "volume_tolerance_mm3": 100.0,
+        # PythonSCAD/pyBOSL2 use coarser circular facets for the eight holes
+        # and Slot end-arcs. Their volume differs by about 155 mm³ while all
+        # 3D wall probes remain within about 0.12 mm.
+        "volume_tolerance_mm3": 180.0,
         "watertight": True,
         "surface_distance_probes": [
             *_through_probes(
