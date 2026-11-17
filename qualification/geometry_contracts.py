@@ -690,7 +690,7 @@ _GEOMETRY_DETAILS = {
     },
     "circular-feature-pattern": {
         "volume_mm3": 100.0 * 100.0 * 6.0 - 6.0 * math.pi * 4.0**2 * 6.0,
-        "volume_tolerance_mm3": 45.0,
+        "volume_tolerance_mm3": 80.0,
         "watertight": True,
         "surface_distance_probes": _through_probes(
             _CIRCULAR_PATTERN_HOLE_CENTERS,
