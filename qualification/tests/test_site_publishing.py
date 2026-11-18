@@ -93,6 +93,11 @@ class SitePublishingContractTests(unittest.TestCase):
 
         self.assertIn("publish_branch: preview-output", workflow)
         self.assertIn("ref: preview-output", workflow)
+        self.assertIn(
+            "ref: ${{ github.event.pull_request.head.sha }}",
+            workflow,
+        )
+        self.assertNotIn("force_orphan: true", workflow)
         self.assertLess(stage, checkout)
         self.assertLess(checkout, verify)
         self.assertLess(verify, publish)
