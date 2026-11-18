@@ -124,6 +124,9 @@ def make_plan(
             "release": False,
         }
 
+    if event_name == "workflow_dispatch" and ref_name != "main":
+        raise ValueError("manual Forge qualification is only allowed on main")
+
     if event_name == "workflow_dispatch" or (
         event_name == "schedule" and schedule == WEEKLY_FULL_CRON
     ):
