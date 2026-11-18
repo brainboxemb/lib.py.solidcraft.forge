@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-11-18
+
 ### Added
 
 - Add explicit native `Hole`, `CounterboreHole`, `CountersinkHole` and
