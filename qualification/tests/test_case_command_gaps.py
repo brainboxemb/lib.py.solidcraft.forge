@@ -35,6 +35,10 @@ class MissingCaseCommandContractTests(unittest.TestCase):
         ]
         self.assertEqual(len(circles), 1)
         self.assertEqual(circles[0]["diameter"], 8)
+        self.assertEqual(
+            circles[0]["center"],
+            ["(width / 2)", "((depth - spacing) / 2)"],
+        )
 
         cuts = [
             row["params"]
