@@ -29,7 +29,10 @@ class AnchoredHoles:
         ) as hole:
             hole.add(
                 Circle2D(d=8),
-                offset=(0, -(self.spacing / 2)),
+                offset=(
+                    self.width / 2,
+                    (self.depth - self.spacing) / 2,
+                ),
             )
 
         source_cut = hole.extrude(Depth.THROUGH_ALL)

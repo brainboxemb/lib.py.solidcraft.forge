@@ -91,7 +91,10 @@ class GeometryFeatures(unittest.TestCase):
         plate = sketch.extrude(thickness)
 
         with Sketch(name="Hole", on=plate, parent=Anchor.TOP) as hole:
-            hole.add(Circle2D(d=8), offset=(0, -(spacing / 2)))
+            hole.add(
+                Circle2D(d=8),
+                offset=(width / 2, (depth - spacing) / 2),
+            )
 
         source_cut = hole.extrude(Depth.THROUGH_ALL)
         plate = plate - source_cut
@@ -109,9 +112,14 @@ class GeometryFeatures(unittest.TestCase):
             if row["command"] == "sketch.create"
         ]
         self.assertEqual(sketches, ["Base", "Hole"])
+        circle = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.circle.center"
+        )
         self.assertEqual(
-            [row["command"] for row in commands].count("sketch.circle.center"),
-            1,
+            circle["center"],
+            ["(width / 2)", "((depth - (spacing)) / 2)"],
         )
         pattern = next(
             row["params"]
