@@ -70,6 +70,7 @@ jobs:
     outputs:
       build_commit: ${{ steps.result.outputs.build_commit }}
     env:
+      GH_TOKEN: ${{ github.token }}
       SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
       BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before || '' }}
       SOURCE_REF: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
