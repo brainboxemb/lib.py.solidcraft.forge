@@ -278,17 +278,40 @@ Every PR has one `merge-gate` status on the current PR head.
 | foundational/toolchain/release | full Q1-Q6 |
 
 The merge gate runs **before merge**. Branch protection requires it for the
-current head commit.
+current head commit and requires the PR to be current with its merge base
+(prefer a merge queue; otherwise require the branch to be up to date).
+
+The merge-gate result records both PR-head SHA and base SHA. A base change
+invalidates the result.
 
 A technical PR is not merged first and qualified afterwards.
 
 Verification jobs use per-PR concurrency with `cancel-in-progress: true`; they
 write no generated branches, so cancelling obsolete verification is safe.
 
+### 9.4 Scheduled full safety run
+
+Run the complete registered Q1-Q6 set on `main` on a schedule (initially
+weekly) and on manual request.
+
+This is a safety net for an incomplete dependency map or selector bug. It does
+not replace the pre-merge gate.
+
+A failing scheduled run:
+
+- never overwrites passing `build/main` evidence with partial/failing output;
+- fails visibly and creates/updates an audit finding;
+- blocks release promotion until resolved.
+
 ## 10. PR evidence and squash-merge promotion
 
-Technical PR verification publishes a sparse `build/pr/N` overlay after the
-required gate passes.
+A technical PR may publish a sparse `build/pr/N` **candidate overlay** after
+successful iteration verification. Per-case metadata records the achieved level
+(for example Q1/Q2); the preview must show that level honestly.
+
+The pre-merge gate may update/upgrade the same current-head overlay. Evidence is
+**promotable** only when every affected case meets the final level required by
+the risk classifier.
 
 On squash merge:
 
@@ -427,7 +450,7 @@ for unrelated PR namespaces.
 | Event | Verification | Build effect | Pages effect |
 | --- | --- | --- | --- |
 | presentation-only PR update | preflight | remove stale `pr/N` if PR was previously technical | replace preview using main evidence |
-| technical PR update | required affected iteration/gate | update sparse `pr/N` | replace preview using overlay+main |
+| technical PR update | affected iteration checks; final gate when merge-ready | update current-head sparse candidate `pr/N` only after passing checks | replace preview using overlay+main and show achieved level |
 | PR reopened | classify current head again | recreate overlay only if technical | recreate preview |
 | PR closed, not merged | none | remove `pr/N` | remove preview |
 | technical PR merged | pre-merge gate already passed; promote/revalidate tree | overlay affected cases into main | rebuild stable site after build promotion |
@@ -496,7 +519,20 @@ hard invariants, not only test fixtures.
 Namespace identifiers are integers from GitHub PR metadata, never free-form path
 strings.
 
-## 18. Releases and retention
+## 18. Pages root control files
+
+Stable Pages assembly treats root control files explicitly.
+
+- `.nojekyll` is generated as part of the site.
+- `CNAME`, if this repository ever configures one, is declared in source
+  configuration and re-emitted by stable assembly; it is not preserved by
+  accident from an old generated branch.
+- `previews/` is the only generated subtree preserved from the previous Pages
+  branch during a stable-root replacement.
+
+No other stale root file survives merely because it happened to exist before.
+
+## 19. Releases and retention
 
 Release technical evidence is immutable.
 
@@ -521,7 +557,7 @@ Version 1 retention policy:
 
 Do not silently squash generated history and break existing permalinks.
 
-## 19. Reference implementations
+## 20. Reference implementations
 
 Reference implementations are independently hashable inputs.
 
@@ -535,7 +571,7 @@ A reference implementation reruns when:
 A Forge-only case change does not automatically rerun every reference library
 unless its reference input hash changes.
 
-## 20. Workflow responsibilities
+## 21. Workflow responsibilities
 
 Workflow YAML is orchestration only.
 
@@ -568,7 +604,7 @@ Forbidden:
 - duplicated branch-layout logic;
 - hand-coded cleanup algorithms in workflows.
 
-## 21. Hard invariants
+## 22. Hard invariants
 
 1. `build/main` contains every registered case.
 2. `build/pr/N` is sparse and contains only PR-owned changed evidence.
@@ -592,8 +628,14 @@ Forbidden:
 18. Publication correctness does not depend on a GitHub concurrency queue.
 19. Fork PR code never receives write-capable publication credentials.
 20. Release evidence has an immutable build reference.
+21. A merge-gate result is invalid when its recorded base SHA is no longer the
+    PR's current merge base.
+22. Candidate PR evidence is never presented as having a higher verification
+    level than it actually achieved.
+23. Scheduled full qualification cannot replace passing stable evidence with
+    failing/partial output.
 
-## 22. Acceptance scenarios
+## 23. Acceptance scenarios
 
 Implementation is not complete until automated/integration tests demonstrate all
 of these.
@@ -609,9 +651,11 @@ of these.
 ### B. One-case technical PR
 
 - only that case hash changes;
-- only that case executes;
-- `build/pr/N` contains only that overlay;
-- preview resolves affected case from PR overlay and all others from main.
+- only that case executes during normal iteration;
+- `build/pr/N` contains only that candidate overlay;
+- its manifest records the actually achieved verification level;
+- preview resolves affected case from PR overlay and all others from main;
+- promotion remains blocked until the required final gate has passed.
 
 ### C. Affected promotion
 
@@ -684,7 +728,7 @@ Start three publications close together for distinct namespaces.
 - audit detects it;
 - reconcile produces the expected scoped removal.
 
-## 23. Reviewer checklist
+## 24. Reviewer checklist
 
 Reject a change if any answer is unclear:
 
@@ -702,7 +746,7 @@ Reject a change if any answer is unclear:
 12. Does the change keep policy out of workflow YAML?
 13. Is there an acceptance/contract test for the behavior?
 
-## 24. Implementation order
+## 25. Implementation order
 
 Implement in this order:
 
