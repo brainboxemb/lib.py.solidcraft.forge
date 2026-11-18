@@ -571,7 +571,7 @@ unless its reference input hash changes.
 ## 21. Workflow responsibilities
 
 The repository exposes exactly one active GitHub Actions workflow:
-`.github/workflows/forge.yml` (**Forge**). PR verification, main promotion,
+`.github/workflows/scpf.yml` (**Forge**). PR verification, main promotion,
 site publication, recovery, cleanup, reconcile, image reuse/build, contract
 snapshot and release publication are conditional jobs/phases inside that one
 workflow.
