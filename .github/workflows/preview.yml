@@ -29,6 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
       - uses: actions/setup-python@v5
@@ -206,7 +207,6 @@ jobs:
           publish_dir: ./output/site
           destination_dir: previews/pr-${{ github.event.pull_request.number }}/fast
           keep_files: true
-          force_orphan: true
           commit_message: "Stage fast preview PR #${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}"
 
       - name: Checkout staged PR preview
@@ -235,5 +235,4 @@ jobs:
           publish_dir: ./staged-preview/previews/pr-${{ github.event.pull_request.number }}/fast
           destination_dir: previews/pr-${{ github.event.pull_request.number }}/fast
           keep_files: true
-          force_orphan: true
           commit_message: "Sync staged fast preview PR #${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}"
