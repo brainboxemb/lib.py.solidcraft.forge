@@ -38,7 +38,8 @@ def _is_pure_csg_tree(shape):
     """Return whether a Shape can be compiled entirely by the primitive CSG path."""
     if not isinstance(shape, Shape):
         return False
-    if shape.kind in ("box", "sphere", "cylinder", "placed_box"):
+    from .csg import CSG_PRIMITIVE_KINDS
+    if shape.kind in CSG_PRIMITIVE_KINDS or shape.kind == "placed_box":
         return True
     if shape.kind == "placed3d":
         return shape.data[0].kind == "cylinder"
