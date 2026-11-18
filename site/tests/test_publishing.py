@@ -160,6 +160,7 @@ class SitePublishingContractTests(unittest.TestCase):
             with self.subTest(required=required):
                 self.assertIn(required, workflow)
 
+        self.assertIn("GH_TOKEN: ${{ github.token }}", workflow)
         self.assertNotIn("gh workflow run", workflow)
         self.assertNotIn("peaceiris/actions-gh-pages", workflow)
         self.assertNotIn("setup_solidcraft.py", workflow)
