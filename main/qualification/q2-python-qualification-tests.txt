@@ -45,6 +45,9 @@ test_preview_scope_code_does_not_install_reference_libraries (_qualification_qua
 test_q1_test_selects_cases_that_use_it_as_evidence (_qualification_qualification_tests_test_preview_scope.PreviewScopeTests.test_q1_test_selects_cases_that_use_it_as_evidence) ... ok
 test_reference_validation_requires_reference_smoke (_qualification_qualification_tests_test_preview_scope.PreviewScopeTests.test_reference_validation_requires_reference_smoke) ... ok
 test_site_change_needs_no_model_case (_qualification_qualification_tests_test_preview_scope.PreviewScopeTests.test_site_change_needs_no_model_case) ... ok
+test_image_id_changes_when_version_input_changes (_qualification_qualification_tests_test_qualification_image.QualificationImageTests.test_image_id_changes_when_version_input_changes) ... ok
+test_metadata_uses_immutable_toolchain_tag (_qualification_qualification_tests_test_qualification_image.QualificationImageTests.test_metadata_uses_immutable_toolchain_tag) ... ok
+test_tool_versions_have_single_sources (_qualification_qualification_tests_test_qualification_image.QualificationImageTests.test_tool_versions_have_single_sources) ... ok
 test_default_reference_set_is_four_independent_libraries (_qualification_qualification_tests_test_reference_models.ReferenceModelTests.test_default_reference_set_is_four_independent_libraries) ... ok
 test_every_qualification_has_python_references (_qualification_qualification_tests_test_reference_models.ReferenceModelTests.test_every_qualification_has_python_references) ... ok
 test_references_do_not_become_forge_api_sources (_qualification_qualification_tests_test_reference_models.ReferenceModelTests.test_references_do_not_become_forge_api_sources) ... ok
@@ -124,6 +127,6 @@ test_chamfer_precedes_native_face_query_and_attached_sketch (_qualification_exam
 test_xz_anchor_command_contract (_qualification_examples_xz_anchor_tests_test_contract.CommandContractTests.test_xz_anchor_command_contract) ... ok
 
 ----------------------------------------------------------------------
-Ran 124 tests in 0.576s
+Ran 127 tests in 0.631s
 
 OK
