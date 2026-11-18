@@ -50,3 +50,4 @@ Current records:
 - [0039-simple-main-qualification-trigger.md](0039-simple-main-qualification-trigger.md) — add one simple `main -> qualification -> build/main -> Pages` recovery trigger (#343).
 - [0040-preserve-staged-qualification-results.md](0040-preserve-staged-qualification-results.md) — preserve the schema-v4 per-case result after staged Q1–Q6 qualification (#345).
 - [0041-single-forge-workflow.md](0041-single-forge-workflow.md) — expose one risk-based Forge workflow and keep CI phases internal (#346).
+- [0042-reliable-qualification-image-cache.md](0042-reliable-qualification-image-cache.md) — distinguish a genuinely missing qualification image from a slow or failed registry pull (#261).
