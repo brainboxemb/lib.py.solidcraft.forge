@@ -1247,6 +1247,17 @@ def build_raw_url(scope, relative=""):
     return f"{base}/{relative}" if relative else base
 
 
+def evidence_scope(build_manifest_data, slug, implementation, fallback):
+    record = (
+        ((build_manifest_data.get("cases") or {}).get(slug) or {})
+        .get("implementations", {})
+        .get(implementation)
+    )
+    if record and record.get("build_scope"):
+        return record["build_scope"]
+    return fallback
+
+
 def text(path):
     return path.read_text(encoding="utf-8")
 
@@ -1972,12 +1983,18 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                         f"Reference result is not PASS: {slug}/{reference_name}"
                     )
                 source_dir = result_path.parent
-                reference_raw_base = build_raw_url(
+                reference_scope = evidence_scope(
+                    build_manifest_data,
+                    slug,
+                    reference_name,
                     build_scope,
+                )
+                reference_raw_base = build_raw_url(
+                    reference_scope,
                     f"examples/{slug}/{reference_name}",
                 )
                 reference_blob_base = build_blob_url(
-                    build_scope,
+                    reference_scope,
                     f"examples/{slug}/{reference_name}",
                 )
                 for name in (
@@ -2182,11 +2199,17 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             ):
                 for evidence in sorted(native_case.glob(pattern)):
                     native_files.append(evidence.name)
+            native_scope = evidence_scope(
+                build_manifest_data,
+                slug,
+                "scpf",
+                build_scope,
+            )
             native_evidence_raw = build_raw_url(
-                build_scope, f"examples/{slug}/scpf"
+                native_scope, f"examples/{slug}/scpf"
             )
             native_evidence_blob = build_blob_url(
-                build_scope, f"examples/{slug}/scpf"
+                native_scope, f"examples/{slug}/scpf"
             )
             preview_html = _render_visual_evidence(
                 case,
@@ -2237,8 +2260,14 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             'reference source</a></li>'
             for reference_name in reference_names
         )
+        native_scope = evidence_scope(
+            build_manifest_data,
+            slug,
+            "scpf",
+            build_scope,
+        )
         native_evidence_blob = build_blob_url(
-            build_scope, f"examples/{slug}/scpf"
+            native_scope, f"examples/{slug}/scpf"
         )
         evidence_items.append(
             '<li><a href="'
@@ -2259,8 +2288,14 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         for name in reference_evidence_files:
             prefix, filename = name.split("/", 1)
             implementation = prefix.removeprefix("reference-")
-            url = build_blob_url(
+            implementation_scope = evidence_scope(
+                build_manifest_data,
+                slug,
+                implementation,
                 build_scope,
+            )
+            url = build_blob_url(
+                implementation_scope,
                 f"examples/{slug}/{implementation}/{filename}",
             )
             evidence_items.append(
@@ -2352,6 +2387,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 if case_record is not None
                 else None
             ),
+            "evidence_build_scope": (
+                case_record.get("build_scope")
+                if case_record is not None
+                else build_scope
+            ),
             "body_count": body_count,
             "parameter_count": parameter_count,
         }
@@ -2362,7 +2402,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         )
         card_preview_url = (
             build_raw_url(
-                build_scope,
+                evidence_scope(build_manifest_data, slug, "scpf", build_scope),
                 f"examples/{slug}/scpf/{card_preview}",
             )
             if card_preview else None

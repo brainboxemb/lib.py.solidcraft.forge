@@ -732,7 +732,10 @@ def check(
             f"{build_ref}/"
         )
         assert build_prefix in page_text, slug
-        assert f"/blob/{build_ref}/main/examples/" in page_text, slug
+        manifest_scope = qualification_manifest["cases"][slug].get(
+            "evidence_build_scope", "main"
+        )
+        assert f"/blob/{build_ref}/{manifest_scope}/examples/" in page_text, slug
         if build_commit:
             assert "/blob/build/" not in page_text, slug
         if require_references:

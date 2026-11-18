@@ -114,9 +114,11 @@ def _implementation_record(
     level: str,
     generated_at: str,
     repo_root: Path,
+    build_scope: str,
 ) -> dict:
     return {
         "source_commit": source_commit,
+        "build_scope": build_scope,
         "input_hash": case_input_hash(slug, implementation, repo_root),
         "verification_level": level,
         "status": "pass",
@@ -166,6 +168,11 @@ def assemble_build(
                 metadata["qualification"]["level"],
                 generated_at,
                 repo_root,
+                (
+                    "main"
+                    if metadata["scope"] == "main"
+                    else f"pr/{metadata['pull_request']}"
+                ),
             )
 
         for reference_root_name in ("references", "reference-smoke"):
@@ -184,6 +191,11 @@ def assemble_build(
                         "reference",
                         generated_at,
                         repo_root,
+                        (
+                            "main"
+                            if metadata["scope"] == "main"
+                            else f"pr/{metadata['pull_request']}"
+                        ),
                     )
 
         if implementations:
@@ -284,6 +296,15 @@ def verify_build(
             if record.get("status") != "pass":
                 raise RuntimeError(
                     f"{slug}/{implementation}: non-passing persistent evidence"
+                )
+            build_scope = record.get("build_scope")
+            if build_scope != "main" and not (
+                isinstance(build_scope, str)
+                and build_scope.startswith("pr/")
+                and build_scope.removeprefix("pr/").isdigit()
+            ):
+                raise RuntimeError(
+                    f"{slug}/{implementation}: invalid build_scope {build_scope!r}"
                 )
             target = root / "examples" / slug / implementation
             if not target.is_dir():
@@ -389,9 +410,11 @@ def promote_overlay(
             if target.exists():
                 shutil.rmtree(target)
             _copy_tree(source, target)
+            promoted_record = json.loads(json.dumps(record))
+            promoted_record["build_scope"] = "main"
             merged.setdefault("cases", {}).setdefault(
                 slug, {"implementations": {}}
-            )["implementations"][implementation] = record
+            )["implementations"][implementation] = promoted_record
 
     (destination / "build.json").write_text(
         json.dumps(merged, indent=2, sort_keys=True) + "\n",
