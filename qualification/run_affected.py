@@ -382,17 +382,7 @@ def main() -> int:
     timings["q1"] = q1_global + q1_case
 
     q2_global, _ = _run(
-        [
-            sys.executable,
-            "-m",
-            "unittest",
-            "discover",
-            "-s",
-            "qualification/tests",
-            "-t",
-            ".",
-            "-v",
-        ]
+        [sys.executable, "qualification/testsuite.py"]
     )
     q2_case, _ = _run(
         [

@@ -28,7 +28,7 @@ class CaseEvidenceMetadataTests(unittest.TestCase):
                 )
                 self.assertTrue(
                     all(
-                        row["file"].startswith("qualification/tests/")
+                        row["file"].startswith(f"examples/{slug}/tests/")
                         for row in levels["q2"]
                     )
                 )

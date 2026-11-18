@@ -27,6 +27,9 @@ Do not depend on SolidCraft names such as `Panel:1` or `Panel:2`.
 
 ## 2. Generated SolidCraft command tests
 
+Keep these tests beside the model under `examples/<case>/tests/`. Do not put
+model-specific command contracts in one central qualification test directory.
+
 Check the JSON Forge generates.
 
 These tests may check:
@@ -127,7 +130,13 @@ These classes are currently skipped in CI while
 Move any unique useful check into the central validator, then remove the
 duplicate skipped test.
 
-## 8. Review rule
+## 8. Qualification tooling tests
+
+Keep discovery, selection, reporting and publication-rule tests under
+`qualification/tests/`. The qualification test runner itself must have unit
+tests there. CI should call the runner rather than reimplement test discovery.
+
+## 9. Review rule
 
 Reject a new test when it:
 

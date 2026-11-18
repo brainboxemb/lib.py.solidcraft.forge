@@ -101,7 +101,7 @@ class CaseSpecificResultTests(unittest.TestCase):
             q1_targets = [{"file": "scpf/tests/test_api.py", "test": "test_api"}]
             q2_targets = [
                 {
-                    "file": "qualification/tests/test_contract.py",
+                    "file": "examples/case-one/tests/test_contract.py",
                     "test": "test_contract",
                 }
             ]

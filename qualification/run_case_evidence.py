@@ -26,42 +26,25 @@ def _run_target(
     target: dict[str, str],
 ) -> tuple[list[str], str, int, bool]:
     path = ROOT / target["file"]
-    if target["file"].startswith("scpf/tests/"):
-        command = [
-            sys.executable,
-            "-m",
-            "unittest",
-            "discover",
-            "-s",
-            str(ROOT / "scpf" / "tests"),
-            "-p",
-            path.name,
-            "-k",
-            target["test"],
-            "-v",
-        ]
-    else:
-        command = [
-            sys.executable,
-            "-m",
-            "unittest",
-            "discover",
-            "-s",
-            str(ROOT / "qualification" / "tests"),
-            "-t",
-            str(ROOT),
-            "-p",
-            path.name,
-            "-k",
-            target["test"],
-            "-v",
-        ]
+    command = [
+        sys.executable,
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        str(path.parent),
+        "-p",
+        path.name,
+        "-k",
+        target["test"],
+        "-v",
+    ]
 
     env = dict(os.environ)
     env.pop("PYTHONPATH", None)
     completed = subprocess.run(
         command,
-        cwd=Path.cwd(),
+        cwd=ROOT,
         env=env,
         text=True,
         stdout=subprocess.PIPE,

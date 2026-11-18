@@ -127,8 +127,10 @@ semantically.
 4. If not specified: update the API contract first.
 5. Update the smallest proving qualification fixture.
 6. Update derived user documentation/examples.
-7. Run Q1/Q2 first and only affected native cases while iterating.
-8. Run full Q1-Q6 before promotion/release.
+7. Keep a model's command-contract tests under `examples/<case>/tests/`.
+   Keep only qualification-tooling tests under `qualification/tests/`.
+8. Run Q1/Q2 first and only affected native cases while iterating.
+9. Run full Q1-Q6 before promotion/release.
 
 When sibling methods use the same public selector or option type, treat that as
 one API. Put shared validation/resolution in one code path where practical and

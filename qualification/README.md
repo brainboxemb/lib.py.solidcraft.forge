@@ -19,13 +19,19 @@ qualification prose or scripts.
 | Q5 | Saved-design parametric mutation where required |
 | Q6 | Fixed-camera visual regression |
 
-Qualification uses three explicit test layers:
+Qualification uses explicit test ownership:
 
 1. `scpf/tests/` checks Forge objects, public API and compiler behaviour.
-2. `qualification/tests/` checks emitted SolidCraft commands and qualification
-   tooling.
-3. `qualification/native_validation.py` is the single Q4/Q5 source for native
+2. `examples/<case>/tests/` checks the emitted SolidCraft commands for that
+   example.
+3. `qualification/tests/` checks the qualification tooling itself, including
+   discovery, selection, reporting and publication rules.
+4. `qualification/native_validation.py` is the single Q4/Q5 source for native
    geometry, saved-design mutation and native-history expectations.
+
+`qualification/testsuite.py` discovers the central tooling tests and each
+example-local test directory. CI calls that runner instead of duplicating test
+directory knowledge in workflow YAML.
 
 Do not copy native measurement expectations back into skipped unittest classes.
 The workflow/runner orchestrates these layers; it is not a separate test
@@ -36,7 +42,7 @@ framework.
 A qualification case reports Q1 or Q2 PASS only when its explicit test targets
 in `qualification/case_evidence.py` pass. Q1 targets point to focused API or
 compiler tests under `scpf/tests/`; Q2 targets point to focused command-
-contract tests under `qualification/tests/`.
+contract tests under `examples/<case>/tests/`.
 
 `qualification/run_case_evidence.py` executes those targets separately per
 case and writes a per-case log plus `q1-case-evidence.tsv` or
