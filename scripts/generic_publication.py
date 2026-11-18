@@ -449,8 +449,8 @@ def execute(
     return build_commit or None
 
 
-def cleanup(pull_request: int) -> None:
-    """Remove one PR build overlay and Pages preview through the generic tool."""
+def cleanup_build(pull_request: int) -> None:
+    """Remove one PR build overlay through the generic publisher."""
 
     run_tool(
         "publish",
@@ -462,6 +462,11 @@ def cleanup(pull_request: int) -> None:
         "--message",
         f"Remove Forge build PR #{pull_request}",
     )
+
+
+def cleanup_pages(pull_request: int) -> None:
+    """Remove one PR Pages preview through the generic publisher."""
+
     run_tool(
         "publish",
         "pages-cleanup",
@@ -472,3 +477,10 @@ def cleanup(pull_request: int) -> None:
         "--message",
         f"Remove Forge preview PR #{pull_request}",
     )
+
+
+def cleanup(pull_request: int) -> None:
+    """Remove one PR build overlay and Pages preview through the generic tool."""
+
+    cleanup_build(pull_request)
+    cleanup_pages(pull_request)
