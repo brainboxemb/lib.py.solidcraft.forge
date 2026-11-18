@@ -55,6 +55,9 @@ Cross-case summaries, qualification reports and technical diagrams belong under
 The stable main website occupies the root of `gh-pages`. Each open PR owns
 exactly one preview:
 
+Qualification evidence is not a website subtree. `gh-pages/qualification/`
+must not exist; that material belongs on the `build` branch.
+
 ```text
 /
 previews/
