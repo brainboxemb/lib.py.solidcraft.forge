@@ -1,5 +1,5 @@
-# One Forge example is one CI item. The integration step proves its generated
-# command contract; the native step uses Forge's existing SolidCraft case runner.
+# One Forge example is one CI item. The integration step writes the cheap
+# case evidence; the native step resumes the same staged output at compile.
 id: corner-anchor
 kind: example
 watch:
@@ -15,7 +15,14 @@ strategy:
   reuse: true
 steps:
   - id: integration
-    run: [python, -m, unittest, discover, -s, tests, -p, "test_*.py", -v]
+    run: [python, ../../scripts/example_ci.py, integration]
+    outputs:
+      - case/stages/corner-anchor/01-q1.json
+      - case/stages/corner-anchor/02-q2.json
+      - case/qualification/case-evidence/q1/corner-anchor.txt
+      - case/qualification/case-evidence/q2/corner-anchor.txt
   - id: native
     run: [python, ../../scripts/example_ci.py, native]
-    outputs: [native-case]
+    outputs:
+      - case/native/corner-anchor
+      - case/stages/corner-anchor/13-gate.json
