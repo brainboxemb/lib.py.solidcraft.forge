@@ -25,7 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       operation: ${{ steps.plan.outputs.operation }}
-      risk: ${{ steps.plan.outputs.risk }}
       gate: ${{ steps.plan.outputs.gate }}
       required_level: ${{ steps.plan.outputs.required_level }}
       cases: ${{ steps.plan.outputs.cases }}
@@ -33,7 +32,6 @@ jobs:
       pipeline_smoke: ${{ steps.plan.outputs.pipeline_smoke }}
       contracts: ${{ steps.plan.outputs.contracts }}
       needs_image: ${{ steps.plan.outputs.needs_image }}
-      site_only: ${{ steps.plan.outputs.site_only }}
       release: ${{ steps.plan.outputs.release }}
     steps:
       - uses: actions/checkout@v4
@@ -68,21 +66,13 @@ jobs:
     if: needs.plan.outputs.operation == 'pr' || needs.plan.outputs.operation == 'main'
     runs-on: ubuntu-latest
     outputs:
-      build_commit: ${{ steps.result.outputs.build_commit }}
+      build_commit: ${{ steps.pipeline.outputs.build_commit }}
     env:
-      GH_TOKEN: ${{ github.token }}
       SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
       BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before || '' }}
       SOURCE_REF: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
       PR_NUMBER: ${{ github.event.pull_request.number || 0 }}
-      GATE: ${{ needs.plan.outputs.gate }}
-      CASES: ${{ needs.plan.outputs.cases }}
-      REQUIRED_LEVEL: ${{ needs.plan.outputs.required_level }}
-      REFERENCE_SMOKE: ${{ needs.plan.outputs.reference_smoke }}
-      PIPELINE_SMOKE: ${{ needs.plan.outputs.pipeline_smoke }}
-      CONTRACTS: ${{ needs.plan.outputs.contracts }}
-      NEEDS_IMAGE: ${{ needs.plan.outputs.needs_image }}
-      OPERATION: ${{ needs.plan.outputs.operation }}
+      PUBLISH: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -101,14 +91,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install Forge verification dependencies
+      - name: Install Forge runtime
         run: python -m pip install -e ./scpf pillow pyyaml
-
-      - name: Run repository preflight
-        run: |
-          python scripts/ci_preflight.py \
-            --source-sha "$SOURCE_SHA" \
-            --site-out output/preflight-site
 
       - name: Resolve immutable qualification image
         if: needs.plan.outputs.needs_image == 'true'
@@ -126,7 +110,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Reuse immutable qualification image
+      - name: Resolve cached qualification image
         if: needs.plan.outputs.needs_image == 'true'
         id: image_cache
         run: |
@@ -165,43 +149,32 @@ jobs:
           cache-from: type=gha,scope=qualification-image
           cache-to: type=gha,mode=max,scope=qualification-image
 
-      - name: Validate new image or Forge pipeline with one complete case
-        if: >-
-          needs.plan.outputs.needs_image == 'true' &&
-          (steps.image_cache.outputs.exists != 'true' || needs.plan.outputs.pipeline_smoke == 'true')
+      - name: Run Forge pipeline
+        id: pipeline
         run: |
-          rm -rf "$RUNNER_TEMP/forge-simple-box"
-          mkdir -p "$RUNNER_TEMP/forge-simple-box"
-          docker run --rm \
-            -v "$GITHUB_WORKSPACE:/workspace" \
-            -v "$RUNNER_TEMP/forge-simple-box:/case-out" \
-            -w /workspace \
-            -e PYTHONPATH=/workspace/scpf:/workspace \
-            "${{ steps.image_cache.outputs.run_image }}" \
-            python qualification/case_runner.py simple-box --out /case-out
+          python scripts/forge_pipeline.py run \
+            --operation "${{ needs.plan.outputs.operation }}" \
+            --source-sha "$SOURCE_SHA" \
+            --base-sha "$BASE_SHA" \
+            --source-ref "$SOURCE_REF" \
+            --pull-request "$PR_NUMBER" \
+            --gate "${{ needs.plan.outputs.gate }}" \
+            --cases "${{ needs.plan.outputs.cases }}" \
+            --required-level "${{ needs.plan.outputs.required_level }}" \
+            --reference-smoke "${{ needs.plan.outputs.reference_smoke }}" \
+            --pipeline-smoke "${{ needs.plan.outputs.pipeline_smoke }}" \
+            --image-built "${{ steps.image_cache.outputs.exists == 'false' }}" \
+            --contracts "${{ needs.plan.outputs.contracts }}" \
+            --image "${{ steps.image_cache.outputs.run_image }}" \
+            --solidcraft-version "${{ steps.image.outputs.solidcraft }}" \
+            --repository "$GITHUB_REPOSITORY" \
+            --workflow-run-id "$GITHUB_RUN_ID" \
+            --generated-build generated-build \
+            --output-root output \
+            --publish "$PUBLISH" \
+            --github-output "$GITHUB_OUTPUT"
 
-          replay_state="$RUNNER_TEMP/forge-simple-box/stages/simple-box/04-replay.json"
-          mutate_state="$RUNNER_TEMP/forge-simple-box/stages/simple-box/08-mutate.json"
-          replay_before="$(sha256sum "$replay_state" | awk '{print $1}')"
-          mutate_before="$(sha256sum "$mutate_state" | awk '{print $1}')"
-
-          docker run --rm \
-            -v "$GITHUB_WORKSPACE:/workspace" \
-            -v "$RUNNER_TEMP/forge-simple-box:/case-out" \
-            -w /workspace \
-            -e PYTHONPATH=/workspace/scpf:/workspace \
-            "${{ steps.image_cache.outputs.run_image }}" \
-            python qualification/case_runner.py simple-box \
-              --out /case-out \
-              --stage mutate
-
-          replay_after="$(sha256sum "$replay_state" | awk '{print $1}')"
-          mutate_after="$(sha256sum "$mutate_state" | awk '{print $1}')"
-          test "$replay_before" = "$replay_after"
-          test "$mutate_before" != "$mutate_after"
-          python -c 'import json,sys; p=json.load(open(sys.argv[1])); assert p["status"]=="pass"' "$mutate_state"
-
-      - name: Publish newly built immutable qualification image
+      - name: Publish newly verified qualification image
         if: needs.plan.outputs.needs_image == 'true' && steps.image_cache.outputs.exists != 'true'
         run: |
           docker tag \
@@ -215,260 +188,13 @@ jobs:
             docker push "${{ steps.image.outputs.alias }}"
           fi
 
-      - name: Verify pinned SolidCraft command contracts
-        if: needs.plan.outputs.contracts == 'true'
-        run: |
-          rm -rf "$RUNNER_TEMP/solidcraft-snapshot"
-          mkdir -p "$RUNNER_TEMP/solidcraft-snapshot"
-          docker run --rm \
-            -v "$GITHUB_WORKSPACE:/workspace" \
-            -v "$RUNNER_TEMP/solidcraft-snapshot:/snapshot" \
-            -w /workspace \
-            -e PYTHONPATH=/workspace/scpf:/workspace \
-            "${{ steps.image_cache.outputs.run_image }}" \
-            bash -lc '
-              python scripts/solidcraft_snapshot.py \
-                --out /snapshot \
-                --version "${{ steps.image.outputs.solidcraft }}" \
-                --source-ref "v${{ steps.image.outputs.solidcraft }}"
-              diff -ru \
-                "docs/vendor/solidcraft/${{ steps.image.outputs.solidcraft }}/runtime" \
-                /snapshot
-              python scripts/solidcraft_snapshot.py \
-                --check-pinned "docs/vendor/solidcraft/${{ steps.image.outputs.solidcraft }}/runtime"
-            '
-
-      - name: Run selected qualification gate
-        if: needs.plan.outputs.gate != 'preflight'
-        run: |
-          args=(
-            --gate "$GATE"
-            --cases "$CASES"
-            --out output/gate
-            --source-sha "$SOURCE_SHA"
-            --build-out output/build
-            --scope "$OPERATION"
-            --source-ref "$SOURCE_REF"
-            --workflow-run-id "$GITHUB_RUN_ID"
-          )
-          if [ "$REFERENCE_SMOKE" = "true" ]; then
-            args+=(--reference-smoke)
-          fi
-          if [ -n "$BASE_SHA" ]; then
-            args+=(--base-commit "$BASE_SHA")
-          fi
-          if [ "$OPERATION" = "pr" ]; then
-            args+=(--pull-request "$PR_NUMBER")
-          fi
-
-          if [ "$NEEDS_IMAGE" = "true" ]; then
-            docker run --rm \
-              -v "$GITHUB_WORKSPACE:/workspace" \
-              -w /workspace \
-              -e PYTHONPATH=/workspace/scpf:/workspace \
-              -e SOLIDCRAFT_GPU=cpu \
-              "${{ steps.image_cache.outputs.run_image }}" \
-              python scripts/verification_gate.py "${args[@]}"
-          else
-            python scripts/verification_gate.py "${args[@]}"
-          fi
-
-      - name: Publish PR technical candidate
-        if: >-
-          needs.plan.outputs.operation == 'pr' &&
-          needs.plan.outputs.gate != 'preflight' &&
-          github.event.pull_request.head.repo.full_name == github.repository
-        id: publish_pr
-        run: |
-          python scripts/publish_generated.py replace-dir \
-            --branch build \
-            --source output/build \
-            --destination "pr/$PR_NUMBER" \
-            --source-ref "$SOURCE_REF" \
-            --expected-source "$SOURCE_SHA" \
-            --repository "$GITHUB_REPOSITORY" \
-            --pull-request "$PR_NUMBER" \
-            --message "Publish build PR #$PR_NUMBER" \
-            --github-output "$GITHUB_OUTPUT"
-
-      - name: Remove obsolete PR technical candidate
-        if: >-
-          needs.plan.outputs.operation == 'pr' &&
-          needs.plan.outputs.gate == 'preflight' &&
-          github.event.pull_request.head.repo.full_name == github.repository
-        run: |
-          python scripts/publish_generated.py remove-dir \
-            --branch build \
-            --destination "pr/$PR_NUMBER" \
-            --message "Remove obsolete build PR #$PR_NUMBER"
-
-      - name: Resolve and test PR preview
-        if: needs.plan.outputs.operation == 'pr'
-        run: |
-          build_commit="${{ steps.publish_pr.outputs.commit }}"
-          if [ -z "$build_commit" ]; then
-            build_commit="$(git -C generated-build rev-parse HEAD)"
-          fi
-
-          if [ "$GATE" = "preflight" ]; then
-            python scripts/generated_output.py resolve-preview \
-              --main generated-build/main \
-              --destination output/resolved
-          else
-            python scripts/generated_output.py resolve-preview \
-              --main generated-build/main \
-              --overlay output/build \
-              --destination output/resolved
-          fi
-
-          python scripts/generated_output.py materialize-site-evidence \
-            --build-root output/resolved \
-            --destination output/evidence
-
-          evidence_sha="$(python -c 'import json; print(json.load(open("output/resolved/build.json", encoding="utf-8"))["source_commit"])')"
-
-          python site/build.py \
-            --out output/site \
-            --source-sha "$SOURCE_SHA" \
-            --native output/evidence/native \
-            --references output/evidence/references \
-            --diagram-root output/evidence/diagrams \
-            --build-manifest output/resolved/build.json \
-            --build-commit "$build_commit" \
-            --build-scope main
-
-          python site/test_site.py \
-            output/site "$SOURCE_SHA" \
-            --evidence-sha="$evidence_sha" \
-            --build-commit="$build_commit"
-
-          python site/provenance.py write-build \
-            --out output/site/provenance.json \
-            --stage preview \
-            --source-ref "$SOURCE_REF" \
-            --source-commit "$SOURCE_SHA" \
-            --pull-request "$PR_NUMBER" \
-            --build-commit "$build_commit" \
-            --build-manifest output/resolved/build.json \
-            --workflow-run-id "$GITHUB_RUN_ID"
-
-      - name: Publish PR preview
-        if: >-
-          needs.plan.outputs.operation == 'pr' &&
-          github.event.pull_request.head.repo.full_name == github.repository
-        run: |
-          python scripts/publish_generated.py replace-dir \
-            --branch gh-pages \
-            --source output/site \
-            --destination "previews/pr-$PR_NUMBER" \
-            --source-ref "$SOURCE_REF" \
-            --expected-source "$SOURCE_SHA" \
-            --repository "$GITHUB_REPOSITORY" \
-            --pull-request "$PR_NUMBER" \
-            --message "Publish preview PR #$PR_NUMBER"
-
-      - name: Resolve stable main build
-        if: needs.plan.outputs.operation == 'main'
-        id: stable
-        run: |
-          if [ "$GATE" = "preflight" ]; then
-            python scripts/generated_output.py verify-build \
-              --root generated-build/main \
-              --require-complete
-            stable_root="generated-build/main"
-            build_commit="$(git -C generated-build rev-parse HEAD)"
-          else
-            python scripts/generated_output.py promote-overlay \
-              --main generated-build/main \
-              --overlay output/build \
-              --destination output/main \
-              --required-level "$REQUIRED_LEVEL" \
-              --source-commit "$SOURCE_SHA" \
-              --workflow-run-id "$GITHUB_RUN_ID"
-
-            python scripts/generated_output.py verify-build \
-              --root output/main \
-              --source-commit "$SOURCE_SHA" \
-              --require-complete
-
-            python scripts/publish_generated.py replace-dir \
-              --branch build \
-              --source output/main \
-              --destination main \
-              --source-ref main \
-              --expected-source "$SOURCE_SHA" \
-              --message "Publish build/main at $SOURCE_SHA" \
-              --github-output "$RUNNER_TEMP/build-output"
-
-            stable_root="output/main"
-            build_commit="$(sed -n 's/^commit=//p' "$RUNNER_TEMP/build-output")"
-          fi
-
-          evidence_sha="$(python -c "import json; print(json.load(open('$stable_root/build.json', encoding='utf-8'))['source_commit'])")"
-          echo "stable_root=$stable_root" >> "$GITHUB_OUTPUT"
-          echo "build_commit=$build_commit" >> "$GITHUB_OUTPUT"
-          echo "evidence_sha=$evidence_sha" >> "$GITHUB_OUTPUT"
-
-      - name: Build and publish stable Forge site
-        if: needs.plan.outputs.operation == 'main'
-        run: |
-          stable_root="${{ steps.stable.outputs.stable_root }}"
-          build_commit="${{ steps.stable.outputs.build_commit }}"
-          evidence_sha="${{ steps.stable.outputs.evidence_sha }}"
-
-          python scripts/generated_output.py materialize-site-evidence \
-            --build-root "$stable_root" \
-            --destination output/evidence
-
-          python site/build.py \
-            --out output/site \
-            --source-sha "$SOURCE_SHA" \
-            --native output/evidence/native \
-            --references output/evidence/references \
-            --diagram-root output/evidence/diagrams \
-            --build-manifest "$stable_root/build.json" \
-            --build-commit "$build_commit" \
-            --build-scope main
-
-          python site/test_site.py \
-            output/site "$SOURCE_SHA" \
-            --evidence-sha="$evidence_sha" \
-            --build-commit="$build_commit" \
-            --require-native --require-references
-
-          python site/provenance.py write-build \
-            --out output/site/provenance.json \
-            --stage stable \
-            --source-ref main \
-            --source-commit "$SOURCE_SHA" \
-            --build-commit "$build_commit" \
-            --build-manifest "$stable_root/build.json" \
-            --workflow-run-id "$GITHUB_RUN_ID"
-
-          python scripts/publish_generated.py replace-stable-pages \
-            --branch gh-pages \
-            --source output/site \
-            --source-ref main \
-            --expected-source "$SOURCE_SHA" \
-            --message "Publish stable Forge site at $SOURCE_SHA"
-
-      - name: Expose stable build commit
-        if: needs.plan.outputs.operation == 'main'
-        id: result
-        run: echo "build_commit=${{ steps.stable.outputs.build_commit }}" >> "$GITHUB_OUTPUT"
-
       - name: Upload Forge diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: forge-${{ github.run_id }}-${{ github.sha }}
           path: |
-            output/preflight-site/
-            output/gate/
-            output/build/
-            output/resolved/
-            output/main/
-            output/site/
+            output/
             ${{ runner.temp }}/forge-simple-box/
             ${{ runner.temp }}/solidcraft-snapshot/
           if-no-files-found: ignore
@@ -491,16 +217,7 @@ jobs:
           python-version: "3.12"
 
       - name: Remove closed PR generated output
-        run: |
-          python scripts/publish_generated.py remove-dir \
-            --branch build \
-            --destination "pr/${{ github.event.pull_request.number }}" \
-            --message "Remove build PR #${{ github.event.pull_request.number }}"
-
-          python scripts/publish_generated.py remove-dir \
-            --branch gh-pages \
-            --destination "previews/pr-${{ github.event.pull_request.number }}" \
-            --message "Remove preview PR #${{ github.event.pull_request.number }}"
+        run: python scripts/forge_pipeline.py cleanup --pull-request "${{ github.event.pull_request.number }}"
 
   reconcile:
     needs: plan
@@ -519,10 +236,7 @@ jobs:
       - name: Reconcile generated PR namespaces
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          python scripts/reconcile_generated.py \
-            --repository "$GITHUB_REPOSITORY" \
-            --apply
+        run: python scripts/reconcile_generated.py --repository "$GITHUB_REPOSITORY" --apply
 
   release:
     needs: [plan, forge]
