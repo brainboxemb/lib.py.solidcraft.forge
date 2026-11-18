@@ -19,6 +19,13 @@ from qualification.preview_scope import reference_smoke_reasons
 WEEKLY_FULL_CRON = "17 3 * * 1"
 RECONCILE_CRON = "41 4 * * *"
 FORGE_TRIGGER = ".github/workflows/forge.trigger"
+REQUIRED_LEVEL = {
+    "preflight": "",
+    "regenerate-derived": "derived",
+    "affected-q1-q2": "affected-q1-q2",
+    "affected-q1-q6": "affected-q1-q6",
+    "full-q1-q6": "q1-q6-full",
+}
 
 # Workflow/orchestration-only changes prove the complete machinery with one
 # real native case instead of requalifying the entire catalog.
@@ -92,6 +99,7 @@ def make_plan(
             "operation": "cleanup",
             "risk": "presentation",
             "gate": "preflight",
+            "required_level": "",
             "cases": "",
             "reference_smoke": False,
             "pipeline_smoke": False,
@@ -106,6 +114,7 @@ def make_plan(
             "operation": "reconcile",
             "risk": "presentation",
             "gate": "preflight",
+            "required_level": "",
             "cases": "",
             "reference_smoke": False,
             "pipeline_smoke": False,
@@ -122,6 +131,7 @@ def make_plan(
             "operation": "main",
             "risk": "foundational",
             "gate": "full-q1-q6",
+            "required_level": "q1-q6-full",
             "cases": "",
             "reference_smoke": True,
             "pipeline_smoke": False,
@@ -184,6 +194,7 @@ def make_plan(
         "operation": operation,
         "risk": risk,
         "gate": gate,
+        "required_level": REQUIRED_LEVEL[gate],
         "cases": ",".join(cases),
         "reference_smoke": reference_smoke,
         "pipeline_smoke": pipeline_smoke,
