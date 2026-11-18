@@ -7,7 +7,7 @@ contracts then exercise every compatible feature automatically.
 from dataclasses import dataclass
 from typing import Callable
 
-from scpf import Anchor, Box, Cylinder, Rectangle2D, Sketch, Sphere
+from scpf import Anchor, Box, Cylinder, Hole, Rectangle2D, Sketch, Sphere
 
 
 @dataclass(frozen=True)
@@ -20,6 +20,15 @@ class BodyCase:
     entry_z: float
     through_depth: float
     capabilities: frozenset[str]
+
+
+@dataclass(frozen=True)
+class FeatureCase:
+    name: str
+    capability: str
+    native_command: str
+    apply: Callable[[object, BodyCase], object]
+    expected_count: int = 1
 
 
 GENERAL_SOLID = "general-solid"
@@ -97,3 +106,21 @@ def build_joined(case):
         0, 0, 15, anchor=Anchor.BOTTOM
     )
     return body + boss
+
+
+def _apply_native_hole(body, case):
+    return body + Hole(
+        d=6,
+        depth=case.through_depth,
+        direction=(0, 0, -1),
+    ).at(0, 0, case.entry_z)
+
+
+FEATURE_CASES = (
+    FeatureCase(
+        "native-hole",
+        NATIVE_HOLE,
+        "solid.hole",
+        _apply_native_hole,
+    ),
+)
