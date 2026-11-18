@@ -1,5 +1,5 @@
-# One Forge example is one CI item. The integration step proves its generated
-# command contract; the native step uses Forge's existing SolidCraft case runner.
+# One Forge example is one CI item. The integration step writes cheap case
+# evidence through command compilation; the native step resumes at replay.
 id: eight-flightcase-corners
 kind: example
 watch:
@@ -15,7 +15,16 @@ strategy:
   reuse: true
 steps:
   - id: integration
-    run: [python, -m, unittest, discover, -s, tests, -p, "test_*.py", -v]
+    run: [python, ../../scripts/example_ci.py, integration]
+    outputs:
+      - case/eight-flightcase-corners.json
+      - case/stages/eight-flightcase-corners/01-q1.json
+      - case/stages/eight-flightcase-corners/02-q2.json
+      - case/stages/eight-flightcase-corners/03-compile.json
+      - case/qualification/case-evidence/q1/eight-flightcase-corners.txt
+      - case/qualification/case-evidence/q2/eight-flightcase-corners.txt
   - id: native
     run: [python, ../../scripts/example_ci.py, native]
-    outputs: [native-case]
+    outputs:
+      - case/native/eight-flightcase-corners
+      - case/stages/eight-flightcase-corners/13-gate.json
