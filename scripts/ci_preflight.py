@@ -82,6 +82,7 @@ def check_contract_tests() -> None:
         "test_publishing.py",
         "test_publish_generated.py",
         "test_reconcile_generated.py",
+        "test_qualification_image.py",
     ):
         run(
             [
