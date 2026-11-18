@@ -274,6 +274,19 @@ Forge qualification models should stay small and abstract so a failure proves
 one API rule rather than product-specific geometry.
 
 
+## Runtime/tool capabilities
+
+Treat stable runtime capabilities as repository knowledge, not as something to
+rediscover on every task.
+
+- In the ChatGPT project runtime used for this repository, the `gh` CLI is not
+  installed. Do not repeatedly run `gh auth status` or probe for `gh`.
+- Use the connected GitHub tools for GitHub reads and writes.
+- If a required GitHub action is not exposed by the connector, state that
+  specific connector limitation. Only then look for another available route.
+- Re-check a recorded capability only after the runtime/tooling environment has
+  explicitly changed.
+
 ## Git workflow
 
 Treat one logical change as one branch/PR and finish that change before calling
@@ -385,6 +398,12 @@ Do not publish failing technical evidence as stable.
 Keep user-visible changes under `[Unreleased]` in `CHANGELOG.md` during
 normal development. Do not create or move release tags manually. For a release,
 follow `docs/10-release-process.md`: use a `qualification/**` release branch,
-bump only `scpf/pyproject.toml`, date the changelog section, require full Q1-Q6
-on the release head and main head, then let the generic release workflow create
-the annotated tag and GitHub Release.
+bump only `scpf/pyproject.toml`, date the changelog section, and require one
+successful full Q1-Q6 qualification for the exact source tree and qualification
+toolchain being released. If the merged `main` source tree is identical to an
+already fully qualified release head, reuse that immutable qualification
+evidence and promote it; do not run full Q1-Q6 again merely because the commit
+SHA changed during merge/squash. Re-run full Q1-Q6 only when no valid full
+qualification exists for that exact source tree/toolchain or when the merged
+tree differs. Then let the generic release workflow create the annotated tag
+and GitHub Release.
