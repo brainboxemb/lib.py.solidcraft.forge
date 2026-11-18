@@ -122,6 +122,23 @@ QUALIFICATION_CASES = [
         ],
     },
     {
+        "slug": "sheet-fold",
+        "group": "features",
+        "title": "Flat sheet, through hole and 90° fold",
+        "intent": "Qualify the fabrication workflow used by later bent parts: create one flat sheet blank, cut an ordinary Hole while flat, fold existing material, and recover the developed flat pattern.",
+        "forge_api": "with Sketch(...): Rectangle2D(...); blank.sheet_metal(thickness=..., bend_radius=..., k_factor=...); sheet + Hole(...).at(...); sheet.fold(line=..., angle=..., fixed=...)",
+        "forge_model": "One 80 x 40 mm rectangular flat blank with a shared 2 mm sheet rule, one Ø6 through hole in the fixed flat, and one 90 degree fold along the Y direction near the right side.",
+        "lowering": "Forge emits one sheet.manage_rules, one Blank sketch, one sheet.flange(type='base'), one native solid.hole and one native sheet.fold. No solid.extrude or fused-solid bend approximation is used.",
+        "native_expectation": "SolidCraft 0.42 keeps one connected sheet-metal body with the Ø6 hole on the fixed flat, one native Fold feature and a flat pattern that recovers the original rectangular blank and cutout.",
+        "mutation": "No Q5 mutation is required in this first sheet-metal qualification. Q1-Q4 prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.",
+        "references": [
+            ("build123d", "The pinned build123d 0.12.0 reference uses make_brake_formed for an independent final-geometry comparison. Its newer BuildSheet/bend API is design input only and is not silently substituted into the pinned reference runtime."),
+            ("CadQuery", "Independent final geometry is built from flat and bent solid envelopes; CadQuery does not provide the same native sheet-history contract."),
+            ("PythonSCAD", "Constructive geometry independently represents the formed envelope and through hole; native sheet rules/history remain SolidCraft-only evidence."),
+            ("pyBOSL2", "Constructive geometry independently represents the formed envelope and through hole; native sheet rules/history remain SolidCraft-only evidence."),
+        ],
+    },
+    {
         "slug": "top-sketch-after-chamfer",
         "group": "features",
         "title": "TOP Sketch after chamfer",
