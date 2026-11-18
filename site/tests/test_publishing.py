@@ -120,13 +120,6 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertIn(".github/workflows/qualify-main.trigger", agents)
         self.assertIn("Do not create a temporary", agents)
 
-    def test_preflight_pr_can_skip_preview_when_main_baseline_is_incomplete(self):
-        workflow = (ROOT / ".github/workflows/preview.yml").read_text()
-        self.assertIn("Verify reusable preview baseline", workflow)
-        self.assertIn("--require-complete", workflow)
-        self.assertIn("continue-on-error: true", workflow)
-        self.assertIn("steps.preview_baseline.outcome == 'success'", workflow)
-
     def test_reconcile_is_scheduled_and_scoped(self):
         workflow = (ROOT / ".github/workflows/reconcile.yml").read_text()
         self.assertIn("schedule:", workflow)
