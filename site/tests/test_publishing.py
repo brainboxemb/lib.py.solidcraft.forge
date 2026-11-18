@@ -150,6 +150,8 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertIn("--evidence-commit", workflow)
         self.assertIn("ref: gh-pages", workflow)
         self.assertIn("publish_branch: gh-pages", workflow)
+        self.assertIn("group: scpf-pages-publish", workflow)
+        self.assertIn("cancel-in-progress: false", workflow)
         self.assertNotIn("publish_branch: qualified-output", workflow)
         self.assertNotIn("publish_branch: preview-output", workflow)
 

@@ -15,8 +15,8 @@ permissions:
   actions: read
 
 concurrency:
-  group: scpf-site-main
-  cancel-in-progress: true
+  group: scpf-pages-publish
+  cancel-in-progress: false
 
 jobs:
   site:
