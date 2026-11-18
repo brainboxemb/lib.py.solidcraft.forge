@@ -1,7 +1,9 @@
-# CI items live beside the Forge code or example that owns their behaviour.
-# A folder becomes an item only when it contains ci.yml, so the examples glob
-# grows with the catalog without maintaining a second central list.
+# CI items live beside the Forge code or generated evidence that owns behaviour.
+# The generic tool discovers folders only; names such as example/reference have
+# no built-in meaning.
 schema: 1
 items:
   - scpf/tests
   - examples/*
+  - qualification/reference_suite
+  - qualification/diagrams
