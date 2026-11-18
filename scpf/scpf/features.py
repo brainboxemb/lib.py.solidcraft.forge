@@ -32,7 +32,11 @@ from .placement import (
     _combine,
     _shell_thickness,
 )
-from .sketches import compile_base, _extrude_profile_params
+from .sketches import (
+    compile_base,
+    compile_standalone_sketch,
+    _extrude_profile_params,
+)
 
 
 def _is_pure_csg_tree(shape):
@@ -68,7 +72,14 @@ def _is_feature_tree(shape):
         and _is_pure_csg_tree(shape)
     ):
         return False
-    if shape.kind in ("box", "placed_box", "tapered_box", "sketch_base_extrusion"):
+    if shape.kind in (
+        "box",
+        "placed_box",
+        "tapered_box",
+        "sketch_base_extrusion",
+        "sheet_base",
+        "sheet_fold",
+    ):
         return True
     if shape.kind in (
         "fillet", "chamfer", "shell", "union", "difference",
@@ -1009,6 +1020,39 @@ def _non_count_parameter_names(node, found=None):
             _non_count_parameter_names(original, found)
             _non_count_parameter_names((axis, alignment, reversed), found)
             return found
+        if node.kind == "sheet_base":
+            (
+                sketch_name,
+                plane,
+                origin,
+                plane_offset,
+                profiles,
+                operations,
+                thickness,
+                bend_radius,
+                _k_factor,
+                rule_name,
+            ) = node.data
+            _non_count_parameter_names(
+                (
+                    sketch_name,
+                    plane,
+                    origin,
+                    plane_offset,
+                    profiles,
+                    operations,
+                    thickness,
+                    bend_radius,
+                    rule_name,
+                ),
+                found,
+            )
+            return found
+        if node.kind == "sheet_fold":
+            original, line, _angle, fixed, position, flip = node.data
+            _non_count_parameter_names(original, found)
+            _non_count_parameter_names((line, fixed, position, flip), found)
+            return found
         if node.kind == "sketch_pattern_rectangular":
             (
                 source, _count1, spacing1, dir1,
@@ -1033,10 +1077,15 @@ def _non_count_parameter_names(node, found=None):
 
 
 def _pattern_angle_parameter_names(node, found=None):
-    """Collect direct Parameters used as circular-pattern angles in degrees."""
+    """Collect direct Parameters used as native angle fields in degrees."""
     if found is None:
         found = set()
     if isinstance(node, Shape):
+        if node.kind == "sheet_fold":
+            original, _line, angle, _fixed, _position, _flip = node.data
+            found.update(param.name for param in parameters_in(angle))
+            _pattern_angle_parameter_names(original, found)
+            return found
         if node.kind == "circular_pattern":
             (
                 original, _sources, _axis, _count, angle,
@@ -1052,6 +1101,33 @@ def _pattern_angle_parameter_names(node, found=None):
     return found
 
 
+def _sheet_dimensionless_parameter_names(node, found=None):
+    """Collect direct Parameters used as dimensionless sheet-rule values."""
+    if found is None:
+        found = set()
+    if isinstance(node, Shape):
+        if node.kind == "sheet_base":
+            (
+                _sketch_name,
+                _plane,
+                _origin,
+                _plane_offset,
+                _profiles,
+                _operations,
+                _thickness,
+                _bend_radius,
+                k_factor,
+                _rule_name,
+            ) = node.data
+            found.update(param.name for param in parameters_in(k_factor))
+            return found
+        _sheet_dimensionless_parameter_names(node.data, found)
+    elif isinstance(node, (tuple, list)):
+        for item in node:
+            _sheet_dimensionless_parameter_names(item, found)
+    return found
+
+
 def _native_feature_name(feature):
     """Resolve the native history feature referenced by a pattern source."""
     if feature.kind == "explicit_sketch_extrusion":
@@ -1063,6 +1139,76 @@ def _native_feature_name(feature):
 
 
 def _to_commands(shape, name):
+    if shape.kind == "sheet_base":
+        (
+            sketch_name,
+            plane,
+            origin,
+            plane_offset,
+            profiles,
+            operations,
+            thickness,
+            bend_radius,
+            k_factor,
+            rule_name,
+        ) = shape.data
+        _require_positive(thickness, "sheet metal thickness")
+        _require_positive(bend_radius, "sheet metal bend radius")
+        k = pv(k_factor)
+        if not 0 < k < 1:
+            raise ModelError("sheet metal k_factor must be between 0 and 1")
+
+        sketch, meta = compile_standalone_sketch(
+            sketch_name,
+            plane,
+            origin,
+            plane_offset,
+            profiles,
+            operations,
+        )
+        rule = _command(
+            "sheet.manage_rules",
+            name=rule_name,
+            thickness=command_value(thickness),
+            k_factor=command_value(k_factor),
+            bend_radius=command_value(bend_radius),
+            active=True,
+        )
+        base = _command(
+            "sheet.flange",
+            type="base",
+            sketch=sketch_name,
+            rule=rule_name,
+            body_name=name,
+        )
+        meta.update(
+            {
+                "sheet": True,
+                "thickness": thickness,
+                "bend_radius": bend_radius,
+                "k_factor": k_factor,
+                "rule_name": rule_name,
+            }
+        )
+        return [rule, *sketch, base], meta
+
+    if shape.kind == "sheet_fold":
+        original, line, angle, fixed, position, flip = shape.data
+        steps, base = _to_commands(original, name)
+        params = {
+            "points": [
+                [command_value(v) for v in point]
+                for point in line
+            ],
+            "angle": command_value(angle),
+            "position": position,
+            "flip": flip,
+            "body": name,
+        }
+        if fixed is not None:
+            params["fixed"] = [command_value(v) for v in fixed]
+        return steps + [_command("sheet.fold", **params)], base
+
     if shape.kind in ("box", "placed_box", "tapered_box", "sketch_base_extrusion"):
         return compile_base(shape, name)
     if _is_pure_csg_tree(shape):
@@ -1243,6 +1389,7 @@ def compile_features(shape, name):
 
     count_parameters = _pattern_count_parameter_names(shape)
     angle_parameters = _pattern_angle_parameter_names(shape)
+    sheet_dimensionless_parameters = _sheet_dimensionless_parameter_names(shape)
     normal_parameters = _non_count_parameter_names(shape)
 
     shared_roles = count_parameters & angle_parameters
@@ -1261,6 +1408,16 @@ def compile_features(shape, name):
             f"{names}; use separate model parameters for count and length"
         )
 
+    mixed_dimensionless = (
+        sheet_dimensionless_parameters & normal_parameters
+    )
+    if mixed_dimensionless:
+        names = ", ".join(sorted(mixed_dimensionless))
+        raise ModelError(
+            "sheet dimensionless parameter(s) also used as millimetre "
+            f"dimensions: {names}; use separate model parameters"
+        )
+
     mixed_angles = angle_parameters & normal_parameters
     if mixed_angles:
         names = ", ".join(sorted(mixed_angles))
@@ -1270,6 +1427,7 @@ def compile_features(shape, name):
             "and length"
         )
 
-    units = {parameter: "" for parameter in count_parameters}
+    dimensionless_parameters = count_parameters | sheet_dimensionless_parameters
+    units = {parameter: "" for parameter in dimensionless_parameters}
     units.update({parameter: "deg" for parameter in angle_parameters})
     return _param_commands(parameters, units=units) + steps
