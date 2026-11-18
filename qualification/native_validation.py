@@ -226,22 +226,45 @@ def validate_anchored_holes(root: Path) -> Validation:
     v.check("two cylindrical hole walls", cylinders == 2, 2, cylinders)
     _check_contract_volume(v, b, "anchored-holes", tol=0.5)
 
-    timeline = [
-        (row.get("type"), row.get("name"))
-        for row in d.get("timeline", [])
-    ]
-    expected_timeline = [
-        ("Sketch", "Base"),
-        ("ExtrudeFeature", "Base"),
-        ("Sketch", "Hole"),
-        ("ExtrudeFeature", "Hole"),
-        ("RectangularPatternFeature", "RectangularPattern1"),
+    timeline_rows = d.get("timeline", [])
+    timeline_types = [row.get("type") for row in timeline_rows]
+    expected_types = [
+        "Sketch",
+        "ExtrudeFeature",
+        "Sketch",
+        "ExtrudeFeature",
+        "RectangularPatternFeature",
     ]
     v.check(
         "one source hole cut is repeated by native rectangular history",
-        timeline == expected_timeline,
-        expected_timeline,
-        timeline,
+        timeline_types == expected_types
+        and timeline_rows[0].get("name") == "Base"
+        and timeline_rows[2].get("name") == "Hole"
+        and timeline_rows[3].get("name") == "Hole"
+        and timeline_rows[4].get("name") == "RectangularPattern1",
+        {
+            "types": expected_types,
+            "explicit_names": {
+                0: "Base",
+                2: "Hole",
+                3: "Hole",
+                4: "RectangularPattern1",
+            },
+        },
+        {
+            "types": timeline_types,
+            "names": [row.get("name") for row in timeline_rows],
+        },
+    )
+    v.check(
+        "anchored-hole native history has no feature warnings",
+        all(row.get("warning") is None for row in timeline_rows),
+        None,
+        [
+            (row.get("name"), row.get("warning"))
+            for row in timeline_rows
+            if row.get("warning") is not None
+        ],
     )
     return v
 
