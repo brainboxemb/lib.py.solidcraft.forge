@@ -204,6 +204,13 @@
       "guide": "guide/geometry/#solids",
       "signature": "Cylinder(*, d, h, axis=<Axis.Z: 'Z'>, anchor=<Anchor.CENTER: 'center'>)"
     },
+    "Cone": {
+      "kind": "callable",
+      "summary": "Create a native cone or tapered cylinder (frustum).",
+      "reference": "reference/geometry-constructors/#Cone",
+      "guide": "guide/geometry/#solids",
+      "signature": "Cone(*, d, top_d=0, h, axis=<Axis.Z: 'Z'>, anchor=<Anchor.CENTER: 'center'>)"
+    },
     "Sphere": {
       "kind": "callable",
       "summary": "Create a sphere centred on the origin unless another anchor is given.",
