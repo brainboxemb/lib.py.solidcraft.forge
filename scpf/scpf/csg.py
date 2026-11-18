@@ -123,6 +123,16 @@ def _csg_primitive(shape, body_name, operation, *, offset=(0, 0, 0)):
 
 
 def _csg_apply(shape, name, operation, offset=(0, 0, 0)):
+    if shape.kind == "placed_box":
+        box, x, y, z, anchor = shape.data
+        length, width, height, _ = box.data
+        placed = Shape("box", (length, width, height, anchor))
+        return _csg_apply(
+            placed,
+            name,
+            operation,
+            (command_value(x), command_value(y), command_value(z)),
+        )
     if shape.kind == "placed3d":
         child, x, y, z = shape.data
         if child.kind != "cylinder":
@@ -143,6 +153,15 @@ def _csg_apply(shape, name, operation, offset=(0, 0, 0)):
 
 
 def _csg_new(shape, name, offset=(0, 0, 0)):
+    if shape.kind == "placed_box":
+        box, x, y, z, anchor = shape.data
+        length, width, height, _ = box.data
+        placed = Shape("box", (length, width, height, anchor))
+        return _csg_new(
+            placed,
+            name,
+            (command_value(x), command_value(y), command_value(z)),
+        )
     if shape.kind == "placed3d":
         child, x, y, z = shape.data
         if child.kind != "cylinder":
