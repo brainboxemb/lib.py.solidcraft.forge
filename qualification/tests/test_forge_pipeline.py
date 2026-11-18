@@ -60,6 +60,43 @@ class ForgePipelineTests(unittest.TestCase):
         self.assertIn("--pull-request", command)
         self.assertIn("351", command)
 
+    def test_qualify_runs_migrated_case_only_for_native_gate(self):
+        ns = args()
+        command = forge_pipeline.qualification_args(ns)
+        with patch.object(
+            forge_pipeline,
+            "run_tool_cad_ci_case",
+        ) as case_item, patch.object(
+            forge_pipeline,
+            "docker_python",
+        ) as legacy_gate:
+            forge_pipeline.qualify(ns)
+
+        case_item.assert_called_once_with(
+            "case-simple-box",
+            ns.image,
+        )
+        legacy_gate.assert_called_once_with(ns.image, *command)
+
+    def test_qualify_skips_native_case_item_for_cheap_gate(self):
+        ns = args(
+            gate="affected-q1-q2",
+            required_level="affected-q1-q2",
+            image="",
+        )
+        command = forge_pipeline.qualification_args(ns)
+        with patch.object(
+            forge_pipeline,
+            "run_tool_cad_ci_case",
+        ) as case_item, patch.object(
+            forge_pipeline,
+            "python",
+        ) as legacy_gate:
+            forge_pipeline.qualify(ns)
+
+        case_item.assert_not_called()
+        legacy_gate.assert_called_once_with(*command)
+
     def test_execute_pr_owns_full_repository_sequence(self):
         ns = args(pipeline_smoke=True, contracts=True)
         with patch.object(
