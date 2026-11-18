@@ -1416,39 +1416,6 @@ class Shape:
             (self, x, y, z),
         )
 
-    def repeat_linear(self, *, count, spacing, axis):
-        """Repeat a Hole or Cylinder in one centred linear row.
-
-        Parameters:
-            count: Number of repeated features. Must be a positive integer.
-            spacing: Centre-to-centre distance between adjacent features, in mm.
-            axis: Pattern direction. Currently Axis.X or Axis.Y.
-
-        Use when:
-            Repeat a Hole or Cylinder before placing it on a supported parent
-            face. The row is centred around the feature placement point.
-
-        Limits:
-            Only Hole and Cylinder are supported. count must be a fixed positive
-            integer and spacing must be positive.
-
-        Example:
-            Hole(d=8).repeat_linear(count=3, spacing=24, axis=Axis.X)
-        """
-        if self.kind not in ("cylinder", "hole"):
-            raise ValueError("repeat_linear() supports Cylinder or Hole")
-        if not isinstance(count, int) or isinstance(count, bool) or count < 1:
-            raise ValueError("repeat_linear count must be a positive integer")
-        if _pv(spacing) <= 0:
-            raise ValueError("repeat_linear spacing must be positive")
-        try:
-            axis = Axis(axis)
-        except ValueError as exc:
-            raise ValueError("repeat_linear axis must be Axis.X or Axis.Y") from exc
-        if axis not in (Axis.X, Axis.Y):
-            raise ValueError("repeat_linear supports only Axis.X or Axis.Y")
-        return Shape("linear_repeat", (self, count, spacing, axis))
-
     def rectangular_pattern(
         self,
         feature,
