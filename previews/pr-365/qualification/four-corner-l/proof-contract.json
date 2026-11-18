@@ -1,0 +1,206 @@
+{
+  "case": "four-corner-l",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "FrameBlock",
+        "min": [
+          -60,
+          -40,
+          0
+        ],
+        "max": [
+          60,
+          40,
+          60
+        ]
+      },
+      {
+        "label": "front-left",
+        "min": [
+          -64,
+          -44,
+          22
+        ],
+        "max": [
+          -32,
+          -12,
+          38
+        ]
+      },
+      {
+        "label": "front-right",
+        "min": [
+          32,
+          -44,
+          22
+        ],
+        "max": [
+          64,
+          -12,
+          38
+        ]
+      },
+      {
+        "label": "rear-right",
+        "min": [
+          32,
+          12,
+          22
+        ],
+        "max": [
+          64,
+          44,
+          38
+        ]
+      },
+      {
+        "label": "rear-left",
+        "min": [
+          -64,
+          12,
+          22
+        ],
+        "max": [
+          -32,
+          44,
+          38
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "FrameBlock",
+        "min": [
+          -60,
+          -40,
+          0
+        ],
+        "max": [
+          60,
+          40,
+          60
+        ]
+      },
+      {
+        "label": "FL front arm",
+        "min": [
+          -60,
+          -44,
+          22
+        ],
+        "max": [
+          -32,
+          -40,
+          38
+        ]
+      },
+      {
+        "label": "FL left arm",
+        "min": [
+          -64,
+          -40,
+          22
+        ],
+        "max": [
+          -60,
+          -12,
+          38
+        ]
+      },
+      {
+        "label": "FR front arm",
+        "min": [
+          32,
+          -44,
+          22
+        ],
+        "max": [
+          60,
+          -40,
+          38
+        ]
+      },
+      {
+        "label": "FR right arm",
+        "min": [
+          60,
+          -40,
+          22
+        ],
+        "max": [
+          64,
+          -12,
+          38
+        ]
+      },
+      {
+        "label": "RR rear arm",
+        "min": [
+          32,
+          40,
+          22
+        ],
+        "max": [
+          60,
+          44,
+          38
+        ]
+      },
+      {
+        "label": "RR right arm",
+        "min": [
+          60,
+          12,
+          22
+        ],
+        "max": [
+          64,
+          40,
+          38
+        ]
+      },
+      {
+        "label": "RL rear arm",
+        "min": [
+          -60,
+          40,
+          22
+        ],
+        "max": [
+          -32,
+          44,
+          38
+        ]
+      },
+      {
+        "label": "RL left arm",
+        "min": [
+          -64,
+          12,
+          22
+        ],
+        "max": [
+          -60,
+          40,
+          38
+        ]
+      }
+    ],
+    "required_views": [
+      "iso",
+      "front",
+      "right"
+    ],
+    "visual_features": [],
+    "bounds_sufficient": true,
+    "bounds_reason": "This case adds placement of four already-qualified L-profile components around the frame. The component profile itself is qualified by the bracket case; these bounds describe this case's additional geometry."
+  },
+  "solidcraft_only": {
+    "native_expectation": "One vertical angle profile wraps each front-left, front-right, rear-right and rear-left rounded side corner. All four occupy Z=22..38 on the 60 mm frame.",
+    "generated_relationship": "Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id.",
+    "q5_required": true,
+    "q5_reason": "Change frame_width/depth from 120x80 to 160x120 mm in the saved .sc design; all four profiles follow the calculated corner positions while remaining centred at the same frame height.",
+    "mutation": "Change frame_width/depth from 120x80 to 160x120 mm in the saved .sc design; all four profiles follow the calculated corner positions while remaining centred at the same frame height."
+  }
+}

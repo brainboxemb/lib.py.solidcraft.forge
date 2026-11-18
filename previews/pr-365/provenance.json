@@ -1,0 +1,17 @@
+{
+  "schema_version": 2,
+  "stage": "preview",
+  "source_ref": "ci/364-run-selected-example-items",
+  "source_commit": "5705828b55a04d122512b1a2c0808dba88f83b6c",
+  "pull_request": "365",
+  "forge_version": "0.11.0",
+  "solidcraft_version": "0.42.0",
+  "workflow_run_id": "44413020849",
+  "build_commit": "03d6b934ac53f5c65fab630a58377f597984f66c",
+  "qualification": {
+    "level": "per-case",
+    "status": "pass",
+    "source_commit": "e74072ef6e674b6b3f65b52d86d4e7a04a4ffa13"
+  },
+  "generated_at": "2026-11-18T22:37:58.882008Z"
+}
