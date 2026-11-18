@@ -23,6 +23,13 @@ EXPECTED_BOUNDS = {
     "hole-family": [
         {"label": "HoleFamily", "min": [-60, -20, 0], "max": [60, 20, 12]},
     ],
+    "sheet-fold": [
+        {
+            "label": "SheetFold",
+            "min": [-40.0, -20.0, 0.0],
+            "max": [21.64380551, 20.0, 21.64380551],
+        },
+    ],
     "top-sketch-after-chamfer": [
         {"label": "TopSketchAfterChamfer", "min": [-50, -35, 0], "max": [50, 35, 10]},
     ],
@@ -316,6 +323,7 @@ REQUIRED_VISUAL_VIEWS.update({
     # both Y positions and exposes the full Z depth.
     "anchored-holes": ("top", "right", "iso"),
     "hole-family": ("top", "front", "iso"),
+    "sheet-fold": ("front", "top", "iso"),
     "top-sketch-after-chamfer": ("top", "front", "iso"),
     # Pattern/slot cases need a normal profile view plus an orthogonal view
     # that makes the through-cut depth visible.
@@ -430,6 +438,10 @@ EXPECTED_VISUAL_FEATURES["hole-family"] = [
     _through_hole("M6 tap drill Ø5", 45, 0, 5, 0, 12),
 ]
 
+EXPECTED_VISUAL_FEATURES["sheet-fold"] = [
+    _through_hole("fixed-flat Ø6 hole", -20, 0, 6, 0, 2),
+]
+
 EXPECTED_VISUAL_FEATURES["top-sketch-after-chamfer"] = [
     _through_hole("center hole Ø12 through", 0, 0, 12, 0, 10),
 ]
@@ -527,6 +539,10 @@ _BOUNDS_ASSESSMENTS = {
     "hole-family": {
         "sufficient": False,
         "reason": "All four Hole-family features leave the outer plate envelope unchanged. 3D probes are required for the simple bore, counterbore recess, countersink cone and threaded tap-drill envelope; native history separately proves thread metadata and modeled-thread intent.",
+    },
+    "sheet-fold": {
+        "sufficient": False,
+        "reason": "The formed bounding box does not prove sheet thickness, the Ø6 cutout or that the upright region came from a native bend. Volume and native sheet history/flat-pattern evidence are required.",
     },
     "top-sketch-after-chamfer": {
         "sufficient": False,
@@ -644,6 +660,16 @@ _BOUNDS_ASSESSMENTS = {
 
 
 _GEOMETRY_DETAILS = {
+    "sheet-fold": {
+        "volume_mm3": 80.0 * 40.0 * 2.0 - math.pi * 3.0**2 * 2.0,
+        "volume_tolerance_mm3": 5.0,
+        "watertight": True,
+        "surface_distance_probes": _through_probes(
+            [("fixed-flat hole", -20.0, 0.0)],
+            (0.5, 1.5),
+            3.0,
+        ),
+    },
     "hole-family": {
         "watertight": True,
         "surface_distance_probes": [
