@@ -103,19 +103,32 @@ def run_tool_cad_ci_layers(out: Path) -> None:
 
     # Keep the always-cheap layer independent from native runtime setup.
     # Native case items are invoked later only when Forge selected a native gate.
-    for item in ("library-tests", "integration-simple-box"):
-        run(
-            [
-                sys.executable,
-                str(tool),
-                "run",
-                "--repo",
-                str(ROOT),
-                "--item",
-                item,
-            ],
-            env=tool_cad_ci_env(),
-        )
+    run(
+        [
+            sys.executable,
+            str(tool),
+            "run",
+            "--repo",
+            str(ROOT),
+            "--item",
+            "library-tests",
+        ],
+        env=tool_cad_ci_env(),
+    )
+    run(
+        [
+            sys.executable,
+            str(tool),
+            "run",
+            "--repo",
+            str(ROOT),
+            "--item",
+            "simple-box",
+            "--until",
+            "integration",
+        ],
+        env=tool_cad_ci_env(),
+    )
 
 
 def run_tool_cad_ci_case(item: str, image: str) -> None:
@@ -135,6 +148,8 @@ def run_tool_cad_ci_case(item: str, image: str) -> None:
             str(ROOT),
             "--item",
             item,
+            "--from",
+            "native",
         ],
         env=env,
     )
