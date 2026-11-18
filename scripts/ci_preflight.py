@@ -61,6 +61,8 @@ def check_contract_tests() -> None:
         "test_preview_scope.py",
         "test_impact.py",
         "test_generated_output.py",
+        "test_setup.py",
+        "test_merge_promotion.py",
     ):
         run(
             [
@@ -79,6 +81,7 @@ def check_contract_tests() -> None:
     for pattern in (
         "test_publishing.py",
         "test_publish_generated.py",
+        "test_reconcile_generated.py",
     ):
         run(
             [

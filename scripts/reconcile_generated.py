@@ -32,6 +32,8 @@ def open_prs(repository: str) -> dict[int, str]:
         [
             "gh",
             "api",
+            "--method",
+            "GET",
             f"repos/{repository}/pulls",
             "-f",
             "state=open",
