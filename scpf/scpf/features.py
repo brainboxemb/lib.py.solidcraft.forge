@@ -22,6 +22,7 @@ from .core import (
     command_value,
     number_text,
     parameters_in,
+    _hole_spec,
 )
 from .compiler import ModelError, _command, _collect, _param_commands, _require_positive
 from .placement import (
@@ -81,21 +82,20 @@ def _hole_commands(feature, position, name, refs=None):
     """Compile one explicitly positioned Hole-family feature."""
     if feature.kind != "hole":
         raise ModelError("native hole operation requires a Hole-family feature")
-    (
-        hole_type,
-        diameter,
-        depth,
-        direction,
-        counterbore_d,
-        counterbore_depth,
-        countersink_d,
-        countersink_angle,
-        thread,
-        hand,
-        thread_depth,
-        modeled,
-        ease_out,
-    ) = feature.data
+    spec = _hole_spec(feature)
+    hole_type = spec["type"]
+    diameter = spec["diameter"]
+    depth = spec["depth"]
+    direction = spec["direction"]
+    counterbore_d = spec["counterbore_diameter"]
+    counterbore_depth = spec["counterbore_depth"]
+    countersink_d = spec["countersink_diameter"]
+    countersink_angle = spec["countersink_angle"]
+    thread = spec["thread"]
+    hand = spec["hand"]
+    thread_depth = spec["thread_depth"]
+    modeled = spec["modeled"]
+    ease_out = spec["ease_out"]
 
     point = tuple(position)
     concrete_point = [pv(v) for v in point]
@@ -462,21 +462,11 @@ def _attached_hole_commands(child, target, parent_anchor, resolved, name):
     if parent_anchor is not Anchor.TOP:
         raise ModelError("Hole.attach() currently starts drilling from Anchor.TOP")
 
-    (
-        hole_type,
-        diameter,
-        depth,
-        hole_direction,
-        counterbore_d,
-        counterbore_depth,
-        countersink_d,
-        countersink_angle,
-        thread,
-        hand,
-        thread_depth,
-        modeled,
-        ease_out,
-    ) = feature.data
+    spec = _hole_spec(feature)
+    hole_type = spec["type"]
+    diameter = spec["diameter"]
+    depth = spec["depth"]
+    hole_direction = spec["direction"]
     _require_positive(diameter, "hole diameter")
     if hole_type != "simple" or hole_direction is not None:
         raise ModelError(
@@ -534,7 +524,7 @@ def _attached_hole_commands(child, target, parent_anchor, resolved, name):
 
     operations = [_command("sketch.create", **plane)]
     for primitive, position, _refs in resolved:
-        hole_diameter = primitive.data[0]
+        hole_diameter = _hole_spec(primitive)["diameter"]
         operations.append(_command(
             "sketch.circle.center",
             center=position[:2],
