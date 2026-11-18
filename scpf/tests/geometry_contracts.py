@@ -129,7 +129,8 @@ def _derived_primitive_cases():
                     None,
                     base.entry_z,
                     base.through_depth,
-                    base.capabilities | frozenset((DERIVED,)),
+                    (base.capabilities - frozenset((PRIMITIVE, CSG)))
+                    | frozenset((DERIVED,)),
                 )
             )
     return tuple(cases)
