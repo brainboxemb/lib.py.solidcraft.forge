@@ -149,6 +149,66 @@ class GeneratedOutputTests(unittest.TestCase):
                 "old",
             )
 
+    def test_complete_overlay_can_bootstrap_legacy_main(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            legacy = root / "legacy"
+            overlay = root / "overlay"
+            dest = root / "dest"
+            legacy.mkdir()
+            (legacy / "build.json").write_text(
+                json.dumps({"schema_version": 1}),
+                encoding="utf-8",
+            )
+            for slug in ("simple-box", "components"):
+                (overlay / "examples" / slug / "scpf").mkdir(parents=True)
+                (overlay / "examples" / slug / "scpf" / "marker").write_text(slug)
+            manifest = {
+                "schema_version": 2,
+                "scope": "pr",
+                "source_ref": "feature",
+                "source_commit": "head",
+                "pull_request": 7,
+                "workflow_run_id": "1",
+                "toolchain": {},
+                "verification": {"level": "q1-q6-full", "status": "pass"},
+                "generated_at": "2026-01-01T00:00:00Z",
+                "cases": {},
+            }
+            for slug in ("simple-box", "components"):
+                manifest["cases"][slug] = {
+                    "implementations": {
+                        "scpf": {
+                            "source_commit": "head",
+                            "build_scope": "pr/7",
+                            "input_hash": "sha256:" + "3" * 64,
+                            "verification_level": "q1-q6-full",
+                            "status": "pass",
+                            "generated_at": "2026-01-01T00:00:00Z",
+                        }
+                    }
+                }
+            (overlay / "build.json").write_text(
+                json.dumps(manifest),
+                encoding="utf-8",
+            )
+            with patch.object(self.module, "CASE_SLUGS", ("simple-box", "components")):
+                merged = self.module.promote_overlay(
+                    legacy,
+                    overlay,
+                    dest,
+                    required_level="q1-q6-full",
+                    source_commit="merge",
+                    repo_root=root,
+                )
+            self.assertEqual(merged["scope"], "main")
+            self.assertEqual(set(merged["cases"]), {"simple-box", "components"})
+            for case in merged["cases"].values():
+                self.assertEqual(
+                    case["implementations"]["scpf"]["build_scope"],
+                    "main",
+                )
+
     def test_promotion_rejects_insufficient_level(self):
         self.assertLess(
             self.module.LEVEL_RANK["affected-q1-q2"],

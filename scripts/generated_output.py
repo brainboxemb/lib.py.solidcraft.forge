@@ -354,6 +354,65 @@ def write_derived_index(root: Path) -> None:
     )
 
 
+def verify_current_hashes(root: Path, *, repo_root: Path = ROOT) -> dict:
+    root = Path(root)
+    manifest = verify_build(root, require_complete=True, repo_root=repo_root)
+    mismatches = []
+    for slug, case in manifest["cases"].items():
+        for implementation, record in case.get("implementations", {}).items():
+            current = case_input_hash(slug, implementation, repo_root)
+            if record.get("input_hash") != current:
+                mismatches.append(
+                    f"{slug}/{implementation}: "
+                    f"{record.get('input_hash')} != {current}"
+                )
+    if mismatches:
+        raise RuntimeError(
+            "build/main evidence no longer matches current technical inputs: "
+            + "; ".join(mismatches)
+        )
+    return manifest
+
+
+def _complete_overlay(manifest: dict) -> bool:
+    return set(manifest.get("cases", {})) == set(CASE_SLUGS)
+
+
+def _bootstrap_main_from_overlay(
+    overlay_root: Path,
+    destination: Path,
+    *,
+    source_commit: str,
+    source_ref: str,
+    workflow_run_id: str,
+) -> dict:
+    overlay = verify_build(overlay_root)
+    if not _complete_overlay(overlay):
+        raise RuntimeError(
+            "legacy main can only be replaced from a complete verified overlay"
+        )
+    if destination.exists():
+        shutil.rmtree(destination)
+    _copy_tree(overlay_root, destination)
+    merged = load_manifest(destination)
+    merged["scope"] = "main"
+    merged["source_ref"] = source_ref
+    merged["source_commit"] = source_commit
+    merged["pull_request"] = None
+    merged["workflow_run_id"] = workflow_run_id
+    merged["generated_at"] = _now()
+    for case in merged["cases"].values():
+        for record in case.get("implementations", {}).values():
+            record["build_scope"] = "main"
+    (destination / "build.json").write_text(
+        json.dumps(merged, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    write_derived_index(destination)
+    verify_build(destination, source_commit, require_complete=True)
+    return merged
+
+
 def promote_overlay(
     main_root: Path,
     overlay_root: Path,
@@ -368,8 +427,27 @@ def promote_overlay(
     main_root = Path(main_root)
     overlay_root = Path(overlay_root)
     destination = Path(destination)
-    main_manifest = verify_build(main_root, require_complete=True, repo_root=repo_root)
     overlay_manifest = verify_build(overlay_root, repo_root=repo_root)
+    try:
+        main_manifest = verify_build(
+            main_root,
+            require_complete=True,
+            repo_root=repo_root,
+        )
+    except RuntimeError:
+        if (
+            LEVEL_RANK.get(required_level, -1)
+            >= LEVEL_RANK["q1-q6-full"]
+            and _complete_overlay(overlay_manifest)
+        ):
+            return _bootstrap_main_from_overlay(
+                overlay_root,
+                destination,
+                source_commit=source_commit,
+                source_ref=source_ref,
+                workflow_run_id=workflow_run_id,
+            )
+        raise
     if overlay_manifest["scope"] != "pr":
         raise RuntimeError("promotion requires a PR overlay")
 
@@ -423,6 +501,21 @@ def promote_overlay(
     write_derived_index(destination)
     verify_build(destination, source_commit, require_complete=True, repo_root=repo_root)
     return merged
+
+
+def resolve_preview(
+    main_root: Path,
+    overlay_root: Path | None,
+    destination: Path,
+) -> dict:
+    if overlay_root is not None:
+        overlay = verify_build(overlay_root)
+        if _complete_overlay(overlay):
+            if destination.exists():
+                shutil.rmtree(destination)
+            _copy_tree(overlay_root, destination)
+            return load_manifest(destination)
+    return resolve_overlay(main_root, overlay_root, destination)
 
 
 def resolve_overlay(main_root: Path, overlay_root: Path | None, destination: Path) -> dict:
@@ -587,6 +680,14 @@ def parser() -> argparse.ArgumentParser:
     resolve.add_argument("--overlay", type=Path)
     resolve.add_argument("--destination", type=Path, required=True)
 
+    preview = commands.add_parser("resolve-preview")
+    preview.add_argument("--main", type=Path, required=True)
+    preview.add_argument("--overlay", type=Path)
+    preview.add_argument("--destination", type=Path, required=True)
+
+    reusable = commands.add_parser("verify-current-hashes")
+    reusable.add_argument("--root", type=Path, required=True)
+
     materialize = commands.add_parser("materialize-site-evidence")
     materialize.add_argument("--build-root", type=Path, required=True)
     materialize.add_argument("--destination", type=Path, required=True)
@@ -633,6 +734,12 @@ def main() -> int:
         return 0
     if args.command == "resolve-overlay":
         resolve_overlay(args.main, args.overlay, args.destination)
+        return 0
+    if args.command == "resolve-preview":
+        resolve_preview(args.main, args.overlay, args.destination)
+        return 0
+    if args.command == "verify-current-hashes":
+        verify_current_hashes(args.root)
         return 0
     if args.command == "materialize-site-evidence":
         materialize_site_evidence(args.build_root, args.destination)
