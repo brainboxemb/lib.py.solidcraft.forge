@@ -454,8 +454,13 @@ def promote_overlay(
                 workflow_run_id=workflow_run_id,
             )
         raise
-    if overlay_manifest["scope"] != "pr":
-        raise RuntimeError("promotion requires a PR overlay")
+    if overlay_manifest["scope"] not in {"pr", "main"}:
+        raise RuntimeError("promotion requires a PR or main candidate")
+    if (
+        overlay_manifest["scope"] == "main"
+        and overlay_manifest.get("source_commit") != source_commit
+    ):
+        raise RuntimeError("main candidate source commit does not match promotion target")
 
     required_rank = LEVEL_RANK[required_level]
     for slug, case in overlay_manifest["cases"].items():
