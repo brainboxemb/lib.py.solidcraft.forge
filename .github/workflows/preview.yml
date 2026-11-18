@@ -38,6 +38,12 @@ jobs:
       - name: Install SCPF
         run: python -m pip install -e ./scpf pillow
 
+      - name: Read Forge version
+        shell: bash
+        run: |
+          forge_version="$(python -c 'from importlib.metadata import version; print(version("scpf"))')"
+          echo "FORGE_VERSION=$forge_version" >> "$GITHUB_ENV"
+
       - name: Determine affected preview scope
         id: preview_scope
         shell: bash
@@ -165,8 +171,23 @@ jobs:
         run: |
           set -euo pipefail
           unset PYTHONPATH
-          python site/build.py --out output/site --source-sha "$GITHUB_SHA" --diagram-root output/diagrams
-          python site/test_site.py output/site "$GITHUB_SHA"
+          source_sha="${{ github.event.pull_request.head.sha }}"
+          python site/build.py --out output/site --source-sha "$source_sha" --diagram-root output/diagrams
+          python site/test_site.py output/site "$source_sha"
+          python site/provenance.py write \
+            --out output/site/provenance.json \
+            --stage preview \
+            --source-ref "${{ github.head_ref }}" \
+            --source-commit "$source_sha" \
+            --pull-request "${{ github.event.pull_request.number }}" \
+            --forge-version "$FORGE_VERSION" \
+            --workflow-run-id "$GITHUB_RUN_ID" \
+            --qualification-level "q1-q2-fast" \
+            --qualification-status pass
+          python site/provenance.py verify \
+            --file output/site/provenance.json \
+            --stage preview \
+            --source-commit "$source_sha"
 
       - name: Upload preview artifact
         uses: actions/upload-artifact@v4
@@ -176,13 +197,43 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Publish browseable PR preview
+      - name: Stage PR preview output
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: preview-output
+          publish_dir: ./output/site
+          destination_dir: previews/pr-${{ github.event.pull_request.number }}/fast
+          keep_files: true
+          force_orphan: true
+          commit_message: "Stage fast preview PR #${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}"
+
+      - name: Checkout staged PR preview
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/checkout@v4
+        with:
+          ref: preview-output
+          path: staged-preview
+          fetch-depth: 1
+
+      - name: Verify staged PR preview
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        shell: bash
+        run: |
+          python site/provenance.py verify \
+            --file "staged-preview/previews/pr-${{ github.event.pull_request.number }}/fast/provenance.json" \
+            --stage preview \
+            --source-commit "${{ github.event.pull_request.head.sha }}"
+
+      - name: Publish browseable PR preview from staged output
         if: github.event.pull_request.head.repo.full_name == github.repository
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ./output/site
+          publish_dir: ./staged-preview/previews/pr-${{ github.event.pull_request.number }}/fast
           destination_dir: previews/pr-${{ github.event.pull_request.number }}/fast
           keep_files: true
-          commit_message: "Fast preview PR #${{ github.event.pull_request.number }} at ${{ github.sha }}"
+          force_orphan: true
+          commit_message: "Sync staged fast preview PR #${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}"
