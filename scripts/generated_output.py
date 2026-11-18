@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Build and maintain the generated-output branch layouts.
+"""Assemble, validate and merge generated technical output.
 
-Workflows may create intermediate files in producer-oriented directories.
-This module is the single place that maps those files to the persistent
-item-oriented build branch and manages generated PR/stable scopes.
+Persistent build data uses schema v2 and per-case provenance. PR scopes are
+sparse overlays; main is a complete baseline.
 """
 
 from __future__ import annotations
@@ -13,10 +12,37 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 import shutil
-
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from qualification.case_selection import CASE_SLUGS
+from qualification.cases import reference_implementations_for, CASE_BY_SLUG
+from qualification.impact import case_input_hash
+
+
+SCHEMA_VERSION = 2
 ALLOWED_BUILD_TOP_LEVEL = {"build.json", "examples", "qualification"}
+LEVEL_RANK = {
+    "preflight": 0,
+    "q1-q2-affected": 1,
+    "affected-q1-q2": 1,
+    "affected-q1-q6": 2,
+    "q1-q6-full": 3,
+    "full-q1-q6": 3,
+    "reference": 1,
+}
+
+
+def _now() -> str:
+    return (
+        datetime.now(timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z")
+    )
 
 
 def _copy_file(source: Path, target: Path) -> None:
@@ -39,48 +65,62 @@ def _copy_tree(source: Path, target: Path) -> None:
 
 
 def _known_case(repo_root: Path, slug: str) -> bool:
-    return (repo_root / "examples" / slug).is_dir()
+    return slug in CASE_SLUGS and (repo_root / "examples" / slug).is_dir()
 
 
-def _known_implementation(repo_root: Path, slug: str, implementation: str) -> bool:
-    return (repo_root / "examples" / slug / implementation).is_dir()
+def _selected_cases(value: str | None, output_root: Path, repo_root: Path) -> tuple[str, ...]:
+    if value:
+        requested = tuple(part.strip() for part in value.replace(" ", ",").split(",") if part.strip())
+        unknown = sorted(set(requested) - set(CASE_SLUGS))
+        if unknown:
+            raise ValueError("unknown case(s): " + ", ".join(unknown))
+        return tuple(slug for slug in CASE_SLUGS if slug in requested)
+
+    detected = set()
+    for path in output_root.glob("*.json"):
+        if _known_case(repo_root, path.stem):
+            detected.add(path.stem)
+    for base in ("native", "references", "reference-smoke"):
+        root = output_root / base
+        if root.is_dir():
+            detected.update(
+                child.name
+                for child in root.iterdir()
+                if child.is_dir() and _known_case(repo_root, child.name)
+            )
+    return tuple(slug for slug in CASE_SLUGS if slug in detected)
 
 
-def _copy_reference_root(
-    repo_root: Path,
+def _copy_reference_case(
     reference_root: Path,
     destination: Path,
-    summary_name: str,
+    slug: str,
+    implementations: tuple[str, ...],
 ) -> None:
-    if not reference_root.is_dir():
-        return
-
-    for case_dir in sorted(reference_root.iterdir()):
-        if not case_dir.is_dir() or not _known_case(repo_root, case_dir.name):
-            continue
-        for implementation_dir in sorted(case_dir.iterdir()):
-            if not implementation_dir.is_dir():
-                continue
-            if not _known_implementation(
-                repo_root,
-                case_dir.name,
-                implementation_dir.name,
-            ):
-                continue
+    for implementation in implementations:
+        source = reference_root / slug / implementation
+        if source.is_dir():
             _copy_tree(
-                implementation_dir,
-                destination
-                / "examples"
-                / case_dir.name
-                / implementation_dir.name,
+                source,
+                destination / "examples" / slug / implementation,
             )
 
-    summary = reference_root / "summary.json"
-    if summary.is_file():
-        _copy_file(
-            summary,
-            destination / "qualification" / summary_name,
-        )
+
+def _implementation_record(
+    slug: str,
+    implementation: str,
+    source_commit: str,
+    level: str,
+    generated_at: str,
+    repo_root: Path,
+) -> dict:
+    return {
+        "source_commit": source_commit,
+        "input_hash": case_input_hash(slug, implementation, repo_root),
+        "verification_level": level,
+        "status": "pass",
+        "generated_at": generated_at,
+    }
 
 
 def assemble_build(
@@ -88,16 +128,65 @@ def assemble_build(
     destination: Path,
     metadata: dict,
     *,
+    cases: tuple[str, ...] | None = None,
     repo_root: Path = ROOT,
-) -> None:
-    """Create one persistent build scope from workflow intermediate output."""
+) -> dict:
     output_root = Path(output_root)
     destination = Path(destination)
     repo_root = Path(repo_root)
+    selected = cases or _selected_cases(None, output_root, repo_root)
+    generated_at = _now()
 
     if destination.exists():
         shutil.rmtree(destination)
     destination.mkdir(parents=True)
+
+    case_records = {}
+    for slug in selected:
+        implementations = {}
+
+        compiled = output_root / f"{slug}.json"
+        if compiled.is_file():
+            _copy_file(
+                compiled,
+                destination / "examples" / slug / "scpf" / "solidcraft.json",
+            )
+
+        native = output_root / "native" / slug
+        if native.is_dir():
+            _copy_tree(native, destination / "examples" / slug / "scpf")
+
+        scpf_target = destination / "examples" / slug / "scpf"
+        if scpf_target.is_dir():
+            implementations["scpf"] = _implementation_record(
+                slug,
+                "scpf",
+                metadata["source_commit"],
+                metadata["qualification"]["level"],
+                generated_at,
+                repo_root,
+            )
+
+        for reference_root_name in ("references", "reference-smoke"):
+            reference_root = output_root / reference_root_name
+            if not reference_root.is_dir():
+                continue
+            refs = reference_implementations_for(CASE_BY_SLUG[slug])
+            _copy_reference_case(reference_root, destination, slug, refs)
+            for implementation in refs:
+                target = destination / "examples" / slug / implementation
+                if target.is_dir():
+                    implementations[implementation] = _implementation_record(
+                        slug,
+                        implementation,
+                        metadata["source_commit"],
+                        "reference",
+                        generated_at,
+                        repo_root,
+                    )
+
+        if implementations:
+            case_records[slug] = {"implementations": implementations}
 
     qualification = output_root / "qualification"
     _copy_tree(qualification, destination / "qualification")
@@ -105,66 +194,65 @@ def assemble_build(
     diagrams = output_root / "diagrams"
     _copy_tree(diagrams, destination / "qualification" / "diagrams")
 
-    for compiled in sorted(output_root.glob("*.json")):
-        slug = compiled.stem
-        if not _known_case(repo_root, slug):
-            continue
+    native_verification = output_root / "native" / "verification.json"
+    if native_verification.is_file():
         _copy_file(
-            compiled,
-            destination / "examples" / slug / "scpf" / "solidcraft.json",
+            native_verification,
+            destination / "qualification" / "native-verification.json",
         )
 
-    native_root = output_root / "native"
-    if native_root.is_dir():
-        for case_dir in sorted(native_root.iterdir()):
-            if not case_dir.is_dir() or not _known_case(repo_root, case_dir.name):
-                continue
-            _copy_tree(
-                case_dir,
-                destination / "examples" / case_dir.name / "scpf",
-            )
-
-        verification = native_root / "verification.json"
-        if verification.is_file():
-            _copy_file(
-                verification,
-                destination / "qualification" / "native-verification.json",
-            )
-
-    _copy_reference_root(
-        repo_root,
-        output_root / "references",
-        destination,
-        "references-summary.json",
-    )
-    _copy_reference_root(
-        repo_root,
-        output_root / "reference-smoke",
-        destination,
-        "reference-smoke-summary.json",
-    )
+    for source_name, target_name in (
+        ("references", "references-summary.json"),
+        ("reference-smoke", "reference-smoke-summary.json"),
+    ):
+        source = output_root / source_name / "summary.json"
+        if source.is_file():
+            _copy_file(source, destination / "qualification" / target_name)
 
     payload = {
-        "schema": 1,
-        **metadata,
-        "generated_at": datetime.now(timezone.utc)
-        .replace(microsecond=0)
-        .isoformat()
-        .replace("+00:00", "Z"),
+        "schema_version": SCHEMA_VERSION,
+        "scope": metadata["scope"],
+        "source_ref": metadata["source_ref"],
+        "source_commit": metadata["source_commit"],
+        "pull_request": metadata.get("pull_request"),
+        "workflow_run_id": metadata["workflow_run_id"],
+        "toolchain": {
+            "forge_version": metadata["forge_version"],
+            "solidcraft_version": metadata.get("solidcraft_version"),
+        },
+        "verification": metadata["qualification"],
+        "generated_at": generated_at,
+        "cases": case_records,
     }
     (destination / "build.json").write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
+    write_derived_index(destination)
+    return payload
 
 
-def verify_build(root: Path, source_commit: str | None = None) -> dict:
-    """Verify the persistent build-scope contract."""
+def load_manifest(root: Path) -> dict:
+    path = Path(root) / "build.json"
+    if not path.is_file():
+        raise RuntimeError(f"missing build metadata: {path}")
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if data.get("schema_version") != SCHEMA_VERSION:
+        raise RuntimeError(
+            f"unsupported build metadata schema: {data.get('schema_version')}"
+        )
+    return data
+
+
+def verify_build(
+    root: Path,
+    source_commit: str | None = None,
+    *,
+    require_complete: bool = False,
+    repo_root: Path = ROOT,
+) -> dict:
     root = Path(root)
-    metadata_file = root / "build.json"
-    if not metadata_file.is_file():
-        raise RuntimeError(f"missing build metadata: {metadata_file}")
-
+    metadata = load_manifest(root)
     unexpected = sorted(
         path.name
         for path in root.iterdir()
@@ -174,13 +262,9 @@ def verify_build(root: Path, source_commit: str | None = None) -> dict:
         raise RuntimeError(
             "unexpected top-level build output: " + ", ".join(unexpected)
         )
-
-    metadata = json.loads(metadata_file.read_text(encoding="utf-8"))
-    if metadata.get("schema") != 1:
-        raise RuntimeError("unsupported build metadata schema")
     if metadata.get("scope") not in {"main", "pr"}:
         raise RuntimeError("build scope must be main or pr")
-    if metadata.get("scope") == "pr" and not metadata.get("pull_request"):
+    if metadata["scope"] == "pr" and not metadata.get("pull_request"):
         raise RuntimeError("PR build metadata must contain pull_request")
     if source_commit and metadata.get("source_commit") != source_commit:
         raise RuntimeError(
@@ -188,52 +272,200 @@ def verify_build(root: Path, source_commit: str | None = None) -> dict:
             f"does not match {source_commit}"
         )
 
+    for slug, case in metadata.get("cases", {}).items():
+        if slug not in CASE_SLUGS:
+            raise RuntimeError(f"unknown case in build manifest: {slug}")
+        for implementation, record in case.get("implementations", {}).items():
+            if not str(record.get("input_hash", "")).startswith("sha256:"):
+                raise RuntimeError(
+                    f"{slug}/{implementation}: missing input hash"
+                )
+            if record.get("status") != "pass":
+                raise RuntimeError(
+                    f"{slug}/{implementation}: non-passing persistent evidence"
+                )
+            target = root / "examples" / slug / implementation
+            if not target.is_dir():
+                raise RuntimeError(
+                    f"{slug}/{implementation}: manifest has no directory"
+                )
+
+    if require_complete:
+        missing = sorted(set(CASE_SLUGS) - set(metadata.get("cases", {})))
+        if missing:
+            raise RuntimeError(
+                "main build is missing registered cases: " + ", ".join(missing)
+            )
     return metadata
 
 
-def prepare_stable_pages(
-    site: Path,
-    current_pages: Path,
-    destination: Path,
-) -> None:
-    """Replace the stable site while preserving all PR previews."""
-    site = Path(site)
-    current_pages = Path(current_pages)
-    destination = Path(destination)
+def write_derived_index(root: Path) -> None:
+    root = Path(root)
+    manifest = json.loads((root / "build.json").read_text(encoding="utf-8"))
+    rows = {}
+    for slug, case in sorted(manifest.get("cases", {}).items()):
+        levels = [
+            record["verification_level"]
+            for record in case.get("implementations", {}).values()
+        ]
+        rows[slug] = {
+            "implementations": sorted(case.get("implementations", {})),
+            "minimum_verification_rank": min(
+                (LEVEL_RANK.get(level, -1) for level in levels),
+                default=-1,
+            ),
+        }
+    qualification = root / "qualification"
+    qualification.mkdir(parents=True, exist_ok=True)
+    (qualification / "evidence-index.json").write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "generated_from_build_schema": SCHEMA_VERSION,
+                "cases": rows,
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
 
-    if not (site / "provenance.json").is_file():
-        raise RuntimeError("stable site is missing provenance.json")
+
+def promote_overlay(
+    main_root: Path,
+    overlay_root: Path,
+    destination: Path,
+    *,
+    required_level: str,
+    source_commit: str,
+    source_ref: str = "main",
+    workflow_run_id: str = "",
+    repo_root: Path = ROOT,
+) -> dict:
+    main_root = Path(main_root)
+    overlay_root = Path(overlay_root)
+    destination = Path(destination)
+    main_manifest = verify_build(main_root, require_complete=True, repo_root=repo_root)
+    overlay_manifest = verify_build(overlay_root, repo_root=repo_root)
+    if overlay_manifest["scope"] != "pr":
+        raise RuntimeError("promotion requires a PR overlay")
+
+    required_rank = LEVEL_RANK[required_level]
+    for slug, case in overlay_manifest["cases"].items():
+        for implementation, record in case["implementations"].items():
+            if implementation == "scpf":
+                level = record["verification_level"]
+                if LEVEL_RANK.get(level, -1) < required_rank:
+                    raise RuntimeError(
+                        f"{slug}: {level} is below required {required_level}"
+                    )
 
     if destination.exists():
         shutil.rmtree(destination)
+    _copy_tree(main_root, destination)
+
+    merged = json.loads(json.dumps(main_manifest))
+    merged["scope"] = "main"
+    merged["source_ref"] = source_ref
+    merged["source_commit"] = source_commit
+    merged["pull_request"] = None
+    merged["workflow_run_id"] = workflow_run_id
+    merged["generated_at"] = _now()
+
+    current_cases = set(CASE_SLUGS)
+    examples_root = destination / "examples"
+    if examples_root.is_dir():
+        for path in list(examples_root.iterdir()):
+            if path.is_dir() and path.name not in current_cases:
+                shutil.rmtree(path)
+                merged["cases"].pop(path.name, None)
+
+    for slug, case in overlay_manifest["cases"].items():
+        for implementation, record in case["implementations"].items():
+            source = overlay_root / "examples" / slug / implementation
+            target = destination / "examples" / slug / implementation
+            if target.exists():
+                shutil.rmtree(target)
+            _copy_tree(source, target)
+            merged.setdefault("cases", {}).setdefault(
+                slug, {"implementations": {}}
+            )["implementations"][implementation] = record
+
+    (destination / "build.json").write_text(
+        json.dumps(merged, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    write_derived_index(destination)
+    verify_build(destination, source_commit, require_complete=True, repo_root=repo_root)
+    return merged
+
+
+def resolve_overlay(main_root: Path, overlay_root: Path | None, destination: Path) -> dict:
+    main_root = Path(main_root)
+    destination = Path(destination)
+    verify_build(main_root, require_complete=True)
+    if destination.exists():
+        shutil.rmtree(destination)
+    _copy_tree(main_root, destination)
+    if overlay_root is None:
+        return load_manifest(destination)
+
+    overlay_root = Path(overlay_root)
+    overlay = verify_build(overlay_root)
+    for slug, case in overlay.get("cases", {}).items():
+        for implementation in case.get("implementations", {}):
+            source = overlay_root / "examples" / slug / implementation
+            target = destination / "examples" / slug / implementation
+            if target.exists():
+                shutil.rmtree(target)
+            _copy_tree(source, target)
+
+    resolved = load_manifest(destination)
+    for slug, case in overlay.get("cases", {}).items():
+        resolved.setdefault("cases", {}).setdefault(
+            slug, {"implementations": {}}
+        )["implementations"].update(case.get("implementations", {}))
+    resolved["overlay"] = {
+        "scope": overlay["scope"],
+        "source_commit": overlay["source_commit"],
+        "pull_request": overlay.get("pull_request"),
+    }
+    (destination / "build.json").write_text(
+        json.dumps(resolved, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    write_derived_index(destination)
+    return resolved
+
+
+def prepare_stable_pages(site: Path, current_pages: Path, destination: Path) -> None:
+    site = Path(site)
+    current_pages = Path(current_pages)
+    destination = Path(destination)
+    if not (site / "provenance.json").is_file():
+        raise RuntimeError("stable site is missing provenance.json")
+    if destination.exists():
+        shutil.rmtree(destination)
     destination.mkdir(parents=True)
-
     _copy_tree(site, destination)
-
     previews = current_pages / "previews"
     if previews.is_dir():
-        preview_destination = destination / "previews"
-        if preview_destination.exists():
-            shutil.rmtree(preview_destination)
-        _copy_tree(previews, preview_destination)
+        _copy_tree(previews, destination / "previews")
 
 
 def remove_pr(root: Path, kind: str, pull_request: int) -> bool:
-    """Remove only one generated PR scope."""
     root = Path(root)
     if pull_request < 1:
         raise ValueError("pull request number must be positive")
-
     if kind == "build":
         target = root / "pr" / str(pull_request)
     elif kind == "pages":
         target = root / "previews" / f"pr-{pull_request}"
     else:
         raise ValueError(f"unknown generated output kind: {kind}")
-
     if not target.exists():
         return False
-
     shutil.rmtree(target)
     parent = target.parent
     if parent.is_dir() and not any(parent.iterdir()):
@@ -244,9 +476,6 @@ def remove_pr(root: Path, kind: str, pull_request: int) -> bool:
 def _metadata_from_args(args: argparse.Namespace) -> dict:
     if args.scope == "pr" and args.pull_request is None:
         raise SystemExit("--pull-request is required for --scope pr")
-    if args.scope == "main" and args.pull_request is not None:
-        raise SystemExit("--pull-request is not valid for --scope main")
-
     return {
         "scope": args.scope,
         "source_ref": args.source_ref,
@@ -278,10 +507,25 @@ def parser() -> argparse.ArgumentParser:
     assemble.add_argument("--workflow-run-id", required=True)
     assemble.add_argument("--qualification-level", required=True)
     assemble.add_argument("--qualification-status", required=True)
+    assemble.add_argument("--cases")
 
     verify = commands.add_parser("verify-build")
     verify.add_argument("--root", type=Path, required=True)
     verify.add_argument("--source-commit")
+    verify.add_argument("--require-complete", action="store_true")
+
+    promote = commands.add_parser("promote-overlay")
+    promote.add_argument("--main", type=Path, required=True)
+    promote.add_argument("--overlay", type=Path, required=True)
+    promote.add_argument("--destination", type=Path, required=True)
+    promote.add_argument("--required-level", required=True)
+    promote.add_argument("--source-commit", required=True)
+    promote.add_argument("--workflow-run-id", default="")
+
+    resolve = commands.add_parser("resolve-overlay")
+    resolve.add_argument("--main", type=Path, required=True)
+    resolve.add_argument("--overlay", type=Path)
+    resolve.add_argument("--destination", type=Path, required=True)
 
     pages = commands.add_parser("prepare-stable-pages")
     pages.add_argument("--site", type=Path, required=True)
@@ -292,29 +536,42 @@ def parser() -> argparse.ArgumentParser:
     remove.add_argument("--root", type=Path, required=True)
     remove.add_argument("--kind", choices=("build", "pages"), required=True)
     remove.add_argument("--pull-request", type=int, required=True)
-
     return result
 
 
 def main() -> int:
     args = parser().parse_args()
-
     if args.command == "assemble-build":
+        cases = _selected_cases(args.cases, args.output_root, ROOT)
         assemble_build(
             args.output_root,
             args.destination,
             _metadata_from_args(args),
+            cases=cases,
         )
         return 0
     if args.command == "verify-build":
-        verify_build(args.root, args.source_commit)
+        verify_build(
+            args.root,
+            args.source_commit,
+            require_complete=args.require_complete,
+        )
+        return 0
+    if args.command == "promote-overlay":
+        promote_overlay(
+            args.main,
+            args.overlay,
+            args.destination,
+            required_level=args.required_level,
+            source_commit=args.source_commit,
+            workflow_run_id=args.workflow_run_id,
+        )
+        return 0
+    if args.command == "resolve-overlay":
+        resolve_overlay(args.main, args.overlay, args.destination)
         return 0
     if args.command == "prepare-stable-pages":
-        prepare_stable_pages(
-            args.site,
-            args.current_pages,
-            args.destination,
-        )
+        prepare_stable_pages(args.site, args.current_pages, args.destination)
         return 0
     if args.command == "remove-pr":
         remove_pr(args.root, args.kind, args.pull_request)
