@@ -70,16 +70,16 @@ PUBLICATION_PATHS = (
     "scripts/publish_generated.py",
     "scripts/reconcile_generated.py",
     "site/provenance.py",
-    ".github/workflows/preview.yml",
-    ".github/workflows/site.yml",
-    ".github/workflows/preflight.yml",
+    ".github/workflows/forge.yml",
+    "scripts/ci/forge_plan.py",
+    "scripts/ci/forge_gate.py",
+    "scripts/ci/forge_site.py",
+    "scripts/ci/forge_release.py",
 )
 
 FULL_WORKFLOW_PATHS = frozenset(
     {
-        ".github/workflows/scpf.yml",
-        ".github/workflows/scpf-affected.yml",
-        ".github/workflows/release.yml",
+        ".github/workflows/qualification-image.yml",
     }
 )
 
