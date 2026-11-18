@@ -25,9 +25,11 @@ from qualification.case_selection import (
     parse_case_selection,
 )
 from qualification.native_cases import (
-    POST_BUILD_INSPECTIONS,
     mutation_spec,
     validate_runtime_metadata,
+)
+from qualification.run_post_build_inspections import (
+    run_post_build_inspections,
 )
 from qualification.visual_validation import render_views
 from scpf.headless import run_document
@@ -162,24 +164,6 @@ def _build_case(slug: str, out: Path, env: dict[str, str]) -> tuple[float, float
         ],
         env=env,
     )
-
-    extra = POST_BUILD_INSPECTIONS.get(slug)
-    if extra:
-        _run(
-            [
-                "solidcraft-cli",
-                "run",
-                extra["command"],
-                "--in",
-                str(case_dir / "model.sc"),
-                "--param-check",
-                "strict",
-                "--results",
-                "--json-out",
-                str(case_dir / extra["output"]),
-            ],
-            env=env,
-        )
 
     snapshot_total = 0.0
     elapsed, _ = _run(
@@ -420,6 +404,11 @@ def main() -> int:
             "mutation": mutation_time,
         }
 
+    run_post_build_inspections(
+        out / "native",
+        out / "qualification" / "post-build-inspections.tsv",
+        cases=selected,
+    )
     _run_validators(",".join(selected), out)
     _gate_selected(selected, out)
     _write_timings(out, timings)
