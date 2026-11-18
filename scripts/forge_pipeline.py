@@ -265,7 +265,7 @@ def qualify(args: argparse.Namespace) -> None:
         args.gate == "full-q1-q6" or "simple-box" in selected
     )
     if native_gate and simple_box_selected:
-        run_tool_cad_ci_case("case-simple-box", args.image)
+        run_tool_cad_ci_case("simple-box", args.image)
 
     command = qualification_args(args)
     if args.image:
