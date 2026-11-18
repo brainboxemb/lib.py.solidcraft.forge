@@ -440,6 +440,42 @@ def resolve_overlay(main_root: Path, overlay_root: Path | None, destination: Pat
     return resolved
 
 
+def materialize_site_evidence(build_root: Path, destination: Path) -> None:
+    """Create the legacy local site-evidence view from normalized build data.
+
+    The site consumes this local view while all emitted technical URLs still
+    point at the immutable build commit.
+    """
+    build_root = Path(build_root)
+    destination = Path(destination)
+    verify_build(build_root)
+    if destination.exists():
+        shutil.rmtree(destination)
+    native = destination / "native"
+    references = destination / "references"
+    diagrams = destination / "diagrams"
+    native.mkdir(parents=True)
+    references.mkdir(parents=True)
+
+    manifest = load_manifest(build_root)
+    for slug, case in manifest.get("cases", {}).items():
+        for implementation in case.get("implementations", {}):
+            source = build_root / "examples" / slug / implementation
+            if implementation == "scpf":
+                _copy_tree(source, native / slug)
+            else:
+                _copy_tree(source, references / slug / implementation)
+
+    qualification = build_root / "qualification"
+    diagrams_source = qualification / "diagrams"
+    if diagrams_source.is_dir():
+        _copy_tree(diagrams_source, diagrams)
+
+    refs = qualification / "references-summary.json"
+    if refs.is_file():
+        _copy_file(refs, references / "summary.json")
+
+
 def prepare_stable_pages(site: Path, current_pages: Path, destination: Path) -> None:
     site = Path(site)
     current_pages = Path(current_pages)
@@ -528,6 +564,10 @@ def parser() -> argparse.ArgumentParser:
     resolve.add_argument("--overlay", type=Path)
     resolve.add_argument("--destination", type=Path, required=True)
 
+    materialize = commands.add_parser("materialize-site-evidence")
+    materialize.add_argument("--build-root", type=Path, required=True)
+    materialize.add_argument("--destination", type=Path, required=True)
+
     pages = commands.add_parser("prepare-stable-pages")
     pages.add_argument("--site", type=Path, required=True)
     pages.add_argument("--current-pages", type=Path, required=True)
@@ -570,6 +610,9 @@ def main() -> int:
         return 0
     if args.command == "resolve-overlay":
         resolve_overlay(args.main, args.overlay, args.destination)
+        return 0
+    if args.command == "materialize-site-evidence":
+        materialize_site_evidence(args.build_root, args.destination)
         return 0
     if args.command == "prepare-stable-pages":
         prepare_stable_pages(args.site, args.current_pages, args.destination)
