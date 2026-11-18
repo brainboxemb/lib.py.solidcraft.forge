@@ -222,6 +222,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Bootstrap pinned tool.cad.ci
+        run: python scripts/bootstrap_cad_ci.py
+
       - name: Remove closed PR generated output
         run: python scripts/forge_pipeline.py cleanup --pull-request "${{ github.event.pull_request.number }}"
 
