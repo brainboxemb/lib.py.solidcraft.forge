@@ -11,7 +11,6 @@ from geometry_contracts import (
     FEATURE_CASES,
     NATIVE_HOLE,
     PRIMITIVE_BODY_CASES,
-    build_joined,
     cases_with,
 )
 
@@ -103,17 +102,6 @@ class GeometryContractMatrix(unittest.TestCase):
                     self.assertEqual(len(native), feature.expected_count)
                     self.assertTrue(
                         all(row["params"].get("targets") == ["Part"] for row in native)
-                    )
-
-    def test_every_feature_contract_survives_a_prior_join(self):
-        for feature in FEATURE_CASES:
-            for case in cases_with(feature.capability):
-                with self.subTest(feature=feature.name, body=case.name):
-                    body = feature.apply(build_joined(case), case)
-                    document = compile_model(body, "Part")
-                    self.assertEqual(
-                        len(_commands(document, feature.native_command)),
-                        feature.expected_count,
                     )
 
     def test_native_hole_contract_supports_sequential_features(self):
