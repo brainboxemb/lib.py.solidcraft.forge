@@ -1,15 +1,27 @@
-# One Forge example is one CI item. The integration step writes cheap case
-# evidence through command compilation; the native step resumes at replay.
+# One Forge example is one CI item. Integration writes cheap case evidence
+# through command compilation; native resumes the same staged output at replay.
 id: four-corner-l
 kind: example
 watch:
-  - examples/four-corner-l/**
+  - examples/four-corner-l/scpf/**
+  - examples/four-corner-l/tests/**
   - scpf/scpf/**
   - qualification/case_runner.py
+  - qualification/case_evidence.py
+  - qualification/case_selection.py
   - qualification/cases.py
+  - qualification/camera.py
+  - qualification/goal_overlay.py
   - qualification/native_cases.py
   - qualification/native_validation.py
+  - qualification/run_case_evidence.py
+  - qualification/run_post_build_inspections.py
   - qualification/visual_validation.py
+  - qualification/commands/**
+  - qualification/finalize_item_result.py
+  - qualification/collect_item_results.py
+  - qualification/results.py
+  - qualification/project_metadata.py
   - scripts/example_ci.py
 strategy:
   reuse: true

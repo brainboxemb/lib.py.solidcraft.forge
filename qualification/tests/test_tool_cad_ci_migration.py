@@ -58,9 +58,9 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertEqual(
             case["steps"][0]["outputs"],
             [
+                "case/simple-box.json",
                 "case/stages/simple-box/01-q1.json",
                 "case/stages/simple-box/02-q2.json",
-                "case/simple-box.json",
                 "case/stages/simple-box/03-compile.json",
                 "case/qualification/case-evidence/q1/simple-box.txt",
                 "case/qualification/case-evidence/q2/simple-box.txt",
@@ -126,6 +126,7 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertIn('"replay"', script)
         self.assertIn("FORGE_QUALIFICATION_IMAGE", script)
         self.assertIn('"docker"', script)
+        self.assertIn("finalize_item_result.py", script)
         self.assertFalse((ROOT / "examples/simple-box/ci.py").exists())
 
     def test_generated_evidence_items_are_independent_from_examples(self):
