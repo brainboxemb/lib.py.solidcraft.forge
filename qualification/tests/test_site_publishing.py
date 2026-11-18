@@ -50,6 +50,40 @@ class SitePublishingContractTests(unittest.TestCase):
                 qualification_status="fail",
             )
 
+    def test_reused_provenance_records_original_qualification_commit(self):
+        provenance = load_provenance_module()
+        from tempfile import TemporaryDirectory
+        import json
+
+        with TemporaryDirectory() as tmp:
+            verification = Path(tmp) / "verification.json"
+            verification.write_text(
+                json.dumps(
+                    {
+                        "verified": True,
+                        "source_commit": "qualified123",
+                        "forge_version": "0.10.0",
+                        "solidcraft_version": "0.42.0",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            data = provenance.create_reused_provenance(
+                stage="stable",
+                source_ref="main",
+                source_commit="site456",
+                evidence_commit="qualified123",
+                verification_file=verification,
+                workflow_run_id="42",
+            )
+
+        self.assertEqual(data["source_commit"], "site456")
+        self.assertEqual(data["qualification"]["level"], "q1-q6-reused")
+        self.assertEqual(
+            data["qualification"]["source_commit"],
+            "qualified123",
+        )
+
     def test_full_workflow_publishes_build_and_pages_after_gate(self):
         workflow = (
             ROOT / ".github" / "workflows" / "scpf.yml"
@@ -108,6 +142,12 @@ class SitePublishingContractTests(unittest.TestCase):
             "python scripts/generated_output.py prepare-stable-pages",
             workflow,
         )
+        self.assertIn(
+            "python site/provenance.py write-reused",
+            workflow,
+        )
+        self.assertIn("--verification reused/native/verification.json", workflow)
+        self.assertIn("--evidence-commit", workflow)
         self.assertIn("ref: gh-pages", workflow)
         self.assertIn("publish_branch: gh-pages", workflow)
         self.assertNotIn("publish_branch: qualified-output", workflow)

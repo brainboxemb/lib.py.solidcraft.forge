@@ -51,6 +51,42 @@ def create_provenance(
     }
 
 
+def create_reused_provenance(
+    *,
+    stage: str,
+    source_ref: str,
+    source_commit: str,
+    evidence_commit: str,
+    verification_file: Path,
+    workflow_run_id: str,
+) -> dict:
+    """Create site provenance from an earlier successful qualification run."""
+    verification = json.loads(verification_file.read_text(encoding="utf-8"))
+    if verification.get("verified") is not True:
+        raise ValueError("reused qualification verification is not passing")
+    if verification.get("source_commit") != evidence_commit:
+        raise ValueError(
+            "reused qualification commit does not match verification.json"
+        )
+    forge_version = verification.get("forge_version")
+    solidcraft_version = verification.get("solidcraft_version")
+    if not forge_version or not solidcraft_version:
+        raise ValueError("reused qualification verification is missing versions")
+
+    data = create_provenance(
+        stage=stage,
+        source_ref=source_ref,
+        source_commit=source_commit,
+        forge_version=forge_version,
+        solidcraft_version=solidcraft_version,
+        workflow_run_id=workflow_run_id,
+        qualification_level="q1-q6-reused",
+        qualification_status="pass",
+    )
+    data["qualification"]["source_commit"] = evidence_commit
+    return data
+
+
 def validate_provenance(
     data: dict,
     *,
@@ -99,6 +135,15 @@ def main() -> int:
     write.add_argument("--qualification-level", required=True)
     write.add_argument("--qualification-status", default="pass")
 
+    reused = sub.add_parser("write-reused")
+    reused.add_argument("--out", type=Path, required=True)
+    reused.add_argument("--stage", choices=sorted(VALID_STAGES), required=True)
+    reused.add_argument("--source-ref", required=True)
+    reused.add_argument("--source-commit", required=True)
+    reused.add_argument("--evidence-commit", required=True)
+    reused.add_argument("--verification", type=Path, required=True)
+    reused.add_argument("--workflow-run-id", required=True)
+
     verify = sub.add_parser("verify")
     verify.add_argument("--file", type=Path, required=True)
     verify.add_argument("--stage", choices=sorted(VALID_STAGES), required=True)
@@ -116,6 +161,22 @@ def main() -> int:
             workflow_run_id=args.workflow_run_id,
             qualification_level=args.qualification_level,
             qualification_status=args.qualification_status,
+        )
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(
+            json.dumps(data, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        return 0
+
+    if args.command == "write-reused":
+        data = create_reused_provenance(
+            stage=args.stage,
+            source_ref=args.source_ref,
+            source_commit=args.source_commit,
+            evidence_commit=args.evidence_commit,
+            verification_file=args.verification,
+            workflow_run_id=args.workflow_run_id,
         )
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(

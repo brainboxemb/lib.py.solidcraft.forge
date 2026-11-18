@@ -147,6 +147,24 @@ jobs:
           python site/build.py             --out output/site             --source-sha "$GITHUB_SHA"             --evidence-sha "$evidence_sha"             --native reused/native             --references reused/references             --diagram-root output/diagrams
           python site/test_site.py output/site "$GITHUB_SHA"             --evidence-sha="$evidence_sha"             --require-native --require-references
 
+      - name: Write reused qualification provenance
+        if: steps.scope.outputs.site_only == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python site/provenance.py write-reused \
+            --out output/site/provenance.json \
+            --stage stable \
+            --source-ref main \
+            --source-commit "$GITHUB_SHA" \
+            --evidence-commit "${{ steps.evidence.outputs.sha }}" \
+            --verification reused/native/verification.json \
+            --workflow-run-id "$GITHUB_RUN_ID"
+          python site/provenance.py verify \
+            --file output/site/provenance.json \
+            --stage stable \
+            --source-commit "$GITHUB_SHA"
+
       - uses: actions/checkout@v4
         if: steps.scope.outputs.site_only == 'true'
         with:
