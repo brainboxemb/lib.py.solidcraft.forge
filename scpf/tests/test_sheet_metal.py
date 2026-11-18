@@ -29,7 +29,7 @@ def make_sheet(
     return sheet.fold(
         line=((20, -20), (20, 20)),
         angle=fold_angle,
-        fixed=(-20, 0, 0),
+        fixed=(-30, 0, 0),
     )
 
 
@@ -89,7 +89,7 @@ class SheetMetalTests(unittest.TestCase):
                 "position": "centerline",
                 "flip": False,
                 "body": "SheetFold",
-                "fixed": [-20, 0, 0],
+                "fixed": [-30, 0, 0],
             },
         )
 
