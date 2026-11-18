@@ -22,7 +22,7 @@ Keep the existing qualification implementation in
 Add a small entry workflow named **Qualify main**. It can be started in two
 simple ways:
 
-- a normal commit that changes `qualification/main.trigger` on `main`;
+- a normal commit that changes `.github/workflows/qualify-main.trigger` on `main`;
 - the parameterless GitHub **Run workflow** button on `main`.
 
 The entry workflow calls the existing qualification workflow against the exact
@@ -39,7 +39,7 @@ release workflow trigger, which listens to the direct
 
 ## Trigger file
 
-`qualification/main.trigger` is an operational marker only. Updating its
+`.github/workflows/qualify-main.trigger` is an operational marker only. Updating its
 single value is enough to request a new main qualification through a normal
 repository commit.
 
@@ -51,7 +51,7 @@ Contract tests prove that:
 
 - the existing qualification workflow supports `workflow_call`;
 - `Qualify main` runs only for `main`;
-- changing only `qualification/main.trigger` is sufficient to start it;
+- changing only `.github/workflows/qualify-main.trigger` is sufficient to start it;
 - the wrapper calls the existing qualification workflow instead of duplicating
   qualification steps;
 - the release workflow does not listen to `Qualify main`.
