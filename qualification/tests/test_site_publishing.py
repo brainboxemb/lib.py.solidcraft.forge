@@ -50,6 +50,42 @@ class SitePublishingContractTests(unittest.TestCase):
                 qualification_status="fail",
             )
 
+    def test_reused_site_provenance_records_qualification_commit(self):
+        provenance = load_provenance_module()
+        from tempfile import TemporaryDirectory
+        import json
+
+        with TemporaryDirectory() as directory:
+            evidence = Path(directory) / "verification.json"
+            evidence.write_text(
+                json.dumps({
+                    "source_commit": "qualified123",
+                    "forge_version": "0.10.0",
+                    "solidcraft_version": "0.42.0",
+                    "verified": True,
+                }),
+                encoding="utf-8",
+            )
+            data = provenance.create_reused_provenance(
+                stage="stable",
+                source_ref="main",
+                source_commit="site456",
+                evidence_file=evidence,
+                workflow_run_id="77",
+            )
+
+        self.assertEqual(data["source_commit"], "site456")
+        self.assertEqual(
+            data["qualification"]["source_commit"],
+            "qualified123",
+        )
+        self.assertEqual(data["qualification"]["level"], "q1-q6-full")
+        provenance.validate_provenance(
+            data,
+            stage="stable",
+            source_commit="site456",
+        )
+
     def test_full_workflow_publishes_build_and_pages_after_gate(self):
         workflow = (
             ROOT / ".github" / "workflows" / "scpf.yml"
@@ -104,6 +140,10 @@ class SitePublishingContractTests(unittest.TestCase):
             ROOT / ".github" / "workflows" / "site.yml"
         ).read_text(encoding="utf-8")
 
+        self.assertIn(
+            "python site/provenance.py write-reused",
+            workflow,
+        )
         self.assertIn(
             "python scripts/generated_output.py prepare-stable-pages",
             workflow,
