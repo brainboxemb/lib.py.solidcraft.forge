@@ -106,21 +106,6 @@ jobs:
             --message "Publish full build/main at $GITHUB_SHA" \
             --github-output "$GITHUB_OUTPUT"
 
-      - name: Record immutable release evidence
-        if: github.ref == 'refs/heads/main'
-        run: |
-          python - <<'PY'
-          import json, os
-          from pathlib import Path
-          Path("output/release-evidence.json").write_text(
-              json.dumps({
-                  "source_commit": os.environ["GITHUB_SHA"],
-                  "build_commit": "${{ steps.publish_build.outputs.commit }}",
-              }, indent=2) + "\n",
-              encoding="utf-8",
-          )
-          PY
-
       - name: Build and test stable site
         if: github.ref == 'refs/heads/main'
         run: |
@@ -176,6 +161,5 @@ jobs:
             output/gate
             output/build
             output/site
-            output/release-evidence.json
           if-no-files-found: ignore
           retention-days: 14

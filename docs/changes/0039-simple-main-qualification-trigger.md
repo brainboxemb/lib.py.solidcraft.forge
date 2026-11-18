@@ -37,6 +37,10 @@ The entry workflow has its own workflow name. It is therefore separate from the
 release workflow trigger, which listens to the direct
 `SCPF full safety qualification` workflow.
 
+`Qualify main` does not write release-evidence metadata. Its job ends at a
+qualified `build/main` plus tested/published Pages; release evidence belongs
+only to the release-oriented full-safety workflow.
+
 ## Trigger file
 
 `.github/workflows/qualify-main.trigger` is an operational marker only. Updating its
