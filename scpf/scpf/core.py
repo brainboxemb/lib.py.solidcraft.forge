@@ -2060,6 +2060,30 @@ def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
     return Shape("cylinder", (h, d, axis.value, _direction_selector(anchor)))
 
 
+_HOLE_FIELDS = (
+    "type",
+    "diameter",
+    "depth",
+    "direction",
+    "counterbore_diameter",
+    "counterbore_depth",
+    "countersink_diameter",
+    "countersink_angle",
+    "thread",
+    "hand",
+    "thread_depth",
+    "modeled",
+    "ease_out",
+)
+
+
+def _hole_spec(feature):
+    """Return Hole-family data by meaning instead of tuple position."""
+    if not isinstance(feature, Shape) or feature.kind != "hole":
+        raise TypeError("expected Hole-family feature")
+    return dict(zip(_HOLE_FIELDS, feature.data))
+
+
 def _validate_hole_direction(direction):
     if direction is None:
         return None
