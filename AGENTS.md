@@ -217,7 +217,7 @@ The workflow qualifies the exact current `main` commit, replaces
 `build/main` only after successful qualification, then builds/tests and
 publishes stable Pages from that same baseline.
 
-A normal commit that changes `qualification/main.trigger` on `main` is the
+A normal commit that changes `.github/workflows/qualify-main.trigger` on `main` is the
 repository-native way to request this recovery. The trigger file carries no
 model/source semantics; it is only an explicit operational signal. The same
 workflow may also expose a parameterless manual Run workflow action in GitHub.
