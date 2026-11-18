@@ -350,12 +350,18 @@ def qualify(args: argparse.Namespace) -> None:
         return
 
     selected = selected_tool_cases(args.gate, args.cases)
-    if args.gate in {"affected-q1-q6", "full-q1-q6"}:
+    native_gate = args.gate in {"affected-q1-q6", "full-q1-q6"}
+    if native_gate:
         for slug in selected:
             run_tool_cad_ci_case(slug, args.image)
-        for item in evidence_items(args.gate, args.reference_smoke):
-            run_tool_cad_ci_evidence(item, args.image)
 
+    # Reference evidence can be required even when the selected Forge cases only
+    # need the cheap integration gate. Its generic item therefore follows the
+    # existing reference_smoke policy independently from native case execution.
+    for item in evidence_items(args.gate, args.reference_smoke):
+        run_tool_cad_ci_evidence(item, args.image)
+
+    if native_gate:
         # Native/reference/diagram work is already complete. The item gate now
         # only translates generic item output for the current site/build adapter.
         python(*item_gate_args(args))
