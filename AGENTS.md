@@ -274,6 +274,47 @@ Forge qualification models should stay small and abstract so a failure proves
 one API rule rather than product-specific geometry.
 
 
+## Runtime/tool capabilities
+
+Treat stable runtime capabilities as repository knowledge, not as something to
+rediscover on every task.
+
+In the ChatGPT project runtime used for this repository, use the connected
+GitHub connector as the normal GitHub interface. The connector already carries
+the repository authentication; do not look for a local token or test GitHub CLI
+authentication first.
+
+Known connector operations used in this repository:
+
+- read repository/branch/commit/PR data and arbitrary supported GitHub GET
+  endpoints;
+- read, create, update and delete repository files;
+- create branches and commits;
+- create, inspect and merge pull requests;
+- compare commits/trees and read commit/check status;
+- inspect workflow runs, jobs, steps and logs;
+- list and download workflow artifacts;
+- rerun failed workflow jobs/runs when the matching connector action exists.
+
+Known limitation: the connector currently exposes no workflow-run cancel action
+and no general workflow-dispatch mutation. The local ChatGPT runtime also has no
+`gh` executable. Therefore do not repeatedly probe `gh`, `gh auth status`,
+environment tokens or the connector catalog during normal work.
+
+When an operation is needed:
+
+1. use the known connector operation when it is listed above;
+2. when it is not listed, check the connector catalog once for that operation;
+3. if the connector does not expose it, record the limitation here when it is a
+   recurring repository task and choose a repository/workflow design that does
+   not depend on that missing operation;
+4. re-check a recorded capability only after the runtime/tooling environment
+   has explicitly changed.
+
+GitHub Actions runners are a different environment. Repository workflows may
+use tools installed/authenticated by GitHub Actions; do not infer runner
+capabilities from the ChatGPT runtime, or vice versa.
+
 ## Git workflow
 
 Treat one logical change as one branch/PR and finish that change before calling
