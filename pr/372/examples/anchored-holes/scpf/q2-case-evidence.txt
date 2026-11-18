@@ -1,0 +1,10 @@
+$ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m unittest discover -s /home/runner/work/lib.py.solidcraft.forge/lib.py.solidcraft.forge/examples/anchored-holes/tests -p test_contract.py -k test_anchored_holes_command_contract -v
+
+test_anchored_holes_command_contract (test_contract.CommandContractTests.test_anchored_holes_command_contract) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+OK
+
+matched_tests=1 status=PASS

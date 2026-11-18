@@ -1,0 +1,71 @@
+{
+  "case": "anchor-topology-mutation",
+  "implementation": "pybosl2",
+  "status": "pass",
+  "source": "examples/anchor-topology-mutation/pybosl2/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      -25.0,
+      -20.0,
+      0.0
+    ],
+    "max": [
+      20.0,
+      10.0,
+      25.0
+    ]
+  },
+  "expected": {
+    "min": [
+      -25.0,
+      -20.0,
+      0.0
+    ],
+    "max": [
+      20.0,
+      10.0,
+      25.0
+    ]
+  },
+  "max_delta_mm": 0.0,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          -25.0,
+          -20.0,
+          0.0
+        ],
+        "max": [
+          20.0,
+          10.0,
+          25.0
+        ]
+      },
+      "expected": {
+        "min": [
+          -25.0,
+          -20.0,
+          0.0
+        ],
+        "max": [
+          20.0,
+          10.0,
+          25.0
+        ]
+      },
+      "max_delta_mm": 0.0,
+      "tolerance_mm": 0.5
+    }
+  },
+  "bounds_sufficient": true,
+  "bounds_reason": "The board and marker positions describe the visible result. After resizing the saved model, the marker must still follow the same selected edge and corner."
+}

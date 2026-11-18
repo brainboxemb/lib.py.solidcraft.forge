@@ -1,0 +1,322 @@
+{
+  "case": "circular-feature-pattern",
+  "implementation": "cadquery",
+  "status": "pass",
+  "source": "examples/circular-feature-pattern/cadquery/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      -50.0,
+      -50.0,
+      0.0
+    ],
+    "max": [
+      50.0,
+      50.0,
+      6.0
+    ]
+  },
+  "expected": {
+    "min": [
+      -50.0,
+      -50.0,
+      0.0
+    ],
+    "max": [
+      50.0,
+      50.0,
+      6.0
+    ]
+  },
+  "max_delta_mm": 0.0,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          -50.0,
+          -50.0,
+          0.0
+        ],
+        "max": [
+          50.0,
+          50.0,
+          6.0
+        ]
+      },
+      "expected": {
+        "min": [
+          -50.0,
+          -50.0,
+          0.0
+        ],
+        "max": [
+          50.0,
+          50.0,
+          6.0
+        ]
+      },
+      "max_delta_mm": 0.0,
+      "tolerance_mm": 0.5
+    },
+    "watertight": {
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    "volume": {
+      "status": "pass",
+      "actual_mm3": 58191.192471469556,
+      "expected_mm3": 58190.44263153228,
+      "delta_mm3": 0.7498399372780113,
+      "tolerance_mm3": 80.0
+    },
+    "surface_distance_probes": {
+      "status": "pass",
+      "probes": [
+        {
+          "label": "hole 1 at z=0.5",
+          "point": [
+            30.0,
+            0.0,
+            0.5
+          ],
+          "actual_mm": 3.9987554727937202,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012445272062797663,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 1 at z=3",
+          "point": [
+            30.0,
+            0.0,
+            3.0
+          ],
+          "actual_mm": 3.998755472793719,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012445272062810986,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 1 at z=5.5",
+          "point": [
+            30.0,
+            0.0,
+            5.5
+          ],
+          "actual_mm": 3.9987554727937202,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012445272062797663,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 2 at z=0.5",
+          "point": [
+            15.000000000000004,
+            25.980762113533157,
+            0.5
+          ],
+          "actual_mm": 3.998755878533081,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669189904,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 2 at z=3",
+          "point": [
+            15.000000000000004,
+            25.980762113533157,
+            3.0
+          ],
+          "actual_mm": 3.998755878533081,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669189904,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 2 at z=5.5",
+          "point": [
+            15.000000000000004,
+            25.980762113533157,
+            5.5
+          ],
+          "actual_mm": 3.9987558785330797,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669203227,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 3 at z=0.5",
+          "point": [
+            -14.999999999999993,
+            25.98076211353316,
+            0.5
+          ],
+          "actual_mm": 3.9987558785330695,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669305367,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 3 at z=3",
+          "point": [
+            -14.999999999999993,
+            25.98076211353316,
+            3.0
+          ],
+          "actual_mm": 3.9987558785330695,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669305367,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 3 at z=5.5",
+          "point": [
+            -14.999999999999993,
+            25.98076211353316,
+            5.5
+          ],
+          "actual_mm": 3.9987558785330695,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669305367,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 4 at z=0.5",
+          "point": [
+            -30.0,
+            3.67394039744206e-15,
+            0.5
+          ],
+          "actual_mm": 3.9987554727937202,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012445272062797663,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 4 at z=3",
+          "point": [
+            -30.0,
+            3.67394039744206e-15,
+            3.0
+          ],
+          "actual_mm": 3.9987554727937185,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012445272062815427,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 4 at z=5.5",
+          "point": [
+            -30.0,
+            3.67394039744206e-15,
+            5.5
+          ],
+          "actual_mm": 3.99875547279372,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012445272062802104,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 5 at z=0.5",
+          "point": [
+            -15.000000000000014,
+            -25.980762113533153,
+            0.5
+          ],
+          "actual_mm": 3.9987558785330912,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669087763,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 5 at z=3",
+          "point": [
+            -15.000000000000014,
+            -25.980762113533153,
+            3.0
+          ],
+          "actual_mm": 3.9987558785330912,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669087763,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 5 at z=5.5",
+          "point": [
+            -15.000000000000014,
+            -25.980762113533153,
+            5.5
+          ],
+          "actual_mm": 3.99875587853309,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669101086,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 6 at z=0.5",
+          "point": [
+            15.000000000000004,
+            -25.980762113533157,
+            0.5
+          ],
+          "actual_mm": 3.998755878533081,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669189904,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 6 at z=3",
+          "point": [
+            15.000000000000004,
+            -25.980762113533157,
+            3.0
+          ],
+          "actual_mm": 3.998755878533081,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669189904,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 6 at z=5.5",
+          "point": [
+            15.000000000000004,
+            -25.980762113533157,
+            5.5
+          ],
+          "actual_mm": 3.9987558785330797,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0012441214669203227,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        }
+      ]
+    }
+  },
+  "bounds_sufficient": false,
+  "bounds_reason": "The six bolt holes do not change the plate envelope. Volume, cylindrical-wall probes and native pattern-history checks are required."
+}

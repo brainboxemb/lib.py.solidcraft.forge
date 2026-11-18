@@ -1,0 +1,30 @@
+{
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": {
+          "face": [
+            -37.082039324993694,
+            -7.082039324993691,
+            5.0
+          ],
+          "body": "SelectiveProfileExtrude",
+          "index": 0
+        },
+        "project_edges": false,
+        "name": "Selected holes"
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          -30.0,
+          0.0
+        ],
+        "diameter": "hole_diameter"
+      }
+    }
+  ]
+}

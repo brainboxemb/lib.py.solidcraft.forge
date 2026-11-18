@@ -1,0 +1,21 @@
+$ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m unittest discover -s /home/runner/work/lib.py.solidcraft.forge/lib.py.solidcraft.forge/scpf/tests -p test_geometry_primitives.py -k test_move_translates_a_csg_composite_without_changing_sizes -v
+
+test_move_translates_a_csg_composite_without_changing_sizes (test_geometry_primitives.GeometryPrimitives.test_move_translates_a_csg_composite_without_changing_sizes) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+OK
+
+matched_tests=1 status=PASS
+
+$ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m unittest discover -s /home/runner/work/lib.py.solidcraft.forge/lib.py.solidcraft.forge/scpf/tests -p test_geometry_primitives.py -k test_cylinder_axis_lowers_directly_to_native_axis -v
+
+test_cylinder_axis_lowers_directly_to_native_axis (test_geometry_primitives.GeometryPrimitives.test_cylinder_axis_lowers_directly_to_native_axis) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK
+
+matched_tests=1 status=PASS

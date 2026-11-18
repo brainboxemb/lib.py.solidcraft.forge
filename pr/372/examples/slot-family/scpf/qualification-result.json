@@ -1,0 +1,133 @@
+{
+  "schema_version": 4,
+  "case": "slot-family",
+  "title": "Native sketch Slot family",
+  "source_commit": "958ab9bcd8a0f68a06cc81560d699b4d33ff69a8",
+  "forge_version": "0.11.0",
+  "solidcraft_version": "0.42.0",
+  "qualified_at": "2026-11-18T22:53:06Z",
+  "status": "pass",
+  "blocked_reason": null,
+  "levels": {
+    "q1": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "scpf/tests/test_native_slots.py",
+          "test": "test_all_five_slot_variants_lower_one_to_one"
+        },
+        {
+          "file": "scpf/tests/test_native_slots.py",
+          "test": "test_arc_center_requires_one_end_definition"
+        }
+      ],
+      "evidence": [
+        "q1-case-evidence.txt"
+      ]
+    },
+    "q2": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "examples/slot-family/tests/test_contract.py",
+          "test": "test_slot_family_command_contract"
+        }
+      ],
+      "commands": 13,
+      "evidence": [
+        "q2-case-evidence.txt"
+      ]
+    },
+    "q3": {
+      "status": "pass",
+      "evidence": [
+        "model.sc",
+        "model.step",
+        "results.json"
+      ]
+    },
+    "q4": {
+      "status": "pass",
+      "evidence": [
+        "joint-inspect.json",
+        "measurements.json",
+        "validation.json"
+      ]
+    },
+    "q5": {
+      "status": "not-required",
+      "required": false,
+      "reason": "No Q5 mutation is required; this case isolates the five native sketch construction methods and their saved feature history.",
+      "mutation": null,
+      "evidence": []
+    },
+    "q6": {
+      "status": "pass",
+      "regression_status": "pass",
+      "expected_shape_status": "pass",
+      "required_views": [
+        "top",
+        "front",
+        "iso"
+      ],
+      "images": [
+        "model.png",
+        "goal-front.png",
+        "goal-iso.png",
+        "goal-right.png",
+        "goal-top.png",
+        "model-front.png",
+        "model-iso.png",
+        "model-right.png",
+        "model-top.png",
+        "overlay-front.png",
+        "overlay-iso.png",
+        "overlay-right.png",
+        "overlay-top.png",
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png"
+      ],
+      "evidence": [
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png",
+        "visual-validation.json"
+      ]
+    }
+  },
+  "evidence": {
+    "native_files": [
+      "joint-inspect.json",
+      "measurements.json",
+      "model.sc",
+      "model.step",
+      "q1-case-evidence.txt",
+      "q2-case-evidence.txt",
+      "results.json",
+      "validation.json",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png",
+      "visual-validation.json"
+    ],
+    "images": [
+      "model.png",
+      "goal-front.png",
+      "goal-iso.png",
+      "goal-right.png",
+      "goal-top.png",
+      "model-front.png",
+      "model-iso.png",
+      "model-right.png",
+      "model-top.png",
+      "overlay-front.png",
+      "overlay-iso.png",
+      "overlay-right.png",
+      "overlay-top.png",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png"
+    ]
+  }
+}
