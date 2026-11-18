@@ -1,6 +1,7 @@
 """Tests for immutable qualification-container metadata and CI ownership."""
 
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -54,6 +55,85 @@ class QualificationImageTests(unittest.TestCase):
         self.assertNotIn("scripts/generated_output.py promote-overlay", workflow)
         self.assertNotIn("site/build.py", workflow)
         self.assertNotIn("site/test_site.py", workflow)
+
+    def test_workflow_delegates_cache_resolution_without_pull_timeout(self):
+        workflow = (
+            qualification_image.ROOT
+            / ".github"
+            / "workflows"
+            / "scpf.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("--resolve-cache", workflow)
+        self.assertNotIn("timeout 30s docker pull", workflow)
+
+    def test_existing_image_is_pulled_and_reused(self):
+        completed = subprocess.CompletedProcess(
+            ["docker", "pull", "image:test"],
+            0,
+            stdout="pulled\n",
+            stderr="",
+        )
+        with patch.object(
+            qualification_image.subprocess,
+            "run",
+            return_value=completed,
+        ) as run:
+            values = qualification_image.resolve_cached_image(
+                "image:test",
+                "abc123",
+            )
+
+        self.assertEqual(
+            values,
+            {"exists": "true", "run_image": "image:test"},
+        )
+        run.assert_called_once()
+
+    def test_explicit_missing_image_allows_local_build(self):
+        completed = subprocess.CompletedProcess(
+            ["docker", "pull", "image:test"],
+            1,
+            stdout="",
+            stderr="manifest unknown: manifest unknown",
+        )
+        with patch.object(
+            qualification_image.subprocess,
+            "run",
+            return_value=completed,
+        ):
+            values = qualification_image.resolve_cached_image(
+                "image:test",
+                "abc123",
+            )
+
+        self.assertEqual(
+            values,
+            {
+                "exists": "false",
+                "run_image": "qualification-local:abc123",
+            },
+        )
+
+    def test_registry_failure_is_not_treated_as_cache_miss(self):
+        completed = subprocess.CompletedProcess(
+            ["docker", "pull", "image:test"],
+            1,
+            stdout="",
+            stderr="TLS handshake timeout",
+        )
+        with patch.object(
+            qualification_image.subprocess,
+            "run",
+            return_value=completed,
+        ):
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "registry failure is not treated as a cache miss",
+            ):
+                qualification_image.resolve_cached_image(
+                    "image:test",
+                    "abc123",
+                )
 
     def test_pipeline_owns_image_smoke_and_exact_stage_rerun(self):
         pipeline = (
