@@ -89,7 +89,14 @@ def run_gate(
     if gate == "preflight":
         return
     if gate == "regenerate-derived":
-        (out / "qualification").mkdir()
+        run(
+            [
+                sys.executable,
+                "qualification/render_diagrams.py",
+                "--out",
+                str(out / "diagrams"),
+            ]
+        )
         return
     if gate == "affected-q1-q2":
         run_q1_q2(cases, out)
@@ -135,9 +142,10 @@ def assemble_build(
     base_commit: str | None,
     workflow_run_id: str,
 ) -> None:
-    if gate in {"preflight", "regenerate-derived"}:
+    if gate == "preflight":
         return
     level = {
+        "regenerate-derived": "derived",
         "affected-q1-q2": "affected-q1-q2",
         "affected-q1-q6": "affected-q1-q6",
         "full-q1-q6": "q1-q6-full",

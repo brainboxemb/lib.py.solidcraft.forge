@@ -32,6 +32,7 @@ TECHNICAL_CASE_SLUGS = supported_case_slugs()
 ALLOWED_BUILD_TOP_LEVEL = {"build.json", "examples", "qualification"}
 LEVEL_RANK = {
     "preflight": 0,
+    "derived": 0,
     "q1-q2-affected": 1,
     "affected-q1-q2": 1,
     "affected-q1-q6": 2,
@@ -499,6 +500,15 @@ def promote_overlay(
                 slug, {"implementations": {}}
             )["implementations"][implementation] = promoted_record
 
+    overlay_diagrams = overlay_root / "qualification" / "diagrams"
+    if overlay_diagrams.is_dir():
+        target_diagrams = destination / "qualification" / "diagrams"
+        if target_diagrams.exists():
+            shutil.rmtree(target_diagrams)
+        _copy_tree(overlay_diagrams, target_diagrams)
+
+    merged["verification"] = {"level": "per-case", "status": "pass"}
+
     (destination / "build.json").write_text(
         json.dumps(merged, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -542,6 +552,13 @@ def resolve_overlay(main_root: Path, overlay_root: Path | None, destination: Pat
             if target.exists():
                 shutil.rmtree(target)
             _copy_tree(source, target)
+
+    overlay_diagrams = overlay_root / "qualification" / "diagrams"
+    if overlay_diagrams.is_dir():
+        target_diagrams = destination / "qualification" / "diagrams"
+        if target_diagrams.exists():
+            shutil.rmtree(target_diagrams)
+        _copy_tree(overlay_diagrams, target_diagrams)
 
     resolved = load_manifest(destination)
     for slug, case in overlay.get("cases", {}).items():

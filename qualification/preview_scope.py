@@ -103,6 +103,9 @@ def main() -> int:
             handle.write(f"cases={','.join(cases)}\n")
             handle.write(f"has_cases={'true' if cases else 'false'}\n")
             handle.write(
+                f"has_build={'true' if (cases or gate == 'regenerate-derived') else 'false'}\n"
+            )
+            handle.write(
                 f"reference_smoke={'true' if reference_reasons else 'false'}\n"
             )
             handle.write(f"final_gate={gate}\n")

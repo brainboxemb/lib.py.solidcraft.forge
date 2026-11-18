@@ -18,6 +18,7 @@ from scripts.generated_output import load_manifest, promote_overlay
 
 
 REQUIRED_LEVEL = {
+    "regenerate-derived": "derived",
     "affected-q1-q2": "affected-q1-q2",
     "affected-q1-q6": "affected-q1-q6",
     "full-q1-q6": "q1-q6-full",
@@ -52,13 +53,13 @@ def prepare(
     cases = affected_cases(paths)
     gate = final_gate(paths, cases)
     result = {
-        "technical": bool(cases),
+        "technical": bool(cases) or gate == "regenerate-derived",
         "cases": ",".join(cases),
         "final_gate": gate,
         "tree_match": tree_sha(head_sha) == tree_sha(merge_sha),
         "promotable": False,
     }
-    if not cases:
+    if not result["technical"]:
         return result
 
     overlay = build_root / "pr" / str(pull_request)
