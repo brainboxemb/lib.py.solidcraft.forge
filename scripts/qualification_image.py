@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
 from pathlib import Path
 
 
@@ -82,6 +83,49 @@ def metadata(repository: str) -> dict[str, str]:
     }
 
 
+def resolve_cached_image(reference: str, image_id: str) -> dict[str, str]:
+    """Pull an existing immutable image, or identify a genuinely missing one.
+
+    A slow or transiently failing registry request is not the same as a cache
+    miss. Only an explicit not-found response allows CI to rebuild the image.
+    """
+
+    completed = subprocess.run(
+        ["docker", "pull", reference],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if completed.stdout:
+        print(completed.stdout, end="")
+    if completed.stderr:
+        print(completed.stderr, end="")
+
+    if completed.returncode == 0:
+        return {
+            "exists": "true",
+            "run_image": reference,
+        }
+
+    detail = f"{completed.stdout}\n{completed.stderr}".lower()
+    missing_markers = (
+        "manifest unknown",
+        "no such manifest",
+        "not found",
+    )
+    if any(marker in detail for marker in missing_markers):
+        return {
+            "exists": "false",
+            "run_image": f"qualification-local:{image_id}",
+        }
+
+    raise RuntimeError(
+        f"could not resolve qualification image {reference!r}; "
+        "registry failure is not treated as a cache miss"
+    )
+
+
 def write_github_output(path: Path, values: dict[str, str]) -> None:
     with path.open("a", encoding="utf-8") as handle:
         for key, value in values.items():
@@ -90,11 +134,22 @@ def write_github_output(path: Path, values: dict[str, str]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--repository", required=True)
+    parser.add_argument("--repository")
+    parser.add_argument("--resolve-cache", action="store_true")
+    parser.add_argument("--reference")
+    parser.add_argument("--image-id")
     parser.add_argument("--github-output", type=Path)
     args = parser.parse_args()
 
-    values = metadata(args.repository)
+    if args.resolve_cache:
+        if not args.reference or not args.image_id:
+            parser.error("--resolve-cache requires --reference and --image-id")
+        values = resolve_cached_image(args.reference, args.image_id)
+    else:
+        if not args.repository:
+            parser.error("--repository is required unless --resolve-cache is used")
+        values = metadata(args.repository)
+
     for key, value in values.items():
         print(f"{key}={value}")
     if args.github_output:
