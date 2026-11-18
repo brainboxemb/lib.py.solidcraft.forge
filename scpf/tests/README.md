@@ -49,8 +49,8 @@ Keep files grouped by API contract:
 - `test_geometry_primitives.py`: primitive-specific details not covered by the matrix;
 - `test_geometry_features.py`: feature-specific rules;
 - `test_geometry_edge_features.py`: fillet/chamfer/taper and edge selection;
-- `test_sketch_profiles.py`, `test_explicit_sketch_primitives.py`,
-  `test_sketch_patterns.py`: Sketch and 2D profile behaviour;
+- `test_sketch_profiles.py`, `test_sketch_extrusion.py`,
+  `test_sketch_attachment.py`, `test_sketch_patterns.py`: Sketch and 2D profile behaviour;
 - `test_core_semantics.py`: shared value/direction helpers;
 - `test_model_authoring.py`: root model and parameter authoring rules;
 - `test_assembly_placement.py`: occurrence placement, grouping and replay;
