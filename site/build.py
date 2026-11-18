@@ -1248,15 +1248,46 @@ def build_raw_url(scope, relative=""):
     return f"{base}/{relative}" if relative else base
 
 
-def evidence_scope(build_manifest_data, slug, implementation, fallback):
-    record = (
+def evidence_record(build_manifest_data, slug, implementation):
+    """Return one generated-evidence record from the current build manifest."""
+
+    return (
         ((build_manifest_data.get("cases") or {}).get(slug) or {})
         .get("implementations", {})
         .get(implementation)
     )
+
+
+def evidence_scope(build_manifest_data, slug, implementation, fallback):
+    """Return the build-branch scope that physically stores one implementation."""
+
+    record = evidence_record(build_manifest_data, slug, implementation)
     if record and record.get("build_scope"):
         return record["build_scope"]
     return fallback
+
+
+def evidence_artifact_path(
+    build_manifest_data,
+    slug,
+    implementation,
+    fallback,
+):
+    """Return the physical path of one implementation in generated build output."""
+
+    record = evidence_record(build_manifest_data, slug, implementation)
+    if record and record.get("artifact_path"):
+        return record["artifact_path"].strip("/")
+    return fallback.strip("/")
+
+
+def evidence_command_path(build_manifest_data, slug):
+    """Return the physical generated-command document path for an SCPF case."""
+
+    record = evidence_record(build_manifest_data, slug, "scpf")
+    if record and record.get("command_path"):
+        return record["command_path"].strip("/")
+    return f"examples/{slug}/scpf/solidcraft.json"
 
 
 def text(path):
@@ -2206,11 +2237,17 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 "scpf",
                 build_scope,
             )
+            native_artifact_path = evidence_artifact_path(
+                build_manifest_data,
+                slug,
+                "scpf",
+                f"examples/{slug}/scpf",
+            )
             native_evidence_raw = build_raw_url(
-                native_scope, f"examples/{slug}/scpf"
+                native_scope, native_artifact_path
             )
             native_evidence_blob = build_blob_url(
-                native_scope, f"examples/{slug}/scpf"
+                native_scope, native_artifact_path
             )
             preview_html = _render_visual_evidence(
                 case,
@@ -2267,12 +2304,20 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             "scpf",
             build_scope,
         )
-        native_evidence_blob = build_blob_url(
-            native_scope, f"examples/{slug}/scpf"
+        native_artifact_path = evidence_artifact_path(
+            build_manifest_data,
+            slug,
+            "scpf",
+            f"examples/{slug}/scpf",
         )
+        native_evidence_blob = build_blob_url(
+            native_scope, native_artifact_path
+        )
+        command_path = evidence_command_path(build_manifest_data, slug)
+        command_blob = build_blob_url(native_scope, command_path)
         evidence_items.append(
             '<li><a href="'
-            + escape(native_evidence_blob + '/solidcraft.json')
+            + escape(command_blob)
             + '">Generated command JSON in build output</a></li>'
         )
         evidence_items.extend(
@@ -2295,9 +2340,15 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 implementation,
                 build_scope,
             )
+            implementation_path = evidence_artifact_path(
+                build_manifest_data,
+                slug,
+                implementation,
+                f"examples/{slug}/{implementation}",
+            )
             url = build_blob_url(
                 implementation_scope,
-                f"examples/{slug}/{implementation}/{filename}",
+                f"{implementation_path}/{filename}",
             )
             evidence_items.append(
                 f'<li><a href="{escape(url)}">'
@@ -2404,7 +2455,15 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         card_preview_url = (
             build_raw_url(
                 evidence_scope(build_manifest_data, slug, "scpf", build_scope),
-                f"examples/{slug}/scpf/{card_preview}",
+                (
+                    evidence_artifact_path(
+                        build_manifest_data,
+                        slug,
+                        "scpf",
+                        f"examples/{slug}/scpf",
+                    )
+                    + f"/{card_preview}"
+                ),
             )
             if card_preview else None
         )
