@@ -20,7 +20,7 @@ permissions:
   actions: write
 
 jobs:
-  verify:
+  merge-gate:
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     concurrency:
@@ -96,7 +96,7 @@ jobs:
 
       - name: Publish current PR technical overlay
         id: publish_build
-        if: steps.scope.outputs.has_cases == 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        if: steps.scope.outputs.has_build == 'true' && github.event.pull_request.head.repo.full_name == github.repository
         run: |
           python scripts/publish_generated.py replace-dir \
             --branch build \
@@ -108,7 +108,7 @@ jobs:
             --github-output "$GITHUB_OUTPUT"
 
       - name: Remove obsolete PR technical overlay
-        if: steps.scope.outputs.has_cases != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        if: steps.scope.outputs.has_build != 'true' && github.event.pull_request.head.repo.full_name == github.repository
         run: |
           python scripts/publish_generated.py remove-dir \
             --branch build \
@@ -125,7 +125,7 @@ jobs:
             build_commit="$(git -C generated-build rev-parse HEAD)"
           fi
           echo "BUILD_COMMIT=$build_commit" >> "$GITHUB_ENV"
-          if [ "${{ steps.scope.outputs.has_cases }}" = "true" ]; then
+          if [ "${{ steps.scope.outputs.has_build }}" = "true" ]; then
             python scripts/generated_output.py resolve-preview \
               --main generated-build/main \
               --overlay output/build \
@@ -196,7 +196,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.merge_commit_sha || github.event.repository.default_branch }}
+          ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
 
       - uses: actions/setup-python@v5
