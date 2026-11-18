@@ -62,7 +62,11 @@ class ForgePipelineTests(unittest.TestCase):
 
     def test_execute_pr_owns_full_repository_sequence(self):
         ns = args(pipeline_smoke=True, contracts=True)
-        with patch.object(forge_pipeline, "preflight") as preflight, \
+        with patch.object(
+                 forge_pipeline,
+                 "run_tool_cad_ci_layers",
+             ) as tool_layers, \
+             patch.object(forge_pipeline, "preflight") as preflight, \
              patch.object(forge_pipeline, "smoke_image") as smoke, \
              patch.object(forge_pipeline, "verify_contracts") as contracts, \
              patch.object(forge_pipeline, "qualify") as qualify, \
@@ -75,6 +79,9 @@ class ForgePipelineTests(unittest.TestCase):
             result = forge_pipeline.execute(ns)
 
         self.assertIsNone(result)
+        tool_layers.assert_called_once_with(
+            ns.output_root / "tool-cad-ci-plan.json"
+        )
         preflight.assert_called_once_with(
             ns.source_sha,
             ns.output_root / "preflight-site",
@@ -91,7 +98,8 @@ class ForgePipelineTests(unittest.TestCase):
 
     def test_new_image_is_smoke_tested_even_without_pipeline_change(self):
         ns = args(pipeline_smoke=False, image_built=True)
-        with patch.object(forge_pipeline, "preflight"), \
+        with patch.object(forge_pipeline, "run_tool_cad_ci_layers"), \
+             patch.object(forge_pipeline, "preflight"), \
              patch.object(forge_pipeline, "smoke_image") as smoke, \
              patch.object(forge_pipeline, "qualify"), \
              patch.object(
@@ -105,7 +113,8 @@ class ForgePipelineTests(unittest.TestCase):
 
     def test_execute_main_promotes_then_builds_stable_site(self):
         ns = args(operation="main", pull_request=0, source_ref="main")
-        with patch.object(forge_pipeline, "preflight"), \
+        with patch.object(forge_pipeline, "run_tool_cad_ci_layers") as tool_layers, \
+             patch.object(forge_pipeline, "preflight"), \
              patch.object(forge_pipeline, "qualify"), \
              patch.object(
                  forge_pipeline,
@@ -116,6 +125,9 @@ class ForgePipelineTests(unittest.TestCase):
             result = forge_pipeline.execute(ns)
 
         self.assertEqual(result, "build-commit")
+        tool_layers.assert_called_once_with(
+            ns.output_root / "tool-cad-ci-plan.json"
+        )
         stable.assert_called_once_with(ns)
         site.assert_called_once_with(
             ns,

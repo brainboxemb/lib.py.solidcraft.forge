@@ -8,12 +8,26 @@ The qualified SolidCraft version comes from
 `scpf.version.TESTED_SOLIDCRAFT_VERSION`. Do not copy a version literal into
 qualification prose or scripts.
 
-## Levels
+## Test layers and qualification result fields
 
-| Level | Purpose |
+The repository has three test layers:
+
+1. `scpf/tests/` contains **library unit tests** for Forge API, validation and
+   compiler behaviour.
+2. `examples/<case>/tests/` contains **integration tests** for concrete
+   examples and their generated SolidCraft command contracts.
+3. Qualification adds the native SolidCraft, saved-design, semantic and visual
+   proof required for a qualification item.
+
+The current qualification result schema still uses historical Q1/Q2 field names
+for focused evidence from the first two layers. They are compatibility labels in
+the existing runner, not separate architectural layers. New tool.cad.ci work
+must use the names library tests, integration tests and qualification.
+
+| Existing result field | Current meaning |
 | --- | --- |
-| Q1 | Python API and symbolic/compiler invariants |
-| Q2 | Generated SolidCraft command contract |
+| Q1 | Focused library-unit-test evidence |
+| Q2 | Focused integration command-contract evidence |
 | Q3 | Native SolidCraft build and saved editable design |
 | Q4 | Native semantic/measurement validation |
 | Q5 | Saved-design parametric mutation where required |
@@ -37,7 +51,7 @@ Do not copy native measurement expectations back into skipped unittest classes.
 The workflow/runner orchestrates these layers; it is not a separate test
 framework.
 
-### Case-specific Q1 and Q2 evidence
+### Focused library and integration evidence (legacy Q1/Q2 fields)
 
 A qualification case reports Q1 or Q2 PASS only when its explicit test targets
 in `qualification/case_evidence.py` pass. Q1 targets point to focused API or
@@ -123,8 +137,7 @@ python qualification/run_affected.py --cases group:anchors
 Available groups come from `qualification/cases.py`. Use `--cases all` only
 when you deliberately want every native case locally.
 
-The affected runner always runs Q1 and Q2 first, then runs Q3-Q6 only for the
-selected native cases. Q5 is executed only for cases marked `q5_required`.
+The affected runner always runs focused library and integration evidence first (currently stored in the legacy Q1/Q2 result fields), then runs Q3-Q6 only for the selected native cases. Q5 is executed only for cases marked `q5_required`.
 
 It writes:
 

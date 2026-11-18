@@ -53,7 +53,69 @@ def docker_python(image: str, *args: str, extra_mounts: tuple[tuple[Path, str], 
     run(command)
 
 
+def tool_cad_ci_path() -> Path:
+    """Return the pinned external CI tool bootstrapped by the workflow."""
+
+    path = ROOT / "ext" / "cad-ci" / "cad-ci.py"
+    if not path.is_file():
+        raise RuntimeError(
+            "missing ext/cad-ci/cad-ci.py; run scripts/bootstrap_cad_ci.py first"
+        )
+    return path
+
+
+def tool_cad_ci_env() -> dict[str, str]:
+    """Provide Forge and repository imports to commands run from item folders."""
+
+    parts = [str(ROOT / "scpf"), str(ROOT)]
+    current = os.environ.get("PYTHONPATH", "")
+    if current:
+        parts.append(current)
+    return {"PYTHONPATH": os.pathsep.join(parts)}
+
+
+def run_tool_cad_ci_layers(out: Path) -> None:
+    """Run the first migrated library/integration items through the pinned tool.
+
+    This is a parallel proof only. The existing qualification runner remains
+    authoritative for native evidence and generated publication in this phase.
+    """
+
+    tool = tool_cad_ci_path()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    env = os.environ.copy()
+    env.update(tool_cad_ci_env())
+
+    plan = subprocess.check_output(
+        [
+            sys.executable,
+            str(tool),
+            "plan",
+            "--repo",
+            str(ROOT),
+            "--json",
+        ],
+        cwd=ROOT,
+        env=env,
+        text=True,
+    )
+    out.write_text(plan, encoding="utf-8")
+
+    run(
+        [
+            sys.executable,
+            str(tool),
+            "run",
+            "--repo",
+            str(ROOT),
+        ],
+        env=tool_cad_ci_env(),
+    )
+
+
 def preflight(source_sha: str, out: Path) -> None:
+    """Run the existing cheap Forge preflight checks."""
+
     python("scripts/ci_preflight.py", "--source-sha", source_sha, "--site-out", str(out))
 
 
@@ -352,6 +414,11 @@ def write_outputs(path: Path | None, *, build_commit: str | None = None) -> None
 
 
 def execute(args: argparse.Namespace) -> str | None:
+    """Run migrated cheap layers first, then the existing Forge qualification."""
+
+    run_tool_cad_ci_layers(
+        args.output_root / "tool-cad-ci-plan.json"
+    )
     preflight(args.source_sha, args.output_root / "preflight-site")
 
     if args.pipeline_smoke or args.image_built:

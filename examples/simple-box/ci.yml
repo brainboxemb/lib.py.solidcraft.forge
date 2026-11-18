@@ -1,0 +1,14 @@
+# One real integration example used to prove the migration path before every
+# example receives its own item config.
+id: integration-simple-box
+kind: integration
+watch:
+  - examples/simple-box/**
+  - scpf/scpf/**
+  - qualification/cases.py
+  - qualification/native_cases.py
+strategy:
+  reuse: true
+steps:
+  - id: test
+    run: [python, -m, unittest, discover, -s, tests, -p, "test_*.py", -v]

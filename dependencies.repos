@@ -1,0 +1,8 @@
+# Exact external repository tools used by Forge CI.
+# tool.cad.ci stays a checked-out repository tool under ext/cad-ci. Forge itself
+# remains installed from scpf/ as the Python library under test.
+repositories:
+  cad-ci:
+    type: git
+    url: https://github.com/brainboxemb/tool.cad.ci.git
+    version: 556e8d43dde9218b28a8d991ab9f2021232e76ab

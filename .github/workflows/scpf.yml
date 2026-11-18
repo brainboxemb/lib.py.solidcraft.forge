@@ -95,6 +95,9 @@ jobs:
       - name: Install Forge runtime
         run: python -m pip install -e ./scpf pillow pyyaml
 
+      - name: Bootstrap pinned tool.cad.ci
+        run: python scripts/bootstrap_cad_ci.py
+
       - name: Resolve immutable qualification image
         if: needs.plan.outputs.needs_image == 'true'
         id: image
@@ -196,6 +199,8 @@ jobs:
           name: forge-${{ github.run_id }}-${{ github.sha }}
           path: |
             output/
+            build/scpf/tests/
+            build/examples/simple-box/
             ${{ runner.temp }}/forge-simple-box/
             ${{ runner.temp }}/solidcraft-snapshot/
           if-no-files-found: ignore
