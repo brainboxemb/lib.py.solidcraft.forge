@@ -121,12 +121,15 @@ def _csg_primitive(shape, body_name, operation, *, offset=(0, 0, 0)):
 def _csg_apply(shape, name, operation, offset=(0, 0, 0)):
     if shape.kind == "placed3d":
         child, x, y, z = shape.data
+        position = (command_value(x), command_value(y), command_value(z))
+        if child.kind == "hole":
+            if operation != "join":
+                raise ModelError("Hole features are added to a body with +")
+            from .features import _hole_commands
+            return _hole_commands(child, position, name)
         if child.kind != "cylinder":
-            raise ModelError("Only Cylinder supports 3D CSG placement")
-        return _csg_apply(
-            child, name, operation,
-            (command_value(x), command_value(y), command_value(z)),
-        )
+            raise ModelError("Only Cylinder and Hole support 3D CSG placement")
+        return _csg_apply(child, name, operation, position)
     if shape.kind == "translated":
         child, delta = shape.data
         return _csg_apply(child, name, operation, _shift(offset, delta))
