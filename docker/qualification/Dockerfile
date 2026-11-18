@@ -28,6 +28,7 @@ RUN apt-get update \
         libdbus-1-3 \
         libegl1 \
         libfontconfig1 \
+        libglib2.0-0 \
         libgl1 \
         libice6 \
         libsm6 \
@@ -84,7 +85,7 @@ RUN python -m pip install --upgrade pip setuptools wheel \
 RUN solidcraft-cli --version \
     && cadcraft-cli --version \
     && python --version \
-    && python -c "import cadquery, trimesh, matplotlib" \
+    && python -c "import pythonscad, pybosl2, cadquery, trimesh, matplotlib" \
     && /opt/build123d/bin/python -c "import build123d"
 
 WORKDIR /workspace
