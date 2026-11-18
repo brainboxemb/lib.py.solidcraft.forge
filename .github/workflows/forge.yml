@@ -1,0 +1,342 @@
+name: Forge
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review, closed]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Create an SCPF release after full qualification
+        type: boolean
+        required: false
+        default: false
+  schedule:
+    - cron: "17 3 * * 1"
+
+permissions:
+  contents: write
+  packages: read
+  pull-requests: read
+
+concurrency:
+  group: forge-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
+
+jobs:
+  forge:
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    env:
+      BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before || '' }}
+      HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      REF_NAME: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+      PR_NUMBER: ${{ github.event.pull_request.number || 0 }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Forge CI dependencies
+        run: python -m pip install -e ./scpf pillow pyyaml
+
+      - name: Plan Forge work
+        id: plan
+        run: |
+          args=(
+            --event-name "${{ github.event_name }}"
+            --base "$BASE_SHA"
+            --head "$HEAD_SHA"
+            --ref-name "$REF_NAME"
+            --out output/plan.json
+            --github-output "$GITHUB_OUTPUT"
+          )
+          if [ "$PR_NUMBER" != "0" ]; then
+            args+=(--pull-request "$PR_NUMBER")
+          fi
+          python scripts/ci/forge_plan.py "${args[@]}"
+
+      - name: Run repository preflight
+        run: |
+          python scripts/ci_preflight.py \
+            --source-sha "$HEAD_SHA" \
+            --site-out output/preflight-site
+
+      - name: Checkout canonical build output
+        uses: actions/checkout@v4
+        with:
+          ref: build
+          path: generated-build
+          fetch-depth: 1
+
+      - name: Checkout current Pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: current-pages
+          fetch-depth: 1
+
+      - name: Resolve immutable qualification image
+        if: steps.plan.outputs.has_build == 'true' || steps.plan.outputs.contracts == 'true'
+        id: image
+        run: |
+          python scripts/qualification_image.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Login to GHCR
+        if: steps.plan.outputs.has_build == 'true' || steps.plan.outputs.contracts == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull qualification image
+        if: steps.plan.outputs.has_build == 'true' || steps.plan.outputs.contracts == 'true'
+        run: docker pull "${{ steps.image.outputs.reference }}"
+
+      - name: Verify pinned SolidCraft command contracts
+        if: steps.plan.outputs.contracts == 'true'
+        run: |
+          version="$(PYTHONPATH=scpf python -c 'from scpf.version import TESTED_SOLIDCRAFT_VERSION; print(TESTED_SOLIDCRAFT_VERSION)')"
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.image.outputs.reference }}" \
+            bash -lc "
+              python scripts/solidcraft_snapshot.py \
+                --out output/solidcraft-snapshot \
+                --version '$version' \
+                --source-ref 'v$version' &&
+              diff -ru \
+                'docs/vendor/solidcraft/$version/runtime' \
+                output/solidcraft-snapshot &&
+              python scripts/solidcraft_snapshot.py \
+                --check-pinned 'docs/vendor/solidcraft/$version/runtime'
+            "
+
+      - name: Run selected qualification
+        if: steps.plan.outputs.has_build == 'true'
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.image.outputs.reference }}" \
+            python scripts/ci/forge_gate.py \
+              --plan output/plan.json \
+              --source-sha "$HEAD_SHA" \
+              --source-ref "$REF_NAME" \
+              --workflow-run-id "$GITHUB_RUN_ID" \
+              --base-commit "$BASE_SHA" \
+              --out output/gate \
+              --build-out output/build
+
+      - name: Publish PR technical overlay
+        if: >-
+          github.event_name == 'pull_request' &&
+          steps.plan.outputs.has_build == 'true' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        id: publish_pr_build
+        run: |
+          python scripts/publish_generated.py replace-dir \
+            --branch build \
+            --source output/build \
+            --destination "pr/$PR_NUMBER" \
+            --source-ref "$REF_NAME" \
+            --expected-source "$HEAD_SHA" \
+            --repository "$GITHUB_REPOSITORY" \
+            --pull-request "$PR_NUMBER" \
+            --message "Publish build PR #$PR_NUMBER" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Remove obsolete PR technical overlay
+        if: >-
+          github.event_name == 'pull_request' &&
+          steps.plan.outputs.has_build != 'true' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          python scripts/publish_generated.py remove-dir \
+            --branch build \
+            --destination "pr/$PR_NUMBER" \
+            --source-ref "$REF_NAME" \
+            --expected-source "$HEAD_SHA" \
+            --repository "$GITHUB_REPOSITORY" \
+            --pull-request "$PR_NUMBER" \
+            --message "Remove obsolete build PR #$PR_NUMBER"
+
+      - name: Build and test PR preview
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          build_commit="${{ steps.publish_pr_build.outputs.commit }}"
+          if [ -z "$build_commit" ]; then
+            build_commit="$(git -C generated-build rev-parse HEAD)"
+          fi
+
+          resolve=(
+            python scripts/generated_output.py resolve-preview
+            --main generated-build/main
+            --destination output/resolved
+          )
+          if [ "${{ steps.plan.outputs.has_build }}" = "true" ]; then
+            resolve+=(--overlay output/build)
+          fi
+          "${resolve[@]}"
+
+          python scripts/ci/forge_site.py \
+            --build-root output/resolved \
+            --out output/site \
+            --source-sha "$HEAD_SHA" \
+            --build-commit "$build_commit" \
+            --build-scope main \
+            --stage preview \
+            --source-ref "$REF_NAME" \
+            --workflow-run-id "$GITHUB_RUN_ID" \
+            --pull-request "$PR_NUMBER"
+
+      - name: Publish PR preview
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          python scripts/publish_generated.py replace-dir \
+            --branch gh-pages \
+            --source output/site \
+            --destination "previews/pr-$PR_NUMBER" \
+            --source-ref "$REF_NAME" \
+            --expected-source "$HEAD_SHA" \
+            --repository "$GITHUB_REPOSITORY" \
+            --pull-request "$PR_NUMBER" \
+            --message "Publish preview PR #$PR_NUMBER"
+
+      - name: Verify full main technical build
+        if: steps.plan.outputs.publication == 'stable' && steps.plan.outputs.full == 'true'
+        run: |
+          python scripts/generated_output.py verify-build \
+            --root output/build \
+            --source-commit "$HEAD_SHA" \
+            --require-complete
+
+      - name: Publish build/main
+        if: steps.plan.outputs.publication == 'stable' && steps.plan.outputs.full == 'true'
+        id: publish_main
+        run: |
+          python scripts/publish_generated.py replace-dir \
+            --branch build \
+            --source output/build \
+            --destination main \
+            --source-ref main \
+            --expected-source "$HEAD_SHA" \
+            --message "Publish full build/main at $HEAD_SHA" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Build and test stable site
+        if: steps.plan.outputs.publication == 'stable'
+        run: |
+          if [ "${{ steps.plan.outputs.full }}" = "true" ]; then
+            build_root="output/build"
+            build_commit="${{ steps.publish_main.outputs.commit }}"
+          else
+            build_root="generated-build/main"
+            python scripts/generated_output.py verify-build \
+              --root "$build_root" \
+              --require-complete
+            build_commit="$(git -C generated-build rev-parse HEAD)"
+          fi
+          echo "BUILD_COMMIT=$build_commit" >> "$GITHUB_ENV"
+
+          python scripts/ci/forge_site.py \
+            --build-root "$build_root" \
+            --out output/site \
+            --source-sha "$HEAD_SHA" \
+            --build-commit "$build_commit" \
+            --build-scope main \
+            --stage stable \
+            --source-ref main \
+            --workflow-run-id "$GITHUB_RUN_ID" \
+            --require-native \
+            --require-references
+
+      - name: Publish stable Pages
+        if: steps.plan.outputs.publication == 'stable'
+        run: |
+          python scripts/publish_generated.py replace-stable-pages \
+            --branch gh-pages \
+            --source output/site \
+            --source-ref main \
+            --expected-source "$HEAD_SHA" \
+            --message "Publish Forge site at $HEAD_SHA"
+
+      - name: Reconcile generated PR namespaces
+        if: steps.plan.outputs.publication == 'stable'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/reconcile_generated.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --apply
+
+      - name: Create requested SCPF release
+        if: github.event_name == 'workflow_dispatch' && inputs.release == true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/ci/forge_release.py \
+            --target-sha "$HEAD_SHA" \
+            --build-sha "$BUILD_COMMIT"
+
+      - name: Upload Forge diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-${{ github.run_id }}
+          path: |
+            output/plan.json
+            output/preflight-site/
+            output/gate/
+            output/build/
+            output/resolved/
+            output/site/
+            output/solidcraft-snapshot/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  cleanup:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout trusted cleanup code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Remove closed PR technical overlay
+        run: |
+          python scripts/publish_generated.py remove-dir \
+            --branch build \
+            --destination "pr/${{ github.event.pull_request.number }}" \
+            --message "Remove build PR #${{ github.event.pull_request.number }}"
+
+      - name: Remove closed PR preview
+        run: |
+          python scripts/publish_generated.py remove-dir \
+            --branch gh-pages \
+            --destination "previews/pr-${{ github.event.pull_request.number }}" \
+            --message "Remove preview PR #${{ github.event.pull_request.number }}"
