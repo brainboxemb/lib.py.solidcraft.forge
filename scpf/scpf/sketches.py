@@ -62,7 +62,7 @@ def compile_standalone_sketch(
     """Compile one standalone Sketch without choosing its 3D operation."""
     if operations:
         raise ModelError(
-            "standalone Sketch pattern/mirror is not supported by this operation"
+            "sketch pattern/mirror currently requires an attached Sketch"
         )
     if plane not in ("XY", "XZ", "YZ"):
         raise ModelError("standalone Sketch requires an XY, XZ or YZ plane")
