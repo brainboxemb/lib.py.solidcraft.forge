@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Qualification coverage · SCPF Python library</title>
+<link rel="stylesheet" href="../../style.css"></head>
+<body><header class="top"><div class="wrap nav">
+<a class="brand" href="../../">SCPF <span>Python library</span></a>
+<div class="site-search" data-search-index="../../search-index.json">
+<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
+       placeholder="Search API…" aria-label="Search SCPF documentation"
+       aria-expanded="false" aria-controls="site-search-results">
+<span class="site-search-shortcut" aria-hidden="true">/</span>
+<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+</div>
+<nav aria-label="Main"><a href="../../">Examples</a><a href="../../guide/">API Guide</a><a href="../../reference/">API Reference</a><a href="../../qualification/">Qualification</a><a href="../../cheatsheet/">Cheatsheet</a>
+<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a></nav></div></header>
+<div class="development-banner" role="status"><div class="wrap">
+<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
+</div></div>
+<main class="wrap">
+<div class="crumb"><a href="../">← Qualification</a> / SolidCraft coverage</div>
+
+<section class="hero small">
+  <p class="eyebrow">SolidCraft → Forge → qualification</p>
+  <h1>SolidCraft functionality coverage</h1>
+  <p>This page separates two questions. First: how much of the useful SolidCraft
+  capability surface is exposed coherently through Forge? Second: how much of that
+  Forge support has been functionally qualified against native SolidCraft?</p>
+  <p class="meta">Capability inventory: 30 · supported: 8 · partial: 17 · missing: 5</p>
+  <p class="meta"><strong>Basic primitives:</strong> 3/5 supported · 1 partial · 1 missing</p>
+</section>
+
+<section class="notice">
+  <strong>Coverage is capability-based, not command-count based.</strong>
+  One row represents a meaningful CAD capability such as primitives, extrusion,
+  fillet/chamfer, components or joints. SolidCraft may expose several commands and
+  options behind one row.
+</section>
+
+<section class="panel">
+  <h2>1. SolidCraft → Forge support</h2>
+  <p class="meta">This is the primary completeness view: what SolidCraft can do,
+  what Forge exposes today, and how important that capability is for the intended Forge API.</p>
+  <h3>Coverage by area</h3>
+  <table>
+    <thead><tr><th>Area</th><th>Total</th><th>Supported</th><th>Partial</th><th>Missing</th></tr></thead>
+    <tbody><tr><td><strong>1 · Geometry fundamentals</strong></td><td>8</td><td>5</td><td>2</td><td>1</td></tr><tr><td><strong>2 · Sketches and parametric profiles</strong></td><td>4</td><td>0</td><td>3</td><td>1</td></tr><tr><td><strong>3 · Part features and face references</strong></td><td>5</td><td>0</td><td>5</td><td>0</td></tr><tr><td><strong>4 · Components, occurrences and relationships</strong></td><td>7</td><td>3</td><td>3</td><td>1</td></tr><tr><td><strong>5 · Advanced modelling</strong></td><td>4</td><td>0</td><td>2</td><td>2</td></tr><tr><td><strong>6 · Inspection and exchange</strong></td><td>2</td><td>0</td><td>2</td><td>0</td></tr></tbody>
+  </table>
+  <h3>Capability detail</h3>
+  <table>
+    <thead><tr><th>Area</th><th>Capability</th><th>SolidCraft</th><th>Forge status</th><th>Forge today</th><th>Target / priority</th></tr></thead>
+    <tbody><tr><td>1 · Geometry fundamentals</td><td><strong>Box</strong></td><td>Native box primitive.</td><td><span class="coverage-status supported">Supported</span></td><td>Q6 · native-qualified in the current Forge subset.</td><td>Core</td></tr><tr><td>1 · Geometry fundamentals</td><td><strong>Cylinder</strong></td><td>Native cylinder primitive, including principal-axis support.</td><td><span class="coverage-status supported">Supported</span></td><td>Q6 · principal-axis Cylinder behaviour is qualified through the shared primitive matrix and native primitive-csg case.</td><td>Core</td></tr><tr><td>1 · Geometry fundamentals</td><td><strong>Sphere</strong></td><td>Native sphere primitive.</td><td><span class="coverage-status supported">Supported</span></td><td>Q6 · native-qualified through primitive CSG.</td><td>Core</td></tr><tr><td>1 · Geometry fundamentals</td><td><strong>Cone</strong></td><td>Native cone / frustum primitive.</td><td><span class="coverage-status partial">Partial</span></td><td>Q2 · public Cone semantics and native command lowering are covered; a dedicated Q6 visual case is still missing.</td><td>Later Q6</td></tr><tr><td>1 · Geometry fundamentals</td><td><strong>Torus</strong></td><td>Native torus primitive.</td><td><span class="coverage-status missing">Missing</span></td><td>Not exposed in Forge.</td><td>Later</td></tr><tr><td>1 · Geometry fundamentals</td><td><strong>Boolean join / cut / intersect</strong></td><td>Native solid operations.</td><td><span class="coverage-status supported">Supported</span></td><td>Q6</td><td>Core</td></tr><tr><td>1 · Geometry fundamentals</td><td><strong>Translation</strong></td><td>Native primitive positions and occurrence moves.</td><td><span class="coverage-status supported">Supported</span></td><td>Q6 for CSG; component move also supported.</td><td>Core</td></tr><tr><td>1 · Geometry fundamentals</td><td><strong>General rotation / mirror / scale</strong></td><td>Occurrence rotation is native; SolidCraft has richer placement machinery.</td><td><span class="coverage-status partial">Partial</span></td><td>Rotation is partial; mirror and scale remain gaps.</td><td>Core rotation; mirror/scale later</td></tr><tr><td>2 · Sketches and parametric profiles</td><td><strong>Lines / rectangles / circles / polygons / text</strong></td><td>Rich native sketch entities.</td><td><span class="coverage-status partial">Partial</span></td><td>Forge exposes only a useful subset today.</td><td>Core</td></tr><tr><td>2 · Sketches and parametric profiles</td><td><strong>Sketch constraints</strong></td><td>Native geometric constraints.</td><td><span class="coverage-status missing">Missing</span></td><td>Very limited/no public Forge constraint API.</td><td>High</td></tr><tr><td>2 · Sketches and parametric profiles</td><td><strong>Sketch dimensions and expressions</strong></td><td>Native dimensions and parameter expressions.</td><td><span class="coverage-status partial">Partial</span></td><td>Expression support exists, but the full sketch-dimension surface is not exposed.</td><td>High</td></tr><tr><td>2 · Sketches and parametric profiles</td><td><strong>Face workplanes / projections</strong></td><td>Native sketches can live on faces and reference/project geometry.</td><td><span class="coverage-status partial">Partial</span></td><td>Face-based placement exists; projection/reference breadth is incomplete.</td><td>High</td></tr><tr><td>3 · Part features and face references</td><td><strong>Extrude</strong></td><td>Native new/join/cut/intersect, symmetric, two-sided and to/from-object extents.</td><td><span class="coverage-status partial">Partial</span></td><td>Q6 basic subset.</td><td>Core</td></tr><tr><td>3 · Part features and face references</td><td><strong>Hole</strong></td><td>Native direction, through/to, countersink/counterbore, threads and edge references.</td><td><span class="coverage-status partial">Partial</span></td><td>Partial Q6 through-hole support.</td><td>Core</td></tr><tr><td>3 · Part features and face references</td><td><strong>Fillet / chamfer / shell</strong></td><td>Native topology-based feature operations.</td><td><span class="coverage-status partial">Partial</span></td><td>Basic Edges.VERTICAL fillet is Q6-qualified; chamfer, shell and richer edge-selection modes still have native gaps.</td><td>High</td></tr><tr><td>3 · Part features and face references</td><td><strong>Patterns</strong></td><td>Native solid and sketch rectangular/circular patterns.</td><td><span class="coverage-status partial">Partial</span></td><td>Hole pattern subset is available.</td><td>High</td></tr><tr><td>3 · Part features and face references</td><td><strong>Materials / appearance</strong></td><td>Native material and appearance support.</td><td><span class="coverage-status partial">Partial</span></td><td>Material assignment exists; appearance breadth is incomplete.</td><td>Useful</td></tr><tr><td>4 · Components, occurrences and relationships</td><td><strong>Components and repeated occurrences</strong></td><td>Native component definitions and occurrence copies.</td><td><span class="coverage-status supported">Supported</span></td><td>Q6 basic reusable-definition/copy path.</td><td>Core</td></tr><tr><td>4 · Components, occurrences and relationships</td><td><strong>Component-local parameters and inherited expressions</strong></td><td>Native user parameters and expressions can drive reusable component geometry.</td><td><span class="coverage-status supported">Supported</span></td><td>Q5 · implicit parameters, inherited expressions and parent-derived child dimensions verified through saved-design mutation.</td><td>Core</td></tr><tr><td>4 · Components, occurrences and relationships</td><td><strong>Occurrence local/world placement</strong></td><td>Native local/world translation, axis-angle and matrices.</td><td><span class="coverage-status partial">Partial</span></td><td>Move and some rotation paths exist; full transform surface is not exposed.</td><td>Core</td></tr><tr><td>4 · Components, occurrences and relationships</td><td><strong>Parent/child relation via a face</strong></td><td>Native face/topology references can remain associative.</td><td><span class="coverage-status supported">Supported</span></td><td>Q5 for standard face/corner anchors.</td><td>Core</td></tr><tr><td>4 · Components, occurrences and relationships</td><td><strong>Local attachment frame / joint origin</strong></td><td>Native face, circle, edge, corner, point, plane or axis origins plus orientation.</td><td><span class="coverage-status partial">Partial</span></td><td>Standard corners, child AnchorFrame and direct AnchorTopology edge/on/corner picks are qualified; explicitly rotated AnchorTopology occurrences remain a gap.</td><td>Core</td></tr><tr><td>4 · Components, occurrences and relationships</td><td><strong>Rigid / planar relationships</strong></td><td>Native persistent component relationships and editable values.</td><td><span class="coverage-status partial">Partial</span></td><td>Rigid, planar and as-built rigid paths are Q6-qualified; broader joint types and relationship options remain incomplete.</td><td>Needed after basic parent/child placement</td></tr><tr><td>4 · Components, occurrences and relationships</td><td><strong>Motion joints / limits / kinematics</strong></td><td>Native degrees of freedom, limits and motion solving.</td><td><span class="coverage-status missing">Missing</span></td><td>Not exposed in Forge.</td><td>Later</td></tr><tr><td>5 · Advanced modelling</td><td><strong>Revolve</strong></td><td>Native parametric revolve.</td><td><span class="coverage-status missing">Missing</span></td><td>Not exposed in Forge.</td><td>High</td></tr><tr><td>5 · Advanced modelling</td><td><strong>Sweep</strong></td><td>Native sweep with path orientation, twist, scale and rails.</td><td><span class="coverage-status missing">Missing</span></td><td>Not exposed in Forge.</td><td>Later</td></tr><tr><td>5 · Advanced modelling</td><td><strong>Loft</strong></td><td>Native multi-section loft with optional rails.</td><td><span class="coverage-status partial">Partial</span></td><td>Internal/special-case use only.</td><td>Later</td></tr><tr><td>5 · Advanced modelling</td><td><strong>Threads / emboss / sheet metal</strong></td><td>Native specialized features exist.</td><td><span class="coverage-status partial">Partial</span></td><td>ThreadedHole is Q6-qualified. The first sheet-metal subset is Q6-qualified through Sketch.sheet_metal() + Shape.fold(); emboss and broader sheet operations remain missing.</td><td>Expand only from real model needs</td></tr><tr><td>6 · Inspection and exchange</td><td><strong>Measurements / topology / interference</strong></td><td>Native inspection and topology queries are extensive.</td><td><span class="coverage-status partial">Partial</span></td><td>Used heavily by qualification; little is public modelling API.</td><td>High for verification</td></tr><tr><td>6 · Inspection and exchange</td><td><strong>Import / export / linked components</strong></td><td>Native exchange and component-linking workflows.</td><td><span class="coverage-status partial">Partial</span></td><td>Available mainly through CLI/project workflow.</td><td>Later</td></tr></tbody>
+  </table>
+</section>
+
+<section class="panel">
+  <h2>2. Functional qualification</h2>
+  <p class="meta">Only after a capability exists in Forge do we ask how strongly it
+  has been proven. Target is the intended qualification depth; Current is the
+  highest dedicated Q-level demonstrated today.</p>
+  <p class="meta"><strong>Functional qualification:</strong> 41/55 at target · 5 below target · 9 gaps</p>
+  <h3>Qualification by area</h3>
+  <table>
+    <thead><tr><th>Area</th><th>Total</th><th>At target</th><th>Below target</th><th>Gap</th></tr></thead>
+    <tbody><tr><td><strong>Primitive objects</strong></td><td>5</td><td>4</td><td>0</td><td>1</td></tr><tr><td><strong>Primitive CSG</strong></td><td>1</td><td>1</td><td>0</td><td>0</td></tr><tr><td><strong>Shape transforms</strong></td><td>2</td><td>1</td><td>0</td><td>1</td></tr><tr><td><strong>Profiles</strong></td><td>2</td><td>2</td><td>0</td><td>0</td></tr><tr><td><strong>Features</strong></td><td>11</td><td>9</td><td>0</td><td>2</td></tr><tr><td><strong>Plastic features</strong></td><td>5</td><td>0</td><td>1</td><td>4</td></tr><tr><td><strong>Explicit Sketch</strong></td><td>6</td><td>5</td><td>0</td><td>1</td></tr><tr><td><strong>Occurrences</strong></td><td>4</td><td>3</td><td>1</td><td>0</td></tr><tr><td><strong>Assemblies</strong></td><td>14</td><td>12</td><td>2</td><td>0</td></tr><tr><td><strong>Parameters</strong></td><td>2</td><td>2</td><td>0</td><td>0</td></tr><tr><td><strong>CLI</strong></td><td>3</td><td>2</td><td>1</td><td>0</td></tr></tbody>
+  </table>
+  <h3>Qualification detail</h3>
+  <table>
+    <thead><tr><th>Area</th><th>Capability</th><th>Target qualification</th><th>Current qualification</th><th>Status</th><th>Cases</th><th>Notes</th></tr></thead>
+    <tbody><tr><td>Primitive objects</td><td><code>Box</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../simple-box/">simple-box</a></td><td>Native parameterized box baseline.</td></tr><tr><td>Primitive objects</td><td><code>Cylinder(axis=Axis.X/Y/Z)</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../primitive-csg/">primitive-csg</a></td><td>Principal-axis native cylinder lowering passed native build, measurement and visual qualification.</td></tr><tr><td>Primitive objects</td><td><code>Sphere</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../primitive-csg/">primitive-csg</a></td><td>Sphere passed native build, measurement and visual qualification.</td></tr><tr><td>Primitive objects</td><td><code>Cone / frustum</code></td><td>Q2</td><td><strong>Q2</strong></td><td><span class="coverage-status at-target">At target</span></td><td>—</td><td>Public native solid.cone lowering is covered by the shared primitive matrix and pinned command contract; add a dedicated native visual qualification case for Q6.</td></tr><tr><td>Primitive objects</td><td><code>Torus</code></td><td>Q6</td><td><strong>GAP</strong></td><td><span class="coverage-status gap">Gap</span></td><td>—</td><td>Not yet exposed through the public Forge API.</td></tr><tr><td>Primitive CSG</td><td><code>union / difference / intersection</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../primitive-csg/">primitive-csg</a></td><td>All three Boolean operators passed native SolidCraft qualification.</td></tr><tr><td>Shape transforms</td><td><code>Shape.move(x,y,z)</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../primitive-csg/">primitive-csg</a></td><td>Translated primitive passed native SolidCraft qualification.</td></tr><tr><td>Shape transforms</td><td><code>General arbitrary primitive rotation</code></td><td>Q6</td><td><strong>GAP</strong></td><td><span class="coverage-status gap">Gap</span></td><td>—</td><td>Principal Cylinder axes are native; arbitrary primitive rotation remains a separate transform capability.</td></tr><tr><td>Profiles</td><td><code>with Sketch(...): Circle2D; sketch.extrude()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../circle-negative-extrude/">circle-negative-extrude</a></td><td>Explicit circle Sketch compiles to a native Sketch plus ExtrudeFeature and is measured/visually qualified.</td></tr><tr><td>Profiles</td><td><code>Sketch.extrude(+d / -d / d, sym=True)</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../circle-negative-extrude/">circle-negative-extrude</a>, <a href="../bracket/">bracket</a></td><td>Signed distance selects positive/negative extrusion; sym=True selects symmetric extrusion. Native direction and bounds remain qualified.</td></tr><tr><td>Features</td><td><code>fillet()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../four-corner-l/">four-corner-l</a>, <a href="../eight-corner-brackets/">eight-corner-brackets</a>, <a href="../eight-flightcase-corners/">eight-flightcase-corners</a></td><td>Basic vertical-edge fillet is command-, native- and visual-qualified; richer edge-selection modes remain separate gaps.</td></tr><tr><td>Features</td><td><code>Shape.rectangular_pattern()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../rectangular-pattern/">rectangular-pattern</a></td><td>Native SolidCraft rectangular History pattern passed command, build, measured geometry and visual qualification.</td></tr><tr><td>Features</td><td><code>Sketch.sheet_metal()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../sheet-fold/">sheet-fold</a></td><td>Native base-sheet creation is qualified from flat Sketch through formed body, visual evidence and recovered flat pattern.</td></tr><tr><td>Features</td><td><code>Shape.fold()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../sheet-fold/">sheet-fold</a></td><td>Native sheet fold is qualified with formed geometry, feature history and flat-pattern bend metadata.</td></tr><tr><td>Features</td><td><code>chamfer()</code></td><td>Q6</td><td><strong>GAP</strong></td><td><span class="coverage-status gap">Gap</span></td><td>—</td><td>Add profile-edge and explicit pick cases.</td></tr><tr><td>Features</td><td><code>shell()</code></td><td>Q6</td><td><strong>GAP</strong></td><td><span class="coverage-status gap">Gap</span></td><td>—</td><td>Add open-face shell measurement.</td></tr><tr><td>Features</td><td><code>with_material()</code></td><td>Q4</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../xz-anchor/">xz-anchor</a></td><td>Material creation/assignment runs natively; add explicit material assertions if needed.</td></tr><tr><td>Features</td><td><code>directional Hole.at()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../hole-family/">hole-family</a></td><td>All four qualified Hole-family features use explicit -Z native direction and pass native geometry checks.</td></tr><tr><td>Features</td><td><code>CounterboreHole.at()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../hole-family/">hole-family</a></td><td>Native counterbore recess is qualified independently from the main bore.</td></tr><tr><td>Features</td><td><code>CountersinkHole.at()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../hole-family/">hole-family</a></td><td>Native 90 degree countersink is qualified with conical geometry evidence.</td></tr><tr><td>Features</td><td><code>ThreadedHole.at()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../hole-family/">hole-family</a></td><td>Native M6 thread metadata and modeled thread geometry are qualified; references independently prove the tap-drill envelope.</td></tr><tr><td>Plastic features</td><td><code>Lip.at()/attach()</code></td><td>Q6</td><td><strong>GAP</strong></td><td><span class="coverage-status gap">Gap</span></td><td>—</td><td>Dedicated native plastic fixture required.</td></tr><tr><td>Plastic features</td><td><code>SnapFit.at()/attach()</code></td><td>Q6</td><td><strong>GAP</strong></td><td><span class="coverage-status gap">Gap</span></td><td>—</td><td>Dedicated native plastic fixture required.</td></tr><tr><td>Plastic features</td><td><code>Boss.attach()</code></td><td>Q6</td><td><strong>Q2</strong></td><td><span class="coverage-status below-target">Below target</span></td><td>—</td><td>Command-level coverage remains; add a dedicated native Boss qualification fixture.</td></tr><tr><td>Plastic features</td><td><code>Boss.at() / directional Boss</code></td><td>Q6</td><td><strong>GAP</strong></td><td><span class="coverage-status gap">Gap</span></td><td>—</td><td>Explicit placement/direction variants still need a dedicated native fixture.</td></tr><tr><td>Plastic features</td><td><code>Rest.at()/attach()</code></td><td>Q6</td><td><strong>GAP</strong></td><td><span class="coverage-status gap">Gap</span></td><td>—</td><td>Dedicated native plastic fixture required.</td></tr><tr><td>Explicit Sketch</td><td><code>Sketch.add(Circle2D)/extrude()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../circle-negative-extrude/">circle-negative-extrude</a></td><td>Named explicit circle sketch persists as its own native Sketch plus ExtrudeFeature and passes visual regression.</td></tr><tr><td>Explicit Sketch</td><td><code>Sketch.add(RoundedRectangle2D)/extrude()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../rounded-rectangle-sketch/">rounded-rectangle-sketch</a></td><td>Saved native sketch has eight curves, one profile and four cylindrical corner faces after join extrusion.</td></tr><tr><td>Explicit Sketch</td><td><code>Native Slot family</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../slot-family/">slot-family</a></td><td>All five SolidCraft Slot construction methods lower one-to-one to their native sketch.slot.* commands and are qualified together in one sketch.</td></tr><tr><td>Explicit Sketch</td><td><code>Rectangle2D in Sketch / extrude()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../anchored-holes/">anchored-holes</a></td><td>Rectangle2D authored in an explicit Sketch is native-qualified.</td></tr><tr><td>Explicit Sketch</td><td><code>Sketch.add(..., anchor=CENTER)</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../anchored-holes/">anchored-holes</a>, <a href="../rounded-rectangle-sketch/">rounded-rectangle-sketch</a></td><td>Dimension-defined profiles are centred semantically; offset is reserved for deliberate local displacement.</td></tr><tr><td>Explicit Sketch</td><td><code>Text2D in Sketch / extrude()</code></td><td>Q6</td><td><strong>GAP</strong></td><td><span class="coverage-status gap">Gap</span></td><td>—</td><td>Text2D explicit-sketch path still needs dedicated native coverage.</td></tr><tr><td>Occurrences</td><td><code>Placement / absolute at()</code></td><td>Q6</td><td><strong>Q2</strong></td><td><span class="coverage-status below-target">Below target</span></td><td>—</td><td>Public placement state is separated from native lowering; numeric extra occurrences lower directly through occurrence.copy translate. Native identity/replay qualification remains required.</td></tr><tr><td>Occurrences</td><td><code>parameter-driven Placement / occurrence.move lowering</code></td><td>Q5</td><td><strong>Q5</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../four-corner-l/">four-corner-l</a></td><td>Symbolic Placement lowers to replay-safe occurrence.move values and follows saved-design frame dimension changes.</td></tr><tr><td>Occurrences</td><td><code>copy + Placement rotation</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../eight-flightcase-corners/">eight-flightcase-corners</a></td><td>Repeated copies with absolute 3D Placement and rotation are native- and visually qualified on all eight case corners.</td></tr><tr><td>Occurrences</td><td><code>group()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../group-hierarchy/">group-hierarchy</a></td><td>Native top/flat BOM inspection proves the named subassembly hierarchy and repeated child occurrences.</td></tr><tr><td>Assemblies</td><td><code>rigid attach()</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../components/">components</a></td><td>Native rigid relationship.</td></tr><tr><td>Assemblies</td><td><code>@assembly imported subassembly</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../assembly-decorator/">assembly-decorator</a></td><td>An imported @assembly factory returns reusable occurrences that compile and build natively.</td></tr><tr><td>Assemblies</td><td><code>gap</code></td><td>Q5</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../parametric-attach/">parametric-attach</a></td><td>Saved-design mutation qualified.</td></tr><tr><td>Assemblies</td><td><code>local planar offset=(u,v)</code></td><td>Q5</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../parametric-offset/">parametric-offset</a></td><td>Current semantics explicitly local to joint frame.</td></tr><tr><td>Assemblies</td><td><code>angle</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../attach-angle/">attach-angle</a></td><td>A non-square child is quarter-turned by the native rigid-joint angle and verified by bounds plus visual regression.</td></tr><tr><td>Assemblies</td><td><code>as_built=True</code></td><td>Q6</td><td><strong>Q2</strong></td><td><span class="coverage-status below-target">Below target</span></td><td>—</td><td>Command-level tests cover joint.as_built, but no dedicated native qualification case currently proves Q3-Q6.</td></tr><tr><td>Assemblies</td><td><code>standard face anchors</code></td><td>Q5</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../parametric-anchor/">parametric-anchor</a></td><td>Parent topology mutation qualified.</td></tr><tr><td>Assemblies</td><td><code>standard corner anchors</code></td><td>Q5</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../corner-anchor/">corner-anchor</a>, <a href="../xz-anchor/">xz-anchor</a></td><td>Width/height mutation and mirrored corners qualified.</td></tr><tr><td>Assemblies</td><td><code>eight profiles as two per vertical side corner</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../eight-corner-brackets/">eight-corner-brackets</a></td><td>The 4-profile baseline is duplicated in Z so each rounded vertical side corner has one lower and one upper angle profile.</td></tr><tr><td>Assemblies</td><td><code>four centred vertical side-corner L-profiles</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../four-corner-l/">four-corner-l</a></td><td>One neutral vertical angle profile wraps each rounded side corner and is centred in height through symbolic native joint placement.</td></tr><tr><td>Assemblies</td><td><code>four-profile placement follows parent width/depth</code></td><td>Q5</td><td><strong>Q5</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../four-corner-l/">four-corner-l</a></td><td>Saved-design 120x80 -&gt; 160x120 mutation moves all four XY side corners while the fixed-height profiles remain centred vertically.</td></tr><tr><td>Assemblies</td><td><code>AnchorFrame</code></td><td>Q6</td><td><strong>Q2</strong></td><td><span class="coverage-status below-target">Below target</span></td><td><a href="../anchor-topology-mutation/">anchor-topology-mutation</a></td><td>A real fixture exercises AnchorFrame as the child reference at command-contract level; arbitrary oriented-frame native qualification remains open.</td></tr><tr><td>Assemblies</td><td><code>AnchorTopology</code></td><td>Q5</td><td><strong>Q5</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../anchor-topology-mutation/">anchor-topology-mutation</a></td><td>A fixed explicit topology pick follows the selected parent corner after native saved-design resize.</td></tr><tr><td>Assemblies</td><td><code>assembly.with_anchor()/anchor()</code></td><td>Q5</td><td><strong>Q5</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../assembly-owned-anchor/">assembly-owned-anchor</a></td><td>Assembly-owned semantic names lower to ordinary native topology-backed relationships and remain associative after saved-design mutation.</td></tr><tr><td>Parameters</td><td><code>implicit component parameters and inherited bindings</code></td><td>Q5</td><td><strong>Q5</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../parameter-scope/">parameter-scope</a></td><td>Native SolidCraft mutation proves local independence, shared bindings and derived expressions.</td></tr><tr><td>Parameters</td><td><code>child dimensions derived from parent geometry</code></td><td>Q5</td><td><strong>Q5</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../parent-derived-child-size/">parent-derived-child-size</a></td><td>A reusable child keeps width/depth expressions derived from parent parameters and rebuilds natively after saved-design mutation.</td></tr><tr><td>CLI</td><td><code>--out command generation</code></td><td>Q2</td><td><strong>Q2</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../simple-box/">simple-box</a></td><td>The simple-box fixture provides concrete command-generation evidence; the wider CI suite repeats the same path.</td></tr><tr><td>CLI</td><td><code>native solidcraft-cli run/eval/snapshot</code></td><td>Q6</td><td><strong>Q6</strong></td><td><span class="coverage-status at-target">At target</span></td><td><a href="../simple-box/">simple-box</a></td><td>Native run/eval/snapshot is exercised by the qualification cases against SolidCraft 0.42.0; simple-box is the concrete baseline link.</td></tr><tr><td>CLI</td><td><code>live --connect / replay</code></td><td>Q2</td><td><strong>Q1</strong></td><td><span class="coverage-status below-target">Below target</span></td><td>—</td><td>Transport/argument behavior should be tested separately from headless geometry.</td></tr></tbody>
+  </table>
+  <p class="meta">Qualification gaps: 9</p>
+</section>
+
+<section class="panel">
+  <h2>3. Public Python API exports</h2>
+  <p class="meta">This is a secondary implementation check. It verifies that every
+  public Forge symbol has an explicit qualification expectation, but it is not a
+  measure of SolidCraft feature completeness.</p>
+  <table>
+    <thead><tr><th>API</th><th>Target</th><th>Current</th><th>Cases</th><th>Notes</th></tr></thead>
+    <tbody><tr><td><code>Box</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../simple-box/">simple-box</a></td><td>Native primitive and parameter baseline.</td></tr><tr><td><code>Cylinder</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../primitive-csg/">primitive-csg</a></td><td>Native principal-axis Cylinder is qualified with explicit Axis.X in SolidCraft 0.42.0; Axis.Y/Z use the same primitive field.</td></tr><tr><td><code>Cone</code></td><td>Q2</td><td><strong>Q2</strong></td><td>—</td><td>Public Cone/frustum semantics, parameter preservation and CSG combinations are covered by the shared geometry contract matrix; the pinned SolidCraft 0.42.0 command snapshot proves the native solid.cone contract. A dedicated Q6 visual fixture remains separate capability work.</td></tr><tr><td><code>Sphere</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../primitive-csg/">primitive-csg</a></td><td>Primitive CSG creation is native-qualified in SolidCraft 0.42.0.</td></tr><tr><td><code>Hole</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../hole-family/">hole-family</a>, <a href="../anchored-holes/">anchored-holes</a></td><td>Simple native Hole.at() is qualified directly by hole-family; anchored-holes separately qualifies face-relative repeated placement.</td></tr><tr><td><code>CounterboreHole</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../hole-family/">hole-family</a></td><td>Native cylindrical counterbore intent is command-, geometry- and visual-qualified.</td></tr><tr><td><code>CountersinkHole</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../hole-family/">hole-family</a></td><td>Native conical countersink intent is command-, geometry- and visual-qualified.</td></tr><tr><td><code>ThreadedHole</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../hole-family/">hole-family</a></td><td>Native M6 tapped-hole metadata and modeled-thread intent are qualified by the Hole-family fixture.</td></tr><tr><td><code>Lip</code></td><td>Q6</td><td><strong>GAP</strong></td><td>—</td><td>Plastic feature needs a dedicated native fixture.</td></tr><tr><td><code>SnapFit</code></td><td>Q6</td><td><strong>GAP</strong></td><td>—</td><td>Plastic feature needs a dedicated native fixture.</td></tr><tr><td><code>Boss</code></td><td>Q6</td><td><strong>Q2</strong></td><td>—</td><td>Boss.attach() retains command-level unit coverage; a dedicated native qualification case is still required.</td></tr><tr><td><code>Rest</code></td><td>Q6</td><td><strong>GAP</strong></td><td>—</td><td>Plastic feature needs a dedicated native fixture.</td></tr><tr><td><code>Depth</code></td><td>Q2</td><td><strong>Q6</strong></td><td><a href="../anchored-holes/">anchored-holes</a></td><td>THROUGH_ALL is exercised by the native hole fixture.</td></tr><tr><td><code>Rectangle2D</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../anchored-holes/">anchored-holes</a></td><td>Rectangle2D is authored inside an explicit Sketch and native-qualified through the rectangle sketch/extrude path.</td></tr><tr><td><code>RoundedRectangle2D</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../rounded-rectangle-sketch/">rounded-rectangle-sketch</a></td><td>Explicit named Sketch lowering preserves one solved eight-curve rounded profile with four true arc corners.</td></tr><tr><td><code>SlotCenterToCenter2D</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../slot-family/">slot-family</a></td><td>Native center-to-center Slot constructor is qualified directly through sketch.slot.center_to_center.</td></tr><tr><td><code>SlotOverall2D</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../slot-family/">slot-family</a></td><td>Native overall-length Slot constructor is qualified directly through sketch.slot.overall.</td></tr><tr><td><code>SlotCenterPoint2D</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../slot-family/">slot-family</a></td><td>Native center-point Slot constructor is qualified directly through sketch.slot.center_point.</td></tr><tr><td><code>SlotArcThreePoint2D</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../slot-family/">slot-family</a></td><td>Native three-point arc Slot constructor is qualified directly through sketch.slot.arc_three_point.</td></tr><tr><td><code>SlotArcCenter2D</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../slot-family/">slot-family</a></td><td>Native center-arc Slot constructor is qualified directly through sketch.slot.arc_center.</td></tr><tr><td><code>Circle2D</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../circle-negative-extrude/">circle-negative-extrude</a></td><td>Circle2D is native- and visual-qualified inside an explicit Sketch scope with negative extrusion.</td></tr><tr><td><code>Polygon2D</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../xz-anchor/">xz-anchor</a>, <a href="../bracket/">bracket</a></td><td>XZ Polygon2D authored inside explicit Sketch scopes is native-qualified for symmetric and positive extrusion.</td></tr><tr><td><code>Shape</code></td><td>Q2</td><td><strong>Q6</strong></td><td><a href="../simple-box/">simple-box</a>, <a href="../anchored-holes/">anchored-holes</a>, <a href="../bracket/">bracket</a>, <a href="../sheet-fold/">sheet-fold</a></td><td>Core composition node is exercised by solid and sheet-metal native cases.</td></tr><tr><td><code>Parameter</code></td><td>Q5</td><td><strong>Q5</strong></td><td><a href="../parameter-scope/">parameter-scope</a>, <a href="../parent-derived-child-size/">parent-derived-child-size</a>, <a href="../parametric-attach/">parametric-attach</a>, <a href="../parametric-offset/">parametric-offset</a>, <a href="../parametric-anchor/">parametric-anchor</a></td><td>Component-local parameters, inherited bindings and parent-derived child expressions are qualified through saved-design mutation.</td></tr><tr><td><code>Placement</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../components/">components</a>, <a href="../four-corner-l/">four-corner-l</a></td><td>Numeric Placement is native-qualified by components; symbolic parameter-driven Placement and replay-safe occurrence.move lowering are mutation-qualified by four-corner-l.</td></tr><tr><td><code>Edges</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../four-corner-l/">four-corner-l</a>, <a href="../eight-corner-brackets/">eight-corner-brackets</a>, <a href="../eight-flightcase-corners/">eight-flightcase-corners</a></td><td>Edges.VERTICAL is native-qualified through rounded reference frames; profile-derived and explicit edge selections still need separate coverage.</td></tr><tr><td><code>Faces</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../anchored-holes/">anchored-holes</a></td><td>TOP face placement is qualified; other face selections need capability coverage.</td></tr><tr><td><code>Anchor</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../parametric-anchor/">parametric-anchor</a>, <a href="../corner-anchor/">corner-anchor</a>, <a href="../xz-anchor/">xz-anchor</a></td><td>Face and corner selectors are qualified by real native anchor cases; AnchorFrame is tracked separately.</td></tr><tr><td><code>AnchorFrame</code></td><td>Q6</td><td><strong>Q2</strong></td><td><a href="../anchor-topology-mutation/">anchor-topology-mutation</a></td><td>The public AnchorFrame command path is covered with a real qualification fixture, but arbitrary oriented-frame native/Q6 coverage is still missing.</td></tr><tr><td><code>AnchorTopology</code></td><td>Q5</td><td><strong>Q5</strong></td><td><a href="../anchor-topology-mutation/">anchor-topology-mutation</a></td><td>Explicit edge/on/corner topology is native-qualified through saved-design parent resize; explicitly rotated occurrences remain unsupported.</td></tr><tr><td><code>Axis</code></td><td>Q2</td><td><strong>Q6</strong></td><td><a href="../anchored-holes/">anchored-holes</a>, <a href="../primitive-csg/">primitive-csg</a></td><td>Axis values are exercised by native feature patterns and principal-axis Cylinder geometry.</td></tr><tr><td><code>X</code></td><td>Q2</td><td><strong>Q1</strong></td><td>—</td><td>Covered as an occurrence-rotation and parent-bound token; dedicated command-contract coverage remains.</td></tr><tr><td><code>Y</code></td><td>Q2</td><td><strong>Q1</strong></td><td>—</td><td>Covered as an occurrence-rotation and parent-bound token; dedicated command-contract coverage remains.</td></tr><tr><td><code>Z</code></td><td>Q2</td><td><strong>Q1</strong></td><td>—</td><td>Covered as an occurrence-rotation token; dedicated command-contract coverage remains.</td></tr><tr><td><code>CENTER</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../anchored-holes/">anchored-holes</a>, <a href="../rounded-rectangle-sketch/">rounded-rectangle-sketch</a></td><td>Semantic Sketch profile centre; command-level centering and native centred Rectangle2D/RoundedRectangle2D geometry are qualified.</td></tr><tr><td><code>TOP</code></td><td>Q2</td><td><strong>Q2</strong></td><td>—</td><td>Cardinal direction constant; combination semantics are covered by API regressions.</td></tr><tr><td><code>BOTTOM</code></td><td>Q2</td><td><strong>Q2</strong></td><td>—</td><td>Cardinal direction constant; combination semantics are covered by API regressions.</td></tr><tr><td><code>LEFT</code></td><td>Q2</td><td><strong>Q2</strong></td><td>—</td><td>Cardinal direction constant; combination semantics are covered by API regressions.</td></tr><tr><td><code>RIGHT</code></td><td>Q2</td><td><strong>Q2</strong></td><td>—</td><td>Cardinal direction constant; combination semantics are covered by API regressions.</td></tr><tr><td><code>FRONT</code></td><td>Q2</td><td><strong>Q2</strong></td><td>—</td><td>Cardinal direction constant; combination semantics are covered by API regressions.</td></tr><tr><td><code>BACK</code></td><td>Q2</td><td><strong>Q2</strong></td><td>—</td><td>Cardinal direction constant; combination semantics are covered by API regressions.</td></tr><tr><td><code>up</code></td><td>Q1</td><td><strong>Q1</strong></td><td>—</td><td>BOSL2-style cardinal offset helper; Python-level arithmetic qualification is appropriate.</td></tr><tr><td><code>down</code></td><td>Q1</td><td><strong>Q1</strong></td><td>—</td><td>BOSL2-style cardinal offset helper; Python-level arithmetic qualification is appropriate.</td></tr><tr><td><code>left</code></td><td>Q1</td><td><strong>Q1</strong></td><td>—</td><td>BOSL2-style cardinal offset helper; Python-level arithmetic qualification is appropriate.</td></tr><tr><td><code>right</code></td><td>Q1</td><td><strong>Q1</strong></td><td>—</td><td>BOSL2-style cardinal offset helper; Python-level arithmetic qualification is appropriate.</td></tr><tr><td><code>front</code></td><td>Q1</td><td><strong>Q1</strong></td><td>—</td><td>BOSL2-style cardinal offset helper; Python-level arithmetic qualification is appropriate.</td></tr><tr><td><code>back</code></td><td>Q1</td><td><strong>Q1</strong></td><td>—</td><td>BOSL2-style cardinal offset helper; Python-level arithmetic qualification is appropriate.</td></tr><tr><td><code>half</code></td><td>Q1</td><td><strong>Q1</strong></td><td>—</td><td>Numeric/symbolic geometry helper; Python-level arithmetic qualification is appropriate.</td></tr><tr><td><code>midpoint</code></td><td>Q1</td><td><strong>Q1</strong></td><td>—</td><td>Numeric/symbolic geometry helper; Python-level arithmetic qualification is appropriate.</td></tr><tr><td><code>pv</code></td><td>Q1</td><td><strong>Q1</strong></td><td>—</td><td>Build-time numeric extraction/validation helper; native coverage is not appropriate.</td></tr><tr><td><code>Sketch</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../anchored-holes/">anchored-holes</a>, <a href="../circle-negative-extrude/">circle-negative-extrude</a>, <a href="../rounded-rectangle-sketch/">rounded-rectangle-sketch</a>, <a href="../xz-anchor/">xz-anchor</a>, <a href="../bracket/">bracket</a>, <a href="../sheet-fold/">sheet-fold</a></td><td>Explicit Sketch is Q6-qualified for normal solid profiles and as the source of a native sheet-metal blank; Text2D remains a capability-level gap.</td></tr><tr><td><code>compile_model</code></td><td>Q2</td><td><strong>Q2</strong></td><td><a href="../simple-box/">simple-box</a></td><td>Compiler entry point is a command-contract API; simple-box provides a concrete generated-command fixture.</td></tr><tr><td><code>run_script</code></td><td>Q2</td><td><strong>Q2</strong></td><td><a href="../simple-box/">simple-box</a></td><td>Runner entry point is exercised by the concrete simple-box command fixture and the wider qualification suite.</td></tr><tr><td><code>component</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../components/">components</a>, <a href="../parameter-scope/">parameter-scope</a></td><td>Reusable definitions/occurrences and component-parameter semantics are native-qualified.</td></tr><tr><td><code>assembly</code></td><td>Q6</td><td><strong>Q6</strong></td><td><a href="../assembly-decorator/">assembly-decorator</a></td><td>Imported @assembly subassembly construction is command-, native- and visual-qualified.</td></tr><tr><td><code>ModelParameterWarning</code></td><td>Q1</td><td><strong>Q1</strong></td><td>—</td><td>Warning contract belongs to Python-level qualification.</td></tr><tr><td><code>ModelError</code></td><td>Q1</td><td><strong>Q1</strong></td><td>—</td><td>Compiler validation/error contract belongs to Python-level qualification.</td></tr></tbody>
+  </table>
+  <p class="meta">Public export qualification gaps: 3</p>
+</section>
+</main>
+
+<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+<a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a></div></footer>
+<script>(() => {
+  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
+  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
+
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    document.execCommand('copy');
+    helper.remove();
+  }
+
+  document.querySelectorAll('pre > code').forEach((code) => {
+    const pre = code.parentElement;
+    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-copy';
+    button.title = 'Copy code';
+    button.setAttribute('aria-label', 'Copy code');
+    button.innerHTML = copyIcon;
+    wrapper.appendChild(button);
+
+    button.addEventListener('click', async () => {
+      try {
+        await copyText(code.textContent);
+        button.innerHTML = doneIcon;
+        button.classList.add('copied');
+        button.title = 'Copied';
+        button.setAttribute('aria-label', 'Copied');
+        window.setTimeout(() => {
+          button.innerHTML = copyIcon;
+          button.classList.remove('copied');
+          button.title = 'Copy code';
+          button.setAttribute('aria-label', 'Copy code');
+        }, 1400);
+      } catch (_error) {
+        button.title = 'Copy failed';
+        button.setAttribute('aria-label', 'Copy failed');
+      }
+    });
+  });
+})();
+</script>
+<script>
+(() => {
+  const root = document.querySelector('.site-search');
+  if (!root) return;
+
+  const input = root.querySelector('.site-search-input');
+  const results = root.querySelector('.site-search-results');
+  const indexUrl = root.dataset.searchIndex;
+  let indexPromise = null;
+  let visible = [];
+
+  const normal = (value) => String(value || '')
+    .toLowerCase()
+    .replace(/[_.:/-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const raw = (value) => String(value || '').toLowerCase().trim();
+
+  function loadIndex() {
+    if (!indexPromise) {
+      indexPromise = fetch(indexUrl)
+        .then((response) => {
+          if (!response.ok) throw new Error('Search index unavailable');
+          return response.json();
+        })
+        .then((data) => data.entries || []);
+    }
+    return indexPromise;
+  }
+
+  function score(entry, query) {
+    const qRaw = raw(query);
+    const q = normal(query);
+    if (!q) return -1;
+
+    const titleRaw = raw(entry.title);
+    const title = normal(entry.title);
+    const aliases = entry.aliases || [];
+    const aliasRaw = aliases.map(raw);
+    const aliasText = normal(aliases.join(' '));
+    const haystack = normal([
+      entry.title,
+      entry.summary,
+      entry.keywords,
+      aliases.join(' '),
+    ].join(' '));
+
+    if (titleRaw === qRaw) return 1000;
+    if (aliasRaw.includes(qRaw)) return 920;
+    if (title.startsWith(q)) return 820;
+    if (aliasText.startsWith(q)) return 760;
+    if (title.includes(q)) return 680;
+    if (aliasText.includes(q)) return 620;
+    if (haystack.includes(q)) return 500;
+
+    const words = q.split(' ').filter(Boolean);
+    if (words.length && words.every((word) => haystack.includes(word))) {
+      return 380 + words.length * 10;
+    }
+    return -1;
+  }
+
+  function closeResults() {
+    results.hidden = true;
+    results.replaceChildren();
+    input.setAttribute('aria-expanded', 'false');
+    visible = [];
+  }
+
+  function render(entries, query) {
+    const ranked = entries
+      .map((entry, order) => ({entry, order, score: score(entry, query)}))
+      .filter((row) => row.score >= 0)
+      .sort((a, b) => b.score - a.score || a.order - b.order)
+      .slice(0, 10);
+
+    results.replaceChildren();
+    visible = ranked.map((row) => row.entry);
+    if (!ranked.length) {
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'No documentation found.';
+      results.appendChild(empty);
+    } else {
+      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
+      ranked.forEach(({entry}) => {
+        const link = document.createElement('a');
+        link.className = 'site-search-result';
+        link.href = new URL(entry.url, indexBase).href;
+
+        const heading = document.createElement('span');
+        heading.className = 'site-search-result-title';
+        heading.textContent = entry.title;
+
+        const kind = document.createElement('span');
+        kind.className = 'site-search-result-kind';
+        kind.textContent = entry.kind;
+
+        const summary = document.createElement('span');
+        summary.className = 'site-search-result-summary';
+        summary.textContent = entry.summary;
+
+        link.append(heading, kind, summary);
+        results.appendChild(link);
+      });
+    }
+    results.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+  }
+
+  async function search() {
+    const query = input.value.trim();
+    if (!query) {
+      closeResults();
+      return;
+    }
+    try {
+      render(await loadIndex(), query);
+    } catch (_error) {
+      results.replaceChildren();
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'Search is unavailable.';
+      results.appendChild(empty);
+      results.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  input.addEventListener('input', search);
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) search();
+  });
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeResults();
+      input.blur();
+    } else if (event.key === 'Enter' && visible.length) {
+      event.preventDefault();
+      results.querySelector('.site-search-result')?.click();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!root.contains(event.target)) closeResults();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const typing = target instanceof HTMLInputElement
+      || target instanceof HTMLTextAreaElement
+      || target instanceof HTMLSelectElement
+      || target?.isContentEditable;
+    const shortcut = (event.ctrlKey || event.metaKey)
+      && event.key.toLowerCase() === 'k';
+    const slash = event.key === '/' && !typing && !event.ctrlKey
+      && !event.metaKey && !event.altKey;
+    if (shortcut || slash) {
+      event.preventDefault();
+      input.focus();
+      input.select();
+    }
+  });
+})();
+</script>
+</body></html>
