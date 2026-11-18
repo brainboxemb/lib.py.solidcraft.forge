@@ -44,7 +44,10 @@ def selected_cases(value: str, gate: str) -> tuple[str, ...]:
 def run_q1_q2(cases: tuple[str, ...], out: Path) -> None:
     qualification = out / "qualification"
     qualification.mkdir(parents=True, exist_ok=True)
-    run([sys.executable, "-m", "unittest", "discover", "-s", "scpf/tests", "-v"])
+    run(
+        [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"],
+        cwd=ROOT / "scpf",
+    )
     run([sys.executable, "qualification/testsuite.py"])
     case_arg = ",".join(cases)
     for level in ("q1", "q2"):

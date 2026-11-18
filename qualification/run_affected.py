@@ -365,7 +365,8 @@ def main() -> int:
     print("Affected qualification: " + ", ".join(selected))
 
     q1_global, _ = _run(
-        [sys.executable, "-m", "unittest", "discover", "-s", "scpf/tests", "-v"]
+        [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"],
+        cwd=ROOT / "scpf",
     )
     q1_case, _ = _run(
         [
