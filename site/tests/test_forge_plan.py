@@ -36,6 +36,7 @@ class ForgePlanTests(unittest.TestCase):
                 ".github/workflows/scpf.yml",
                 ".github/workflows/forge.yml",
                 "qualification/impact.py",
+                "qualification/tests/test_native_runtime_metadata.py",
                 "scripts/ci/forge_plan.py",
                 "site/tests/test_publishing.py",
                 "docs/11-generated-output.md",
