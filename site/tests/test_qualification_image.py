@@ -1,4 +1,4 @@
-"""Tests for immutable qualification-container metadata."""
+"""Tests for immutable qualification-container metadata and CI ownership."""
 
 from pathlib import Path
 import tempfile
@@ -38,58 +38,35 @@ class QualificationImageTests(unittest.TestCase):
         )
         self.assertEqual(values["solidcraft"], "0.42.0")
 
-    def test_forge_workflow_reuses_image_before_building(self):
+    def test_forge_workflow_delegates_pipeline_logic(self):
         workflow = (
             qualification_image.ROOT
             / ".github"
             / "workflows"
             / "scpf.yml"
         ).read_text(encoding="utf-8")
-        pull = workflow.index("docker pull")
-        build = workflow.index("docker/build-push-action@v6")
-        self.assertLess(pull, build)
-        self.assertIn(
-            "steps.image_cache.outputs.exists != 'true'",
-            workflow,
-        )
-        self.assertIn("scripts/qualification_image.py", workflow)
+        self.assertIn("python scripts/forge_pipeline.py run", workflow)
+        self.assertIn("docker/build-push-action@v6", workflow)
 
-    def test_missing_image_is_smoke_tested_before_immutable_publish(self):
-        workflow = (
-            qualification_image.ROOT
-            / ".github"
-            / "workflows"
-            / "scpf.yml"
-        ).read_text(encoding="utf-8")
-        smoke = workflow.index(
-            "- name: Validate new image or Forge pipeline with one complete case"
-        )
-        publish = workflow.index(
-            "- name: Publish newly built immutable qualification image"
-        )
-        self.assertLess(smoke, publish)
-        self.assertIn("qualification/case_runner.py simple-box", workflow)
-        self.assertIn("--stage mutate", workflow)
-        self.assertIn("replay_before", workflow)
+        # These are repository/pipeline concerns, not Actions concerns.
+        self.assertNotIn("qualification/case_runner.py simple-box", workflow)
+        self.assertNotIn("scripts/verification_gate.py", workflow)
+        self.assertNotIn("scripts/generated_output.py promote-overlay", workflow)
+        self.assertNotIn("site/build.py", workflow)
+        self.assertNotIn("site/test_site.py", workflow)
 
-    def test_pipeline_smoke_uses_selected_cached_image_without_reinstalling_toolchain(self):
-        workflow = (
+    def test_pipeline_owns_image_smoke_and_exact_stage_rerun(self):
+        pipeline = (
             qualification_image.ROOT
-            / ".github"
-            / "workflows"
-            / "scpf.yml"
+            / "scripts"
+            / "forge_pipeline.py"
         ).read_text(encoding="utf-8")
-        smoke = workflow.split(
-            "- name: Validate new image or Forge pipeline with one complete case",
-            1,
-        )[1].split(
-            "- name: Publish newly built immutable qualification image",
-            1,
-        )[0]
-        self.assertIn("steps.image_cache.outputs.run_image", smoke)
-        self.assertIn("qualification/case_runner.py simple-box", smoke)
-        self.assertNotIn("apt-get", smoke)
-        self.assertNotIn("setup_solidcraft.py", smoke)
+        self.assertIn('"qualification/case_runner.py"', pipeline)
+        self.assertIn('"simple-box"', pipeline)
+        self.assertIn('"--stage"', pipeline)
+        self.assertIn('"mutate"', pipeline)
+        self.assertIn("replay_before", pipeline)
+        self.assertIn("mutate_before", pipeline)
 
     def test_dockerfile_contains_no_tool_version_literals(self):
         dockerfile = qualification_image.DOCKERFILE.read_text(encoding="utf-8")
