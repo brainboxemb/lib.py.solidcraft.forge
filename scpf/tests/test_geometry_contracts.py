@@ -9,6 +9,8 @@ from scpf.csg import CSG_PRIMITIVE_KINDS
 from geometry_contracts import (
     CSG,
     CSG_OPERATION_CASES,
+    DERIVED_FEATURE_BODY_CASES,
+    FEATURE_BODY_CASES,
     FEATURE_CASES,
     NATIVE_HOLE,
     PRIMITIVE_BODY_CASES,
@@ -24,6 +26,35 @@ def _commands(document, name):
 
 
 class GeometryContractMatrix(unittest.TestCase):
+    def test_contract_registries_have_unique_names(self):
+        body_names = [case.name for case in FEATURE_BODY_CASES]
+        feature_names = [case.name for case in FEATURE_CASES]
+        operation_names = [case.name for case in CSG_OPERATION_CASES]
+
+        self.assertEqual(len(body_names), len(set(body_names)))
+        self.assertEqual(len(feature_names), len(set(feature_names)))
+        self.assertEqual(len(operation_names), len(set(operation_names)))
+
+    def test_every_operation_generates_one_derived_body_per_primitive(self):
+        self.assertEqual(
+            len(DERIVED_FEATURE_BODY_CASES),
+            len(PRIMITIVE_BODY_CASES) * len(CSG_OPERATION_CASES),
+        )
+        expected = {
+            f"{body.name}-{operation.name}"
+            for body in PRIMITIVE_BODY_CASES
+            for operation in CSG_OPERATION_CASES
+        }
+        self.assertEqual(
+            {case.name for case in DERIVED_FEATURE_BODY_CASES},
+            expected,
+        )
+
+    def test_every_registered_feature_has_compatible_bodies(self):
+        for feature in FEATURE_CASES:
+            with self.subTest(feature=feature.name):
+                self.assertTrue(cases_with(feature.capability))
+
     def test_primitive_registry_covers_every_compiler_primitive(self):
         self.assertEqual(
             {case.kind for case in PRIMITIVE_BODY_CASES},
