@@ -29,7 +29,7 @@ class SheetFold:
         return sheet.fold(
             line=((20, -20), (20, 20)),
             angle=self.fold_angle,
-            fixed=(-20, 0, 0),
+            fixed=(-30, 0, 0),
         )
 
 
