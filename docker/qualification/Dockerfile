@@ -1,7 +1,9 @@
-FROM python:3.12-slim-bookworm@sha256:935c3c5b12357a7e10caa9c1e6ca5692344d97cf229832ef584be2cec9fc03df
+ARG PYTHON_IMAGE
+FROM ${PYTHON_IMAGE}
 
 ARG SOLIDCRAFT_VERSION
 ARG CADCRAFT_VERSION
+ARG CADCRAFT_SHA256
 ARG PYTHONSCAD_VERSION
 ARG PYBOSL2_REV
 ARG CADQUERY_VERSION
@@ -58,7 +60,7 @@ RUN set -eux; \
     url="https://github.com/storytold/cadcraft/releases/download/v${CADCRAFT_VERSION}/${archive}"; \
     mkdir -p /opt/cadcraft/bin /tmp/cadcraft; \
     curl --proto '=https' -fsSL "${url}" -o "/tmp/cadcraft/${archive}"; \
-    echo "57b6f1b41b4f3c542a82f103202ed1a779440e5ff8d25c08ef66abda1a8cb1b9  /tmp/cadcraft/${archive}" | sha256sum -c -; \
+    echo "${CADCRAFT_SHA256}  /tmp/cadcraft/${archive}" | sha256sum -c -; \
     tar -xzf "/tmp/cadcraft/${archive}" \
         --strip-components=2 \
         -C /opt/cadcraft/bin \

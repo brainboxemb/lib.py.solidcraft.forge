@@ -81,8 +81,10 @@ jobs:
           push: false
           tags: qualification-local:${{ steps.meta.outputs.image_id }}
           build-args: |
+            PYTHON_IMAGE=${{ steps.meta.outputs.python_image }}
             SOLIDCRAFT_VERSION=${{ steps.meta.outputs.solidcraft }}
             CADCRAFT_VERSION=${{ steps.meta.outputs.cadcraft }}
+            CADCRAFT_SHA256=${{ steps.meta.outputs.cadcraft_sha256 }}
             PYTHONSCAD_VERSION=${{ steps.meta.outputs.pythonscad }}
             PYBOSL2_REV=${{ steps.meta.outputs.pybosl2 }}
             CADQUERY_VERSION=${{ steps.meta.outputs.cadquery }}

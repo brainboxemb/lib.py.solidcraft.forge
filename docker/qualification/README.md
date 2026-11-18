@@ -2,7 +2,16 @@
 
 This image contains the slow-changing qualification toolchain only.
 
-The Python base image is pinned by OCI digest so rebuilding the same toolchain does not silently move to a different base image.
+Tool versions are not configured in this Dockerfile. The qualification
+environment has explicit version owners:
+
+- SolidCraft: `scpf/scpf/version.py`;
+- Python base image: `qualification/toolchain.json`;
+- CADCraft version/checksum: `qualification/toolchain.json`;
+- reference-library versions: `qualification/toolchain.json`.
+
+The Python base image is pinned by OCI digest so rebuilding the same toolchain
+does not silently move to a different base image.
 
 It contains:
 

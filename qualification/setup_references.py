@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def load_toolchain(path: Path = ROOT / "qualification" / "toolchain.json") -> dict:
     data = json.loads(path.read_text(encoding="utf-8"))
-    if data.get("schema") != 1:
+    if data.get("schema") != 2:
         raise ValueError("unsupported toolchain schema")
     return data
 

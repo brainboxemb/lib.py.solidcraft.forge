@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 
 
@@ -17,9 +18,9 @@ VERSION_FILE = ROOT / "scpf" / "scpf" / "version.py"
 
 def load_toolchain() -> dict:
     data = json.loads(TOOLCHAIN.read_text(encoding="utf-8"))
-    if data.get("schema") != 1:
+    if data.get("schema") != 2:
         raise ValueError("unsupported qualification toolchain schema")
-    required = {"python", "cadcraft", "references"}
+    required = {"python_image", "cadcraft", "references"}
     missing = sorted(required - set(data))
     if missing:
         raise ValueError("missing toolchain fields: " + ", ".join(missing))
@@ -39,6 +40,20 @@ def image_id() -> str:
 def metadata(repository: str) -> dict[str, str]:
     data = load_toolchain()
     refs = data["references"]
+    cadcraft = data["cadcraft"]
+    if not isinstance(cadcraft, dict):
+        raise ValueError("cadcraft toolchain entry must be an object")
+    missing_cadcraft = sorted({"version", "sha256"} - set(cadcraft))
+    if missing_cadcraft:
+        raise ValueError(
+            "missing cadcraft toolchain fields: " + ", ".join(missing_cadcraft)
+        )
+    match = re.search(r"python:(\d+\.\d+)", data["python_image"])
+    if match is None:
+        raise ValueError(
+            "python_image must contain a major.minor Python tag"
+        )
+    python_version = match.group(1)
 
     namespace: dict[str, object] = {}
     exec(VERSION_FILE.read_text(encoding="utf-8"), namespace)
@@ -51,11 +66,13 @@ def metadata(repository: str) -> dict[str, str]:
         "tag": f"toolchain-{digest}",
         "reference": f"{image}:toolchain-{digest}",
         "alias": (
-            f"{image}:sc-{solidcraft}-py-{data['python']}"
+            f"{image}:sc-{solidcraft}-py-{python_version}"
         ),
-        "python": data["python"],
+        "python": python_version,
+        "python_image": data["python_image"],
         "solidcraft": solidcraft,
-        "cadcraft": data["cadcraft"],
+        "cadcraft": str(cadcraft["version"]),
+        "cadcraft_sha256": str(cadcraft["sha256"]),
         "pythonscad": refs["pythonscad"],
         "pybosl2": refs["pybosl2"],
         "cadquery": refs["cadquery"],
