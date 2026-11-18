@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.publish_generated import publish
+from scripts import generic_publication
 
 
 def run(args: list[str], *, check: bool = True) -> subprocess.CompletedProcess:
@@ -121,21 +121,11 @@ def reconcile(repository: str, *, apply: bool) -> dict:
     for number in sorted(
         set(result["orphan_build"]) | set(result["stale_build"])
     ):
-        publish(
-            branch="build",
-            operation="remove-dir",
-            destination=f"pr/{number}",
-            message=f"Reconcile build PR #{number}",
-        )
+        generic_publication.cleanup_build(number)
     for number in sorted(
         set(result["orphan_preview"]) | set(result["stale_preview"])
     ):
-        publish(
-            branch="gh-pages",
-            operation="remove-dir",
-            destination=f"previews/pr-{number}",
-            message=f"Reconcile preview PR #{number}",
-        )
+        generic_publication.cleanup_pages(number)
     result["applied"] = True
     return result
 
