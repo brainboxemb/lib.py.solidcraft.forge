@@ -30,6 +30,8 @@ jobs:
   preview:
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
+    outputs:
+      has_cases: ${{ steps.preview_scope.outputs.has_cases }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -203,6 +205,7 @@ jobs:
           done
 
       - name: Assemble PR technical build
+        if: steps.preview_scope.outputs.has_cases == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -222,6 +225,7 @@ jobs:
             --source-commit "${{ github.event.pull_request.head.sha }}"
 
       - name: Upload PR technical build
+        if: steps.preview_scope.outputs.has_cases == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: scpf-build-pr-${{ github.event.pull_request.number }}
@@ -260,7 +264,7 @@ jobs:
   publish-build:
     name: publish-build
     needs: preview
-    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository && needs.preview.outputs.has_cases == 'true'
     runs-on: ubuntu-latest
     concurrency:
       group: scpf-build-publish

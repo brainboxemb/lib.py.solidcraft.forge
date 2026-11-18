@@ -331,7 +331,13 @@ Rules:
   Do not publish new data to them.
 - The website never lives on `build`; technical build evidence never lives in
   the stable Pages root merely to stage publication.
-- `gh-pages` has no `qualification/` tree. Qualification reports, native\n  files, renders, measurements and reference evidence belong on `build`.\n- Every generated build has `build.json` with source ref/commit, PR number
+- `gh-pages/qualification/` is the public readable qualification section.
+  It contains HTML, documentation source and presentation-only material.
+  Generated commands, native files, renders, measurements and reference
+  evidence belong on `build`; public qualification pages link to that output.
+- A presentation-only PR does not create `build/pr/<number>/`. Its Pages
+  preview reuses the latest qualified `build/main/` evidence.
+- Every generated build has `build.json` with source ref/commit, PR number
   when applicable, Forge/SolidCraft versions when known, workflow run,
   qualification level/status and generation time.
 - Every generated website has `provenance.json` and is verified before

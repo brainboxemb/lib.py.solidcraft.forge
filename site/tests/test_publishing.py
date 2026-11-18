@@ -90,6 +90,14 @@ class SitePublishingContractTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         self.assertIn('      - "site/**"', workflow)
+        self.assertNotIn(
+            '      - ".github/workflows/preview.yml"',
+            workflow,
+        )
+        self.assertNotIn(
+            '      - ".github/workflows/release.yml"',
+            workflow,
+        )
         self.assertIn("publish_branch: build", workflow)
         self.assertIn("destination_dir: main", workflow)
         self.assertIn("publish_branch: gh-pages", workflow)
@@ -118,6 +126,14 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertIn("publish_branch: build", workflow)
         self.assertIn(
             "destination_dir: pr/${{ github.event.pull_request.number }}",
+            workflow,
+        )
+        self.assertIn(
+            "if: steps.preview_scope.outputs.has_cases == 'true'",
+            workflow,
+        )
+        self.assertIn(
+            "needs.preview.outputs.has_cases == 'true'",
             workflow,
         )
         self.assertIn("publish_branch: gh-pages", workflow)
@@ -164,6 +180,8 @@ class SitePublishingContractTests(unittest.TestCase):
             "gh-pages/previews/pr-<number>/",
             "`preview-output` and `qualified-output` are not part",
             "main -> technical build -> build/main/",
+            "A presentation-only PR does not create",
+            "gh-pages/qualification/",
         ):
             self.assertIn(phrase, agents)
 
