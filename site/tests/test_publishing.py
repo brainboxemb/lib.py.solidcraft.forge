@@ -1,4 +1,4 @@
-"""Publishing contract tests for generated Forge output."""
+"""Site and publishing contract tests for generated Forge output."""
 
 from __future__ import annotations
 
