@@ -82,7 +82,7 @@ class SheetFoldQualificationTests(unittest.TestCase):
                 "position": "centerline",
                 "flip": False,
                 "body": "SheetFold",
-                "fixed": [-20, 0, 0],
+                "fixed": [-30, 0, 0],
             },
         )
 
