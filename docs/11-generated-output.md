@@ -1,35 +1,68 @@
 # Generated output and publication design
 
-Status: **normative**
+Status: **proposed normative contract — implementation is not yet compliant**
 
-This document defines how Forge source, technical build output, qualification
-evidence and the public website are stored, verified and published.
+This document defines the target design for Forge source, verification,
+technical build output and the public website.
 
-If a workflow, script, test or repository instruction disagrees with this
-document, the implementation is wrong until this document is deliberately
-changed.
+Do not call this design implemented until every acceptance scenario in this
+document passes against the real generated branches.
 
-The purpose is simple: every kind of data has one owner, every event has one
-defined effect, and every generated write is scoped so it cannot damage
-unrelated output.
+If workflow/code and this document disagree, either the implementation is wrong
+or this document must be deliberately changed first.
 
-## 1. Persistent branch roles
+## 1. Goals
+
+The design has four goals:
+
+1. a small change builds as little as possible;
+2. technical evidence is never silently lost or mislabeled;
+3. concurrent/out-of-order workflow runs cannot overwrite newer output;
+4. a reviewer can determine from changed files exactly what must run and what
+   may be published.
+
+Correctness must not depend on GitHub Actions concurrency queues behaving as a
+reliable message queue.
+
+## 2. Terms
+
+**Presentation-only change**  
+Changes public presentation or documentation but does not change any technical
+case input, technical derived output or toolchain input.
+
+**Derived-only change**  
+Changes reports/diagrams/aggregation that can be regenerated from existing
+per-case evidence without executing model cases.
+
+**Technical case change**  
+Changes the input hash of one or more qualification cases.
+
+**Native-sensitive change**  
+Changes Forge behavior that requires native SolidCraft validation for affected
+cases.
+
+**Foundational change**  
+Changes compiler/replay/runtime behavior shared so broadly that the safe final
+gate is the complete registered qualification set.
+
+**Technical equivalence**  
+Two source trees are technically equivalent for a case when that case's
+calculated input hash is equal.
+
+## 3. Persistent branch roles
 
 Forge has three persistent branches:
 
 | Branch | Purpose | Human-edited |
 | --- | --- | --- |
 | `main` | source, tests and documentation | yes, through PRs |
-| `build` | generated technical output and qualification evidence | no |
+| `build` | generated technical evidence | no |
 | `gh-pages` | generated public website | no |
 
-An open PR may add one temporary source branch. Closing or merging that PR
-removes the need for that branch.
+An open PR may add one temporary source branch. Generated staging branches such
+as `preview-output`, `qualified-output` and `model-output` do not exist.
 
-Generated staging branches such as `preview-output`, `qualified-output` or
-`model-output` do not exist in this design.
-
-Normal steady state is therefore:
+Normal steady state:
 
 ```text
 main
@@ -37,32 +70,34 @@ build
 gh-pages
 ```
 
-## 2. One canonical store per kind of data
+## 4. Canonical ownership
 
 | Information | Canonical store |
 | --- | --- |
-| editable Forge source | `main` / PR source branch |
-| generated SolidCraft command JSON | `build` |
+| editable source | `main` / PR source branch |
+| command JSON | `build` |
 | native SolidCraft files | `build` |
-| STEP / SC / STL files | `build` |
-| native renders and screenshots | `build` |
-| measurements and validation JSON | `build` |
+| STEP/SC/STL | `build` |
+| native renders | `build` |
+| measurements/validation JSON | `build` |
 | reference-library results/renders | `build` |
-| cross-case qualification reports | `build` |
-| generated technical diagrams | `build` |
-| public documentation HTML | `gh-pages` |
+| per-case verification metadata | `build` |
+| derived technical reports/diagrams | `build` |
+| public HTML | `gh-pages` |
 | public Qualification HTML | `gh-pages/qualification/` |
-| PR website preview | `gh-pages/previews/pr-<number>/` |
+| PR website preview | `gh-pages/previews/pr-N/` |
 
-GitHub Actions artifacts are temporary transport/debug artifacts. They are not a
-canonical database.
+Actions artifacts are temporary transport/debug data, not a canonical store.
 
-If evidence exists on `build`, a later site build reads it from `build`.
-It must not search old workflow runs to rediscover the same evidence.
+The repository is public. Public Qualification pages may therefore link to
+immutable commits on the public `build` branch.
 
-## 3. Build branch layout
+## 5. Build branch layout
 
-`build` has two namespaces:
+`build/main` is a **complete baseline** for every currently registered case.
+
+`build/pr/N` is a **sparse overlay** containing only cases changed/verified by
+that PR.
 
 ```text
 main/
@@ -77,37 +112,208 @@ main/
   qualification/
 
 pr/
-  <number>/
+  N/
     build.json
     examples/
-      <case>/
+      <affected-case>/
         <implementation>/
     qualification/
 ```
 
-The path below the scope follows the source item, not the workflow that produced
-it.
-
-Example:
+The replacement unit is:
 
 ```text
-examples/simple-box/scpf/model.py
--> build/main/examples/simple-box/scpf/...
-
-examples/simple-box/cadquery/model.py
--> build/main/examples/simple-box/cadquery/...
+examples/<case>/<implementation>/
 ```
 
-Workflow-local trees such as `output/native`, `output/references` and
-`output/qualification` may exist while a job is running. They are normalized
-before publication.
+not the complete scope.
 
-Top-level producer directories such as `native/` and `references/` are
-forbidden on the persistent `build` branch.
+A technical PR must never copy every unchanged main case into `pr/N` merely to
+make the overlay look complete.
 
-## 4. Pages branch layout
+### 5.1 Overlay resolution
 
-The stable website occupies the root of `gh-pages`.
+For a PR preview, resolve evidence per case:
+
+1. use `pr/N/examples/<case>/...` when that case exists in the PR overlay;
+2. otherwise use `main/examples/<case>/...`.
+
+The resulting logical view is complete even though the PR namespace is sparse.
+
+### 5.2 Promotion to main
+
+Promoting affected evidence to `build/main`:
+
+1. starts from the latest complete `build/main`;
+2. replaces only verified affected case/implementation directories;
+3. removes cases/implementations explicitly deleted from the authoritative
+   catalog;
+4. preserves every unaffected case;
+5. regenerates cross-case derived output from the merged per-case evidence;
+6. writes a new schema-validated `build.json`.
+
+A partial affected run never replaces the complete `main/` directory.
+
+## 6. Per-case evidence manifest
+
+`build.json` schema version 2 describes mixed evidence honestly.
+
+Example shape:
+
+```json
+{
+  "schema_version": 2,
+  "scope": "main",
+  "generated_at": "...",
+  "workflow_run_id": "...",
+  "toolchain": {
+    "forge_version": "...",
+    "solidcraft_version": "...",
+    "reference_versions": {}
+  },
+  "cases": {
+    "simple-box": {
+      "implementations": {
+        "scpf": {
+          "source_commit": "...",
+          "source_tree": "...",
+          "input_hash": "sha256:...",
+          "verification_level": "q1-q6",
+          "status": "pass",
+          "generated_at": "..."
+        },
+        "cadquery": {
+          "source_commit": "...",
+          "input_hash": "sha256:...",
+          "verification_level": "reference",
+          "status": "pass",
+          "generated_at": "..."
+        }
+      }
+    }
+  }
+}
+```
+
+Scope-level metadata may summarize the minimum verification level, but may not
+claim that every case was rebuilt on the latest source commit.
+
+The site must reject an unknown manifest schema.
+
+## 7. Case input hashes and dependency map
+
+Affected-case selection is based on deterministic input hashes, not only on
+changed-path guesses.
+
+For each case/implementation, the input hash includes:
+
+- that implementation's source;
+- its verification contract/expectations;
+- hashes of Forge modules declared as dependencies for that case;
+- SolidCraft version where applicable;
+- reference-library version where applicable;
+- relevant generator/runner version.
+
+The repository contains one explicit, tested module/API-to-case dependency map.
+A Forge module change therefore changes the input hash of every dependent case.
+
+Changed paths are still used to classify risk and to explain why a case is
+affected, but a case is reusable only when its calculated input hash equals the
+stored hash in `build/main/build.json`.
+
+Global/unknown dependencies deliberately invalidate all relevant cases.
+
+## 8. Change classification
+
+Classification is implemented once in tested Python. The overall class is the
+maximum risk class of all changed inputs.
+
+| Class | Typical inputs | Default action |
+| --- | --- | --- |
+| presentation | `site/**`, normal docs, CSS, public templates | preflight/site only |
+| publication infrastructure | publication scripts/workflows/provenance | preflight + publication contract/integration tests |
+| derived | technical report/diagram generators | regenerate derived output only |
+| case | case source/contract/reference source | affected cases |
+| native-sensitive | geometry/attachment implementation used by mapped cases | affected native gate |
+| foundational | compiler, replay, runtime/headless core | full final gate |
+| toolchain | SolidCraft version, Python/toolchain, reference dependency pins | full final gate |
+| unknown | anything not classified | full final gate |
+
+Unknown paths fail safe to the highest class.
+
+Dependency versions must live in versioned repository data/files, not only as
+literal package pins hidden in workflow YAML, so classification and hashing can
+see them.
+
+## 9. Verification levels
+
+### 9.1 Preflight
+
+Every relevant PR first runs:
+
+- Python compile;
+- workflow YAML structural validation;
+- publication/layout contract tests;
+- site build/test against resolved existing evidence;
+- classification and affected-hash calculation.
+
+Expensive work does not start when preflight fails.
+
+### 9.2 Iteration verification
+
+Normal development runs only affected cheap tests/evidence.
+
+A Forge source change with no mapped proving case is an error.
+
+### 9.3 Pre-merge final gate
+
+Every PR has one `merge-gate` status on the current PR head.
+
+| Risk | Merge gate |
+| --- | --- |
+| presentation/publication infrastructure | preflight + relevant publication tests |
+| derived-only | regenerate/validate derived output |
+| ordinary case | affected Q1/Q2 |
+| native-sensitive | affected Q1-Q6 |
+| foundational/toolchain/release | full Q1-Q6 |
+
+The merge gate runs **before merge**. Branch protection requires it for the
+current head commit.
+
+A technical PR is not merged first and qualified afterwards.
+
+Verification jobs use per-PR concurrency with `cancel-in-progress: true`; they
+write no generated branches, so cancelling obsolete verification is safe.
+
+## 10. PR evidence and squash-merge promotion
+
+Technical PR verification publishes a sparse `build/pr/N` overlay after the
+required gate passes.
+
+On squash merge:
+
+1. read the verified PR overlay before cleanup;
+2. compare the PR-head tree with the merge-commit tree;
+3. when the trees are equal and case input hashes match current `main`, reuse
+   the PR evidence;
+4. promote affected case directories into `build/main`;
+5. regenerate derived cross-case output;
+6. publish the stable site;
+7. only then remove the PR overlay/preview.
+
+If the trees differ or current input hashes differ, PR evidence is not promoted.
+The required verification is rerun for the merge tree before `build/main`
+changes.
+
+If that verification fails:
+
+- `build/main` remains unchanged;
+- stable Pages remains on the last honest evidence;
+- the workflow fails visibly;
+- automated reconciliation/audit reports that `main` is ahead of technical
+  evidence.
+
+## 11. Pages layout
 
 ```text
 /
@@ -116,368 +322,399 @@ The stable website occupies the root of `gh-pages`.
   reference/
   qualification/
   cheatsheet/
-  ...
   provenance.json
+  ...
 
 previews/
-  pr-<number>/
-    index.html
-    guide/
-    reference/
-    qualification/
+  pr-N/
     ...
+    qualification/
     provenance.json
 ```
 
-The public `qualification/` directory is intentional. It contains the readable
-presentation of qualification status and evidence.
+Public `qualification/` is required.
 
-It must not contain copies of technical build evidence such as:
+It contains HTML/presentation only. It must not contain duplicate technical
+files already canonical on `build`.
 
-- `.sc`, `.step` or `.stl`;
-- generated command JSON;
-- measurement/result/validation JSON;
-- native renders already stored on `build`;
-- reference-library render/result files already stored on `build`.
+## 12. Immutable evidence links
 
-Qualification HTML links to the corresponding canonical files on `build`.
-
-## 5. Evidence scope for a website
-
-A website build always uses one explicit technical evidence scope.
-
-### Stable site
+Pages never links to mutable URLs such as:
 
 ```text
-build/main
+.../blob/build/main/...
 ```
 
-### Presentation-only PR
+A site build records the exact `build` branch commit SHA it consumed and emits
+permalinks:
 
 ```text
-build/main
+https://github.com/<repo>/blob/<build-commit>/main/...
+https://raw.githubusercontent.com/<repo>/<build-commit>/main/...
 ```
 
-A presentation-only PR does not create `build/pr/<number>/`.
+A PR overlay and main baseline may both be read from the same immutable build
+branch commit; the path determines `pr/N` versus `main`.
 
-### Technical PR with affected cases
+Technical publication therefore occurs before the dependent site publication.
+
+`provenance.json` records at least:
+
+- site source commit;
+- evidence/source commit(s);
+- immutable build branch commit SHA;
+- PR number when applicable;
+- generated time;
+- site schema version.
+
+## 13. Publication protocol: correctness without trusting concurrency queues
+
+GitHub Actions concurrency is an optimization, not the correctness mechanism.
+
+Every generated-branch mutation uses one tested publisher implementing:
+
+1. validate that the candidate source is still current;
+2. fetch the latest destination branch head;
+3. create a fresh local tree from that exact head;
+4. apply only the owned namespace mutation;
+5. validate the resulting tree;
+6. commit with the fetched head as parent;
+7. push normally, never force;
+8. on non-fast-forward, fetch and reapply the same pure mutation;
+9. retry a bounded number of times;
+10. fail visibly if retries are exhausted.
+
+This is compare-and-swap behavior.
+
+### 13.1 Freshness checks
+
+PR publication:
+
+- publish only when candidate source commit equals current PR head.
+
+Stable site publication:
+
+- publish only for current `main` source commit.
+
+Case promotion:
+
+- publish only when the candidate case input hash equals the current main case
+  input hash.
+
+Older runs may finish later, but they cannot overwrite newer evidence.
+
+### 13.2 Concurrency groups
+
+Use per-namespace groups to reduce duplicate work, not one global queue:
 
 ```text
-build/pr/<number>
+publish-build-main
+publish-build-pr-N
+publish-pages-main
+publish-pages-pr-N
 ```
 
-The website source commit and the evidence commit may differ for a
-presentation-only change. Provenance records both.
+Same-namespace publication uses `cancel-in-progress: false`.
 
-## 6. Verification strategy
+Different namespaces may run concurrently; branch push collisions are handled
+by the retry protocol.
 
-Do not run every model after every edit.
+This prevents GitHub's one-pending-run behavior from silently discarding work
+for unrelated PR namespaces.
 
-### 6.1 Preflight
+## 14. Event matrix
 
-Every relevant PR first runs a cheap preflight:
-
-- compile Python;
-- validate workflow YAML structure;
-- run publication/layout contract tests;
-- build and test the website;
-- determine affected qualification cases.
-
-A preflight failure stops expensive work.
-
-### 6.2 Affected verification
-
-For API/model work, select cases from:
-
-- changed `examples/<case>/...` paths;
-- Q1/Q2 tests referenced by `qualification/case_evidence.py`;
-- explicit shared case/evidence registry changes.
-
-A Forge source change without a proving case is an error. Do not hide that by
-running all cases.
-
-### 6.3 Final gate by risk
-
-| Change | Required final gate |
-| --- | --- |
-| site/docs/presentation only | preflight |
-| ordinary affected API/model contract | affected Q1/Q2 |
-| native/geometry-sensitive Forge change | affected Q1-Q6 |
-| foundational compiler/replay/runtime change | full Q1-Q6 |
-| SolidCraft promotion | full Q1-Q6 |
-| release | full Q1-Q6 |
-
-The final gate is a promotion rule. It is not a reason to make every PR
-iteration expensive.
-
-## 7. Event matrix
-
-This table is normative.
-
-| Event | Verification | `build` effect | `gh-pages` effect |
+| Event | Verification | Build effect | Pages effect |
 | --- | --- | --- | --- |
-| presentation-only PR update | preflight | none | replace `previews/pr-N/` |
-| technical PR update | preflight + affected checks | replace `pr/N/` | replace `previews/pr-N/` |
-| PR close | none | remove only `pr/N/` if present | remove only `previews/pr-N/` |
-| presentation-only merge | preflight already passed; reuse `build/main` | none | replace stable root, preserve previews |
-| technical merge | required final gate | replace `main/` after pass | replace stable root, preserve previews |
-| release / SolidCraft promotion | full qualification | replace `main/` after pass | replace stable root, preserve previews |
+| presentation-only PR update | preflight | remove stale `pr/N` if PR was previously technical | replace preview using main evidence |
+| technical PR update | required affected iteration/gate | update sparse `pr/N` | replace preview using overlay+main |
+| PR reopened | classify current head again | recreate overlay only if technical | recreate preview |
+| PR closed, not merged | none | remove `pr/N` | remove preview |
+| technical PR merged | pre-merge gate already passed; promote/revalidate tree | overlay affected cases into main | rebuild stable site after build promotion |
+| presentation-only PR merged | validate current case hashes still match build/main | no technical write | rebuild stable site from build/main |
+| verification failure | none published | no partial/stale candidate write; stale PR output may be removed | no new preview; stale PR preview may be removed |
+| force-push/rebase | recompute against new base/head | obsolete run rejected by freshness check | obsolete run rejected |
+| draft PR | preflight; expensive gate optional until ready | no durable technical publish unless explicitly requested | optional preview |
+| fork PR | read-only verification only | no write | no public preview from untrusted code |
+| workflow dispatch | explicit audited recovery inputs | scoped repair only | scoped repair only |
+| release | full gate | promote main and tag evidence | stable site uses tagged/immutable evidence |
 
-A site-only merge must never trigger full model qualification merely because
-site code changed.
+A presentation-only merge is permitted to reuse `build/main` only when current
+case input hashes still match that baseline. If technical inputs changed since
+the stored evidence, it is not presentation-only from the evidence perspective.
 
-## 8. Publication ownership and locks
+## 15. Derived output
 
-There are two generated destinations and therefore two global writer locks:
+Cross-case reports and technical diagrams are derived data.
 
-```text
-build     -> scpf-build-publish
-gh-pages  -> scpf-pages-publish
-```
+They are regenerated from the resolved per-case evidence when their generator or
+inputs change.
 
-Every writer to the same destination uses the same lock.
-
-For generated branch publication:
-
-```text
-cancel-in-progress: false
-```
-
-A newer publication may wait. It must not cancel a writer after that writer has
-read the destination and before it pushes an updated tree.
-
-## 9. Namespace ownership
-
-A publisher may modify only the namespace it owns.
-
-PR technical publication:
+This creates a distinct operation:
 
 ```text
-build/pr/<number>/
+regenerate-derived
 ```
 
-PR website publication:
+It executes no models unless a case input hash also changed.
+
+Derived output is never the authoritative source for per-case status.
+
+## 16. Cleanup and reconciliation
+
+PR close cleanup is useful but not sufficient.
+
+A scheduled/manual reconcile job:
+
+1. reads current open PR numbers;
+2. reads `build/pr/*` and `gh-pages/previews/pr-*`;
+3. removes namespaces whose PR is no longer open;
+4. detects open technical PRs whose stored source is not current head;
+5. detects stable site/build provenance drift;
+6. applies repairs through the same retrying publisher.
+
+Cleanup is idempotent.
+
+This makes the system self-healing if a close event or publish job is lost.
+
+## 17. Recovery and live audit
+
+Provide `workflow_dispatch` recovery/audit operations with explicit validated
+inputs such as:
 
 ```text
-gh-pages/previews/pr-<number>/
+audit
+reconcile
+rebuild-main-derived
+republish-main-site
+rebuild-pr:N
 ```
 
-Stable technical publication:
+The audit reads the **real** `build` and `gh-pages` branches and checks the
+hard invariants, not only test fixtures.
+
+Namespace identifiers are integers from GitHub PR metadata, never free-form path
+strings.
+
+## 18. Releases and retention
+
+Release technical evidence is immutable.
+
+After a release passes full qualification, tag the exact build branch commit:
 
 ```text
-build/main/
+evidence/vX.Y.Z
 ```
 
-Stable website publication:
+Release/publication metadata refers to that immutable build commit.
 
-```text
-gh-pages root, except previews/
-```
+Normal publishers never force-push generated branches.
 
-A stable Pages replacement preserves the current `previews/` tree while
-holding the Pages writer lock.
+Version 1 retention policy:
 
-PR cleanup removes only its own namespace while holding the same destination
-lock. Cleanup must never rebuild or replace the stable root.
+- keep generated-branch history intact;
+- audit branch/repository size on a schedule;
+- do not introduce automatic history rewriting while public Pages permalinks
+  depend on build commit SHAs;
+- if size becomes unacceptable, first move large binary evidence to a storage
+  mechanism with immutable object IDs, then deliberately revise this design.
 
-## 10. Provenance
+Do not silently squash generated history and break existing permalinks.
 
-Every technical scope contains `build.json`.
+## 19. Reference implementations
 
-Required fields:
+Reference implementations are independently hashable inputs.
 
-- schema version;
-- scope (`main` or `pr`);
-- source ref;
-- source commit;
-- PR number for PR scope;
-- Forge version;
-- SolidCraft version when applicable;
-- workflow run id;
-- verification level and status;
-- generation time.
+A reference implementation reruns when:
 
-Every website root contains `provenance.json`.
+- its source changes;
+- its runner/exporter changes;
+- its pinned library version changes;
+- a shared contract it proves changes.
 
-For normal technical publication:
+A Forge-only case change does not automatically rerun every reference library
+unless its reference input hash changes.
 
-```text
-site source commit == evidence commit
-```
-
-For presentation-only publication:
-
-```text
-site source commit = current main/PR commit
-evidence commit    = build/main source commit
-```
-
-Both commits are explicit. Reused evidence must never be presented as if the
-presentation-only source commit was fully requalified.
-
-## 11. Site consumption of technical evidence
-
-`build` is the technical source of truth.
-
-A site-only build reads:
-
-```text
-build/main/build.json
-build/main/examples/...
-build/main/qualification/...
-```
-
-It does not search Actions run history for the last passing qualification.
-
-The site generator may inspect a local checkout/copy of that evidence while
-rendering HTML. Emitted evidence links and image URLs point to the canonical
-`build/<scope>/...` namespace.
-
-Technical evidence is not copied into Pages.
-
-## 12. Workflow responsibilities
+## 20. Workflow responsibilities
 
 Workflow YAML is orchestration only.
 
 Allowed:
 
 - triggers;
-- checkout;
-- Python/tool setup;
-- cache setup;
-- calling repository scripts;
-- temporary diagnostic artifact upload;
-- calling one publication action with already prepared output.
+- checkout/setup;
+- caches;
+- invoking repository commands;
+- passing GitHub event metadata;
+- temporary diagnostic artifact upload.
 
-Repository rules belong in tested Python:
+Policy belongs in tested Python:
 
-- changed-path classification;
-- affected-case selection;
-- build-tree normalization;
-- evidence-scope selection;
-- provenance validation;
-- stable Pages assembly;
-- PR cleanup target calculation;
-- generated-tree validation.
+- classification;
+- input hashing;
+- affected-case calculation;
+- overlay resolution;
+- manifest validation;
+- publication freshness;
+- namespace mutation/retry;
+- promotion;
+- cleanup/reconcile;
+- live audit.
 
-Forbidden in workflows:
+Forbidden:
 
-- model-specific JSON assertions;
-- large `git diff` classification algorithms;
-- embedded Python one-liners implementing repository policy;
-- duplicated branch-layout rules;
-- duplicated cleanup rules.
+- model-specific JSON assertions in YAML;
+- large `git diff` policy scripts;
+- duplicated branch-layout logic;
+- hand-coded cleanup algorithms in workflows.
 
-## 13. Hard invariants
+## 21. Hard invariants
 
-CI tests these directly.
+1. `build/main` contains every registered case.
+2. `build/pr/N` is sparse and contains only PR-owned changed evidence.
+3. A non-affected main case never disappears during affected promotion.
+4. Every case/implementation has its own input hash, source provenance and
+   verification status.
+5. Unknown inputs classify to the safest/highest gate.
+6. Public `qualification/` exists.
+7. Pages contains no duplicate technical evidence.
+8. Every technical link is an immutable build-commit permalink.
+9. A stale PR/main run cannot overwrite newer output.
+10. A PR mutation cannot touch another PR namespace.
+11. Stable Pages replacement preserves all live previews.
+12. Site-only work does not execute technical model qualification.
+13. Site-only reuse is allowed only when current technical input hashes match
+    `build/main`.
+14. Technical PR evidence is promoted before merge cleanup removes it.
+15. A failed verification never publishes partial technical evidence.
+16. Cross-case derived reports are regenerated from resolved per-case evidence.
+17. Every generated namespace belongs to stable state or an open PR.
+18. Publication correctness does not depend on a GitHub concurrency queue.
+19. Fork PR code never receives write-capable publication credentials.
+20. Release evidence has an immutable build reference.
 
-1. A complete stable site contains `gh-pages/qualification/`.
-2. Pages qualification contains no technical evidence copies.
-3. Qualification HTML links to `build/<scope>/...`.
-4. A presentation-only PR creates no `build/pr/N`.
-5. A technical PR writes only `build/pr/N`.
-6. A PR preview writes only `gh-pages/previews/pr-N`.
-7. Closing one PR cannot delete another PR's output.
-8. Stable Pages replacement preserves all current previews.
-9. Every `gh-pages` writer uses `scpf-pages-publish`.
-10. Every `build` writer uses `scpf-build-publish`.
-11. Site-only changes do not trigger full technical qualification.
-12. Forge source changes without a proving case fail selection.
-13. Stable technical publication requires passing final verification.
-14. Site-only publication reads `build/main`, not Actions-run history.
-15. Generated branches contain no editable source-of-truth files.
+## 22. Acceptance scenarios
 
-## 14. Failure and recovery
-
-If generated output becomes inconsistent:
-
-1. identify which invariant failed;
-2. fix the publisher/assembly code;
-3. regenerate the affected namespace;
-4. run the publication/layout tests;
-5. do not treat hand-editing generated branch files as the normal repair.
-
-PR cleanup is idempotent. Removing an already absent PR scope is success.
-
-## 15. Acceptance scenarios
-
-This design is not implemented until all scenarios are demonstrated.
+Implementation is not complete until automated/integration tests demonstrate all
+of these.
 
 ### A. Presentation-only PR
 
-Change only site presentation code.
-
-Expected:
-
-- preflight passes;
-- affected cases = none;
-- reference smoke skipped;
+- affected hashes: none;
+- no reference/native execution;
 - no `build/pr/N`;
-- one Pages preview;
-- Qualification HTML exists;
-- evidence links point to `build/main`.
+- one preview;
+- Qualification HTML uses immutable `build/main` links.
 
-### B. One-case API/model PR
+### B. One-case technical PR
 
-Change Forge/API code plus one proving case.
+- only that case hash changes;
+- only that case executes;
+- `build/pr/N` contains only that overlay;
+- preview resolves affected case from PR overlay and all others from main.
 
-Expected:
+### C. Affected promotion
 
-- selector names only affected case(s);
-- technical output exists only under `build/pr/N`;
-- one preview exists under `previews/pr-N`;
-- unrelated qualification cases are not rebuilt during normal iteration.
+- promote one case;
+- every other main case remains byte-identical;
+- complete cross-case derived report is regenerated.
 
-### C. PR close
+### D. Out-of-order runs
 
-Expected:
+- commit A starts;
+- commit B starts;
+- B publishes;
+- A finishes later;
+- A is rejected as stale;
+- B remains published.
 
-- only that PR's build/preview scopes disappear;
-- stable site/build stay unchanged;
-- other open PR scopes remain.
+### E. Three unrelated publications
 
-### D. Presentation-only merge
+Start three publications close together for distinct namespaces.
 
-Expected:
+- no namespace mutation is lost because of concurrency pending limits;
+- non-fast-forward conflicts retry successfully.
 
-- no full Q1-Q6 run;
-- `build/main` remains unchanged;
-- stable Pages rebuilds from current source plus `build/main` evidence;
-- `qualification/` remains public;
-- previews are preserved.
+### F. PR technical -> presentation-only
 
-### E. Technical merge
+- later commit removes technical change;
+- input hashes match main;
+- stale `build/pr/N` is removed;
+- preview switches to main evidence.
 
-Expected:
+### G. PR close and lost cleanup
 
-- required final gate passes;
-- `build/main` is replaced by output from that technical source;
-- stable Pages uses the same evidence;
-- previews are preserved.
+- simulate missing close cleanup;
+- reconcile removes orphan build/preview scopes.
 
-### F. Concurrent Pages operations
+### H. Presentation-only merge
 
-Run stable publication and PR cleanup close together.
+- no technical model run;
+- `build/main` unchanged;
+- stable site source advances;
+- evidence/build commit remains explicit and immutable.
 
-Expected:
+### I. Technical squash merge
 
-- both serialize on `scpf-pages-publish`;
-- stable root remains current;
-- only the intended PR preview disappears;
-- no stable directory is lost.
+- pre-merge gate passes;
+- merge tree equals verified PR tree;
+- PR evidence is promoted without rebuilding;
+- cleanup occurs after promotion.
 
-## 16. Reviewer checklist
+### J. Merge tree mismatch
 
-A reviewer should reject a change when any answer is unclear:
+- PR tree differs from merge tree;
+- PR evidence is not promoted;
+- required verification reruns on merge tree;
+- main evidence changes only after pass.
 
-1. Which source commit is being verified?
-2. Which cases are affected?
-3. Which evidence scope is read?
-4. Which exact generated namespace may be written?
-5. Which global lock protects that write?
-6. Which provenance records source and evidence commits?
-7. Can this event overwrite unrelated PR/stable output?
-8. Does site-only work avoid technical qualification?
-9. Are technical files kept out of Pages?
-10. Is the behavior covered by an automated contract test?
+### K. Derived-only change
+
+- no model executes;
+- derived reports/diagrams regenerate from existing evidence.
+
+### L. Fork PR
+
+- verification runs read-only;
+- no generated branch is written.
+
+### M. Live audit
+
+- inject a stale orphan preview in a fixture/temporary remote;
+- audit detects it;
+- reconcile produces the expected scoped removal.
+
+## 23. Reviewer checklist
+
+Reject a change if any answer is unclear:
+
+1. What risk class is this change?
+2. Which case input hashes change?
+3. Which final gate is required before merge?
+4. Which immutable build commit supplies site evidence?
+5. Which exact namespace may be mutated?
+6. How is stale/out-of-order publication rejected?
+7. How does the publisher recover from non-fast-forward?
+8. Can any unaffected case disappear?
+9. Does per-case provenance remain truthful after overlay promotion?
+10. Are derived outputs regenerated from resolved evidence?
+11. Is cleanup recoverable by reconcile?
+12. Does the change keep policy out of workflow YAML?
+13. Is there an acceptance/contract test for the behavior?
+
+## 24. Implementation order
+
+Implement in this order:
+
+1. schema v2 per-case manifest + overlay semantics;
+2. deterministic input hashes + dependency map/classifier;
+3. retrying freshness-aware publication library;
+4. immutable build-commit links/provenance;
+5. pre-merge merge-gate and promotion-before-cleanup flow;
+6. derived-output regeneration;
+7. reconcile/live audit;
+8. workflow simplification to orchestration only;
+9. retention/size monitoring.
+
+Do not migrate the CAD repository to this pattern until Forge passes the
+acceptance scenarios above.
