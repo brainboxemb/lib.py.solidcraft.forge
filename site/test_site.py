@@ -187,7 +187,7 @@ def check(
     assert "shape.pattern(...)" not in cheatsheet
 
     for _group, title, _target, _current, _cases, _note in CAPABILITY_COVERAGE:
-        match = re.match(r"^(Shape|Sketch)\.([A-Za-z_][A-Za-z0-9_]*)\(\)", title)
+        match = re.match(r"^(Shape|Sketch)\.([A-Za-z_][A-Za-z0-9_]*)\(", title)
         if not match:
             continue
         owner_name, method_name = match.groups()
