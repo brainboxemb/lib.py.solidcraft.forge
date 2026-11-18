@@ -160,6 +160,45 @@ When another library lacks a SolidCraft-style associative relationship, compare
 the visible geometry and state the semantic limitation in a short source
 comment. Do not fake associativity with unexplained coordinates.
 
+## Verification levels
+
+Do not run every model after every edit. The changed paths and proving tests
+define the scope.
+
+`qualification/preview_scope.py` is the executable selector for PR work. It
+must agree with these rules:
+
+| Stage | When | What runs |
+| --- | --- | --- |
+| Preflight | Every relevant PR update | Compile all Python, validate workflow structure, run CI contract tests, build/test the website |
+| Affected Q1/Q2 | Normal API/model development | All cheap Forge unit tests plus Q1/Q2 evidence and command compilation only for selected cases |
+| Affected Q1-Q6 | Final check for native/geometry-sensitive work | `qualification/run_affected.py --cases <selected>` |
+| Full Q1-Q6 | Foundational compiler/replay/runtime changes, SolidCraft promotion, release | Every registered case plus the normal full reference/native gate |
+
+How cases are selected:
+
+- A changed `examples/<case>/...` path selects that case.
+- A changed Q1/Q2 test selects every case that names that test in
+  `qualification/case_evidence.py`.
+- A Forge source change under `scpf/scpf/` must have at least one selected
+  proving case. If it does not, the selector fails. Add or update the proving
+  unit test/case instead of widening CI to every model.
+- Changes to the case registry/evidence registry select all cases because they
+  change the mapping itself.
+- Site/docs/workflow-only changes select no CAD case.
+- Reference libraries run only when reference implementation or
+  reference-validation code changed.
+
+The selector also reports the required final gate. During iteration, the PR
+preview stays at preflight + affected Q1/Q2. Before promotion, run the reported
+final gate. Do not replace a missing proving case with `all` merely to make CI
+pass.
+
+`scripts/ci_preflight.py` is the first hard gate. Keep it cheap. It exists to
+catch broken Python, malformed workflow structure, broken publication
+contracts and a broken website before third-party CAD libraries or native
+SolidCraft are started.
+
 ## Qualification performance
 
 Keep the edit-check loop short:

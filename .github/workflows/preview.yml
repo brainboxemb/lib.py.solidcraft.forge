@@ -13,6 +13,7 @@ on:
       - "CHANGELOG.md"
       - "scripts/release/**"
       - "scripts/generated_output.py"
+      - "scripts/ci_preflight.py"
       - ".github/workflows/preview.yml"
       - ".github/workflows/release.yml"
       - ".github/workflows/scpf.yml"
@@ -40,7 +41,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install SCPF
-        run: python -m pip install -e ./scpf pillow
+        run: python -m pip install -e ./scpf pillow pyyaml
 
       - name: Read Forge version
         shell: bash
@@ -57,6 +58,26 @@ jobs:
             --base "${{ github.event.pull_request.base.sha }}" \
             --head "${{ github.event.pull_request.head.sha }}" \
             --github-output "$GITHUB_OUTPUT"
+
+      - name: Run repository preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/ci_preflight.py \
+            --source-sha "${{ github.event.pull_request.head.sha }}" \
+            --site-out output/site
+
+      - name: Publish verification plan
+        shell: bash
+        run: |
+          {
+            echo "### Verification plan"
+            echo ""
+            echo "- Affected cases: \`${{ steps.preview_scope.outputs.cases || 'none' }}\`"
+            echo "- PR gate: affected Q1/Q2 only"
+            echo "- Final gate: \`${{ steps.preview_scope.outputs.final_gate }}\`"
+            echo "- Reference smoke: \`${{ steps.preview_scope.outputs.reference_smoke }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Restore rendered CADCraft diagrams
         id: cadcraft_diagrams
@@ -94,8 +115,12 @@ jobs:
           unset PYTHONPATH
           cd "$RUNNER_TEMP"
           python -m unittest discover -s "$GITHUB_WORKSPACE/scpf/tests" -v
-          python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
-            --level q1 --out "$GITHUB_WORKSPACE/output/qualification"
+          if [ -n "${{ steps.preview_scope.outputs.cases }}" ]; then
+            python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
+              --level q1 \
+              --cases "${{ steps.preview_scope.outputs.cases }}" \
+              --out "$GITHUB_WORKSPACE/output/qualification"
+          fi
 
       - name: Run standard qualification tests
         shell: bash
@@ -104,8 +129,12 @@ jobs:
           unset PYTHONPATH
           cd "$RUNNER_TEMP"
           python "$GITHUB_WORKSPACE/qualification/testsuite.py"
-          python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
-            --level q2 --out "$GITHUB_WORKSPACE/output/qualification"
+          if [ -n "${{ steps.preview_scope.outputs.cases }}" ]; then
+            python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
+              --level q2 \
+              --cases "${{ steps.preview_scope.outputs.cases }}" \
+              --out "$GITHUB_WORKSPACE/output/qualification"
+          fi
 
       - name: Install pinned comparison libraries
         if: steps.preview_scope.outputs.reference_smoke == 'true'
@@ -130,8 +159,12 @@ jobs:
       - name: Execute and render reference smoke case
         if: steps.preview_scope.outputs.reference_smoke == 'true'
         run: |
+          cases="${{ steps.preview_scope.outputs.cases }}"
+          if [ -z "$cases" ]; then
+            cases="simple-box"
+          fi
           python qualification/reference_validation.py \
-            --cases simple-box \
+            --cases "$cases" \
             --out output/reference-smoke \
             --source-sha "$GITHUB_SHA"
 
@@ -156,14 +189,15 @@ jobs:
             qualification/visual_validation.py \
             scripts/release/validate_release.py
 
-      - name: Compile documented qualification fixtures
+      - name: Compile affected qualification fixtures
+        if: steps.preview_scope.outputs.has_cases == 'true'
         shell: bash
         run: |
           set -euo pipefail
           unset PYTHONPATH
           mkdir -p output
-          models="$(python -c 'from qualification.cases import supported_case_slugs; print(" ".join(supported_case_slugs()))')"
-          for model in $models plate; do
+          cases="${{ steps.preview_scope.outputs.cases }}"
+          for model in ${cases//,/ }; do
             python -m scpf "examples/$model/scpf/model.py" --out "output/$model.json"
             python -m json.tool "output/$model.json" >/dev/null
           done
@@ -181,7 +215,7 @@ jobs:
             --pull-request "${{ github.event.pull_request.number }}" \
             --forge-version "$FORGE_VERSION" \
             --workflow-run-id "$GITHUB_RUN_ID" \
-            --qualification-level q1-q2-fast \
+            --qualification-level q1-q2-affected \
             --qualification-status pass
           python scripts/generated_output.py verify-build \
             --root output/build \
@@ -195,14 +229,11 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Build lightweight Pages preview
+      - name: Finalize Pages preview
         shell: bash
         run: |
           set -euo pipefail
-          unset PYTHONPATH
           source_sha="${{ github.event.pull_request.head.sha }}"
-          python site/build.py --out output/site --source-sha "$source_sha" --diagram-root output/diagrams
-          python site/test_site.py output/site "$source_sha"
           python site/provenance.py write \
             --out output/site/provenance.json \
             --stage preview \
@@ -211,7 +242,7 @@ jobs:
             --pull-request "${{ github.event.pull_request.number }}" \
             --forge-version "$FORGE_VERSION" \
             --workflow-run-id "$GITHUB_RUN_ID" \
-            --qualification-level "q1-q2-fast" \
+            --qualification-level "q1-q2-affected" \
             --qualification-status pass
           python site/provenance.py verify \
             --file output/site/provenance.json \
