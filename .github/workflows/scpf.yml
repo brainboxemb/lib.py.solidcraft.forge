@@ -16,8 +16,6 @@ on:
       - "scripts/generated_output.py"
       - "CHANGELOG.md"
       - ".github/workflows/scpf.yml"
-      - ".github/workflows/preview.yml"
-      - ".github/workflows/release.yml"
   workflow_dispatch: {}
 
 permissions:

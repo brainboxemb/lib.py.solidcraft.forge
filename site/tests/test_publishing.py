@@ -10,6 +10,15 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def load_reuse_selector():
+    path = ROOT / "scripts" / "reusable_qualification.py"
+    spec = importlib.util.spec_from_file_location("reusable_qualification", path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
+
+
 def load_provenance_module():
     path = ROOT / "site" / "provenance.py"
     spec = importlib.util.spec_from_file_location("site_provenance", path)
@@ -90,6 +99,14 @@ class SitePublishingContractTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         self.assertIn('      - "site/**"', workflow)
+        self.assertNotIn(
+            '      - ".github/workflows/preview.yml"',
+            workflow,
+        )
+        self.assertNotIn(
+            '      - ".github/workflows/release.yml"',
+            workflow,
+        )
         self.assertIn("publish_branch: build", workflow)
         self.assertIn("destination_dir: main", workflow)
         self.assertIn("publish_branch: gh-pages", workflow)
@@ -120,6 +137,14 @@ class SitePublishingContractTests(unittest.TestCase):
             "destination_dir: pr/${{ github.event.pull_request.number }}",
             workflow,
         )
+        self.assertIn(
+            "if: steps.preview_scope.outputs.has_cases == 'true'",
+            workflow,
+        )
+        self.assertIn(
+            "needs.preview.outputs.has_cases == 'true'",
+            workflow,
+        )
         self.assertIn("publish_branch: gh-pages", workflow)
         self.assertIn(
             "destination_dir: previews/pr-${{ github.event.pull_request.number }}",
@@ -133,11 +158,47 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertIn("--kind build", workflow)
         self.assertIn("--kind pages", workflow)
 
+    def test_site_evidence_reuse_uses_same_risk_scope_as_prs(self):
+        selector = load_reuse_selector()
+
+        self.assertTrue(
+            selector.reusable_paths(
+                (
+                    "site/build.py",
+                    "site/tests/test_publishing.py",
+                    "scripts/ci_preflight.py",
+                    ".github/workflows/site.yml",
+                )
+            )
+        )
+        self.assertFalse(
+            selector.reusable_paths(
+                (
+                    "scpf/scpf/compiler.py",
+                    "scpf/tests/test_assembly_placement.py",
+                )
+            )
+        )
+        self.assertFalse(
+            selector.reusable_paths(
+                ("qualification/reference_validation.py",)
+            )
+        )
+
     def test_site_only_publication_preserves_pages_previews(self):
         workflow = (
             ROOT / ".github" / "workflows" / "site.yml"
         ).read_text(encoding="utf-8")
 
+        self.assertIn(
+            "python scripts/reusable_qualification.py scope",
+            workflow,
+        )
+        self.assertIn(
+            "python scripts/reusable_qualification.py select",
+            workflow,
+        )
+        self.assertNotIn("grep -Ev", workflow)
         self.assertIn(
             "python scripts/generated_output.py prepare-stable-pages",
             workflow,
@@ -164,6 +225,8 @@ class SitePublishingContractTests(unittest.TestCase):
             "gh-pages/previews/pr-<number>/",
             "`preview-output` and `qualified-output` are not part",
             "main -> technical build -> build/main/",
+            "A presentation-only PR does not create",
+            "gh-pages/qualification/",
         ):
             self.assertIn(phrase, agents)
 
