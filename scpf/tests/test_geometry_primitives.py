@@ -171,6 +171,50 @@ class GeometryPrimitives(unittest.TestCase):
         from scpf.core import Cylinder
         self.assertFalse(hasattr(Cylinder(d=8, h=20), "orient"))
 
+    def test_cone_is_native_tapered_primitive(self):
+        from scpf import BOTTOM, Cone, Parameter
+        from scpf.compiler import compile_model
+
+        diameter = Parameter("diameter", 20)
+        interference = Parameter("interference", 0.2)
+        commands = compile_model(
+            Cone(
+                d=diameter,
+                top_d=diameter + interference,
+                h=20,
+                anchor=BOTTOM,
+            ),
+            "TaperedPin",
+        )["commands"]
+        cone = next(
+            row["params"] for row in commands
+            if row["command"] == "solid.cone"
+        )
+        self.assertEqual(cone["base"], [0, 0, 0])
+        self.assertEqual(cone["diameter"], "diameter")
+        self.assertIn("interference", str(cone["top_diameter"]))
+        self.assertEqual(cone["height"], 20)
+
+    def test_cone_supports_only_center_or_axial_end_anchors(self):
+        from scpf import BOTTOM, LEFT, Axis, Cone
+        from scpf.compiler import compile_model
+
+        bottom = compile_model(
+            Cone(d=20, top_d=21, h=20, anchor=BOTTOM),
+            "Cone",
+        )["commands"][-1]["params"]
+        self.assertEqual(bottom["base"], [0, 0, 0])
+
+        x_axis = compile_model(
+            Cone(d=20, top_d=21, h=20, axis=Axis.X, anchor=LEFT),
+            "ConeX",
+        )["commands"][-1]["params"]
+        self.assertEqual(x_axis["base"], [0, 0, 0])
+        self.assertEqual(x_axis["axis"], "X")
+
+        with self.assertRaisesRegex(ValueError, "axial end"):
+            Cone(d=20, top_d=21, h=20, anchor=LEFT)
+
     def test_move_rejects_non_finite_coordinates(self):
         with tempfile.TemporaryDirectory() as directory:
             file = Path(directory) / "model.py"
