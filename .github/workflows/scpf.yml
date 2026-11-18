@@ -115,13 +115,11 @@ jobs:
         if: needs.plan.outputs.needs_image == 'true'
         id: image_cache
         run: |
-          if timeout 30s docker pull "${{ steps.image.outputs.reference }}"; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "run_image=${{ steps.image.outputs.reference }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "run_image=qualification-local:${{ steps.image.outputs.image_id }}" >> "$GITHUB_OUTPUT"
-          fi
+          python scripts/qualification_image.py \
+            --resolve-cache \
+            --reference "${{ steps.image.outputs.reference }}" \
+            --image-id "${{ steps.image.outputs.image_id }}" \
+            --github-output "$GITHUB_OUTPUT"
 
       - name: Set up Docker buildx
         if: needs.plan.outputs.needs_image == 'true' && steps.image_cache.outputs.exists != 'true'
