@@ -1,8 +1,9 @@
-"""Case-specific Q1/Q2 test evidence for qualification.
+"""Map qualification cases to focused library and integration evidence.
 
-Q1 targets live in scpf/tests and prove public Python API, validation or
-compiler behaviour. Q2 targets live beside the qualification example under
-examples/<case>/tests and assert the command contract of that fixture.
+The existing qualification result schema calls these fields Q1 and Q2. In the
+repository design they are normal library unit tests under scpf/tests and
+integration command-contract tests under examples/<case>/tests. Keep these
+legacy keys only while the old qualification runner still consumes them.
 """
 
 from pathlib import Path

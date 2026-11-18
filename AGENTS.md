@@ -67,6 +67,35 @@ Do not write:
 The goal is simple: a technical reader should understand the sentence the first
 time they read it.
 
+## EXPLAIN THE CODE
+
+Code must contain enough explanation that another engineer can follow the
+important flow without reconstructing it from implementation details.
+
+- Start every Python module with a short docstring that says what it owns.
+- Give public and non-trivial helper functions a short docstring.
+- Add comments where they explain why a safety check, dependency, reuse rule or
+  execution order exists.
+- Explain why an apparently simpler implementation is deliberately not used.
+- Do not comment every assignment or repeat obvious syntax.
+- Treat a core module with almost no explanatory text as incomplete.
+
+## TEST LAYERS
+
+Use three conceptual test layers:
+
+1. **Library unit tests** under `scpf/tests/` prove Forge API, validation and
+   compiler behaviour.
+2. **Integration tests** under `examples/<case>/tests/` prove a concrete
+   example and its generated SolidCraft command contract.
+3. **Qualification** proves the required native SolidCraft result, saved-design
+   behaviour and visual/semantic checks for a qualification item.
+
+The current qualification runner still writes the historical field names
+`Q1` and `Q2` for focused library/integration evidence. Those are
+transitional result labels in the old runner, not separate architecture layers.
+Do not introduce Q1/Q2 terminology into new tool.cad.ci item design.
+
 Before implementing any foundational compiler change:
 
 1. read these constraints first;
@@ -129,7 +158,7 @@ semantically.
 6. Update derived user documentation/examples.
 7. Keep a model's command-contract tests under `examples/<case>/tests/`.
    Keep only qualification-tooling tests under `qualification/tests/`.
-8. Run Q1/Q2 first and only affected native cases while iterating.
+8. Run the relevant library unit tests and affected integration examples first, then only affected native qualification items while iterating.
 9. Run full Q1-Q6 before promotion/release.
 
 When sibling methods use the same public selector or option type, treat that as
@@ -256,7 +285,7 @@ SolidCraft are started.
 
 Keep the edit-check loop short:
 
-- Q1/Q2 require no SolidCraft.
+- Library unit tests and integration tests require no SolidCraft. The current runner still records their focused evidence in legacy Q1/Q2 fields until that runner is migrated.
 - Native qualification must support selected cases.
 - Time compile/build/eval/snapshot/mutation steps before optimizing startup.
 - Reuse a supported persistent native process only when measured useful and
@@ -312,7 +341,7 @@ When writing or changing an SCPF model:
 5. Run `python -m scpf check path/to/model.py`.
 6. Compile the model to command JSON when reviewing the generated SolidCraft
    operations.
-7. Do not describe a model as working at Q1/Q2 level until those checks pass.
+7. Do not describe a model as working until its relevant library and integration checks pass.
 8. Do not claim native SolidCraft behaviour unless the relevant Q3+ validation
    actually ran.
 
