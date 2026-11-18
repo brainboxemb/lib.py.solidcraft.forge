@@ -103,7 +103,7 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
 
             summary_text = summary.read_text(encoding="utf-8")
             for slug in POST_BUILD_INSPECTIONS:
-                self.assertIn(f"{slug}\\t", summary_text)
+                self.assertIn(f"{slug}\t", summary_text)
 
     def test_workflow_uses_generic_post_build_runner(self):
         workflow = (
