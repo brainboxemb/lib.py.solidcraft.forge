@@ -405,41 +405,60 @@ green.
 
 ## Generated build output and Pages publishing
 
-`docs/11-generated-output.md` is the normative publication design. Read it
-before changing build/Pages branches, previews, evidence links, publication
-workflows or cleanup. If code/workflows disagree with that document, fix the
-implementation or deliberately change the design first.
+Forge consumes the pinned released `tool.cad.ci` revision for durable build
+output and generated-branch publication. Forge does not maintain a second
+build-store or Git publication implementation.
 
+The consumer owns:
 
-Generated output has two branches with different jobs. Do not mix them with
-source branches.
+- example/reference/diagram item commands;
+- qualification and gate policy;
+- native runtime/image selection;
+- interpretation of generated evidence;
+- website content and CSS.
 
-1. `main` and PR branches contain editable source.
-2. `build` contains generated technical build and qualification output.
-3. `gh-pages` contains only the browseable website.
+`tool.cad.ci` owns:
 
-The `build` branch has exactly two scopes:
+- item output under `build/<item source path>/`;
+- complete `build/main` and sparse `build/pr/<number>` scopes;
+- partial `main` updates and PR overlay resolution;
+- safe `build`-branch pushes;
+- stable Pages and `previews/pr-<number>` publication;
+- closed-PR cleanup.
+
+The source tree is the item catalog. Do not create a second publication layout
+for qualification concepts. For example, the `simple-box` item owns:
+
+```text
+build/examples/simple-box/
+  item.json
+  steps/
+  case/
+    simple-box.json
+    stages/
+    native/simple-box/
+```
+
+Reference and diagram evidence have their own non-overlapping item roots under
+`build/qualification/`. The generic tool does not know what those files mean.
+
+The generated `build` branch has exactly two scopes:
 
 ```text
 main/
-  examples/<case>/<implementation>/...
-  qualification/...
   build.json
-pr/<number>/
-  examples/<case>/<implementation>/...
-  qualification/...
-  build.json
+  <item source path>/...
+pr/
+  <number>/
+    build.json
+    <affected item source path>/...
 ```
 
-The item path mirrors the source path. For example,
-`examples/simple-box/cadquery/model.py` produces technical output under
-`examples/simple-box/cadquery/`; native Forge/SolidCraft output for
-`examples/simple-box/scpf/model.py` lives under
-`examples/simple-box/scpf/`. Do not create top-level `native/`,
-`references/` or other producer-oriented trees on the `build` branch.
-Only cross-case reports belong under `qualification/`.
+`main/` is a complete accepted baseline. A PR scope is a sparse overlay.
+A preview is rendered from resolved `main + PR overlay`; unaffected item
+directories remain from `main`.
 
-Pages uses the matching scope model:
+Pages uses:
 
 ```text
 /                         # stable main website
@@ -448,52 +467,28 @@ previews/pr-<number>/     # one website preview per open PR
 
 Rules:
 
-- A PR may replace only `build/pr/<number>/` and
-  `gh-pages/previews/pr-<number>/`.
-- Updating a PR replaces those same directories. Do not create `fast`,
-  `full`, branch-name or staging variants.
-- Closing a PR removes both generated PR directories. A merged technical PR
-  promotes its verified overlay before cleanup.
-- Normal technical merge promotion replaces only affected case/implementation
-  directories in the complete `build/main/` baseline. A scheduled/manual full
-  Q1-Q6 safety run may rebuild the complete baseline.
-- Replacing the stable Pages root must preserve `previews/`.
-- `preview-output` and `qualified-output` are not part of the architecture.
-  Do not publish new data to them.
-- The website never lives on `build`; technical build evidence never lives in
-  the stable Pages root merely to stage publication.
-- `gh-pages/qualification/` is the public readable qualification section.
-  It contains HTML, documentation source and presentation-only material.
-  Generated commands, native files, renders, measurements and reference
-  evidence belong on `build`; public qualification pages link to that output.
-- A presentation-only PR does not create `build/pr/<number>/`. Its Pages
-  preview reuses the latest qualified `build/main/` evidence.
-- Every generated build uses schema-v2 `build.json` with per-case and
-  per-implementation source commit, input hash, build scope and achieved
-  verification level. Mixed-age evidence must remain truthful.
-- Every generated website has `provenance.json` and is verified before
-  publication.
-- Workflows orchestrate setup and publication. Path selection, build layout,
-  cleanup and other repository rules belong in tested Python code, not inline
-  shell/Python workflow logic.
-- CI artifacts may retain additional heavy/intermediate evidence. They are not
-  a third generated branch or an alternative source of truth.
+- A PR changes only its own build overlay and Pages preview.
+- Closing a PR removes both through the generic publisher.
+- A main technical run replaces only completed affected items.
+- Presentation-only changes reuse the accepted generic `build/main` evidence.
+- The website never lives on `build`; generated technical evidence never
+  lives in Pages merely to stage publication.
+- Public qualification pages may interpret generic item output, but that
+  interpretation stays in Forge site code.
+- Every generated website has `provenance.json` and is tested before publish.
+- GitHub Actions stays thin. Item selection, reuse, build-store operations and
+  publication are not reimplemented in workflow YAML.
+- Generated branches are updated with normal retrying pushes; never force-push.
+- CI artifacts are diagnostics only, not an alternative evidence database.
 
-The intended flow is:
+The normal flow is:
 
-`PR source -> required merge gate -> sparse build/pr/<number>/`
+`PR source -> selected Forge items -> generic sparse PR overlay -> preview`
 
-`resolved build/main + PR overlay -> gh-pages/previews/pr-<number>/`
+`main source -> selected Forge items -> partial generic main update -> stable Pages`.
 
-and after a technical merge:
-
-`verified PR overlay -> scoped promotion -> build/main/`
-
-`build/main -> stable gh-pages root`.
-
-All public technical links use the immutable generated-branch commit SHA.
-Publication uses the retrying publisher in `scripts/publish_generated.py`;
-normal workflows must not force-push generated branches.
+The first cutover to the generic build-store must use a full passing main gate
+so `build/main` is complete before later partial updates are allowed.
 
 Do not publish failing technical evidence as stable.
 
