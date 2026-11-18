@@ -15,18 +15,18 @@ not require a temporary qualification branch.
 
 ## Decision
 
-Keep the existing qualification implementation in
-`.github/workflows/scpf.yml`, but make that workflow reusable through
-`workflow_call`.
+Keep the existing qualification and release workflows unchanged.
 
-Add a small entry workflow named **Qualify main**. It can be started in two
-simple ways:
+Add one operational workflow named **Qualify main**. It uses the same existing
+qualification scripts, immutable qualification image and publication commands,
+but has its own workflow name so it cannot be mistaken for a release run.
+
+It can be started in two simple ways:
 
 - a normal commit that changes `.github/workflows/qualify-main.trigger` on `main`;
 - the parameterless GitHub **Run workflow** button on `main`.
 
-The entry workflow calls the existing qualification workflow against the exact
-current `main` SHA. The existing main-only steps then:
+The workflow runs against the exact current `main` SHA and then:
 
 1. build and verify the complete technical baseline;
 2. replace `build/main`;
@@ -49,9 +49,9 @@ No source or model code is encoded in the marker.
 
 Contract tests prove that:
 
-- the existing qualification workflow supports `workflow_call`;
 - `Qualify main` runs only for `main`;
 - changing only `.github/workflows/qualify-main.trigger` is sufficient to start it;
-- the wrapper calls the existing qualification workflow instead of duplicating
-  qualification steps;
+- the workflow uses the existing immutable qualification image,
+  verification gate and publication commands;
+- the existing full-safety and release workflows remain unchanged;
 - the release workflow does not listen to `Qualify main`.
