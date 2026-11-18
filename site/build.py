@@ -1940,9 +1940,15 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                     raise ValueError(
                         f"Reference result is not PASS: {slug}/{reference_name}"
                     )
-                dest = case_dir / f"reference-{reference_name}"
-                dest.mkdir(exist_ok=True)
                 source_dir = result_path.parent
+                reference_raw_base = build_raw_url(
+                    build_scope,
+                    f"examples/{slug}/{reference_name}",
+                )
+                reference_blob_base = build_blob_url(
+                    build_scope,
+                    f"examples/{slug}/{reference_name}",
+                )
                 for name in (
                     "result.json",
                     "model.stl",
