@@ -39,6 +39,7 @@ PIPELINE_ONLY_EXACT = frozenset(
     {
         "AGENTS.md",
         "qualification/impact.py",
+        "qualification/tests/test_native_runtime_metadata.py",
         "docs/10-release-process.md",
         "docs/11-generated-output.md",
         "docs/changes/0041-one-forge-workflow.md",
