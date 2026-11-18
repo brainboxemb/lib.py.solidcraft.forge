@@ -127,18 +127,26 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
             self.assertEqual(run.call_count, 1)
             self.assertIn(f"{slug}\t", summary.read_text(encoding="utf-8"))
 
-    def test_native_runner_uses_generic_post_build_runner(self):
-        source = (
+    def test_case_runner_owns_generic_post_build_runner(self):
+        case_runner = (
+            ROOT / "qualification" / "case_runner.py"
+        ).read_text(encoding="utf-8")
+        affected_runner = (
             ROOT / "qualification" / "run_affected.py"
         ).read_text(encoding="utf-8")
+
         self.assertIn(
             "run_post_build_inspections(",
-            source,
+            case_runner,
+        )
+        self.assertNotIn(
+            "run_post_build_inspections(",
+            affected_runner,
         )
         for spec in POST_BUILD_INSPECTIONS.values():
             self.assertNotIn(
                 f'"{spec["command"]}"',
-                source,
+                affected_runner,
             )
 
         workflow = (
