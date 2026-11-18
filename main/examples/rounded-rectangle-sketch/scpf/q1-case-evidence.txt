@@ -1,0 +1,10 @@
+$ /usr/local/bin/python -m unittest discover -s /workspace/scpf/tests -p test_geometry_features.py -k test_rounded_rectangle_sketch_compiles_to_true_native_arcs -v
+
+test_rounded_rectangle_sketch_compiles_to_true_native_arcs (test_geometry_features.GeometryFeatures.test_rounded_rectangle_sketch_compiles_to_true_native_arcs) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK
+
+matched_tests=1 status=PASS

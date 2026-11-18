@@ -1,0 +1,10 @@
+$ /usr/local/bin/python -m unittest discover -s /workspace/examples/round-top-sketch/tests -p test_contract.py -k test_top_face_query_is_used_after_circular_base_extrusion -v
+
+test_top_face_query_is_used_after_circular_base_extrusion (test_contract.RoundTopSketchQualificationTests.test_top_face_query_is_used_after_circular_base_extrusion) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+OK
+
+matched_tests=1 status=PASS

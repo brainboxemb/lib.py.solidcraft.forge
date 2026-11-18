@@ -1,0 +1,10 @@
+$ /usr/local/bin/python -m unittest discover -s /workspace/scpf/tests -p test_assembly_attachments.py -k test_attach_angle_is_emitted_as_native_joint_turn -v
+
+test_attach_angle_is_emitted_as_native_joint_turn (test_assembly_attachments.AssemblyAttachmentTests.test_attach_angle_is_emitted_as_native_joint_turn) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK
+
+matched_tests=1 status=PASS

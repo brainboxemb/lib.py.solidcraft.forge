@@ -1,0 +1,133 @@
+{
+  "schema_version": 4,
+  "case": "top-sketch-after-chamfer",
+  "title": "TOP Sketch after chamfer",
+  "source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+  "forge_version": "0.11.0",
+  "solidcraft_version": "0.42.0",
+  "qualified_at": "2026-11-18T17:45:00Z",
+  "status": "pass",
+  "blocked_reason": null,
+  "levels": {
+    "q1": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "scpf/tests/test_headless.py",
+          "test": "test_numeric_vector_selector_tolerates_kernel_float_noise"
+        },
+        {
+          "file": "scpf/tests/test_sketch_attachment.py",
+          "test": "test_top_attached_sketch_uses_same_face_query_after_edge_features"
+        }
+      ],
+      "evidence": [
+        "q1-case-evidence.txt"
+      ]
+    },
+    "q2": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "examples/top-sketch-after-chamfer/tests/test_contract.py",
+          "test": "test_chamfer_precedes_native_face_query_and_attached_sketch"
+        }
+      ],
+      "commands": 7,
+      "evidence": [
+        "q2-case-evidence.txt"
+      ]
+    },
+    "q3": {
+      "status": "pass",
+      "evidence": [
+        "model.sc",
+        "model.step",
+        "results.json"
+      ]
+    },
+    "q4": {
+      "status": "pass",
+      "evidence": [
+        "joint-inspect.json",
+        "measurements.json",
+        "validation.json"
+      ]
+    },
+    "q5": {
+      "status": "not-required",
+      "required": false,
+      "reason": "No saved-design mutation in this fixture; it isolates stable face lookup after topology-changing native features.",
+      "mutation": null,
+      "evidence": []
+    },
+    "q6": {
+      "status": "pass",
+      "regression_status": "pass",
+      "expected_shape_status": "pass",
+      "required_views": [
+        "top",
+        "front",
+        "iso"
+      ],
+      "images": [
+        "model.png",
+        "goal-front.png",
+        "goal-iso.png",
+        "goal-right.png",
+        "goal-top.png",
+        "model-front.png",
+        "model-iso.png",
+        "model-right.png",
+        "model-top.png",
+        "overlay-front.png",
+        "overlay-iso.png",
+        "overlay-right.png",
+        "overlay-top.png",
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png"
+      ],
+      "evidence": [
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png",
+        "visual-validation.json"
+      ]
+    }
+  },
+  "evidence": {
+    "native_files": [
+      "joint-inspect.json",
+      "measurements.json",
+      "model.sc",
+      "model.step",
+      "q1-case-evidence.txt",
+      "q2-case-evidence.txt",
+      "results.json",
+      "validation.json",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png",
+      "visual-validation.json"
+    ],
+    "images": [
+      "model.png",
+      "goal-front.png",
+      "goal-iso.png",
+      "goal-right.png",
+      "goal-top.png",
+      "model-front.png",
+      "model-iso.png",
+      "model-right.png",
+      "model-top.png",
+      "overlay-front.png",
+      "overlay-iso.png",
+      "overlay-right.png",
+      "overlay-top.png",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png"
+    ]
+  }
+}
