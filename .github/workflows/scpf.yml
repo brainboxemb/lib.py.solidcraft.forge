@@ -5,6 +5,7 @@ on:
     branches:
       - "qualification/**"
   workflow_dispatch: {}
+  workflow_call: {}
   schedule:
     - cron: "17 3 * * 1"
 
