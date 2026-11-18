@@ -50,7 +50,22 @@ class ToolCadCiMigrationTests(unittest.TestCase):
             [step["id"] for step in case["steps"]],
             ["integration", "native"],
         )
-        self.assertEqual(case["steps"][1]["outputs"], ["native-case"])
+        self.assertEqual(
+            case["steps"][0]["outputs"],
+            [
+                "case/stages/simple-box/01-q1.json",
+                "case/stages/simple-box/02-q2.json",
+                "case/qualification/case-evidence/q1/simple-box.txt",
+                "case/qualification/case-evidence/q2/simple-box.txt",
+            ],
+        )
+        self.assertEqual(
+            case["steps"][1]["outputs"],
+            [
+                "case/native/simple-box",
+                "case/stages/simple-box/13-gate.json",
+            ],
+        )
 
     def test_every_supported_case_has_one_example_item(self):
         """Every native case has one non-overlapping example-owned CI item."""
@@ -69,8 +84,24 @@ class ToolCadCiMigrationTests(unittest.TestCase):
                     ["integration", "native"],
                 )
                 self.assertEqual(
+                    config["steps"][0]["run"],
+                    [
+                        "python",
+                        "../../scripts/example_ci.py",
+                        "integration",
+                    ],
+                )
+                self.assertEqual(
+                    config["steps"][1]["run"],
+                    [
+                        "python",
+                        "../../scripts/example_ci.py",
+                        "native",
+                    ],
+                )
+                self.assertIn(
+                    f"case/stages/{slug}/13-gate.json",
                     config["steps"][1]["outputs"],
-                    ["native-case"],
                 )
 
     def test_shared_example_runner_uses_tool_identity_and_output_path(self):
@@ -82,6 +113,8 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertIn("CAD_CI_ITEM", script)
         self.assertIn("CAD_CI_OUTPUT", script)
         self.assertIn("qualification/case_runner.py", script)
+        self.assertIn('"--until"', script)
+        self.assertIn('"q2"', script)
         self.assertIn('"--from"', script)
         self.assertIn('"compile"', script)
         self.assertIn("FORGE_QUALIFICATION_IMAGE", script)
