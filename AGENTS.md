@@ -215,29 +215,30 @@ recalculating every case input hash. Any technical source change must use the
 normal technical qualification/promotion flow. Actions-run history is not an
 evidence database.
 
-### Qualify main recovery path
+### One Forge workflow
 
-When the current published state is out of sync, the operational recovery use
-case is always:
+There is one normal user-facing workflow: **Forge**.
+
+It owns PR verification, main qualification, `build/main`, Pages publication,
+PR preview cleanup, scheduled safety qualification and explicit release
+publication. The operator does not choose separate preflight/affected/full/site/
+reconcile workflows.
+
+The only separate workflow is **Forge · qualification image**, because building
+and caching the immutable SolidCraft/reference container separately is a
+performance optimization.
+
+When published state is out of sync, the recovery path is always:
 
 `main -> qualification -> build/main -> Pages`
 
-Use the **Qualify main** workflow for this. Do not create a temporary
-`qualification/**` branch and do not involve the release workflow merely to
-repair Pages or `build/main`.
+A normal commit that changes `scripts/ci/forge.trigger` on `main` requests
+that full recovery. Manual **Run workflow** on Forge does the same. Do not create
+a temporary qualification branch merely to trigger recovery.
 
-The workflow qualifies the exact current `main` commit, replaces
-`build/main` only after successful qualification, then builds/tests and
-publishes stable Pages from that same baseline.
-
-A normal commit that changes `.github/workflows/qualify-main.trigger` on `main` is the
-repository-native way to request this recovery. The trigger file carries no
-model/source semantics; it is only an explicit operational signal. The same
-workflow may also expose a parameterless manual Run workflow action in GitHub.
-
-Do not require an operator or agent to choose Q1/Q2/Q6/full for this recovery
-entry point. The workflow owns the qualification policy. Release work remains a
-separate process under `docs/10-release-process.md`.
+The workflow owns qualification-level selection. PRs use the risk classifier;
+presentation-only main changes may reuse a complete passing `build/main`;
+technical main changes and explicit recovery run full Q1-Q6.
 
 `scripts/ci_preflight.py` is the first hard gate. Keep it cheap. It exists to
 catch broken Python, malformed workflow structure, broken publication
@@ -415,11 +416,12 @@ Rules:
   `gh-pages/previews/pr-<number>/`.
 - Updating a PR replaces those same directories. Do not create `fast`,
   `full`, branch-name or staging variants.
-- Closing a PR removes both generated PR directories. A merged technical PR
-  promotes its verified overlay before cleanup.
-- Normal technical merge promotion replaces only affected case/implementation
-  directories in the complete `build/main/` baseline. A scheduled/manual full
-  Q1-Q6 safety run may rebuild the complete baseline.
+- Closing a PR removes both generated PR directories.
+- PR technical overlays are preview evidence only; they are not the stable
+  source of truth after merge.
+- A technical `main` change runs full Q1-Q6 and replaces `build/main/` only
+  after that exact main commit passes. A presentation-only main change may
+  reuse the complete passing `build/main/` baseline.
 - Replacing the stable Pages root must preserve `previews/`.
 - `preview-output` and `qualified-output` are not part of the architecture.
   Do not publish new data to them.
@@ -450,7 +452,7 @@ The intended flow is:
 
 and after a technical merge:
 
-`verified PR overlay -> scoped promotion -> build/main/`
+`main source -> full qualification -> build/main/`
 
 `build/main -> stable gh-pages root`.
 
@@ -464,7 +466,8 @@ Do not publish failing technical evidence as stable.
 
 Keep user-visible changes under `[Unreleased]` in `CHANGELOG.md` during
 normal development. Do not create or move release tags manually. For a release,
-follow `docs/10-release-process.md`: use a `qualification/**` release branch,
-bump only `scpf/pyproject.toml`, date the changelog section, require full Q1-Q6
-on the release head and main head, then let the generic release workflow create
-the annotated tag and GitHub Release.
+follow `docs/10-release-process.md`: prepare the release PR, bump only
+`scpf/pyproject.toml`, date the changelog section, require full Q1-Q6, merge
+to `main`, then explicitly request release publication through the single
+**Forge** workflow. The release step runs only after that same Forge run has
+qualified and published the exact main commit.
