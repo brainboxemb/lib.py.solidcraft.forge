@@ -45,10 +45,6 @@ repository commit.
 
 No source or model code is encoded in the marker.
 
-A preflight-only PR that introduces or edits this recovery path may encounter an
-already incomplete `build/main`. In that situation the PR still runs repository
-preflight and contract tests, but skips the optional PR website preview instead
-of failing on the stale baseline. Technical PRs remain strict.
 
 ## Verification
 
