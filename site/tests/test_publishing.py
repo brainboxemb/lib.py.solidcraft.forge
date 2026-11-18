@@ -111,6 +111,7 @@ class SitePublishingContractTests(unittest.TestCase):
     def test_qualify_main_does_not_become_a_release_trigger(self):
         release = (ROOT / ".github/workflows/release.yml").read_text()
         self.assertIn('"SCPF full safety qualification"', release)
+        self.assertIn("github.event.workflow_run.event == 'workflow_dispatch'", release)
         self.assertNotIn('"Qualify main"', release)
 
     def test_agent_documents_simple_main_recovery_path(self):
