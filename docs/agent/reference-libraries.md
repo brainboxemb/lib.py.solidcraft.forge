@@ -131,6 +131,29 @@ For build123d 0.12.0 curved slots, use `SlotArc(edge_or_wire, height)`.
 `SlotCurve` is a later API and must not be used by the pinned 0.12.0
 qualification environment.
 
+For mechanical holes, build123d 0.12.0 uses Builder-mode Part operations:
+
+```python
+from build123d import CounterBoreHole, CounterSinkHole, Hole
+
+Hole(radius=3)
+CounterBoreHole(
+    radius=3,
+    counter_bore_radius=6,
+    counter_bore_depth=4,
+)
+CounterSinkHole(
+    radius=3,
+    counter_sink_radius=6,
+    counter_sink_angle=90,
+)
+```
+
+Omitting `depth` cuts through the current part. build123d core has no
+equivalent native tapped-hole metadata operation, so the Forge Hole-family
+qualification uses the M6 tap-drill envelope for its build123d thread
+reference and keeps thread semantics in SolidCraft-native evidence.
+
 For operations not listed above, consult the **installed pinned** version and
 refresh this cache before relying on new behaviour; do not repeatedly browse
 the build123d Git repository for ordinary modelling tasks.
