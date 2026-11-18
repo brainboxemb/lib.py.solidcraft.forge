@@ -239,6 +239,57 @@ Parallel work on another existing branch is fine while CI runs. Keep the topics
 separate, and merge or otherwise finish the first PR as soon as its checks are
 green.
 
+## Generated build output and Pages publishing
+
+Generated site output has three separate states. Do not mix them.
+
+1. **Source branch** — editable Forge code and documentation.
+2. **Preview/staging output** — build output owned by one PR or branch.
+3. **Stable output** — the last fully qualified `main` build.
+
+Rules:
+
+- A branch or PR may only replace its own preview output.
+- Preview output must never overwrite stable output.
+- Preview Pages live under a branch/PR-specific path such as
+  `previews/pr-123/`.
+- Only a fully successful `main` Q1-Q6 qualification may replace stable
+  output.
+- Stable publishable output lives on the generated `qualified-output`
+  branch. Treat that branch as generated data, not source code.
+- `gh-pages` is only a serving branch. Do not rebuild Forge or qualification
+  data there.
+- Promote already-built output to Pages; do not independently rebuild the site
+  during publication.
+- Replacing the stable Pages root must preserve the `previews/` subtree.
+- Updating one preview must not touch the stable root or another preview.
+- Every generated preview/stable output must contain `provenance.json` with
+  at least the source branch/PR, source commit, Forge version, SolidCraft
+  version when applicable, workflow run id, qualification status/level and
+  generation time.
+- Verify provenance before promotion. The source commit in stable output must
+  match the successful `main` qualification commit.
+- Keep heavy qualification evidence such as STEP files, complete native build
+  trees and large render sets as CI artifacts. Generated Git branches contain
+  only publishable output plus provenance.
+- Generated output is latest-only. Do not build an ever-growing Git history of
+  generated site files.
+- Changes under `site/**` are product changes and must trigger the same
+  qualification needed before stable publication.
+- Site capability/coverage data must be checked against the real public API.
+  Removed methods must not remain published as stale documentation.
+
+The intended flow is:
+
+`source branch -> branch-owned build -> preview page`
+
+and, only after full qualification:
+
+`main -> qualified-output -> stable gh-pages root`.
+
+Do not publish a failing or partially qualified build as stable merely because
+the site renderer itself succeeded.
+
 ## Release discipline
 
 Keep user-visible changes under `[Unreleased]` in `CHANGELOG.md` during
