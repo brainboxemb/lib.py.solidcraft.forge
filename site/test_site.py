@@ -37,6 +37,7 @@ def check(
     require_native: bool = False,
     require_references: bool = False,
     evidence_sha: str | None = None,
+    build_commit: str | None = None,
 ):
     evidence_sha = evidence_sha or sha
     template_dir = ROOT / "qualification" / "templates"
@@ -725,11 +726,15 @@ def check(
         assert "qualification-reference-list" in page_text
         assert page_text.count("qualification-reference-row") == len(reference_names)
         assert not (site / "qualification" / slug / "commands.json").exists()
+        build_ref = build_commit or "build"
         build_prefix = (
-            "https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/"
+            "https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/"
+            f"{build_ref}/"
         )
         assert build_prefix in page_text, slug
-        assert "/blob/build/main/examples/" in page_text, slug
+        assert f"/blob/{build_ref}/main/examples/" in page_text, slug
+        if build_commit:
+            assert "/blob/build/" not in page_text, slug
         if require_references:
             manifest_case = qualification_manifest["cases"][slug]
             evidence = manifest_case["reference_evidence"]
@@ -1020,10 +1025,15 @@ if __name__ == "__main__":
         (arg.split("=", 1)[1] for arg in extra if arg.startswith("--evidence-sha=")),
         None,
     )
+    build_commit = next(
+        (arg.split("=", 1)[1] for arg in extra if arg.startswith("--build-commit=")),
+        None,
+    )
     check(
         Path(sys.argv[1]),
         sys.argv[2],
         require_native="--require-native" in extra,
         require_references="--require-references" in extra,
         evidence_sha=evidence_sha,
+        build_commit=build_commit,
     )
