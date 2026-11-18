@@ -26,8 +26,9 @@ Do not create ad-hoc tags or releases from feature branches.
 
 ## Preparing a release
 
-Create a release PR on a branch matching `qualification/**` so the complete
-qualification workflow runs before merge.
+Create a normal release PR. The Forge risk classifier treats the version and
+release-contract changes as full-qualification inputs, so the PR must pass full
+Q1-Q6 before merge.
 
 The release PR must:
 
@@ -44,13 +45,12 @@ The release PR must:
 
 ## Publishing after merge
 
-Merging a release PR promotes the already verified PR evidence when the squash
-merge tree is identical to the verified PR tree. The close workflow then starts
-`SCPF full safety qualification` again on the exact `main` commit before any
-release is published.
+After the release PR is merged, run the single **Forge** workflow manually with
+**release** enabled.
 
-The generic `Publish SCPF release` workflow is triggered only after that main
-qualification completes successfully. It then:
+That Forge run first performs full Q1-Q6 on the exact current `main` commit,
+publishes `build/main` and stable Pages, and only then runs the release step.
+The release step:
 
 1. reads the package version from `scpf/pyproject.toml`;
 2. does nothing if that version already has a published GitHub Release;
