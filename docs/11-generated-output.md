@@ -291,8 +291,8 @@ write no generated branches, so cancelling obsolete verification is safe.
 
 ### 9.4 Scheduled full safety run
 
-Run the complete registered Q1-Q6 set on `main` on a schedule (initially
-weekly) and on manual request.
+The single **Forge** workflow runs the complete registered Q1-Q6 set on `main`
+weekly and on manual request.
 
 This is a safety net for an incomplete dependency map or selector bug. It does
 not replace the pre-merge gate.
@@ -303,38 +303,32 @@ A failing scheduled run:
 - fails visibly and creates/updates an audit finding;
 - blocks release promotion until resolved.
 
-## 10. PR evidence and squash-merge promotion
+## 10. PR evidence and main publication
 
-A technical PR may publish a sparse `build/pr/N` **candidate overlay** after
-successful iteration verification. Per-case metadata records the achieved level
-(for example Q1/Q2); the preview must show that level honestly.
+A technical PR may publish a sparse `build/pr/N` candidate overlay after
+successful risk-based verification. Per-case metadata records the achieved
+level and the preview shows that level honestly.
 
-The pre-merge gate may update/upgrade the same current-head overlay. Evidence is
-**promotable** only when every affected case meets the final level required by
-the risk classifier.
+The PR overlay exists for review and preview only. It is not promoted as the
+stable source of truth after merge.
 
-On squash merge:
+On a technical `main` change, the single Forge workflow:
 
-1. read the verified PR overlay before cleanup;
-2. compare the PR-head tree with the merge-commit tree;
-3. when the trees are equal and case input hashes match current `main`, reuse
-   the PR evidence;
-4. promote affected case directories into `build/main`;
-5. regenerate derived cross-case output;
-6. publish the stable site;
-7. only then remove the PR overlay/preview.
+1. qualifies the exact current main commit with full Q1-Q6;
+2. verifies the complete technical build;
+3. replaces `build/main` only after that full gate passes;
+4. rebuilds and tests the stable site from that exact baseline;
+5. publishes stable Pages;
+6. reconciles stale PR build/preview namespaces.
 
-If the trees differ or current input hashes differ, PR evidence is not promoted.
-The required verification is rerun for the merge tree before `build/main`
-changes.
+For presentation-only main changes, Forge may reuse a structurally complete,
+passing `build/main` baseline and rebuild only the site.
 
-If that verification fails:
+If technical main qualification fails:
 
 - `build/main` remains unchanged;
 - stable Pages remains on the last honest evidence;
-- the workflow fails visibly;
-- automated reconciliation/audit reports that `main` is ahead of technical
-  evidence.
+- the Forge run fails visibly.
 
 ## 11. Pages layout
 
@@ -573,6 +567,10 @@ A Forge-only case change does not automatically rerun every reference library
 unless its reference input hash changes.
 
 ## 21. Workflow responsibilities
+
+Expose one normal user-facing workflow: `.github/workflows/forge.yml`.
+`.github/workflows/qualification-image.yml` is the only separate workflow and
+exists solely to build/cache the reusable immutable qualification image.
 
 Workflow YAML is orchestration only.
 
