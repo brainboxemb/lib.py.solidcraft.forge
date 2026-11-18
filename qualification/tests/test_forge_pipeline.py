@@ -77,23 +77,25 @@ class ForgePipelineTests(unittest.TestCase):
         self.assertIn("--pull-request", command)
         self.assertIn("351", command)
 
-    def test_qualify_runs_migrated_case_only_for_native_gate(self):
+    def test_native_gate_collects_items_instead_of_rerunning_legacy_gate(self):
         ns = args()
-        command = forge_pipeline.qualification_args(ns)
+        command = forge_pipeline.item_gate_args(ns)
         with patch.object(
             forge_pipeline,
             "run_tool_cad_ci_case",
         ) as case_item, patch.object(
             forge_pipeline,
             "docker_python",
-        ) as legacy_gate:
+        ) as item_gate:
             forge_pipeline.qualify(ns)
 
         case_item.assert_called_once_with(
             "simple-box",
             ns.image,
         )
-        legacy_gate.assert_called_once_with(ns.image, *command)
+        item_gate.assert_called_once_with(ns.image, *command)
+        self.assertEqual(command[0], "qualification/item_gate.py")
+        self.assertNotIn("scripts/verification_gate.py", command)
 
     def test_qualify_skips_native_case_item_for_cheap_gate(self):
         ns = args(
