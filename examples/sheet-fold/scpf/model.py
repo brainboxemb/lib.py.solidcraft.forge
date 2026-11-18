@@ -7,7 +7,6 @@ class SheetFold:
     thickness = 2.0
     bend_radius = 2.0
     k_factor = 0.5
-    fold_x = 20.0
     fold_angle = 90.0
     hole_diameter = 6.0
 
@@ -28,10 +27,7 @@ class SheetFold:
         ).at(-20, 0, self.thickness)
 
         return sheet.fold(
-            line=(
-                (self.fold_x, -self.depth / 2),
-                (self.fold_x, self.depth / 2),
-            ),
+            line=((20, -20), (20, 20)),
             angle=self.fold_angle,
             fixed=(-20, 0, 0),
         )
