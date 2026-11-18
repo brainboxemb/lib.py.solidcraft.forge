@@ -181,6 +181,28 @@ When intentionally changing a qualification model, update its regression/native
 checks and all required reference implementations.
 
 
+## Unit-test geometry contracts
+
+The unit-test layer is the first and cheapest place to prove a general Forge
+geometry rule.
+
+- Do not add one body-specific regression when the public rule applies to a
+  family of bodies.
+- Register supported primitives, body capabilities, CSG operations and general
+  features in `scpf/tests/geometry_contracts.py`.
+- A general feature must run through the shared body × feature matrix for every
+  compatible direct and derived body.
+- A new primitive must enter the canonical compiler primitive set and the test
+  body registry; the registry-completeness test must fail until both agree.
+- Derived join/cut/intersection body cases come from the same operation
+  registry as the primitive-pair CSG tests. Do not maintain a second list.
+- Keep a focused standalone regression only when the failure is genuinely
+  specific and cannot be expressed as a shared API contract.
+- When reorganising tests, preserve existing coverage and update qualification
+  Q1 evidence paths in the same change.
+
+See `scpf/tests/README.md` for the current test layout.
+
 ## Model authoring workflow
 
 When writing or changing an SCPF model:
