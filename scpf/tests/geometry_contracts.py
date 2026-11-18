@@ -14,7 +14,9 @@ from scpf import Anchor, Box, Cylinder, Rectangle2D, Sketch, Sphere
 class BodyCase:
     name: str
     kind: str | None
+    native_command: str | None
     build: Callable[[], object]
+    build_parameterized: Callable[[object], object] | None
     entry_z: float
     through_depth: float
     capabilities: frozenset[str]
@@ -45,24 +47,38 @@ def _sketch_extrusion():
     return sketch.extrude(20)
 
 
+def _box_parameterized(size):
+    return Box(size, 40, 20, anchor=Anchor.BOTTOM)
+
+
+def _cylinder_parameterized(size):
+    return Cylinder(d=size, h=20, anchor=Anchor.BOTTOM)
+
+
+def _sphere_parameterized(size):
+    return Sphere(size / 2)
+
+
 PRIMITIVE_BODY_CASES = (
     BodyCase(
-        "box", "box", _box, 20, 20,
+        "box", "box", "solid.box", _box, _box_parameterized, 20, 20,
         frozenset((GENERAL_SOLID, PRIMITIVE, CSG, NATIVE_HOLE, JOINABLE)),
     ),
     BodyCase(
-        "cylinder", "cylinder", _cylinder, 20, 20,
+        "cylinder", "cylinder", "solid.cylinder", _cylinder,
+        _cylinder_parameterized, 20, 20,
         frozenset((GENERAL_SOLID, PRIMITIVE, CSG, NATIVE_HOLE, JOINABLE)),
     ),
     BodyCase(
-        "sphere", "sphere", _sphere, 20, 40,
+        "sphere", "sphere", "solid.sphere", _sphere, _sphere_parameterized,
+        20, 40,
         frozenset((GENERAL_SOLID, PRIMITIVE, CSG, NATIVE_HOLE, JOINABLE)),
     ),
 )
 
 FEATURE_BODY_CASES = PRIMITIVE_BODY_CASES + (
     BodyCase(
-        "sketch-extrusion", None, _sketch_extrusion, 20, 20,
+        "sketch-extrusion", None, None, _sketch_extrusion, None, 20, 20,
         frozenset((GENERAL_SOLID, NATIVE_HOLE, JOINABLE)),
     ),
 )
