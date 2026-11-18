@@ -1,5 +1,5 @@
-# One Forge example is one CI item. The integration step writes the cheap
-# case evidence; the native step resumes the same staged output at compile.
+# One Forge example is one CI item. The integration step writes cheap case
+# evidence through command compilation; the native step resumes at replay.
 id: xz-anchor
 kind: example
 watch:
@@ -17,8 +17,10 @@ steps:
   - id: integration
     run: [python, ../../scripts/example_ci.py, integration]
     outputs:
+      - case/xz-anchor.json
       - case/stages/xz-anchor/01-q1.json
       - case/stages/xz-anchor/02-q2.json
+      - case/stages/xz-anchor/03-compile.json
       - case/qualification/case-evidence/q1/xz-anchor.txt
       - case/qualification/case-evidence/q2/xz-anchor.txt
   - id: native

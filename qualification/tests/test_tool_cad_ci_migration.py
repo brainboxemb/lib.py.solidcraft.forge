@@ -55,6 +55,8 @@ class ToolCadCiMigrationTests(unittest.TestCase):
             [
                 "case/stages/simple-box/01-q1.json",
                 "case/stages/simple-box/02-q2.json",
+                "case/simple-box.json",
+                "case/stages/simple-box/03-compile.json",
                 "case/qualification/case-evidence/q1/simple-box.txt",
                 "case/qualification/case-evidence/q2/simple-box.txt",
             ],
@@ -114,9 +116,9 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertIn("CAD_CI_OUTPUT", script)
         self.assertIn("qualification/case_runner.py", script)
         self.assertIn('"--until"', script)
-        self.assertIn('"q2"', script)
-        self.assertIn('"--from"', script)
         self.assertIn('"compile"', script)
+        self.assertIn('"--from"', script)
+        self.assertIn('"replay"', script)
         self.assertIn("FORGE_QUALIFICATION_IMAGE", script)
         self.assertIn('"docker"', script)
         self.assertFalse((ROOT / "examples/simple-box/ci.py").exists())

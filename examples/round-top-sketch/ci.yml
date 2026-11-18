@@ -1,5 +1,5 @@
-# One Forge example is one CI item. The integration step writes the cheap
-# case evidence; the native step resumes the same staged output at compile.
+# One Forge example is one CI item. The integration step writes cheap case
+# evidence through command compilation; the native step resumes at replay.
 id: round-top-sketch
 kind: example
 watch:
@@ -17,8 +17,10 @@ steps:
   - id: integration
     run: [python, ../../scripts/example_ci.py, integration]
     outputs:
+      - case/round-top-sketch.json
       - case/stages/round-top-sketch/01-q1.json
       - case/stages/round-top-sketch/02-q2.json
+      - case/stages/round-top-sketch/03-compile.json
       - case/qualification/case-evidence/q1/round-top-sketch.txt
       - case/qualification/case-evidence/q2/round-top-sketch.txt
   - id: native

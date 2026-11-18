@@ -48,7 +48,7 @@ def qualification_image() -> str:
 
 
 def run_integration() -> None:
-    """Run the case's cheap q1/q2 compatibility stages on the host."""
+    """Run cheap case evidence and command compilation on the host."""
 
     subprocess.run(
         [
@@ -58,7 +58,7 @@ def run_integration() -> None:
             "--out",
             str(case_output()),
             "--until",
-            "q2",
+            "compile",
         ],
         cwd=ROOT,
         check=True,
@@ -66,7 +66,7 @@ def run_integration() -> None:
 
 
 def run_native() -> None:
-    """Resume the same staged case output at compile inside the native image."""
+    """Resume the same staged case output at replay inside the native image."""
 
     slug = item_slug()
     out = case_output()
@@ -89,7 +89,7 @@ def run_native() -> None:
             "--out",
             f"/workspace/{relative_out.as_posix()}",
             "--from",
-            "compile",
+            "replay",
         ],
         cwd=ROOT,
         check=True,

@@ -1,5 +1,5 @@
-# One Forge example is one CI item. The integration step writes the cheap
-# case evidence; the native step resumes the same staged output at compile.
+# One Forge example is one CI item. The integration step writes cheap case
+# evidence through command compilation; the native step resumes at replay.
 id: repeated-parent-attachments
 kind: example
 watch:
@@ -17,8 +17,10 @@ steps:
   - id: integration
     run: [python, ../../scripts/example_ci.py, integration]
     outputs:
+      - case/repeated-parent-attachments.json
       - case/stages/repeated-parent-attachments/01-q1.json
       - case/stages/repeated-parent-attachments/02-q2.json
+      - case/stages/repeated-parent-attachments/03-compile.json
       - case/qualification/case-evidence/q1/repeated-parent-attachments.txt
       - case/qualification/case-evidence/q2/repeated-parent-attachments.txt
   - id: native
