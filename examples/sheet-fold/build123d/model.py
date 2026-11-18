@@ -28,7 +28,7 @@ sheet = make_brake_formed(
     thickness=2,
     station_widths=40,
     line=inside,
-    side=Side.RIGHT,
+    side=Side.LEFT,
 )
 
 # make_brake_formed grows the station width to one side of the path plane.
