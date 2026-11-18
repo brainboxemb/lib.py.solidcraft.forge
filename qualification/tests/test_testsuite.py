@@ -1,10 +1,16 @@
-"""Tests for qualification test discovery."""
+"""Tests for qualification test discovery and in-memory execution."""
 
+from io import StringIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from qualification.testsuite import model_test_dirs, qualification_test_dirs
+from qualification.testsuite import (
+    build_suite,
+    model_test_dirs,
+    qualification_test_dirs,
+    qualification_test_files,
+)
 
 
 class TestSuiteDiscoveryTests(unittest.TestCase):
@@ -48,6 +54,70 @@ class TestSuiteDiscoveryTests(unittest.TestCase):
                     root / "examples" / "case" / "tests",
                 ),
             )
+
+    def test_test_file_discovery_is_cached_in_memory(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp).resolve()
+            tooling = root / "qualification" / "tests"
+            model = root / "examples" / "case" / "tests"
+            tooling.mkdir(parents=True)
+            model.mkdir(parents=True)
+            (tooling / "test_tooling.py").write_text(
+                "import unittest\n",
+                encoding="utf-8",
+            )
+            (model / "test_contract.py").write_text(
+                "import unittest\n",
+                encoding="utf-8",
+            )
+
+            first = qualification_test_files(root)
+            second = qualification_test_files(root)
+
+            self.assertIs(first, second)
+            self.assertEqual(
+                first,
+                (
+                    tooling / "test_tooling.py",
+                    model / "test_contract.py",
+                ),
+            )
+
+    def test_same_test_filename_from_multiple_models_runs_in_one_suite(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp).resolve()
+            tooling = root / "qualification" / "tests"
+            first = root / "examples" / "first-case" / "tests"
+            second = root / "examples" / "second-case" / "tests"
+            tooling.mkdir(parents=True)
+            first.mkdir(parents=True)
+            second.mkdir(parents=True)
+
+            (tooling / "test_tooling.py").write_text(
+                "import unittest\n"
+                "class ToolingTest(unittest.TestCase):\n"
+                "    def test_tooling(self):\n"
+                "        self.assertTrue(True)\n",
+                encoding="utf-8",
+            )
+            for directory, class_name in (
+                (first, "FirstContractTest"),
+                (second, "SecondContractTest"),
+            ):
+                (directory / "test_contract.py").write_text(
+                    "import unittest\n"
+                    f"class {class_name}(unittest.TestCase):\n"
+                    "    def test_contract(self):\n"
+                    "        self.assertTrue(True)\n",
+                    encoding="utf-8",
+                )
+
+            suite = build_suite(root)
+            stream = StringIO()
+            result = unittest.TextTestRunner(stream=stream).run(suite)
+
+            self.assertTrue(result.wasSuccessful(), stream.getvalue())
+            self.assertEqual(result.testsRun, 3)
 
 
 if __name__ == "__main__":
