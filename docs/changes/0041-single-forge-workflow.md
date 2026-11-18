@@ -71,9 +71,16 @@ The workflow may contain multiple jobs because cleanup, reconcile and release
 have different event/security boundaries. They remain part of the same visible
 **Forge** run.
 
-Policy belongs in tested Python. YAML may wire Actions, environments and
-repository commands but must not duplicate case selection, branch layout or
-risk classification.
+Policy belongs in tested Python. YAML is a thin GitHub wrapper: events,
+permissions, concurrency, checkout, registry/build-cache setup and artifact
+upload. The reproducible command `scripts/forge_pipeline.py run` owns
+preflight, image/pipeline smoke, contract checks, qualification, PR preview,
+stable promotion and site publication. Release publication likewise runs
+through `scripts/release/publish_release.py`.
+
+The same pipeline command can be run locally against checked-out source and a
+checked-out `build` branch. YAML must not contain case-stage reruns, gate
+assembly, preview resolution, promotion rules or site-build sequences.
 
 ## Verification
 
@@ -83,6 +90,9 @@ Regression tests require:
 - planner coverage for PR/main/manual/trigger/schedules/cleanup/release;
 - one-case pipeline smoke for orchestration changes;
 - immutable image reuse before rebuild;
+- workflow delegates repository work to `scripts/forge_pipeline.py`;
+- qualification stage reruns, gate assembly, preview/site build and promotion
+  do not appear as inline workflow shell logic;
 - sparse main promotion preserving unaffected cases;
 - presentation reuse validating against `build.json.source_commit`;
 - generated branch writes through the retrying publisher;
