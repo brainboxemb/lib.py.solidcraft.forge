@@ -128,6 +128,16 @@ def run_gate(
             ]
         )
 
+    if gate == "full-q1-q6":
+        run(
+            [
+                sys.executable,
+                "qualification/render_diagrams.py",
+                "--out",
+                str(out / "diagrams"),
+            ]
+        )
+
 
 def assemble_build(
     *,
