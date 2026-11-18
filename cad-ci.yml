@@ -1,7 +1,8 @@
-# First Forge migration phase: prove the real library-test layer and one
-# integration example through tool.cad.ci. Native qualification remains on the
-# existing qualification runner until qualification cases own their own config.
+# CI items live beside the Forge code or case that owns their behaviour.
+# A folder becomes an item only when it contains ci.yml, so these globs can
+# grow with the examples catalog without maintaining a second central list.
 schema: 1
 items:
   - scpf/tests
-  - examples/simple-box
+  - examples/*/tests
+  - examples/*
