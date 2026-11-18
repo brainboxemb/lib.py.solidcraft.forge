@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Qualification · Eight vertical L-profiles: two per side corner · SCPF Python library</title>
+<link rel="stylesheet" href="../../style.css"></head>
+<body><header class="top"><div class="wrap nav">
+<a class="brand" href="../../">SCPF <span>Python library</span></a>
+<div class="site-search" data-search-index="../../search-index.json">
+<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
+       placeholder="Search API…" aria-label="Search SCPF documentation"
+       aria-expanded="false" aria-controls="site-search-results">
+<span class="site-search-shortcut" aria-hidden="true">/</span>
+<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+</div>
+<nav aria-label="Main"><a href="../../">Examples</a><a href="../../guide/">API Guide</a><a href="../../reference/">API Reference</a><a href="../../qualification/">Qualification</a><a href="../../cheatsheet/">Cheatsheet</a>
+<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a></nav></div></header>
+<div class="development-banner" role="status"><div class="wrap">
+<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
+</div></div>
+<main class="wrap">
+<div class="crumb"><a href="../">← Qualification</a> / Eight vertical L-profiles: two per side corner</div>
+
+<section class="hero small">
+  <p class="eyebrow">Forge model example</p>
+  <div class="qualification-status-line"><span class="qualification-status pass">PASS</span></div>
+  <h1>Eight vertical L-profiles: two per side corner</h1>
+</section>
+
+<section class="panel qualification-example-overview">
+  <h2>What this example makes</h2>
+  <p>Each rounded vertical side corner carries exactly two outside angle profiles. On the 60 mm frame they occupy Z=0..16 and Z=44..60.</p>
+  <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Eight vertical L-profiles: two per side corner expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+  <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-iso.png" alt="Eight vertical L-profiles: two per side corner native SolidCraft preview"></a><figcaption>Native SolidCraft preview from the generated build output.</figcaption></figure>
+</section>
+
+<section class="panel">
+  <h2>Forge code</h2>
+  <p>This is the complete Forge source used for this example.</p>
+  <pre><code>&quot;&quot;&quot;Eight vertical L-profiles: two on each rounded side corner.&quot;&quot;&quot;
+
+
+class FrameBlock:
+    _width = 120.0
+    _depth = 80.0
+    _height = 60.0
+
+    def build(self):
+        return Box(
+            self._width,
+            self._depth,
+            self._height,
+            anchor=Anchor.BOTTOM,
+        ).fillet(8, edges=Edges.VERTICAL)
+
+
+class LProfile:
+    ARM_LENGTH = 28.0
+    THICKNESS = 4.0
+    PROFILE_HEIGHT = 16.0
+
+    def build(self):
+        with Sketch(name=&quot;Profile&quot;, plane=&quot;XY&quot;) as sketch:
+            Polygon2D(
+                [
+                    (0, 0),
+                    (self.ARM_LENGTH, 0),
+                    (self.ARM_LENGTH, -self.THICKNESS),
+                    (-self.THICKNESS, -self.THICKNESS),
+                    (-self.THICKNESS, self.ARM_LENGTH),
+                    (0, self.ARM_LENGTH),
+                ],
+                plane=&quot;XY&quot;,
+            )
+        return sketch.extrude(self.PROFILE_HEIGHT)
+
+
+class EightCornerBrackets:
+    frame_width = 120.0
+    frame_depth = 80.0
+    frame_height = 60.0
+
+    def build(self):
+        frame = FrameBlock(
+            _width=self.frame_width,
+            _depth=self.frame_depth,
+            _height=self.frame_height,
+        )
+        profile = LProfile()
+
+        half_width = half(self.frame_width)
+        half_depth = half(self.frame_depth)
+        top_height = self.frame_height - LProfile.PROFILE_HEIGHT
+
+        def placed(x, y, angle, height):
+            rotation = None if angle == 0 else (Z, angle)
+            return profile.copy(
+                placement=Placement(
+                    x=x,
+                    y=y,
+                    z=height,
+                    rotation=rotation,
+                ),
+            )
+
+        front_left_bottom = placed(-half_width, -half_depth, 0, 0)
+        front_left_top = placed(-half_width, -half_depth, 0, top_height)
+
+        front_right_bottom = placed(half_width, -half_depth, 90, 0)
+        front_right_top = placed(half_width, -half_depth, 90, top_height)
+
+        rear_right_bottom = placed(half_width, half_depth, 180, 0)
+        rear_right_top = placed(half_width, half_depth, 180, top_height)
+
+        rear_left_bottom = placed(-half_width, half_depth, 270, 0)
+        rear_left_top = placed(-half_width, half_depth, 270, top_height)
+
+        return (
+            frame
+            + front_left_bottom + front_left_top
+            + front_right_bottom + front_right_top
+            + rear_right_bottom + rear_right_top
+            + rear_left_bottom + rear_left_top
+        )
+
+
+EightCornerBrackets()
+</code></pre>
+  <h3>API used</h3>
+  <p><code>LProfile.copy(placement=Placement(x=..., y=..., z=..., rotation=(Z, ...)))</code></p>
+</section>
+
+<section class="panel">
+  <h2>Reference code</h2>
+  <p>The same model is written independently with the reference libraries below.
+  This makes it easier to compare modelling style and the resulting shape.</p>
+  
+  <div class="qualification-reference-list">
+    <section class="qualification-reference-row"><div class="qualification-reference-source"><h4>PythonSCAD</h4><pre><code>&quot;&quot;&quot;PythonSCAD reference: two short L profiles on each vertical frame corner.&quot;&quot;&quot;
+
+from pythonscad import *
+
+frame = cube([120, 80, 60], center=True).up(30).fillet(8)
+
+def l_profile():
+    horizontal = cube([32, 4, 16], center=True).translate([12, -2, 8])
+    vertical = cube([4, 32, 16], center=True).translate([-2, 12, 8])
+    return horizontal | vertical
+
+model = frame
+for x, y, angle in [(-60, -40, 0), (60, -40, 90), (60, 40, 180), (-60, 40, 270)]:
+    low = l_profile().rotz(angle).translate([x, y, 0])
+    high = l_profile().rotz(angle).translate([x, y, 44])
+    model = model | low | high
+</code></pre><p><a href="reference-pythonscad.py">Open PythonSCAD source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pythonscad/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pythonscad/model-iso.png" alt="Eight vertical L-profiles: two per side corner PythonSCAD reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pythonscad/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pythonscad/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 1/1 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-64.0, -44.0, 0.0], &#x27;max&#x27;: [64.0, 44.0, 60.0]}</code></td><td><code>{&#x27;min&#x27;: [-64.0, -44.0, 0.0], &#x27;max&#x27;: [64.0, 44.0, 60.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>pyBOSL2</h4><pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference: two L profiles on every vertical corner.&quot;&quot;&quot;
+
+from pybosl2 import Anchor, cuboid
+
+frame = cuboid([120, 80, 60], rounding=8, edges=Anchor.Z).up(30)
+
+def l_profile():
+    horizontal = cuboid([32, 4, 16]).translate([12, -2, 8])
+    vertical = cuboid([4, 32, 16]).translate([-2, 12, 8])
+    return horizontal | vertical
+
+model = frame
+for x, y, angle in [(-60, -40, 0), (60, -40, 90), (60, 40, 180), (-60, 40, 270)]:
+    low = l_profile().rotate(angle, [0, 0, 1]).translate([x, y, 0])
+    high = l_profile().rotate(angle, [0, 0, 1]).translate([x, y, 44])
+    model = model | low | high
+</code></pre><p><a href="reference-pybosl2.py">Open pyBOSL2 source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pybosl2/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pybosl2/model-iso.png" alt="Eight vertical L-profiles: two per side corner pyBOSL2 reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pybosl2/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pybosl2/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 1/1 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-64.0, -44.0, 0.0], &#x27;max&#x27;: [64.0, 44.0, 60.0]}</code></td><td><code>{&#x27;min&#x27;: [-64.0, -44.0, 0.0], &#x27;max&#x27;: [64.0, 44.0, 60.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>CadQuery</h4><pre><code>&quot;&quot;&quot;CadQuery reference for two short L profiles on each vertical frame corner.&quot;&quot;&quot;
+
+import cadquery as cq
+
+
+frame = (
+    cq.Workplane(&quot;XY&quot;)
+    .box(120, 80, 60, centered=(True, True, False))
+    .edges(&quot;|Z&quot;)
+    .fillet(8)
+    .val()
+)
+
+horizontal = cq.Solid.makeBox(32, 4, 16, cq.Vector(-4, -4, 0))
+vertical = cq.Solid.makeBox(4, 32, 16, cq.Vector(-4, -4, 0))
+profile = horizontal.fuse(vertical)
+
+model = cq.Assembly()
+model.add(frame, name=&quot;frame&quot;)
+for corner, (x, y, angle) in enumerate([
+    (-60, -40, 0),
+    (60, -40, 90),
+    (60, 40, 180),
+    (-60, 40, 270),
+]):
+    rotation = cq.Location(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), angle)
+    for level, z in ((&quot;low&quot;, 0), (&quot;high&quot;, 44)):
+        model.add(
+            profile,
+            name=f&quot;profile_{corner}_{level}&quot;,
+            loc=cq.Location((x, y, z)) * rotation,
+        )
+</code></pre><p><a href="reference-cadquery.py">Open CadQuery source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/cadquery/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/cadquery/model-iso.png" alt="Eight vertical L-profiles: two per side corner CadQuery reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/cadquery/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/cadquery/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 1/1 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-64.0, -44.0, 0.0], &#x27;max&#x27;: [64.0, 44.0, 60.0]}</code></td><td><code>{&#x27;min&#x27;: [-64.0, -44.0, 0.0], &#x27;max&#x27;: [64.0, 44.0, 60.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>build123d</h4><pre><code>&quot;&quot;&quot;build123d reference: two reusable L protectors per vertical frame corner.&quot;&quot;&quot;
+from build123d import (
+    Align,
+    Axis,
+    BasePartObject,
+    Box,
+    BuildPart,
+    Locations,
+    Mode,
+    Rot,
+    fillet,
+)
+
+
+class LProtector(BasePartObject):
+    def __init__(self, mode=Mode.ADD):
+        with BuildPart() as profile:
+            with Locations((12, -2, 8)):
+                Box(32, 4, 16)
+            with Locations((-2, 12, 8)):
+                Box(4, 32, 16)
+        super().__init__(part=profile.part, mode=mode)
+
+
+bottom = (Align.CENTER, Align.CENTER, Align.MIN)
+
+with BuildPart() as model:
+    Box(120, 80, 60, align=bottom)
+    fillet(model.edges().filter_by(Axis.Z), radius=8)
+
+    for x, y, angle in [
+        (-60, -40, 0),
+        (60, -40, 90),
+        (60, 40, 180),
+        (-60, 40, 270),
+    ]:
+        for z in (0, 44):
+            with Locations((x, y, z)):
+                with Locations(Rot(0, 0, angle)):
+                    LProtector()
+</code></pre><p><a href="reference-build123d.py">Open build123d source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/build123d/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/build123d/model-iso.png" alt="Eight vertical L-profiles: two per side corner build123d reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/build123d/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/build123d/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 1/1 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-64.0, -44.0, 0.0], &#x27;max&#x27;: [64.0, 44.0, 60.0]}</code></td><td><code>{&#x27;min&#x27;: [-64.0, -44.0, 0.0], &#x27;max&#x27;: [64.0, 44.0, 60.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr></tbody></table></div></details></div></section>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>How Forge builds it in SolidCraft</h2>
+  <p>Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id.</p>
+  <details>
+    <summary>Show generated SolidCraft commands</summary>
+    <pre><code>parameters.add
+parameters.add
+parameters.add
+component.create
+solid.box
+solid.fillet
+component.activate
+component.create
+sketch.create
+sketch.line
+sketch.finish
+solid.extrude
+component.activate
+occurrence.copy
+occurrence.copy
+occurrence.copy
+occurrence.copy
+occurrence.copy
+occurrence.copy
+occurrence.copy
+occurrence.move
+occurrence.move
+occurrence.move
+occurrence.move
+occurrence.move
+occurrence.move
+occurrence.move
+occurrence.move</code></pre>
+  </details>
+</section>
+
+<section class="panel"><h2>SolidCraft result</h2><p>Built and measured with <strong>SolidCraft 0.42.0</strong>. Open the measurement details to inspect body sizes and editable parameters.</p><details class="qualification-detail-block"><summary><strong>size 160x120x90</strong> · 9 bodies</summary><h4>Editable parameters</h4><table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td><code>frame_width</code></td><td>160.0</td></tr><tr><td><code>frame_depth</code></td><td>120.0</td></tr><tr><td><code>frame_height</code></td><td>90.0</td></tr></tbody></table><h4>Body size</h4><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>FrameBlock</td><td><code>[-80, -60, 0]</code></td><td><code>[80, 60, 90]</code></td></tr><tr><td>LProfile</td><td><code>[-84, -64, 0]</code></td><td><code>[-52, -32, 16]</code></td></tr><tr><td>LProfile (LProfile:2)</td><td><code>[-84, -64, 74]</code></td><td><code>[-52, -32, 90]</code></td></tr><tr><td>LProfile (LProfile:3)</td><td><code>[52, -64, 0]</code></td><td><code>[84, -32, 16]</code></td></tr><tr><td>LProfile (LProfile:4)</td><td><code>[52, -64, 74]</code></td><td><code>[84, -32, 90]</code></td></tr><tr><td>LProfile (LProfile:5)</td><td><code>[52, 32, 0]</code></td><td><code>[84, 64, 16]</code></td></tr><tr><td>LProfile (LProfile:6)</td><td><code>[52, 32, 74]</code></td><td><code>[84, 64, 90]</code></td></tr><tr><td>LProfile (LProfile:7)</td><td><code>[-84, 32, 0]</code></td><td><code>[-52, 64, 16]</code></td></tr><tr><td>LProfile (LProfile:8)</td><td><code>[-84, 32, 74]</code></td><td><code>[-52, 64, 90]</code></td></tr></tbody></table></details><details class="qualification-detail-block"><summary><strong>Original model</strong> · 9 bodies</summary><h4>Editable parameters</h4><table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td><code>frame_width</code></td><td>120.0</td></tr><tr><td><code>frame_depth</code></td><td>80.0</td></tr><tr><td><code>frame_height</code></td><td>60.0</td></tr></tbody></table><h4>Body size</h4><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>FrameBlock</td><td><code>[-60, -40, 0]</code></td><td><code>[60, 40, 60]</code></td></tr><tr><td>LProfile</td><td><code>[-64, -44, 0]</code></td><td><code>[-32, -12, 16]</code></td></tr><tr><td>LProfile (LProfile:2)</td><td><code>[-64, -44, 44]</code></td><td><code>[-32, -12, 60]</code></td></tr><tr><td>LProfile (LProfile:3)</td><td><code>[32, -44, 0]</code></td><td><code>[64, -12, 16]</code></td></tr><tr><td>LProfile (LProfile:4)</td><td><code>[32, -44, 44]</code></td><td><code>[64, -12, 60]</code></td></tr><tr><td>LProfile (LProfile:5)</td><td><code>[32, 12, 0]</code></td><td><code>[64, 44, 16]</code></td></tr><tr><td>LProfile (LProfile:6)</td><td><code>[32, 12, 44]</code></td><td><code>[64, 44, 60]</code></td></tr><tr><td>LProfile (LProfile:7)</td><td><code>[-64, 12, 0]</code></td><td><code>[-32, 44, 16]</code></td></tr><tr><td>LProfile (LProfile:8)</td><td><code>[-64, 12, 44]</code></td><td><code>[-32, 44, 60]</code></td></tr></tbody></table></details><details class="qualification-detail-block qualification-semantic-checks"><summary><strong>Semantic validation</strong> · PASS · 4/4 checks passed</summary><div class="qualification-table-scroll"><table class="qualification-checks"><thead><tr><th>Status</th><th>Level</th><th>Check</th><th>Expected</th><th>Actual</th></tr></thead><tbody><tr><td><span class="qualification-status pass">PASS</span></td><td>Q4</td><td>declared target geometry</td><td><code>[{&quot;label&quot;: &quot;FrameBlock&quot;, &quot;min&quot;: [-60, -40, 0], &quot;max&quot;: [60, 40, 60]}, {&quot;label&quot;: &quot;front-left bottom&quot;, &quot;min&quot;: [-64, -44, 0], &quot;max&quot;: [-32, -12, 16]}, {&quot;label&quot;: &quot;front-left top&quot;, &quot;min&quot;: [-64, -44, 44], &quot;max&quot;: [-32, -12, 60]}, {&quot;label&quot;: &quot;front-right bottom&quot;, &quot;min&quot;: [32, -44, 0], &quot;max&quot;: [64, -12, 16]}, {&quot;label&quot;: &quot;front-right top&quot;, &quot;min&quot;: [32, -44, 44], &quot;max&quot;: [64, -12, 60]}, {&quot;label&quot;: &quot;rear-right bottom&quot;, &quot;min&quot;: [32, 12, 0], &quot;max&quot;: [64, 44, 16]}, {&quot;label&quot;: &quot;rear-right top&quot;, &quot;min&quot;: [32, 12, 44], &quot;max&quot;: [64, 44, 60]}, {&quot;label&quot;: &quot;rear-left bottom&quot;, &quot;min&quot;: [-64, 12, 0], &quot;max&quot;: [-32, 44, 16]}, {&quot;label&quot;: &quot;rear-left top&quot;, &quot;min&quot;: [-64, 12, 44], &quot;max&quot;: [-32, 44, 60]}]</code></td><td><code>[{&quot;min&quot;: [-60.0, -40.0, 0.0], &quot;max&quot;: [60.0, 40.0, 60.0]}, {&quot;min&quot;: [-64.0, -44.0, 0.0], &quot;max&quot;: [-32.0, -12.0, 16.0]}, {&quot;min&quot;: [-64.0, -44.0, 44.0], &quot;max&quot;: [-32.0, -12.0, 60.0]}, {&quot;min&quot;: [32.0, -44.0, 0.0], &quot;max&quot;: [64.0, -12.0, 16.0]}, {&quot;min&quot;: [32.0, -44.0, 44.0], &quot;max&quot;: [64.0, -12.0, 60.0]}, {&quot;min&quot;: [32.0, 12.0, 0.0], &quot;max&quot;: [64.0, 44.0, 16.0]}, {&quot;min&quot;: [32.0, 12.0, 44.0], &quot;max&quot;: [64.0, 44.0, 60.0]}, {&quot;min&quot;: [-64.0, 12.0, 0.0], &quot;max&quot;: [-32.0, 44.0, 16.0]}, {&quot;min&quot;: [-64.0, 12.0, 44.0], &quot;max&quot;: [-32.0, 44.0, 60.0]}]</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q4</td><td>nine bodies: frame plus eight brackets</td><td><code>9</code></td><td><code>9</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q5</td><td>declared mutation target geometry</td><td><code>[{&quot;label&quot;: &quot;FrameBlock&quot;, &quot;min&quot;: [-80, -60, 0], &quot;max&quot;: [80, 60, 90]}, {&quot;label&quot;: &quot;front-left bottom&quot;, &quot;min&quot;: [-84, -64, 0], &quot;max&quot;: [-52, -32, 16]}, {&quot;label&quot;: &quot;front-left top&quot;, &quot;min&quot;: [-84, -64, 74], &quot;max&quot;: [-52, -32, 90]}, {&quot;label&quot;: &quot;front-right bottom&quot;, &quot;min&quot;: [52, -64, 0], &quot;max&quot;: [84, -32, 16]}, {&quot;label&quot;: &quot;front-right top&quot;, &quot;min&quot;: [52, -64, 74], &quot;max&quot;: [84, -32, 90]}, {&quot;label&quot;: &quot;rear-right bottom&quot;, &quot;min&quot;: [52, 32, 0], &quot;max&quot;: [84, 64, 16]}, {&quot;label&quot;: &quot;rear-right top&quot;, &quot;min&quot;: [52, 32, 74], &quot;max&quot;: [84, 64, 90]}, {&quot;label&quot;: &quot;rear-left bottom&quot;, &quot;min&quot;: [-84, 32, 0], &quot;max&quot;: [-52, 64, 16]}, {&quot;label&quot;: &quot;rear-left top&quot;, &quot;min&quot;: [-84, 32, 74], &quot;max&quot;: [-52, 64, 90]}]</code></td><td><code>[{&quot;min&quot;: [-80.0, -60.0, 0.0], &quot;max&quot;: [80.0, 60.0, 90.0]}, {&quot;min&quot;: [-84.0, -64.0, 0.0], &quot;max&quot;: [-52.0, -32.0, 16.0]}, {&quot;min&quot;: [-84.0, -64.0, 74.0], &quot;max&quot;: [-52.0, -32.0, 90.0]}, {&quot;min&quot;: [52.0, -64.0, 0.0], &quot;max&quot;: [84.0, -32.0, 16.0]}, {&quot;min&quot;: [52.0, -64.0, 74.0], &quot;max&quot;: [84.0, -32.0, 90.0]}, {&quot;min&quot;: [52.0, 32.0, 0.0], &quot;max&quot;: [84.0, 64.0, 16.0]}, {&quot;min&quot;: [52.0, 32.0, 74.0], &quot;max&quot;: [84.0, 64.0, 90.0]}, {&quot;min&quot;: [-84.0, 32.0, 0.0], &quot;max&quot;: [-52.0, 64.0, 16.0]}, {&quot;min&quot;: [-84.0, 32.0, 74.0], &quot;max&quot;: [-52.0, 64.0, 90.0]}]</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q5</td><td>nine bodies after saved-design mutation</td><td><code>9</code></td><td><code>9</code></td></tr></tbody></table></div></details></section>
+
+<section class="panel qualification-visual-check"><h2>Visual result</h2><p>Actual is the SolidCraft render. Goal shows the expected shape. Overlay places both on top of each other so differences are easy to see.</p><p class="meta"><strong>Views checked:</strong> Iso, Front, Right</p><p class="meta"><strong>Image checks:</strong> expected shape PASS; saved render PASS.</p><section class="qualification-view" data-view="iso"><h3>Iso</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-iso.png" alt="Eight vertical L-profiles: two per side corner iso Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft iso view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/goal-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/goal-iso.png" alt="Eight vertical L-profiles: two per side corner iso Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same iso view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/overlay-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/overlay-iso.png" alt="Eight vertical L-profiles: two per side corner iso Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual iso view</figcaption></figure></div></section><section class="qualification-view" data-view="front"><h3>Front</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-front.png" alt="Eight vertical L-profiles: two per side corner front Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft front view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/goal-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/goal-front.png" alt="Eight vertical L-profiles: two per side corner front Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same front view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/overlay-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/overlay-front.png" alt="Eight vertical L-profiles: two per side corner front Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual front view</figcaption></figure></div></section><section class="qualification-view" data-view="right"><h3>Right</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-right.png" alt="Eight vertical L-profiles: two per side corner right Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft right view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/goal-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/goal-right.png" alt="Eight vertical L-profiles: two per side corner right Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same right view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/overlay-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/overlay-right.png" alt="Eight vertical L-profiles: two per side corner right Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual right view</figcaption></figure></div></section></section>
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Q1 · Q2 · Q3 · Q4 · Q5 · Q6</span></div>
+    <div class="qualification-case-test-evidence"><h3>Q1 and Q2 tests</h3><p>These are the exact automated tests used for this example.</p><ul><li><strong>Q1 PASS</strong><div><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/214764f4fb822df8f4bebbaa92a8cf9addd0478d/scpf/tests/test_assembly_placement.py#L708"><code>scpf/tests/test_assembly_placement.py::test_symbolic_ordinary_copy_placement_keeps_parameter</code></a></div><div class="meta">Test run files: <a href="q1-case-evidence.txt">q1-case-evidence.txt</a></div></li><li><strong>Q2 PASS</strong><div><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/214764f4fb822df8f4bebbaa92a8cf9addd0478d/examples/eight-corner-brackets/tests/test_contract.py#L12"><code>examples/eight-corner-brackets/tests/test_contract.py::test_parametric_profile_placement_uses_replay_variables</code></a></div><div class="meta">Test run files: <a href="q2-case-evidence.txt">q2-case-evidence.txt</a></div></li></ul></div>
+
+    <h3>Geometry checks</h3>
+    <p>These are the sizes and measurement points used by the automated checks.</p>
+    <div class="qualification-proof-contract"><div class="qualification-table-scroll"><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>FrameBlock</td><td><code>[-60, -40, 0]</code></td><td><code>[60, 40, 60]</code></td></tr><tr><td>front-left bottom</td><td><code>[-64, -44, 0]</code></td><td><code>[-32, -12, 16]</code></td></tr><tr><td>front-left top</td><td><code>[-64, -44, 44]</code></td><td><code>[-32, -12, 60]</code></td></tr><tr><td>front-right bottom</td><td><code>[32, -44, 0]</code></td><td><code>[64, -12, 16]</code></td></tr><tr><td>front-right top</td><td><code>[32, -44, 44]</code></td><td><code>[64, -12, 60]</code></td></tr><tr><td>rear-right bottom</td><td><code>[32, 12, 0]</code></td><td><code>[64, 44, 16]</code></td></tr><tr><td>rear-right top</td><td><code>[32, 12, 44]</code></td><td><code>[64, 44, 60]</code></td></tr><tr><td>rear-left bottom</td><td><code>[-64, 12, 0]</code></td><td><code>[-32, 44, 16]</code></td></tr><tr><td>rear-left top</td><td><code>[-64, 12, 44]</code></td><td><code>[-32, 44, 60]</code></td></tr></tbody></table></div><ul class="qualification-proof-summary"><li><strong>Is the size check enough for this model?</strong> Yes — This case adds eight placements of the qualified corner-bracket geometry. Per-occurrence bounds and the visual decomposition describe the added placement geometry; native relationships are checked separately.</li><li><strong>Views checked:</strong> iso, front, right</li></ul><p class="meta"><a href="proof-contract.json">Open geometry check data →</a></p></div>
+
+    <h3>Saved-design test</h3><p><strong>Checked in the saved model. Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow the calculated X/Y positions and each upper member moves to Z=74..90.</p>
+
+    <h3>Raw test files</h3>
+    <ul><li><a href="model.py">Forge fixture source</a></li><li><a href="reference-pythonscad.py">PythonSCAD reference source</a></li><li><a href="reference-pybosl2.py">pyBOSL2 reference source</a></li><li><a href="reference-cadquery.py">CadQuery reference source</a></li><li><a href="reference-build123d.py">build123d reference source</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/solidcraft.json">Generated command JSON in build output</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/results.json">results.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/measurements-size-160x120x90.json">measurements-size-160x120x90.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/measurements.json">measurements.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/joint-inspect.json">joint-inspect.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-size-160x120x90.sc">model-size-160x120x90.sc</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model.sc">model.sc</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model.step">model.step</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/qualification-result.json">qualification-result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/validation.json">validation.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/visual-validation.json">visual-validation.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/camera-front.json">camera-front.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/camera-iso.json">camera-iso.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/camera-right.json">camera-right.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/q1-case-evidence.txt">q1-case-evidence.txt</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/q2-case-evidence.txt">q2-case-evidence.txt</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model.png">Native snapshot: model.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-front.png">Native snapshot: model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/goal-front.png">Native snapshot: goal-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/overlay-front.png">Native snapshot: overlay-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/visual-diff-front.png">Native snapshot: visual-diff-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-right.png">Native snapshot: model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/goal-right.png">Native snapshot: goal-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/overlay-right.png">Native snapshot: overlay-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/visual-diff-right.png">Native snapshot: visual-diff-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/model-iso.png">Native snapshot: model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/goal-iso.png">Native snapshot: goal-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/overlay-iso.png">Native snapshot: overlay-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/scpf/visual-diff-iso.png">Native snapshot: visual-diff-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pythonscad/result.json">Reference evidence: reference-pythonscad/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pythonscad/model.stl">Reference evidence: reference-pythonscad/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pythonscad/model-front.png">Reference evidence: reference-pythonscad/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pythonscad/model-right.png">Reference evidence: reference-pythonscad/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pythonscad/model-iso.png">Reference evidence: reference-pythonscad/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pybosl2/result.json">Reference evidence: reference-pybosl2/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pybosl2/model.stl">Reference evidence: reference-pybosl2/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pybosl2/model-front.png">Reference evidence: reference-pybosl2/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pybosl2/model-right.png">Reference evidence: reference-pybosl2/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/pybosl2/model-iso.png">Reference evidence: reference-pybosl2/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/cadquery/result.json">Reference evidence: reference-cadquery/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/cadquery/model.stl">Reference evidence: reference-cadquery/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/cadquery/model-front.png">Reference evidence: reference-cadquery/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/cadquery/model-right.png">Reference evidence: reference-cadquery/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/cadquery/model-iso.png">Reference evidence: reference-cadquery/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/build123d/result.json">Reference evidence: reference-build123d/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/build123d/model.stl">Reference evidence: reference-build123d/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/build123d/model-front.png">Reference evidence: reference-build123d/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/build123d/model-right.png">Reference evidence: reference-build123d/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/135c2418e9b63693becb853cda40e8488fd06904/pr/359/examples/eight-corner-brackets/build123d/model-iso.png">Reference evidence: reference-build123d/model-iso.png</a></li></ul>
+
+    <h3>Reference documentation</h3>
+    <ul><li><strong><a href="https://docs.solidcraft.io/guide/assemblies.html">SolidCraft</a>:</strong> component.create/occurrence.copy return real occurrence ids; the replay executor binds those ids before later parametric occurrence.move commands.</li><li><strong><a href="https://github.com/BelfrySCAD/BOSL2/wiki/Tutorial-Attachment-Overview">BOSL2</a>:</strong> One neutral component is repeated by assembly-owned placement.</li></ul>
+  </div>
+</details>
+</main>
+
+<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+<a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a></div></footer>
+<script>(() => {
+  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
+  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
+
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    document.execCommand('copy');
+    helper.remove();
+  }
+
+  document.querySelectorAll('pre > code').forEach((code) => {
+    const pre = code.parentElement;
+    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-copy';
+    button.title = 'Copy code';
+    button.setAttribute('aria-label', 'Copy code');
+    button.innerHTML = copyIcon;
+    wrapper.appendChild(button);
+
+    button.addEventListener('click', async () => {
+      try {
+        await copyText(code.textContent);
+        button.innerHTML = doneIcon;
+        button.classList.add('copied');
+        button.title = 'Copied';
+        button.setAttribute('aria-label', 'Copied');
+        window.setTimeout(() => {
+          button.innerHTML = copyIcon;
+          button.classList.remove('copied');
+          button.title = 'Copy code';
+          button.setAttribute('aria-label', 'Copy code');
+        }, 1400);
+      } catch (_error) {
+        button.title = 'Copy failed';
+        button.setAttribute('aria-label', 'Copy failed');
+      }
+    });
+  });
+})();
+</script>
+<script>
+(() => {
+  const root = document.querySelector('.site-search');
+  if (!root) return;
+
+  const input = root.querySelector('.site-search-input');
+  const results = root.querySelector('.site-search-results');
+  const indexUrl = root.dataset.searchIndex;
+  let indexPromise = null;
+  let visible = [];
+
+  const normal = (value) => String(value || '')
+    .toLowerCase()
+    .replace(/[_.:/-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const raw = (value) => String(value || '').toLowerCase().trim();
+
+  function loadIndex() {
+    if (!indexPromise) {
+      indexPromise = fetch(indexUrl)
+        .then((response) => {
+          if (!response.ok) throw new Error('Search index unavailable');
+          return response.json();
+        })
+        .then((data) => data.entries || []);
+    }
+    return indexPromise;
+  }
+
+  function score(entry, query) {
+    const qRaw = raw(query);
+    const q = normal(query);
+    if (!q) return -1;
+
+    const titleRaw = raw(entry.title);
+    const title = normal(entry.title);
+    const aliases = entry.aliases || [];
+    const aliasRaw = aliases.map(raw);
+    const aliasText = normal(aliases.join(' '));
+    const haystack = normal([
+      entry.title,
+      entry.summary,
+      entry.keywords,
+      aliases.join(' '),
+    ].join(' '));
+
+    if (titleRaw === qRaw) return 1000;
+    if (aliasRaw.includes(qRaw)) return 920;
+    if (title.startsWith(q)) return 820;
+    if (aliasText.startsWith(q)) return 760;
+    if (title.includes(q)) return 680;
+    if (aliasText.includes(q)) return 620;
+    if (haystack.includes(q)) return 500;
+
+    const words = q.split(' ').filter(Boolean);
+    if (words.length && words.every((word) => haystack.includes(word))) {
+      return 380 + words.length * 10;
+    }
+    return -1;
+  }
+
+  function closeResults() {
+    results.hidden = true;
+    results.replaceChildren();
+    input.setAttribute('aria-expanded', 'false');
+    visible = [];
+  }
+
+  function render(entries, query) {
+    const ranked = entries
+      .map((entry, order) => ({entry, order, score: score(entry, query)}))
+      .filter((row) => row.score >= 0)
+      .sort((a, b) => b.score - a.score || a.order - b.order)
+      .slice(0, 10);
+
+    results.replaceChildren();
+    visible = ranked.map((row) => row.entry);
+    if (!ranked.length) {
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'No documentation found.';
+      results.appendChild(empty);
+    } else {
+      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
+      ranked.forEach(({entry}) => {
+        const link = document.createElement('a');
+        link.className = 'site-search-result';
+        link.href = new URL(entry.url, indexBase).href;
+
+        const heading = document.createElement('span');
+        heading.className = 'site-search-result-title';
+        heading.textContent = entry.title;
+
+        const kind = document.createElement('span');
+        kind.className = 'site-search-result-kind';
+        kind.textContent = entry.kind;
+
+        const summary = document.createElement('span');
+        summary.className = 'site-search-result-summary';
+        summary.textContent = entry.summary;
+
+        link.append(heading, kind, summary);
+        results.appendChild(link);
+      });
+    }
+    results.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+  }
+
+  async function search() {
+    const query = input.value.trim();
+    if (!query) {
+      closeResults();
+      return;
+    }
+    try {
+      render(await loadIndex(), query);
+    } catch (_error) {
+      results.replaceChildren();
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'Search is unavailable.';
+      results.appendChild(empty);
+      results.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  input.addEventListener('input', search);
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) search();
+  });
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeResults();
+      input.blur();
+    } else if (event.key === 'Enter' && visible.length) {
+      event.preventDefault();
+      results.querySelector('.site-search-result')?.click();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!root.contains(event.target)) closeResults();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const typing = target instanceof HTMLInputElement
+      || target instanceof HTMLTextAreaElement
+      || target instanceof HTMLSelectElement
+      || target?.isContentEditable;
+    const shortcut = (event.ctrlKey || event.metaKey)
+      && event.key.toLowerCase() === 'k';
+    const slash = event.key === '/' && !typing && !event.ctrlKey
+      && !event.metaKey && !event.altKey;
+    if (shortcut || slash) {
+      event.preventDefault();
+      input.focus();
+      input.select();
+    }
+  });
+})();
+</script>
+</body></html>
