@@ -121,6 +121,7 @@ def assemble_build(
     source_ref: str,
     source_sha: str,
     pull_request: int | None,
+    base_commit: str | None,
     workflow_run_id: str,
 ) -> None:
     if gate in {"preflight", "regenerate-derived"}:
@@ -150,6 +151,11 @@ def assemble_build(
                 if pull_request is not None
                 else []
             ),
+            *(
+                ["--base-commit", base_commit]
+                if base_commit
+                else []
+            ),
             "--forge-version",
             package_version("scpf"),
             "--solidcraft-version",
@@ -177,6 +183,7 @@ def main() -> int:
     parser.add_argument("--scope", choices=("main", "pr"), default="pr")
     parser.add_argument("--source-ref")
     parser.add_argument("--pull-request", type=int)
+    parser.add_argument("--base-commit")
     parser.add_argument("--workflow-run-id")
     args = parser.parse_args()
 
@@ -205,6 +212,7 @@ def main() -> int:
             source_ref=args.source_ref,
             source_sha=args.source_sha,
             pull_request=args.pull_request,
+            base_commit=args.base_commit,
             workflow_run_id=args.workflow_run_id,
         )
     return 0

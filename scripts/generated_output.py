@@ -227,6 +227,7 @@ def assemble_build(
         "scope": metadata["scope"],
         "source_ref": metadata["source_ref"],
         "source_commit": metadata["source_commit"],
+        "base_commit": metadata.get("base_commit"),
         "pull_request": metadata.get("pull_request"),
         "workflow_run_id": metadata["workflow_run_id"],
         "toolchain": {
@@ -634,6 +635,7 @@ def _metadata_from_args(args: argparse.Namespace) -> dict:
         "source_ref": args.source_ref,
         "source_commit": args.source_commit,
         "pull_request": args.pull_request,
+        "base_commit": args.base_commit,
         "forge_version": args.forge_version,
         "solidcraft_version": args.solidcraft_version,
         "workflow_run_id": args.workflow_run_id,
@@ -655,6 +657,7 @@ def parser() -> argparse.ArgumentParser:
     assemble.add_argument("--source-ref", required=True)
     assemble.add_argument("--source-commit", required=True)
     assemble.add_argument("--pull-request", type=int)
+    assemble.add_argument("--base-commit")
     assemble.add_argument("--forge-version", required=True)
     assemble.add_argument("--solidcraft-version")
     assemble.add_argument("--workflow-run-id", required=True)
