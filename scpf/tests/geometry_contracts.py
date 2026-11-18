@@ -47,6 +47,17 @@ JOINABLE = "joinable"
 DERIVED = "derived"
 
 
+CSG_OPERATION_CASES = (
+    OperationCase("join", "join", lambda left, right: left + right),
+    OperationCase("cut", "cut", lambda left, right: left - right),
+    OperationCase(
+        "intersection",
+        "intersect",
+        lambda left, right: left & right,
+    ),
+)
+
+
 def _box():
     return Box(40, 40, 20, anchor=Anchor.BOTTOM)
 
@@ -106,29 +117,18 @@ DIRECT_FEATURE_BODY_CASES = PRIMITIVE_BODY_CASES + (
 def _derived_primitive_cases():
     cases = []
     for base in PRIMITIVE_BODY_CASES:
-        def joined(base=base):
-            return base.build() + Cylinder(
-                d=16, h=10, anchor=Anchor.BOTTOM
-            ).at(0, 0, 15, anchor=Anchor.BOTTOM)
+        for operation in CSG_OPERATION_CASES:
+            def build(base=base, operation=operation):
+                modifier = Cylinder(
+                    d=16,
+                    h=30,
+                    anchor=Anchor.BOTTOM,
+                ).at(0, 0, -5, anchor=Anchor.BOTTOM)
+                return operation.apply(base.build(), modifier)
 
-        def cut(base=base):
-            return base.build() - Cylinder(
-                d=8, h=30, anchor=Anchor.BOTTOM
-            ).at(0, 0, -5, anchor=Anchor.BOTTOM)
-
-        def intersected(base=base):
-            return base.build() & Box(
-                30, 30, 12, anchor=Anchor.BOTTOM
-            ).at(0, 0, 4, anchor=Anchor.BOTTOM)
-
-        for suffix, build in (
-            ("join", joined),
-            ("cut", cut),
-            ("intersection", intersected),
-        ):
             cases.append(
                 BodyCase(
-                    f"{base.name}-{suffix}",
+                    f"{base.name}-{operation.name}",
                     None,
                     None,
                     build,
@@ -171,13 +171,3 @@ FEATURE_CASES = (
     ),
 )
 
-
-CSG_OPERATION_CASES = (
-    OperationCase("join", "join", lambda left, right: left + right),
-    OperationCase("cut", "cut", lambda left, right: left - right),
-    OperationCase(
-        "intersection",
-        "intersect",
-        lambda left, right: left & right,
-    ),
-)
