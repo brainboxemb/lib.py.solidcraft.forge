@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-11-18
+
 ### Fixed
 
 - Primitive CSG route selection no longer depends on which primitive is on the
