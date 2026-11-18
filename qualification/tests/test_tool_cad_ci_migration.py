@@ -6,6 +6,7 @@ import unittest
 import yaml
 
 from scripts import bootstrap_cad_ci
+from qualification.cases import supported_case_slugs
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -51,19 +52,41 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         )
         self.assertEqual(case["steps"][1]["outputs"], ["native-case"])
 
-    def test_simple_box_case_uses_forge_runner_and_tool_output_path(self):
-        """The generic tool must not gain SolidCraft qualification semantics."""
+    def test_every_supported_case_has_one_example_item(self):
+        """Every native case has one non-overlapping example-owned CI item."""
+
+        for slug in supported_case_slugs():
+            with self.subTest(slug=slug):
+                config_path = ROOT / "examples" / slug / "ci.yml"
+                self.assertTrue(config_path.is_file(), config_path)
+                config = yaml.safe_load(
+                    config_path.read_text(encoding="utf-8")
+                )
+                self.assertEqual(config["id"], slug)
+                self.assertEqual(config["kind"], "example")
+                self.assertEqual(
+                    [step["id"] for step in config["steps"]],
+                    ["integration", "native"],
+                )
+                self.assertEqual(
+                    config["steps"][1]["outputs"],
+                    ["native-case"],
+                )
+
+    def test_shared_example_runner_uses_tool_identity_and_output_path(self):
+        """SolidCraft runtime semantics remain in Forge's shared runner."""
 
         script = (
-            ROOT / "examples/simple-box/ci.py"
+            ROOT / "scripts/example_ci.py"
         ).read_text(encoding="utf-8")
+        self.assertIn("CAD_CI_ITEM", script)
         self.assertIn("CAD_CI_OUTPUT", script)
-        self.assertIn("qualification", script)
-        self.assertIn("case_runner.py", script)
+        self.assertIn("qualification/case_runner.py", script)
         self.assertIn('"--from"', script)
         self.assertIn('"compile"', script)
         self.assertIn("FORGE_QUALIFICATION_IMAGE", script)
         self.assertIn('"docker"', script)
+        self.assertFalse((ROOT / "examples/simple-box/ci.py").exists())
 
     def test_workflow_only_bootstraps_the_pinned_tool(self):
         """Selection and test execution stay in tested Python, not YAML."""
