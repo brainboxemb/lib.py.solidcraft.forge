@@ -334,6 +334,15 @@ def build_stable_site(args: argparse.Namespace, root: Path, build_commit: str, e
         )
 
 
+def parse_bool(value: str) -> bool:
+    value = value.strip().lower()
+    if value in {"1", "true", "yes", "on"}:
+        return True
+    if value in {"0", "false", "no", "off", ""}:
+        return False
+    raise argparse.ArgumentTypeError(f"invalid boolean value: {value}")
+
+
 def write_outputs(path: Path | None, *, build_commit: str | None = None) -> None:
     if not path:
         return
@@ -345,9 +354,9 @@ def write_outputs(path: Path | None, *, build_commit: str | None = None) -> None
 def execute(args: argparse.Namespace) -> str | None:
     preflight(args.source_sha, args.output_root / "preflight-site")
 
-    if args.pipeline_smoke:
+    if args.pipeline_smoke or args.image_built:
         if not args.image:
-            raise ValueError("pipeline smoke requires --image")
+            raise ValueError("pipeline/image smoke requires --image")
         smoke_image(args.image, args.smoke_out)
 
     if args.contracts:
@@ -397,9 +406,10 @@ def parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--gate", required=True)
     run_parser.add_argument("--cases", default="")
     run_parser.add_argument("--required-level", default="")
-    run_parser.add_argument("--reference-smoke", action="store_true")
-    run_parser.add_argument("--pipeline-smoke", action="store_true")
-    run_parser.add_argument("--contracts", action="store_true")
+    run_parser.add_argument("--reference-smoke", type=parse_bool, default=False)
+    run_parser.add_argument("--pipeline-smoke", type=parse_bool, default=False)
+    run_parser.add_argument("--image-built", type=parse_bool, default=False)
+    run_parser.add_argument("--contracts", type=parse_bool, default=False)
     run_parser.add_argument("--image", default="")
     run_parser.add_argument("--solidcraft-version", default="")
     run_parser.add_argument("--repository", default=os.environ.get("GITHUB_REPOSITORY", ""))
@@ -408,7 +418,7 @@ def parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--output-root", type=Path, default=Path("output"))
     run_parser.add_argument("--smoke-out", type=Path, default=Path(tempfile.gettempdir()) / "forge-simple-box")
     run_parser.add_argument("--contract-out", type=Path, default=Path(tempfile.gettempdir()) / "solidcraft-snapshot")
-    run_parser.add_argument("--publish", action="store_true")
+    run_parser.add_argument("--publish", type=parse_bool, default=False)
     run_parser.add_argument("--github-output", type=Path)
 
     cleanup_parser = sub.add_parser("cleanup")
