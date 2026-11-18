@@ -279,8 +279,31 @@ def qualification_args(args: argparse.Namespace) -> list[str]:
     return command
 
 
+def item_gate_args(args: argparse.Namespace) -> list[str]:
+    """Build arguments for collecting already-completed native example items."""
+
+    command = [
+        "qualification/item_gate.py",
+        "--gate", args.gate,
+        "--cases", args.cases,
+        "--out", str(args.output_root / "gate"),
+        "--build-out", str(args.output_root / "build"),
+        "--source-sha", args.source_sha,
+        "--scope", args.operation,
+        "--source-ref", args.source_ref,
+        "--workflow-run-id", args.workflow_run_id,
+    ]
+    if args.reference_smoke:
+        command.append("--reference-smoke")
+    if args.base_sha:
+        command += ["--base-commit", args.base_sha]
+    if args.operation == "pr":
+        command += ["--pull-request", str(args.pull_request)]
+    return command
+
+
 def qualify(args: argparse.Namespace) -> None:
-    """Run migrated native items first, then the legacy authoritative gate."""
+    """Run the selected Forge gate without duplicating native CAD execution."""
 
     if args.gate == "preflight":
         return
@@ -290,11 +313,17 @@ def qualify(args: argparse.Namespace) -> None:
         for slug in selected:
             run_tool_cad_ci_case(slug, args.image)
 
+        # The item gate only collects completed item output and adds Forge-owned
+        # reference/diagram evidence. It does not rerun the native case stages.
+        docker_python(args.image, *item_gate_args(args))
+        return
+
     command = qualification_args(args)
     if args.image:
         docker_python(args.image, *command)
     else:
         python(*command)
+
 
 def publish_pr_candidate(args: argparse.Namespace) -> str:
     destination = f"pr/{args.pull_request}"
