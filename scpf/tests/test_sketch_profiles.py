@@ -1,7 +1,18 @@
-"""Polygon and parameterised Sketch profile contracts."""
+"""Sketch contract tests."""
 import unittest
 
-from scpf import Sketch
+from scpf import (
+    Anchor,
+    Box,
+    CENTER,
+    Rectangle2D,
+    Circle2D,
+    Depth,
+    Edges,
+    Sketch,
+    Parameter,
+)
+from scpf.compiler import ModelError, compile_model
 
 class SketchProfileTests(unittest.TestCase):
     def test_box_requires_no_implicit_sketch(self):
