@@ -83,14 +83,17 @@ def pipeline_only(paths: tuple[str, ...] | list[str]) -> bool:
     normalized = tuple(_norm(path) for path in paths)
     if not normalized:
         return False
+
+    has_pipeline_change = False
     for path in normalized:
         if path in PIPELINE_PATHS:
+            has_pipeline_change = True
             continue
         kind = classify((path,))
         if kind in {"presentation", "publication"}:
             continue
         return False
-    return True
+    return has_pipeline_change
 
 
 def make_plan(
