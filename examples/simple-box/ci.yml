@@ -1,14 +1,21 @@
-# One real integration example used to prove the migration path before every
-# example receives its own item config.
-id: integration-simple-box
-kind: integration
+# The example folder owns the native SolidCraft proof for this case.
+# tool.cad.ci only runs and reuses the declared command; Forge keeps all
+# knowledge of what the native stages mean.
+id: case-simple-box
+kind: case
+needs:
+  - integration-simple-box
 watch:
   - examples/simple-box/**
   - scpf/scpf/**
+  - qualification/case_runner.py
   - qualification/cases.py
   - qualification/native_cases.py
+  - qualification/native_validation.py
+  - qualification/visual_validation.py
 strategy:
   reuse: true
 steps:
-  - id: test
-    run: [python, -m, unittest, discover, -s, tests, -p, "test_*.py", -v]
+  - id: native
+    run: [python, ci.py, native]
+    outputs: [native-case]
