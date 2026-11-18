@@ -134,15 +134,15 @@ class SitePublishingContractTests(unittest.TestCase):
             path.name
             for path in (ROOT / ".github" / "workflows").glob("*.yml")
         )
-        self.assertEqual(workflows, ["forge.yml"])
-        workflow = (ROOT / ".github/workflows/forge.yml").read_text()
+        self.assertEqual(workflows, ["scpf.yml"])
+        workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
         self.assertIn("name: Forge", workflow)
         self.assertIn("workflow_dispatch: {}", workflow)
         self.assertIn('cron: "17 3 * * 1"', workflow)
         self.assertIn('cron: "41 4 * * *"', workflow)
 
     def test_forge_workflow_owns_normal_verification_and_publication(self):
-        workflow = (ROOT / ".github/workflows/forge.yml").read_text()
+        workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
         for required in (
             "scripts/forge_scope.py",
             "scripts/ci_preflight.py",
@@ -166,7 +166,7 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertNotIn("setup_references.py", workflow)
 
     def test_forge_workflow_reuses_immutable_image_and_has_one_case_pipeline_smoke(self):
-        workflow = (ROOT / ".github/workflows/forge.yml").read_text()
+        workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
         self.assertIn("docker pull", workflow)
         self.assertIn("docker/build-push-action@v6", workflow)
         self.assertIn("qualification/case_runner.py simple-box", workflow)
@@ -174,14 +174,14 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertIn("steps.image_cache.outputs.exists != 'true'", workflow)
 
     def test_reused_site_evidence_tracks_build_source_commit(self):
-        workflow = (ROOT / ".github/workflows/forge.yml").read_text()
+        workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
         self.assertIn("evidence_sha=", workflow)
         self.assertIn('--evidence-sha="$evidence_sha"', workflow)
         self.assertIn("output/resolved/build.json", workflow)
         self.assertIn('generated-build/main', workflow)
 
     def test_forge_recovery_trigger_is_repository_native_and_release_independent(self):
-        workflow = (ROOT / ".github/workflows/forge.yml").read_text()
+        workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
         trigger = (ROOT / ".github" / "workflows" / "forge.trigger").read_text()
         planner = (ROOT / "scripts/forge_scope.py").read_text()
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
@@ -194,7 +194,7 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertIn(".github/workflows/forge.trigger", agents)
 
     def test_generated_branch_writes_use_retrying_publisher(self):
-        workflow = (ROOT / ".github/workflows/forge.yml").read_text()
+        workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
         self.assertNotIn("git push origin HEAD:build", workflow)
         self.assertNotIn("git push origin HEAD:gh-pages", workflow)
         self.assertNotIn("git push --force", workflow)
