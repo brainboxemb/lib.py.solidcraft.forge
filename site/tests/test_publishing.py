@@ -91,6 +91,35 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertNotIn("setup_references.py", workflow)
         self.assertNotIn("peaceiris/actions-gh-pages", workflow)
 
+    def test_qualify_main_is_one_operational_entry(self):
+        workflow = (ROOT / ".github/workflows/qualify-main.yml").read_text()
+        trigger = (ROOT / ".github/workflows/qualify-main.trigger").read_text()
+
+        self.assertIn("name: Qualify main", workflow)
+        self.assertIn("branches:", workflow)
+        self.assertIn("- main", workflow)
+        self.assertIn('".github/workflows/qualify-main.trigger"', workflow)
+        self.assertIn("workflow_dispatch: {}", workflow)
+        self.assertIn("if: github.ref == 'refs/heads/main'", workflow)
+        self.assertIn("scripts/qualification_image.py", workflow)
+        self.assertIn("scripts/verification_gate.py", workflow)
+        self.assertIn("--gate full-q1-q6", workflow)
+        self.assertIn("scripts/publish_generated.py replace-dir", workflow)
+        self.assertIn("scripts/publish_generated.py replace-stable-pages", workflow)
+        self.assertTrue(trigger.strip())
+
+    def test_qualify_main_does_not_become_a_release_trigger(self):
+        release = (ROOT / ".github/workflows/release.yml").read_text()
+        self.assertIn('"SCPF full safety qualification"', release)
+        self.assertNotIn('"Qualify main"', release)
+
+    def test_agent_documents_simple_main_recovery_path(self):
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("main -> qualification -> build/main -> Pages", agents)
+        self.assertIn("Qualify main", agents)
+        self.assertIn(".github/workflows/qualify-main.trigger", agents)
+        self.assertIn("Do not create a temporary", agents)
+
     def test_reconcile_is_scheduled_and_scoped(self):
         workflow = (ROOT / ".github/workflows/reconcile.yml").read_text()
         self.assertIn("schedule:", workflow)

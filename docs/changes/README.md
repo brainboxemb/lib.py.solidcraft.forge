@@ -47,3 +47,4 @@ Current records:
 - [0028-attached-through-all-direction.md](0028-attached-through-all-direction.md) — make attached Sketch through-all cuts emit the support-face direction explicitly so TOP cuts cannot silently miss the target body.
 - [0029-repeated-parent-attachments.md](0029-repeated-parent-attachments.md) — qualify two disconnected attachment graphs on repeated parent occurrences and decide #162 from current SolidCraft 0.42 evidence.
 - [0038-presentation-only-build-reuse.md](0038-presentation-only-build-reuse.md) — let presentation-only source changes reuse a complete passing `build/main` baseline without recalculating every qualification case hash.
+- [0039-simple-main-qualification-trigger.md](0039-simple-main-qualification-trigger.md) — add one simple `main -> qualification -> build/main -> Pages` recovery trigger (#343).
