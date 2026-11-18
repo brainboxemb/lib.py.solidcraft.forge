@@ -955,6 +955,27 @@ def _cylinder_base_from_anchor(height, diameter, axis, point, anchor):
     return tuple(base)
 
 
+def _cone_base_from_anchor(height, axis, point, anchor):
+    """Get native cone/frustum base from an axial anchor datum.
+
+    A tapered solid has different transverse radii at its two ends, so Forge
+    keeps Cone anchors deliberately unambiguous: CENTER or either axial end.
+    """
+    selector = _direction_selector(anchor)
+    index = {"X": 0, "Y": 1, "Z": 2}[axis]
+    if any(side != 0 for i, side in enumerate(selector.vector) if i != index):
+        raise ValueError(
+            "Cone anchor must be CENTER or an axial end for the selected axis"
+        )
+    base = list(point)
+    axial_side = selector.vector[index]
+    if axial_side > 0:
+        base[index] = _dim_add(base[index], -height)
+    elif axial_side == 0:
+        base[index] = _dim_add(base[index], -half(height))
+    return tuple(base)
+
+
 def _sphere_center_from_anchor(radius, point, anchor):
     """Place the selected sphere tangent/center anchor at a world point."""
     vector = _direction_selector(anchor).vector
@@ -997,6 +1018,14 @@ def _shape_center(shape):
         }[axis]
         return _primitive_center_from_anchor(extents, (0, 0, 0), anchor)
 
+    if shape.kind == "cone":
+        height, _diameter, _top_diameter, axis, anchor = shape.data
+        base = _cone_base_from_anchor(height, axis, (0, 0, 0), anchor)
+        index = {"X": 0, "Y": 1, "Z": 2}[axis]
+        center = list(base)
+        center[index] = _dim_add(center[index], half(height))
+        return tuple(center)
+
     if shape.kind == "translated":
         child, delta = shape.data
         center = _shape_center(child)
@@ -1022,7 +1051,7 @@ def _shape_center(shape):
         return left_center
 
     raise ValueError(
-        "CENTER alignment currently supports direct Box, Sphere, Cylinder "
+        "CENTER alignment currently supports direct Box, Sphere, Cylinder, Cone "
         "and centered CSG composites"
     )
 
@@ -1416,8 +1445,8 @@ class Shape:
             child: Child datum for shape-to-shape alignment. Currently only Anchor.CENTER is supported.
 
         Use when:
-            Use shape.at(x, y, z) for geometric placement. A Box, Cylinder or
-            Sphere may use a cardinal anchor. Use shape.at(target) for the
+            Use shape.at(x, y, z) for geometric placement. Box, Cylinder,
+            Cone and Sphere support their documented anchors. Use shape.at(target) for the
             supported shape-to-shape CENTER alignment.
 
         Limits:
@@ -1463,6 +1492,18 @@ class Shape:
             height, diameter, axis, _origin_anchor = self.data
             selected = _direction_selector(anchor)
             placed = Shape("cylinder", (height, diameter, axis, selected))
+            return Shape("placed3d", (placed, x, y, z))
+
+        if self.kind == "cone":
+            if child is not Anchor.CENTER:
+                raise ValueError("child= is only valid for shape-to-shape at()")
+            height, diameter, top_diameter, axis, _origin_anchor = self.data
+            selected = _direction_selector(anchor)
+            _cone_base_from_anchor(height, axis, (0, 0, 0), selected)
+            placed = Shape(
+                "cone",
+                (height, diameter, top_diameter, axis, selected),
+            )
             return Shape("placed3d", (placed, x, y, z))
 
         if self.kind == "sphere":
@@ -2099,6 +2140,37 @@ def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
     except ValueError as exc:
         raise ValueError("Cylinder axis must be Axis.X, Axis.Y or Axis.Z") from exc
     return Shape("cylinder", (h, d, axis.value, _direction_selector(anchor)))
+
+
+def Cone(*, d, top_d=0, h, axis=Axis.Z, anchor=Anchor.CENTER):
+    """Create a native cone or tapered cylinder (frustum).
+
+    Parameters:
+        d: Diameter at the base end, in mm.
+        top_d: Diameter at the other end, in mm. Defaults to 0 for a full cone.
+        h: Length along the selected axis, in mm.
+        axis: Cone axis. Use Axis.X, Axis.Y or Axis.Z. Defaults to Axis.Z.
+        anchor: CENTER or one of the two axial end datums.
+
+    Use when:
+        Model a cone, tapered pin or lightly conical cylinder directly with
+        SolidCraft's native solid.cone feature.
+
+    Limits:
+        Because the two end radii may differ, transverse tangent anchors are
+        intentionally not exposed. Use CENTER or the selected axis' two end
+        anchors: LEFT/RIGHT for X, FRONT/BACK for Y, BOTTOM/TOP for Z.
+
+    Example:
+        Cone(d=20, top_d=20.2, h=20, anchor=Anchor.BOTTOM)
+    """
+    try:
+        axis = Axis(axis)
+    except ValueError as exc:
+        raise ValueError("Cone axis must be Axis.X, Axis.Y or Axis.Z") from exc
+    selector = _direction_selector(anchor)
+    _cone_base_from_anchor(h, axis.value, (0, 0, 0), selector)
+    return Shape("cone", (h, d, top_d, axis.value, selector))
 
 
 _HOLE_FIELDS = (
