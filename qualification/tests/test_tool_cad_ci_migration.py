@@ -1,7 +1,6 @@
-"""Contract tests for the first Forge tool.cad.ci migration phase."""
+"""Contract tests for the Forge tool.cad.ci migration."""
 
 from pathlib import Path
-import re
 import unittest
 
 import yaml
@@ -24,27 +23,48 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         )
         self.assertEqual(sha, TOOL_COMMIT)
 
-    def test_root_config_has_library_and_integration_items_only(self):
-        """Phase one must not pretend native qualification is migrated."""
+    def test_root_config_discovers_owned_test_and_case_folders(self):
+        """Forge keeps integration and native case ownership beside examples."""
 
         config = yaml.safe_load(
             (ROOT / "cad-ci.yml").read_text(encoding="utf-8")
         )
         self.assertEqual(
             config["items"],
-            ["scpf/tests", "examples/simple-box"],
+            ["scpf/tests", "examples/*/tests", "examples/*"],
         )
 
         library = yaml.safe_load(
             (ROOT / "scpf/tests/ci.yml").read_text(encoding="utf-8")
         )
         integration = yaml.safe_load(
+            (ROOT / "examples/simple-box/tests/ci.yml").read_text(
+                encoding="utf-8"
+            )
+        )
+        case = yaml.safe_load(
             (ROOT / "examples/simple-box/ci.yml").read_text(
                 encoding="utf-8"
             )
         )
+
         self.assertEqual(library["kind"], "library-test")
         self.assertEqual(integration["kind"], "integration")
+        self.assertEqual(case["kind"], "case")
+        self.assertEqual(case["needs"], ["integration-simple-box"])
+        self.assertEqual(case["steps"][0]["outputs"], ["native-case"])
+
+    def test_simple_box_case_uses_forge_runner_and_tool_output_path(self):
+        """The generic tool must not gain SolidCraft qualification semantics."""
+
+        script = (
+            ROOT / "examples/simple-box/ci.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("CAD_CI_OUTPUT", script)
+        self.assertIn("qualification", script)
+        self.assertIn("case_runner.py", script)
+        self.assertIn('"--from"', script)
+        self.assertIn('"compile"', script)
 
     def test_workflow_only_bootstraps_the_pinned_tool(self):
         """Selection and test execution stay in tested Python, not YAML."""
@@ -60,7 +80,7 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertNotIn("cad-ci plan", workflow)
 
     def test_new_docs_name_the_three_real_test_layers(self):
-        """New repository guidance must not present Q1/Q2 as architecture."""
+        """Repository guidance must not present Q1/Q2 as architecture."""
 
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         for phrase in (
