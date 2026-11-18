@@ -40,7 +40,7 @@ class MissingCaseCommandContractTests(unittest.TestCase):
             row["params"]
             for row in rows
             if row["command"] == "solid.extrude"
-            and row["params"]["operation"] == "cut"
+            and row["params"].get("operation") == "cut"
         ]
         self.assertEqual(len(cuts), 1)
         self.assertEqual(cuts[0]["name"], "Hole")
