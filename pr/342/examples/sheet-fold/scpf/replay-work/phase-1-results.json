@@ -1,0 +1,181 @@
+[
+  {
+    "display_value": 80.0,
+    "name": "width",
+    "unit": "mm",
+    "value": 80.0
+  },
+  {
+    "display_value": 40.0,
+    "name": "depth",
+    "unit": "mm",
+    "value": 40.0
+  },
+  {
+    "display_value": 2.0,
+    "name": "thickness",
+    "unit": "mm",
+    "value": 2.0
+  },
+  {
+    "display_value": 2.0,
+    "name": "bend_radius",
+    "unit": "mm",
+    "value": 2.0
+  },
+  {
+    "display_value": 0.5,
+    "name": "k_factor",
+    "unit": "",
+    "value": 0.5
+  },
+  {
+    "display_value": 6.0,
+    "name": "hole_diameter",
+    "unit": "mm",
+    "value": 6.0
+  },
+  {
+    "display_value": 90.0,
+    "name": "fold_angle",
+    "unit": "deg",
+    "value": 90.0
+  },
+  {
+    "errors": [],
+    "rule": {
+      "angle_display": "bend",
+      "bend_radius": "bend_radius",
+      "corner_relief": "Thickness * 4.0",
+      "corner_relief_shape": "notch",
+      "gap": "Thickness",
+      "hem_gap": "0.01 mm",
+      "k_factor": "k_factor",
+      "name": "SheetFold Rule",
+      "relief_depth": "Thickness * 0.5",
+      "relief_width": "Thickness",
+      "thickness": "thickness"
+    },
+    "values": {
+      "angle_display": "bend",
+      "bend_radius": 2.0,
+      "corner_relief": 8.0,
+      "corner_relief_shape": "notch",
+      "gap": 2.0,
+      "hem_gap": 0.01,
+      "k_factor": 0.5,
+      "relief_depth": 1.0,
+      "relief_width": 2.0,
+      "thickness": 2.0
+    }
+  },
+  {
+    "attachment": "fixed",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Blank",
+    "projected": null,
+    "sketch": 1
+  },
+  {
+    "constraints": [
+      "k1",
+      "k2",
+      "k3",
+      "k4"
+    ],
+    "corners": {
+      "bottom_left": "p1",
+      "bottom_right": "p2",
+      "top_left": "p4",
+      "top_right": "p3"
+    },
+    "created": {
+      "constraints": [
+        "k1",
+        "k2",
+        "k3",
+        "k4"
+      ],
+      "curves": [
+        "l1",
+        "l2",
+        "l3",
+        "l4"
+      ],
+      "dimensions": [],
+      "points": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ]
+    },
+    "curves": [
+      "l1",
+      "l2",
+      "l3",
+      "l4"
+    ],
+    "sides": {
+      "bottom": "l1",
+      "left": "l4",
+      "right": "l2",
+      "top": "l3"
+    },
+    "sketch": {
+      "dof": 0,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 1,
+    "sketch": 1
+  },
+  {
+    "bodies": [
+      "SheetFold"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "SheetFold"
+    ],
+    "feature": 2,
+    "ms": 1.638211,
+    "name": "BaseFlange1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "SheetFold"
+    ],
+    "changed_bodies": [
+      "SheetFold"
+    ],
+    "created_bodies": [],
+    "feature": 3,
+    "ms": 40.103154,
+    "name": "Hole1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "SheetFold"
+    ],
+    "changed_bodies": [
+      "SheetFold"
+    ],
+    "created_bodies": [],
+    "feature": 4,
+    "ms": 8.213115,
+    "name": "Fold1",
+    "removed_bodies": [],
+    "warning": null
+  }
+]

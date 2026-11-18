@@ -1,0 +1,71 @@
+{
+  "case": "eight-flightcase-corners",
+  "implementation": "build123d",
+  "status": "pass",
+  "source": "examples/eight-flightcase-corners/build123d/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      -64.0,
+      -44.0,
+      -4.0
+    ],
+    "max": [
+      64.0,
+      44.0,
+      64.0
+    ]
+  },
+  "expected": {
+    "min": [
+      -64.0,
+      -44.0,
+      -4.0
+    ],
+    "max": [
+      64.0,
+      44.0,
+      64.0
+    ]
+  },
+  "max_delta_mm": 0.0,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          -64.0,
+          -44.0,
+          -4.0
+        ],
+        "max": [
+          64.0,
+          44.0,
+          64.0
+        ]
+      },
+      "expected": {
+        "min": [
+          -64.0,
+          -44.0,
+          -4.0
+        ],
+        "max": [
+          64.0,
+          44.0,
+          64.0
+        ]
+      },
+      "max_delta_mm": 0.0,
+      "tolerance_mm": 0.5
+    }
+  },
+  "bounds_sufficient": true,
+  "bounds_reason": "This case qualifies eight corner placements around the case. Per-occurrence bounds and the visual decomposition describe this case's placement geometry; native relationships are checked separately."
+}

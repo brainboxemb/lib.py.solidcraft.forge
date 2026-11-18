@@ -1,0 +1,166 @@
+{
+  "case": "anchored-holes",
+  "implementation": "pybosl2",
+  "status": "pass",
+  "source": "examples/anchored-holes/pybosl2/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max": [
+      100.0,
+      60.0,
+      10.0
+    ]
+  },
+  "expected": {
+    "min": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max": [
+      100.0,
+      60.0,
+      10.0
+    ]
+  },
+  "max_delta_mm": 0.0,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          100.0,
+          60.0,
+          10.0
+        ]
+      },
+      "expected": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          100.0,
+          60.0,
+          10.0
+        ]
+      },
+      "max_delta_mm": 0.0,
+      "tolerance_mm": 0.5
+    },
+    "watertight": {
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    "volume": {
+      "status": "pass",
+      "actual_mm3": 59033.37579852197,
+      "expected_mm3": 58994.69035085127,
+      "delta_mm3": 38.68544767070125,
+      "tolerance_mm3": 55.0
+    },
+    "surface_distance_probes": {
+      "status": "pass",
+      "probes": [
+        {
+          "label": "front hole at z=1",
+          "point": [
+            50.0,
+            10.0,
+            1.0
+          ],
+          "actual_mm": 3.8837661726277553,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382737224475,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "front hole at z=5",
+          "point": [
+            50.0,
+            10.0,
+            5.0
+          ],
+          "actual_mm": 3.8837661726277553,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382737224475,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "front hole at z=9",
+          "point": [
+            50.0,
+            10.0,
+            9.0
+          ],
+          "actual_mm": 3.8837661726277553,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382737224475,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "rear hole at z=1",
+          "point": [
+            50.0,
+            50.0,
+            1.0
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "rear hole at z=5",
+          "point": [
+            50.0,
+            50.0,
+            5.0
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "rear hole at z=9",
+          "point": [
+            50.0,
+            50.0,
+            9.0
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        }
+      ]
+    }
+  },
+  "bounds_sufficient": false,
+  "bounds_reason": "The holes do not change the outer plate bounds. Volume and 3D hole-wall probes are required."
+}
