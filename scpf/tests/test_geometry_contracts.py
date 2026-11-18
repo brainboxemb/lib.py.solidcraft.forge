@@ -8,6 +8,7 @@ from scpf.csg import CSG_PRIMITIVE_KINDS
 
 from geometry_contracts import (
     CSG,
+    FEATURE_CASES,
     NATIVE_HOLE,
     PRIMITIVE_BODY_CASES,
     build_joined,
@@ -92,37 +93,28 @@ class GeometryContractMatrix(unittest.TestCase):
                             ["Part"],
                         )
 
-    def test_native_hole_contract_runs_on_every_compatible_body(self):
-        for case in cases_with(NATIVE_HOLE):
-            with self.subTest(body=case.name):
-                body = case.build()
-                body = body + Hole(
-                    d=6,
-                    depth=case.through_depth,
-                    direction=(0, 0, -1),
-                ).at(0, 0, case.entry_z)
+    def test_every_feature_contract_runs_on_every_compatible_body(self):
+        for feature in FEATURE_CASES:
+            for case in cases_with(feature.capability):
+                with self.subTest(feature=feature.name, body=case.name):
+                    body = feature.apply(case.build(), case)
+                    document = compile_model(body, "Part")
+                    native = _commands(document, feature.native_command)
+                    self.assertEqual(len(native), feature.expected_count)
+                    self.assertTrue(
+                        all(row["params"].get("targets") == ["Part"] for row in native)
+                    )
 
-                document = compile_model(body, "Part")
-                holes = _commands(document, "solid.hole")
-                self.assertEqual(len(holes), 1)
-                self.assertEqual(holes[0]["params"]["diameter"], 6)
-                self.assertEqual(holes[0]["params"]["targets"], ["Part"])
-
-    def test_native_hole_contract_survives_a_prior_join(self):
-        for case in cases_with(NATIVE_HOLE):
-            with self.subTest(body=case.name):
-                body = build_joined(case)
-                body = body + Hole(
-                    d=6,
-                    depth=case.through_depth,
-                    direction=(0, 0, -1),
-                ).at(0, 0, case.entry_z)
-
-                document = compile_model(body, "Part")
-                self.assertEqual(
-                    len(_commands(document, "solid.hole")),
-                    1,
-                )
+    def test_every_feature_contract_survives_a_prior_join(self):
+        for feature in FEATURE_CASES:
+            for case in cases_with(feature.capability):
+                with self.subTest(feature=feature.name, body=case.name):
+                    body = feature.apply(build_joined(case), case)
+                    document = compile_model(body, "Part")
+                    self.assertEqual(
+                        len(_commands(document, feature.native_command)),
+                        feature.expected_count,
+                    )
 
     def test_native_hole_contract_supports_sequential_features(self):
         for case in cases_with(NATIVE_HOLE):
