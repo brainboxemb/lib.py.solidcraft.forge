@@ -144,6 +144,8 @@ jobs:
           python scripts/generated_output.py materialize-site-evidence \
             --build-root output/resolved \
             --destination output/evidence
+          evidence_sha="$(python -c 'import json; print(json.load(open("output/resolved/build.json", encoding="utf-8"))["source_commit"])')"
+          echo "EVIDENCE_SHA=$evidence_sha" >> "$GITHUB_ENV"
 
       - name: Build and test PR website
         if: github.event.pull_request.head.repo.full_name == github.repository
@@ -159,6 +161,7 @@ jobs:
             --build-scope main
           python site/test_site.py \
             output/site "${{ github.event.pull_request.head.sha }}" \
+            --evidence-sha="$EVIDENCE_SHA" \
             --build-commit="$BUILD_COMMIT"
           python site/provenance.py write-build \
             --out output/site/provenance.json \
