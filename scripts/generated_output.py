@@ -19,7 +19,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from qualification.case_selection import CASE_SLUGS
-from qualification.cases import reference_implementations_for, CASE_BY_SLUG
+from qualification.cases import reference_implementations_for
+from qualification.case_selection import CASE_BY_SLUG
 from qualification.impact import case_input_hash
 
 
