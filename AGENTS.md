@@ -193,6 +193,10 @@ How cases are selected:
   `qualification/results.py`. Stage-state JSON is rerun/debug evidence; it is
   not a replacement result format. Build and Pages consume the canonical
   per-case result.
+- Site generation must resolve `case_record` and native verification state
+  independently for each qualification slug from the normalized build manifest.
+  Never carry case verification state across example/qualification loop
+  iterations.
 
 The selector also reports the required final gate. Work on a source branch with
 cheap affected checks while implementing. Open a PR only when the implementation
