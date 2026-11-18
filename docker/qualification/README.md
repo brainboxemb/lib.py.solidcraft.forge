@@ -40,3 +40,17 @@ mutation -> native Q4/Q5 validation`.
 
 This intentionally tests one vertical integration path before the full
 qualification suite is allowed to consume the image.
+
+
+## One-case real gate
+
+After the fast vertical smoke passes, the image workflow also executes the
+repository's real gate:
+
+```text
+verification_gate.py --gate affected-q1-q6 --cases simple-box
+```
+
+That deliberately exercises the same Q1-Q6 orchestration later used by PR CI,
+but for exactly one qualification case. The complete case set is not used while
+developing the container.

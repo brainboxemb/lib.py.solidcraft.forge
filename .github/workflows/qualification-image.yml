@@ -71,6 +71,30 @@ jobs:
             qualification-local:${{ steps.meta.outputs.image_id }} \
             python qualification/integration/simple_box.py --out /smoke/simple-box
 
+      - name: Run real one-case qualification gate
+        run: |
+          mkdir -p "$RUNNER_TEMP/simple-box-gate"
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -v "$RUNNER_TEMP/simple-box-gate:/gate" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            qualification-local:${{ steps.meta.outputs.image_id }} \
+            python scripts/verification_gate.py \
+              --gate affected-q1-q6 \
+              --cases simple-box \
+              --out /gate/simple-box \
+              --source-sha "$GITHUB_SHA"
+
+      - name: Upload one-case gate diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qualification-image-gate-${{ github.sha }}
+          path: ${{ runner.temp }}/simple-box-gate
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Upload smoke diagnostics
         if: always()
         uses: actions/upload-artifact@v4
