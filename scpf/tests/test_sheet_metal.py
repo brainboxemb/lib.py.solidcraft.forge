@@ -174,6 +174,11 @@ class SheetMetalTests(unittest.TestCase):
                 position="outside",
             )
 
+        with self.assertRaisesRegex(ValueError, "fixed numbers"):
+            sheet.fold(
+                line=((Parameter("fold_x", 20), -10), (20, 10)),
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
