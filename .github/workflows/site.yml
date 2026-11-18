@@ -147,12 +147,27 @@ jobs:
           python site/build.py             --out output/site             --source-sha "$GITHUB_SHA"             --evidence-sha "$evidence_sha"             --native reused/native             --references reused/references             --diagram-root output/diagrams
           python site/test_site.py output/site "$GITHUB_SHA"             --evidence-sha="$evidence_sha"             --require-native --require-references
 
+      - uses: actions/checkout@v4
+        if: steps.scope.outputs.site_only == 'true'
+        with:
+          ref: gh-pages
+          path: current-pages
+          fetch-depth: 1
+
+      - name: Prepare stable Pages root
+        if: steps.scope.outputs.site_only == 'true'
+        run: |
+          python scripts/generated_output.py prepare-stable-pages \
+            --site output/site \
+            --current-pages current-pages \
+            --destination output/pages-stable
+
       - name: Publish current library site
         if: steps.scope.outputs.site_only == 'true'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ./output/site
-          keep_files: true
+          publish_dir: ./output/pages-stable
+          force_orphan: true
           commit_message: "SCPF site-only build at ${{ github.sha }} using qualification ${{ steps.evidence.outputs.sha }}"

@@ -243,54 +243,79 @@ green.
 
 ## Generated build output and Pages publishing
 
-Generated site output has three separate states. Do not mix them.
+Generated output has two branches with different jobs. Do not mix them with
+source branches.
 
-1. **Source branch** — editable Forge code and documentation.
-2. **Preview/staging output** — build output owned by one PR or branch.
-3. **Stable output** — the last fully qualified `main` build.
+1. `main` and PR branches contain editable source.
+2. `build` contains generated technical build and qualification output.
+3. `gh-pages` contains only the browseable website.
+
+The `build` branch has exactly two scopes:
+
+```text
+main/
+  examples/<case>/<implementation>/...
+  qualification/...
+  build.json
+pr/<number>/
+  examples/<case>/<implementation>/...
+  qualification/...
+  build.json
+```
+
+The item path mirrors the source path. For example,
+`examples/simple-box/cadquery/model.py` produces technical output under
+`examples/simple-box/cadquery/`; native Forge/SolidCraft output for
+`examples/simple-box/scpf/model.py` lives under
+`examples/simple-box/scpf/`. Do not create top-level `native/`,
+`references/` or other producer-oriented trees on the `build` branch.
+Only cross-case reports belong under `qualification/`.
+
+Pages uses the matching scope model:
+
+```text
+/                         # stable main website
+previews/pr-<number>/     # one website preview per open PR
+```
 
 Rules:
 
-- A branch or PR may only replace its own preview output.
-- Preview output must never overwrite stable output.
-- Preview Pages live under a branch/PR-specific path such as
-  `previews/pr-123/`.
-- Only a fully successful `main` Q1-Q6 qualification may replace stable
-  output.
-- Stable publishable output lives on the generated `qualified-output`
-  branch. Treat that branch as generated data, not source code.
-- `gh-pages` is only a serving branch. Do not rebuild Forge or qualification
-  data there.
-- Promote already-built output to Pages; do not independently rebuild the site
-  during publication.
-- Replacing the stable Pages root must preserve the `previews/` subtree.
-- Updating one preview must not touch the stable root or another preview.
-- Every generated preview/stable output must contain `provenance.json` with
-  at least the source branch/PR, source commit, Forge version, SolidCraft
-  version when applicable, workflow run id, qualification status/level and
-  generation time.
-- Verify provenance before promotion. The source commit in stable output must
-  match the successful `main` qualification commit.
-- Keep heavy qualification evidence such as STEP files, complete native build
-  trees and large render sets as CI artifacts. Generated Git branches contain
-  only publishable output plus provenance.
-- Generated output is latest-only. Do not build an ever-growing Git history of
-  generated site files.
-- Changes under `site/**` are product changes and must trigger the same
-  qualification needed before stable publication.
-- Site capability/coverage data must be checked against the real public API.
-  Removed methods must not remain published as stale documentation.
+- A PR may replace only `build/pr/<number>/` and
+  `gh-pages/previews/pr-<number>/`.
+- Updating a PR replaces those same directories. Do not create `fast`,
+  `full`, branch-name or staging variants.
+- Closing a PR removes both generated PR directories.
+- A successful full Q1-Q6 `main` run replaces `build/main/` and the stable
+  Pages root.
+- Replacing the stable Pages root must preserve `previews/`.
+- `preview-output` and `qualified-output` are not part of the architecture.
+  Do not publish new data to them.
+- The website never lives on `build`; technical build evidence never lives in
+  the stable Pages root merely to stage publication.
+- Every generated build has `build.json` with source ref/commit, PR number
+  when applicable, Forge/SolidCraft versions when known, workflow run,
+  qualification level/status and generation time.
+- Every generated website has `provenance.json` and is verified before
+  publication.
+- Workflows orchestrate setup and publication. Path selection, build layout,
+  cleanup and other repository rules belong in tested Python code, not inline
+  shell/Python workflow logic.
+- CI artifacts may retain additional heavy/intermediate evidence. They are not
+  a third generated branch or an alternative source of truth.
 
 The intended flow is:
 
-`source branch -> branch-owned build -> preview page`
+`PR source -> technical build -> build/pr/<number>/`
 
-and, only after full qualification:
+`PR source -> website build -> gh-pages/previews/pr-<number>/`
 
-`main -> qualified-output -> stable gh-pages root`.
+and after full qualification:
 
-Do not publish a failing or partially qualified build as stable merely because
-the site renderer itself succeeded.
+`main -> technical build -> build/main/`
+
+`main -> website build -> stable gh-pages root`.
+
+Do not publish a failing or partially qualified build as stable.
 
 ## Release discipline
 
