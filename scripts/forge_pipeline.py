@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts import publish_generated
+from scripts import generic_publication, publish_generated
 from qualification.cases import supported_case_slugs
 
 
@@ -572,7 +572,7 @@ def write_outputs(path: Path | None, *, build_commit: str | None = None) -> None
 
 
 def execute(args: argparse.Namespace) -> str | None:
-    """Run migrated cheap layers first, then the existing Forge qualification."""
+    """Run Forge verification, then publish through the generic CI store."""
 
     run_tool_cad_ci_layers(
         args.output_root / "tool-cad-ci-plan.json",
@@ -596,29 +596,24 @@ def execute(args: argparse.Namespace) -> str | None:
 
     qualify(args)
 
-    if args.operation == "pr":
-        build_commit = publish_pr_candidate(args)
-        resolve_preview(args, build_commit)
-        return None
-
-    root, build_commit, evidence_sha = stable_build(args)
-    build_stable_site(args, root, build_commit, evidence_sha)
-    return build_commit
+    return generic_publication.execute(
+        source_sha=args.source_sha,
+        source_ref=args.source_ref,
+        operation=args.operation,
+        pull_request=args.pull_request,
+        gate=args.gate,
+        cases=args.cases,
+        workflow_run_id=args.workflow_run_id,
+        generated_build=args.generated_build,
+        output_root=args.output_root,
+        publish=args.publish,
+    )
 
 
 def cleanup(pull_request: int) -> None:
-    publish_generated.publish(
-        branch="build",
-        operation="remove-dir",
-        destination=f"pr/{pull_request}",
-        message=f"Remove build PR #{pull_request}",
-    )
-    publish_generated.publish(
-        branch="gh-pages",
-        operation="remove-dir",
-        destination=f"previews/pr-{pull_request}",
-        message=f"Remove preview PR #{pull_request}",
-    )
+    """Remove one closed PR's generic build overlay and Pages preview."""
+
+    generic_publication.cleanup(pull_request)
 
 
 def parser() -> argparse.ArgumentParser:
