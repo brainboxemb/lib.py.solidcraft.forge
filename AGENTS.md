@@ -238,6 +238,15 @@ risk decision. A manual/trigger recovery is release-independent; release
 publication is considered only when an intentional package-version change
 reaches `main`.
 
+Keep GitHub Actions thin. The workflow owns GitHub-specific orchestration only:
+events, permissions, concurrency, checkout, runner/tool setup, registry/cache
+access and artifact upload. `scripts/forge_pipeline.py` owns the reproducible
+Forge operation: preflight, pipeline/image smoke, contract checks,
+qualification, preview generation, stable promotion and Pages generation.
+Release policy/publication lives in `scripts/release/publish_release.py`.
+Do not put case-stage reruns, gate assembly, preview resolution, promotion
+rules or site-build sequences back into YAML.
+
 `scripts/ci_preflight.py` is the first hard gate. Keep it cheap. It exists to
 catch broken Python, malformed workflow structure, broken publication
 contracts and a broken website before third-party CAD libraries or native
