@@ -37,8 +37,11 @@ class ForgeScopeTests(unittest.TestCase):
             event_name="pull_request",
             paths=(
                 ".github/workflows/scpf.yml",
-                ".github/workflows/forge.yml",
                 "scripts/forge_scope.py",
+                "scripts/forge_pipeline.py",
+                "scripts/ci_preflight.py",
+                "qualification/tests/test_forge_pipeline.py",
+                "site/tests/test_qualification_image.py",
                 "AGENTS.md",
             ),
         )
