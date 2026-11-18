@@ -23,6 +23,8 @@ jobs:
   merge-gate:
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
     concurrency:
       group: verify-pr-${{ github.event.pull_request.number }}
       cancel-in-progress: true
@@ -104,6 +106,8 @@ jobs:
             --destination "pr/${{ github.event.pull_request.number }}" \
             --source-ref "${{ github.head_ref }}" \
             --expected-source "${{ github.event.pull_request.head.sha }}" \
+            --repository "$GITHUB_REPOSITORY" \
+            --pull-request "${{ github.event.pull_request.number }}" \
             --message "Publish build PR #${{ github.event.pull_request.number }}" \
             --github-output "$GITHUB_OUTPUT"
 
@@ -115,6 +119,8 @@ jobs:
             --destination "pr/${{ github.event.pull_request.number }}" \
             --source-ref "${{ github.head_ref }}" \
             --expected-source "${{ github.event.pull_request.head.sha }}" \
+            --repository "$GITHUB_REPOSITORY" \
+            --pull-request "${{ github.event.pull_request.number }}" \
             --message "Remove obsolete build PR #${{ github.event.pull_request.number }}"
 
       - name: Resolve preview evidence
@@ -173,6 +179,8 @@ jobs:
             --destination "previews/pr-${{ github.event.pull_request.number }}" \
             --source-ref "${{ github.head_ref }}" \
             --expected-source "${{ github.event.pull_request.head.sha }}" \
+            --repository "$GITHUB_REPOSITORY" \
+            --pull-request "${{ github.event.pull_request.number }}" \
             --message "Publish preview PR #${{ github.event.pull_request.number }}"
 
       - name: Upload verification diagnostics

@@ -9,6 +9,7 @@ and performs a normal non-force push. Push races are retried.
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 import os
 import shutil
@@ -53,6 +54,37 @@ def remote_ref(remote: str, ref: str, *, cwd: Path = ROOT) -> str | None:
     )
     line = completed.stdout.strip()
     return line.split()[0] if line else None
+
+
+def assert_pr_fresh(
+    repository: str | None,
+    pull_request: int | None,
+    expected_source: str | None,
+    *,
+    cwd: Path = ROOT,
+) -> None:
+    if not repository or pull_request is None:
+        return
+    completed = _run(
+        [
+            "gh",
+            "api",
+            "--method",
+            "GET",
+            f"repos/{repository}/pulls/{pull_request}",
+        ],
+        cwd=cwd,
+        capture=True,
+    )
+    data = json.loads(completed.stdout)
+    if data.get("state") != "open":
+        raise StaleSource(f"pull request #{pull_request} is no longer open")
+    current = ((data.get("head") or {}).get("sha"))
+    if expected_source and current != expected_source:
+        raise StaleSource(
+            f"pull request #{pull_request} head is {current}, "
+            f"candidate is {expected_source}"
+        )
 
 
 def assert_fresh(
@@ -145,6 +177,8 @@ def publish(
     remote: str = "origin",
     source_ref: str | None = None,
     expected_source: str | None = None,
+    repository: str | None = None,
+    pull_request: int | None = None,
     message: str,
     retries: int = 5,
     cwd: Path = ROOT,
@@ -153,6 +187,12 @@ def publish(
         raise ValueError("retries must be positive")
 
     for attempt in range(1, retries + 1):
+        assert_pr_fresh(
+            repository,
+            pull_request,
+            expected_source,
+            cwd=cwd,
+        )
         assert_fresh(remote, source_ref, expected_source, cwd=cwd)
         _run(["git", "fetch", "--no-tags", remote, branch], cwd=cwd)
         base = remote_ref(remote, branch, cwd=cwd)
@@ -186,6 +226,12 @@ def publish(
 
                 # Re-check immediately before the write. This rejects an old
                 # verification run even when it spent a long time building.
+                assert_pr_fresh(
+                    repository,
+                    pull_request,
+                    expected_source,
+                    cwd=cwd,
+                )
                 assert_fresh(remote, source_ref, expected_source, cwd=cwd)
                 pushed = _run(
                     ["git", "push", remote, f"HEAD:refs/heads/{branch}"],
@@ -224,6 +270,8 @@ def main() -> int:
     parser.add_argument("--remote", default="origin")
     parser.add_argument("--source-ref")
     parser.add_argument("--expected-source")
+    parser.add_argument("--repository")
+    parser.add_argument("--pull-request", type=int)
     parser.add_argument("--message", required=True)
     parser.add_argument("--retries", type=int, default=5)
     parser.add_argument("--github-output", type=Path)
@@ -237,6 +285,8 @@ def main() -> int:
         remote=args.remote,
         source_ref=args.source_ref,
         expected_source=args.expected_source,
+        repository=args.repository,
+        pull_request=args.pull_request,
         message=args.message,
         retries=args.retries,
     )

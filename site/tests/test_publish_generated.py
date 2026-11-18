@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import unittest
 
-from scripts.publish_generated import StaleSource, publish
+from scripts.publish_generated import StaleSource, assert_pr_fresh, publish
 
 
 def run(args, cwd):
@@ -82,6 +82,32 @@ class PublishGeneratedTests(unittest.TestCase):
                 message="stale",
                 cwd=self.repo,
             )
+
+    def test_closed_pr_is_rejected(self):
+        from unittest.mock import patch
+        import json
+        from subprocess import CompletedProcess
+
+        payload = {
+            "state": "closed",
+            "head": {"sha": self.source},
+        }
+        with patch(
+            "scripts.publish_generated._run",
+            return_value=CompletedProcess(
+                args=[],
+                returncode=0,
+                stdout=json.dumps(payload),
+                stderr="",
+            ),
+        ):
+            with self.assertRaises(StaleSource):
+                assert_pr_fresh(
+                    "brainboxemb/lib.py.solidcraft.forge",
+                    7,
+                    self.source,
+                    cwd=self.repo,
+                )
 
     def test_stable_pages_preserves_previews(self):
         preview = self.root / "preview"
