@@ -1,15 +1,19 @@
 name: SCPF full safety qualification
 
 on:
+  push:
+    branches:
+      - "qualification/**"
   workflow_dispatch: {}
   schedule:
     - cron: "17 3 * * 1"
 
 permissions:
   contents: write
+  packages: read
 
 concurrency:
-  group: full-safety-main
+  group: full-safety-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -18,52 +22,78 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.sha }}
           fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Install Forge
-        run: python -m pip install -e ./scpf pillow pyyaml
-
-      - name: Run repository preflight
-        run: python scripts/ci_preflight.py --source-sha "$GITHUB_SHA"
-
-      - name: Install SolidCraft
+      - name: Resolve immutable qualification image
+        id: image
         run: |
-          python qualification/setup_solidcraft.py \
-            --destination "$RUNNER_TEMP/solidcraft" \
-            --github-path "$GITHUB_PATH"
+          python scripts/qualification_image.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --github-output "$GITHUB_OUTPUT"
 
-      - name: Install all reference environments
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull qualification image
+        run: docker pull "${{ steps.image.outputs.reference }}"
+
+      - name: Run repository preflight in qualification image
         run: |
-          python qualification/setup_references.py \
-            --build123d-venv "$RUNNER_TEMP/build123d-venv" \
-            --github-env "$GITHUB_ENV"
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.image.outputs.reference }}" \
+            python scripts/ci_preflight.py \
+              --source-sha "$GITHUB_SHA" \
+              --site-out output/preflight-site
 
       - name: Run complete Q1-Q6 safety gate
-        env:
-          SOLIDCRAFT_GPU: cpu
         run: |
-          python scripts/verification_gate.py \
-            --gate full-q1-q6 \
-            --out output/gate \
-            --source-sha "$GITHUB_SHA" \
-            --build-out output/build \
-            --scope main \
-            --source-ref main \
-            --workflow-run-id "$GITHUB_RUN_ID"
+          args=(
+            --gate full-q1-q6
+            --out output/gate
+            --source-sha "$GITHUB_SHA"
+          )
+          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            args+=(
+              --build-out output/build
+              --scope main
+              --source-ref main
+              --workflow-run-id "$GITHUB_RUN_ID"
+            )
+          fi
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.image.outputs.reference }}" \
+            python scripts/verification_gate.py "${args[@]}"
 
       - name: Verify complete technical baseline
+        if: github.ref == 'refs/heads/main'
         run: |
-          python scripts/generated_output.py verify-build \
-            --root output/build \
-            --source-commit "$GITHUB_SHA" \
-            --require-complete
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.image.outputs.reference }}" \
+            python scripts/generated_output.py verify-build \
+              --root output/build \
+              --source-commit "$GITHUB_SHA" \
+              --require-complete
 
       - name: Publish build/main
+        if: github.ref == 'refs/heads/main'
         id: publish_build
         run: |
           python scripts/publish_generated.py replace-dir \
@@ -76,6 +106,7 @@ jobs:
             --github-output "$GITHUB_OUTPUT"
 
       - name: Record immutable release evidence
+        if: github.ref == 'refs/heads/main'
         run: |
           python - <<'PY'
           import json, os
@@ -89,33 +120,45 @@ jobs:
           )
           PY
 
-      - name: Build and publish stable site
+      - name: Build and test stable site
+        if: github.ref == 'refs/heads/main'
         run: |
           build_commit="${{ steps.publish_build.outputs.commit }}"
-          python scripts/generated_output.py materialize-site-evidence \
-            --build-root output/build \
-            --destination output/evidence
-          python site/build.py \
-            --out output/site \
-            --source-sha "$GITHUB_SHA" \
-            --native output/evidence/native \
-            --references output/evidence/references \
-            --diagram-root output/evidence/diagrams \
-            --build-manifest output/build/build.json \
-            --build-commit "$build_commit" \
-            --build-scope main
-          python site/test_site.py \
-            output/site "$GITHUB_SHA" \
-            --build-commit="$build_commit" \
-            --require-native --require-references
-          python site/provenance.py write-build \
-            --out output/site/provenance.json \
-            --stage stable \
-            --source-ref main \
-            --source-commit "$GITHUB_SHA" \
-            --build-commit "$build_commit" \
-            --build-manifest output/build/build.json \
-            --workflow-run-id "$GITHUB_RUN_ID"
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.image.outputs.reference }}" \
+            bash -lc "
+              python scripts/generated_output.py materialize-site-evidence \
+                --build-root output/build \
+                --destination output/evidence &&
+              python site/build.py \
+                --out output/site \
+                --source-sha '$GITHUB_SHA' \
+                --native output/evidence/native \
+                --references output/evidence/references \
+                --diagram-root output/evidence/diagrams \
+                --build-manifest output/build/build.json \
+                --build-commit '$build_commit' \
+                --build-scope main &&
+              python site/test_site.py \
+                output/site '$GITHUB_SHA' \
+                --build-commit='$build_commit' \
+                --require-native --require-references &&
+              python site/provenance.py write-build \
+                --out output/site/provenance.json \
+                --stage stable \
+                --source-ref main \
+                --source-commit '$GITHUB_SHA' \
+                --build-commit '$build_commit' \
+                --build-manifest output/build/build.json \
+                --workflow-run-id '$GITHUB_RUN_ID'
+            "
+
+      - name: Publish stable Pages
+        if: github.ref == 'refs/heads/main'
+        run: |
           python scripts/publish_generated.py replace-stable-pages \
             --branch gh-pages \
             --source output/site \
@@ -133,5 +176,5 @@ jobs:
             output/build
             output/site
             output/release-evidence.json
-          if-no-files-found: warn
+          if-no-files-found: ignore
           retention-days: 14

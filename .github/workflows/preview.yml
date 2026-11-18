@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   merge-gate:
-    if: github.event.action != 'closed'
+    if: github.event.action != 'closed' && !startsWith(github.head_ref, 'qualification/')
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
@@ -225,7 +225,7 @@ jobs:
           fetch-depth: 1
 
       - name: Prepare technical promotion
-        if: github.event.pull_request.merged == true
+        if: github.event.pull_request.merged == true && !startsWith(github.event.pull_request.head.ref, 'qualification/')
         id: promote
         run: |
           python scripts/merge_promotion.py \
@@ -293,7 +293,7 @@ jobs:
         run: gh workflow run scpf.yml --ref main
 
       - name: Requalify exact main commit for a release
-        if: github.event.pull_request.merged == true && steps.promote.outputs.release_candidate == 'true' && steps.promote.outputs.promotable == 'true'
+        if: github.event.pull_request.merged == true && (startsWith(github.event.pull_request.head.ref, 'qualification/') || (steps.promote.outputs.release_candidate == 'true' && steps.promote.outputs.promotable == 'true'))
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run scpf.yml --ref main

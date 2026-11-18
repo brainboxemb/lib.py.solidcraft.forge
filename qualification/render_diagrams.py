@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import os
 from pathlib import Path
+import shutil
 import subprocess
 
 
@@ -18,18 +19,17 @@ def run(command: list[str], *, env: dict[str, str] | None = None) -> None:
 
 def render_all(out: Path) -> None:
     out.mkdir(parents=True, exist_ok=True)
-    run(["bash", "qualification/setup_cadcraft.sh"])
-    install_dir = (
-        Path.home()
-        / ".cache"
-        / "cadcraft"
-        / "0.20.1-linux-x86_64"
-    )
-    cli = install_dir / "cadcraft-cli"
-    if not cli.is_file():
-        raise RuntimeError(f"CADCraft CLI not found after setup: {cli}")
     env = dict(os.environ)
-    env["PATH"] = str(install_dir) + os.pathsep + env.get("PATH", "")
+    cli = shutil.which("cadcraft-cli", path=env.get("PATH"))
+    if cli is None:
+        run(["bash", "qualification/setup_cadcraft.sh"])
+        install_dir = Path.home() / ".cache" / "cadcraft" / "0.20.1-linux-x86_64"
+        cli_path = install_dir / "cadcraft-cli"
+        if not cli_path.is_file():
+            raise RuntimeError(
+                f"CADCraft CLI not found after setup: {cli_path}"
+            )
+        env["PATH"] = str(install_dir) + os.pathsep + env.get("PATH", "")
     plans = sorted((ROOT / "qualification" / "diagrams").glob("*.cadcraft.json"))
     if not plans:
         raise RuntimeError("no CADCraft qualification diagrams found")

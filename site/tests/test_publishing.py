@@ -74,15 +74,19 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertNotIn("reusable_qualification.py select", workflow)
         self.assertNotIn("peaceiris/actions-gh-pages", workflow)
 
-    def test_full_workflow_is_safety_gate_not_main_push_gate(self):
+    def test_full_workflow_uses_immutable_image_and_release_branch_gate(self):
         workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
         self.assertIn("workflow_dispatch", workflow)
         self.assertIn("schedule:", workflow)
-        self.assertNotIn("push:", workflow)
+        self.assertIn('"qualification/**"', workflow)
+        self.assertIn("docker pull", workflow)
+        self.assertIn("steps.image.outputs.reference", workflow)
         self.assertIn("--gate full-q1-q6", workflow)
         self.assertIn("--require-complete", workflow)
         self.assertIn("scripts/publish_generated.py replace-dir", workflow)
         self.assertIn("scripts/publish_generated.py replace-stable-pages", workflow)
+        self.assertNotIn("setup_solidcraft.py", workflow)
+        self.assertNotIn("setup_references.py", workflow)
         self.assertNotIn("peaceiris/actions-gh-pages", workflow)
 
     def test_reconcile_is_scheduled_and_scoped(self):
