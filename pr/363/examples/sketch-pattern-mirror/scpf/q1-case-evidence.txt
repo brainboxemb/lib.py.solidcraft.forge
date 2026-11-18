@@ -3,7 +3,7 @@ $ /usr/local/bin/python -m unittest discover -s /workspace/scpf/tests -p test_sk
 test_circle_rectangular_pattern_uses_bound_native_curves (test_sketch_patterns.SketchPatternMirrorTests.test_circle_rectangular_pattern_uses_bound_native_curves) ... ok
 
 ----------------------------------------------------------------------
-Ran 1 test in 0.001s
+Ran 1 test in 0.002s
 
 OK
 
@@ -14,7 +14,7 @@ $ /usr/local/bin/python -m unittest discover -s /workspace/scpf/tests -p test_sk
 test_slot_pattern_and_mirrors_reuse_operation_results (test_sketch_patterns.SketchPatternMirrorTests.test_slot_pattern_and_mirrors_reuse_operation_results) ... ok
 
 ----------------------------------------------------------------------
-Ran 1 test in 0.001s
+Ran 1 test in 0.002s
 
 OK
 
@@ -25,7 +25,7 @@ $ /usr/local/bin/python -m unittest discover -s /workspace/scpf/tests -p test_sk
 test_pattern_count_and_spacing_remain_native_parameters (test_sketch_patterns.SketchPatternMirrorTests.test_pattern_count_and_spacing_remain_native_parameters) ... ok
 
 ----------------------------------------------------------------------
-Ran 1 test in 0.001s
+Ran 1 test in 0.002s
 
 OK
 
