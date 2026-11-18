@@ -44,13 +44,20 @@ The release PR must:
 
 ## Publishing after merge
 
-Merging a release PR promotes the already verified PR evidence when the squash
-merge tree is identical to the verified PR tree. The close workflow then starts
-`SCPF full safety qualification` again on the exact `main` commit before any
-release is published.
+The release PR already passed full Q1-Q6 before merge. After squash merge, the
+release workflow compares the verified release-head tree with the resulting
+`main` tree.
 
-The generic `Publish SCPF release` workflow is triggered only after that main
-qualification completes successfully. It then:
+When those trees are identical and the qualification toolchain identity still
+matches, reuse the successful full qualification. Do not run full Q1-Q6 again
+only because squash merge created a different commit SHA. Promote/rebind the
+verified evidence to the current `main` commit and publish from that evidence.
+
+Run full Q1-Q6 on `main` only when no valid full qualification exists for the
+exact merged source tree/toolchain, or when the merge tree differs from the
+qualified release tree.
+
+The generic `Publish SCPF release` workflow then:
 
 1. reads the package version from `scpf/pyproject.toml`;
 2. does nothing if that version already has a published GitHub Release;
@@ -58,11 +65,13 @@ qualification completes successfully. It then:
 4. refuses the release when `docs/design/release-blockers.txt` contains an
    active non-comment blocker;
 5. requires a dated matching changelog section;
-6. records the currently qualified SolidCraft version;
+6. records the currently qualified SolidCraft version and reused/full
+   qualification identity;
 7. creates an annotated `vX.Y.Z` Git tag on that exact commit;
 8. creates the GitHub Release using that changelog section as release notes.
 
-A failed main qualification therefore cannot publish a release.
+A release therefore cannot publish without a successful full Q1-Q6
+qualification for the exact source tree/toolchain being released.
 
 ## Downstream pinning
 
