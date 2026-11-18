@@ -51,6 +51,108 @@ def _extrude_profile_params(profile_picks, exact_regions):
     return params
 
 
+def compile_standalone_sketch(
+    sketch_name,
+    plane,
+    origin,
+    plane_offset,
+    profiles,
+    operations,
+):
+    """Compile one standalone Sketch without choosing its 3D operation."""
+    if operations:
+        raise ModelError(
+            "sketch pattern/mirror currently requires an attached Sketch"
+        )
+    if plane not in ("XY", "XZ", "YZ"):
+        raise ModelError("standalone Sketch requires an XY, XZ or YZ plane")
+    if len(profiles) != 1:
+        raise ModelError("standalone Sketch currently requires exactly one profile")
+    profile, profile_anchor, (ox, oy) = profiles[0]
+    if origin is not None:
+        raise ModelError("standalone Sketch origin is not supported yet")
+
+    sketch_params = {"plane": plane, "name": sketch_name}
+    if plane_offset is not None:
+        sketch_params["offset"] = command_value(plane_offset)
+    sketch = [_command("sketch.create", **sketch_params)]
+
+    if profile.kind == "rectangle":
+        width, depth = profile.data
+        _require_positive(width, "rectangle width")
+        _require_positive(depth, "rectangle depth")
+        if profile_anchor is Anchor.CENTER:
+            x0 = _combine_dimension(ox, -half(width))
+            y0 = _combine_dimension(oy, -half(depth))
+            x1 = _combine_dimension(ox, half(width))
+            y1 = _combine_dimension(oy, half(depth))
+        else:
+            x0, y0 = ox, oy
+            x1 = _combine_dimension(ox, width)
+            y1 = _combine_dimension(oy, depth)
+        sketch.append(_command(
+            "sketch.rectangle.two_point",
+            p0=[command_value(x0), command_value(y0)],
+            p1=[command_value(x1), command_value(y1)],
+        ))
+        meta = {
+            "profile": "rectangle",
+            "width": width,
+            "depth": depth,
+            "origin": (x0, y0, 0),
+        }
+    elif profile.kind == "circle":
+        (diameter,) = profile.data
+        _require_positive(diameter, "circle diameter")
+        if profile_anchor not in (None, Anchor.CENTER):
+            raise ModelError("Circle2D sketch anchor must be CENTER")
+        sketch.append(_command(
+            "sketch.circle.center",
+            center=[command_value(ox), command_value(oy)],
+            diameter=command_value(diameter),
+        ))
+        meta = {"profile": "circle"}
+    elif profile.kind == "polygon":
+        if profile_anchor is not None:
+            raise ModelError(
+                "Polygon2D uses authored sketch coordinates; "
+                "semantic CENTER is not supported yet"
+            )
+        points, profile_plane, ids = profile.data
+        if profile_plane != plane:
+            raise ModelError("Polygon2D plane must match Sketch plane")
+        if pv(ox) or pv(oy):
+            raise ModelError("standalone Polygon2D offset is not supported yet")
+        concrete = [tuple(pv(v) for v in point) for point in points]
+        if not all(isfinite(v) for point in concrete for v in point):
+            raise ModelError("non-finite polygon coordinate")
+        if len(set(concrete)) != len(concrete):
+            raise ModelError("duplicate polygon vertices")
+        if any(a == b for a, b in zip(concrete, concrete[1:] + concrete[:1])):
+            raise ModelError("zero-length polygon edge")
+        sketch.append(_command(
+            "sketch.line",
+            points=[[command_value(v) for v in point] for point in points],
+            closed=True,
+            ids=list(ids) if ids is not None else
+            [chr(ord("a") + i) for i in range(len(points))],
+        ))
+        meta = {
+            "profile": "polygon",
+            "sketch_plane": plane,
+            "sketch_plane_offset": plane_offset if plane_offset is not None else 0,
+            "profile_points": points,
+            "profile_ids": ids,
+        }
+    else:
+        raise ModelError(
+            "standalone Sketch supports Rectangle2D, Circle2D and Polygon2D"
+        )
+
+    sketch.append(_command("sketch.finish"))
+    return sketch, meta
+
+
 def compile_base(shape, name):
     """Create a native editable base body, regardless of example/model name."""
     if shape.kind in ("box", "placed_box"):
@@ -127,87 +229,19 @@ def compile_base(shape, name):
             profile_picks,
             exact_regions,
         ) = shape.data
-        if operations:
-            raise ModelError(
-                "sketch pattern/mirror currently requires an attached Sketch"
-            )
         _require_positive(distance, "sketch extrusion distance")
-        if plane not in ("XY", "XZ", "YZ"):
-            raise ModelError("standalone Sketch requires an XY, XZ or YZ plane")
-        if len(profiles) != 1:
-            raise ModelError("standalone Sketch currently requires exactly one profile")
-        profile, profile_anchor, (ox, oy) = profiles[0]
-        if origin is not None:
-            raise ModelError("standalone Sketch origin is not supported yet")
-        sketch_params = {"plane": plane, "name": sketch_name}
-        if plane_offset is not None:
-            sketch_params["offset"] = command_value(plane_offset)
-        sketch = [_command("sketch.create", **sketch_params)]
-        if profile.kind == "rectangle":
-            width, depth = profile.data
-            _require_positive(width, "rectangle width")
-            _require_positive(depth, "rectangle depth")
-            if profile_anchor is Anchor.CENTER:
-                x0 = _combine_dimension(ox, -half(width))
-                y0 = _combine_dimension(oy, -half(depth))
-                x1 = _combine_dimension(ox, half(width))
-                y1 = _combine_dimension(oy, half(depth))
-            else:
-                x0, y0 = ox, oy
-                x1 = _combine_dimension(ox, width)
-                y1 = _combine_dimension(oy, depth)
-            sketch.append(_command(
-                "sketch.rectangle.two_point",
-                p0=[command_value(x0), command_value(y0)],
-                p1=[command_value(x1), command_value(y1)],
-            ))
-            meta = {
-                "profile": "rectangle",
-                "width": width,
-                "depth": depth,
-                "thickness": distance,
-                "origin": (x0, y0, 0),
-            }
-        elif profile.kind == "circle":
-            (diameter,) = profile.data
-            _require_positive(diameter, "circle diameter")
-            if profile_anchor not in (None, Anchor.CENTER):
-                raise ModelError("Circle2D sketch anchor must be CENTER")
-            sketch.append(_command(
-                "sketch.circle.center",
-                center=[command_value(ox), command_value(oy)],
-                diameter=command_value(diameter),
-            ))
-            meta = {"profile": "circle", "thickness": distance}
-        elif profile.kind == "polygon":
-            if profile_anchor is not None:
-                raise ModelError(
-                    "Polygon2D uses authored sketch coordinates; "
-                    "semantic CENTER is not supported yet"
-                )
-            points, profile_plane, ids = profile.data
-            if profile_plane != plane:
-                raise ModelError("Polygon2D plane must match Sketch plane")
-            if pv(ox) or pv(oy):
-                raise ModelError("standalone Polygon2D offset is not supported yet")
-            concrete = [tuple(pv(v) for v in point) for point in points]
-            if not all(isfinite(v) for point in concrete for v in point):
-                raise ModelError("non-finite polygon coordinate")
-            if len(set(concrete)) != len(concrete):
-                raise ModelError("duplicate polygon vertices")
-            if any(a == b for a, b in zip(concrete, concrete[1:] + concrete[:1])):
-                raise ModelError("zero-length polygon edge")
-            sketch.append(_command("sketch.line",
-                points=[[command_value(v) for v in point] for point in points],
-                closed=True, ids=list(ids) if ids is not None else
-                [chr(ord("a") + i) for i in range(len(points))]))
-            meta = {"profile": "polygon", "sketch_plane": plane,
-                    "sketch_plane_offset": plane_offset if plane_offset is not None else 0,
-                    "thickness": distance,
-                    "extrusion_direction": direction,
-                    "profile_points": points, "profile_ids": ids}
-        else:
-            raise ModelError("standalone Sketch supports Rectangle2D, Circle2D and Polygon2D")
+        sketch, meta = compile_standalone_sketch(
+            sketch_name,
+            plane,
+            origin,
+            plane_offset,
+            profiles,
+            operations,
+        )
+        meta["thickness"] = distance
+        if meta.get("profile") == "polygon":
+            meta["extrusion_direction"] = direction
+
         extrude = dict(
             distance=command_value(distance),
             direction=direction,
@@ -216,10 +250,7 @@ def compile_base(shape, name):
         extrude.update(
             _extrude_profile_params(profile_picks, exact_regions)
         )
-        sketch.extend([
-            _command("sketch.finish"),
-            _command("solid.extrude", **extrude),
-        ])
+        sketch.append(_command("solid.extrude", **extrude))
         return sketch, meta
 
     if shape.kind == "tapered_box":
