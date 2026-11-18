@@ -23,6 +23,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts import publish_generated
+from qualification.cases import supported_case_slugs
 
 
 def run(args: list[str], *, cwd: Path = ROOT, env: dict[str, str] | None = None) -> None:
@@ -74,62 +75,92 @@ def tool_cad_ci_env() -> dict[str, str]:
     return {"PYTHONPATH": os.pathsep.join(parts)}
 
 
-def run_tool_cad_ci_layers(out: Path) -> None:
-    """Run the first migrated library/integration items through the pinned tool.
+def selected_tool_cases(gate: str, cases: str) -> tuple[str, ...]:
+    """Return supported example items selected by Forge's domain policy."""
 
-    This is a parallel proof only. The existing qualification runner remains
-    authoritative for native evidence and generated publication in this phase.
+    supported = supported_case_slugs()
+    if gate == "full-q1-q6":
+        return tuple(supported)
+
+    requested = {
+        value.strip()
+        for value in cases.split(",")
+        if value.strip()
+    }
+    return tuple(slug for slug in supported if slug in requested)
+
+
+def run_tool_cad_ci_layers(out: Path, gate: str, cases: str) -> None:
+    """Run selected cheap Forge test layers through the pinned generic tool.
+
+    Forge has already decided the gate and affected cases. The generic runner
+    receives only concrete item names and an integration step boundary.
     """
 
     tool = tool_cad_ci_path()
     out.parent.mkdir(parents=True, exist_ok=True)
-    env = os.environ.copy()
-    env.update(tool_cad_ci_env())
+    selected = selected_tool_cases(gate, cases)
+    rows: list[dict] = []
+    seen: set[str] = set()
 
-    plan = subprocess.check_output(
-        [
-            sys.executable,
-            str(tool),
-            "plan",
-            "--repo",
-            str(ROOT),
-            "--json",
-        ],
-        cwd=ROOT,
-        env=env,
-        text=True,
-    )
-    out.write_text(plan, encoding="utf-8")
+    if gate not in {"preflight", "regenerate-derived"}:
+        items = ("library-tests", *selected)
+        for item in items:
+            plan = json.loads(
+                subprocess.check_output(
+                    [
+                        sys.executable,
+                        str(tool),
+                        "plan",
+                        "--repo",
+                        str(ROOT),
+                        "--item",
+                        item,
+                        "--json",
+                    ],
+                    cwd=ROOT,
+                    env={**os.environ, **tool_cad_ci_env()},
+                    text=True,
+                )
+            )
+            for row in plan:
+                item_id = row.get("id")
+                if isinstance(item_id, str) and item_id not in seen:
+                    seen.add(item_id)
+                    rows.append(row)
 
-    # Keep the always-cheap layer independent from native runtime setup.
-    # Native case items are invoked later only when Forge selected a native gate.
-    run(
-        [
-            sys.executable,
-            str(tool),
-            "run",
-            "--repo",
-            str(ROOT),
-            "--item",
-            "library-tests",
-        ],
-        env=tool_cad_ci_env(),
-    )
-    run(
-        [
-            sys.executable,
-            str(tool),
-            "run",
-            "--repo",
-            str(ROOT),
-            "--item",
-            "simple-box",
-            "--until",
-            "integration",
-        ],
-        env=tool_cad_ci_env(),
-    )
+        run(
+            [
+                sys.executable,
+                str(tool),
+                "run",
+                "--repo",
+                str(ROOT),
+                "--item",
+                "library-tests",
+            ],
+            env=tool_cad_ci_env(),
+        )
+        for slug in selected:
+            run(
+                [
+                    sys.executable,
+                    str(tool),
+                    "run",
+                    "--repo",
+                    str(ROOT),
+                    "--item",
+                    slug,
+                    "--until",
+                    "integration",
+                ],
+                env=tool_cad_ci_env(),
+            )
 
+    out.write_text(
+        json.dumps(rows, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
 def run_tool_cad_ci_case(item: str, image: str) -> None:
     """Run one Forge-owned native case item with its resolved runtime image."""
@@ -249,30 +280,21 @@ def qualification_args(args: argparse.Namespace) -> list[str]:
 
 
 def qualify(args: argparse.Namespace) -> None:
+    """Run migrated native items first, then the legacy authoritative gate."""
+
     if args.gate == "preflight":
         return
 
-    # Prove the first migrated native case through the generic item runner.
-    # Forge still decides when native SolidCraft is required and which image
-    # supplies that runtime. The legacy gate remains authoritative in this PR.
-    selected = {
-        value.strip()
-        for value in args.cases.split(",")
-        if value.strip()
-    }
-    native_gate = args.gate in {"affected-q1-q6", "full-q1-q6"}
-    simple_box_selected = (
-        args.gate == "full-q1-q6" or "simple-box" in selected
-    )
-    if native_gate and simple_box_selected:
-        run_tool_cad_ci_case("simple-box", args.image)
+    selected = selected_tool_cases(args.gate, args.cases)
+    if args.gate in {"affected-q1-q6", "full-q1-q6"}:
+        for slug in selected:
+            run_tool_cad_ci_case(slug, args.image)
 
     command = qualification_args(args)
     if args.image:
         docker_python(args.image, *command)
     else:
         python(*command)
-
 
 def publish_pr_candidate(args: argparse.Namespace) -> str:
     destination = f"pr/{args.pull_request}"
@@ -475,7 +497,9 @@ def execute(args: argparse.Namespace) -> str | None:
     """Run migrated cheap layers first, then the existing Forge qualification."""
 
     run_tool_cad_ci_layers(
-        args.output_root / "tool-cad-ci-plan.json"
+        args.output_root / "tool-cad-ci-plan.json",
+        args.gate,
+        args.cases,
     )
     preflight(args.source_sha, args.output_root / "preflight-site")
 

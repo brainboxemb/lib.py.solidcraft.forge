@@ -50,6 +50,23 @@ class ForgePipelineTests(unittest.TestCase):
         with self.assertRaises(argparse.ArgumentTypeError):
             forge_pipeline.parse_bool("maybe")
 
+    def test_selected_tool_cases_follow_forge_gate_selection(self):
+        self.assertEqual(
+            forge_pipeline.selected_tool_cases(
+                "affected-q1-q6",
+                "simple-box,anchored-holes",
+            ),
+            ("simple-box", "anchored-holes"),
+        )
+        self.assertEqual(
+            forge_pipeline.selected_tool_cases("preflight", ""),
+            (),
+        )
+        self.assertEqual(
+            forge_pipeline.selected_tool_cases("full-q1-q6", ""),
+            forge_pipeline.supported_case_slugs(),
+        )
+
     def test_pr_qualification_arguments_are_complete(self):
         command = forge_pipeline.qualification_args(args())
         self.assertEqual(command[0], "scripts/verification_gate.py")
@@ -117,7 +134,9 @@ class ForgePipelineTests(unittest.TestCase):
 
         self.assertIsNone(result)
         tool_layers.assert_called_once_with(
-            ns.output_root / "tool-cad-ci-plan.json"
+            ns.output_root / "tool-cad-ci-plan.json",
+            ns.gate,
+            ns.cases,
         )
         preflight.assert_called_once_with(
             ns.source_sha,
@@ -163,7 +182,9 @@ class ForgePipelineTests(unittest.TestCase):
 
         self.assertEqual(result, "build-commit")
         tool_layers.assert_called_once_with(
-            ns.output_root / "tool-cad-ci-plan.json"
+            ns.output_root / "tool-cad-ci-plan.json",
+            ns.gate,
+            ns.cases,
         )
         stable.assert_called_once_with(ns)
         site.assert_called_once_with(
