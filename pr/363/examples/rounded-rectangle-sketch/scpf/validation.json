@@ -1,0 +1,149 @@
+{
+  "case": "rounded-rectangle-sketch",
+  "q4": "pass",
+  "q5": "not-required",
+  "checks": [
+    {
+      "name": "declared target geometry",
+      "level": "q4",
+      "status": "pass",
+      "expected": [
+        {
+          "label": "RoundedRectangleSketch",
+          "min": [
+            -40,
+            -30,
+            0
+          ],
+          "max": [
+            40,
+            30,
+            13
+          ]
+        }
+      ],
+      "actual": [
+        {
+          "min": [
+            -40.0,
+            -30.0,
+            0.0
+          ],
+          "max": [
+            40.0,
+            30.0,
+            13.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "single joined rounded-pad body",
+      "level": "q4",
+      "status": "pass",
+      "expected": 1,
+      "actual": 1
+    },
+    {
+      "name": "rounded sketch pad bounds",
+      "level": "q4",
+      "status": "pass",
+      "expected": {
+        "min": [
+          -40,
+          -30,
+          0
+        ],
+        "max": [
+          40,
+          30,
+          13
+        ]
+      },
+      "actual": {
+        "max": [
+          40.0,
+          30.0,
+          13.0
+        ],
+        "min": [
+          -40.0,
+          -30.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "shared geometry volume",
+      "level": "q4",
+      "status": "pass",
+      "expected": {
+        "volume_mm3": 33428.31853071796,
+        "tolerance_mm3": 0.5
+      },
+      "actual": {
+        "volume_mm3": 33428.318530878125
+      }
+    },
+    {
+      "name": "four true rounded corner faces",
+      "level": "q4",
+      "status": "pass",
+      "expected": 4,
+      "actual": 4
+    },
+    {
+      "name": "rounded pad remains one solved profile with construction diagonal",
+      "level": "q4",
+      "status": "pass",
+      "expected": {
+        "curves": 9,
+        "profiles": 1,
+        "status": "solved",
+        "dof": 0
+      },
+      "actual": {
+        "curves": 9,
+        "dof": 0,
+        "id": 2,
+        "name": "Rounded pad",
+        "profiles": 1,
+        "status": "solved",
+        "visible": false
+      }
+    },
+    {
+      "name": "explicit rounded sketch remains distinct native history",
+      "level": "q4",
+      "status": "pass",
+      "expected": [
+        [
+          "BoxFeature",
+          "Box1"
+        ],
+        [
+          "Sketch",
+          "Rounded pad"
+        ],
+        [
+          "ExtrudeFeature",
+          "Rounded pad"
+        ]
+      ],
+      "actual": [
+        [
+          "BoxFeature",
+          "Box1"
+        ],
+        [
+          "Sketch",
+          "Rounded pad"
+        ],
+        [
+          "ExtrudeFeature",
+          "Rounded pad"
+        ]
+      ]
+    }
+  ]
+}

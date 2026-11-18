@@ -1,0 +1,46 @@
+{
+  "commands": [
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 5,
+        "translate": [
+          0,
+          0,
+          10.0
+        ]
+      }
+    },
+    {
+      "command": "joint.create",
+      "params": {
+        "type": "rigid",
+        "name": "Attach Arm to Base",
+        "a": {
+          "face": [
+            0.0,
+            0.0,
+            10.0
+          ],
+          "occurrence": 2
+        },
+        "b": {
+          "face": [
+            0.0,
+            0.0,
+            10.0
+          ],
+          "occurrence": 5
+        },
+        "angle": 90.0
+      }
+    },
+    {
+      "command": "browser.visibility",
+      "params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ]
+}

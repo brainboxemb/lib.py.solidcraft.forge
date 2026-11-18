@@ -1,0 +1,238 @@
+[
+  {
+    "display_value": 100.0,
+    "name": "width",
+    "unit": "mm",
+    "value": 100.0
+  },
+  {
+    "display_value": 60.0,
+    "name": "depth",
+    "unit": "mm",
+    "value": 60.0
+  },
+  {
+    "display_value": 10.0,
+    "name": "thickness",
+    "unit": "mm",
+    "value": 10.0
+  },
+  {
+    "display_value": 40.0,
+    "name": "spacing",
+    "unit": "mm",
+    "value": 40.0
+  },
+  {
+    "attachment": "fixed",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Base",
+    "projected": null,
+    "sketch": 1
+  },
+  {
+    "constraints": [
+      "k1",
+      "k2",
+      "k3",
+      "k4"
+    ],
+    "corners": {
+      "bottom_left": "p1",
+      "bottom_right": "p2",
+      "top_left": "p4",
+      "top_right": "p3"
+    },
+    "created": {
+      "constraints": [
+        "k1",
+        "k2",
+        "k3",
+        "k4"
+      ],
+      "curves": [
+        "l1",
+        "l2",
+        "l3",
+        "l4"
+      ],
+      "dimensions": [],
+      "points": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ]
+    },
+    "curves": [
+      "l1",
+      "l2",
+      "l3",
+      "l4"
+    ],
+    "sides": {
+      "bottom": "l1",
+      "left": "l4",
+      "right": "l2",
+      "top": "l3"
+    },
+    "sketch": {
+      "dof": 0,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 1,
+    "sketch": 1
+  },
+  {
+    "bodies": [
+      "AnchoredHoles"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "AnchoredHoles"
+    ],
+    "feature": 2,
+    "ms": 2.445856,
+    "name": "Extrude1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "body": "AnchoredHoles",
+    "faces": [
+      {
+        "area": 6000.0,
+        "centroid": [
+          50.0,
+          30.0,
+          10.0
+        ],
+        "exact": true,
+        "index": 0,
+        "name": "F2:top",
+        "plane_normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "point": [
+          21.690481051546996,
+          21.690481051546996,
+          10.0
+        ]
+      },
+      {
+        "area": 1000.0,
+        "centroid": [
+          49.99999999999999,
+          60.0,
+          5.0
+        ],
+        "exact": true,
+        "index": 1,
+        "name": "F2:side:l3",
+        "plane_normal": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "point": [
+          95.24937810560445,
+          60.0,
+          4.7506218943955485
+        ]
+      },
+      {
+        "area": 600.0,
+        "centroid": [
+          0.0,
+          30.0,
+          5.0
+        ],
+        "exact": true,
+        "index": 2,
+        "name": "F2:side:l4",
+        "plane_normal": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          0.0,
+          55.4138126514911,
+          4.5861873485089015
+        ]
+      },
+      {
+        "area": 1000.0,
+        "centroid": [
+          49.99999999999999,
+          0.0,
+          5.0
+        ],
+        "exact": true,
+        "index": 3,
+        "name": "F2:side:l1",
+        "plane_normal": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "point": [
+          4.7506218943955485,
+          0.0,
+          4.7506218943955485
+        ]
+      },
+      {
+        "area": 600.0,
+        "centroid": [
+          100.0,
+          30.0,
+          5.0
+        ],
+        "exact": true,
+        "index": 4,
+        "name": "F2:side:l2",
+        "plane_normal": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          100.0,
+          4.5861873485089015,
+          4.5861873485089015
+        ]
+      },
+      {
+        "area": 6000.0,
+        "centroid": [
+          50.0,
+          30.0,
+          0.0
+        ],
+        "exact": true,
+        "index": 5,
+        "name": "F2:start",
+        "plane_normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "point": [
+          21.690481051546996,
+          21.690481051546996,
+          0.0
+        ]
+      }
+    ]
+  }
+]

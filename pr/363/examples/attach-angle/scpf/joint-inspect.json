@@ -1,0 +1,123 @@
+[
+  {
+    "joints": [
+      {
+        "a": {
+          "component": 1,
+          "component_name": "Base",
+          "frame": {
+            "origin": [
+              0.0,
+              0.0,
+              10.0
+            ],
+            "x": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "z": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "occurrence": 2,
+          "occurrence_name": "Base:1",
+          "path": "Base:1",
+          "references": [
+            {
+              "feature": {
+                "id": 3,
+                "name": "Box1",
+                "type": "BoxFeature"
+              },
+              "name": "F3:+z",
+              "role": "face",
+              "role_in_feature": "+z"
+            }
+          ],
+          "resolves": true,
+          "snap": {
+            "face": "F3:+z",
+            "pick": [
+              0.0,
+              0.0,
+              10.0
+            ],
+            "type": "face_center",
+            "x": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          }
+        },
+        "angle": 90.0,
+        "b": {
+          "component": 4,
+          "component_name": "Arm",
+          "frame": {
+            "origin": [
+              0.0,
+              0.0,
+              10.0
+            ],
+            "x": [
+              -1.0,
+              6.123233995736766e-17,
+              0.0
+            ],
+            "z": [
+              0.0,
+              0.0,
+              -1.0
+            ]
+          },
+          "occurrence": 5,
+          "occurrence_name": "Arm:1",
+          "path": "Arm:1",
+          "references": [
+            {
+              "feature": {
+                "id": 6,
+                "name": "Box2",
+                "type": "BoxFeature"
+              },
+              "name": "F6:-z",
+              "role": "face",
+              "role_in_feature": "-z"
+            }
+          ],
+          "resolves": true,
+          "snap": {
+            "face": "F6:-z",
+            "pick": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "type": "face_center",
+            "x": [
+              0.0,
+              -1.0,
+              0.0
+            ]
+          }
+        },
+        "conflicts": [],
+        "dofs": [],
+        "errors": [],
+        "flip": false,
+        "id": 7,
+        "links": [],
+        "name": "Attach Arm to Base",
+        "offset": 0.0,
+        "suppressed": false,
+        "type": "rigid",
+        "values": [],
+        "visible": false
+      }
+    ]
+  }
+]

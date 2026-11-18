@@ -1,0 +1,32 @@
+$ /usr/local/bin/python -m unittest discover -s /workspace/examples/sketch-pattern-mirror/tests -p test_contract.py -k test_circle_seed_stays_one_native_profile_with_pattern_and_mirror -v
+
+test_circle_seed_stays_one_native_profile_with_pattern_and_mirror (test_contract.SketchPatternMirrorQualificationTests.test_circle_seed_stays_one_native_profile_with_pattern_and_mirror) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+OK
+
+matched_tests=1 status=PASS
+
+$ /usr/local/bin/python -m unittest discover -s /workspace/examples/sketch-pattern-mirror/tests -p test_contract.py -k test_slot_seed_stays_one_native_profile_with_pattern_and_mirrors -v
+
+test_slot_seed_stays_one_native_profile_with_pattern_and_mirrors (test_contract.SketchPatternMirrorQualificationTests.test_slot_seed_stays_one_native_profile_with_pattern_and_mirrors) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+OK
+
+matched_tests=1 status=PASS
+
+$ /usr/local/bin/python -m unittest discover -s /workspace/examples/sketch-pattern-mirror/tests -p test_contract.py -k test_pattern_parameters_have_correct_native_units -v
+
+test_pattern_parameters_have_correct_native_units (test_contract.SketchPatternMirrorQualificationTests.test_pattern_parameters_have_correct_native_units) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+OK
+
+matched_tests=1 status=PASS

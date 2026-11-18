@@ -1,0 +1,133 @@
+{
+  "schema_version": 4,
+  "case": "anchored-holes",
+  "title": "Face-relative hole with native pattern",
+  "source_commit": "dc450955a2eb11f4a4c6fed13231ca4f5402fc79",
+  "forge_version": "0.11.0",
+  "solidcraft_version": "0.42.0",
+  "qualified_at": "2026-11-18T22:38:43Z",
+  "status": "pass",
+  "blocked_reason": null,
+  "levels": {
+    "q1": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "scpf/tests/test_geometry_features.py",
+          "test": "test_repeat_linear_is_not_part_of_the_public_shape_api"
+        },
+        {
+          "file": "scpf/tests/test_geometry_features.py",
+          "test": "test_attached_hole_source_uses_native_rectangular_pattern"
+        }
+      ],
+      "evidence": [
+        "q1-case-evidence.txt"
+      ]
+    },
+    "q2": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "examples/anchored-holes/tests/test_contract.py",
+          "test": "test_anchored_holes_command_contract"
+        }
+      ],
+      "commands": 14,
+      "evidence": [
+        "q2-case-evidence.txt"
+      ]
+    },
+    "q3": {
+      "status": "pass",
+      "evidence": [
+        "model.sc",
+        "model.step",
+        "results.json"
+      ]
+    },
+    "q4": {
+      "status": "pass",
+      "evidence": [
+        "joint-inspect.json",
+        "measurements.json",
+        "validation.json"
+      ]
+    },
+    "q5": {
+      "status": "not-required",
+      "required": false,
+      "reason": "No saved-design mutation in this fixture; geometry and feature placement are measured at Q4.",
+      "mutation": null,
+      "evidence": []
+    },
+    "q6": {
+      "status": "pass",
+      "regression_status": "pass",
+      "expected_shape_status": "pass",
+      "required_views": [
+        "top",
+        "right",
+        "iso"
+      ],
+      "images": [
+        "model.png",
+        "goal-front.png",
+        "goal-iso.png",
+        "goal-right.png",
+        "goal-top.png",
+        "model-front.png",
+        "model-iso.png",
+        "model-right.png",
+        "model-top.png",
+        "overlay-front.png",
+        "overlay-iso.png",
+        "overlay-right.png",
+        "overlay-top.png",
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png"
+      ],
+      "evidence": [
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png",
+        "visual-validation.json"
+      ]
+    }
+  },
+  "evidence": {
+    "native_files": [
+      "joint-inspect.json",
+      "measurements.json",
+      "model.sc",
+      "model.step",
+      "q1-case-evidence.txt",
+      "q2-case-evidence.txt",
+      "results.json",
+      "validation.json",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png",
+      "visual-validation.json"
+    ],
+    "images": [
+      "model.png",
+      "goal-front.png",
+      "goal-iso.png",
+      "goal-right.png",
+      "goal-top.png",
+      "model-front.png",
+      "model-iso.png",
+      "model-right.png",
+      "model-top.png",
+      "overlay-front.png",
+      "overlay-iso.png",
+      "overlay-right.png",
+      "overlay-top.png",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png"
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "commands": [
+    {
+      "command": "component.create",
+      "params": {
+        "name": "Block",
+        "grounded": true
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": 40.0,
+        "width": 30.0,
+        "height": 10.0,
+        "corner": [
+          -20.0,
+          -15.0,
+          0
+        ],
+        "body_name": "Block"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "Block",
+        "translate": [
+          40.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  ]
+}
