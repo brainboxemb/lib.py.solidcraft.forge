@@ -1,0 +1,21 @@
+# One Forge example is one CI item. The integration step proves its generated
+# command contract; the native step uses Forge's existing SolidCraft case runner.
+id: assembly-owned-anchor
+kind: example
+watch:
+  - examples/assembly-owned-anchor/**
+  - scpf/scpf/**
+  - qualification/case_runner.py
+  - qualification/cases.py
+  - qualification/native_cases.py
+  - qualification/native_validation.py
+  - qualification/visual_validation.py
+  - scripts/example_ci.py
+strategy:
+  reuse: true
+steps:
+  - id: integration
+    run: [python, -m, unittest, discover, -s, tests, -p, "test_*.py", -v]
+  - id: native
+    run: [python, ../../scripts/example_ci.py, native]
+    outputs: [native-case]
