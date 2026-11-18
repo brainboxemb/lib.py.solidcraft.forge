@@ -1,0 +1,76 @@
+{
+  "case": "corner-anchor",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "Base",
+        "min": [
+          -20,
+          -15,
+          0
+        ],
+        "max": [
+          20,
+          15,
+          20
+        ]
+      },
+      {
+        "label": "Marker",
+        "min": [
+          10,
+          -25,
+          10
+        ],
+        "max": [
+          20,
+          -15,
+          20
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "Base",
+        "min": [
+          -20,
+          -15,
+          0
+        ],
+        "max": [
+          20,
+          15,
+          20
+        ]
+      },
+      {
+        "label": "Marker",
+        "min": [
+          10,
+          -25,
+          10
+        ],
+        "max": [
+          20,
+          -15,
+          20
+        ]
+      }
+    ],
+    "required_views": [
+      "iso",
+      "front",
+      "right"
+    ],
+    "visual_features": [],
+    "bounds_sufficient": true,
+    "bounds_reason": "The base and marker positions show the intended corner placement. The saved SolidCraft model is then changed to confirm that the marker keeps following that corner."
+  },
+  "solidcraft_only": {
+    "native_expectation": "The marker sits on the front-top-right corner of the base.",
+    "generated_relationship": "joint.create receives SolidCraft edge/on/corner picks so the saved design can re-find the corner after geometry changes.",
+    "q5_required": true,
+    "q5_reason": "Change the base from 40x20 to 80x40 mm; the marker must follow both the new right side and new top.",
+    "mutation": "Change the base from 40x20 to 80x40 mm; the marker must follow both the new right side and new top."
+  }
+}
