@@ -107,7 +107,7 @@ set -euo pipefail
 python scripts/solidcraft_snapshot.py \
   --out /snapshot \
   --version {solidcraft_version!r} \
-  --source-ref {'v' + solidcraft_version!r}
+  --source-ref {('v' + solidcraft_version)!r}
 diff -ru docs/vendor/solidcraft/{solidcraft_version}/runtime /snapshot
 python scripts/solidcraft_snapshot.py \
   --check-pinned docs/vendor/solidcraft/{solidcraft_version}/runtime
