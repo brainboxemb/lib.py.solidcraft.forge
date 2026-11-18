@@ -1,15 +1,17 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "stage": "stable",
   "source_ref": "main",
-  "source_commit": "8f8aea1b1326b424380cc9b04eb53ac979138783",
+  "source_commit": "bc4c7155a7bc3563101985eaba373be88819c936",
   "pull_request": null,
-  "forge_version": "0.10.0",
+  "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "workflow_run_id": "44339565493",
+  "workflow_run_id": "44374555949",
+  "build_commit": "8e90a1be42c5a28766d8fedb7592119475dfffab",
   "qualification": {
-    "level": "q1-q6-full",
-    "status": "pass"
+    "level": "per-case",
+    "status": "pass",
+    "source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023"
   },
-  "generated_at": "2026-11-18T15:51:33.119984Z"
+  "generated_at": "2026-11-18T18:53:25.761633Z"
 }

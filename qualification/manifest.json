@@ -1,9 +1,9 @@
 {
-  "library_commit": "8f8aea1b1326b424380cc9b04eb53ac979138783",
-  "qualification_commit": "8f8aea1b1326b424380cc9b04eb53ac979138783",
-  "forge_version": "0.10.0",
+  "library_commit": "bc4c7155a7bc3563101985eaba373be88819c936",
+  "qualification_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+  "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T15:51:23Z",
+  "qualified_at": "2026-11-18T17:46:44Z",
   "native_verified": true,
   "cases": {
     "simple-box": {
@@ -209,6 +209,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:9db82b3f80f8ec5fa11906e513ec311fb4f5f5b65a136ac05e77b07e250bb1a4",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 3
     },
@@ -512,6 +516,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:2e6dcdb8d698e989f58b3f3dde4c11731fff58b8baab87e52ac1ad5de3c89744",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 4
     },
@@ -849,6 +857,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:064e1648c0fe29cd2d406fe569f039017a2497429ed522102b5c6303ef8361ea",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 3
     },
@@ -1108,6 +1120,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:3d0e7ecc88b790d26e46148887542abd35ebd1671ab9df38129f44f71227730a",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 7
     },
@@ -1368,6 +1384,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:f91411ed6f0f0349e941548e20926ea9bd4ac756d31fa67dead095e923ccaf81",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 0
     },
@@ -1541,8 +1561,6 @@
         "results.json",
         "measurements-shared-width-100.json",
         "measurements.json",
-        "parameters-export-results.json",
-        "parameters.json",
         "joint-inspect.json",
         "model-shared-width-100.sc",
         "model.sc",
@@ -1680,6 +1698,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:fc857fead45926f2112cb8824247de374cef7dbb1f84c7f9754bc677a3985e62",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 5,
       "parameter_count": 3
     },
@@ -1912,6 +1934,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:68b8ca10bfc0978e279a3058221d1022a21812f30a68699d04f74e6f6ff48ff7",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 2,
       "parameter_count": 2
     },
@@ -2138,6 +2164,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:e5d39c81cd822906a5467badd0e4c15c5861e64707b88fc4bd6274eebaf372fd",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 2,
       "parameter_count": 0
     },
@@ -2422,6 +2452,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:673d9f7cc39456dd2aca919be6bf4dd28338af3504690b75c8a9bf1c5ca6f213",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 4,
       "parameter_count": 1
     },
@@ -2648,6 +2682,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:0614db43fa6dd66e0a1d975fc199247ac8eace7cb90bab5c42ec88ebbf4342b0",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 2,
       "parameter_count": 0
     },
@@ -2902,6 +2940,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:d5078e34b02da323ac5a23e8c6cf353550ad39b076630547e6f764e685fea3ac",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 3,
       "parameter_count": 0
     },
@@ -3128,6 +3170,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:92e6c4d47321c89fda0e51959c7bdf1dd4be3a086c2f7af08a777d0e76c189f8",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 2,
       "parameter_count": 0
     },
@@ -3360,6 +3406,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:d27f4501254262cee3ccaeb8ab1225fd3af11dc8dec2cee37fa055d9346f2e45",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 2,
       "parameter_count": 1
     },
@@ -3592,6 +3642,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:53fedcf64f911eb95ae8d6f3eb510523d9b7b650d38abc500abc53b39e0e6bfe",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 2,
       "parameter_count": 1
     },
@@ -3824,6 +3878,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:00710f846531195da56a04c87e799ccf691d8dda58a13e518adf156334732260",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 2,
       "parameter_count": 1
     },
@@ -4056,6 +4114,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:2eceb92a35281404716c2a8f4126a25a9aed576e4bb66a89140f3eef49c00218",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 2,
       "parameter_count": 2
     },
@@ -4288,6 +4350,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:5f3789306fb00247957bffd77016567c0ba81fe67d7d3370b24b6916edacad1f",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 2,
       "parameter_count": 2
     },
@@ -4546,6 +4612,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:6950c5ff244d923d00e8f0d1642a18e88f29d0a0f1ad81a7180c20169e182c00",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 3,
       "parameter_count": 2
     },
@@ -4908,6 +4978,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:dd4a16bcb7ab1348138a4305e8310f9794fdec61af76ef99e38fe7661ba9e8df",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 5,
       "parameter_count": 3
     },
@@ -5426,6 +5500,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:a0aac770e1279ad8648f34c5280ef3a35e584c749b976ec22e2e6cd38ce45a47",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 9,
       "parameter_count": 3
     },
@@ -6048,6 +6126,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:20150511aa555b7ccebe45438ab1e7abe10d81a38361c47228f3c1fa3e79160c",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 9,
       "parameter_count": 3
     },
@@ -6306,6 +6388,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:9247b89d1fb8bd61c03de8c198c59af41377431d82ce9a4e3384b169711cccf8",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 3,
       "parameter_count": 2
     },
@@ -6535,6 +6621,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:27ead8cce930b114a818e6f7d7ab5d57e9f32a22b36e215e31f2048f48629ede",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 0
     },
@@ -6750,6 +6840,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:6a6e10df96fe335ff84914636ebf2a80808b5d65ac58121c2f1833504728ee28",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 3
     },
@@ -7721,6 +7815,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:8d662c13fe0266b3f8a1ab2a537591913893a6233f262134db32e07cb3fb5156",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 6
     },
@@ -8073,6 +8171,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:0497ece27afb706cff106b5e58136ebb01dd7b2d8e6dc36184b86f9c31e0f21c",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 3
     },
@@ -8558,6 +8660,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:82f5dfaa3fe13db065fba221a66e80b3dede44ce25ab30b89af7cf608279d825",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 2
     },
@@ -9075,6 +9181,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:a15749721ba7e7454a5e66ecfe51f950fbedef155bf39e1a832a1afc1fc513c1",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 4
     },
@@ -9689,6 +9799,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:a1c7ac2f2f5ceb375975df23631a5defe2468e2280e4bec4836ab6831d9b97fb",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 3
     },
@@ -9924,6 +10038,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:dd20bfd7b7a71b488cc8843a9c0f34cfe03b4429e552ad722f65feb828d19969",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 8
     },
@@ -10171,6 +10289,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:ad0e8290c0ad159ceb461580f0db1e5f34677d2153fcb69cfc9c3c437e6c1127",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 0
     },
@@ -10403,6 +10525,10 @@
         }
       },
       "solidcraft_version": "0.42.0",
+      "evidence_source_commit": "b26fc53561c2f0856a5909dd4e30d30eef7ae023",
+      "input_hash": "sha256:b33ba795e1d72a124ce2f11e981a6c80443465220ba3d5160c09f3d07c900d4b",
+      "verification_level": "q1-q6-full",
+      "evidence_build_scope": "main",
       "body_count": 1,
       "parameter_count": 3
     }
