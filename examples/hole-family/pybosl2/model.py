@@ -16,7 +16,7 @@ counterbore = (
 
 countersink = (
     cyl(diameter=6, height=16).translate([15, 0, 6])
-    | cyl(d1=6, d2=12, height=3, anchor=Anchor.BOTTOM).translate([15, 0, 9])
+    | cyl(diameter1=6, diameter2=12, height=3, anchor=Anchor.BOTTOM).translate([15, 0, 9])
 )
 
 tap_drill = cyl(diameter=5, height=16).translate([45, 0, 6])
