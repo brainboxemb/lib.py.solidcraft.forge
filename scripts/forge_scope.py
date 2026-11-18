@@ -128,7 +128,7 @@ def make_plan(
             "contracts": False,
             "needs_image": True,
             "site_only": False,
-            "release": event_name == "workflow_dispatch",
+            "release": False,
         }
 
     if event_name not in {"pull_request", "push"}:
@@ -175,6 +175,11 @@ def make_plan(
         or contracts
     )
 
+    release = (
+        operation == "main"
+        and "scpf/pyproject.toml" in selected_paths
+    )
+
     return {
         "operation": operation,
         "risk": risk,
@@ -185,7 +190,7 @@ def make_plan(
         "contracts": contracts,
         "needs_image": needs_image,
         "site_only": site_only,
-        "release": False,
+        "release": release,
     }
 
 
