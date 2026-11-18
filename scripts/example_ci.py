@@ -36,6 +36,16 @@ def case_output() -> Path:
     return Path(value).resolve() / "case"
 
 
+def source_sha() -> str:
+    """Return the exact source commit represented by this item output."""
+
+    return subprocess.check_output(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        text=True,
+    ).strip()
+
+
 def qualification_image() -> str:
     """Return the immutable native runtime image selected by Forge."""
 
@@ -90,6 +100,22 @@ def run_native() -> None:
             f"/workspace/{relative_out.as_posix()}",
             "--from",
             "replay",
+        ],
+        cwd=ROOT,
+        check=True,
+    )
+
+    # Keep the durable generic item self-contained. This normalization consumes
+    # only the staged files just produced above and does not rerun SolidCraft.
+    subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "qualification" / "finalize_item_result.py"),
+            slug,
+            "--out",
+            str(out),
+            "--source-sha",
+            source_sha(),
         ],
         cwd=ROOT,
         check=True,
