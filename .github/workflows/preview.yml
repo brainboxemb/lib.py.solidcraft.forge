@@ -198,8 +198,34 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  publish-preview:
+    name: publish-preview
+    needs: preview
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    concurrency:
+      group: scpf-pages-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: scpf-preview-pr-${{ github.event.pull_request.number }}
+          path: output/site
+
+      - name: Verify built PR preview provenance
+        shell: bash
+        run: |
+          python site/provenance.py verify \
+            --file output/site/provenance.json \
+            --stage preview \
+            --source-commit "${{ github.event.pull_request.head.sha }}"
+
       - name: Stage PR preview output
-        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -210,7 +236,6 @@ jobs:
           commit_message: "Stage fast preview PR #${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}"
 
       - name: Checkout staged PR preview
-        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/checkout@v4
         with:
           ref: preview-output
@@ -218,7 +243,6 @@ jobs:
           fetch-depth: 1
 
       - name: Verify staged PR preview
-        if: github.event.pull_request.head.repo.full_name == github.repository
         shell: bash
         run: |
           python site/provenance.py verify \
@@ -227,7 +251,6 @@ jobs:
             --source-commit "${{ github.event.pull_request.head.sha }}"
 
       - name: Publish browseable PR preview from staged output
-        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
