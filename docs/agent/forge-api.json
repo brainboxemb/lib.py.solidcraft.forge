@@ -234,10 +234,31 @@
     },
     "Hole": {
       "kind": "callable",
-      "summary": "Create a hole feature, optionally directional and countersunk.",
+      "summary": "Create a simple cylindrical hole feature.",
       "reference": "reference/feature-constructors/#Hole",
       "guide": "guide/features/#features",
-      "signature": "Hole(*, d, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None, countersink_d=None, countersink_angle=90, countersink_recess=0)"
+      "signature": "Hole(*, d, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None)"
+    },
+    "CounterboreHole": {
+      "kind": "callable",
+      "summary": "Create a hole with a cylindrical recess at its entry face.",
+      "reference": "reference/feature-constructors/#CounterboreHole",
+      "guide": "guide/features/#features",
+      "signature": "CounterboreHole(*, d, counterbore_d, counterbore_depth, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None)"
+    },
+    "CountersinkHole": {
+      "kind": "callable",
+      "summary": "Create a hole with a conical countersink at its entry face.",
+      "reference": "reference/feature-constructors/#CountersinkHole",
+      "guide": "guide/features/#features",
+      "signature": "CountersinkHole(*, d, countersink_d, countersink_angle=90, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None)"
+    },
+    "ThreadedHole": {
+      "kind": "callable",
+      "summary": "Create a tapped hole with native thread intent.",
+      "reference": "reference/feature-constructors/#ThreadedHole",
+      "guide": "guide/features/#features",
+      "signature": "ThreadedHole(*, thread, depth=<Depth.THROUGH_ALL: 'through_all'>, d=None, direction=None, hand='right', thread_depth=None, modeled=False, ease_out=None)"
     },
     "Lip": {
       "kind": "callable",

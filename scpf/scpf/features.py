@@ -22,6 +22,7 @@ from .core import (
     command_value,
     number_text,
     parameters_in,
+    _hole_spec,
 )
 from .compiler import ModelError, _command, _collect, _param_commands, _require_positive
 from .placement import (
@@ -78,14 +79,23 @@ def _is_feature_tree(shape):
 
 
 def _hole_commands(feature, position, name, refs=None):
-    """Compile an explicitly positioned Hole to one or more native features."""
+    """Compile one explicitly positioned Hole-family feature."""
     if feature.kind != "hole":
-        raise ModelError("native hole operation requires Hole")
-    (
-        diameter, depth, direction, countersink_d, countersink_angle,
-        countersink_recess,
-    ) = feature.data
-    _require_positive(diameter, "hole diameter")
+        raise ModelError("native hole operation requires a Hole-family feature")
+    spec = _hole_spec(feature)
+    hole_type = spec["type"]
+    diameter = spec["diameter"]
+    depth = spec["depth"]
+    direction = spec["direction"]
+    counterbore_d = spec["counterbore_diameter"]
+    counterbore_depth = spec["counterbore_depth"]
+    countersink_d = spec["countersink_diameter"]
+    countersink_angle = spec["countersink_angle"]
+    thread = spec["thread"]
+    hand = spec["hand"]
+    thread_depth = spec["thread_depth"]
+    modeled = spec["modeled"]
+    ease_out = spec["ease_out"]
 
     point = tuple(position)
     concrete_point = [pv(v) for v in point]
@@ -96,90 +106,74 @@ def _hole_commands(feature, position, name, refs=None):
         _vector(direction, "hole direction") if direction is not None else None
     )
 
-    def simple_params(at, hole_diameter, hole_depth):
-        params = dict(
-            position=(
-                [command_value(v) for v in at] if direction_vector is not None
-                else [pv(v) for v in at]
-            ),
-            diameter=command_value(hole_diameter),
-            targets=[name],
-        )
-        if hole_depth is not Depth.THROUGH_ALL:
-            _require_positive(hole_depth, "hole depth")
-            params["depth"] = command_value(hole_depth)
-        if direction_vector is not None:
-            params["direction"] = direction_vector
-        if refs:
-            params["references"] = refs
-        return params
+    params = {
+        "position": (
+            [command_value(v) for v in point]
+            if direction_vector is not None
+            else [pv(v) for v in point]
+        ),
+        "targets": [name],
+    }
+    if diameter is not None:
+        _require_positive(diameter, "hole diameter")
+        params["diameter"] = command_value(diameter)
+    if depth is not Depth.THROUGH_ALL:
+        _require_positive(depth, "hole depth")
+        params["depth"] = command_value(depth)
+    if direction_vector is not None:
+        params["direction"] = direction_vector
+    if refs:
+        params["references"] = refs
 
-    if countersink_d is None:
-        return [_command("solid.hole", **simple_params(point, diameter, depth))]
-
-    _require_positive(countersink_d, "countersink diameter")
-    if pv(countersink_d) <= pv(diameter):
-        raise ModelError("countersink diameter must exceed hole diameter")
-    angle = pv(countersink_angle)
-    if not isfinite(angle) or angle <= 0 or angle >= 180:
-        raise ModelError("countersink angle must be between 0 and 180 degrees")
-
-    recess = pv(countersink_recess)
-    if recess < 0:
-        raise ModelError("countersink recess cannot be negative")
-
-    commands = []
-    entry = point
-    remaining_depth = depth
-
-    if recess:
-        if direction_vector is None:
+    if hole_type == "simple":
+        pass
+    elif hole_type == "counterbore":
+        _require_positive(counterbore_d, "counterbore diameter")
+        _require_positive(counterbore_depth, "counterbore depth")
+        if pv(counterbore_d) <= pv(diameter):
             raise ModelError(
-                "a recessed countersink requires an explicit hole direction"
+                "counterbore diameter must exceed hole diameter"
             )
-        commands.append(_command(
-            "solid.hole",
-            **simple_params(point, countersink_d, countersink_recess),
-        ))
-        length = sum(v * v for v in direction_vector) ** 0.5
-        unit = tuple(v / length for v in direction_vector)
-        # A hole only moves along its axis.  Keep the other coordinates
-        # unchanged instead of generating CAD expressions like
-        # "(head_recess * 0)", which are misleading and unnecessary.
-        entry = tuple(
-            point[i] if abs(unit[i]) < 1e-12
-            else _combine(point[i], countersink_recess * unit[i])
-            for i in range(3)
+        params.update(
+            type="counterbore",
+            cb_diameter=command_value(counterbore_d),
+            cb_depth=command_value(counterbore_depth),
         )
-        if depth is not Depth.THROUGH_ALL:
-            remaining_depth = _combine(depth, -countersink_recess)
-            if pv(remaining_depth) <= 0:
-                raise ModelError(
-                    "hole depth must extend beyond the countersink recess"
-                )
+    elif hole_type == "countersink":
+        _require_positive(countersink_d, "countersink diameter")
+        if pv(countersink_d) <= pv(diameter):
+            raise ModelError(
+                "countersink diameter must exceed hole diameter"
+            )
+        angle = pv(countersink_angle)
+        if not isfinite(angle) or angle <= 0 or angle >= 180:
+            raise ModelError(
+                "countersink angle must be between 0 and 180 degrees"
+            )
+        params.update(
+            type="countersink",
+            cs_diameter=command_value(countersink_d),
+            cs_angle=command_value(countersink_angle),
+        )
+    elif hole_type == "threaded":
+        params["thread"] = thread
+        if hand != "right":
+            params["hand"] = hand
+        if thread_depth is not None:
+            _require_positive(thread_depth, "thread depth")
+            params["thread_depth"] = command_value(thread_depth)
+        if modeled:
+            params["modeled"] = True
+        if ease_out is not None:
+            params["ease_out"] = (
+                command_value(ease_out)
+                if not isinstance(ease_out, str)
+                else ease_out
+            )
+    else:
+        raise ModelError(f"unsupported Hole-family type {hole_type}")
 
-    params = simple_params(entry, diameter, remaining_depth)
-    params.update(
-        type="countersink",
-        cs_diameter=command_value(countersink_d),
-        cs_angle=command_value(countersink_angle),
-    )
-    # References describe the original entry face. They do not apply to the
-    # recessed floor created by the first command.
-    if recess:
-        params.pop("references", None)
-    commands.append(_command("solid.hole", **params))
-    # Native SolidCraft 0.30.1 fails to Boolean-cut a +X countersink
-    # if its counterbore has already been cut.  Both subtractive cuts
-    # commute geometrically, so make the countersink first and its
-    # shallow counterbore second.  Other orientations retain the
-    # straightforward counterbore-then-countersink feature sequence.
-    if (recess and direction_vector is not None
-            and direction_vector[0] > 0
-            and direction_vector[1] == 0
-            and direction_vector[2] == 0):
-        return [commands[-1], *commands[:-1]]
-    return commands
+    return [_command("solid.hole", **params)]
 
 
 
@@ -468,15 +462,15 @@ def _attached_hole_commands(child, target, parent_anchor, resolved, name):
     if parent_anchor is not Anchor.TOP:
         raise ModelError("Hole.attach() currently starts drilling from Anchor.TOP")
 
-    (
-        diameter, depth, hole_direction, countersink_d, countersink_angle,
-        countersink_recess,
-    ) = feature.data
+    spec = _hole_spec(feature)
+    hole_type = spec["type"]
+    diameter = spec["diameter"]
+    depth = spec["depth"]
+    hole_direction = spec["direction"]
     _require_positive(diameter, "hole diameter")
-    if (hole_direction is not None or countersink_d is not None
-            or pv(countersink_recess) != 0):
+    if hole_type != "simple" or hole_direction is not None:
         raise ModelError(
-            "directional or countersunk Hole currently requires explicit .at() placement"
+            "non-simple or directional Hole-family features currently require explicit .at() placement"
         )
     (_, _), (_, _, origin_z), thickness = _base_rectangle(target)
     base_top = thickness if pv(origin_z) == 0 else _combine(origin_z, thickness)
@@ -530,7 +524,7 @@ def _attached_hole_commands(child, target, parent_anchor, resolved, name):
 
     operations = [_command("sketch.create", **plane)]
     for primitive, position, _refs in resolved:
-        hole_diameter = primitive.data[0]
+        hole_diameter = _hole_spec(primitive)["diameter"]
         operations.append(_command(
             "sketch.circle.center",
             center=position[:2],

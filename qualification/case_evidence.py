@@ -50,6 +50,28 @@ CASE_EVIDENCE = {
             ),
         ],
     },
+    "hole-family": {
+        "q1": [
+            _target(
+                "scpf/tests/test_hole_family.py",
+                "test_all_hole_variants_lower_one_to_one_to_native_hole",
+            ),
+            _target(
+                "scpf/tests/test_hole_family.py",
+                "test_hole_family_validates_feature_specific_dimensions",
+            ),
+            _target(
+                "scpf/tests/test_hole_family.py",
+                "test_threaded_hole_keeps_cosmetic_and_modeled_intent_distinct",
+            ),
+        ],
+        "q2": [
+            _target(
+                "qualification/tests/test_hole_family.py",
+                "test_hole_family_uses_four_native_hole_features",
+            ),
+        ],
+    },
     "top-sketch-after-chamfer": {
         "q1": [
             _target(

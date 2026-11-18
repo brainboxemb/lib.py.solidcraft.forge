@@ -30,7 +30,10 @@ This is distinct from assembly `Anchor` semantics.
 ## SolidCraft mapping
 
 Forge expands this small primitive repetition before lowering and emits one
-native sketch/cut. This is intentionally not a SolidCraft Pattern feature.
+native Sketch plus one cut Extrude. This case qualifies face-relative repeated
+placement; it intentionally does **not** qualify SolidCraft's native
+`solid.hole` feature. Native Hole features are qualified separately by
+`hole-family`.
 
 ## Acceptance criteria
 

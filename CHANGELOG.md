@@ -8,6 +8,18 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- Add explicit native `Hole`, `CounterboreHole`, `CountersinkHole` and
+  `ThreadedHole` features with shared body × feature contract tests and a
+  dedicated `hole-family` qualification (issue #302).
+
+### Changed
+
+- Remove countersink-specific optional arguments from `Hole`; countersink,
+  counterbore and thread intent now use their dedicated constructors.
+
+
 ## [0.9.1] - 2026-11-18
 
 ### Fixed
