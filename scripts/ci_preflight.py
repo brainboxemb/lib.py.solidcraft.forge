@@ -60,7 +60,6 @@ def check_contract_tests() -> None:
     for pattern in (
         "test_preview_scope.py",
         "test_generated_output.py",
-        "test_site_publishing.py",
     ):
         run(
             [
@@ -75,6 +74,20 @@ def check_contract_tests() -> None:
                 "-v",
             ]
         )
+
+    run(
+        [
+            sys.executable,
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "site/tests",
+            "-p",
+            "test_publishing.py",
+            "-v",
+        ]
+    )
 
 
 def check_site(source_sha: str, out: Path) -> None:
