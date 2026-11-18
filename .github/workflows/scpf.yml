@@ -242,6 +242,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Bootstrap pinned tool.cad.ci
+        run: python scripts/bootstrap_cad_ci.py
+
       - name: Reconcile generated PR namespaces
         env:
           GH_TOKEN: ${{ github.token }}
