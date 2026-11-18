@@ -51,7 +51,7 @@ class GeneratedOutputTests(unittest.TestCase):
             (output / "simple-box.json").write_text('{"commands": []}\n', encoding="utf-8")
             (output / "native" / "simple-box" / "model.step").write_bytes(b"step")
 
-            with patch.object(self.module, "CASE_SLUGS", ("simple-box", "components")), \
+            with patch.object(self.module, "TECHNICAL_CASE_SLUGS", ("simple-box", "components")), \
                  patch.object(self.module, "case_input_hash", return_value="sha256:" + "1" * 64):
                 data = self.module.assemble_build(
                     output,
@@ -89,9 +89,10 @@ class GeneratedOutputTests(unittest.TestCase):
                 "keep", encoding="utf-8"
             )
 
-            def record(commit, level):
+            def record(commit, level, scope):
                 return {
                     "source_commit": commit,
+                    "build_scope": scope,
                     "input_hash": "sha256:" + "2" * 64,
                     "verification_level": level,
                     "status": "pass",
@@ -109,8 +110,8 @@ class GeneratedOutputTests(unittest.TestCase):
                 "verification": {"level": "q1-q6-full", "status": "pass"},
                 "generated_at": "2026-01-01T00:00:00Z",
                 "cases": {
-                    "simple-box": {"implementations": {"scpf": record("old", "q1-q6-full")}},
-                    "components": {"implementations": {"scpf": record("old", "q1-q6-full")}},
+                    "simple-box": {"implementations": {"scpf": record("old", "q1-q6-full", "main")}},
+                    "components": {"implementations": {"scpf": record("old", "q1-q6-full", "main")}},
                 },
             }
             overlay_manifest = {
@@ -120,13 +121,13 @@ class GeneratedOutputTests(unittest.TestCase):
                 "source_commit": "new",
                 "pull_request": 42,
                 "cases": {
-                    "simple-box": {"implementations": {"scpf": record("new", "affected-q1-q6")}},
+                    "simple-box": {"implementations": {"scpf": record("new", "affected-q1-q6", "pr/42")}},
                 },
             }
             (main / "build.json").write_text(json.dumps(main_manifest), encoding="utf-8")
             (overlay / "build.json").write_text(json.dumps(overlay_manifest), encoding="utf-8")
 
-            with patch.object(self.module, "CASE_SLUGS", ("simple-box", "components")):
+            with patch.object(self.module, "TECHNICAL_CASE_SLUGS", ("simple-box", "components")):
                 merged = self.module.promote_overlay(
                     main,
                     overlay,
@@ -192,7 +193,7 @@ class GeneratedOutputTests(unittest.TestCase):
                 json.dumps(manifest),
                 encoding="utf-8",
             )
-            with patch.object(self.module, "CASE_SLUGS", ("simple-box", "components")):
+            with patch.object(self.module, "TECHNICAL_CASE_SLUGS", ("simple-box", "components")):
                 merged = self.module.promote_overlay(
                     legacy,
                     overlay,
