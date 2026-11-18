@@ -1224,14 +1224,13 @@ def page(title, body, *, stylesheet, home, cheatsheet):
 
 
 def build_scope_from_environment():
-    """Return the generated build scope for this site build."""
-    explicit = os.environ.get("SCPF_BUILD_SCOPE", "").strip("/")
-    if explicit:
-        return explicit
-    match = re.fullmatch(r"refs/pull/(\d+)/(?:merge|head)", os.environ.get("GITHUB_REF", ""))
-    if match:
-        return f"pr/{match.group(1)}"
-    return "main"
+    """Return the technical evidence scope for this site build.
+
+    Presentation-only builds reuse the last qualified main output. A workflow
+    that actually produces new PR technical evidence must set
+    SCPF_BUILD_SCOPE=pr/<number> explicitly.
+    """
+    return os.environ.get("SCPF_BUILD_SCOPE", "main").strip("/") or "main"
 
 
 def build_blob_url(scope, relative=""):

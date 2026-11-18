@@ -729,6 +729,7 @@ def check(
             "https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/"
         )
         assert build_prefix in page_text, slug
+        assert "/blob/build/main/examples/" in page_text, slug
         if require_references:
             manifest_case = qualification_manifest["cases"][slug]
             evidence = manifest_case["reference_evidence"]
