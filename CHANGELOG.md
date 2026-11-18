@@ -8,6 +8,14 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Removed
+
+- Removed the obsolete `Shape.repeat_linear()` / `linear_repeat` Forge-side
+  repetition path. Repeated history features use native rectangular or circular
+  patterns instead. The `anchored-holes` qualification now proves one
+  face-attached source cut plus one native rectangular pattern (issue #256).
+
+
 ## [0.10.0] - 2026-11-18
 
 ### Added

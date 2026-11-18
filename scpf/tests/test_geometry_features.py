@@ -13,24 +13,37 @@ from scpf import Sketch
 ROOT = Path(__file__).resolve().parents[2]
 
 class GeometryFeatures(unittest.TestCase):
-    def test_anchored_holes_example_compiles_to_one_holes_sketch(self):
+    def test_anchored_holes_example_uses_native_pattern_history(self):
         commands = run_script(
-            ROOT / "examples/anchored-holes/scpf/model.py")["commands"]
+            ROOT / "examples/anchored-holes/scpf/model.py"
+        )["commands"]
+
         self.assertEqual(
-            [c["params"]["name"] for c in commands
-             if c["command"] == "sketch.create"],
-            ["Base", "Holes"],
+            [
+                row["params"]["name"]
+                for row in commands
+                if row["command"] == "sketch.create"
+            ],
+            ["Base", "Hole"],
         )
-        centers = [
-            c["params"]["center"]
-            for c in commands
-            if c["command"] == "sketch.circle.center"
+        circles = [
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.circle.center"
         ]
-        self.assertEqual(len(centers), 2)
-        self.assertTrue(all("spacing" in str(center[1]) for center in centers))
-        self.assertFalse(any(c["command"] == "solid.hole" for c in commands))
-        self.assertEqual(commands[-1]["command"], "solid.extrude")
-        self.assertEqual(commands[-1]["params"]["operation"], "cut")
+        self.assertEqual(len(circles), 1)
+        self.assertEqual(circles[0]["diameter"], 8)
+
+        patterns = [
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.pattern.rectangular"
+        ]
+        self.assertEqual(len(patterns), 1)
+        self.assertEqual(patterns[0]["features"], ["Hole"])
+        self.assertEqual(patterns[0]["dir1"], [0.0, 1.0, 0.0])
+        self.assertEqual(patterns[0]["count1"], 2)
+        self.assertEqual(patterns[0]["spacing1"], "spacing")
 
     def test_named_edge_selection_and_explicit_edge_points(self):
         from scpf.core import Box, Edges
@@ -63,35 +76,52 @@ class GeometryFeatures(unittest.TestCase):
         self.assertEqual((negative["distance"], negative["direction"]), ("height", "negative"))
         self.assertEqual((symmetric["distance"], symmetric["direction"]), ("height", "symmetric"))
 
-    def test_attached_hole_repeat_builds_one_sketch_cut(self):
-        from scpf.core import Axis, Depth, Faces, Hole, Rectangle2D, Parameter
+    def test_attached_hole_source_uses_native_rectangular_pattern(self):
+        from scpf.core import Anchor, Axis, Depth, Circle2D, Rectangle2D, Parameter
         from scpf.compiler import compile_model
+
         width = Parameter("width", 100)
         depth = Parameter("depth", 60)
         thickness = Parameter("thickness", 10)
-        with Sketch(name="Base", plane="XY") as sketch:
-            Rectangle2D(width, depth)
-        plate = sketch.extrude(thickness)
-        holes = Hole(d=8, depth=Depth.THROUGH_ALL).repeat_linear(
-            count=2, spacing=40, axis=Axis.Y
-        ).on(plate, face=Faces.TOP)
-        commands = compile_model(plate + holes, "Plate")["commands"]
+        spacing = Parameter("spacing", 40)
 
-        sketches = [c["params"]["name"] for c in commands
-                    if c["command"] == "sketch.create"]
-        self.assertEqual(sketches, ["Base", "Holes"])
-        circles = [c["params"] for c in commands
-                   if c["command"] == "sketch.circle.center"]
-        centers = [c["center"] for c in circles]
-        self.assertEqual(len(centers), 2)
-        self.assertTrue(all("width" in str(center[0]) for center in centers))
-        self.assertTrue(all("depth" in str(center[1]) for center in centers))
-        self.assertTrue(all(c["diameter"] == 8 for c in circles))
-        self.assertFalse(any(c["command"] == "solid.hole" for c in commands))
-        self.assertEqual(commands[-1]["command"], "solid.extrude")
-        self.assertEqual(commands[-1]["params"]["operation"], "cut")
-        self.assertEqual(commands[-1]["params"]["direction"], "positive")
-        self.assertEqual(commands[-1]["params"]["distance"], "thickness")
+        with Sketch(name="Base", plane="XY") as sketch:
+            profile = Rectangle2D(width, depth)
+            sketch.add(profile, offset=(width / 2, depth / 2))
+        plate = sketch.extrude(thickness)
+
+        with Sketch(name="Hole", on=plate, parent=Anchor.TOP) as hole:
+            hole.add(Circle2D(d=8), offset=(0, -(spacing / 2)))
+
+        source_cut = hole.extrude(Depth.THROUGH_ALL)
+        plate = plate - source_cut
+        model = plate.rectangular_pattern(
+            source_cut,
+            count=2,
+            spacing=spacing,
+            direction=Axis.Y,
+        )
+
+        commands = compile_model(model, "Plate")["commands"]
+        sketches = [
+            row["params"]["name"]
+            for row in commands
+            if row["command"] == "sketch.create"
+        ]
+        self.assertEqual(sketches, ["Base", "Hole"])
+        self.assertEqual(
+            [row["command"] for row in commands].count("sketch.circle.center"),
+            1,
+        )
+        pattern = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.pattern.rectangular"
+        )
+        self.assertEqual(pattern["features"], ["Hole"])
+        self.assertEqual(pattern["dir1"], [0.0, 1.0, 0.0])
+        self.assertEqual(pattern["count1"], 2)
+        self.assertEqual(pattern["spacing1"], "spacing")
 
     def test_native_rectangular_feature_pattern_command(self):
         from scpf.core import Anchor, Axis, Box, Parameter, Rectangle2D
@@ -316,23 +346,44 @@ class GeometryFeatures(unittest.TestCase):
         self.assertIs(top.data[3], Anchor.BOTTOM)
         self.assertIs(bottom.data[3], Anchor.BOTTOM)
 
-    def test_symmetric_anchored_cylinder_repeat_follows_plate_dimensions(self):
-        from scpf.core import Anchor, Axis, Cylinder, Rectangle2D
+    def test_centered_hole_pair_uses_one_source_cut_and_native_pattern(self):
+        from scpf.core import Anchor, Axis, Circle2D, Depth, Rectangle2D
         from scpf.compiler import compile_model
+
         with Sketch(name="Base", plane="XY") as sketch:
             Rectangle2D(100, 60)
-        base = sketch.extrude(10)
-        holes = Cylinder(d=8, h=12).repeat_linear(
-            count=2, spacing=40, axis=Axis.Y
-        ).attach(base, parent=Anchor.CENTER, child=Anchor.CENTER)
-        commands = compile_model(base - holes, "Plate")["commands"]
-        cylinders = [c["params"] for c in commands
-                     if c["command"] == "solid.cylinder"]
-        self.assertEqual(len(cylinders), 2)
-        self.assertEqual([c["base"][0] for c in cylinders], [0, 0])
-        self.assertEqual([c["base"][1] for c in cylinders], [-20, 20])
-        self.assertEqual([c["base"][2] for c in cylinders], [-1, -1])
-        self.assertEqual([c["operation"] for c in cylinders], ["cut", "cut"])
+        plate = sketch.extrude(10)
+
+        with Sketch(name="Hole", on=plate, parent=Anchor.TOP) as hole:
+            hole.add(Circle2D(d=8), offset=(0, -20))
+
+        source_cut = hole.extrude(Depth.THROUGH_ALL)
+        plate = plate - source_cut
+        model = plate.rectangular_pattern(
+            source_cut,
+            count=2,
+            spacing=40,
+            direction=Axis.Y,
+        )
+        commands = compile_model(model, "Plate")["commands"]
+
+        circles = [
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.circle.center"
+        ]
+        self.assertEqual(len(circles), 1)
+        self.assertEqual(circles[0]["center"], [0, -20])
+
+        pattern = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.pattern.rectangular"
+        )
+        self.assertEqual(pattern["features"], ["Hole"])
+        self.assertEqual(pattern["dir1"], [0.0, 1.0, 0.0])
+        self.assertEqual(pattern["count1"], 2)
+        self.assertEqual(pattern["spacing1"], 40)
 
     def test_attached_boss_tracks_plate_top_and_offsets(self):
         from scpf.core import Cylinder, Faces, Rectangle2D, Parameter
@@ -359,25 +410,19 @@ class GeometryFeatures(unittest.TestCase):
         )
 
     def test_relative_anchor_rejects_unsupported_usage(self):
-        from scpf.core import Anchor, Axis, Cylinder, Rectangle2D, Sphere
+        from scpf.core import Anchor, Cylinder, Rectangle2D, Sphere
         with Sketch(name="Base", plane="XY") as sketch:
             Rectangle2D(80, 50)
         base = sketch.extrude(8)
         with self.assertRaises(ValueError):
             Sphere(8).attach(base, parent=Anchor.TOP)
         with self.assertRaises(ValueError):
-            Cylinder(d=8, h=10).repeat_linear(count=2, spacing=40, axis=Axis.Z)
-        with self.assertRaises(ValueError):
             Cylinder(d=8, h=10).attach(base, offset=(1, 2, 3))
 
-    def test_repeat_linear_requires_explicit_axes_and_valid_count(self):
-        from scpf.core import Axis, Cylinder, Hole
-        with self.assertRaises(TypeError):
-            Hole(d=8).repeat_linear(x=70, y=30)
-        with self.assertRaises(ValueError):
-            Cylinder(d=8, h=3).repeat_linear(count=0, spacing=40, axis=Axis.X)
-        with self.assertRaises(ValueError):
-            Hole(d=8).repeat_linear(count=2, spacing=40, axis=Axis.Z)
+    def test_repeat_linear_is_not_part_of_the_public_shape_api(self):
+        from scpf.core import Cylinder, Hole
+        self.assertFalse(hasattr(Hole(d=8), "repeat_linear"))
+        self.assertFalse(hasattr(Cylinder(d=8, h=3), "repeat_linear"))
 
     def test_attached_hole_uses_sketch_while_explicit_at_can_be_native(self):
         from scpf.compiler import compile_model

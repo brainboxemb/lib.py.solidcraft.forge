@@ -1,3 +1,8 @@
+"""Face-relative Hole cut repeated by one native history pattern."""
+
+from dataclasses import dataclass
+
+
 @dataclass
 class AnchoredHoles:
     """Two through holes, each 20 mm from the center along the Y axis."""
@@ -10,18 +15,32 @@ class AnchoredHoles:
     def build(self):
         with Sketch(name="Base", plane="XY") as sketch:
             profile = Rectangle2D(self.width, self.depth)
-            # Keep this qualification's original lower-left datum. Rectangle2D
-            # is centered by default now, so the Forge fixture states the old
-            # placement explicitly instead of moving the reference models.
             sketch.add(
                 profile,
                 offset=(self.width / 2, self.depth / 2),
             )
+
         plate = sketch.extrude(self.thickness)
-        holes = Hole(d=8, depth=Depth.THROUGH_ALL).repeat_linear(
-            count=2, spacing=self.spacing, axis=Axis.Y
-        ).on(plate, face=Faces.TOP)
-        plate + holes
+
+        with Sketch(
+            name="Hole",
+            on=plate,
+            parent=Anchor.TOP,
+        ) as hole:
+            hole.add(
+                Circle2D(d=8),
+                offset=(0, -(self.spacing / 2)),
+            )
+
+        source_cut = hole.extrude(Depth.THROUGH_ALL)
+        plate = plate - source_cut
+
+        return plate.rectangular_pattern(
+            source_cut,
+            count=2,
+            spacing=self.spacing,
+            direction=Axis.Y,
+        )
 
 
 AnchoredHoles()

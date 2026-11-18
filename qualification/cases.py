@@ -93,15 +93,15 @@ QUALIFICATION_CASES = [
     {
         "slug": "anchored-holes",
         "group": "features",
-        "title": "Face-relative repeated holes",
-        "intent": "Verify a 2D profile, native extrusion, repeated holes and placement on a selected face.",
-        "forge_api": "with Sketch(plane='XY'): Rectangle2D(...); sketch.extrude(...); Hole(...).repeat_linear(...).on(..., face=Faces.TOP)",
-        "forge_model": "A feature-based plate plus a Forge-side repeated Hole layout anchored to the plate's TOP face.",
-        "lowering": "Forge expands the small primitive repetition before lowering and emits one native hole sketch/cut; this case is intentionally not a SolidCraft History Pattern.",
-        "native_expectation": "One plate with two through holes at the requested Y spacing and no feature errors.",
+        "title": "Face-relative hole with native pattern",
+        "intent": "Verify one TOP-face source hole cut followed by one native rectangular history pattern.",
+        "forge_api": "with Sketch(on=plate, parent=Anchor.TOP): Circle2D(...); source_cut = sketch.extrude(Depth.THROUGH_ALL); plate.rectangular_pattern(source_cut, ...)",
+        "forge_model": "A feature-based plate with one face-attached source hole cut and one native rectangular pattern that creates the second hole.",
+        "lowering": "Forge emits one attached Hole sketch/cut and one native solid.pattern.rectangular history feature. No Forge-side repeat helper or expanded duplicate profiles are used.",
+        "native_expectation": "One plate with two through holes at the requested Y spacing, one source cut and one native rectangular pattern feature.",
         "mutation": "No saved-design mutation in this fixture; geometry and feature placement are measured at Q4.",
         "references": [
-            ("OpenSCAD", "Comparable geometry normally uses difference() and repeated cylinders. This case qualifies face-relative repeated placement through a generated Sketch/cut; native solid.hole is qualified separately by hole-family."),
+            ("OpenSCAD", "Comparable geometry normally uses difference() and repeated cylinders. This case instead qualifies one semantic TOP-face source cut plus native SolidCraft pattern history; native solid.hole itself is qualified separately by hole-family."),
         ],
     },
     {
