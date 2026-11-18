@@ -119,7 +119,7 @@ class GeometryFeatures(unittest.TestCase):
         )
         self.assertEqual(
             circle["center"],
-            ["(width / 2)", "((depth - spacing) / 2)"],
+            ["(width / 2)", "((depth - (spacing)) / 2)"],
         )
         pattern = next(
             row["params"]
