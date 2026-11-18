@@ -18,13 +18,14 @@ def commands(slug: str) -> list[dict]:
 class MissingCaseCommandContractTests(unittest.TestCase):
     def test_anchored_holes_command_contract(self):
         rows = commands("anchored-holes")
+
         self.assertEqual(
             [
                 row["params"]["name"]
                 for row in rows
                 if row["command"] == "sketch.create"
             ],
-            ["Base", "Holes"],
+            ["Base", "Hole"],
         )
 
         circles = [
@@ -32,13 +33,35 @@ class MissingCaseCommandContractTests(unittest.TestCase):
             for row in rows
             if row["command"] == "sketch.circle.center"
         ]
-        self.assertEqual(len(circles), 2)
-        self.assertTrue(
-            all("spacing" in str(row["center"][1]) for row in circles)
+        self.assertEqual(len(circles), 1)
+        self.assertEqual(circles[0]["diameter"], 8)
+
+        cuts = [
+            row["params"]
+            for row in rows
+            if row["command"] == "solid.extrude"
+            and row["params"]["operation"] == "cut"
+        ]
+        self.assertEqual(len(cuts), 1)
+        self.assertEqual(cuts[0]["name"], "Hole")
+
+        patterns = [
+            row["params"]
+            for row in rows
+            if row["command"] == "solid.pattern.rectangular"
+        ]
+        self.assertEqual(len(patterns), 1)
+        self.assertEqual(
+            patterns[0],
+            {
+                "features": ["Hole"],
+                "dir1": [0.0, 1.0, 0.0],
+                "count1": 2,
+                "spacing1": "spacing",
+                "alignment": "right",
+                "reversed": False,
+            },
         )
-        self.assertEqual(rows[-1]["command"], "solid.extrude")
-        self.assertEqual(rows[-1]["params"]["operation"], "cut")
-        self.assertEqual(rows[-1]["params"]["distance"], "thickness")
 
     def test_components_command_contract(self):
         rows = commands("components")
