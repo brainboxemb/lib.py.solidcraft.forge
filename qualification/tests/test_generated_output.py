@@ -253,6 +253,134 @@ class GeneratedOutputTests(unittest.TestCase):
                 "old",
             )
 
+    def test_main_candidate_replaces_affected_case_and_preserves_complete_baseline(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            main = root / "main"
+            candidate = root / "candidate"
+            dest = root / "dest"
+            for base in (main, candidate):
+                (base / "qualification").mkdir(parents=True)
+                (base / "examples" / "simple-box" / "scpf").mkdir(parents=True)
+
+            (main / "examples" / "simple-box" / "scpf" / "marker").write_text("old")
+            (candidate / "examples" / "simple-box" / "scpf" / "marker").write_text("new")
+            (main / "examples" / "components" / "scpf").mkdir(parents=True)
+            (main / "examples" / "components" / "scpf" / "marker").write_text("keep")
+
+            def record(commit, level, scope):
+                return {
+                    "source_commit": commit,
+                    "build_scope": scope,
+                    "input_hash": "sha256:" + "4" * 64,
+                    "verification_level": level,
+                    "status": "pass",
+                    "generated_at": "2026-01-01T00:00:00Z",
+                }
+
+            main_manifest = {
+                "schema_version": 2,
+                "scope": "main",
+                "source_ref": "main",
+                "source_commit": "old",
+                "pull_request": None,
+                "workflow_run_id": "1",
+                "toolchain": {},
+                "verification": {"level": "per-case", "status": "pass"},
+                "generated_at": "2026-01-01T00:00:00Z",
+                "cases": {
+                    "simple-box": {"implementations": {"scpf": record("old", "q1-q6-full", "main")}},
+                    "components": {"implementations": {"scpf": record("old", "q1-q6-full", "main")}},
+                },
+            }
+            candidate_manifest = {
+                **main_manifest,
+                "source_commit": "new-main",
+                "workflow_run_id": "2",
+                "verification": {"level": "affected-q1-q6", "status": "pass"},
+                "cases": {
+                    "simple-box": {
+                        "implementations": {
+                            "scpf": record("new-main", "affected-q1-q6", "main")
+                        }
+                    }
+                },
+            }
+            (main / "build.json").write_text(json.dumps(main_manifest), encoding="utf-8")
+            (candidate / "build.json").write_text(
+                json.dumps(candidate_manifest), encoding="utf-8"
+            )
+
+            with patch.object(
+                self.module,
+                "TECHNICAL_CASE_SLUGS",
+                ("simple-box", "components"),
+            ):
+                merged = self.module.promote_overlay(
+                    main,
+                    candidate,
+                    dest,
+                    required_level="affected-q1-q6",
+                    source_commit="new-main",
+                    source_ref="main",
+                    workflow_run_id="2",
+                    repo_root=root,
+                )
+
+            self.assertEqual(
+                (dest / "examples/simple-box/scpf/marker").read_text(),
+                "new",
+            )
+            self.assertEqual(
+                (dest / "examples/components/scpf/marker").read_text(),
+                "keep",
+            )
+            self.assertEqual(merged["source_commit"], "new-main")
+            self.assertEqual(merged["scope"], "main")
+            self.assertEqual(
+                merged["cases"]["simple-box"]["implementations"]["scpf"]["build_scope"],
+                "main",
+            )
+
+    def test_main_candidate_must_match_promotion_target(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            main = root / "main"
+            candidate = root / "candidate"
+            dest = root / "dest"
+            for base in (main, candidate):
+                base.mkdir()
+                (base / "build.json").write_text(
+                    json.dumps(
+                        {
+                            "schema_version": 2,
+                            "scope": "main",
+                            "source_ref": "main",
+                            "source_commit": "candidate" if base == candidate else "old",
+                            "pull_request": None,
+                            "workflow_run_id": "1",
+                            "toolchain": {},
+                            "verification": {"level": "per-case", "status": "pass"},
+                            "generated_at": "2026-01-01T00:00:00Z",
+                            "cases": {},
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+            with patch.object(self.module, "TECHNICAL_CASE_SLUGS", ()):
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    "main candidate source commit does not match",
+                ):
+                    self.module.promote_overlay(
+                        main,
+                        candidate,
+                        dest,
+                        required_level="affected-q1-q6",
+                        source_commit="different",
+                        repo_root=root,
+                    )
+
     def test_complete_overlay_can_bootstrap_legacy_main(self):
         with TemporaryDirectory() as temp:
             root = Path(temp)

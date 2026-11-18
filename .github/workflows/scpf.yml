@@ -1,23 +1,249 @@
-name: SCPF full safety qualification
+name: Forge
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, closed]
   push:
-    branches:
-      - "qualification/**"
+    branches: [main]
   workflow_dispatch: {}
   schedule:
     - cron: "17 3 * * 1"
+    - cron: "41 4 * * *"
 
 permissions:
   contents: write
-  packages: read
+  packages: write
+  pull-requests: read
+  actions: read
 
 concurrency:
-  group: full-safety-${{ github.ref }}
-  cancel-in-progress: ${{ startsWith(github.ref, 'refs/heads/qualification/') }}
+  group: forge-${{ github.event.pull_request.number || github.ref || github.event.schedule }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
 
 jobs:
-  full:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      operation: ${{ steps.plan.outputs.operation }}
+      gate: ${{ steps.plan.outputs.gate }}
+      required_level: ${{ steps.plan.outputs.required_level }}
+      cases: ${{ steps.plan.outputs.cases }}
+      reference_smoke: ${{ steps.plan.outputs.reference_smoke }}
+      pipeline_smoke: ${{ steps.plan.outputs.pipeline_smoke }}
+      contracts: ${{ steps.plan.outputs.contracts }}
+      needs_image: ${{ steps.plan.outputs.needs_image }}
+      release: ${{ steps.plan.outputs.release }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Plan Forge run
+        id: plan
+        env:
+          PYTHONPATH: scpf:.
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before || '' }}
+          HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          EVENT_ACTION: ${{ github.event.action || '' }}
+          SCHEDULE: ${{ github.event.schedule || '' }}
+        run: |
+          python scripts/forge_scope.py \
+            --event-name "$GITHUB_EVENT_NAME" \
+            --event-action "$EVENT_ACTION" \
+            --base "$BASE_SHA" \
+            --head "$HEAD_SHA" \
+            --ref-name "$GITHUB_REF_NAME" \
+            --schedule "$SCHEDULE" \
+            --github-output "$GITHUB_OUTPUT"
+
+  forge:
+    needs: plan
+    if: needs.plan.outputs.operation == 'pr' || needs.plan.outputs.operation == 'main'
+    runs-on: ubuntu-latest
+    outputs:
+      build_commit: ${{ steps.pipeline.outputs.build_commit }}
+    env:
+      SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before || '' }}
+      SOURCE_REF: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+      PR_NUMBER: ${{ github.event.pull_request.number || 0 }}
+      PUBLISH: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Checkout canonical build output
+        uses: actions/checkout@v4
+        with:
+          ref: build
+          path: generated-build
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Forge runtime
+        run: python -m pip install -e ./scpf pillow pyyaml
+
+      - name: Resolve immutable qualification image
+        if: needs.plan.outputs.needs_image == 'true'
+        id: image
+        run: |
+          python scripts/qualification_image.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Login to GHCR
+        if: needs.plan.outputs.needs_image == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve cached qualification image
+        if: needs.plan.outputs.needs_image == 'true'
+        id: image_cache
+        run: |
+          if timeout 30s docker pull "${{ steps.image.outputs.reference }}"; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "run_image=${{ steps.image.outputs.reference }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "run_image=qualification-local:${{ steps.image.outputs.image_id }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Docker buildx
+        if: needs.plan.outputs.needs_image == 'true' && steps.image_cache.outputs.exists != 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build missing qualification image
+        if: needs.plan.outputs.needs_image == 'true' && steps.image_cache.outputs.exists != 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/qualification
+          file: docker/qualification/Dockerfile
+          load: true
+          push: false
+          tags: qualification-local:${{ steps.image.outputs.image_id }}
+          build-args: |
+            PYTHON_IMAGE=${{ steps.image.outputs.python_image }}
+            SOLIDCRAFT_VERSION=${{ steps.image.outputs.solidcraft }}
+            CADCRAFT_VERSION=${{ steps.image.outputs.cadcraft }}
+            CADCRAFT_SHA256=${{ steps.image.outputs.cadcraft_sha256 }}
+            PYTHONSCAD_VERSION=${{ steps.image.outputs.pythonscad }}
+            PYBOSL2_REV=${{ steps.image.outputs.pybosl2 }}
+            CADQUERY_VERSION=${{ steps.image.outputs.cadquery }}
+            BUILD123D_VERSION=${{ steps.image.outputs.build123d }}
+            TRIMESH_SPEC=${{ steps.image.outputs.trimesh }}
+            MATPLOTLIB_SPEC=${{ steps.image.outputs.matplotlib }}
+          cache-from: type=gha,scope=qualification-image
+          cache-to: type=gha,mode=max,scope=qualification-image
+
+      - name: Run Forge pipeline
+        id: pipeline
+        run: |
+          python scripts/forge_pipeline.py run \
+            --operation "${{ needs.plan.outputs.operation }}" \
+            --source-sha "$SOURCE_SHA" \
+            --base-sha "$BASE_SHA" \
+            --source-ref "$SOURCE_REF" \
+            --pull-request "$PR_NUMBER" \
+            --gate "${{ needs.plan.outputs.gate }}" \
+            --cases "${{ needs.plan.outputs.cases }}" \
+            --required-level "${{ needs.plan.outputs.required_level }}" \
+            --reference-smoke "${{ needs.plan.outputs.reference_smoke }}" \
+            --pipeline-smoke "${{ needs.plan.outputs.pipeline_smoke }}" \
+            --image-built "${{ steps.image_cache.outputs.exists == 'false' }}" \
+            --contracts "${{ needs.plan.outputs.contracts }}" \
+            --image "${{ steps.image_cache.outputs.run_image }}" \
+            --solidcraft-version "${{ steps.image.outputs.solidcraft }}" \
+            --repository "$GITHUB_REPOSITORY" \
+            --workflow-run-id "$GITHUB_RUN_ID" \
+            --generated-build generated-build \
+            --output-root output \
+            --publish "$PUBLISH" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Publish newly verified qualification image
+        if: needs.plan.outputs.needs_image == 'true' && steps.image_cache.outputs.exists != 'true'
+        run: |
+          docker tag \
+            "qualification-local:${{ steps.image.outputs.image_id }}" \
+            "${{ steps.image.outputs.reference }}"
+          docker push "${{ steps.image.outputs.reference }}"
+          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            docker tag \
+              "qualification-local:${{ steps.image.outputs.image_id }}" \
+              "${{ steps.image.outputs.alias }}"
+            docker push "${{ steps.image.outputs.alias }}"
+          fi
+
+      - name: Upload Forge diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-${{ github.run_id }}-${{ github.sha }}
+          path: |
+            output/
+            ${{ runner.temp }}/forge-simple-box/
+            ${{ runner.temp }}/solidcraft-snapshot/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  cleanup:
+    needs: plan
+    if: >-
+      needs.plan.outputs.operation == 'cleanup' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Remove closed PR generated output
+        run: python scripts/forge_pipeline.py cleanup --pull-request "${{ github.event.pull_request.number }}"
+
+  reconcile:
+    needs: plan
+    if: needs.plan.outputs.operation == 'reconcile'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Reconcile generated PR namespaces
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/reconcile_generated.py --repository "$GITHUB_REPOSITORY" --apply
+
+  release:
+    needs: [plan, forge]
+    if: >-
+      needs.plan.outputs.release == 'true' &&
+      needs.forge.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,152 +255,11 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Resolve immutable qualification image
-        id: image
+      - name: Publish qualified release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          python scripts/qualification_image.py \
+          python scripts/release/publish_release.py \
             --repository "$GITHUB_REPOSITORY" \
-            --github-output "$GITHUB_OUTPUT"
-
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Pull qualification image
-        run: docker pull "${{ steps.image.outputs.reference }}"
-
-      - name: Run repository preflight in qualification image
-        run: |
-          docker run --rm \
-            -v "$GITHUB_WORKSPACE:/workspace" \
-            -w /workspace \
-            -e PYTHONPATH=/workspace/scpf:/workspace \
-            "${{ steps.image.outputs.reference }}" \
-            python scripts/ci_preflight.py \
-              --source-sha "$GITHUB_SHA" \
-              --site-out output/preflight-site
-
-      - name: Run complete Q1-Q6 safety gate
-        run: |
-          args=(
-            --gate full-q1-q6
-            --out output/gate
-            --source-sha "$GITHUB_SHA"
-          )
-          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
-            args+=(
-              --build-out output/build
-              --scope main
-              --source-ref main
-              --workflow-run-id "$GITHUB_RUN_ID"
-            )
-          fi
-          docker run --rm \
-            -v "$GITHUB_WORKSPACE:/workspace" \
-            -w /workspace \
-            -e PYTHONPATH=/workspace/scpf:/workspace \
-            "${{ steps.image.outputs.reference }}" \
-            python scripts/verification_gate.py "${args[@]}"
-
-      - name: Verify complete technical baseline
-        if: github.ref == 'refs/heads/main'
-        run: |
-          docker run --rm \
-            -v "$GITHUB_WORKSPACE:/workspace" \
-            -w /workspace \
-            -e PYTHONPATH=/workspace/scpf:/workspace \
-            "${{ steps.image.outputs.reference }}" \
-            python scripts/generated_output.py verify-build \
-              --root output/build \
-              --source-commit "$GITHUB_SHA" \
-              --require-complete
-
-      - name: Publish build/main
-        if: github.ref == 'refs/heads/main'
-        id: publish_build
-        run: |
-          python scripts/publish_generated.py replace-dir \
-            --branch build \
-            --source output/build \
-            --destination main \
-            --source-ref main \
-            --expected-source "$GITHUB_SHA" \
-            --message "Publish full build/main at $GITHUB_SHA" \
-            --github-output "$GITHUB_OUTPUT"
-
-      - name: Record immutable release evidence
-        if: github.ref == 'refs/heads/main'
-        run: |
-          python - <<'PY'
-          import json, os
-          from pathlib import Path
-          Path("output/release-evidence.json").write_text(
-              json.dumps({
-                  "source_commit": os.environ["GITHUB_SHA"],
-                  "build_commit": "${{ steps.publish_build.outputs.commit }}",
-              }, indent=2) + "\n",
-              encoding="utf-8",
-          )
-          PY
-
-      - name: Build and test stable site
-        if: github.ref == 'refs/heads/main'
-        run: |
-          build_commit="${{ steps.publish_build.outputs.commit }}"
-          docker run --rm \
-            -v "$GITHUB_WORKSPACE:/workspace" \
-            -w /workspace \
-            -e PYTHONPATH=/workspace/scpf:/workspace \
-            "${{ steps.image.outputs.reference }}" \
-            bash -lc "
-              python scripts/generated_output.py materialize-site-evidence \
-                --build-root output/build \
-                --destination output/evidence &&
-              python site/build.py \
-                --out output/site \
-                --source-sha '$GITHUB_SHA' \
-                --native output/evidence/native \
-                --references output/evidence/references \
-                --diagram-root output/evidence/diagrams \
-                --build-manifest output/build/build.json \
-                --build-commit '$build_commit' \
-                --build-scope main &&
-              python site/test_site.py \
-                output/site '$GITHUB_SHA' \
-                --build-commit='$build_commit' \
-                --require-native --require-references &&
-              python site/provenance.py write-build \
-                --out output/site/provenance.json \
-                --stage stable \
-                --source-ref main \
-                --source-commit '$GITHUB_SHA' \
-                --build-commit '$build_commit' \
-                --build-manifest output/build/build.json \
-                --workflow-run-id '$GITHUB_RUN_ID'
-            "
-
-      - name: Publish stable Pages
-        if: github.ref == 'refs/heads/main'
-        run: |
-          python scripts/publish_generated.py replace-stable-pages \
-            --branch gh-pages \
-            --source output/site \
-            --source-ref main \
-            --expected-source "$GITHUB_SHA" \
-            --message "Publish full qualified site at $GITHUB_SHA"
-
-      - name: Upload safety evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: scpf-qualification-${{ github.sha }}
-          path: |
-            output/gate
-            output/build
-            output/site
-            output/release-evidence.json
-          if-no-files-found: ignore
-          retention-days: 14
+            --target-sha "${{ github.sha }}" \
+            --build-sha "${{ needs.forge.outputs.build_commit }}"

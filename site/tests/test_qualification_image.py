@@ -1,4 +1,4 @@
-"""Tests for immutable qualification-container metadata."""
+"""Tests for immutable qualification-container metadata and CI ownership."""
 
 from pathlib import Path
 import tempfile
@@ -38,46 +38,35 @@ class QualificationImageTests(unittest.TestCase):
         )
         self.assertEqual(values["solidcraft"], "0.42.0")
 
-    def test_image_workflow_only_tracks_toolchain_inputs(self):
+    def test_forge_workflow_delegates_pipeline_logic(self):
         workflow = (
             qualification_image.ROOT
             / ".github"
             / "workflows"
-            / "qualification-image.yml"
+            / "scpf.yml"
         ).read_text(encoding="utf-8")
-        self.assertIn('"docker/qualification/**"', workflow)
-        self.assertIn('"qualification/toolchain.json"', workflow)
-        self.assertIn('"scpf/scpf/version.py"', workflow)
-        self.assertNotIn('"scpf/**"', workflow)
-        self.assertNotIn('"examples/simple-box/**"', workflow)
-        self.assertNotIn('"qualification/run_affected.py"', workflow)
+        self.assertIn("python scripts/forge_pipeline.py run", workflow)
+        self.assertIn("docker/build-push-action@v6", workflow)
 
-    def test_immutable_image_is_publishable_before_main(self):
-        workflow = (
-            qualification_image.ROOT
-            / ".github"
-            / "workflows"
-            / "qualification-image.yml"
-        ).read_text(encoding="utf-8")
-        immutable = workflow.split(
-            "- name: Publish immutable qualification image", 1
-        )[1].split("- name: Publish readable main alias", 1)[0]
-        self.assertNotIn("github.ref == 'refs/heads/main'", immutable)
+        # These are repository/pipeline concerns, not Actions concerns.
+        self.assertNotIn("qualification/case_runner.py simple-box", workflow)
+        self.assertNotIn("scripts/verification_gate.py", workflow)
+        self.assertNotIn("scripts/generated_output.py promote-overlay", workflow)
+        self.assertNotIn("site/build.py", workflow)
+        self.assertNotIn("site/test_site.py", workflow)
 
-    def test_staged_smoke_consumes_image_without_building_it(self):
-        workflow = (
+    def test_pipeline_owns_image_smoke_and_exact_stage_rerun(self):
+        pipeline = (
             qualification_image.ROOT
-            / ".github"
-            / "workflows"
-            / "qualification-smoke.yml"
+            / "scripts"
+            / "forge_pipeline.py"
         ).read_text(encoding="utf-8")
-        self.assertIn("docker pull", workflow)
-        self.assertIn("qualification/case_runner.py simple-box", workflow)
-        self.assertIn("--stage mutate", workflow)
-        self.assertIn("replay_before", workflow)
-        self.assertNotIn("docker/build-push-action", workflow)
-        self.assertNotIn("pip install", workflow)
-        self.assertNotIn("apt-get", workflow)
+        self.assertIn('"qualification/case_runner.py"', pipeline)
+        self.assertIn('"simple-box"', pipeline)
+        self.assertIn('"--stage"', pipeline)
+        self.assertIn('"mutate"', pipeline)
+        self.assertIn("replay_before", pipeline)
+        self.assertIn("mutate_before", pipeline)
 
     def test_dockerfile_contains_no_tool_version_literals(self):
         dockerfile = qualification_image.DOCKERFILE.read_text(encoding="utf-8")

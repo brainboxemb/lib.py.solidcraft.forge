@@ -64,6 +64,8 @@ def check_contract_tests() -> None:
         "test_setup.py",
         "test_merge_promotion.py",
         "test_case_runner.py",
+        "test_forge_scope.py",
+        "test_forge_pipeline.py",
     ):
         run(
             [

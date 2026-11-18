@@ -453,13 +453,13 @@ for unrelated PR namespaces.
 | technical PR update | affected iteration checks; final gate when merge-ready | update current-head sparse candidate `pr/N` only after passing checks | replace preview using overlay+main and show achieved level |
 | PR reopened | classify current head again | recreate overlay only if technical | recreate preview |
 | PR closed, not merged | none | remove `pr/N` | remove preview |
-| technical PR merged | pre-merge gate already passed; promote/revalidate tree | overlay affected cases into main | rebuild stable site after build promotion |
+| technical PR merged | the main Forge run reclassifies the exact merge commit and runs the required stable gate | merge a verified sparse main candidate into `build/main` | rebuild stable site after build promotion |
 | presentation-only PR merged | validate `build/main` is a complete passing baseline | no technical write | rebuild stable site from build/main |
 | verification failure | none published | no partial/stale candidate write; stale PR output may be removed | no new preview; stale PR preview may be removed |
 | force-push/rebase | recompute against new base/head | obsolete run rejected by freshness check | obsolete run rejected |
 | draft PR | preflight; expensive gate optional until ready | no durable technical publish unless explicitly requested | optional preview |
 | fork PR | read-only verification only | no write | no public preview from untrusted code |
-| workflow dispatch | explicit audited recovery inputs | scoped repair only | scoped repair only |
+| workflow dispatch on main | full Q1-Q6 recovery of exact current main | replace verified `build/main` | rebuild stable site |
 | release | full gate | promote main and tag evidence | stable site uses tagged/immutable evidence |
 
 A presentation-only merge may reuse the existing complete passing `build/main`
@@ -488,7 +488,7 @@ Derived output is never the authoritative source for per-case status.
 
 PR close cleanup is useful but not sufficient.
 
-A scheduled/manual reconcile job:
+The daily reconcile phase inside the single Forge workflow:
 
 1. reads current open PR numbers;
 2. reads `build/pr/*` and `gh-pages/previews/pr-*`;
@@ -503,19 +503,15 @@ This makes the system self-healing if a close event or publish job is lost.
 
 ## 17. Recovery and live audit
 
-Provide `workflow_dispatch` recovery/audit operations with explicit validated
-inputs such as:
+Recovery does not expose a menu of CI phases.
 
-```text
-audit
-reconcile
-rebuild-main-derived
-republish-main-site
-rebuild-pr:N
-```
+A parameterless manual **Forge** run on `main`, or a normal commit changing
+`.github/workflows/forge.trigger`, runs full Q1-Q6 on the exact current main
+commit and republishes `build/main` plus stable Pages only after success.
 
-The audit reads the **real** `build` and `gh-pages` branches and checks the
-hard invariants, not only test fixtures.
+Scheduled reconcile remains an internal phase of the same Forge workflow. It
+reads the **real** `build` and `gh-pages` branches and checks/repairs scoped
+generated namespaces through the retrying publisher.
 
 Namespace identifiers are integers from GitHub PR metadata, never free-form path
 strings.
@@ -573,6 +569,16 @@ A Forge-only case change does not automatically rerun every reference library
 unless its reference input hash changes.
 
 ## 21. Workflow responsibilities
+
+The repository exposes exactly one active GitHub Actions workflow:
+`.github/workflows/scpf.yml` (**Forge**). PR verification, main promotion,
+site publication, recovery, cleanup, reconcile, image reuse/build, contract
+snapshot and release publication are conditional jobs/phases inside that one
+workflow.
+
+A phase is not a reason to create another workflow file. Performance comes from
+risk selection, immutable image reuse and selected cases rather than from making
+the operator choose between Actions.
 
 Workflow YAML is orchestration only.
 

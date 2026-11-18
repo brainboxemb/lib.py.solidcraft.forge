@@ -26,8 +26,8 @@ Do not create ad-hoc tags or releases from feature branches.
 
 ## Preparing a release
 
-Create a release PR on a branch matching `qualification/**` so the complete
-qualification workflow runs before merge.
+Create a normal release PR. The PR uses the same risk-based **Forge** workflow
+as all other development; there is no special release-branch workflow.
 
 The release PR must:
 
@@ -40,17 +40,20 @@ The release PR must:
    has separately been requalified;
 6. have no active non-comment lines in
    `docs/design/release-blockers.txt`;
-7. pass the full Q1-Q6 qualification on the exact release-PR head.
+7. pass the PR gate selected by the repository risk classifier.
+
+Changing `scpf/pyproject.toml` is a toolchain/release input. After merge, the
+single **Forge** workflow therefore requires full Q1-Q6 on the exact new
+`main` commit before its release job is eligible.
 
 ## Publishing after merge
 
-Merging a release PR promotes the already verified PR evidence when the squash
-merge tree is identical to the verified PR tree. The close workflow then starts
-`SCPF full safety qualification` again on the exact `main` commit before any
-release is published.
+After merge, the same **Forge** workflow runs on the exact new `main` commit.
+Because the package version changed, it selects full Q1-Q6, publishes the
+resulting verified `build/main` and stable Pages, and only then allows the
+release job in that same workflow to continue.
 
-The generic `Publish SCPF release` workflow is triggered only after that main
-qualification completes successfully. It then:
+The release job then:
 
 1. reads the package version from `scpf/pyproject.toml`;
 2. does nothing if that version already has a published GitHub Release;
@@ -62,7 +65,9 @@ qualification completes successfully. It then:
 7. creates an annotated `vX.Y.Z` Git tag on that exact commit;
 8. creates the GitHub Release using that changelog section as release notes.
 
-A failed main qualification therefore cannot publish a release.
+A failed main qualification therefore cannot publish a release. Manual
+recovery and `.github/workflows/forge.trigger` full runs never create a
+release merely because a package version is currently unreleased.
 
 ## Downstream pinning
 
