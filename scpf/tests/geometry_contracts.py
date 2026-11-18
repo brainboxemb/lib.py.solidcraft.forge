@@ -24,6 +24,13 @@ class BodyCase:
 
 
 @dataclass(frozen=True)
+class OperationCase:
+    name: str
+    native_operation: str
+    apply: Callable[[object, object], object]
+
+
+@dataclass(frozen=True)
 class FeatureCase:
     name: str
     capability: str
@@ -161,5 +168,16 @@ FEATURE_CASES = (
         NATIVE_HOLE,
         "solid.hole",
         _apply_native_hole,
+    ),
+)
+
+
+CSG_OPERATION_CASES = (
+    OperationCase("join", "join", lambda left, right: left + right),
+    OperationCase("cut", "cut", lambda left, right: left - right),
+    OperationCase(
+        "intersection",
+        "intersect",
+        lambda left, right: left & right,
     ),
 )
