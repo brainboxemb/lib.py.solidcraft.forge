@@ -115,7 +115,7 @@ class SitePublishingContractTests(unittest.TestCase):
             stage="stable",
             source_ref="main",
             source_commit="abc123",
-            forge_version="0.10.0",
+            forge_version="0.11.0",
             solidcraft_version="0.42.0",
             workflow_run_id="42",
             qualification_level="per-case",
@@ -129,109 +129,81 @@ class SitePublishingContractTests(unittest.TestCase):
         )
         self.assertEqual(data["build_commit"], "buildsha123")
 
-    def test_pr_workflow_uses_one_gate_and_retrying_publisher(self):
-        workflow = (ROOT / ".github/workflows/preview.yml").read_text()
-        self.assertIn("qualification/preview_scope.py", workflow)
-        self.assertIn("scripts/verification_gate.py", workflow)
-        self.assertIn("scripts/merge_promotion.py", workflow)
-        self.assertIn("scripts/publish_generated.py replace-dir", workflow)
-        self.assertIn("scripts/publish_generated.py remove-dir", workflow)
-        self.assertIn("--expected-source", workflow)
-        self.assertIn("--base-commit", workflow)
-        self.assertIn("resolve-preview", workflow)
-        self.assertNotIn("peaceiris/actions-gh-pages", workflow)
-        self.assertNotIn("git push origin", workflow)
+    def test_actions_expose_one_normal_forge_workflow_plus_image_worker(self):
+        workflows = {
+            path.name
+            for path in (ROOT / ".github/workflows").glob("*.yml")
+        }
+        self.assertEqual(
+            workflows,
+            {"forge.yml", "qualification-image.yml"},
+        )
 
-    def test_reused_site_evidence_tracks_build_source_commit(self):
-        preview = (ROOT / ".github/workflows/preview.yml").read_text()
-        site = (ROOT / ".github/workflows/site.yml").read_text()
+        forge = (ROOT / ".github/workflows/forge.yml").read_text(
+            encoding="utf-8"
+        )
+        image = (ROOT / ".github/workflows/qualification-image.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("name: Forge", forge)
+        self.assertIn("scripts/ci/forge_plan.py", forge)
+        self.assertIn("scripts/ci/forge_gate.py", forge)
+        self.assertIn("scripts/ci/forge_site.py", forge)
+        self.assertIn("scripts/publish_generated.py", forge)
+        self.assertIn("scripts/reconcile_generated.py", forge)
+        self.assertIn("workflow_dispatch:", forge)
+        self.assertIn("schedule:", forge)
+        self.assertIn("qualification image", image.lower())
 
-        self.assertIn('EVIDENCE_SHA=', preview)
-        self.assertIn('--evidence-sha="$EVIDENCE_SHA"', preview)
-        self.assertIn('output/resolved/build.json', preview)
-
-        self.assertIn('EVIDENCE_SHA=', site)
-        self.assertIn('--evidence-sha="$EVIDENCE_SHA"', site)
-        self.assertIn('generated-build/main/build.json', site)
-
-    def test_site_only_reads_build_main_not_actions_history(self):
-        workflow = (ROOT / ".github/workflows/site.yml").read_text()
-        self.assertIn("ref: build", workflow)
-        self.assertIn("verify-build", workflow)
-        self.assertIn("--require-complete", workflow)
-        self.assertNotIn("verify-current-hashes", workflow)
-        self.assertIn("materialize-site-evidence", workflow)
-        self.assertIn("site/provenance.py write-build", workflow)
-        self.assertIn("scripts/publish_generated.py replace-stable-pages", workflow)
-        self.assertNotIn("gh run", workflow)
-        self.assertNotIn("actions/download-artifact", workflow)
-        self.assertNotIn("reusable_qualification.py select", workflow)
-        self.assertNotIn("peaceiris/actions-gh-pages", workflow)
-
-    def test_full_workflow_uses_immutable_image_and_release_branch_gate(self):
-        workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
-        self.assertIn("workflow_dispatch", workflow)
-        self.assertIn("schedule:", workflow)
-        self.assertIn('"qualification/**"', workflow)
+    def test_forge_workflow_uses_immutable_image_for_native_work(self):
+        workflow = (ROOT / ".github/workflows/forge.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("scripts/qualification_image.py", workflow)
         self.assertIn("docker pull", workflow)
         self.assertIn("steps.image.outputs.reference", workflow)
-        self.assertIn("--gate full-q1-q6", workflow)
-        self.assertIn("--require-complete", workflow)
-        self.assertIn("scripts/publish_generated.py replace-dir", workflow)
-        self.assertIn("scripts/publish_generated.py replace-stable-pages", workflow)
         self.assertNotIn("setup_solidcraft.py", workflow)
         self.assertNotIn("setup_references.py", workflow)
-        self.assertNotIn("peaceiris/actions-gh-pages", workflow)
 
-    def test_qualify_main_is_one_operational_entry(self):
-        workflow = (ROOT / ".github/workflows/qualify-main.yml").read_text()
-        trigger = (ROOT / ".github/workflows/qualify-main.trigger").read_text()
-
-        self.assertIn("name: Qualify main", workflow)
-        self.assertIn("branches:", workflow)
-        self.assertIn("- main", workflow)
-        self.assertIn('".github/workflows/qualify-main.trigger"', workflow)
-        self.assertIn("workflow_dispatch: {}", workflow)
-        self.assertIn("if: github.ref == 'refs/heads/main'", workflow)
-        self.assertIn("scripts/qualification_image.py", workflow)
-        self.assertIn("scripts/verification_gate.py", workflow)
-        self.assertIn("--gate full-q1-q6", workflow)
-        self.assertIn("scripts/publish_generated.py replace-dir", workflow)
-        self.assertIn("scripts/publish_generated.py replace-stable-pages", workflow)
+    def test_main_recovery_is_one_forge_trigger(self):
+        workflow = (ROOT / ".github/workflows/forge.yml").read_text(
+            encoding="utf-8"
+        )
+        trigger = (ROOT / "scripts/ci/forge.trigger").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("push:", workflow)
+        self.assertIn("branches: [main]", workflow)
+        self.assertIn("workflow_dispatch:", workflow)
         self.assertTrue(trigger.strip())
 
-    def test_qualify_main_does_not_become_a_release_trigger(self):
-        release = (ROOT / ".github/workflows/release.yml").read_text()
-        self.assertIn('"SCPF full safety qualification"', release)
-        self.assertNotIn('"Qualify main"', release)
-
-    def test_agent_documents_simple_main_recovery_path(self):
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         self.assertIn("main -> qualification -> build/main -> Pages", agents)
-        self.assertIn("Qualify main", agents)
-        self.assertIn(".github/workflows/qualify-main.trigger", agents)
-        self.assertIn("Do not create a temporary", agents)
+        self.assertIn("scripts/ci/forge.trigger", agents)
+        self.assertIn("one normal user-facing workflow", agents)
 
-    def test_reconcile_is_scheduled_and_scoped(self):
-        workflow = (ROOT / ".github/workflows/reconcile.yml").read_text()
-        self.assertIn("schedule:", workflow)
-        self.assertIn("scripts/reconcile_generated.py", workflow)
-        script = (ROOT / "scripts" / "reconcile_generated.py").read_text()
-        self.assertIn('destination=f"pr/{number}"', script)
-        self.assertIn('destination=f"previews/pr-{number}"', script)
+    def test_release_is_inside_forge_not_a_second_workflow(self):
+        workflow = (ROOT / ".github/workflows/forge.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("scripts/ci/forge_release.py", workflow)
+        self.assertIn("Create requested SCPF release", workflow)
+        self.assertFalse(
+            (ROOT / ".github/workflows/release.yml").exists()
+        )
 
-    def test_no_workflow_directly_pushes_generated_branches(self):
-        for path in (ROOT / ".github" / "workflows").glob("*.yml"):
+    def test_no_workflow_directly_force_pushes_generated_branches(self):
+        for path in (ROOT / ".github/workflows").glob("*.yml"):
             text = path.read_text(encoding="utf-8")
             self.assertNotIn("peaceiris/actions-gh-pages", text, path.name)
-            self.assertNotIn("git push origin HEAD:build", text, path.name)
-            self.assertNotIn("git push origin HEAD:gh-pages", text, path.name)
+            self.assertNotIn("git push --force", text, path.name)
+            self.assertNotIn("git push -f", text, path.name)
 
     def test_site_evidence_reuse_uses_same_risk_scope(self):
         selector = load_reuse_selector()
         self.assertTrue(
             selector.reusable_paths(
-                ("site/build.py", "docs/11-generated-output.md")
+                ("site/style.css", "docs/11-generated-output.md")
             )
         )
         self.assertFalse(
