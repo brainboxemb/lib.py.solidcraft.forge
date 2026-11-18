@@ -124,6 +124,8 @@ def write_validation_summaries(
     qualification.mkdir(parents=True, exist_ok=True)
     native_rows = ["case\tq4\tq5\n"]
     visual_rows = ["case\tstatus\n"]
+    native_summary: dict[str, dict] = {}
+    visual_summary: dict[str, dict] = {}
 
     for slug in cases:
         native = _read_json(
@@ -132,12 +134,22 @@ def write_validation_summaries(
         visual = _read_json(
             aggregate_root / "native" / slug / "visual-validation.json"
         )
+        native_summary[slug] = native
+        visual_summary[slug] = visual
         q4 = str(native.get("q4", "missing")).upper()
         q5 = str(native.get("q5", "missing")).upper()
         status = str(visual.get("status", "missing")).upper()
         native_rows.append(f"{slug}\t{q4}\t{q5}\n")
         visual_rows.append(f"{slug}\t{status}\n")
 
+    (qualification / "native-validation.json").write_text(
+        json.dumps(native_summary, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    (qualification / "visual-validation.json").write_text(
+        json.dumps(visual_summary, indent=2) + "\n",
+        encoding="utf-8",
+    )
     (qualification / "native-validation.tsv").write_text(
         "".join(native_rows),
         encoding="utf-8",
