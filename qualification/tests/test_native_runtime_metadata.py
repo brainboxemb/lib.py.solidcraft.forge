@@ -2,7 +2,9 @@
 
 from pathlib import Path
 import re
+import tempfile
 import unittest
+from unittest.mock import patch
 
 from qualification.case_selection import CASE_SLUGS
 from qualification.cases import QUALIFICATION_CASES, QUALIFICATION_LEVELS
@@ -13,6 +15,7 @@ from qualification.native_cases import (
     validate_runtime_metadata,
 )
 from qualification.native_validation import VALIDATORS
+from qualification.run_post_build_inspections import run_post_build_inspections
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 
 
@@ -62,6 +65,59 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
                 self.assertIn(slug, CASE_SLUGS)
                 self.assertTrue((ROOT / spec["command"]).is_file())
                 self.assertTrue(spec["output"].endswith(".json"))
+
+    def test_post_build_runner_executes_every_registered_inspection(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            native_root = Path(tmp) / "native"
+            summary = Path(tmp) / "post-build.tsv"
+            for slug in POST_BUILD_INSPECTIONS:
+                case_root = native_root / slug
+                case_root.mkdir(parents=True)
+                (case_root / "model.sc").write_text(
+                    "test model",
+                    encoding="utf-8",
+                )
+
+            with patch(
+                "qualification.run_post_build_inspections.subprocess.run"
+            ) as run:
+                run_post_build_inspections(
+                    native_root,
+                    summary,
+                    solidcraft_cli="solidcraft-test",
+                )
+
+            self.assertEqual(run.call_count, len(POST_BUILD_INSPECTIONS))
+            calls = [call.args[0] for call in run.call_args_list]
+            for slug, spec in POST_BUILD_INSPECTIONS.items():
+                with self.subTest(case=slug):
+                    expected_output = str(
+                        native_root / slug / spec["output"]
+                    )
+                    matching = [
+                        args for args in calls
+                        if str(ROOT / spec["command"]) in args
+                    ]
+                    self.assertEqual(len(matching), 1)
+                    self.assertIn(expected_output, matching[0])
+
+            summary_text = summary.read_text(encoding="utf-8")
+            for slug in POST_BUILD_INSPECTIONS:
+                self.assertIn(f"{slug}\t", summary_text)
+
+    def test_workflow_uses_generic_post_build_runner(self):
+        workflow = (
+            ROOT / ".github" / "workflows" / "scpf.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "python qualification/run_post_build_inspections.py",
+            workflow,
+        )
+        for spec in POST_BUILD_INSPECTIONS.values():
+            self.assertNotIn(
+                f"solidcraft-cli run {spec['command']}",
+                workflow,
+            )
 
     def test_documented_native_version_uses_forge_target(self):
         q3 = next(row for row in QUALIFICATION_LEVELS if row[0] == "Q3")

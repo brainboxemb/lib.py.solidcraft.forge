@@ -213,12 +213,12 @@ jobs:
 
             printf "%s\tPASS\tPASS\tPASS\tPASS\n" "$model" >> output/qualification/q3-q4-q6-native.tsv
           done
-          # Named group hierarchy: ask native SolidCraft to report both the
-          # direct root children and the flattened subassembly contents.
-          solidcraft-cli run qualification/commands/group-hierarchy/inspect-bom.json \
-            --in output/native/group-hierarchy/model.sc \
-            --param-check strict --results \
-            --json-out output/native/group-hierarchy/results-bom.json
+          # Every registered native post-build inspection comes from
+          # qualification/native_cases.py. Adding a new inspection therefore
+          # automatically makes it part of the qualification run.
+          python qualification/run_post_build_inspections.py \
+            --native-root output/native \
+            --summary output/qualification/post-build-inspections.tsv
 
           # Parameter-scope also records the published native parameter list.
           solidcraft-cli run qualification/commands/parameter-scope/export-parameters.json \
