@@ -20,6 +20,7 @@ from qualification.visual_validation import (
     REFERENCE_SIZE,
     decode_reference,
     encode_reference,
+    load_baselines,
     normalized_gray,
     render_views,
     validate_case,
@@ -109,6 +110,16 @@ class QualificationCameraTests(unittest.TestCase):
         self.assertEqual(reference.size, REFERENCE_SIZE)
         self.assertEqual(reference.mode, "L")
         self.assertEqual(reference.getpixel((0, 0)), 123)
+
+    def test_every_saved_visual_baseline_decodes(self):
+        baselines = load_baselines().get("cases", {})
+        self.assertTrue(baselines)
+        for case, baseline in baselines.items():
+            for view, payload in baseline.get("views", {}).items():
+                with self.subTest(case=case, view=view):
+                    reference = decode_reference(payload)
+                    self.assertEqual(reference.size, REFERENCE_SIZE)
+                    self.assertEqual(reference.mode, "L")
 
     def test_q6_requires_regression_and_expected_shape_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
