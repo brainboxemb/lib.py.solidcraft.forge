@@ -101,6 +101,8 @@ def run_tool_cad_ci_layers(out: Path) -> None:
     )
     out.write_text(plan, encoding="utf-8")
 
+    # Keep the always-cheap layer independent from native runtime setup.
+    # Native case items are invoked later only when Forge selected a native gate.
     run(
         [
             sys.executable,
@@ -108,8 +110,48 @@ def run_tool_cad_ci_layers(out: Path) -> None:
             "run",
             "--repo",
             str(ROOT),
+            "--item",
+            "library-tests",
         ],
         env=tool_cad_ci_env(),
+    )
+    run(
+        [
+            sys.executable,
+            str(tool),
+            "run",
+            "--repo",
+            str(ROOT),
+            "--item",
+            "simple-box",
+            "--until",
+            "integration",
+        ],
+        env=tool_cad_ci_env(),
+    )
+
+
+def run_tool_cad_ci_case(item: str, image: str) -> None:
+    """Run one Forge-owned native case item with its resolved runtime image."""
+
+    if not image:
+        raise ValueError(f"{item} requires the qualification image")
+
+    env = tool_cad_ci_env()
+    env["FORGE_QUALIFICATION_IMAGE"] = image
+    run(
+        [
+            sys.executable,
+            str(tool_cad_ci_path()),
+            "run",
+            "--repo",
+            str(ROOT),
+            "--item",
+            item,
+            "--from",
+            "native",
+        ],
+        env=env,
     )
 
 
@@ -209,6 +251,22 @@ def qualification_args(args: argparse.Namespace) -> list[str]:
 def qualify(args: argparse.Namespace) -> None:
     if args.gate == "preflight":
         return
+
+    # Prove the first migrated native case through the generic item runner.
+    # Forge still decides when native SolidCraft is required and which image
+    # supplies that runtime. The legacy gate remains authoritative in this PR.
+    selected = {
+        value.strip()
+        for value in args.cases.split(",")
+        if value.strip()
+    }
+    native_gate = args.gate in {"affected-q1-q6", "full-q1-q6"}
+    simple_box_selected = (
+        args.gate == "full-q1-q6" or "simple-box" in selected
+    )
+    if native_gate and simple_box_selected:
+        run_tool_cad_ci_case("simple-box", args.image)
+
     command = qualification_args(args)
     if args.image:
         docker_python(args.image, *command)

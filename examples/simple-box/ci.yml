@@ -1,14 +1,21 @@
-# One real integration example used to prove the migration path before every
-# example receives its own item config.
-id: integration-simple-box
-kind: integration
+# One example is one CI item. Cheap integration proof and native SolidCraft
+# proof are ordered steps of the same item, so generated output has one owner.
+# Forge decides how far the item must run; tool.cad.ci only executes the range.
+id: simple-box
+kind: example
 watch:
   - examples/simple-box/**
   - scpf/scpf/**
+  - qualification/case_runner.py
   - qualification/cases.py
   - qualification/native_cases.py
+  - qualification/native_validation.py
+  - qualification/visual_validation.py
 strategy:
   reuse: true
 steps:
-  - id: test
+  - id: integration
     run: [python, -m, unittest, discover, -s, tests, -p, "test_*.py", -v]
+  - id: native
+    run: [python, ci.py, native]
+    outputs: [native-case]
