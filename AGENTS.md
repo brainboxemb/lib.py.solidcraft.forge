@@ -288,6 +288,12 @@ green.
 
 ## Generated build output and Pages publishing
 
+`docs/11-generated-output.md` is the normative publication design. Read it
+before changing build/Pages branches, previews, evidence links, publication
+workflows or cleanup. If code/workflows disagree with that document, fix the
+implementation or deliberately change the design first.
+
+
 Generated output has two branches with different jobs. Do not mix them with
 source branches.
 
