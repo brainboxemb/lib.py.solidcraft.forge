@@ -1,0 +1,314 @@
+{
+  "case": "rectangular-pattern",
+  "q4": "pass",
+  "q5": "pass",
+  "checks": [
+    {
+      "name": "declared target geometry",
+      "level": "q4",
+      "status": "pass",
+      "expected": [
+        {
+          "label": "RectangularPattern",
+          "min": [
+            -60,
+            -40,
+            0
+          ],
+          "max": [
+            60,
+            40,
+            4
+          ]
+        }
+      ],
+      "actual": [
+        {
+          "min": [
+            -60.0,
+            -40.0,
+            0.0
+          ],
+          "max": [
+            60.0,
+            40.0,
+            4.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "single patterned plate body",
+      "level": "q4",
+      "status": "pass",
+      "expected": 1,
+      "actual": 1
+    },
+    {
+      "name": "pattern keeps the plate outer bounds",
+      "level": "q4",
+      "status": "pass",
+      "expected": {
+        "min": [
+          -60,
+          -40,
+          0
+        ],
+        "max": [
+          60,
+          40,
+          4
+        ]
+      },
+      "actual": {
+        "max": [
+          60.0,
+          40.0,
+          4.0
+        ],
+        "min": [
+          -60.0,
+          -40.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "3 x 2 rectangular Slot pattern has qualified native geometry",
+      "level": "q4",
+      "status": "pass",
+      "expected": {
+        "volume_mm3": 36281.415986824606,
+        "faces": 30,
+        "face_types": {
+          "cylinder": 12,
+          "plane": 18
+        }
+      },
+      "actual": {
+        "volume_mm3": 36281.4159864975,
+        "faces": 30,
+        "face_types": {
+          "cylinder": 12,
+          "plane": 18
+        }
+      }
+    },
+    {
+      "name": "source Slot remains one solved native sketch profile",
+      "level": "q4",
+      "status": "pass",
+      "expected": {
+        "name": "Slot",
+        "curves": 5,
+        "profiles": 1,
+        "status": "solved"
+      },
+      "actual": {
+        "curves": 5,
+        "dof": 3,
+        "id": 2,
+        "name": "Slot",
+        "profiles": 1,
+        "status": "solved",
+        "visible": false
+      }
+    },
+    {
+      "name": "source cut stays single and pattern is one native History feature",
+      "level": "q4",
+      "status": "pass",
+      "expected": [
+        [
+          "BoxFeature",
+          "Box1"
+        ],
+        [
+          "Sketch",
+          "Slot"
+        ],
+        [
+          "ExtrudeFeature",
+          "Slot"
+        ],
+        [
+          "RectangularPatternFeature",
+          "RectangularPattern1"
+        ]
+      ],
+      "actual": [
+        [
+          "BoxFeature",
+          "Box1"
+        ],
+        [
+          "Sketch",
+          "Slot"
+        ],
+        [
+          "ExtrudeFeature",
+          "Slot"
+        ],
+        [
+          "RectangularPatternFeature",
+          "RectangularPattern1"
+        ]
+      ]
+    },
+    {
+      "name": "declared mutation target geometry",
+      "level": "q5",
+      "status": "pass",
+      "expected": [
+        {
+          "label": "RectangularPattern",
+          "min": [
+            -60,
+            -40,
+            0
+          ],
+          "max": [
+            60,
+            40,
+            4
+          ]
+        }
+      ],
+      "actual": [
+        {
+          "min": [
+            -60.0,
+            -40.0,
+            0.0
+          ],
+          "max": [
+            60.0,
+            40.0,
+            4.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pattern parameters changed in saved design",
+      "level": "q5",
+      "status": "pass",
+      "expected": {
+        "columns": 2.0,
+        "pitch": 30.0,
+        "rows": 2.0,
+        "row_pitch": 28.0
+      },
+      "actual": {
+        "columns": 2.0,
+        "pitch": 30.0,
+        "rows": 2.0,
+        "row_pitch": 28.0
+      }
+    },
+    {
+      "name": "mutated pattern remains one body",
+      "level": "q5",
+      "status": "pass",
+      "expected": 1,
+      "actual": 1
+    },
+    {
+      "name": "2 x 2 pattern rebuilds four Slot cuts",
+      "level": "q5",
+      "status": "pass",
+      "expected": {
+        "volume_mm3": 36987.61065788307,
+        "faces": 22,
+        "face_types": {
+          "cylinder": 8,
+          "plane": 14
+        }
+      },
+      "actual": {
+        "volume_mm3": 36987.61065771006,
+        "faces": 22,
+        "face_types": {
+          "cylinder": 8,
+          "plane": 14
+        }
+      }
+    },
+    {
+      "name": "30 mm pitch moves the rebuilt Slot layout",
+      "level": "q5",
+      "status": "pass",
+      "expected": [
+        -0.5727820682366427,
+        -0.5345965970208665,
+        2.0
+      ],
+      "actual": [
+        -0.572782068049407,
+        -0.5345965971250489,
+        2.0000000000040603
+      ]
+    },
+    {
+      "name": "mutation keeps one solved source Slot profile",
+      "level": "q5",
+      "status": "pass",
+      "expected": {
+        "name": "Slot",
+        "curves": 5,
+        "profiles": 1,
+        "status": "solved"
+      },
+      "actual": {
+        "curves": 5,
+        "dof": 3,
+        "id": 2,
+        "name": "Slot",
+        "profiles": 1,
+        "status": "solved",
+        "visible": false
+      }
+    },
+    {
+      "name": "mutation keeps one source cut and one native pattern feature",
+      "level": "q5",
+      "status": "pass",
+      "expected": [
+        [
+          "BoxFeature",
+          "Box1"
+        ],
+        [
+          "Sketch",
+          "Slot"
+        ],
+        [
+          "ExtrudeFeature",
+          "Slot"
+        ],
+        [
+          "RectangularPatternFeature",
+          "RectangularPattern1"
+        ]
+      ],
+      "actual": [
+        [
+          "BoxFeature",
+          "Box1"
+        ],
+        [
+          "Sketch",
+          "Slot"
+        ],
+        [
+          "ExtrudeFeature",
+          "Slot"
+        ],
+        [
+          "RectangularPatternFeature",
+          "RectangularPattern1"
+        ]
+      ]
+    }
+  ]
+}

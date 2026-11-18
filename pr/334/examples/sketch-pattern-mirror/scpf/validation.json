@@ -1,0 +1,281 @@
+{
+  "case": "sketch-pattern-mirror",
+  "q4": "pass",
+  "q5": "pass",
+  "checks": [
+    {
+      "name": "declared target geometry",
+      "level": "q4",
+      "status": "pass",
+      "expected": [
+        {
+          "label": "SketchPatternMirror",
+          "min": [
+            -120,
+            -80,
+            0
+          ],
+          "max": [
+            120,
+            80,
+            5
+          ]
+        }
+      ],
+      "actual": [
+        {
+          "min": [
+            -120.0,
+            -80.0,
+            0.0
+          ],
+          "max": [
+            120.0,
+            80.0,
+            5.000000000000001
+          ]
+        }
+      ]
+    },
+    {
+      "name": "single patterned plate body",
+      "level": "q4",
+      "status": "pass",
+      "expected": 1,
+      "actual": 1
+    },
+    {
+      "name": "baseline seed/pattern parameters",
+      "level": "q4",
+      "status": "pass",
+      "expected": {
+        "hole_columns": 4.0,
+        "hole_diameter": 8.0,
+        "hole_pitch": 25.0,
+        "slot_count": 2.0,
+        "slot_pitch": 50.0
+      },
+      "actual": {
+        "hole_columns": 4.0,
+        "hole_diameter": 8.0,
+        "hole_pitch": 25.0,
+        "slot_count": 2.0,
+        "slot_pitch": 50.0
+      }
+    },
+    {
+      "name": "baseline associative cuts remove expected material",
+      "level": "q4",
+      "status": "pass",
+      "expected": 181578.76140340505,
+      "actual": 181578.7614030834
+    },
+    {
+      "name": "one Dog holes and one Clamp slots sketch",
+      "level": "q4",
+      "status": "pass",
+      "expected": [
+        "Dog holes",
+        "Clamp slots"
+      ],
+      "actual": [
+        "Clamp slots",
+        "Dog holes"
+      ]
+    },
+    {
+      "name": "both associative sketches solve",
+      "level": "q4",
+      "status": "pass",
+      "expected": {
+        "Dog holes": "solved",
+        "Clamp slots": "solved"
+      },
+      "actual": {
+        "Dog holes": "solved",
+        "Clamp slots": "solved"
+      }
+    },
+    {
+      "name": "pattern/mirror geometry stays inside two Sketch features",
+      "level": "q4",
+      "status": "pass",
+      "expected": [
+        [
+          "BoxFeature",
+          "Box1"
+        ],
+        [
+          "Sketch",
+          "Dog holes"
+        ],
+        [
+          "ExtrudeFeature",
+          "Dog holes"
+        ],
+        [
+          "Sketch",
+          "Clamp slots"
+        ],
+        [
+          "ExtrudeFeature",
+          "Clamp slots"
+        ]
+      ],
+      "actual": [
+        [
+          "BoxFeature",
+          "Box1"
+        ],
+        [
+          "Sketch",
+          "Dog holes"
+        ],
+        [
+          "ExtrudeFeature",
+          "Dog holes"
+        ],
+        [
+          "Sketch",
+          "Clamp slots"
+        ],
+        [
+          "ExtrudeFeature",
+          "Clamp slots"
+        ]
+      ]
+    },
+    {
+      "name": "declared mutation target geometry",
+      "level": "q5",
+      "status": "pass",
+      "expected": [
+        {
+          "label": "SketchPatternMirror",
+          "min": [
+            -120,
+            -80,
+            0
+          ],
+          "max": [
+            120,
+            80,
+            5
+          ]
+        }
+      ],
+      "actual": [
+        {
+          "min": [
+            -120.0,
+            -80.0,
+            0.0
+          ],
+          "max": [
+            120.0,
+            80.0,
+            5.000000000000001
+          ]
+        }
+      ]
+    },
+    {
+      "name": "saved pattern parameters changed",
+      "level": "q5",
+      "status": "pass",
+      "expected": {
+        "hole_columns": 4.0,
+        "hole_diameter": 10.0,
+        "hole_pitch": 30.0,
+        "slot_count": 2.0,
+        "slot_pitch": 30.0
+      },
+      "actual": {
+        "hole_columns": 4.0,
+        "hole_diameter": 10.0,
+        "hole_pitch": 30.0,
+        "slot_count": 2.0,
+        "slot_pitch": 30.0
+      }
+    },
+    {
+      "name": "saved design keeps 8 holes and 8 slots after associative edits",
+      "level": "q5",
+      "status": "pass",
+      "expected": 180447.78804811274,
+      "actual": 180447.78805063973
+    },
+    {
+      "name": "saved spacing edits move the repeated sketch geometry",
+      "level": "q5",
+      "status": "pass",
+      "expected": {
+        "different_from_baseline_x_by_more_than_mm": 0.01,
+        "baseline_x": 0.24914221233465159
+      },
+      "actual": 0.3264371540624332
+    },
+    {
+      "name": "mutation keeps the same two solved Sketch features",
+      "level": "q5",
+      "status": "pass",
+      "expected": {
+        "Dog holes": "solved",
+        "Clamp slots": "solved"
+      },
+      "actual": {
+        "Dog holes": "solved",
+        "Clamp slots": "solved"
+      }
+    },
+    {
+      "name": "mutation preserves the two-sketch history",
+      "level": "q5",
+      "status": "pass",
+      "expected": [
+        [
+          "BoxFeature",
+          "Box1"
+        ],
+        [
+          "Sketch",
+          "Dog holes"
+        ],
+        [
+          "ExtrudeFeature",
+          "Dog holes"
+        ],
+        [
+          "Sketch",
+          "Clamp slots"
+        ],
+        [
+          "ExtrudeFeature",
+          "Clamp slots"
+        ]
+      ],
+      "actual": [
+        [
+          "BoxFeature",
+          "Box1"
+        ],
+        [
+          "Sketch",
+          "Dog holes"
+        ],
+        [
+          "ExtrudeFeature",
+          "Dog holes"
+        ],
+        [
+          "Sketch",
+          "Clamp slots"
+        ],
+        [
+          "ExtrudeFeature",
+          "Clamp slots"
+        ]
+      ]
+    }
+  ]
+}

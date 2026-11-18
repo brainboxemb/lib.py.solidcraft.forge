@@ -1,0 +1,33 @@
+case	compile	build	eval	snapshot	mutation
+simple-box	0.074	0.016	0.011	0.433	0.028
+anchored-holes	0.075	0.099	0.086	0.764	
+hole-family	0.072	3.003	3.522	14.772	
+sheet-fold	0.073	0.090	0.081	0.771	
+top-sketch-after-chamfer	0.072	0.124	0.073	0.808	
+parameter-scope	0.073	0.030	0.018	0.292	0.047
+parent-derived-child-size	0.073	0.019	0.012	0.402	0.041
+components	0.072	0.013	0.010	0.360	
+repeated-parent-attachments	0.073	0.035	0.013	0.436	0.034
+assembly-decorator	0.072	0.013	0.010	0.417	
+group-hierarchy	0.072	0.019	0.012	0.630	
+attach-angle	0.074	0.035	0.012	0.441	
+parametric-attach	0.075	0.035	0.012	0.366	0.028
+parametric-offset	0.077	0.035	0.012	0.535	0.028
+parametric-anchor	0.076	0.035	0.012	0.393	0.036
+corner-anchor	0.077	0.035	0.013	0.539	0.038
+anchor-topology-mutation	0.078	0.036	0.012	0.470	0.037
+assembly-owned-anchor	0.077	0.044	0.016	0.350	0.044
+four-corner-l	0.077	0.173	0.089	0.839	0.317
+eight-corner-brackets	0.077	0.173	0.090	0.887	0.393
+eight-flightcase-corners	0.077	0.216	0.108	0.955	0.428
+xz-anchor	0.077	0.046	0.016	0.570	0.048
+round-top-sketch	0.075	0.154	0.097	0.644	
+circle-negative-extrude	0.076	0.029	0.042	0.655	
+sketch-pattern-mirror	0.077	1.262	0.567	2.550	2.176
+selective-profile-extrude	0.076	0.120	0.108	0.796	0.355
+circular-feature-pattern	0.074	0.221	0.242	1.416	0.465
+rectangular-pattern	0.075	0.277	0.294	1.628	0.650
+slot-family	0.077	0.215	0.249	1.356	
+rounded-rectangle-sketch	0.077	0.084	0.062	0.727	
+primitive-csg	0.077	0.597	0.843	2.137	
+bracket	0.097	0.021	0.015	0.617	

@@ -1,0 +1,101 @@
+{
+  "case": "circle-negative-extrude",
+  "implementation": "pythonscad",
+  "status": "pass",
+  "source": "examples/circle-negative-extrude/pythonscad/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      -10.0,
+      -9.945218953682733,
+      -30.0
+    ],
+    "max": [
+      10.0,
+      9.945218953682733,
+      0.0
+    ]
+  },
+  "expected": {
+    "min": [
+      -10.0,
+      -10.0,
+      -30.0
+    ],
+    "max": [
+      10.0,
+      10.0,
+      0.0
+    ]
+  },
+  "max_delta_mm": 0.05478104631726666,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          -10.0,
+          -9.945218953682733,
+          -30.0
+        ],
+        "max": [
+          10.0,
+          9.945218953682733,
+          0.0
+        ]
+      },
+      "expected": {
+        "min": [
+          -10.0,
+          -10.0,
+          -30.0
+        ],
+        "max": [
+          10.0,
+          10.0,
+          0.0
+        ]
+      },
+      "max_delta_mm": 0.05478104631726666,
+      "tolerance_mm": 0.5
+    },
+    "watertight": {
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    "volume": {
+      "status": "pass",
+      "actual_mm3": 9356.02608679917,
+      "expected_mm3": 9424.77796076938,
+      "delta_mm3": 68.75187397021,
+      "tolerance_mm3": 100.0
+    },
+    "surface_distance_probes": {
+      "status": "pass",
+      "probes": [
+        {
+          "label": "circular side outside the diagonal",
+          "point": [
+            8.0,
+            8.0,
+            -15.0
+          ],
+          "actual_mm": 1.352984501007286,
+          "expected_mm": 1.3137084989847612,
+          "delta_mm": 0.0392760020225249,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        }
+      ]
+    }
+  },
+  "bounds_sufficient": false,
+  "bounds_reason": "A box can share the same envelope as this cylinder. Circular volume and a radial surface probe are required."
+}

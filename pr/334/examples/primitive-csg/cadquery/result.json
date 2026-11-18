@@ -1,0 +1,133 @@
+{
+  "case": "primitive-csg",
+  "implementation": "cadquery",
+  "status": "pass",
+  "source": "examples/primitive-csg/cadquery/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      -19.595918655395508,
+      -19.9940128326416,
+      0.0
+    ],
+    "max": [
+      25.0,
+      19.9940128326416,
+      20.0
+    ]
+  },
+  "expected": {
+    "min": [
+      -19.595917942265423,
+      -20.0,
+      0.0
+    ],
+    "max": [
+      25.0,
+      20.0,
+      20.0
+    ]
+  },
+  "max_delta_mm": 0.0059871673583984375,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          -19.595918655395508,
+          -19.9940128326416,
+          0.0
+        ],
+        "max": [
+          25.0,
+          19.9940128326416,
+          20.0
+        ]
+      },
+      "expected": {
+        "min": [
+          -19.595917942265423,
+          -20.0,
+          0.0
+        ],
+        "max": [
+          25.0,
+          20.0,
+          20.0
+        ]
+      },
+      "max_delta_mm": 0.0059871673583984375,
+      "tolerance_mm": 0.5
+    },
+    "watertight": {
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    "surface_distance_probes": {
+      "status": "pass",
+      "probes": [
+        {
+          "label": "surviving sphere interior",
+          "point": [
+            -10.0,
+            0.0,
+            10.0
+          ],
+          "actual_mm": 5.842979404215853,
+          "expected_mm": 5.857864376269049,
+          "delta_mm": 0.014884972053195611,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "cylindrical bore",
+          "point": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "actual_mm": 2.9987566471099854,
+          "expected_mm": 3.0,
+          "delta_mm": 0.0012433528900146484,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "clip plane at x=25",
+          "point": [
+            27.0,
+            10.0,
+            10.0
+          ],
+          "actual_mm": 2.0,
+          "expected_mm": 2.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "unioned box extension",
+          "point": [
+            23.0,
+            14.0,
+            10.0
+          ],
+          "actual_mm": 1.0,
+          "expected_mm": 1.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        }
+      ]
+    }
+  },
+  "bounds_sufficient": false,
+  "bounds_reason": "Many different Boolean results can share this envelope. Surface probes must prove the surviving sphere, bore, clipped box and unioned extension."
+}

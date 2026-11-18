@@ -1,0 +1,712 @@
+{
+  "case": "sketch-pattern-mirror",
+  "implementation": "pybosl2",
+  "status": "pass",
+  "source": "examples/sketch-pattern-mirror/pybosl2/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      -120.0,
+      -80.0,
+      0.0
+    ],
+    "max": [
+      120.0,
+      80.0,
+      5.0
+    ]
+  },
+  "expected": {
+    "min": [
+      -120.0,
+      -80.0,
+      0.0
+    ],
+    "max": [
+      120.0,
+      80.0,
+      5.0
+    ]
+  },
+  "max_delta_mm": 0.0,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          -120.0,
+          -80.0,
+          0.0
+        ],
+        "max": [
+          120.0,
+          80.0,
+          5.0
+        ]
+      },
+      "expected": {
+        "min": [
+          -120.0,
+          -80.0,
+          0.0
+        ],
+        "max": [
+          120.0,
+          80.0,
+          5.0
+        ]
+      },
+      "max_delta_mm": 0.0,
+      "tolerance_mm": 0.5
+    },
+    "watertight": {
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    "volume": {
+      "status": "pass",
+      "actual_mm3": 181733.5029449278,
+      "expected_mm3": 181578.76140340505,
+      "delta_mm3": 154.74154152275878,
+      "tolerance_mm3": 180.0
+    },
+    "surface_distance_probes": {
+      "status": "pass",
+      "probes": [
+        {
+          "label": "hole 1,1 at z=0.5",
+          "point": [
+            -60.0,
+            -45.0,
+            0.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 1,1 at z=2.5",
+          "point": [
+            -60.0,
+            -45.0,
+            2.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 1,1 at z=4.5",
+          "point": [
+            -60.0,
+            -45.0,
+            4.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 2,1 at z=0.5",
+          "point": [
+            -35.0,
+            -45.0,
+            0.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 2,1 at z=2.5",
+          "point": [
+            -35.0,
+            -45.0,
+            2.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 2,1 at z=4.5",
+          "point": [
+            -35.0,
+            -45.0,
+            4.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 3,1 at z=0.5",
+          "point": [
+            -10.0,
+            -45.0,
+            0.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 3,1 at z=2.5",
+          "point": [
+            -10.0,
+            -45.0,
+            2.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 3,1 at z=4.5",
+          "point": [
+            -10.0,
+            -45.0,
+            4.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 4,1 at z=0.5",
+          "point": [
+            15.0,
+            -45.0,
+            0.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 4,1 at z=2.5",
+          "point": [
+            15.0,
+            -45.0,
+            2.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 4,1 at z=4.5",
+          "point": [
+            15.0,
+            -45.0,
+            4.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 1,2 at z=0.5",
+          "point": [
+            -60.0,
+            45.0,
+            0.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 1,2 at z=2.5",
+          "point": [
+            -60.0,
+            45.0,
+            2.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 1,2 at z=4.5",
+          "point": [
+            -60.0,
+            45.0,
+            4.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 2,2 at z=0.5",
+          "point": [
+            -35.0,
+            45.0,
+            0.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 2,2 at z=2.5",
+          "point": [
+            -35.0,
+            45.0,
+            2.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 2,2 at z=4.5",
+          "point": [
+            -35.0,
+            45.0,
+            4.5
+          ],
+          "actual_mm": 3.8837661743164062,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623382568359375,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 3,2 at z=0.5",
+          "point": [
+            -10.0,
+            45.0,
+            0.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 3,2 at z=2.5",
+          "point": [
+            -10.0,
+            45.0,
+            2.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 3,2 at z=4.5",
+          "point": [
+            -10.0,
+            45.0,
+            4.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 4,2 at z=0.5",
+          "point": [
+            15.0,
+            45.0,
+            0.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 4,2 at z=2.5",
+          "point": [
+            15.0,
+            45.0,
+            2.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "hole 4,2 at z=4.5",
+          "point": [
+            15.0,
+            45.0,
+            4.5
+          ],
+          "actual_mm": 3.8837671279907227,
+          "expected_mm": 4.0,
+          "delta_mm": 0.11623287200927734,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 1,1 at z=0.5",
+          "point": [
+            -80.0,
+            -20.0,
+            0.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 1,1 at z=2.5",
+          "point": [
+            -80.0,
+            -20.0,
+            2.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 1,1 at z=4.5",
+          "point": [
+            -80.0,
+            -20.0,
+            4.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 2,1 at z=0.5",
+          "point": [
+            -30.0,
+            -20.0,
+            0.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 2,1 at z=2.5",
+          "point": [
+            -30.0,
+            -20.0,
+            2.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 2,1 at z=4.5",
+          "point": [
+            -30.0,
+            -20.0,
+            4.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 3,1 at z=0.5",
+          "point": [
+            30.0,
+            -20.0,
+            0.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 3,1 at z=2.5",
+          "point": [
+            30.0,
+            -20.0,
+            2.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 3,1 at z=4.5",
+          "point": [
+            30.0,
+            -20.0,
+            4.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 4,1 at z=0.5",
+          "point": [
+            80.0,
+            -20.0,
+            0.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 4,1 at z=2.5",
+          "point": [
+            80.0,
+            -20.0,
+            2.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 4,1 at z=4.5",
+          "point": [
+            80.0,
+            -20.0,
+            4.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 1,2 at z=0.5",
+          "point": [
+            -80.0,
+            20.0,
+            0.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 1,2 at z=2.5",
+          "point": [
+            -80.0,
+            20.0,
+            2.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 1,2 at z=4.5",
+          "point": [
+            -80.0,
+            20.0,
+            4.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 2,2 at z=0.5",
+          "point": [
+            -30.0,
+            20.0,
+            0.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 2,2 at z=2.5",
+          "point": [
+            -30.0,
+            20.0,
+            2.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 2,2 at z=4.5",
+          "point": [
+            -30.0,
+            20.0,
+            4.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 3,2 at z=0.5",
+          "point": [
+            30.0,
+            20.0,
+            0.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 3,2 at z=2.5",
+          "point": [
+            30.0,
+            20.0,
+            2.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 3,2 at z=4.5",
+          "point": [
+            30.0,
+            20.0,
+            4.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 4,2 at z=0.5",
+          "point": [
+            80.0,
+            20.0,
+            0.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 4,2 at z=2.5",
+          "point": [
+            80.0,
+            20.0,
+            2.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "slot 4,2 at z=4.5",
+          "point": [
+            80.0,
+            20.0,
+            4.5
+          ],
+          "actual_mm": 4.0,
+          "expected_mm": 4.0,
+          "delta_mm": 0.0,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        }
+      ]
+    }
+  },
+  "bounds_sufficient": false,
+  "bounds_reason": "The Circle and Slot cuts do not change the plate envelope. Volume, 3D wall probes and saved-design mutation are required to prove the associative sketch pattern/mirror result."
+}

@@ -1,0 +1,387 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "6a05d3bc13a933122eed2aee9cc66841311165e7ab6e58a173ebfabcdf147c70",
+  "variables": {
+    "$caseblock": 2,
+    "$flightcasecorner_occurrence_1": 6,
+    "$flightcasecorner_occurrence_2": 10,
+    "$flightcasecorner_occurrence_3": 11,
+    "$flightcasecorner_occurrence_4": 12,
+    "$flightcasecorner_occurrence_5": 13,
+    "$flightcasecorner_occurrence_6": 14,
+    "$flightcasecorner_occurrence_7": 15,
+    "$flightcasecorner_occurrence_8": 16
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "case_width",
+        "expression": "120",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "case_depth",
+        "expression": "80",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "case_height",
+        "expression": "60",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 3,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "CaseBlock",
+        "grounded": true
+      },
+      "bindings": {
+        "$caseblock": 2
+      }
+    },
+    {
+      "index": 4,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": "case_width",
+        "width": "case_depth",
+        "height": "case_height",
+        "corner": [
+          "-case_width / 2",
+          "-case_depth / 2",
+          0
+        ],
+        "body_name": "CaseBlock"
+      }
+    },
+    {
+      "index": 5,
+      "command": "solid.fillet",
+      "resolved_params": {
+        "edges": [
+          [
+            -60.0,
+            -40.0,
+            30.0
+          ],
+          [
+            60.0,
+            -40.0,
+            30.0
+          ],
+          [
+            60.0,
+            40.0,
+            30.0
+          ],
+          [
+            -60.0,
+            40.0,
+            30.0
+          ]
+        ],
+        "radius": 8,
+        "body": "CaseBlock"
+      }
+    },
+    {
+      "index": 6,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 7,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "FlightcaseCorner",
+        "grounded": false
+      },
+      "bindings": {
+        "$flightcasecorner_occurrence_1": 6
+      }
+    },
+    {
+      "index": 8,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 20.0,
+        "width": 20.0,
+        "height": 4.0,
+        "operation": "new",
+        "center": [
+          10.0,
+          10.0,
+          -2.0
+        ],
+        "body_name": "FlightcaseCorner"
+      }
+    },
+    {
+      "index": 9,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 20.0,
+        "width": 4.5,
+        "height": 20.5,
+        "operation": "join",
+        "center": [
+          10.0,
+          -1.75,
+          9.75
+        ],
+        "targets": [
+          "FlightcaseCorner"
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 4.5,
+        "width": 20.0,
+        "height": 20.5,
+        "operation": "join",
+        "center": [
+          -1.75,
+          10.0,
+          9.75
+        ],
+        "targets": [
+          "FlightcaseCorner"
+        ]
+      }
+    },
+    {
+      "index": 11,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 12,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "FlightcaseCorner"
+      },
+      "bindings": {
+        "$flightcasecorner_occurrence_2": 10
+      }
+    },
+    {
+      "index": 13,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "FlightcaseCorner"
+      },
+      "bindings": {
+        "$flightcasecorner_occurrence_3": 11
+      }
+    },
+    {
+      "index": 14,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "FlightcaseCorner"
+      },
+      "bindings": {
+        "$flightcasecorner_occurrence_4": 12
+      }
+    },
+    {
+      "index": 15,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "FlightcaseCorner"
+      },
+      "bindings": {
+        "$flightcasecorner_occurrence_5": 13
+      }
+    },
+    {
+      "index": 16,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "FlightcaseCorner"
+      },
+      "bindings": {
+        "$flightcasecorner_occurrence_6": 14
+      }
+    },
+    {
+      "index": 17,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "FlightcaseCorner"
+      },
+      "bindings": {
+        "$flightcasecorner_occurrence_7": 15
+      }
+    },
+    {
+      "index": 18,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "FlightcaseCorner"
+      },
+      "bindings": {
+        "$flightcasecorner_occurrence_8": 16
+      }
+    },
+    {
+      "index": 19,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 6,
+        "translate": [
+          "-(case_width / 2)",
+          "-(case_depth / 2)",
+          0
+        ]
+      }
+    },
+    {
+      "index": 20,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 10,
+        "translate": [
+          "case_width / 2",
+          "-(case_depth / 2)",
+          0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "90 deg"
+      }
+    },
+    {
+      "index": 21,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 11,
+        "translate": [
+          "case_width / 2",
+          "case_depth / 2",
+          0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "180 deg"
+      }
+    },
+    {
+      "index": 22,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 12,
+        "translate": [
+          "-(case_width / 2)",
+          "case_depth / 2",
+          0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "270 deg"
+      }
+    },
+    {
+      "index": 23,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 13,
+        "translate": [
+          "-(case_width / 2)",
+          "-(case_depth / 2)",
+          "case_height"
+        ],
+        "axis": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "angle": "180 deg"
+      }
+    },
+    {
+      "index": 24,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 14,
+        "translate": [
+          "case_width / 2",
+          "-(case_depth / 2)",
+          "case_height"
+        ],
+        "axis": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "angle": "180 deg"
+      }
+    },
+    {
+      "index": 25,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 15,
+        "translate": [
+          "case_width / 2",
+          "case_depth / 2",
+          "case_height"
+        ],
+        "axis": [
+          1.0,
+          -1.0,
+          0.0
+        ],
+        "angle": "180 deg"
+      }
+    },
+    {
+      "index": 26,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 16,
+        "translate": [
+          "-(case_width / 2)",
+          "case_depth / 2",
+          "case_height"
+        ],
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "angle": "180 deg"
+      }
+    }
+  ],
+  "completed": 27
+}

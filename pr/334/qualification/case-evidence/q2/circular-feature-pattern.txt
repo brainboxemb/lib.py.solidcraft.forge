@@ -1,0 +1,21 @@
+$ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m unittest discover -s /home/runner/work/lib.py.solidcraft.forge/lib.py.solidcraft.forge/examples/circular-feature-pattern/tests -p test_contract.py -k test_emits_one_native_circular_feature_pattern -v
+
+test_emits_one_native_circular_feature_pattern (test_contract.CircularFeaturePatternQualificationTests.test_emits_one_native_circular_feature_pattern) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+OK
+
+matched_tests=1 status=PASS
+
+$ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m unittest discover -s /home/runner/work/lib.py.solidcraft.forge/lib.py.solidcraft.forge/examples/circular-feature-pattern/tests -p test_contract.py -k test_count_parameter_is_dimensionless_and_pcd_is_length -v
+
+test_count_parameter_is_dimensionless_and_pcd_is_length (test_contract.CircularFeaturePatternQualificationTests.test_count_parameter_is_dimensionless_and_pcd_is_length) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+OK
+
+matched_tests=1 status=PASS
