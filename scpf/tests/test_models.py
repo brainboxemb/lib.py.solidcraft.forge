@@ -724,6 +724,36 @@ class SCPFExamples(unittest.TestCase):
         )["commands"]
         self.assertEqual(commands[-1]["command"], "solid.hole")
 
+    def test_cylinder_body_accepts_native_hole_features(self):
+        from scpf.compiler import compile_model
+        from scpf.core import Anchor, Cylinder, Hole
+
+        body = Cylinder(d=100, h=10, anchor=Anchor.BOTTOM)
+        body = body + Cylinder(d=44, h=16, anchor=Anchor.BOTTOM).at(
+            0, 0, 10, anchor=Anchor.BOTTOM
+        )
+        body = body + Hole(
+            d=24,
+            depth=26,
+            direction=(0, 0, -1),
+        ).at(0, 0, 26)
+        body = body + Hole(
+            d=9,
+            depth=10,
+            direction=(0, 0, -1),
+        ).at(35, 0, 10)
+
+        commands = compile_model(body, "Flange")["commands"]
+        self.assertEqual(
+            [row["command"] for row in commands],
+            ["solid.cylinder", "solid.cylinder", "solid.hole", "solid.hole"],
+        )
+        self.assertEqual(commands[0]["params"]["operation"], "new")
+        self.assertEqual(commands[1]["params"]["operation"], "join")
+        self.assertEqual(commands[2]["params"]["position"], [0, 0, 26])
+        self.assertEqual(commands[2]["params"]["targets"], ["Flange"])
+        self.assertEqual(commands[3]["params"]["position"], [35, 0, 10])
+
     def test_shell_uses_faces_without_reusing_anchor_semantics(self):
         from scpf.compiler import compile_model
         from scpf.core import Box, Faces
