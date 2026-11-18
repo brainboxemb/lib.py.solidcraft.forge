@@ -1,0 +1,10 @@
+$ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m unittest discover -s /home/runner/work/lib.py.solidcraft.forge/lib.py.solidcraft.forge/scpf/tests -p test_assembly_placement.py -k test_named_group_creates_real_nested_native_component -v
+
+test_named_group_creates_real_nested_native_component (test_assembly_placement.AssemblyPlacementTests.test_named_group_creates_real_nested_native_component) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+OK
+
+matched_tests=1 status=PASS

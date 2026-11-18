@@ -1,0 +1,4194 @@
+{
+  "schema_version": 4,
+  "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+  "forge_version": "0.10.0",
+  "solidcraft_version": "0.42.0",
+  "qualified_at": "2026-11-18T13:26:54Z",
+  "cases": {
+    "simple-box": {
+      "schema_version": 4,
+      "case": "simple-box",
+      "title": "Parameterized Box",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_model_authoring.py",
+              "test": "test_plain_model_class_fields_become_parameters"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/simple-box/tests/test_contract.py",
+              "test": "test_box_lowers_directly_to_native_solid_box"
+            }
+          ],
+          "commands": 4,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-length-50.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Required because this case explicitly claims an editable native Box. Change length from 40 to 50 mm in the saved .sc design; the Box must rebuild to 50 x 30 x 10 mm without rerunning Python.",
+          "mutation": "length 40 -> 50 mm",
+          "evidence": [
+            "measurements-length-50.json",
+            "model-length-50.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-length-50.json",
+          "measurements.json",
+          "model-length-50.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "anchored-holes": {
+      "schema_version": 4,
+      "case": "anchored-holes",
+      "title": "Face-relative hole with native pattern",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_geometry_features.py",
+              "test": "test_repeat_linear_is_not_part_of_the_public_shape_api"
+            },
+            {
+              "file": "scpf/tests/test_geometry_features.py",
+              "test": "test_attached_hole_source_uses_native_rectangular_pattern"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/anchored-holes/tests/test_contract.py",
+              "test": "test_anchored_holes_command_contract"
+            }
+          ],
+          "commands": 14,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No saved-design mutation in this fixture; geometry and feature placement are measured at Q4.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "top",
+            "right",
+            "iso"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "goal-top.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "model-top.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "overlay-top.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "goal-top.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "model-top.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "overlay-top.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "hole-family": {
+      "schema_version": 4,
+      "case": "hole-family",
+      "title": "Native Hole family",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_hole_family.py",
+              "test": "test_all_hole_variants_lower_one_to_one_to_native_hole"
+            },
+            {
+              "file": "scpf/tests/test_hole_family.py",
+              "test": "test_hole_family_validates_feature_specific_dimensions"
+            },
+            {
+              "file": "scpf/tests/test_hole_family.py",
+              "test": "test_threaded_hole_keeps_cosmetic_and_modeled_intent_distinct"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/hole-family/tests/test_contract.py",
+              "test": "test_hole_family_uses_four_native_hole_features"
+            }
+          ],
+          "commands": 8,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No saved-design mutation is required in this first Hole-family qualification; Q1-Q4 prove API, native command identity and geometry while Q6 proves the visible forms.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "top",
+            "front",
+            "iso"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "goal-top.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "model-top.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "overlay-top.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "goal-top.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "model-top.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "overlay-top.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "sheet-fold": {
+      "schema_version": 4,
+      "case": "sheet-fold",
+      "title": "Flat sheet, through hole and 90\u00b0 fold",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_sheet_metal.py",
+              "test": "test_blank_hole_and_fold_lower_to_native_sheet_history"
+            },
+            {
+              "file": "scpf/tests/test_sheet_metal.py",
+              "test": "test_sheet_rule_and_fold_parameter_units_are_correct"
+            },
+            {
+              "file": "scpf/tests/test_sheet_metal.py",
+              "test": "test_sheet_metal_and_fold_validate_authoring_contract"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/sheet-fold/tests/test_contract.py",
+              "test": "test_sheet_fold_uses_native_sheet_history"
+            },
+            {
+              "file": "examples/sheet-fold/tests/test_contract.py",
+              "test": "test_sheet_rule_and_fold_parameters_have_native_units"
+            }
+          ],
+          "commands": 14,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No Q5 mutation is required in this first sheet-metal qualification. Q1-Q4 prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "front",
+            "top",
+            "iso"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "goal-top.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "model-top.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "overlay-top.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results-flat-pattern.json",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "goal-top.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "model-top.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "overlay-top.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "top-sketch-after-chamfer": {
+      "schema_version": 4,
+      "case": "top-sketch-after-chamfer",
+      "title": "TOP Sketch after chamfer",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_headless.py",
+              "test": "test_numeric_vector_selector_tolerates_kernel_float_noise"
+            },
+            {
+              "file": "scpf/tests/test_sketch_attachment.py",
+              "test": "test_top_attached_sketch_uses_same_face_query_after_edge_features"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/top-sketch-after-chamfer/tests/test_contract.py",
+              "test": "test_chamfer_precedes_native_face_query_and_attached_sketch"
+            }
+          ],
+          "commands": 7,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No saved-design mutation in this fixture; it isolates stable face lookup after topology-changing native features.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "top",
+            "front",
+            "iso"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "goal-top.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "model-top.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "overlay-top.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "goal-top.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "model-top.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "overlay-top.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "parameter-scope": {
+      "schema_version": 4,
+      "case": "parameter-scope",
+      "title": "Explicit component parameters and shared dependencies",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_component_definitions.py",
+              "test": "test_component_defaults_are_fixed_unless_included"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/parameter-scope/tests/test_contract.py",
+              "test": "test_generated_parameter_contract"
+            }
+          ],
+          "commands": 16,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-shared-width-100.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change shared_width from 80 to 100 mm in the saved native design; widths must change from [40,40,60,80,80] to [40,50,60,100,100].",
+          "mutation": "shared_width 80 -> 100 mm",
+          "evidence": [
+            "measurements-shared-width-100.json",
+            "model-shared-width-100.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-shared-width-100.json",
+          "measurements.json",
+          "model-shared-width-100.sc",
+          "model.sc",
+          "model.step",
+          "parameters-export-results.json",
+          "parameters.json",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "parent-derived-child-size": {
+      "schema_version": 4,
+      "case": "parent-derived-child-size",
+      "title": "Child dimensions derived from parent parameters",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_component_definitions.py",
+              "test": "test_parent_expression_remains_an_expression_in_child_geometry"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/parent-derived-child-size/tests/test_contract.py",
+              "test": "test_child_dimensions_keep_parent_expressions"
+            }
+          ],
+          "commands": 8,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-size-160x120.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change base_width/base_depth from 120x80 to 160x120 mm in the saved .sc design; without rerunning Python the child must rebuild from 60x40 to 80x60 mm.",
+          "mutation": "parent 120x80 -> 160x120 mm; child follows 60x40 -> 80x60 mm",
+          "evidence": [
+            "measurements-size-160x120.json",
+            "model-size-160x120.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-size-160x120.json",
+          "measurements.json",
+          "model-size-160x120.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "components": {
+      "schema_version": 4,
+      "case": "components",
+      "title": "Reuse one component definition in two placements",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_placement.py",
+              "test": "test_copy_accepts_placement_override"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/components/tests/test_contract.py",
+              "test": "test_components_command_contract"
+            }
+          ],
+          "commands": 4,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No mutation in this base case; parameter-driven Placement is qualified separately.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "repeated-parent-attachments": {
+      "schema_version": 4,
+      "case": "repeated-parent-attachments",
+      "title": "Attachments on repeated parent occurrences",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_attachments.py",
+              "test": "test_repeated_parent_attachments_keep_distinct_targets"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/repeated-parent-attachments/tests/test_contract.py",
+              "test": "test_two_authored_rigid_joints_use_bound_occurrences"
+            }
+          ],
+          "commands": 14,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-height-60.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change parent_height from 40 to 60 mm in the saved .sc design; both Parent occurrences become 60 mm tall and both Marker occurrences move from Z=40..50 to Z=60..70 without rerunning Python.",
+          "mutation": "parent_height 40 -> 60 mm; both attached markers follow",
+          "evidence": [
+            "measurements-height-60.json",
+            "model-height-60.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-height-60.json",
+          "measurements.json",
+          "model-height-60.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "assembly-decorator": {
+      "schema_version": 4,
+      "case": "assembly-decorator",
+      "title": "Imported @assembly subassembly",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_component_definitions.py",
+              "test": "test_imported_assembly_class_uses_object_syntax"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/assembly-decorator/tests/test_contract.py",
+              "test": "test_imported_assembly_lowers_to_reusable_native_occurrences"
+            }
+          ],
+          "commands": 4,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No saved-design mutation in this fixture; it isolates imported @assembly construction and native lowering.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "group-hierarchy": {
+      "schema_version": 4,
+      "case": "group-hierarchy",
+      "title": "Named native subassembly group",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_placement.py",
+              "test": "test_named_group_creates_real_nested_native_component"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/group-hierarchy/tests/test_contract.py",
+              "test": "test_group_lowers_to_real_nested_component"
+            }
+          ],
+          "commands": 8,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "results-bom.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No saved-design mutation in this fixture; it isolates persisted native grouping and hierarchy.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results-bom.json",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "attach-angle": {
+      "schema_version": 4,
+      "case": "attach-angle",
+      "title": "Native attachment clocking angle",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_attachments.py",
+              "test": "test_attach_angle_is_emitted_as_native_joint_turn"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/attach-angle/tests/test_contract.py",
+              "test": "test_quarter_turn_is_emitted_on_rigid_joint"
+            }
+          ],
+          "commands": 9,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "Not required; this case isolates native orientation/clocking and is qualified by measured bounds plus fixed-camera visual regression.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "parametric-attach": {
+      "schema_version": 4,
+      "case": "parametric-attach",
+      "title": "Editable distance between attached components",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_attachments.py",
+              "test": "test_parametric_attach_keeps_gap_as_native_joint_expression"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/parametric-attach/tests/test_contract.py",
+              "test": "test_parametric_attach_command_contract"
+            }
+          ],
+          "commands": 10,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-gap-30.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change gap from 10 to 30 mm in the saved .sc design; the child must move another 20 mm without rerunning Python.",
+          "mutation": "gap 10 -> 30 mm",
+          "evidence": [
+            "measurements-gap-30.json",
+            "model-gap-30.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-gap-30.json",
+          "measurements.json",
+          "model-gap-30.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "parametric-offset": {
+      "schema_version": 4,
+      "case": "parametric-offset",
+      "title": "Editable local offset at an attachment",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_attachments.py",
+              "test": "test_parametric_attach_keeps_in_plane_offset_expression"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/parametric-offset/tests/test_contract.py",
+              "test": "test_parametric_offset_command_contract"
+            }
+          ],
+          "commands": 10,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-shift-10.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm.",
+          "mutation": "shift 5 -> 10 mm",
+          "evidence": [
+            "measurements-shift-10.json",
+            "model-shift-10.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-shift-10.json",
+          "measurements.json",
+          "model-shift-10.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "parametric-anchor": {
+      "schema_version": 4,
+      "case": "parametric-anchor",
+      "title": "Face anchor follows parent geometry",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_component_definitions.py",
+              "test": "test_component_preserves_parent_parameter_dependency"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/parametric-anchor/tests/test_contract.py",
+              "test": "test_parametric_anchor_command_contract"
+            }
+          ],
+          "commands": 10,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-width-80.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change base_width from 40 to 80 mm in the saved design; the block follows the moved RIGHT face.",
+          "mutation": "base_width 40 -> 80 mm",
+          "evidence": [
+            "measurements-width-80.json",
+            "model-width-80.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-width-80.json",
+          "measurements.json",
+          "model-width-80.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "corner-anchor": {
+      "schema_version": 4,
+      "case": "corner-anchor",
+      "title": "Topology-backed corner anchor",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_attachments.py",
+              "test": "test_corner_anchor_compiles_to_native_edge_and_corner_origins"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/corner-anchor/tests/test_contract.py",
+              "test": "test_corner_anchor_command_contract"
+            }
+          ],
+          "commands": 11,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-size-80x40.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change the base from 40x20 to 80x40 mm; the marker must follow both the new right side and new top.",
+          "mutation": "base 40x20 -> 80x40 mm",
+          "evidence": [
+            "measurements-size-80x40.json",
+            "model-size-80x40.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-size-80x40.json",
+          "measurements.json",
+          "model-size-80x40.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "anchor-topology-mutation": {
+      "schema_version": 4,
+      "case": "anchor-topology-mutation",
+      "title": "Explicit topology pick follows parent resize",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_attachments.py",
+              "test": "test_named_topology_anchor_is_inlined_as_edge_reference"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/anchor-topology-mutation/tests/test_contract.py",
+              "test": "test_fixed_topology_pick_is_inlined"
+            }
+          ],
+          "commands": 11,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-size-80x40.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the unchanged native relationship must move the marker to the new front-top-left corner without rerunning Python.",
+          "mutation": "board 40x20 -> 80x40 mm; fixed topology pick follows corner",
+          "evidence": [
+            "measurements-size-80x40.json",
+            "model-size-80x40.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-size-80x40.json",
+          "measurements.json",
+          "model-size-80x40.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "assembly-owned-anchor": {
+      "schema_version": 4,
+      "case": "assembly-owned-anchor",
+      "title": "Assembly-owned named anchor",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_attachments.py",
+              "test": "test_assembly_can_own_named_attachment_anchor"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/assembly-owned-anchor/tests/test_contract.py",
+              "test": "test_named_assembly_anchor_resolves_to_native_corner_relationship"
+            }
+          ],
+          "commands": 14,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-size-80x40.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the marker created through the assembly-owned name must follow the moved corner without rerunning Python.",
+          "mutation": "base 40x20 -> 80x40 mm; named semantic anchor follows corner",
+          "evidence": [
+            "measurements-size-80x40.json",
+            "model-size-80x40.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-size-80x40.json",
+          "measurements.json",
+          "model-size-80x40.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "four-corner-l": {
+      "schema_version": 4,
+      "case": "four-corner-l",
+      "title": "Four centred vertical L-profiles",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_placement.py",
+              "test": "test_symbolic_ordinary_copy_placement_keeps_parameter"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/four-corner-l/tests/test_contract.py",
+              "test": "test_parametric_profile_placement_uses_replay_variables"
+            }
+          ],
+          "commands": 20,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-size-160x120.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change frame_width/depth from 120x80 to 160x120 mm in the saved .sc design; all four profiles follow the calculated corner positions while remaining centred at the same frame height.",
+          "mutation": "frame 120x80 -> 160x120 mm",
+          "evidence": [
+            "measurements-size-160x120.json",
+            "model-size-160x120.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-size-160x120.json",
+          "measurements.json",
+          "model-size-160x120.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "eight-corner-brackets": {
+      "schema_version": 4,
+      "case": "eight-corner-brackets",
+      "title": "Eight vertical L-profiles: two per side corner",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_placement.py",
+              "test": "test_symbolic_ordinary_copy_placement_keeps_parameter"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/eight-corner-brackets/tests/test_contract.py",
+              "test": "test_parametric_profile_placement_uses_replay_variables"
+            }
+          ],
+          "commands": 28,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-size-160x120x90.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow the calculated X/Y positions and each upper member moves to Z=74..90.",
+          "mutation": "frame 120x80x60 -> 160x120x90 mm",
+          "evidence": [
+            "measurements-size-160x120x90.json",
+            "model-size-160x120x90.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-size-160x120x90.json",
+          "measurements.json",
+          "model-size-160x120x90.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "eight-flightcase-corners": {
+      "schema_version": 4,
+      "case": "eight-flightcase-corners",
+      "title": "Eight flightcase corner protectors",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_assembly_placement.py",
+              "test": "test_symbolic_copy_with_rotation_uses_bound_native_move"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/eight-flightcase-corners/tests/test_contract.py",
+              "test": "test_parametric_corner_placement_uses_replay_variables"
+            }
+          ],
+          "commands": 27,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-size-160x120x90.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change case_width/depth/height from 120x80x60 to 160x120x90 mm; all protectors follow the calculated corner positions without rerunning Python, while every protector remains exactly 24x24x24 mm.",
+          "mutation": "case 120x80x60 -> 160x120x90 mm",
+          "evidence": [
+            "measurements-size-160x120x90.json",
+            "model-size-160x120x90.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-size-160x120x90.json",
+          "measurements.json",
+          "model-size-160x120x90.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "xz-anchor": {
+      "schema_version": 4,
+      "case": "xz-anchor",
+      "title": "Anchors on XZ-profile extrusion",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_component_definitions.py",
+              "test": "test_xz_rectangular_component_uses_standard_corner_anchor"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/xz-anchor/tests/test_contract.py",
+              "test": "test_xz_anchor_command_contract"
+            }
+          ],
+          "commands": 21,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-size-80x40.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change board width/height from 40x20 to 80x40 mm; both markers follow their own corners.",
+          "mutation": "board 40x20 -> 80x40 mm",
+          "evidence": [
+            "measurements-size-80x40.json",
+            "model-size-80x40.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-size-80x40.json",
+          "measurements.json",
+          "model-size-80x40.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "round-top-sketch": {
+      "schema_version": 4,
+      "case": "round-top-sketch",
+      "title": "TOP Sketch on circular body",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_sketch_attachment.py",
+              "test": "test_top_attached_sketch_supports_circular_extrusion_body"
+            },
+            {
+              "file": "scpf/tests/test_sketch_attachment.py",
+              "test": "test_explicit_plane_origin_sketch_supports_circular_body"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/round-top-sketch/tests/test_contract.py",
+              "test": "test_top_face_query_is_used_after_circular_base_extrusion"
+            }
+          ],
+          "commands": 9,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No saved-design mutation; this fixture isolates support-face lookup on a non-rectangular feature body.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "circle-negative-extrude": {
+      "schema_version": 4,
+      "case": "circle-negative-extrude",
+      "title": "Negative circle profile extrusion",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_sketch_profiles.py",
+              "test": "test_circle_in_with_sketch_negative_extrusion"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/circle-negative-extrude/tests/test_contract.py",
+              "test": "test_signed_distance_preserves_negative_native_direction"
+            }
+          ],
+          "commands": 6,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No saved-design mutation in this fixture; it isolates direct circle-profile lowering and negative extrusion semantics.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "sketch-pattern-mirror": {
+      "schema_version": 4,
+      "case": "sketch-pattern-mirror",
+      "title": "Associative sketch pattern and mirror",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_sketch_patterns.py",
+              "test": "test_circle_rectangular_pattern_uses_bound_native_curves"
+            },
+            {
+              "file": "scpf/tests/test_sketch_patterns.py",
+              "test": "test_slot_pattern_and_mirrors_reuse_operation_results"
+            },
+            {
+              "file": "scpf/tests/test_sketch_patterns.py",
+              "test": "test_pattern_count_and_spacing_remain_native_parameters"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/sketch-pattern-mirror/tests/test_contract.py",
+              "test": "test_circle_seed_stays_one_native_profile_with_pattern_and_mirror"
+            },
+            {
+              "file": "examples/sketch-pattern-mirror/tests/test_contract.py",
+              "test": "test_slot_seed_stays_one_native_profile_with_pattern_and_mirrors"
+            },
+            {
+              "file": "examples/sketch-pattern-mirror/tests/test_contract.py",
+              "test": "test_pattern_parameters_have_correct_native_units"
+            }
+          ],
+          "commands": 22,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-patterns-mutated.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change hole_diameter 8->10 mm, hole_pitch 25->30 mm and slot_pitch 50->30 mm in the saved .sc design. Without rerunning Python all existing pattern and mirror copies must follow the changed seed and spacing. Pattern counts remain native editable parameters, but SolidCraft 0.42 mirrors a fixed selected entity set and does not automatically adopt new entities added later by an upstream count change.",
+          "mutation": "Circle diameter and sketch pattern spacing mutate through existing pattern/mirror relationships",
+          "evidence": [
+            "measurements-patterns-mutated.json",
+            "model-patterns-mutated.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "top",
+            "front",
+            "iso"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "goal-top.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "model-top.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "overlay-top.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-patterns-mutated.json",
+          "measurements.json",
+          "model-patterns-mutated.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "goal-top.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "model-top.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "overlay-top.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "selective-profile-extrude": {
+      "schema_version": 4,
+      "case": "selective-profile-extrude",
+      "title": "Selective Sketch profile extrusion",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_sketch_patterns.py",
+              "test": "test_pattern_can_feed_one_selective_profile_extrusion"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/selective-profile-extrude/tests/test_contract.py",
+              "test": "test_one_pattern_and_one_selective_native_extrusion"
+            },
+            {
+              "file": "examples/selective-profile-extrude/tests/test_contract.py",
+              "test": "test_saved_design_mutation_changes_seed_and_pattern_spacing"
+            }
+          ],
+          "commands": 9,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-pattern-mutated.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Change hole_diameter 8->10 mm and hole_pitch 20->24 mm in the saved .sc design. Without rerunning Python the three selected cuts must follow their associated pattern profiles, including profiles whose centres move away from the original pick points; the unselected profile remains uncut.",
+          "mutation": "hole diameter 8 -> 10 mm; pattern pitch 20 -> 24 mm; selected profiles remain associated",
+          "evidence": [
+            "measurements-pattern-mutated.json",
+            "model-pattern-mutated.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "top",
+            "front",
+            "iso"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "goal-top.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "model-top.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "overlay-top.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-pattern-mutated.json",
+          "measurements.json",
+          "model-pattern-mutated.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "goal-top.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "model-top.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "overlay-top.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "circular-feature-pattern": {
+      "schema_version": 4,
+      "case": "circular-feature-pattern",
+      "title": "Native circular feature pattern",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_geometry_features.py",
+              "test": "test_circular_pattern_emits_one_native_feature_pattern"
+            },
+            {
+              "file": "scpf/tests/test_geometry_features.py",
+              "test": "test_circular_pattern_validates_shared_feature_and_axis_options"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/circular-feature-pattern/tests/test_contract.py",
+              "test": "test_emits_one_native_circular_feature_pattern"
+            },
+            {
+              "file": "examples/circular-feature-pattern/tests/test_contract.py",
+              "test": "test_count_parameter_is_dimensionless_and_pcd_is_length"
+            }
+          ],
+          "commands": 9,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-bolts-4.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature.",
+          "mutation": "bolt count 6 -> 4",
+          "evidence": [
+            "measurements-bolts-4.json",
+            "model-bolts-4.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "top",
+            "front",
+            "iso"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "goal-top.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "model-top.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "overlay-top.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-bolts-4.json",
+          "measurements.json",
+          "model-bolts-4.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "goal-top.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "model-top.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "overlay-top.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "rectangular-pattern": {
+      "schema_version": 4,
+      "case": "rectangular-pattern",
+      "title": "Native rectangular feature pattern",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_geometry_features.py",
+              "test": "test_rectangular_pattern_requires_applied_extrude_feature"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/rectangular-pattern/tests/test_contract.py",
+              "test": "test_emits_one_native_feature_pattern"
+            },
+            {
+              "file": "examples/rectangular-pattern/tests/test_contract.py",
+              "test": "test_count_parameters_are_dimensionless"
+            }
+          ],
+          "commands": 11,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements-columns-2-pitch-30.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "pass",
+          "required": true,
+          "reason": "Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature.",
+          "mutation": "columns 3 -> 2; pitch 24 -> 30 mm",
+          "evidence": [
+            "measurements-columns-2-pitch-30.json",
+            "model-columns-2-pitch-30.sc"
+          ]
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "top",
+            "right",
+            "iso"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "goal-top.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "model-top.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "overlay-top.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements-columns-2-pitch-30.json",
+          "measurements.json",
+          "model-columns-2-pitch-30.sc",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "goal-top.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "model-top.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "overlay-top.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "slot-family": {
+      "schema_version": 4,
+      "case": "slot-family",
+      "title": "Native sketch Slot family",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_native_slots.py",
+              "test": "test_all_five_slot_variants_lower_one_to_one"
+            },
+            {
+              "file": "scpf/tests/test_native_slots.py",
+              "test": "test_arc_center_requires_one_end_definition"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/slot-family/tests/test_contract.py",
+              "test": "test_slot_family_command_contract"
+            }
+          ],
+          "commands": 13,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No Q5 mutation is required; this case isolates the five native sketch construction methods and their saved feature history.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "top",
+            "front",
+            "iso"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "goal-top.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "model-top.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "overlay-top.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "goal-top.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "model-top.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "overlay-top.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "rounded-rectangle-sketch": {
+      "schema_version": 4,
+      "case": "rounded-rectangle-sketch",
+      "title": "Explicit rounded-rectangle sketch pad",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_geometry_features.py",
+              "test": "test_rounded_rectangle_sketch_compiles_to_true_native_arcs"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/rounded-rectangle-sketch/tests/test_contract.py",
+              "test": "test_named_sketch_uses_native_rounded_rectangle"
+            }
+          ],
+          "commands": 13,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No saved-design mutation in this fixture; it isolates explicit rounded-rectangle sketch geometry and native join extrusion.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "top",
+            "front",
+            "iso"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "goal-top.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "model-top.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "overlay-top.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "goal-top.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "model-top.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "overlay-top.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "primitive-csg": {
+      "schema_version": 4,
+      "case": "primitive-csg",
+      "title": "Primitive CSG",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_geometry_primitives.py",
+              "test": "test_move_translates_a_csg_composite_without_changing_sizes"
+            },
+            {
+              "file": "scpf/tests/test_geometry_primitives.py",
+              "test": "test_cylinder_axis_lowers_directly_to_native_axis"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/primitive-csg/tests/test_contract.py",
+              "test": "test_generated_command_contract"
+            }
+          ],
+          "commands": 4,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "No saved-design mutation in this case; it isolates primitive CSG lowering. Parametric edits are covered by dedicated Q5 cases.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    },
+    "bracket": {
+      "schema_version": 4,
+      "case": "bracket",
+      "title": "Minimal L-profile",
+      "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+      "forge_version": "0.10.0",
+      "solidcraft_version": "0.42.0",
+      "qualified_at": "2026-11-18T13:26:54Z",
+      "status": "pass",
+      "blocked_reason": null,
+      "levels": {
+        "q1": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "scpf/tests/test_sketch_profiles.py",
+              "test": "test_positioned_xz_polygon_keeps_parameterized_y_plane"
+            },
+            {
+              "file": "scpf/tests/test_sketch_extrusion.py",
+              "test": "test_sketch_extrude_signed_distance_and_sym"
+            }
+          ],
+          "evidence": [
+            "q1-case-evidence.txt"
+          ]
+        },
+        "q2": {
+          "status": "pass",
+          "tests": [
+            {
+              "file": "examples/bracket/tests/test_contract.py",
+              "test": "test_bracket_command_contract"
+            }
+          ],
+          "commands": 7,
+          "evidence": [
+            "q2-case-evidence.txt"
+          ]
+        },
+        "q3": {
+          "status": "pass",
+          "evidence": [
+            "model.sc",
+            "model.step",
+            "results.json"
+          ]
+        },
+        "q4": {
+          "status": "pass",
+          "evidence": [
+            "joint-inspect.json",
+            "measurements.json",
+            "validation.json"
+          ]
+        },
+        "q5": {
+          "status": "not-required",
+          "required": false,
+          "reason": "Not yet an attachment mutation case. This component is intentionally the geometry baseline for upcoming multi-orientation anchor tests.",
+          "mutation": null,
+          "evidence": []
+        },
+        "q6": {
+          "status": "pass",
+          "regression_status": "pass",
+          "expected_shape_status": "pass",
+          "required_views": [
+            "iso",
+            "front",
+            "right"
+          ],
+          "images": [
+            "model.png",
+            "goal-front.png",
+            "goal-iso.png",
+            "goal-right.png",
+            "model-front.png",
+            "model-iso.png",
+            "model-right.png",
+            "overlay-front.png",
+            "overlay-iso.png",
+            "overlay-right.png",
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png"
+          ],
+          "evidence": [
+            "visual-diff-front.png",
+            "visual-diff-iso.png",
+            "visual-diff-right.png",
+            "visual-validation.json"
+          ]
+        }
+      },
+      "evidence": {
+        "native_files": [
+          "joint-inspect.json",
+          "measurements.json",
+          "model.sc",
+          "model.step",
+          "q1-case-evidence.txt",
+          "q2-case-evidence.txt",
+          "results.json",
+          "validation.json",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png",
+          "visual-validation.json"
+        ],
+        "images": [
+          "model.png",
+          "goal-front.png",
+          "goal-iso.png",
+          "goal-right.png",
+          "model-front.png",
+          "model-iso.png",
+          "model-right.png",
+          "overlay-front.png",
+          "overlay-iso.png",
+          "overlay-right.png",
+          "visual-diff-front.png",
+          "visual-diff-iso.png",
+          "visual-diff-right.png"
+        ]
+      }
+    }
+  }
+}

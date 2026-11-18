@@ -1,0 +1,151 @@
+{
+  "schema_version": 4,
+  "case": "sketch-pattern-mirror",
+  "title": "Associative sketch pattern and mirror",
+  "source_commit": "3f813ff556aa0b3cae047f1144289923aa0e394c",
+  "forge_version": "0.10.0",
+  "solidcraft_version": "0.42.0",
+  "qualified_at": "2026-11-18T13:26:54Z",
+  "status": "pass",
+  "blocked_reason": null,
+  "levels": {
+    "q1": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "scpf/tests/test_sketch_patterns.py",
+          "test": "test_circle_rectangular_pattern_uses_bound_native_curves"
+        },
+        {
+          "file": "scpf/tests/test_sketch_patterns.py",
+          "test": "test_slot_pattern_and_mirrors_reuse_operation_results"
+        },
+        {
+          "file": "scpf/tests/test_sketch_patterns.py",
+          "test": "test_pattern_count_and_spacing_remain_native_parameters"
+        }
+      ],
+      "evidence": [
+        "q1-case-evidence.txt"
+      ]
+    },
+    "q2": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "examples/sketch-pattern-mirror/tests/test_contract.py",
+          "test": "test_circle_seed_stays_one_native_profile_with_pattern_and_mirror"
+        },
+        {
+          "file": "examples/sketch-pattern-mirror/tests/test_contract.py",
+          "test": "test_slot_seed_stays_one_native_profile_with_pattern_and_mirrors"
+        },
+        {
+          "file": "examples/sketch-pattern-mirror/tests/test_contract.py",
+          "test": "test_pattern_parameters_have_correct_native_units"
+        }
+      ],
+      "commands": 22,
+      "evidence": [
+        "q2-case-evidence.txt"
+      ]
+    },
+    "q3": {
+      "status": "pass",
+      "evidence": [
+        "model.sc",
+        "model.step",
+        "results.json"
+      ]
+    },
+    "q4": {
+      "status": "pass",
+      "evidence": [
+        "joint-inspect.json",
+        "measurements-patterns-mutated.json",
+        "measurements.json",
+        "validation.json"
+      ]
+    },
+    "q5": {
+      "status": "pass",
+      "required": true,
+      "reason": "Change hole_diameter 8->10 mm, hole_pitch 25->30 mm and slot_pitch 50->30 mm in the saved .sc design. Without rerunning Python all existing pattern and mirror copies must follow the changed seed and spacing. Pattern counts remain native editable parameters, but SolidCraft 0.42 mirrors a fixed selected entity set and does not automatically adopt new entities added later by an upstream count change.",
+      "mutation": "Circle diameter and sketch pattern spacing mutate through existing pattern/mirror relationships",
+      "evidence": [
+        "measurements-patterns-mutated.json",
+        "model-patterns-mutated.sc"
+      ]
+    },
+    "q6": {
+      "status": "pass",
+      "regression_status": "pass",
+      "expected_shape_status": "pass",
+      "required_views": [
+        "top",
+        "front",
+        "iso"
+      ],
+      "images": [
+        "model.png",
+        "goal-front.png",
+        "goal-iso.png",
+        "goal-right.png",
+        "goal-top.png",
+        "model-front.png",
+        "model-iso.png",
+        "model-right.png",
+        "model-top.png",
+        "overlay-front.png",
+        "overlay-iso.png",
+        "overlay-right.png",
+        "overlay-top.png",
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png"
+      ],
+      "evidence": [
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png",
+        "visual-validation.json"
+      ]
+    }
+  },
+  "evidence": {
+    "native_files": [
+      "joint-inspect.json",
+      "measurements-patterns-mutated.json",
+      "measurements.json",
+      "model-patterns-mutated.sc",
+      "model.sc",
+      "model.step",
+      "q1-case-evidence.txt",
+      "q2-case-evidence.txt",
+      "results.json",
+      "validation.json",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png",
+      "visual-validation.json"
+    ],
+    "images": [
+      "model.png",
+      "goal-front.png",
+      "goal-iso.png",
+      "goal-right.png",
+      "goal-top.png",
+      "model-front.png",
+      "model-iso.png",
+      "model-right.png",
+      "model-top.png",
+      "overlay-front.png",
+      "overlay-iso.png",
+      "overlay-right.png",
+      "overlay-top.png",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png"
+    ]
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "case": "parametric-attach",
+  "implementation": "pybosl2",
+  "status": "pass",
+  "source": "examples/parametric-attach/pybosl2/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      -20.0,
+      -15.0,
+      0.0
+    ],
+    "max": [
+      50.0,
+      15.0,
+      10.0
+    ]
+  },
+  "expected": {
+    "min": [
+      -20.0,
+      -15.0,
+      0.0
+    ],
+    "max": [
+      50.0,
+      15.0,
+      10.0
+    ]
+  },
+  "max_delta_mm": 0.0,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          -20.0,
+          -15.0,
+          0.0
+        ],
+        "max": [
+          50.0,
+          15.0,
+          10.0
+        ]
+      },
+      "expected": {
+        "min": [
+          -20.0,
+          -15.0,
+          0.0
+        ],
+        "max": [
+          50.0,
+          15.0,
+          10.0
+        ]
+      },
+      "max_delta_mm": 0.0,
+      "tolerance_mm": 0.5
+    }
+  },
+  "bounds_sufficient": true,
+  "bounds_reason": "The two rectangular body bounds describe the baseline gap geometry. Saved joint recompute is proved separately by Q5."
+}

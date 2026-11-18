@@ -1,0 +1,19 @@
+case	mutation	status
+simple-box	length 40 -> 50 mm	PRODUCED
+parameter-scope	shared_width 80 -> 100 mm	PRODUCED
+parent-derived-child-size	parent 120x80 -> 160x120 mm; child follows 60x40 -> 80x60 mm	PRODUCED
+repeated-parent-attachments	parent_height 40 -> 60 mm; both attached markers follow	PRODUCED
+assembly-owned-anchor	base 40x20 -> 80x40 mm; named semantic anchor follows corner	PRODUCED
+anchor-topology-mutation	board 40x20 -> 80x40 mm; fixed topology pick follows corner	PRODUCED
+parametric-attach	gap 10 -> 30 mm	PRODUCED
+parametric-offset	shift 5 -> 10 mm	PRODUCED
+parametric-anchor	base_width 40 -> 80 mm	PRODUCED
+corner-anchor	base 40x20 -> 80x40 mm	PRODUCED
+xz-anchor	board 40x20 -> 80x40 mm	PRODUCED
+sketch-pattern-mirror	Circle diameter and sketch pattern spacing mutate through existing pattern/mirror relationships	PRODUCED
+selective-profile-extrude	hole diameter 8 -> 10 mm; pattern pitch 20 -> 24 mm; selected profiles remain associated	PRODUCED
+circular-feature-pattern	bolt count 6 -> 4	PRODUCED
+rectangular-pattern	columns 3 -> 2; pitch 24 -> 30 mm	PRODUCED
+four-corner-l	frame 120x80 -> 160x120 mm	PRODUCED
+eight-corner-brackets	frame 120x80x60 -> 160x120x90 mm	PRODUCED
+eight-flightcase-corners	case 120x80x60 -> 160x120x90 mm	PRODUCED
