@@ -21,7 +21,7 @@ CASE_EVIDENCE = {
     "simple-box": {
         "q1": [
             _target(
-                "scpf/tests/test_models.py",
+                "scpf/tests/test_model_authoring.py",
                 "test_plain_model_class_fields_become_parameters",
             ),
         ],
@@ -35,11 +35,11 @@ CASE_EVIDENCE = {
     "anchored-holes": {
         "q1": [
             _target(
-                "scpf/tests/test_models.py",
+                "scpf/tests/test_geometry_features.py",
                 "test_repeat_linear_requires_explicit_axes_and_valid_count",
             ),
             _target(
-                "scpf/tests/test_models.py",
+                "scpf/tests/test_geometry_features.py",
                 "test_on_uses_faces_without_exposing_assembly_anchors",
             ),
         ],
@@ -57,7 +57,7 @@ CASE_EVIDENCE = {
                 "test_numeric_vector_selector_tolerates_kernel_float_noise",
             ),
             _target(
-                "scpf/tests/test_explicit_sketch_primitives.py",
+                "scpf/tests/test_sketch_attachment.py",
                 "test_top_attached_sketch_uses_same_face_query_after_edge_features",
             ),
         ],
@@ -71,7 +71,7 @@ CASE_EVIDENCE = {
     "parameter-scope": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_component_definitions.py",
                 "test_component_defaults_are_fixed_unless_included",
             ),
         ],
@@ -85,7 +85,7 @@ CASE_EVIDENCE = {
     "parent-derived-child-size": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_component_definitions.py",
                 "test_parent_expression_remains_an_expression_in_child_geometry",
             ),
         ],
@@ -99,7 +99,7 @@ CASE_EVIDENCE = {
     "components": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_placement.py",
                 "test_copy_accepts_placement_override",
             ),
         ],
@@ -113,7 +113,7 @@ CASE_EVIDENCE = {
     "repeated-parent-attachments": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_attachments.py",
                 "test_repeated_parent_attachments_keep_distinct_targets",
             ),
         ],
@@ -127,7 +127,7 @@ CASE_EVIDENCE = {
     "assembly-decorator": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_component_definitions.py",
                 "test_imported_assembly_class_uses_object_syntax",
             ),
         ],
@@ -141,7 +141,7 @@ CASE_EVIDENCE = {
     "group-hierarchy": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_placement.py",
                 "test_named_group_creates_real_nested_native_component",
             ),
         ],
@@ -155,7 +155,7 @@ CASE_EVIDENCE = {
     "attach-angle": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_attachments.py",
                 "test_attach_angle_is_emitted_as_native_joint_turn",
             ),
         ],
@@ -169,7 +169,7 @@ CASE_EVIDENCE = {
     "parametric-attach": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_attachments.py",
                 "test_parametric_attach_keeps_gap_as_native_joint_expression",
             ),
         ],
@@ -183,7 +183,7 @@ CASE_EVIDENCE = {
     "parametric-offset": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_attachments.py",
                 "test_parametric_attach_keeps_in_plane_offset_expression",
             ),
         ],
@@ -197,7 +197,7 @@ CASE_EVIDENCE = {
     "parametric-anchor": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_component_definitions.py",
                 "test_component_preserves_parent_parameter_dependency",
             ),
         ],
@@ -211,7 +211,7 @@ CASE_EVIDENCE = {
     "corner-anchor": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_attachments.py",
                 "test_corner_anchor_compiles_to_native_edge_and_corner_origins",
             ),
         ],
@@ -225,7 +225,7 @@ CASE_EVIDENCE = {
     "anchor-topology-mutation": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_attachments.py",
                 "test_named_topology_anchor_is_inlined_as_edge_reference",
             ),
         ],
@@ -239,7 +239,7 @@ CASE_EVIDENCE = {
     "assembly-owned-anchor": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_attachments.py",
                 "test_assembly_can_own_named_attachment_anchor",
             ),
         ],
@@ -253,7 +253,7 @@ CASE_EVIDENCE = {
     "four-corner-l": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_placement.py",
                 "test_symbolic_ordinary_copy_placement_keeps_parameter",
             ),
         ],
@@ -267,7 +267,7 @@ CASE_EVIDENCE = {
     "eight-corner-brackets": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_placement.py",
                 "test_symbolic_ordinary_copy_placement_keeps_parameter",
             ),
         ],
@@ -281,7 +281,7 @@ CASE_EVIDENCE = {
     "eight-flightcase-corners": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_assembly_placement.py",
                 "test_symbolic_copy_with_rotation_uses_bound_native_move",
             ),
         ],
@@ -295,7 +295,7 @@ CASE_EVIDENCE = {
     "xz-anchor": {
         "q1": [
             _target(
-                "scpf/tests/test_assembly.py",
+                "scpf/tests/test_component_definitions.py",
                 "test_xz_rectangular_component_uses_standard_corner_anchor",
             ),
         ],
@@ -309,11 +309,11 @@ CASE_EVIDENCE = {
     "round-top-sketch": {
         "q1": [
             _target(
-                "scpf/tests/test_explicit_sketch_primitives.py",
+                "scpf/tests/test_sketch_attachment.py",
                 "test_top_attached_sketch_supports_circular_extrusion_body",
             ),
             _target(
-                "scpf/tests/test_explicit_sketch_primitives.py",
+                "scpf/tests/test_sketch_attachment.py",
                 "test_explicit_plane_origin_sketch_supports_circular_body",
             ),
         ],
@@ -327,7 +327,7 @@ CASE_EVIDENCE = {
     "circle-negative-extrude": {
         "q1": [
             _target(
-                "scpf/tests/test_explicit_sketch_primitives.py",
+                "scpf/tests/test_sketch_profiles.py",
                 "test_circle_in_with_sketch_negative_extrusion",
             ),
         ],
@@ -389,11 +389,11 @@ CASE_EVIDENCE = {
     "circular-feature-pattern": {
         "q1": [
             _target(
-                "scpf/tests/test_models.py",
+                "scpf/tests/test_geometry_features.py",
                 "test_circular_pattern_emits_one_native_feature_pattern",
             ),
             _target(
-                "scpf/tests/test_models.py",
+                "scpf/tests/test_geometry_features.py",
                 "test_circular_pattern_validates_shared_feature_and_axis_options",
             ),
         ],
@@ -411,7 +411,7 @@ CASE_EVIDENCE = {
     "rectangular-pattern": {
         "q1": [
             _target(
-                "scpf/tests/test_models.py",
+                "scpf/tests/test_geometry_features.py",
                 "test_rectangular_pattern_requires_applied_extrude_feature",
             ),
         ],
@@ -447,7 +447,7 @@ CASE_EVIDENCE = {
     "rounded-rectangle-sketch": {
         "q1": [
             _target(
-                "scpf/tests/test_models.py",
+                "scpf/tests/test_geometry_features.py",
                 "test_rounded_rectangle_sketch_compiles_to_true_native_arcs",
             ),
         ],
@@ -461,11 +461,11 @@ CASE_EVIDENCE = {
     "primitive-csg": {
         "q1": [
             _target(
-                "scpf/tests/test_models.py",
+                "scpf/tests/test_geometry_primitives.py",
                 "test_move_translates_a_csg_composite_without_changing_sizes",
             ),
             _target(
-                "scpf/tests/test_models.py",
+                "scpf/tests/test_geometry_primitives.py",
                 "test_cylinder_axis_lowers_directly_to_native_axis",
             ),
         ],
@@ -479,11 +479,11 @@ CASE_EVIDENCE = {
     "bracket": {
         "q1": [
             _target(
-                "scpf/tests/test_generic_geometry.py",
+                "scpf/tests/test_sketch_profiles.py",
                 "test_positioned_xz_polygon_keeps_parameterized_y_plane",
             ),
             _target(
-                "scpf/tests/test_explicit_sketch_primitives.py",
+                "scpf/tests/test_sketch_extrusion.py",
                 "test_sketch_extrude_signed_distance_and_sym",
             ),
         ],

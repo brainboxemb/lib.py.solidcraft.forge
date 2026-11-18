@@ -34,8 +34,38 @@ from .placement import (
 from .sketches import compile_base, _extrude_profile_params
 
 
-def _is_feature_tree(shape):
+def _is_pure_csg_tree(shape):
+    """Return whether a Shape can be compiled entirely by the primitive CSG path."""
     if not isinstance(shape, Shape):
+        return False
+    from .csg import CSG_PRIMITIVE_KINDS
+    if shape.kind in CSG_PRIMITIVE_KINDS or shape.kind == "placed_box":
+        return True
+    if shape.kind == "placed3d":
+        return shape.data[0].kind == "cylinder"
+    if shape.kind == "translated":
+        return _is_pure_csg_tree(shape.data[0])
+    if shape.kind in ("union", "difference", "intersection"):
+        return (
+            _is_pure_csg_tree(shape.data[0])
+            and _is_pure_csg_tree(shape.data[1])
+        )
+    return False
+
+
+def _is_feature_tree(shape):
+    """Return whether this Shape needs ordered feature lowering.
+
+    Pure primitive CSG combinations stay on the CSG compiler regardless of
+    which primitive happens to be on the left. A later native feature can wrap
+    such a CSG body without changing how that base body was constructed.
+    """
+    if not isinstance(shape, Shape):
+        return False
+    if (
+        shape.kind in ("union", "difference", "intersection")
+        and _is_pure_csg_tree(shape)
+    ):
         return False
     if shape.kind in ("box", "placed_box", "tapered_box", "sketch_base_extrusion"):
         return True
@@ -43,7 +73,7 @@ def _is_feature_tree(shape):
         "fillet", "chamfer", "shell", "union", "difference",
         "material_assignment", "rectangular_pattern", "circular_pattern",
     ):
-        return _is_feature_tree(shape.data[0])
+        return True
     return False
 
 
@@ -1041,6 +1071,9 @@ def _native_feature_name(feature):
 def _to_commands(shape, name):
     if shape.kind in ("box", "placed_box", "tapered_box", "sketch_base_extrusion"):
         return compile_base(shape, name)
+    if _is_pure_csg_tree(shape):
+        from .csg import _csg_new
+        return _csg_new(shape, name), None
     if shape.kind == "circular_pattern":
         (
             original, sources, axis, count, angle,
