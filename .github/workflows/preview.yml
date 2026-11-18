@@ -123,19 +123,8 @@ jobs:
             --pull-request "${{ github.event.pull_request.number }}" \
             --message "Remove obsolete build PR #${{ github.event.pull_request.number }}"
 
-      - name: Verify reusable preview baseline
-        id: preview_baseline
-        if: steps.scope.outputs.has_build != 'true' && github.event.pull_request.head.repo.full_name == github.repository
-        continue-on-error: true
-        run: |
-          python scripts/generated_output.py verify-build \
-            --root generated-build/main \
-            --require-complete
-
       - name: Resolve preview evidence
-        if: >-
-          github.event.pull_request.head.repo.full_name == github.repository &&
-          (steps.scope.outputs.has_build == 'true' || steps.preview_baseline.outcome == 'success')
+        if: github.event.pull_request.head.repo.full_name == github.repository
         run: |
           build_commit="${{ steps.publish_build.outputs.commit }}"
           if [ -z "$build_commit" ]; then
@@ -157,9 +146,7 @@ jobs:
             --destination output/evidence
 
       - name: Build and test PR website
-        if: >-
-          github.event.pull_request.head.repo.full_name == github.repository &&
-          (steps.scope.outputs.has_build == 'true' || steps.preview_baseline.outcome == 'success')
+        if: github.event.pull_request.head.repo.full_name == github.repository
         run: |
           python site/build.py \
             --out output/site \
@@ -184,9 +171,7 @@ jobs:
             --workflow-run-id "$GITHUB_RUN_ID"
 
       - name: Publish PR website
-        if: >-
-          github.event.pull_request.head.repo.full_name == github.repository &&
-          (steps.scope.outputs.has_build == 'true' || steps.preview_baseline.outcome == 'success')
+        if: github.event.pull_request.head.repo.full_name == github.repository
         run: |
           python scripts/publish_generated.py replace-dir \
             --branch gh-pages \
