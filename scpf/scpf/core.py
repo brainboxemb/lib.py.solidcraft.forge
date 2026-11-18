@@ -2060,30 +2060,18 @@ def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
     return Shape("cylinder", (h, d, axis.value, _direction_selector(anchor)))
 
 
-def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
-         countersink_d=None, countersink_angle=90, countersink_recess=0):
-    """Create a hole feature, optionally directional and countersunk.
-
-    Parameters:
-        d: Finished hole diameter in mm.
-        depth: Hole depth in mm, or Depth.THROUGH_ALL. Defaults to Depth.THROUGH_ALL.
-        direction: Optional non-zero XYZ direction vector for the hole axis.
-        countersink_d: Optional countersink diameter in mm. It must be larger than d.
-        countersink_angle: Included countersink angle in degrees. Defaults to 90.
-        countersink_recess: Optional straight recess before the countersink starts, in mm. Defaults to 0.
-
-    Use when:
-        Remove a manufacturing-style hole from a supported body. Simple holes
-        can be placed with on(); directional or countersunk holes can use the
-        native Hole path with explicit placement.
-
-    Limits:
-        d and finite depth values must be positive. A recessed countersink
-        requires countersink_d and, when compiled, an explicit hole direction.
-
-    Example:
-        Hole(d=8, depth=Depth.THROUGH_ALL)
-    """
+def _hole_feature(
+    hole_type,
+    *,
+    d,
+    depth=Depth.THROUGH_ALL,
+    direction=None,
+    counterbore_d=None,
+    counterbore_depth=None,
+    countersink_d=None,
+    countersink_angle=None,
+):
+    """Build one validated native Hole feature description."""
     if _pv(d) <= 0:
         raise ValueError("hole diameter must be positive")
     if depth is not Depth.THROUGH_ALL and _pv(depth) <= 0:
@@ -2095,22 +2083,118 @@ def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None,
         concrete = [_pv(v) for v in direction]
         if not all(isfinite(v) for v in concrete) or concrete == [0, 0, 0]:
             raise ValueError("Hole direction must be a finite non-zero direction")
-    if countersink_d is not None:
+
+    if hole_type == "counterbore":
+        if counterbore_d is None or counterbore_depth is None:
+            raise ValueError(
+                "CounterboreHole requires counterbore_d and counterbore_depth"
+            )
+        if _pv(counterbore_d) <= _pv(d):
+            raise ValueError(
+                "counterbore diameter must be larger than hole diameter"
+            )
+        if _pv(counterbore_depth) <= 0:
+            raise ValueError("counterbore depth must be positive")
+    elif hole_type == "countersink":
+        if countersink_d is None:
+            raise ValueError("CountersinkHole requires countersink_d")
         if _pv(countersink_d) <= _pv(d):
-            raise ValueError("countersink diameter must be larger than hole diameter")
+            raise ValueError(
+                "countersink diameter must be larger than hole diameter"
+            )
         angle = _pv(countersink_angle)
         if not isfinite(angle) or angle <= 0 or angle >= 180:
-            raise ValueError("countersink angle must be between 0 and 180 degrees")
-        if _pv(countersink_recess) < 0:
-            raise ValueError("countersink recess cannot be negative")
-    elif _pv(countersink_recess) != 0:
-        raise ValueError("countersink recess requires countersink_d")
+            raise ValueError(
+                "countersink angle must be between 0 and 180 degrees"
+            )
+    elif hole_type != "simple":
+        raise ValueError(f"unsupported hole type: {hole_type}")
+
     return Shape(
         "hole",
         (
-            d, depth, direction, countersink_d, countersink_angle,
-            countersink_recess,
+            hole_type,
+            d,
+            depth,
+            direction,
+            counterbore_d,
+            counterbore_depth,
+            countersink_d,
+            countersink_angle,
         ),
+    )
+
+
+def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None):
+    """Create a simple drilled hole feature.
+
+    Parameters:
+        d: Finished hole diameter in mm.
+        depth: Hole depth in mm, or Depth.THROUGH_ALL.
+        direction: Optional non-zero XYZ direction vector for the hole axis.
+
+    Example:
+        Hole(d=4.3)
+    """
+    return _hole_feature(
+        "simple",
+        d=d,
+        depth=depth,
+        direction=direction,
+    )
+
+
+def CounterboreHole(
+    *,
+    d,
+    counterbore_d,
+    counterbore_depth,
+    depth=Depth.THROUGH_ALL,
+    direction=None,
+):
+    """Create a counterbored hole feature.
+
+    Parameters:
+        d: Finished through/blind hole diameter in mm.
+        counterbore_d: Counterbore diameter in mm.
+        counterbore_depth: Counterbore depth from the entry face in mm.
+        depth: Main hole depth in mm, or Depth.THROUGH_ALL.
+        direction: Optional non-zero XYZ direction vector for the hole axis.
+    """
+    return _hole_feature(
+        "counterbore",
+        d=d,
+        depth=depth,
+        direction=direction,
+        counterbore_d=counterbore_d,
+        counterbore_depth=counterbore_depth,
+    )
+
+
+def CountersinkHole(
+    *,
+    d,
+    countersink_d,
+    countersink_angle=90,
+    depth=Depth.THROUGH_ALL,
+    direction=None,
+):
+    """Create a countersunk hole feature.
+
+    Parameters:
+        d: Finished through/blind hole diameter in mm.
+        countersink_d: Countersink diameter at the entry face in mm.
+        countersink_angle: Included countersink angle in degrees.
+        depth: Main hole depth in mm, or Depth.THROUGH_ALL.
+        direction: Optional non-zero XYZ direction vector for the hole axis.
+    """
+    return _hole_feature(
+        "countersink",
+        d=d,
+        depth=depth,
+        direction=direction,
+        countersink_d=countersink_d,
+        countersink_angle=countersink_angle,
     )
 
 
