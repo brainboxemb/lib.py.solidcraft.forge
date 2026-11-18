@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 from scpf.runner import run_script
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from guides import GUIDES
+from evidence import scpf_case_state
 from api_coverage import (
     EXPORT_COVERAGE,
     CAPABILITY_COVERAGE,
@@ -1371,20 +1372,10 @@ def build(
         (dest / "model.py").write_text(source, encoding="utf-8")
         (dest / "commands.json").write_text(json.dumps(commands, indent=2) + "\n", encoding="utf-8")
         count = len(commands["commands"])
-        case_record = (
-            ((build_manifest_data.get("cases") or {}).get(slug) or {})
-            .get("implementations", {})
-            .get("scpf")
-        )
-        native_levels = {"affected-q1-q6", "q1-q6-full", "full-q1-q6"}
-        case_verified = (
-            bool(
-                case_record
-                and case_record.get("status") == "pass"
-                and case_record.get("verification_level") in native_levels
-            )
-            if build_manifest_data
-            else verified
+        case_record, case_verified = scpf_case_state(
+            build_manifest_data,
+            slug,
+            fallback_verified=verified,
         )
         screenshot = (
             native_root / slug / "model.png"
@@ -1918,6 +1909,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
 
     for case in QUALIFICATION_CASES:
         slug = case["slug"]
+        case_record, case_verified = scpf_case_state(
+            build_manifest_data,
+            slug,
+            fallback_verified=verified,
+        )
         blocked_reason = case.get("blocked_reason")
         source_path = ROOT / "examples" / slug / "scpf" / "model.py"
         if blocked_reason:
