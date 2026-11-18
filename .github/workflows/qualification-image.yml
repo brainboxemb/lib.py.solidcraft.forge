@@ -9,15 +9,6 @@ on:
       - "docker/qualification/**"
       - "qualification/toolchain.json"
       - "scpf/scpf/version.py"
-      - "qualification/integration/**"
-      - "qualification/run_case_evidence.py"
-      - "qualification/run_affected.py"
-      - "qualification/native_cases.py"
-      - "qualification/native_validation.py"
-      - "qualification/visual_validation.py"
-      - "scripts/verification_gate.py"
-      - "examples/simple-box/**"
-      - "scpf/**"
       - "scripts/qualification_image.py"
       - ".github/workflows/qualification-image.yml"
   workflow_dispatch: {}
@@ -50,16 +41,14 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - name: Login to GHCR
-        if: github.ref == 'refs/heads/main'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Reuse existing immutable image on main
+      - name: Reuse existing immutable image
         id: existing
-        if: github.ref == 'refs/heads/main'
         run: |
           if docker manifest inspect "${{ steps.meta.outputs.reference }}" >/dev/null 2>&1; then
             docker pull "${{ steps.meta.outputs.reference }}"
@@ -72,7 +61,7 @@ jobs:
           fi
 
       - name: Build qualification image
-        if: github.ref != 'refs/heads/main' || steps.existing.outputs.exists != 'true'
+        if: steps.existing.outputs.exists != 'true'
         uses: docker/build-push-action@v6
         with:
           context: docker/qualification
@@ -139,13 +128,16 @@ jobs:
           retention-days: 7
 
       - name: Publish immutable qualification image
-        if: github.ref == 'refs/heads/main' && steps.existing.outputs.exists != 'true'
+        if: steps.existing.outputs.exists != 'true'
         run: |
           docker tag \
             "qualification-local:${{ steps.meta.outputs.image_id }}" \
             "${{ steps.meta.outputs.reference }}"
           docker push "${{ steps.meta.outputs.reference }}"
 
+      - name: Publish readable main alias
+        if: github.ref == 'refs/heads/main'
+        run: |
           docker tag \
             "qualification-local:${{ steps.meta.outputs.image_id }}" \
             "${{ steps.meta.outputs.alias }}"

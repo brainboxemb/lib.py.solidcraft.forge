@@ -38,6 +38,32 @@ class QualificationImageTests(unittest.TestCase):
         )
         self.assertEqual(values["solidcraft"], "0.42.0")
 
+    def test_image_workflow_only_tracks_toolchain_inputs(self):
+        workflow = (
+            qualification_image.ROOT
+            / ".github"
+            / "workflows"
+            / "qualification-image.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn('"docker/qualification/**"', workflow)
+        self.assertIn('"qualification/toolchain.json"', workflow)
+        self.assertIn('"scpf/scpf/version.py"', workflow)
+        self.assertNotIn('"scpf/**"', workflow)
+        self.assertNotIn('"examples/simple-box/**"', workflow)
+        self.assertNotIn('"qualification/run_affected.py"', workflow)
+
+    def test_immutable_image_is_publishable_before_main(self):
+        workflow = (
+            qualification_image.ROOT
+            / ".github"
+            / "workflows"
+            / "qualification-image.yml"
+        ).read_text(encoding="utf-8")
+        immutable = workflow.split(
+            "- name: Publish immutable qualification image", 1
+        )[1].split("- name: Publish readable main alias", 1)[0]
+        self.assertNotIn("github.ref == 'refs/heads/main'", immutable)
+
     def test_dockerfile_contains_no_tool_version_literals(self):
         dockerfile = qualification_image.DOCKERFILE.read_text(encoding="utf-8")
         values = qualification_image.metadata(
