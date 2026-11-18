@@ -66,6 +66,12 @@ def check_contract_tests() -> None:
         "test_case_runner.py",
         "test_forge_scope.py",
         "test_forge_pipeline.py",
+        "test_tool_cad_ci_migration.py",
+        "test_collect_item_results.py",
+        "test_item_gate.py",
+        "test_finalize_item_result.py",
+        "test_generic_publication.py",
+        "test_generic_site.py",
     ):
         run(
             [
