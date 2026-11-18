@@ -225,6 +225,24 @@ def validate_anchored_holes(root: Path) -> Validation:
     cylinders = b.get("face_types", {}).get("cylinder", 0)
     v.check("two cylindrical hole walls", cylinders == 2, 2, cylinders)
     _check_contract_volume(v, b, "anchored-holes", tol=0.5)
+
+    timeline = [
+        (row.get("type"), row.get("name"))
+        for row in d.get("timeline", [])
+    ]
+    expected_timeline = [
+        ("Sketch", "Base"),
+        ("ExtrudeFeature", "Base"),
+        ("Sketch", "Hole"),
+        ("ExtrudeFeature", "Hole"),
+        ("RectangularPatternFeature", "RectangularPattern1"),
+    ]
+    v.check(
+        "one source hole cut is repeated by native rectangular history",
+        timeline == expected_timeline,
+        expected_timeline,
+        timeline,
+    )
     return v
 
 
