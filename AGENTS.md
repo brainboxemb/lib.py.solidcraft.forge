@@ -196,9 +196,11 @@ head/base pair. Do not create an early PR merely to use CI as the development
 loop.
 
 Site-only publication uses the same risk decision through
-`scripts/reusable_qualification.py`. It reuses canonical `build/main`
-evidence only when current technical input hashes still match. Actions-run
-history is not an evidence database.
+`scripts/reusable_qualification.py`. For a presentation-only source change it
+may reuse a structurally valid, complete passing `build/main` baseline without
+recalculating every case input hash. Any technical source change must use the
+normal technical qualification/promotion flow. Actions-run history is not an
+evidence database.
 
 `scripts/ci_preflight.py` is the first hard gate. Keep it cheap. It exists to
 catch broken Python, malformed workflow structure, broken publication
