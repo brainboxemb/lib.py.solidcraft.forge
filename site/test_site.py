@@ -182,6 +182,35 @@ def check(
     assert "shape.rectangular_pattern(...)" in cheatsheet
     assert "shape.circular_pattern(...)" in cheatsheet
     assert "sketch.extrude(..., profiles=[...])" in cheatsheet
+    assert "Sketch.sheet_metal(...)" in cheatsheet
+    assert "Shape.fold(...)" in cheatsheet
+    assert "shape.pattern(...)" not in cheatsheet
+
+    for _group, title, _target, _current, _cases, _note in CAPABILITY_COVERAGE:
+        match = re.match(r"^(Shape|Sketch)\.([A-Za-z_][A-Za-z0-9_]*)\(", title)
+        if not match:
+            continue
+        owner_name, method_name = match.groups()
+        owner = getattr(scpf, owner_name)
+        assert hasattr(owner, method_name), (
+            "stale capability method",
+            title,
+        )
+
+    for _heading, items in CHEATSHEET:
+        for title, _description, _snippet, _linked in items:
+            match = re.match(
+                r"^(shape|Shape|sketch|Sketch)\.([A-Za-z_][A-Za-z0-9_]*)",
+                title,
+            )
+            if not match:
+                continue
+            owner_token, method_name = match.groups()
+            owner = scpf.Shape if owner_token.lower() == "shape" else scpf.Sketch
+            assert hasattr(owner, method_name), (
+                "stale cheatsheet method",
+                title,
+            )
 
     for spec in METHOD_REFERENCES:
         signature = inspect.signature(spec["object"])

@@ -17,9 +17,9 @@ SOLIDCRAFT_CAPABILITIES = [
     # group, capability, SolidCraft capability, Forge status, Forge today,
     # priority/target, reference model, note
     ("fundamentals", "Box", "Native box primitive.", "Supported", "Q6 · native-qualified in the current Forge subset.", "Core", "PythonSCAD + OpenSCAD", "Core rectangular solid."),
-    ("fundamentals", "Cylinder", "Native cylinder primitive, including axis-vector support.", "Supported", "Q6 · basic Z-axis primitive native-qualified.", "Core", "PythonSCAD + OpenSCAD", "General orientation remains a separate transform capability."),
+    ("fundamentals", "Cylinder", "Native cylinder primitive, including principal-axis support.", "Supported", "Q6 · principal-axis Cylinder behaviour is qualified through the shared primitive matrix and native primitive-csg case.", "Core", "PythonSCAD + OpenSCAD", "Arbitrary non-principal rotation remains a separate transform capability."),
     ("fundamentals", "Sphere", "Native sphere primitive.", "Supported", "Q6 · native-qualified through primitive CSG.", "Core", "PythonSCAD + OpenSCAD", "Core rounded primitive."),
-    ("fundamentals", "Cone", "Native cone primitive.", "Missing", "Not exposed in Forge.", "Later", "PythonSCAD + OpenSCAD", "Useful breadth, not needed for current frame work."),
+    ("fundamentals", "Cone", "Native cone / frustum primitive.", "Partial", "Q2 · public Cone semantics and native command lowering are covered; a dedicated Q6 visual case is still missing.", "Later Q6", "PythonSCAD + OpenSCAD", "Keep it in the shared primitive contract matrix; add native visual coverage when a real model needs it."),
     ("fundamentals", "Torus", "Native torus primitive.", "Missing", "Not exposed in Forge.", "Later", "PythonSCAD + OpenSCAD", "Useful breadth, not needed for current frame work."),
     ("fundamentals", "Boolean join / cut / intersect", "Native solid operations.", "Supported", "Q6", "Core", "PythonSCAD + OpenSCAD", "Operator syntax is a good fit."),
     ("fundamentals", "Translation", "Native primitive positions and occurrence moves.", "Supported", "Q6 for CSG; component move also supported.", "Core", "PythonSCAD + OpenSCAD", "Keep world movement distinct from local attachment offsets."),
@@ -47,7 +47,7 @@ SOLIDCRAFT_CAPABILITIES = [
     ("advanced", "Revolve", "Native parametric revolve.", "Missing", "Not exposed in Forge.", "High", "PythonSCAD + OpenSCAD", "Common mechanical modelling operation."),
     ("advanced", "Sweep", "Native sweep with path orientation, twist, scale and rails.", "Missing", "Not exposed in Forge.", "Later", "PythonSCAD + OpenSCAD", "Useful, not a prerequisite for current projects."),
     ("advanced", "Loft", "Native multi-section loft with optional rails.", "Partial", "Internal/special-case use only.", "Later", "PythonSCAD + OpenSCAD", "Expose only when a real scenario needs it."),
-    ("advanced", "Threads / emboss / sheet metal", "Native specialized features exist.", "Missing", "Not exposed in Forge.", "Later/out of current scope", "SolidCraft", "Track capability without wrapping everything."),
+    ("advanced", "Threads / emboss / sheet metal", "Native specialized features exist.", "Partial", "ThreadedHole is Q6-qualified. The first sheet-metal subset is Q6-qualified through Sketch.sheet_metal() + Shape.fold(); emboss and broader sheet operations remain missing.", "Expand only from real model needs", "SolidCraft + build123d reference", "Keep the public API small; add sheet operations only when a qualification case proves the workflow."),
 
     ("inspection", "Measurements / topology / interference", "Native inspection and topology queries are extensive.", "Partial", "Used heavily by qualification; little is public modelling API.", "High for verification", "SolidCraft", "Qualification should consume this even if the modelling API stays small."),
     ("inspection", "Import / export / linked components", "Native exchange and component-linking workflows.", "Partial", "Available mainly through CLI/project workflow.", "Later", "SolidCraft", "Separate workflow capability from modelling API."),

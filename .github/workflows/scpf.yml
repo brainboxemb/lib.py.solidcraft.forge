@@ -6,6 +6,7 @@ on:
       - main
       - "qualify/**"
       - "qualification/**"
+      - "site/**"
     paths:
       - "scpf/**"
       - "examples/**"
@@ -311,44 +312,6 @@ jobs:
           name: scpf-library-site
           path: output/site
           if-no-files-found: error
-      - name: Resolve qualification preview target
-        id: native_preview
-        if: success() && startsWith(github.ref_name, 'qualify/')
-        shell: bash
-        run: |
-          slug="${GITHUB_REF_NAME#qualify/}"
-          slug="${slug//\//-}"
-          destination="previews/$slug"
-          repo="${GITHUB_REPOSITORY#*/}"
-          url="https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo}/${destination}/"
-          echo "destination=$destination" >> "$GITHUB_OUTPUT"
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-
-      - name: Publish qualification branch preview
-        if: steps.native_preview.outputs.destination != ''
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./output/site
-          destination_dir: ${{ steps.native_preview.outputs.destination }}
-          keep_files: true
-          commit_message: "Native qualification ${{ github.ref_name }} at ${{ github.sha }}"
-
-      - name: Show qualification preview URL
-        if: steps.native_preview.outputs.url != ''
-        shell: bash
-        run: |
-          echo "### SolidCraft qualification preview" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Forge: **$FORGE_VERSION**" >> "$GITHUB_STEP_SUMMARY"
-          echo "- SolidCraft: **$SOLIDCRAFT_VERSION**" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Qualified: **$QUALIFIED_AT**" >> "$GITHUB_STEP_SUMMARY"
-          printf -- '- Branch: `%s`\n' "$GITHUB_REF_NAME" >> "$GITHUB_STEP_SUMMARY"
-          printf -- '- Commit: `%s`\n' "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Results: ${{ steps.native_preview.outputs.url }}qualification/results/" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Full preview: ${{ steps.native_preview.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
-
       - name: Enforce qualification status
         shell: bash
         run: |
@@ -374,14 +337,186 @@ jobs:
           print(f"Qualification passed: {len(results['cases'])} case(s)")
           PY
 
-      - name: Publish current library site
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - name: Write publication provenance
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref_name, 'qualify/') || startsWith(github.ref_name, 'qualification/'))
+        shell: bash
+        run: |
+          if test "$GITHUB_REF" = "refs/heads/main"; then
+            stage=stable
+          else
+            stage=preview
+          fi
+          python site/provenance.py write \
+            --out output/site/provenance.json \
+            --stage "$stage" \
+            --source-ref "$GITHUB_REF_NAME" \
+            --source-commit "$GITHUB_SHA" \
+            --forge-version "$FORGE_VERSION" \
+            --solidcraft-version "$SOLIDCRAFT_VERSION" \
+            --workflow-run-id "$GITHUB_RUN_ID" \
+            --qualification-level "q1-q6-full" \
+            --qualification-status pass
+          python site/provenance.py verify \
+            --file output/site/provenance.json \
+            --stage "$stage" \
+            --source-commit "$GITHUB_SHA"
+
+      - name: Upload qualified publication output
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref_name, 'qualify/') || startsWith(github.ref_name, 'qualification/'))
+        uses: actions/upload-artifact@v4
+        with:
+          name: scpf-publish-site-${{ github.sha }}
+          path: output/site
+          if-no-files-found: error
+          retention-days: 14
+
+  publish-site:
+    name: publish-site
+    needs: package
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref_name, 'qualify/') || startsWith(github.ref_name, 'qualification/'))
+    runs-on: ubuntu-latest
+    concurrency:
+      group: scpf-pages-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: scpf-publish-site-${{ github.sha }}
+          path: output/site
+
+      - name: Resolve publication target
+        id: publish_target
+        shell: bash
+        run: |
+          if test "$GITHUB_REF" = "refs/heads/main"; then
+            echo "stage=stable" >> "$GITHUB_OUTPUT"
+            echo "destination=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          ref="$GITHUB_REF_NAME"
+          slug="${ref#qualify/}"
+          slug="${slug#qualification/}"
+          slug="${slug//\//-}"
+          destination="previews/$slug/full"
+          repo="${GITHUB_REPOSITORY#*/}"
+          url="https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo}/${destination}/"
+          echo "stage=preview" >> "$GITHUB_OUTPUT"
+          echo "destination=$destination" >> "$GITHUB_OUTPUT"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Verify built publication provenance
+        shell: bash
+        run: |
+          python site/provenance.py verify \
+            --file output/site/provenance.json \
+            --stage "${{ steps.publish_target.outputs.stage }}" \
+            --source-commit "$GITHUB_SHA"
+
+      - name: Stage qualified branch preview output
+        if: steps.publish_target.outputs.stage == 'preview'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: preview-output
+          publish_dir: ./output/site
+          destination_dir: ${{ steps.publish_target.outputs.destination }}
+          keep_files: true
+          commit_message: "Stage qualified preview ${{ github.ref_name }} at ${{ github.sha }}"
+
+      - name: Checkout staged qualification preview
+        if: steps.publish_target.outputs.stage == 'preview'
+        uses: actions/checkout@v4
+        with:
+          ref: preview-output
+          path: staged-native-preview
+          fetch-depth: 1
+
+      - name: Verify staged qualification preview
+        if: steps.publish_target.outputs.stage == 'preview'
+        shell: bash
+        run: |
+          python site/provenance.py verify \
+            --file "staged-native-preview/${{ steps.publish_target.outputs.destination }}/provenance.json" \
+            --stage preview \
+            --source-commit "$GITHUB_SHA"
+
+      - name: Publish qualification preview from staged output
+        if: steps.publish_target.outputs.stage == 'preview'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ./output/site
+          publish_dir: ./staged-native-preview/${{ steps.publish_target.outputs.destination }}
+          destination_dir: ${{ steps.publish_target.outputs.destination }}
           keep_files: true
-          commit_message: "SCPF library site at ${{ github.sha }}"
+          commit_message: "Sync qualified preview ${{ github.ref_name }} at ${{ github.sha }}"
 
+      - name: Show qualification preview URL
+        if: steps.publish_target.outputs.stage == 'preview'
+        shell: bash
+        run: |
+          echo "### SolidCraft qualification preview" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          printf -- '- Branch: `%s`\n' "$GITHUB_REF_NAME" >> "$GITHUB_STEP_SUMMARY"
+          printf -- '- Commit: `%s`\n' "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Staged output: `preview-output/${{ steps.publish_target.outputs.destination }}`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Full preview: ${{ steps.publish_target.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Stage stable qualified output
+        if: steps.publish_target.outputs.stage == 'stable'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: qualified-output
+          publish_dir: ./output/site
+          force_orphan: true
+          commit_message: "Qualified stable output at ${{ github.sha }}"
+
+      - name: Checkout stable qualified output
+        if: steps.publish_target.outputs.stage == 'stable'
+        uses: actions/checkout@v4
+        with:
+          ref: qualified-output
+          path: staged-stable
+          fetch-depth: 1
+
+      - name: Checkout current Pages state
+        if: steps.publish_target.outputs.stage == 'stable'
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: current-pages
+          fetch-depth: 1
+
+      - name: Prepare stable Pages root from qualified output
+        if: steps.publish_target.outputs.stage == 'stable'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python site/provenance.py verify \
+            --file staged-stable/provenance.json \
+            --stage stable \
+            --source-commit "$GITHUB_SHA"
+          rm -rf output/pages-stable
+          mkdir -p output/pages-stable
+          cp -a staged-stable/. output/pages-stable/
+          rm -rf output/pages-stable/.git
+          if test -d current-pages/previews; then
+            rm -rf output/pages-stable/previews
+            cp -a current-pages/previews output/pages-stable/previews
+          fi
+
+      - name: Publish stable Pages root from qualified output
+        if: steps.publish_target.outputs.stage == 'stable'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./output/pages-stable
+          force_orphan: true
+          commit_message: "Promote qualified site at ${{ github.sha }}"
