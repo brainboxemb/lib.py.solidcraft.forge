@@ -65,6 +65,8 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertIn("case_runner.py", script)
         self.assertIn('"--from"', script)
         self.assertIn('"compile"', script)
+        self.assertIn("FORGE_QUALIFICATION_IMAGE", script)
+        self.assertIn('"docker"', script)
 
     def test_workflow_only_bootstraps_the_pinned_tool(self):
         """Selection and test execution stay in tested Python, not YAML."""
