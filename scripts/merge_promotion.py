@@ -44,6 +44,7 @@ def prepare(
     base_sha: str,
     head_sha: str,
     merge_sha: str,
+    current_main_sha: str,
     pull_request: int,
     build_root: Path,
     destination: Path,
@@ -54,6 +55,8 @@ def prepare(
     gate = final_gate(paths, cases)
     result = {
         "technical": gate != "preflight",
+        "current_main": current_main_sha,
+        "merge_is_current_main": merge_sha == current_main_sha,
         "release_candidate": "scpf/pyproject.toml" in paths,
         "cases": ",".join(cases),
         "final_gate": gate,
@@ -61,6 +64,8 @@ def prepare(
         "promotable": False,
     }
     if not result["technical"]:
+        return result
+    if not result["merge_is_current_main"]:
         return result
 
     overlay = build_root / "pr" / str(pull_request)
@@ -107,6 +112,7 @@ def main() -> int:
     parser.add_argument("--base-sha", required=True)
     parser.add_argument("--head-sha", required=True)
     parser.add_argument("--merge-sha", required=True)
+    parser.add_argument("--current-main-sha", required=True)
     parser.add_argument("--pull-request", type=int, required=True)
     parser.add_argument("--build-root", type=Path, required=True)
     parser.add_argument("--destination", type=Path, required=True)
@@ -118,6 +124,7 @@ def main() -> int:
         base_sha=args.base_sha,
         head_sha=args.head_sha,
         merge_sha=args.merge_sha,
+        current_main_sha=args.current_main_sha,
         pull_request=args.pull_request,
         build_root=args.build_root,
         destination=args.destination,

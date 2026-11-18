@@ -232,6 +232,7 @@ jobs:
             --base-sha "${{ github.event.pull_request.base.sha }}" \
             --head-sha "${{ github.event.pull_request.head.sha }}" \
             --merge-sha "${{ github.event.pull_request.merge_commit_sha }}" \
+            --current-main-sha "$(git rev-parse HEAD)" \
             --pull-request "${{ github.event.pull_request.number }}" \
             --build-root generated-build \
             --destination output/main \
@@ -285,7 +286,7 @@ jobs:
             --expected-source "${{ github.event.pull_request.merge_commit_sha }}" \
             --message "Publish stable site after PR #${{ github.event.pull_request.number }}"
 
-      - name: Request full safety rebuild when merge tree differs
+      - name: Request full safety rebuild when promotion is stale or incompatible
         if: github.event.pull_request.merged == true && steps.promote.outputs.technical == 'true' && steps.promote.outputs.promotable != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -298,6 +299,7 @@ jobs:
         run: gh workflow run scpf.yml --ref main
 
       - name: Remove closed PR technical overlay
+        if: always()
         run: |
           python scripts/publish_generated.py remove-dir \
             --branch build \
@@ -305,6 +307,7 @@ jobs:
             --message "Remove build PR #${{ github.event.pull_request.number }}"
 
       - name: Remove closed PR website preview
+        if: always()
         run: |
           python scripts/publish_generated.py remove-dir \
             --branch gh-pages \
