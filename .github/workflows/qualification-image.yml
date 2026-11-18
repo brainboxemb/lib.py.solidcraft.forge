@@ -8,6 +8,7 @@ on:
     paths:
       - "docker/qualification/**"
       - "qualification/toolchain.json"
+      - "scpf/scpf/version.py"
       - "qualification/integration/**"
       - "qualification/run_case_evidence.py"
       - "qualification/run_affected.py"

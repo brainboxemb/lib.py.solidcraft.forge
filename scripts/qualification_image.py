@@ -12,13 +12,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DOCKERFILE = ROOT / "docker" / "qualification" / "Dockerfile"
 TOOLCHAIN = ROOT / "qualification" / "toolchain.json"
+VERSION_FILE = ROOT / "scpf" / "scpf" / "version.py"
 
 
 def load_toolchain() -> dict:
     data = json.loads(TOOLCHAIN.read_text(encoding="utf-8"))
     if data.get("schema") != 1:
         raise ValueError("unsupported qualification toolchain schema")
-    required = {"python", "solidcraft", "cadcraft", "references"}
+    required = {"python", "cadcraft", "references"}
     missing = sorted(required - set(data))
     if missing:
         raise ValueError("missing toolchain fields: " + ", ".join(missing))
@@ -27,7 +28,7 @@ def load_toolchain() -> dict:
 
 def image_id() -> str:
     digest = hashlib.sha256()
-    for path in (DOCKERFILE, TOOLCHAIN):
+    for path in (DOCKERFILE, TOOLCHAIN, VERSION_FILE):
         digest.update(str(path.relative_to(ROOT)).encode())
         digest.update(b"\0")
         digest.update(path.read_bytes())
@@ -38,6 +39,10 @@ def image_id() -> str:
 def metadata(repository: str) -> dict[str, str]:
     data = load_toolchain()
     refs = data["references"]
+
+    namespace: dict[str, object] = {}
+    exec(VERSION_FILE.read_text(encoding="utf-8"), namespace)
+    solidcraft = str(namespace["TESTED_SOLIDCRAFT_VERSION"])
     digest = image_id()
     image = f"ghcr.io/{repository.lower()}/qualification"
     return {
@@ -46,10 +51,10 @@ def metadata(repository: str) -> dict[str, str]:
         "tag": f"toolchain-{digest}",
         "reference": f"{image}:toolchain-{digest}",
         "alias": (
-            f"{image}:sc-{data['solidcraft']}-py-{data['python']}"
+            f"{image}:sc-{solidcraft}-py-{data['python']}"
         ),
         "python": data["python"],
-        "solidcraft": data["solidcraft"],
+        "solidcraft": solidcraft,
         "cadcraft": data["cadcraft"],
         "pythonscad": refs["pythonscad"],
         "pybosl2": refs["pybosl2"],
