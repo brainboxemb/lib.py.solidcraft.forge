@@ -8,6 +8,25 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Primitive CSG route selection no longer depends on which primitive is on the
+  left side of a join, cut or intersection. Pure primitive trees use the CSG
+  compiler consistently, while ordered features can be applied after an
+  already-built primitive CSG body.
+- Explicitly placed native `Hole` features can therefore be added to
+  Cylinder-, Sphere- and derived primitive bodies instead of only body shapes
+  that happened to enter the feature compiler first (issue #297).
+
+### Testing
+
+- Rebuilt the SCPF unit-test layout around reusable geometry contracts.
+  Primitive creation, placement, parameters, all primitive-pair CSG operations
+  and compatible body × feature combinations now use generated matrices.
+  Direct and derived join/cut/intersection bodies share the same feature
+  contracts, and compiler primitive support is checked against the test
+  registry (issue #299).
+
 ## [0.9.0] - 2026-11-17
 
 ### Added
