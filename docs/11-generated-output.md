@@ -574,6 +574,16 @@ unless its reference input hash changes.
 
 ## 21. Workflow responsibilities
 
+The repository exposes exactly one active GitHub Actions workflow:
+`.github/workflows/forge.yml` (**Forge**). PR verification, main promotion,
+site publication, recovery, cleanup, reconcile, image reuse/build, contract
+snapshot and release publication are conditional jobs/phases inside that one
+workflow.
+
+A phase is not a reason to create another workflow file. Performance comes from
+risk selection, immutable image reuse and selected cases rather than from making
+the operator choose between Actions.
+
 Workflow YAML is orchestration only.
 
 Allowed:
