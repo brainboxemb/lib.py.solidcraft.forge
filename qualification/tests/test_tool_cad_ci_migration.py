@@ -31,16 +31,11 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         )
         self.assertEqual(
             config["items"],
-            ["scpf/tests", "examples/*/tests", "examples/*"],
+            ["scpf/tests", "examples/*"],
         )
 
         library = yaml.safe_load(
             (ROOT / "scpf/tests/ci.yml").read_text(encoding="utf-8")
-        )
-        integration = yaml.safe_load(
-            (ROOT / "examples/simple-box/tests/ci.yml").read_text(
-                encoding="utf-8"
-            )
         )
         case = yaml.safe_load(
             (ROOT / "examples/simple-box/ci.yml").read_text(
@@ -49,10 +44,12 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         )
 
         self.assertEqual(library["kind"], "library-test")
-        self.assertEqual(integration["kind"], "integration")
-        self.assertEqual(case["kind"], "case")
-        self.assertEqual(case["needs"], ["integration-simple-box"])
-        self.assertEqual(case["steps"][0]["outputs"], ["native-case"])
+        self.assertEqual(case["kind"], "example")
+        self.assertEqual(
+            [step["id"] for step in case["steps"]],
+            ["integration", "native"],
+        )
+        self.assertEqual(case["steps"][1]["outputs"], ["native-case"])
 
     def test_simple_box_case_uses_forge_runner_and_tool_output_path(self):
         """The generic tool must not gain SolidCraft qualification semantics."""
