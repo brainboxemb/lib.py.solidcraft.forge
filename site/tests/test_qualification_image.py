@@ -38,46 +38,58 @@ class QualificationImageTests(unittest.TestCase):
         )
         self.assertEqual(values["solidcraft"], "0.42.0")
 
-    def test_image_workflow_only_tracks_toolchain_inputs(self):
+    def test_forge_workflow_reuses_image_before_building(self):
         workflow = (
             qualification_image.ROOT
             / ".github"
             / "workflows"
-            / "qualification-image.yml"
+            / "scpf.yml"
         ).read_text(encoding="utf-8")
-        self.assertIn('"docker/qualification/**"', workflow)
-        self.assertIn('"qualification/toolchain.json"', workflow)
-        self.assertIn('"scpf/scpf/version.py"', workflow)
-        self.assertNotIn('"scpf/**"', workflow)
-        self.assertNotIn('"examples/simple-box/**"', workflow)
-        self.assertNotIn('"qualification/run_affected.py"', workflow)
+        pull = workflow.index("docker pull")
+        build = workflow.index("docker/build-push-action@v6")
+        self.assertLess(pull, build)
+        self.assertIn(
+            "steps.image_cache.outputs.exists != 'true'",
+            workflow,
+        )
+        self.assertIn("scripts/qualification_image.py", workflow)
 
-    def test_immutable_image_is_publishable_before_main(self):
+    def test_missing_image_is_smoke_tested_before_immutable_publish(self):
         workflow = (
             qualification_image.ROOT
             / ".github"
             / "workflows"
-            / "qualification-image.yml"
+            / "scpf.yml"
         ).read_text(encoding="utf-8")
-        immutable = workflow.split(
-            "- name: Publish immutable qualification image", 1
-        )[1].split("- name: Publish readable main alias", 1)[0]
-        self.assertNotIn("github.ref == 'refs/heads/main'", immutable)
-
-    def test_staged_smoke_consumes_image_without_building_it(self):
-        workflow = (
-            qualification_image.ROOT
-            / ".github"
-            / "workflows"
-            / "qualification-smoke.yml"
-        ).read_text(encoding="utf-8")
-        self.assertIn("docker pull", workflow)
+        smoke = workflow.index(
+            "- name: Validate new image or Forge pipeline with one complete case"
+        )
+        publish = workflow.index(
+            "- name: Publish newly built immutable qualification image"
+        )
+        self.assertLess(smoke, publish)
         self.assertIn("qualification/case_runner.py simple-box", workflow)
         self.assertIn("--stage mutate", workflow)
         self.assertIn("replay_before", workflow)
-        self.assertNotIn("docker/build-push-action", workflow)
-        self.assertNotIn("pip install", workflow)
-        self.assertNotIn("apt-get", workflow)
+
+    def test_pipeline_smoke_uses_selected_cached_image_without_reinstalling_toolchain(self):
+        workflow = (
+            qualification_image.ROOT
+            / ".github"
+            / "workflows"
+            / "scpf.yml"
+        ).read_text(encoding="utf-8")
+        smoke = workflow.split(
+            "- name: Validate new image or Forge pipeline with one complete case",
+            1,
+        )[1].split(
+            "- name: Publish newly built immutable qualification image",
+            1,
+        )[0]
+        self.assertIn("steps.image_cache.outputs.run_image", smoke)
+        self.assertIn("qualification/case_runner.py simple-box", smoke)
+        self.assertNotIn("apt-get", smoke)
+        self.assertNotIn("setup_solidcraft.py", smoke)
 
     def test_dockerfile_contains_no_tool_version_literals(self):
         dockerfile = qualification_image.DOCKERFILE.read_text(encoding="utf-8")
