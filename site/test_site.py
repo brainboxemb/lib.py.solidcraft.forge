@@ -746,6 +746,9 @@ def check(
                     assert rel in evidence, (slug, rel)
                     artifact = site / "qualification" / slug / rel
                     assert not artifact.exists(), artifact
+                assert not (
+                    site / "qualification" / slug / prefix
+                ).exists(), (slug, implementation)
                 assert (
                     f"/examples/{slug}/{implementation}/model-iso.png"
                     in page_text
