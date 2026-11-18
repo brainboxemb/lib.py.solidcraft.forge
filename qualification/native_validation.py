@@ -283,6 +283,122 @@ def validate_hole_family(root: Path) -> Validation:
     return v
 
 
+def validate_sheet_fold(root: Path) -> Validation:
+    v = Validation("sheet-fold")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "sheet-fold", tol=0.01)
+
+    v.check("one connected sheet body", d["body_count"] == 1, 1, d["body_count"])
+    if d["bodies"]:
+        body = d["bodies"][0]
+        v.check(
+            "body remains native sheet metal",
+            body.get("sheet_metal") is True and body.get("closed") is True,
+            {"sheet_metal": True, "closed": True},
+            {
+                "sheet_metal": body.get("sheet_metal"),
+                "closed": body.get("closed"),
+            },
+        )
+        _check_contract_volume(v, body, "sheet-fold", tol=0.01)
+
+    timeline = [
+        (row.get("type"), row.get("name"))
+        for row in d.get("timeline", [])
+    ]
+    expected_timeline = [
+        ("Sketch", "Blank"),
+        ("BaseFlangeFeature", "BaseFlange1"),
+        ("HoleFeature", "Hole1"),
+        ("FoldFeature", "Fold1"),
+    ]
+    v.check(
+        "native history keeps blank, base flange, hole and fold",
+        timeline == expected_timeline,
+        expected_timeline,
+        timeline,
+    )
+
+    sketches = d.get("sketches", [])
+    blank = next(
+        (row for row in sketches if row.get("name") == "Blank"),
+        None,
+    )
+    v.check(
+        "flat blank remains one solved native profile",
+        blank is not None
+        and blank.get("profiles") == 1
+        and blank.get("curves") == 4
+        and blank.get("status") == "solved",
+        {"name": "Blank", "profiles": 1, "curves": 4, "status": "solved"},
+        blank,
+    )
+
+    flat_rows = load(root / "results-flat-pattern.json")
+    v.check(
+        "flat-pattern inspection returns one sheet result",
+        isinstance(flat_rows, list) and len(flat_rows) == 1,
+        1,
+        len(flat_rows) if isinstance(flat_rows, list) else None,
+    )
+    if isinstance(flat_rows, list) and len(flat_rows) == 1:
+        flat = flat_rows[0]
+        size = flat.get("flat_size_mm")
+        v.check(
+            "flat pattern recovers 80 x 40 x 2 blank",
+            isinstance(size, list)
+            and len(size) == 3
+            and vector_close(size, [80.0, 40.0, 2.0], 0.001),
+            [80.0, 40.0, 2.0],
+            size,
+        )
+
+        cutouts = flat.get("cutout_shapes", [])
+        circle = (
+            cutouts[0].get("circle")
+            if len(cutouts) == 1 and isinstance(cutouts[0], dict)
+            else None
+        )
+        v.check(
+            "flat pattern preserves the Ø6 cutout",
+            circle is not None
+            and vector_close(circle.get("center", []), [-20.0, 0.0], 0.001)
+            and close(circle.get("radius", -1), 3.0, 0.001),
+            {"center": [-20.0, 0.0], "radius": 3.0},
+            circle,
+        )
+
+        bends = flat.get("bends", [])
+        bend = bends[0] if len(bends) == 1 else None
+        v.check(
+            "flat pattern reports the qualified 90 degree R2 bend",
+            bend is not None
+            and close(bend.get("angle_deg", 0), 90.0, 0.001)
+            and close(bend.get("radius", 0), 2.0, 0.001)
+            and close(bend.get("allowance", 0), 4.71238898038469, 0.001),
+            {
+                "angle_deg": 90.0,
+                "radius": 2.0,
+                "allowance": 4.71238898038469,
+            },
+            bend,
+        )
+        v.check(
+            "flat pattern keeps the shared sheet rule",
+            flat.get("rule") == "SheetFold Rule"
+            and close(flat.get("thickness", 0), 2.0, 0.001)
+            and close(flat.get("k_factor", 0), 0.5, 0.001),
+            {"rule": "SheetFold Rule", "thickness": 2.0, "k_factor": 0.5},
+            {
+                "rule": flat.get("rule"),
+                "thickness": flat.get("thickness"),
+                "k_factor": flat.get("k_factor"),
+            },
+        )
+
+    return v
+
+
 def validate_top_sketch_after_chamfer(root: Path) -> Validation:
     v = Validation("top-sketch-after-chamfer")
     d = load(root / "measurements.json")
@@ -1845,6 +1961,7 @@ VALIDATORS = {
     "simple-box": validate_simple_box,
     "anchored-holes": validate_anchored_holes,
     "hole-family": validate_hole_family,
+    "sheet-fold": validate_sheet_fold,
     "top-sketch-after-chamfer": validate_top_sketch_after_chamfer,
     "parameter-scope": validate_parameter_scope,
     "parent-derived-child-size": validate_parent_derived_child_size,
