@@ -32,7 +32,12 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         )
         self.assertEqual(
             config["items"],
-            ["scpf/tests", "examples/*"],
+            [
+                "scpf/tests",
+                "examples/*",
+                "qualification/reference_suite",
+                "qualification/diagrams",
+            ],
         )
 
         library = yaml.safe_load(
@@ -53,9 +58,9 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertEqual(
             case["steps"][0]["outputs"],
             [
-                "case/simple-box.json",
                 "case/stages/simple-box/01-q1.json",
                 "case/stages/simple-box/02-q2.json",
+                "case/simple-box.json",
                 "case/stages/simple-box/03-compile.json",
                 "case/qualification/case-evidence/q1/simple-box.txt",
                 "case/qualification/case-evidence/q2/simple-box.txt",
@@ -122,6 +127,25 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertIn("FORGE_QUALIFICATION_IMAGE", script)
         self.assertIn('"docker"', script)
         self.assertFalse((ROOT / "examples/simple-box/ci.py").exists())
+
+    def test_generated_evidence_items_are_independent_from_examples(self):
+        """Reference and diagram outputs have non-overlapping generic owners."""
+
+        references = yaml.safe_load(
+            (ROOT / "qualification/reference_suite/ci.yml").read_text(
+                encoding="utf-8"
+            )
+        )
+        diagrams = yaml.safe_load(
+            (ROOT / "qualification/diagrams/ci.yml").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(references["id"], "reference-suite")
+        self.assertEqual(references["steps"][0]["outputs"], ["references"])
+        self.assertEqual(diagrams["id"], "qualification-diagrams")
+        self.assertEqual(diagrams["steps"][0]["outputs"], ["rendered"])
+        self.assertNotIn("scpf/scpf/**", references["watch"])
 
     def test_workflow_only_bootstraps_the_pinned_tool(self):
         """Selection and test execution stay in tested Python, not YAML."""

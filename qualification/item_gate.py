@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""Assemble a Forge native gate from completed tool.cad.ci example items.
+"""Assemble a Forge native gate from completed tool.cad.ci item output.
 
-Example items have already run the real case stages. This module collects that
-evidence, adds Forge-owned reference/diagram output when policy requires it and
-writes the transitional build format used by the current site publisher.
+Example items already contain the real case stages. Reference and diagram
+evidence are separate generic items. This module only translates those
+consumer-owned outputs into the transitional Forge build shape still used by
+the current site publisher.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
-import subprocess
+import shutil
 import sys
 
 
@@ -25,10 +27,34 @@ from scripts.verification_gate import assemble_build, selected_cases
 NATIVE_GATES = {"affected-q1-q6", "full-q1-q6"}
 
 
-def run(command: list[str]) -> None:
-    """Run one Forge-owned post-qualification command."""
+def copy_completed_item_output(
+    *,
+    build_root: Path,
+    item_path: Path,
+    output_name: str,
+    destination: Path,
+) -> None:
+    """Copy one declared output from a complete passing generic CI item."""
 
-    subprocess.run(command, cwd=ROOT, check=True)
+    item_root = build_root / item_path
+    try:
+        state = json.loads(
+            (item_root / "item.json").read_text(encoding="utf-8")
+        )
+    except FileNotFoundError as exc:
+        raise RuntimeError(f"missing completed evidence item: {item_path}") from exc
+    if state.get("status") != "pass":
+        raise RuntimeError(f"evidence item is not passing: {item_path}")
+
+    source = item_root / output_name
+    if not source.is_dir() or not any(source.iterdir()):
+        raise RuntimeError(
+            f"missing evidence output {output_name!r} for {item_path}"
+        )
+    if destination.exists():
+        shutil.rmtree(destination)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(source, destination)
 
 
 def execute(
@@ -46,7 +72,7 @@ def execute(
     workflow_run_id: str,
     build_root: Path = ROOT / "build",
 ) -> tuple[str, ...]:
-    """Collect completed native items and assemble current publication input."""
+    """Collect completed CI items and assemble current publication input."""
 
     if gate not in NATIVE_GATES:
         raise ValueError(f"item native gate does not support {gate}")
@@ -59,29 +85,21 @@ def execute(
         source_sha=source_sha,
     )
 
-    # Reference implementations and diagrams are Forge publication evidence.
-    # They are intentionally outside the generic item runner.
+    # These are normal generic CI items. Forge knows what their files mean;
+    # tool.cad.ci only guarantees that the item output is complete and current.
     if reference_smoke or gate == "full-q1-q6":
-        run(
-            [
-                sys.executable,
-                "qualification/reference_validation.py",
-                "--cases",
-                ",".join(cases),
-                "--out",
-                str(out / "references"),
-                "--source-sha",
-                source_sha,
-            ]
+        copy_completed_item_output(
+            build_root=build_root,
+            item_path=Path("qualification/reference_suite"),
+            output_name="references",
+            destination=out / "references",
         )
     if gate == "full-q1-q6":
-        run(
-            [
-                sys.executable,
-                "qualification/render_diagrams.py",
-                "--out",
-                str(out / "diagrams"),
-            ]
+        copy_completed_item_output(
+            build_root=build_root,
+            item_path=Path("qualification/diagrams"),
+            output_name="rendered",
+            destination=out / "diagrams",
         )
 
     assemble_build(
