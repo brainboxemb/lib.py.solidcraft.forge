@@ -69,6 +69,109 @@ class GeneratedOutputTests(unittest.TestCase):
             self.assertEqual(record["source_commit"], "abc123")
             self.assertEqual(record["verification_level"], "affected-q1-q6")
 
+    def test_complete_main_baseline_does_not_recalculate_case_hashes(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            build = root / "main"
+            for slug in ("simple-box", "components"):
+                (build / "examples" / slug / "scpf").mkdir(parents=True)
+            manifest = {
+                "schema_version": 2,
+                "scope": "main",
+                "source_ref": "main",
+                "source_commit": "qualified",
+                "pull_request": None,
+                "workflow_run_id": "1",
+                "toolchain": {},
+                "verification": {"level": "q1-q6-full", "status": "pass"},
+                "generated_at": "2026-01-01T00:00:00Z",
+                "cases": {},
+            }
+            for slug in ("simple-box", "components"):
+                manifest["cases"][slug] = {
+                    "implementations": {
+                        "scpf": {
+                            "source_commit": "qualified",
+                            "build_scope": "main",
+                            "input_hash": "sha256:" + "4" * 64,
+                            "verification_level": "q1-q6-full",
+                            "status": "pass",
+                            "generated_at": "2026-01-01T00:00:00Z",
+                        }
+                    }
+                }
+            (build / "build.json").write_text(
+                json.dumps(manifest),
+                encoding="utf-8",
+            )
+
+            with patch.object(
+                self.module,
+                "TECHNICAL_CASE_SLUGS",
+                ("simple-box", "components"),
+            ), patch.object(
+                self.module,
+                "case_input_hash",
+                side_effect=AssertionError("presentation reuse must not recalculate hashes"),
+            ):
+                verified = self.module.verify_build(
+                    build,
+                    require_complete=True,
+                    repo_root=root,
+                )
+
+            self.assertEqual(verified["source_commit"], "qualified")
+
+    def test_complete_main_baseline_rejects_missing_case(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            build = root / "main"
+            (build / "examples" / "simple-box" / "scpf").mkdir(parents=True)
+            manifest = {
+                "schema_version": 2,
+                "scope": "main",
+                "source_ref": "main",
+                "source_commit": "qualified",
+                "pull_request": None,
+                "workflow_run_id": "1",
+                "toolchain": {},
+                "verification": {"level": "q1-q6-full", "status": "pass"},
+                "generated_at": "2026-01-01T00:00:00Z",
+                "cases": {
+                    "simple-box": {
+                        "implementations": {
+                            "scpf": {
+                                "source_commit": "qualified",
+                                "build_scope": "main",
+                                "input_hash": "sha256:" + "5" * 64,
+                                "verification_level": "q1-q6-full",
+                                "status": "pass",
+                                "generated_at": "2026-01-01T00:00:00Z",
+                            }
+                        }
+                    }
+                },
+            }
+            (build / "build.json").write_text(
+                json.dumps(manifest),
+                encoding="utf-8",
+            )
+
+            with patch.object(
+                self.module,
+                "TECHNICAL_CASE_SLUGS",
+                ("simple-box", "components"),
+            ):
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    "main build is missing registered cases",
+                ):
+                    self.module.verify_build(
+                        build,
+                        require_complete=True,
+                        repo_root=root,
+                    )
+
     def test_promotion_replaces_one_case_and_preserves_other(self):
         with TemporaryDirectory() as temp:
             root = Path(temp)

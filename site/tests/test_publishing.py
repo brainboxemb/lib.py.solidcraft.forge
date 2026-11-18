@@ -65,7 +65,9 @@ class SitePublishingContractTests(unittest.TestCase):
     def test_site_only_reads_build_main_not_actions_history(self):
         workflow = (ROOT / ".github/workflows/site.yml").read_text()
         self.assertIn("ref: build", workflow)
-        self.assertIn("verify-current-hashes", workflow)
+        self.assertIn("verify-build", workflow)
+        self.assertIn("--require-complete", workflow)
+        self.assertNotIn("verify-current-hashes", workflow)
         self.assertIn("materialize-site-evidence", workflow)
         self.assertIn("site/provenance.py write-build", workflow)
         self.assertIn("scripts/publish_generated.py replace-stable-pages", workflow)

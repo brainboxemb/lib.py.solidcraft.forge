@@ -49,11 +49,12 @@ jobs:
           path: generated-build
           fetch-depth: 1
 
-      - name: Verify canonical technical baseline is reusable
+      - name: Verify canonical technical baseline is complete
         if: steps.scope.outputs.site_only == 'true'
         run: |
-          python scripts/generated_output.py verify-current-hashes \
-            --root generated-build/main
+          python scripts/generated_output.py verify-build \
+            --root generated-build/main \
+            --require-complete
           echo "BUILD_COMMIT=$(git -C generated-build rev-parse HEAD)" >> "$GITHUB_ENV"
 
       - name: Build site from canonical build/main evidence

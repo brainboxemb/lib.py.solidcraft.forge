@@ -8,6 +8,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Presentation-only main changes now reuse the existing complete `build/main`
+  technical baseline without recalculating every qualification case input hash.
+  Technical changes still require the normal qualification/promotion path
+  (issue #320).
+
 ## [0.11.0] - 2026-11-18
 
 ### Added
