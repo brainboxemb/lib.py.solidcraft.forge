@@ -602,10 +602,12 @@ def check(
         "corner-bracket-local-axes",
         "corner-bracket-front-corners",
     ):
-        for suffix in (".svg", ".dxf", ".cadcraft.json"):
-            artifact = site / "qualification" / "joint-anatomy" / f"{diagram}{suffix}"
-            assert artifact.is_file() and artifact.stat().st_size > 0, artifact
-        assert f'src="{diagram}.svg"' in joint_anatomy_page
+        source = site / "qualification" / "joint-anatomy" / f"{diagram}.cadcraft.json"
+        assert source.is_file() and source.stat().st_size > 0, source
+        assert not (site / "qualification" / "joint-anatomy" / f"{diagram}.svg").exists()
+        assert not (site / "qualification" / "joint-anatomy" / f"{diagram}.dxf").exists()
+        assert f"/qualification/diagrams/{diagram}.svg" in joint_anatomy_page
+        assert f"/qualification/diagrams/{diagram}.dxf" in joint_anatomy_page
         assert f'href="{diagram}.cadcraft.json"' in joint_anatomy_page
     assert "Q1" in qualification_index and "Q6" in qualification_index
     assert 'class="reference-grid qualification-grid"' in qualification_index

@@ -2532,16 +2532,6 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         "corner-bracket-front-corners",
     )
     for diagram in joint_diagrams:
-        for suffix in (".svg", ".dxf"):
-            source = (
-                diagram_root / f"{diagram}{suffix}"
-                if diagram_root is not None else None
-            )
-            if source is None or not source.is_file():
-                raise ValueError(
-                    f"Generated SolidCraft joint concept drawing missing: {diagram}{suffix}"
-                )
-            shutil.copyfile(source, joint_anatomy_root / source.name)
         plan = ROOT / "qualification" / "diagrams" / f"{diagram}.cadcraft.json"
         if not plan.is_file():
             raise ValueError(f"CadCraft concept source missing: {plan}")
@@ -2551,6 +2541,12 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         "joint-anatomy.html",
         source_sha=escape(sha),
         solidcraft_version=escape(TESTED_SOLIDCRAFT_VERSION),
+        diagram_raw_base=escape(
+            build_raw_url(build_scope, "qualification/diagrams")
+        ),
+        diagram_blob_base=escape(
+            build_blob_url(build_scope, "qualification/diagrams")
+        ),
     )
     (joint_anatomy_root / "index.html").write_text(
         page(
