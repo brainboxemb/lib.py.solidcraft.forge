@@ -244,13 +244,6 @@ METHOD_REFERENCES = (
     _method("Shape.chamfer", "Shape.chamfer()", Shape.chamfer, guide="features", guide_anchor="fillet"),
     _method("Shape.shell", "Shape.shell()", Shape.shell, guide="features", guide_anchor="shell"),
     _method(
-        "Shape.repeat_linear",
-        "Shape.repeat_linear()",
-        Shape.repeat_linear,
-        guide="features",
-        guide_anchor="features",
-    ),
-    _method(
         "Shape.rectangular_pattern",
         "Shape.rectangular_pattern()",
         Shape.rectangular_pattern,
