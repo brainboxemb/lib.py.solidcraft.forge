@@ -89,7 +89,10 @@ class ForgeScopeTests(unittest.TestCase):
         self.assertFalse(plan["site_only"])
 
     def test_manual_run_is_full_recovery_without_release(self):
-        plan = self.scope.make_plan(event_name="workflow_dispatch")
+        plan = self.scope.make_plan(
+            event_name="workflow_dispatch",
+            ref_name="main",
+        )
         self.assertEqual(plan["gate"], "full-q1-q6")
         self.assertFalse(plan["release"])
 
@@ -101,6 +104,13 @@ class ForgeScopeTests(unittest.TestCase):
         )
         self.assertEqual(plan["gate"], "full-q1-q6")
         self.assertTrue(plan["release"])
+
+    def test_manual_run_off_main_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "only allowed on main"):
+            self.scope.make_plan(
+                event_name="workflow_dispatch",
+                ref_name="feature/test",
+            )
 
     def test_weekly_schedule_is_full(self):
         plan = self.scope.make_plan(
