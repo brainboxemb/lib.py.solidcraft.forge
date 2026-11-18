@@ -54,3 +54,12 @@ verification_gate.py --gate affected-q1-q6 --cases simple-box
 That deliberately exercises the same Q1-Q6 orchestration later used by PR CI,
 but for exactly one qualification case. The complete case set is not used while
 developing the container.
+
+
+## Compatibility trigger
+
+The image identity changes only when the Dockerfile or toolchain changes.
+However, the same isolated workflow reruns the one-case compatibility gate when
+the relevant Forge or qualification runner changes. On `main`, if the
+immutable GHCR tag already exists, the workflow pulls and tests that exact image
+instead of rebuilding or overwriting it.
