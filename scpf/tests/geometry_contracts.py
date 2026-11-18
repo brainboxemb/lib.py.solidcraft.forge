@@ -136,7 +136,7 @@ PRIMITIVE_BODY_CASES = (
     BodyCase(
         "cone", "cone", "solid.cone", _cone, _cone_parameterized,
         ("base", (5, 6, 7)), 20, 20,
-        frozenset((GENERAL_SOLID, PRIMITIVE, CSG, NATIVE_HOLE, JOINABLE)),
+        frozenset((GENERAL_SOLID, PRIMITIVE, CSG, SIMPLE_HOLE, COUNTERBORE_HOLE, COUNTERSINK_HOLE, THREADED_HOLE, JOINABLE)),
     ),
     BodyCase(
         "sphere", "sphere", "solid.sphere", _sphere, _sphere_parameterized,
