@@ -1833,7 +1833,10 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         encoding="utf-8",
     )
 
-    # Qualification evidence is technical build output. It is published on\n    # the generated `build` branch, not copied into the Pages website.\n\n    sections = []
+    # Qualification evidence is technical build output. It is published on
+    # the generated `build` branch, not copied into the Pages website.
+
+    sections = []
     for heading, items in CHEATSHEET:
         boxes = []
         for title, description, snippet, linked in items:
