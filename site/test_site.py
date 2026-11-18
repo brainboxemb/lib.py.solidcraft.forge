@@ -757,13 +757,18 @@ def check(
                 assert not (
                     site / "qualification" / slug / prefix
                 ).exists(), (slug, implementation)
+                old_prefix = f"/examples/{slug}/{implementation}"
+                generic_prefix = (
+                    "/qualification/reference_suite/references/"
+                    f"{slug}/{implementation}"
+                )
                 assert (
-                    f"/examples/{slug}/{implementation}/model-iso.png"
-                    in page_text
+                    f"{old_prefix}/model-iso.png" in page_text
+                    or f"{generic_prefix}/model-iso.png" in page_text
                 ), (slug, implementation)
                 assert (
-                    f"/examples/{slug}/{implementation}/result.json"
-                    in page_text
+                    f"{old_prefix}/result.json" in page_text
+                    or f"{generic_prefix}/result.json" in page_text
                 ), (slug, implementation)
                 assert "Reference result checks" in page_text, (
                     slug,
