@@ -44,6 +44,9 @@ PIPELINE_PATHS = frozenset(
         ".github/workflows/site.yml",
         ".github/workflows/solidcraft-contracts.yml",
         "scripts/forge_scope.py",
+        "qualification/tests/test_forge_scope.py",
+        "qualification/tests/test_generated_output.py",
+        "site/tests/test_publishing.py",
     }
 )
 
