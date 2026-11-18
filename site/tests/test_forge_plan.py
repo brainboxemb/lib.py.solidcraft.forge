@@ -30,11 +30,31 @@ class ForgePlanTests(unittest.TestCase):
         self.assertFalse(plan["has_build"])
         self.assertEqual(plan["publication"], "preview")
 
-    def test_forge_pipeline_change_runs_one_simple_box_native_smoke(self):
-        plan = self.plan(("site/build.py",))
+    def test_forge_pipeline_refactor_runs_one_simple_box_native_smoke(self):
+        plan = self.plan(
+            (
+                ".github/workflows/scpf.yml",
+                ".github/workflows/forge.yml",
+                "qualification/impact.py",
+                "scripts/ci/forge_plan.py",
+                "site/tests/test_publishing.py",
+                "docs/11-generated-output.md",
+                "AGENTS.md",
+            )
+        )
         self.assertEqual(plan["gate"], "affected-q1-q6")
         self.assertEqual(plan["cases"], ["simple-box"])
         self.assertTrue(plan["has_build"])
+
+    def test_pipeline_change_does_not_downgrade_real_forge_change(self):
+        plan = self.plan(
+            (
+                ".github/workflows/forge.yml",
+                "scpf/scpf/compiler.py",
+            )
+        )
+        self.assertEqual(plan["gate"], "full-q1-q6")
+        self.assertEqual(plan["cases"], [])
 
     def test_native_sensitive_pr_stays_affected(self):
         plan = self.plan(("examples/simple-box/scpf/model.py",))
