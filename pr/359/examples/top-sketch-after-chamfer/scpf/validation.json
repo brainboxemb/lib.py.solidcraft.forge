@@ -1,0 +1,95 @@
+{
+  "case": "top-sketch-after-chamfer",
+  "q4": "pass",
+  "q5": "not-required",
+  "checks": [
+    {
+      "name": "declared target geometry",
+      "level": "q4",
+      "status": "pass",
+      "expected": [
+        {
+          "label": "TopSketchAfterChamfer",
+          "min": [
+            -50,
+            -35,
+            0
+          ],
+          "max": [
+            50,
+            35,
+            10
+          ]
+        }
+      ],
+      "actual": [
+        {
+          "min": [
+            -50.0,
+            -35.0,
+            -3.9619130284537425e-32
+          ],
+          "max": [
+            50.0,
+            35.00000000000001,
+            10.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "one chamfered plate body",
+      "level": "q4",
+      "status": "pass",
+      "expected": 1,
+      "actual": 1
+    },
+    {
+      "name": "one cylindrical through-hole wall",
+      "level": "q4",
+      "status": "pass",
+      "expected": 1,
+      "actual": 1
+    },
+    {
+      "name": "shared geometry volume",
+      "level": "q4",
+      "status": "pass",
+      "expected": {
+        "volume_mm3": 67589.02664470767,
+        "tolerance_mm3": 0.5
+      },
+      "actual": {
+        "volume_mm3": 67589.02664469673
+      }
+    },
+    {
+      "name": "post-chamfer TOP Sketch stays solved",
+      "level": "q4",
+      "status": "pass",
+      "expected": {
+        "Top hole": "solved"
+      },
+      "actual": {
+        "Top hole": "solved"
+      }
+    },
+    {
+      "name": "native history keeps chamfer before attached Sketch",
+      "level": "q4",
+      "status": "pass",
+      "expected": [
+        "BoxFeature",
+        "ChamferFeature",
+        "Sketch",
+        "ExtrudeFeature"
+      ],
+      "actual": [
+        "BoxFeature",
+        "ChamferFeature",
+        "Sketch",
+        "ExtrudeFeature"
+      ]
+    }
+  ]
+}

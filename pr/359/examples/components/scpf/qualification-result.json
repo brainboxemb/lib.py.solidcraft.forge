@@ -1,0 +1,123 @@
+{
+  "schema_version": 4,
+  "case": "components",
+  "title": "Reuse one component definition in two placements",
+  "source_commit": "214764f4fb822df8f4bebbaa92a8cf9addd0478d",
+  "forge_version": "0.11.0",
+  "solidcraft_version": "0.42.0",
+  "qualified_at": "2026-11-18T22:20:53Z",
+  "status": "pass",
+  "blocked_reason": null,
+  "levels": {
+    "q1": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "scpf/tests/test_assembly_placement.py",
+          "test": "test_copy_accepts_placement_override"
+        }
+      ],
+      "evidence": [
+        "q1-case-evidence.txt"
+      ]
+    },
+    "q2": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "examples/components/tests/test_contract.py",
+          "test": "test_components_command_contract"
+        }
+      ],
+      "commands": 4,
+      "evidence": [
+        "q2-case-evidence.txt"
+      ]
+    },
+    "q3": {
+      "status": "pass",
+      "evidence": [
+        "model.sc",
+        "model.step",
+        "results.json"
+      ]
+    },
+    "q4": {
+      "status": "pass",
+      "evidence": [
+        "joint-inspect.json",
+        "measurements.json",
+        "validation.json"
+      ]
+    },
+    "q5": {
+      "status": "not-required",
+      "required": false,
+      "reason": "No mutation in this base case; parameter-driven Placement is qualified separately.",
+      "mutation": null,
+      "evidence": []
+    },
+    "q6": {
+      "status": "pass",
+      "regression_status": "pass",
+      "expected_shape_status": "pass",
+      "required_views": [
+        "iso",
+        "front",
+        "right"
+      ],
+      "images": [
+        "model.png",
+        "goal-front.png",
+        "goal-iso.png",
+        "goal-right.png",
+        "model-front.png",
+        "model-iso.png",
+        "model-right.png",
+        "overlay-front.png",
+        "overlay-iso.png",
+        "overlay-right.png",
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png"
+      ],
+      "evidence": [
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png",
+        "visual-validation.json"
+      ]
+    }
+  },
+  "evidence": {
+    "native_files": [
+      "joint-inspect.json",
+      "measurements.json",
+      "model.sc",
+      "model.step",
+      "q1-case-evidence.txt",
+      "q2-case-evidence.txt",
+      "results.json",
+      "validation.json",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png",
+      "visual-validation.json"
+    ],
+    "images": [
+      "model.png",
+      "goal-front.png",
+      "goal-iso.png",
+      "goal-right.png",
+      "model-front.png",
+      "model-iso.png",
+      "model-right.png",
+      "overlay-front.png",
+      "overlay-iso.png",
+      "overlay-right.png",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png"
+    ]
+  }
+}

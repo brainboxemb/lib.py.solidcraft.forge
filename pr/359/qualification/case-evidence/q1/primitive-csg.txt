@@ -1,0 +1,21 @@
+$ /usr/local/bin/python -m unittest discover -s /workspace/scpf/tests -p test_geometry_primitives.py -k test_move_translates_a_csg_composite_without_changing_sizes -v
+
+test_move_translates_a_csg_composite_without_changing_sizes (test_geometry_primitives.GeometryPrimitives.test_move_translates_a_csg_composite_without_changing_sizes) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+OK
+
+matched_tests=1 status=PASS
+
+$ /usr/local/bin/python -m unittest discover -s /workspace/scpf/tests -p test_geometry_primitives.py -k test_cylinder_axis_lowers_directly_to_native_axis -v
+
+test_cylinder_axis_lowers_directly_to_native_axis (test_geometry_primitives.GeometryPrimitives.test_cylinder_axis_lowers_directly_to_native_axis) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK
+
+matched_tests=1 status=PASS
