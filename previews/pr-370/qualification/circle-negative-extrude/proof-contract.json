@@ -1,0 +1,65 @@
+{
+  "case": "circle-negative-extrude",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "NegativeCircleExtrude",
+        "min": [
+          -10,
+          -10,
+          -30
+        ],
+        "max": [
+          10,
+          10,
+          0
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "NegativeCircleExtrude",
+        "min": [
+          -10,
+          -10,
+          -30
+        ],
+        "max": [
+          10,
+          10,
+          0
+        ]
+      }
+    ],
+    "required_views": [
+      "iso",
+      "front",
+      "right"
+    ],
+    "visual_features": [],
+    "bounds_sufficient": false,
+    "bounds_reason": "A box can share the same envelope as this cylinder. Circular volume and a radial surface probe are required.",
+    "volume_mm3": 9424.77796076938,
+    "volume_tolerance_mm3": 100.0,
+    "watertight": true,
+    "surface_distance_probes": [
+      {
+        "label": "circular side outside the diagonal",
+        "point": [
+          8.0,
+          8.0,
+          -15.0
+        ],
+        "distance_mm": 1.3137084989847612,
+        "tolerance_mm": 0.3
+      }
+    ]
+  },
+  "solidcraft_only": {
+    "native_expectation": "One 20 mm diameter cylindrical body spans X/Y -10..10 mm and Z -30..0 mm, with an error-free saved SolidCraft timeline.",
+    "generated_relationship": "The signed Forge distance is normalized to a positive native distance plus solid.extrude(direction='negative').",
+    "q5_required": false,
+    "q5_reason": "No saved-design mutation in this fixture; it isolates direct circle-profile lowering and negative extrusion semantics.",
+    "mutation": null
+  }
+}
