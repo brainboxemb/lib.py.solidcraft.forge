@@ -1,17 +1,25 @@
-"""Reusable body × feature contract tests."""
+"""Reusable body × operation and body × feature contract tests."""
 
 import unittest
 
-from scpf import Hole
+from scpf import Hole, Parameter
 from scpf.compiler import compile_model
 from scpf.csg import CSG_PRIMITIVE_KINDS
 
 from geometry_contracts import (
+    CSG,
     NATIVE_HOLE,
     PRIMITIVE_BODY_CASES,
     build_joined,
     cases_with,
 )
+
+
+def _commands(document, name):
+    return [
+        row for row in document["commands"]
+        if row["command"] == name
+    ]
 
 
 class GeometryContractMatrix(unittest.TestCase):
@@ -25,15 +33,64 @@ class GeometryContractMatrix(unittest.TestCase):
         for case in PRIMITIVE_BODY_CASES:
             with self.subTest(body=case.name):
                 commands = compile_model(case.build(), "Part")["commands"]
-                body_commands = [
-                    row for row in commands
-                    if row["command"] in {
-                        "solid.box", "solid.cylinder", "solid.sphere"
-                    }
-                ]
-                self.assertEqual(len(body_commands), 1)
-                self.assertEqual(body_commands[0]["params"]["operation"], "new")
-                self.assertEqual(body_commands[0]["params"]["body_name"], "Part")
+                native = _commands({"commands": commands}, case.native_command)
+                self.assertEqual(len(native), 1)
+                self.assertEqual(native[0]["params"]["operation"], "new")
+                self.assertEqual(native[0]["params"]["body_name"], "Part")
+
+    def test_every_registered_primitive_preserves_parameters(self):
+        for case in PRIMITIVE_BODY_CASES:
+            with self.subTest(body=case.name):
+                size = Parameter("size", 30)
+                body = case.build_parameterized(size)
+                commands = compile_model(body, "Part")["commands"]
+
+                parameters = _commands(
+                    {"commands": commands}, "parameters.add"
+                )
+                self.assertEqual(
+                    [row["params"]["name"] for row in parameters],
+                    ["size"],
+                )
+                primitive = _commands(
+                    {"commands": commands}, case.native_command
+                )[0]
+                self.assertIn("size", str(primitive["params"]))
+
+    def test_csg_operations_cover_every_primitive_pair(self):
+        operations = (
+            ("join", lambda left, right: left + right),
+            ("cut", lambda left, right: left - right),
+            ("intersect", lambda left, right: left & right),
+        )
+        csg_cases = cases_with(CSG)
+
+        for operation, combine in operations:
+            for left_case in csg_cases:
+                for right_case in csg_cases:
+                    with self.subTest(
+                        operation=operation,
+                        left=left_case.name,
+                        right=right_case.name,
+                    ):
+                        result = combine(
+                            left_case.build(),
+                            right_case.build().move(x=5),
+                        )
+                        commands = compile_model(result, "Part")["commands"]
+
+                        self.assertEqual(
+                            commands[0]["params"]["operation"],
+                            "new",
+                        )
+                        self.assertEqual(
+                            commands[-1]["params"]["operation"],
+                            operation,
+                        )
+                        self.assertEqual(
+                            commands[-1]["params"]["targets"],
+                            ["Part"],
+                        )
 
     def test_native_hole_contract_runs_on_every_compatible_body(self):
         for case in cases_with(NATIVE_HOLE):
@@ -45,11 +102,8 @@ class GeometryContractMatrix(unittest.TestCase):
                     direction=(0, 0, -1),
                 ).at(0, 0, case.entry_z)
 
-                commands = compile_model(body, "Part")["commands"]
-                holes = [
-                    row for row in commands
-                    if row["command"] == "solid.hole"
-                ]
+                document = compile_model(body, "Part")
+                holes = _commands(document, "solid.hole")
                 self.assertEqual(len(holes), 1)
                 self.assertEqual(holes[0]["params"]["diameter"], 6)
                 self.assertEqual(holes[0]["params"]["targets"], ["Part"])
@@ -64,9 +118,9 @@ class GeometryContractMatrix(unittest.TestCase):
                     direction=(0, 0, -1),
                 ).at(0, 0, case.entry_z)
 
-                commands = compile_model(body, "Part")["commands"]
+                document = compile_model(body, "Part")
                 self.assertEqual(
-                    [row["command"] for row in commands].count("solid.hole"),
+                    len(_commands(document, "solid.hole")),
                     1,
                 )
 
@@ -81,14 +135,13 @@ class GeometryContractMatrix(unittest.TestCase):
                         direction=(0, 0, -1),
                     ).at(x, 0, case.entry_z)
 
-                commands = compile_model(body, "Part")["commands"]
-                holes = [
-                    row["params"] for row in commands
-                    if row["command"] == "solid.hole"
-                ]
+                holes = _commands(
+                    compile_model(body, "Part"),
+                    "solid.hole",
+                )
                 self.assertEqual(len(holes), 2)
                 self.assertEqual(
-                    [row["position"][0] for row in holes],
+                    [row["params"]["position"][0] for row in holes],
                     [-5, 5],
                 )
 
