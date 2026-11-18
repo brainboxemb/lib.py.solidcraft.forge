@@ -1237,6 +1237,80 @@ class Shape:
             raise ValueError("taper inset must be below half the footprint")
         return Shape("tapered_box", (self, from_z, inset))
 
+    def fold(
+        self,
+        *,
+        line,
+        angle=90,
+        fixed=None,
+        position="centerline",
+        flip=False,
+    ):
+        """Fold existing sheet material along one straight line.
+
+        Parameters:
+            line: Two XY or XYZ points defining the fold line.
+            angle: Bend angle in degrees. Defaults to 90.
+            fixed: Optional XYZ point on the side that must stay fixed.
+            position: Native bend-line position: "centerline", "start", "end" or "mould". Defaults to "centerline".
+            flip: Fold to the opposite side when True. Defaults to False.
+
+        Use when:
+            Bend material that already exists in a sheet blank. Dimensions and
+            bend allowance come from the sheet's shared rule.
+
+        Limits:
+            This first qualified form supports one straight fold line. The line
+            endpoints and fixed point are fixed finite coordinates.
+
+        Example:
+            sheet.fold(
+                line=((20, -20), (20, 20)),
+                angle=90,
+                fixed=(-20, 0, 0),
+            )
+        """
+        if not isinstance(line, (list, tuple)) or len(line) != 2:
+            raise ValueError("fold line must contain exactly two points")
+
+        def point3(value, label):
+            if not isinstance(value, (list, tuple)) or len(value) not in (2, 3):
+                raise ValueError(f"{label} must be an XY or XYZ point")
+            result = tuple(value) if len(value) == 3 else (value[0], value[1], 0)
+            if not all(
+                isinstance(v, (int, float)) and not isinstance(v, bool)
+                for v in result
+            ):
+                raise ValueError(
+                    f"{label} coordinates must be fixed numbers; "
+                    "associative fold lines require a Sketch line"
+                )
+            if not all(isfinite(v) for v in result):
+                raise ValueError(f"{label} must contain finite coordinates")
+            return result
+
+        p0 = point3(line[0], "fold line point")
+        p1 = point3(line[1], "fold line point")
+        if tuple(_pv(v) for v in p0) == tuple(_pv(v) for v in p1):
+            raise ValueError("fold line points must be different")
+
+        value = _pv(angle)
+        if not isfinite(value) or value == 0 or abs(value) >= 180:
+            raise ValueError("fold angle must be non-zero and below 180 degrees")
+
+        if position not in ("centerline", "start", "end", "mould"):
+            raise ValueError(
+                "fold position must be centerline, start, end or mould"
+            )
+        if not isinstance(flip, bool):
+            raise TypeError("fold flip must be True or False")
+
+        fixed_point = None if fixed is None else point3(fixed, "fold fixed")
+        return Shape(
+            "sheet_fold",
+            (self, (p0, p1), angle, fixed_point, position, flip),
+        )
+
     def fillet(self, radius, *, edges=Edges.VERTICAL):
         """Round selected solid edges with one radius.
 

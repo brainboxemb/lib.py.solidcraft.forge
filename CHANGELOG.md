@@ -8,6 +8,15 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- Added the first native sheet-metal workflow: `Sketch.sheet_metal(...)`
+  creates a rule-backed flat sheet from one closed XY Sketch and
+  `Shape.fold(...)` bends existing sheet material with native
+  `sheet.fold` history. The `sheet-fold` qualification verifies one
+  through hole before the bend, formed geometry and recovery of the original
+  80 × 40 × 2 mm flat pattern with its Ø6 cutout (issue #305).
+
 ### Removed
 
 - Removed the obsolete `Shape.repeat_linear()` / `linear_repeat` Forge-side

@@ -385,6 +385,75 @@ class Sketch:
         self._operations.append(operation)
         return operation
 
+    def sheet_metal(
+        self,
+        *,
+        thickness,
+        bend_radius,
+        k_factor=0.5,
+        rule_name="Forge Sheet",
+    ):
+        """Create a native sheet-metal body from this closed flat Sketch.
+
+        Parameters:
+            thickness: Sheet thickness in mm.
+            bend_radius: Default inside bend radius in mm.
+            k_factor: Neutral-axis K-factor. Must be greater than 0 and less than 1. Defaults to 0.5.
+            rule_name: Native SolidCraft sheet-rule name. Defaults to "Forge Sheet".
+
+        Use when:
+            Start a fabricated sheet part from its flat blank before applying
+            holes, folds, hems or other sheet-metal features.
+
+        Limits:
+            The first qualified form requires one standalone XY Sketch with one
+            closed profile. Leave the Sketch scope before creating the sheet.
+
+        Example:
+            with Sketch(name="Blank", plane="XY") as blank:
+                Rectangle2D(80, 40)
+            sheet = blank.sheet_metal(
+                thickness=2,
+                bend_radius=2,
+                k_factor=0.5,
+            )
+        """
+        if not self._closed:
+            raise ValueError("leave the Sketch scope before creating sheet metal")
+        if self.on is not None:
+            raise ValueError("sheet_metal() requires a standalone Sketch")
+        if self.plane != "XY":
+            raise ValueError("sheet_metal() currently requires an XY Sketch")
+        if len(self._profiles) != 1:
+            raise ValueError(
+                "sheet_metal() currently requires exactly one closed profile"
+            )
+        if pv(thickness) <= 0:
+            raise ValueError("sheet metal thickness must be positive")
+        if pv(bend_radius) <= 0:
+            raise ValueError("sheet metal bend_radius must be positive")
+        k = pv(k_factor)
+        if not isfinite(k) or not 0 < k < 1:
+            raise ValueError("sheet metal k_factor must be between 0 and 1")
+        if not isinstance(rule_name, str) or not rule_name.strip():
+            raise ValueError("sheet metal rule_name must be non-empty")
+
+        return Shape(
+            "sheet_base",
+            (
+                self.name,
+                self.plane,
+                self.origin,
+                self.offset,
+                tuple(self._profiles),
+                tuple(self._operations),
+                thickness,
+                bend_radius,
+                k_factor,
+                rule_name,
+            ),
+        )
+
     def extrude(
         self,
         distance,

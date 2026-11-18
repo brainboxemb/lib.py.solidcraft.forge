@@ -2,7 +2,7 @@
 
 Generated from the pinned SolidCraft runtime command registry.
 
-Forge-referenced commands: **44**
+Forge-referenced commands: **47**
 
 - `browser.visibility` → `contracts/browser.visibility.json`
 - `component.activate` → `contracts/component.activate.json`
@@ -22,6 +22,9 @@ Forge-referenced commands: **44**
 - `plastic.lip` → `contracts/plastic.lip.json`
 - `plastic.rest` → `contracts/plastic.rest.json`
 - `plastic.snap_fit` → `contracts/plastic.snap_fit.json`
+- `sheet.flange` → `contracts/sheet.flange.json`
+- `sheet.fold` → `contracts/sheet.fold.json`
+- `sheet.manage_rules` → `contracts/sheet.manage_rules.json`
 - `sketch.circle.center` → `contracts/sketch.circle.center.json`
 - `sketch.create` → `contracts/sketch.create.json`
 - `sketch.edit` → `contracts/sketch.edit.json`

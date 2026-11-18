@@ -131,6 +131,10 @@ POST_BUILD_INSPECTIONS = {
         "command": "qualification/commands/group-hierarchy/inspect-bom.json",
         "output": "results-bom.json",
     },
+    "sheet-fold": {
+        "command": "qualification/commands/sheet-fold/inspect-flat-pattern.json",
+        "output": "results-flat-pattern.json",
+    },
 }
 
 
