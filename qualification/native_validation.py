@@ -228,6 +228,43 @@ def validate_anchored_holes(root: Path) -> Validation:
     return v
 
 
+def validate_hole_family(root: Path) -> Validation:
+    v = Validation("hole-family")
+    d = load(root / "measurements.json")
+    _check_declared_bounds(v, d, "hole-family", tol=0.01)
+
+    v.check("one Hole-family plate body", d["body_count"] == 1, 1, d["body_count"])
+    if d["bodies"]:
+        body = d["bodies"][0]
+        v.check(
+            "Hole-family outer bounds stay unchanged",
+            bbox_close(body, [-60, -20, 0], [60, 20, 12], 0.01),
+            {"min": [-60, -20, 0], "max": [60, 20, 12]},
+            body["bbox"],
+        )
+
+    timeline = d.get("timeline", [])
+    hole_rows = [
+        row for row in timeline
+        if "hole" in str(row.get("type", "")).lower()
+    ]
+    v.check(
+        "native history contains four Hole features",
+        len(hole_rows) == 4,
+        4,
+        [(row.get("type"), row.get("name")) for row in hole_rows],
+    )
+
+    sketches = d.get("sketches", [])
+    v.check(
+        "native Hole family needs no helper sketches",
+        len(sketches) == 0,
+        0,
+        len(sketches),
+    )
+    return v
+
+
 def validate_top_sketch_after_chamfer(root: Path) -> Validation:
     v = Validation("top-sketch-after-chamfer")
     d = load(root / "measurements.json")
@@ -1789,6 +1826,7 @@ def validate_bracket(root: Path) -> Validation:
 VALIDATORS = {
     "simple-box": validate_simple_box,
     "anchored-holes": validate_anchored_holes,
+    "hole-family": validate_hole_family,
     "top-sketch-after-chamfer": validate_top_sketch_after_chamfer,
     "parameter-scope": validate_parameter_scope,
     "parent-derived-child-size": validate_parent_derived_child_size,
