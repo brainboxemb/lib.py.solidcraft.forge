@@ -1,0 +1,17 @@
+{
+  "schema_version": 2,
+  "stage": "preview",
+  "source_ref": "ci/360-simple-box-case-item",
+  "source_commit": "bcf233c8308b429fdbc57c02999c145caf98b455",
+  "pull_request": "361",
+  "forge_version": "0.11.0",
+  "solidcraft_version": "0.42.0",
+  "workflow_run_id": "44412767461",
+  "build_commit": "a8bf5f670aca8f35a7f521ca3624e87e7d489c8a",
+  "qualification": {
+    "level": "per-case",
+    "status": "pass",
+    "source_commit": "bcf233c8308b429fdbc57c02999c145caf98b455"
+  },
+  "generated_at": "2026-11-18T22:39:18.102993Z"
+}
