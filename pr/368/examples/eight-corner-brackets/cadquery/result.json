@@ -1,0 +1,71 @@
+{
+  "case": "eight-corner-brackets",
+  "implementation": "cadquery",
+  "status": "pass",
+  "source": "examples/eight-corner-brackets/cadquery/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      -64.0,
+      -44.0,
+      0.0
+    ],
+    "max": [
+      64.0,
+      44.0,
+      60.0
+    ]
+  },
+  "expected": {
+    "min": [
+      -64.0,
+      -44.0,
+      0.0
+    ],
+    "max": [
+      64.0,
+      44.0,
+      60.0
+    ]
+  },
+  "max_delta_mm": 0.0,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          -64.0,
+          -44.0,
+          0.0
+        ],
+        "max": [
+          64.0,
+          44.0,
+          60.0
+        ]
+      },
+      "expected": {
+        "min": [
+          -64.0,
+          -44.0,
+          0.0
+        ],
+        "max": [
+          64.0,
+          44.0,
+          60.0
+        ]
+      },
+      "max_delta_mm": 0.0,
+      "tolerance_mm": 0.5
+    }
+  },
+  "bounds_sufficient": true,
+  "bounds_reason": "This case adds eight placements of the qualified corner-bracket geometry. Per-occurrence bounds and the visual decomposition describe the added placement geometry; native relationships are checked separately."
+}

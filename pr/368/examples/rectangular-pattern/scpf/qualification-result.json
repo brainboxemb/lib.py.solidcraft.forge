@@ -1,0 +1,139 @@
+{
+  "schema_version": 4,
+  "case": "rectangular-pattern",
+  "title": "Native rectangular feature pattern",
+  "source_commit": "15193d0b241adc23bae932a4140dc6e5f37f831f",
+  "forge_version": "0.11.0",
+  "solidcraft_version": "0.42.0",
+  "qualified_at": "2026-11-18T23:05:18Z",
+  "status": "pass",
+  "blocked_reason": null,
+  "levels": {
+    "q1": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "scpf/tests/test_geometry_features.py",
+          "test": "test_rectangular_pattern_requires_applied_extrude_feature"
+        }
+      ],
+      "evidence": [
+        "q1-case-evidence.txt"
+      ]
+    },
+    "q2": {
+      "status": "pass",
+      "tests": [
+        {
+          "file": "examples/rectangular-pattern/tests/test_contract.py",
+          "test": "test_emits_one_native_feature_pattern"
+        },
+        {
+          "file": "examples/rectangular-pattern/tests/test_contract.py",
+          "test": "test_count_parameters_are_dimensionless"
+        }
+      ],
+      "commands": 11,
+      "evidence": [
+        "q2-case-evidence.txt"
+      ]
+    },
+    "q3": {
+      "status": "pass",
+      "evidence": [
+        "model.sc",
+        "model.step",
+        "results.json"
+      ]
+    },
+    "q4": {
+      "status": "pass",
+      "evidence": [
+        "joint-inspect.json",
+        "measurements-columns-2-pitch-30.json",
+        "measurements.json",
+        "validation.json"
+      ]
+    },
+    "q5": {
+      "status": "pass",
+      "required": true,
+      "reason": "Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature.",
+      "mutation": "columns 3 -> 2; pitch 24 -> 30 mm",
+      "evidence": [
+        "measurements-columns-2-pitch-30.json",
+        "model-columns-2-pitch-30.sc"
+      ]
+    },
+    "q6": {
+      "status": "pass",
+      "regression_status": "pass",
+      "expected_shape_status": "pass",
+      "required_views": [
+        "top",
+        "right",
+        "iso"
+      ],
+      "images": [
+        "model.png",
+        "goal-front.png",
+        "goal-iso.png",
+        "goal-right.png",
+        "goal-top.png",
+        "model-front.png",
+        "model-iso.png",
+        "model-right.png",
+        "model-top.png",
+        "overlay-front.png",
+        "overlay-iso.png",
+        "overlay-right.png",
+        "overlay-top.png",
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png"
+      ],
+      "evidence": [
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png",
+        "visual-validation.json"
+      ]
+    }
+  },
+  "evidence": {
+    "native_files": [
+      "joint-inspect.json",
+      "measurements-columns-2-pitch-30.json",
+      "measurements.json",
+      "model-columns-2-pitch-30.sc",
+      "model.sc",
+      "model.step",
+      "q1-case-evidence.txt",
+      "q2-case-evidence.txt",
+      "results.json",
+      "validation.json",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png",
+      "visual-validation.json"
+    ],
+    "images": [
+      "model.png",
+      "goal-front.png",
+      "goal-iso.png",
+      "goal-right.png",
+      "goal-top.png",
+      "model-front.png",
+      "model-iso.png",
+      "model-right.png",
+      "model-top.png",
+      "overlay-front.png",
+      "overlay-iso.png",
+      "overlay-right.png",
+      "overlay-top.png",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+$ /usr/local/bin/python -m unittest discover -s /workspace/scpf/tests -p test_assembly_placement.py -k test_copy_accepts_placement_override -v
+
+test_copy_accepts_placement_override (test_assembly_placement.AssemblyPlacementTests.test_copy_accepts_placement_override) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK
+
+matched_tests=1 status=PASS

@@ -1,0 +1,10 @@
+$ /usr/local/bin/python -m unittest discover -s /workspace/examples/hole-family/tests -p test_contract.py -k test_hole_family_uses_four_native_hole_features -v
+
+test_hole_family_uses_four_native_hole_features (test_contract.HoleFamilyQualificationTests.test_hole_family_uses_four_native_hole_features) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+OK
+
+matched_tests=1 status=PASS

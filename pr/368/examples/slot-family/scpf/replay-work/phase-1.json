@@ -1,0 +1,48 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "width",
+        "expression": "160",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "depth",
+        "expression": "120",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "thickness",
+        "expression": "5",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "width",
+        "width": "depth",
+        "height": "thickness",
+        "corner": [
+          "-width / 2",
+          "-depth / 2",
+          0
+        ],
+        "body_name": "SlotFamily"
+      }
+    },
+    {
+      "command": "model.faces",
+      "params": {
+        "body": "SlotFamily"
+      }
+    }
+  ]
+}

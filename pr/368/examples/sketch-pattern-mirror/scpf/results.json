@@ -1,0 +1,1039 @@
+[
+  {
+    "display_value": 8.0,
+    "name": "hole_diameter",
+    "unit": "mm",
+    "value": 8.0
+  },
+  {
+    "display_value": 4.0,
+    "name": "hole_columns",
+    "unit": "",
+    "value": 4.0
+  },
+  {
+    "display_value": 25.0,
+    "name": "hole_pitch",
+    "unit": "mm",
+    "value": 25.0
+  },
+  {
+    "display_value": 2.0,
+    "name": "slot_count",
+    "unit": "",
+    "value": 2.0
+  },
+  {
+    "display_value": 50.0,
+    "name": "slot_pitch",
+    "unit": "mm",
+    "value": 50.0
+  },
+  {
+    "bodies": [
+      "SketchPatternMirror"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "SketchPatternMirror"
+    ],
+    "feature": 1,
+    "ms": 2.541153,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "body": "SketchPatternMirror",
+    "faces": [
+      {
+        "area": 38400.0,
+        "centroid": [
+          0.0,
+          0.0,
+          5.0
+        ],
+        "exact": true,
+        "index": 0,
+        "name": "F1:+z",
+        "plane_normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "point": [
+          -64.22205101855957,
+          -24.222051018559572,
+          5.0
+        ]
+      },
+      {
+        "area": 1200.0,
+        "centroid": [
+          0.0,
+          80.0,
+          2.5
+        ],
+        "exact": true,
+        "index": 1,
+        "name": "F1:+y",
+        "plane_normal": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "point": [
+          117.52603884157803,
+          80.0,
+          2.4739611584219614
+        ]
+      },
+      {
+        "area": 800.0,
+        "centroid": [
+          -120.0,
+          0.0,
+          2.5000000000000004
+        ],
+        "exact": true,
+        "index": 2,
+        "name": "F1:-x",
+        "plane_normal": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          -120.0,
+          77.5390529679106,
+          2.4609470320893916
+        ]
+      },
+      {
+        "area": 1200.0,
+        "centroid": [
+          0.0,
+          -80.0,
+          2.5
+        ],
+        "exact": true,
+        "index": 3,
+        "name": "F1:-y",
+        "plane_normal": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "point": [
+          -117.52603884157803,
+          -80.0,
+          2.4739611584219614
+        ]
+      },
+      {
+        "area": 800.0,
+        "centroid": [
+          120.0,
+          0.0,
+          2.5000000000000004
+        ],
+        "exact": true,
+        "index": 4,
+        "name": "F1:+x",
+        "plane_normal": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          120.0,
+          -77.5390529679106,
+          2.4609470320893916
+        ]
+      },
+      {
+        "area": 38400.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "exact": true,
+        "index": 5,
+        "name": "F1:-z",
+        "plane_normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "point": [
+          -64.22205101855957,
+          -24.222051018559572,
+          0.0
+        ]
+      }
+    ]
+  },
+  {
+    "attachment": "exact_face",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Dog holes",
+    "projected": null,
+    "sketch": 2
+  },
+  {
+    "constraints": [
+      "k1"
+    ],
+    "created": {
+      "constraints": [],
+      "curves": [
+        "c1"
+      ],
+      "dimensions": [
+        "k1"
+      ],
+      "points": [
+        "c1.center"
+      ]
+    },
+    "curves": [
+      "c1"
+    ],
+    "sketch": {
+      "dof": 2,
+      "solved": true
+    }
+  },
+  {
+    "center": null,
+    "constraints": [
+      "k2",
+      "k3",
+      "k4",
+      "k5",
+      "k6",
+      "k7"
+    ],
+    "created": {
+      "constraints": [
+        "k2",
+        "k3",
+        "k4",
+        "k5",
+        "k6",
+        "k7"
+      ],
+      "curves": [
+        "c2",
+        "c3",
+        "c4"
+      ],
+      "dimensions": [],
+      "points": [
+        "p1",
+        "p2",
+        "p3"
+      ]
+    },
+    "curves": [
+      "c2",
+      "c3",
+      "c4"
+    ],
+    "pattern": "pat1",
+    "sketch": {
+      "dof": 2,
+      "solved": true
+    }
+  },
+  {
+    "constraints": [
+      "k8",
+      "k9",
+      "k10",
+      "k11",
+      "k12",
+      "k13",
+      "k14",
+      "k15"
+    ],
+    "created": {
+      "constraints": [
+        "k8",
+        "k9",
+        "k10",
+        "k11",
+        "k12",
+        "k13",
+        "k14",
+        "k15"
+      ],
+      "curves": [
+        "l1",
+        "c5",
+        "c6",
+        "c7",
+        "c8"
+      ],
+      "dimensions": [],
+      "points": [
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8",
+        "p9"
+      ]
+    },
+    "curves": [
+      "c5",
+      "c6",
+      "c7",
+      "c8"
+    ],
+    "sketch": {
+      "dof": 2,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 8,
+    "sketch": 2
+  },
+  {
+    "bodies": [
+      "SketchPatternMirror"
+    ],
+    "changed_bodies": [
+      "SketchPatternMirror"
+    ],
+    "created_bodies": [],
+    "feature": 3,
+    "ms": 61.399106,
+    "name": "Dog holes",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "body": "SketchPatternMirror",
+    "faces": [
+      {
+        "area": 38037.96132803246,
+        "centroid": [
+          0.21415107000663602,
+          -1.3509254664576537e-15,
+          5.000000000000003
+        ],
+        "exact": true,
+        "index": 0,
+        "name": "F1:+z",
+        "plane_normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "point": [
+          88.76181998219417,
+          21.059427232647987,
+          5.0
+        ]
+      },
+      {
+        "area": 1200.0,
+        "centroid": [
+          0.0,
+          80.0,
+          2.5
+        ],
+        "exact": true,
+        "index": 1,
+        "name": "F1:+y",
+        "plane_normal": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "point": [
+          117.52603884157803,
+          80.0,
+          2.4739611584219614
+        ]
+      },
+      {
+        "area": 800.0,
+        "centroid": [
+          -120.0,
+          0.0,
+          2.5000000000000004
+        ],
+        "exact": true,
+        "index": 2,
+        "name": "F1:-x",
+        "plane_normal": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          -120.0,
+          77.5390529679106,
+          2.4609470320893916
+        ]
+      },
+      {
+        "area": 1200.0,
+        "centroid": [
+          0.0,
+          -80.0,
+          2.5
+        ],
+        "exact": true,
+        "index": 3,
+        "name": "F1:-y",
+        "plane_normal": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "point": [
+          -117.52603884157803,
+          -80.0,
+          2.4739611584219614
+        ]
+      },
+      {
+        "area": 800.0,
+        "centroid": [
+          120.0,
+          0.0,
+          2.5000000000000004
+        ],
+        "exact": true,
+        "index": 4,
+        "name": "F1:+x",
+        "plane_normal": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          120.0,
+          -77.5390529679106,
+          2.4609470320893916
+        ]
+      },
+      {
+        "area": 38037.9613280325,
+        "centroid": [
+          0.21415107000663325,
+          -1.8874102479380694e-15,
+          0.0
+        ],
+        "exact": true,
+        "index": 5,
+        "name": "F1:-z",
+        "plane_normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "point": [
+          88.67930116898137,
+          -22.134841711234913,
+          0.0
+        ]
+      },
+      {
+        "area": 122.45869835682834,
+        "centroid": [
+          -59.99999999999997,
+          -44.99999999999999,
+          2.4999999999999996
+        ],
+        "cylinder": {
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "origin": [
+            -59.999999999999986,
+            -44.99999999999999,
+            -1.099999999999999
+          ],
+          "radius": 3.9999999999999862
+        },
+        "exact": true,
+        "index": 6,
+        "name": "F3:side:c1",
+        "plane_normal": null,
+        "point": [
+          -57.45172878922443,
+          -41.91676892913742,
+          0.3782873320801452
+        ]
+      },
+      {
+        "area": 122.45869835682893,
+        "centroid": [
+          -35.00000000000001,
+          -45.0,
+          2.5000000000000004
+        ],
+        "cylinder": {
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "origin": [
+            -35.00000000000001,
+            -45.00000000000001,
+            -1.099999999999999
+          ],
+          "radius": 4.000000000000007
+        },
+        "exact": true,
+        "index": 7,
+        "name": "F3:side:c2",
+        "plane_normal": null,
+        "point": [
+          -31.916768929137408,
+          -47.54827121077557,
+          0.3782873320801472
+        ]
+      },
+      {
+        "area": 122.45869835682873,
+        "centroid": [
+          -10.000000000000002,
+          -45.00000000000001,
+          2.4999999999999996
+        ],
+        "cylinder": {
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "origin": [
+            -10.0,
+            -45.0,
+            -1.099999999999999
+          ],
+          "radius": 4.0
+        },
+        "exact": true,
+        "index": 8,
+        "name": "F3:side:c3",
+        "plane_normal": null,
+        "point": [
+          -13.12598252177789,
+          -47.49564285777014,
+          0.37828733208014564
+        ]
+      },
+      {
+        "area": 122.45869835682873,
+        "centroid": [
+          14.999999999999996,
+          -45.0,
+          2.4999999999999996
+        ],
+        "cylinder": {
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "origin": [
+            15.0,
+            -45.0,
+            -1.099999999999999
+          ],
+          "radius": 4.0
+        },
+        "exact": true,
+        "index": 9,
+        "name": "F3:side:c4",
+        "plane_normal": null,
+        "point": [
+          11.874017478222106,
+          -47.49564285777014,
+          0.3782873320801461
+        ]
+      },
+      {
+        "area": 122.45869835682831,
+        "centroid": [
+          -59.99999999999998,
+          45.0,
+          2.5
+        ],
+        "cylinder": {
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "origin": [
+            -59.999999999999986,
+            45.00000000000001,
+            -1.099999999999999
+          ],
+          "radius": 3.9999999999999862
+        },
+        "exact": true,
+        "index": 10,
+        "name": "F3:side:c5",
+        "plane_normal": null,
+        "point": [
+          -62.548271210775546,
+          41.91676892913743,
+          4.621712667919853
+        ]
+      },
+      {
+        "area": 122.45869835682899,
+        "centroid": [
+          -35.0,
+          44.99999999999999,
+          2.4999999999999996
+        ],
+        "cylinder": {
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "origin": [
+            -35.00000000000001,
+            44.99999999999999,
+            -1.099999999999999
+          ],
+          "radius": 4.000000000000007
+        },
+        "exact": true,
+        "index": 11,
+        "name": "F3:side:c6",
+        "plane_normal": null,
+        "point": [
+          -31.874017478222115,
+          47.49564285777015,
+          0.3782873320801472
+        ]
+      },
+      {
+        "area": 122.45869835682872,
+        "centroid": [
+          -10.0,
+          45.000000000000014,
+          2.5
+        ],
+        "cylinder": {
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "origin": [
+            -10.0,
+            45.0,
+            -1.099999999999999
+          ],
+          "radius": 4.0
+        },
+        "exact": true,
+        "index": 12,
+        "name": "F3:side:c7",
+        "plane_normal": null,
+        "point": [
+          -6.874017478222109,
+          47.49564285777014,
+          0.37828733208014564
+        ]
+      },
+      {
+        "area": 122.45869835682873,
+        "centroid": [
+          15.000000000000004,
+          45.00000000000001,
+          2.499999999999999
+        ],
+        "cylinder": {
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "origin": [
+            15.0,
+            45.0,
+            -1.099999999999999
+          ],
+          "radius": 4.0
+        },
+        "exact": true,
+        "index": 13,
+        "name": "F3:side:c8",
+        "plane_normal": null,
+        "point": [
+          18.12598252177789,
+          47.49564285777015,
+          0.3782873320801452
+        ]
+      }
+    ]
+  },
+  {
+    "attachment": "exact_face",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Clamp slots",
+    "projected": null,
+    "sketch": 4
+  },
+  {
+    "centre_line": "l3",
+    "constraints": [
+      "k1",
+      "k2",
+      "k3",
+      "k4",
+      "k5",
+      "k6"
+    ],
+    "created": {
+      "constraints": [
+        "k1",
+        "k2",
+        "k3",
+        "k4",
+        "k5",
+        "k6"
+      ],
+      "curves": [
+        "l1",
+        "a1",
+        "l2",
+        "a2",
+        "l3"
+      ],
+      "dimensions": [],
+      "points": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "a1.center",
+        "a2.center",
+        "p5"
+      ]
+    },
+    "curves": [
+      "l1",
+      "a1",
+      "l2",
+      "a2"
+    ],
+    "middle": "p5",
+    "sketch": {
+      "dof": 5,
+      "solved": true
+    }
+  },
+  {
+    "center": null,
+    "constraints": [
+      "k7",
+      "k8",
+      "k9",
+      "k10",
+      "k11",
+      "k12"
+    ],
+    "created": {
+      "constraints": [
+        "k7",
+        "k8",
+        "k9",
+        "k10",
+        "k11",
+        "k12"
+      ],
+      "curves": [
+        "l4",
+        "a3",
+        "l5",
+        "a4"
+      ],
+      "dimensions": [],
+      "points": [
+        "p6",
+        "p7",
+        "p8",
+        "p9",
+        "p10",
+        "p11"
+      ]
+    },
+    "curves": [
+      "l4",
+      "a3",
+      "l5",
+      "a4"
+    ],
+    "pattern": "pat1",
+    "sketch": {
+      "dof": 5,
+      "solved": true
+    }
+  },
+  {
+    "constraints": [
+      "k13",
+      "k14",
+      "k15",
+      "k16",
+      "k17",
+      "k18",
+      "k19",
+      "k20",
+      "k21",
+      "k22",
+      "k23",
+      "k24"
+    ],
+    "created": {
+      "constraints": [
+        "k13",
+        "k14",
+        "k15",
+        "k16",
+        "k17",
+        "k18",
+        "k19",
+        "k20",
+        "k21",
+        "k22",
+        "k23",
+        "k24"
+      ],
+      "curves": [
+        "l6",
+        "l7",
+        "a5",
+        "l8",
+        "a6",
+        "l9",
+        "a7",
+        "l10",
+        "a8"
+      ],
+      "dimensions": [],
+      "points": [
+        "p12",
+        "p13",
+        "p14",
+        "p15",
+        "p16",
+        "p17",
+        "p18",
+        "p19",
+        "p20",
+        "p21",
+        "p22",
+        "p23",
+        "p24",
+        "p25"
+      ]
+    },
+    "curves": [
+      "l7",
+      "a5",
+      "l8",
+      "a6",
+      "l9",
+      "a7",
+      "l10",
+      "a8"
+    ],
+    "sketch": {
+      "dof": 5,
+      "solved": true
+    }
+  },
+  {
+    "constraints": [
+      "k25",
+      "k26",
+      "k27",
+      "k28",
+      "k29",
+      "k30",
+      "k31",
+      "k32",
+      "k33",
+      "k34",
+      "k35",
+      "k36"
+    ],
+    "created": {
+      "constraints": [
+        "k25",
+        "k26",
+        "k27",
+        "k28",
+        "k29",
+        "k30",
+        "k31",
+        "k32",
+        "k33",
+        "k34",
+        "k35",
+        "k36"
+      ],
+      "curves": [
+        "l11",
+        "l12",
+        "a9",
+        "l13",
+        "a10",
+        "l14",
+        "a11",
+        "l15",
+        "a12"
+      ],
+      "dimensions": [],
+      "points": [
+        "p26",
+        "p27",
+        "p28",
+        "p29",
+        "p30",
+        "p31",
+        "p32",
+        "p33",
+        "p34",
+        "p35",
+        "p36",
+        "p37",
+        "p38",
+        "p39"
+      ]
+    },
+    "curves": [
+      "l12",
+      "a9",
+      "l13",
+      "a10",
+      "l14",
+      "a11",
+      "l15",
+      "a12"
+    ],
+    "sketch": {
+      "dof": 5,
+      "solved": true
+    }
+  },
+  {
+    "constraints": [
+      "k37",
+      "k38",
+      "k39",
+      "k40",
+      "k41",
+      "k42",
+      "k43",
+      "k44",
+      "k45",
+      "k46",
+      "k47",
+      "k48"
+    ],
+    "created": {
+      "constraints": [
+        "k37",
+        "k38",
+        "k39",
+        "k40",
+        "k41",
+        "k42",
+        "k43",
+        "k44",
+        "k45",
+        "k46",
+        "k47",
+        "k48"
+      ],
+      "curves": [
+        "l16",
+        "a13",
+        "l17",
+        "a14",
+        "l18",
+        "a15",
+        "l19",
+        "a16"
+      ],
+      "dimensions": [],
+      "points": [
+        "p40",
+        "p41",
+        "p42",
+        "p43",
+        "p44",
+        "p45",
+        "p46",
+        "p47",
+        "p48",
+        "p49",
+        "p50",
+        "p51"
+      ]
+    },
+    "curves": [
+      "l16",
+      "a13",
+      "l17",
+      "a14",
+      "l18",
+      "a15",
+      "l19",
+      "a16"
+    ],
+    "sketch": {
+      "dof": 5,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 8,
+    "sketch": 4
+  },
+  {
+    "bodies": [
+      "SketchPatternMirror"
+    ],
+    "changed_bodies": [
+      "SketchPatternMirror"
+    ],
+    "created_bodies": [],
+    "feature": 5,
+    "ms": 103.501942,
+    "name": "Clamp slots",
+    "removed_bodies": [],
+    "warning": null
+  }
+]
