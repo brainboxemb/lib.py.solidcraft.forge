@@ -112,6 +112,8 @@ def run_gate(
                 ",".join(cases),
                 "--out",
                 str(out),
+                "--source-sha",
+                source_sha,
             ]
         )
     else:

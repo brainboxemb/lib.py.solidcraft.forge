@@ -18,6 +18,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from qualification.case_evidence import evidence_for
 from qualification.cases import QUALIFICATION_CASES
 from qualification.native_cases import mutation_spec
 
@@ -103,6 +104,65 @@ def _existing_names(case_dir: Path, patterns: tuple[str, ...]) -> list[str]:
     return sorted(names)
 
 
+def _stage_state(stages_root: Path, slug: str, stage: str) -> dict:
+    matches = tuple(sorted((stages_root / slug).glob(f"*-{stage}.json")))
+    if len(matches) != 1:
+        return {}
+    return json.loads(matches[0].read_text(encoding="utf-8"))
+
+
+def _staged_rows(
+    *,
+    output_root: Path,
+    stages_root: Path,
+    slugs: tuple[str, ...],
+    q1_rows: dict,
+    q2_case_rows: dict,
+    q2_rows: dict,
+    native_rows: dict,
+    mutation_rows: dict,
+) -> None:
+    """Overlay legacy TSV rows from the individually rerunnable stage records."""
+    for slug in slugs:
+        for level, rows in (("q1", q1_rows), ("q2", q2_case_rows)):
+            state = _stage_state(stages_root, slug, level)
+            rows[slug] = {
+                "case": slug,
+                "status": "PASS" if state.get("status") == "pass" else "FAIL",
+                "tests": json.dumps(list(evidence_for(slug, level))),
+                "evidence": f"case-evidence/{level}/{slug}.txt",
+            }
+
+        compiled = output_root / f"{slug}.json"
+        command_count = None
+        if compiled.is_file():
+            payload = json.loads(compiled.read_text(encoding="utf-8"))
+            commands = payload.get("commands")
+            if isinstance(commands, list):
+                command_count = len(commands)
+        compile_state = _stage_state(stages_root, slug, "compile")
+        q2_rows[slug] = {
+            "case": slug,
+            "commands": "" if command_count is None else str(command_count),
+            "status": "PASS" if compile_state.get("status") == "pass" else "FAIL",
+        }
+
+        replay = _stage_state(stages_root, slug, "replay")
+        evaluate = _stage_state(stages_root, slug, "evaluate")
+        native_rows[slug] = {
+            "case": slug,
+            "build": "PASS" if replay.get("status") == "pass" else "FAIL",
+            "eval": "PASS" if evaluate.get("status") == "pass" else "FAIL",
+        }
+
+        mutation = mutation_spec(slug)
+        if mutation is not None:
+            mutation_rows[slug] = {
+                "case": slug,
+                "mutation": mutation["label"],
+            }
+
+
 def collect(
     qualification_dir: Path,
     native_root: Path,
@@ -110,6 +170,10 @@ def collect(
     forge_version: str,
     solidcraft_version: str,
     qualified_at: str,
+    *,
+    output_root: Path | None = None,
+    stages_root: Path | None = None,
+    cases: tuple[str, ...] | None = None,
 ) -> dict:
     q1_rows = _read_tsv(qualification_dir / "q1-case-evidence.tsv")
     q2_case_rows = _read_tsv(qualification_dir / "q2-case-evidence.tsv")
@@ -118,6 +182,25 @@ def collect(
     mutation_rows = _read_tsv(qualification_dir / "q5-parametric-mutation.tsv")
     validation_rows = _read_tsv(qualification_dir / "native-validation.tsv")
     visual_rows = _read_tsv(qualification_dir / "visual-validation.tsv")
+
+    selected_slugs = (
+        tuple(case["slug"] for case in QUALIFICATION_CASES)
+        if cases is None
+        else tuple(cases)
+    )
+    if (output_root is None) != (stages_root is None):
+        raise ValueError("output_root and stages_root must be supplied together")
+    if output_root is not None and stages_root is not None:
+        _staged_rows(
+            output_root=Path(output_root),
+            stages_root=Path(stages_root),
+            slugs=selected_slugs,
+            q1_rows=q1_rows,
+            q2_case_rows=q2_case_rows,
+            q2_rows=q2_rows,
+            native_rows=native_rows,
+            mutation_rows=mutation_rows,
+        )
 
     aggregate = {
         "schema_version": SCHEMA_VERSION,
@@ -128,8 +211,11 @@ def collect(
         "cases": {},
     }
 
+    selected_set = set(selected_slugs)
     for case in QUALIFICATION_CASES:
         slug = case["slug"]
+        if slug not in selected_set:
+            continue
         case_dir = native_root / slug
         case_dir.mkdir(parents=True, exist_ok=True)
 

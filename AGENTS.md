@@ -188,6 +188,11 @@ How cases are selected:
 - Site/docs/workflow-only changes select no CAD case.
 - Reference libraries run only when reference implementation or
   reference-validation code changed.
+- Every affected/full Q1-Q6 staged run must finish by collecting the canonical
+  schema-v4 `native/<case>/qualification-result.json` through
+  `qualification/results.py`. Stage-state JSON is rerun/debug evidence; it is
+  not a replacement result format. Build and Pages consume the canonical
+  per-case result.
 
 The selector also reports the required final gate. Work on a source branch with
 cheap affected checks while implementing. Open a PR only when the implementation

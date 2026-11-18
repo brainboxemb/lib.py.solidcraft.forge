@@ -48,3 +48,4 @@ Current records:
 - [0029-repeated-parent-attachments.md](0029-repeated-parent-attachments.md) — qualify two disconnected attachment graphs on repeated parent occurrences and decide #162 from current SolidCraft 0.42 evidence.
 - [0038-presentation-only-build-reuse.md](0038-presentation-only-build-reuse.md) — let presentation-only source changes reuse a complete passing `build/main` baseline without recalculating every qualification case hash.
 - [0039-simple-main-qualification-trigger.md](0039-simple-main-qualification-trigger.md) — add one simple `main -> qualification -> build/main -> Pages` recovery trigger (#343).
+- [0040-preserve-staged-qualification-results.md](0040-preserve-staged-qualification-results.md) — preserve the schema-v4 per-case result after staged Q1–Q6 qualification (#345).

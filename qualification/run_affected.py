@@ -9,6 +9,7 @@ separately with qualification/case_runner.py.
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 import shutil
@@ -30,6 +31,18 @@ from qualification.case_selection import (
     parse_case_selection,
 )
 from qualification.native_cases import validate_runtime_metadata
+from qualification.project_metadata import scpf_version
+from qualification.results import collect as collect_results
+from scpf.version import TESTED_SOLIDCRAFT_VERSION
+
+
+def _now() -> str:
+    return (
+        datetime.now(timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z")
+    )
 
 
 def _run(command: list[str], *, cwd: Path = ROOT) -> float:
@@ -167,6 +180,7 @@ def main() -> int:
         type=Path,
         default=ROOT / "output" / "affected",
     )
+    parser.add_argument("--source-sha")
     args = parser.parse_args()
 
     selected = parse_case_selection(args.cases)
@@ -201,6 +215,35 @@ def main() -> int:
         global_q1=global_q1,
         global_q2=global_q2,
     )
+
+    source_sha = args.source_sha
+    if not source_sha:
+        source_sha = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            text=True,
+        ).strip()
+    collected = collect_results(
+        out / "qualification",
+        out / "native",
+        source_sha,
+        scpf_version(),
+        TESTED_SOLIDCRAFT_VERSION,
+        _now(),
+        output_root=out,
+        stages_root=out / "stages",
+        cases=selected,
+    )
+    incomplete = [
+        slug
+        for slug, result in collected["cases"].items()
+        if result["status"] != "pass"
+    ]
+    if incomplete:
+        raise RuntimeError(
+            "staged qualification result collection is incomplete: "
+            + ", ".join(incomplete)
+        )
 
     print("\nAffected staged qualification PASS")
     return 0

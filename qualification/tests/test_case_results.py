@@ -87,6 +87,103 @@ class CaseSpecificResultTests(unittest.TestCase):
             )["cases"]["case-one"]
             self.assertEqual(case["levels"]["q1"]["status"], "missing")
 
+    def test_staged_outputs_restore_schema_v4_case_result(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            qualification_dir = root / "qualification"
+            native_root = root / "native"
+            stages_root = root / "stages"
+            case_dir = native_root / "case-one"
+            case_dir.mkdir(parents=True)
+            qualification_dir.mkdir()
+
+            for level in ("q1", "q2"):
+                evidence = (
+                    qualification_dir
+                    / "case-evidence"
+                    / level
+                    / "case-one.txt"
+                )
+                evidence.parent.mkdir(parents=True, exist_ok=True)
+                evidence.write_text(f"{level.upper()} PASS\n", encoding="utf-8")
+
+            for index, stage in enumerate(
+                ("q1", "q2", "compile", "replay", "evaluate"),
+                start=1,
+            ):
+                path = stages_root / "case-one" / f"{index:02d}-{stage}.json"
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(
+                    json.dumps({"status": "pass"}),
+                    encoding="utf-8",
+                )
+
+            (root / "case-one.json").write_text(
+                json.dumps({"commands": [{"command": "solid.box"}]}),
+                encoding="utf-8",
+            )
+            for name in ("model.sc", "model.step", "results.json", "measurements.json"):
+                (case_dir / name).write_text("{}", encoding="utf-8")
+            (case_dir / "validation.json").write_text(
+                json.dumps({"q4": "pass", "q5": "not-required"}),
+                encoding="utf-8",
+            )
+            (case_dir / "visual-validation.json").write_text(
+                json.dumps({
+                    "status": "pass",
+                    "regression": {"status": "pass"},
+                    "expected_shape": {
+                        "status": "pass",
+                        "required_views": ["front"],
+                    },
+                }),
+                encoding="utf-8",
+            )
+            (case_dir / "model-front.png").write_bytes(b"png")
+
+            _write_tsv(
+                qualification_dir / "native-validation.tsv",
+                ("case", "q4", "q5"),
+                [{"case": "case-one", "q4": "PASS", "q5": "NOT-REQUIRED"}],
+            )
+            _write_tsv(
+                qualification_dir / "visual-validation.tsv",
+                ("case", "status"),
+                [{"case": "case-one", "status": "PASS"}],
+            )
+
+            targets = {
+                "q1": [{"file": "scpf/tests/test_api.py", "test": "test_api"}],
+                "q2": [{"file": "examples/case-one/tests/test_contract.py", "test": "test_contract"}],
+            }
+            with patch.object(results, "QUALIFICATION_CASES", [CASE]), \
+                 patch.object(results, "evidence_for", side_effect=lambda slug, level: targets[level]):
+                aggregate = results.collect(
+                    qualification_dir,
+                    native_root,
+                    "abc123",
+                    "0.test",
+                    "0.42.0",
+                    "2026-11-18T00:00:00Z",
+                    output_root=root,
+                    stages_root=stages_root,
+                    cases=("case-one",),
+                )
+
+            case = aggregate["cases"]["case-one"]
+            self.assertEqual(case["schema_version"], 4)
+            self.assertEqual(case["status"], "pass")
+            self.assertEqual(
+                [case["levels"][f"q{index}"]["status"] for index in range(1, 7)],
+                ["pass", "pass", "pass", "pass", "not-required", "pass"],
+            )
+            persisted = json.loads(
+                (case_dir / "qualification-result.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(persisted["levels"]["q6"]["status"], "pass")
+
     def test_case_pass_requires_target_list_and_run_log(self):
         with TemporaryDirectory() as temp:
             root = Path(temp)
