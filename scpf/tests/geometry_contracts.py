@@ -36,6 +36,7 @@ PRIMITIVE = "primitive"
 CSG = "csg"
 NATIVE_HOLE = "native-hole"
 JOINABLE = "joinable"
+DERIVED = "derived"
 
 
 def _box():
@@ -85,7 +86,7 @@ PRIMITIVE_BODY_CASES = (
     ),
 )
 
-FEATURE_BODY_CASES = PRIMITIVE_BODY_CASES + (
+DIRECT_FEATURE_BODY_CASES = PRIMITIVE_BODY_CASES + (
     BodyCase(
         "sketch-extrusion", None, None, _sketch_extrusion, None, 20, 20,
         frozenset((GENERAL_SOLID, NATIVE_HOLE, JOINABLE)),
@@ -93,19 +94,53 @@ FEATURE_BODY_CASES = PRIMITIVE_BODY_CASES + (
 )
 
 
+def _derived_primitive_cases():
+    cases = []
+    for base in PRIMITIVE_BODY_CASES:
+        def joined(base=base):
+            return base.build() + Cylinder(
+                d=16, h=10, anchor=Anchor.BOTTOM
+            ).at(0, 0, 15, anchor=Anchor.BOTTOM)
+
+        def cut(base=base):
+            return base.build() - Cylinder(
+                d=8, h=30, anchor=Anchor.BOTTOM
+            ).at(0, 0, -5, anchor=Anchor.BOTTOM)
+
+        def intersected(base=base):
+            return base.build() & Box(
+                30, 30, 12, anchor=Anchor.BOTTOM
+            ).at(0, 0, 4, anchor=Anchor.BOTTOM)
+
+        for suffix, build in (
+            ("join", joined),
+            ("cut", cut),
+            ("intersection", intersected),
+        ):
+            cases.append(
+                BodyCase(
+                    f"{base.name}-{suffix}",
+                    None,
+                    None,
+                    build,
+                    None,
+                    base.entry_z,
+                    base.through_depth,
+                    base.capabilities | frozenset((DERIVED,)),
+                )
+            )
+    return tuple(cases)
+
+
+DERIVED_FEATURE_BODY_CASES = _derived_primitive_cases()
+FEATURE_BODY_CASES = DIRECT_FEATURE_BODY_CASES + DERIVED_FEATURE_BODY_CASES
+
+
 def cases_with(capability):
     return tuple(
         case for case in FEATURE_BODY_CASES
         if capability in case.capabilities
     )
-
-
-def build_joined(case):
-    body = case.build()
-    boss = Cylinder(d=16, h=10, anchor=Anchor.BOTTOM).at(
-        0, 0, 15, anchor=Anchor.BOTTOM
-    )
-    return body + boss
 
 
 def _apply_native_hole(body, case):
