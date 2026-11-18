@@ -88,8 +88,17 @@ class ForgeScopeTests(unittest.TestCase):
         self.assertTrue(plan["needs_image"])
         self.assertFalse(plan["site_only"])
 
-    def test_manual_run_is_full_and_release_eligible(self):
+    def test_manual_run_is_full_recovery_without_release(self):
         plan = self.scope.make_plan(event_name="workflow_dispatch")
+        self.assertEqual(plan["gate"], "full-q1-q6")
+        self.assertFalse(plan["release"])
+
+    def test_main_version_change_is_release_candidate(self):
+        plan = self.scope.make_plan(
+            event_name="push",
+            ref_name="main",
+            paths=("scpf/pyproject.toml", "CHANGELOG.md"),
+        )
         self.assertEqual(plan["gate"], "full-q1-q6")
         self.assertTrue(plan["release"])
 
