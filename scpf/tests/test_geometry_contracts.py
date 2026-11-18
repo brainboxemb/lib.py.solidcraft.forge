@@ -6,7 +6,7 @@ from scpf import Hole
 from scpf.compiler import compile_model
 from scpf.csg import CSG_PRIMITIVE_KINDS
 
-from .geometry_contracts import (
+from geometry_contracts import (
     NATIVE_HOLE,
     PRIMITIVE_BODY_CASES,
     build_joined,
