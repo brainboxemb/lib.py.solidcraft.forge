@@ -1,0 +1,78 @@
+{
+  "case": "bracket",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "Bracket",
+        "min": [
+          0,
+          -12,
+          -40
+        ],
+        "max": [
+          40,
+          12,
+          0
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "arm X",
+        "min": [
+          0,
+          -12,
+          -12
+        ],
+        "max": [
+          40,
+          12,
+          0
+        ]
+      },
+      {
+        "label": "arm Z",
+        "min": [
+          0,
+          -12,
+          -40
+        ],
+        "max": [
+          12,
+          12,
+          0
+        ]
+      }
+    ],
+    "required_views": [
+      "iso",
+      "front",
+      "right"
+    ],
+    "visual_features": [],
+    "bounds_sufficient": false,
+    "bounds_reason": "A filled box can share the L-profile envelope. L-profile volume and a probe in the missing corner are required.",
+    "volume_mm3": 19584.0,
+    "volume_tolerance_mm3": 1.0,
+    "watertight": true,
+    "surface_distance_probes": [
+      {
+        "label": "empty inside corner",
+        "point": [
+          30.0,
+          0.0,
+          -30.0
+        ],
+        "distance_mm": 18.0,
+        "tolerance_mm": 0.3
+      }
+    ]
+  },
+  "solidcraft_only": {
+    "native_expectation": "A clean 40 mm L profile with 12 mm arms and 24 mm symmetric extrusion width.",
+    "generated_relationship": "Native XZ sketch/polygon plus symmetric extrusion. No assembly commands are present yet.",
+    "q5_required": false,
+    "q5_reason": "Not yet an attachment mutation case. This component is intentionally the geometry baseline for upcoming multi-orientation anchor tests.",
+    "mutation": null
+  }
+}
