@@ -32,6 +32,14 @@ def _target_cwd(
     return ROOT
 
 
+def _target_env() -> dict[str, str]:
+    env = dict(os.environ)
+    env["PYTHONPATH"] = os.pathsep.join(
+        [str(ROOT / "scpf"), str(ROOT)]
+    )
+    return env
+
+
 def _run_target(
     target: dict[str, str],
 ) -> tuple[list[str], str, int, bool]:
@@ -50,12 +58,10 @@ def _run_target(
         "-v",
     ]
 
-    env = dict(os.environ)
-    env.pop("PYTHONPATH", None)
     completed = subprocess.run(
         command,
         cwd=_target_cwd(target),
-        env=env,
+        env=_target_env(),
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,

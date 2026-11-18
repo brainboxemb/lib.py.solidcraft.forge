@@ -5,7 +5,7 @@ import unittest
 
 from qualification.case_evidence import CASE_EVIDENCE, validate_case_evidence
 from qualification.cases import supported_qualification_cases
-from qualification.run_case_evidence import ROOT, _target_cwd
+from qualification.run_case_evidence import ROOT, _target_cwd, _target_env
 
 
 class CaseEvidenceMetadataTests(unittest.TestCase):
@@ -33,6 +33,12 @@ class CaseEvidenceMetadataTests(unittest.TestCase):
             ),
             ROOT,
         )
+
+    def test_case_runner_uses_current_checkout_for_imports(self):
+        env = _target_env()
+        paths = env["PYTHONPATH"].split(":")
+        self.assertEqual(paths[0], str(ROOT / "scpf"))
+        self.assertEqual(paths[1], str(ROOT))
 
     def test_q1_and_q2_use_separate_test_layers(self):
         for slug, levels in CASE_EVIDENCE.items():
