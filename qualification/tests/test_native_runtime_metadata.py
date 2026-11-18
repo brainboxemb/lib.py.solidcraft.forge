@@ -150,7 +150,7 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
             )
 
         workflow = (
-            ROOT / ".github" / "workflows" / "scpf.yml"
+            ROOT / ".github" / "workflows" / "forge.yml"
         ).read_text(encoding="utf-8")
         for spec in POST_BUILD_INSPECTIONS.values():
             self.assertNotIn(
