@@ -2189,7 +2189,24 @@ def _hole_feature(
 
 
 def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None):
-    """Create a simple cylindrical hole feature."""
+    """Create a simple cylindrical hole feature.
+
+    Parameters:
+        d: Finished hole diameter in mm.
+        depth: Hole depth in mm, or Depth.THROUGH_ALL. Defaults to through all.
+        direction: Optional non-zero XYZ direction vector from the entry point into the material.
+
+    Use when:
+        Make an ordinary drilled hole without a head recess or thread intent.
+
+    Limits:
+        d and finite depth values must be positive. Explicit native Hole
+        features are positioned with at(); face-relative repeated simple holes
+        may also use on() through the existing placement route.
+
+    Example:
+        Hole(d=4.3).at(0, 0, 2)
+    """
     return _hole_feature(
         "simple",
         d=d,
@@ -2206,7 +2223,29 @@ def CounterboreHole(
     depth=Depth.THROUGH_ALL,
     direction=None,
 ):
-    """Create a hole with a cylindrical recess at its entry face."""
+    """Create a hole with a cylindrical recess at its entry face.
+
+    Parameters:
+        d: Finished main-hole diameter in mm.
+        counterbore_d: Diameter of the cylindrical recess in mm.
+        counterbore_depth: Depth of the recess from the entry face in mm.
+        depth: Main-hole depth in mm, or Depth.THROUGH_ALL. Defaults to through all.
+        direction: Optional non-zero XYZ direction vector from the entry point into the material.
+
+    Use when:
+        Seat a cylindrical screw head or other part below the entry surface.
+
+    Limits:
+        counterbore_d must be larger than d. counterbore_depth and finite
+        depth values must be positive. Position this native feature with at().
+
+    Example:
+        CounterboreHole(
+            d=6,
+            counterbore_d=12,
+            counterbore_depth=4,
+        ).at(0, 0, 12)
+    """
     return _hole_feature(
         "counterbore",
         d=d,
@@ -2225,7 +2264,30 @@ def CountersinkHole(
     depth=Depth.THROUGH_ALL,
     direction=None,
 ):
-    """Create a hole with a conical countersink/chamfer at its entry face."""
+    """Create a hole with a conical countersink at its entry face.
+
+    Parameters:
+        d: Finished main-hole diameter in mm.
+        countersink_d: Diameter of the countersink at the entry face in mm.
+        countersink_angle: Included countersink angle in degrees. Defaults to 90.
+        depth: Main-hole depth in mm, or Depth.THROUGH_ALL. Defaults to through all.
+        direction: Optional non-zero XYZ direction vector from the entry point into the material.
+
+    Use when:
+        Seat a countersunk fastener or specify a hole whose conical entry is
+        part of the hole feature itself.
+
+    Limits:
+        countersink_d must be larger than d. countersink_angle must be between
+        0 and 180 degrees. Position this native feature with at().
+
+    Example:
+        CountersinkHole(
+            d=6,
+            countersink_d=12,
+            countersink_angle=90,
+        ).at(0, 0, 12)
+    """
     return _hole_feature(
         "countersink",
         d=d,
@@ -2247,11 +2309,34 @@ def ThreadedHole(
     modeled=False,
     ease_out=None,
 ):
-    """Create a tapped hole.
+    """Create a tapped hole with native thread intent.
 
-    The thread designation chooses SolidCraft's normal tapping drill unless
-    d is supplied explicitly. modeled=False keeps the thread as native thread
-    metadata; modeled=True asks SolidCraft to cut the thread geometry.
+    Parameters:
+        thread: Thread designation such as "M6" or "1/4-20 UNC".
+        depth: Drill depth in mm, or Depth.THROUGH_ALL. Defaults to through all.
+        d: Optional explicit tap-drill diameter in mm. When omitted, SolidCraft selects the drill from the thread designation.
+        direction: Optional non-zero XYZ direction vector from the entry point into the material.
+        hand: Thread hand, "right" or "left". Defaults to "right".
+        thread_depth: Optional positive threaded length in mm, independent of drill depth.
+        modeled: Whether SolidCraft cuts modeled thread geometry. Defaults to False.
+        ease_out: Optional modeled-thread runout: "standard", "short", or a positive length.
+
+    Use when:
+        Preserve tapped-hole manufacturing intent instead of representing the
+        result as an ordinary cylindrical subtraction.
+
+    Limits:
+        The thread designation must be supported by SolidCraft. modeled=True
+        creates actual thread geometry and can be substantially heavier than
+        cosmetic/native thread metadata. Position this native feature with at().
+
+    Example:
+        ThreadedHole(
+            thread="M6",
+            d=5,
+            thread_depth=10,
+            modeled=True,
+        ).at(0, 0, 12)
     """
     return _hole_feature(
         "threaded",
