@@ -2,7 +2,7 @@
 
 import unittest
 
-from scpf import Hole, Parameter
+from scpf import Anchor, Hole, Parameter
 from scpf.compiler import compile_model
 from scpf.csg import CSG_PRIMITIVE_KINDS
 
@@ -37,6 +37,21 @@ class GeometryContractMatrix(unittest.TestCase):
                 self.assertEqual(len(native), 1)
                 self.assertEqual(native[0]["params"]["operation"], "new")
                 self.assertEqual(native[0]["params"]["body_name"], "Part")
+
+    def test_every_registered_primitive_supports_bottom_at_placement(self):
+        for case in PRIMITIVE_BODY_CASES:
+            with self.subTest(body=case.name):
+                placed = case.build().at(5, 6, 7, anchor=Anchor.BOTTOM)
+                commands = compile_model(placed, "Part")["commands"]
+                native = _commands(
+                    {"commands": commands},
+                    case.native_command,
+                )[0]
+                key, expected = case.bottom_at_expected
+                self.assertEqual(
+                    native["params"][key],
+                    list(expected),
+                )
 
     def test_every_registered_primitive_preserves_parameters(self):
         for case in PRIMITIVE_BODY_CASES:
