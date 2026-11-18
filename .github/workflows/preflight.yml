@@ -1,0 +1,43 @@
+name: SCPF repository preflight
+
+on:
+  pull_request:
+    paths:
+      - "scpf/**"
+      - "examples/**"
+      - "qualification/**"
+      - "site/**"
+      - "scripts/**"
+      - "docs/**"
+      - ".github/workflows/**"
+      - "AGENTS.md"
+      - "README.md"
+      - "CHANGELOG.md"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scpf-preflight-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install preflight dependencies
+        run: python -m pip install -e ./scpf pillow pyyaml
+
+      - name: Run repository preflight
+        run: |
+          python scripts/ci_preflight.py \
+            --source-sha "${{ github.event.pull_request.head.sha }}"
