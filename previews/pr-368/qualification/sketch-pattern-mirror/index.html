@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Qualification · Associative sketch pattern and mirror · SCPF Python library</title>
+<link rel="stylesheet" href="../../style.css"></head>
+<body><header class="top"><div class="wrap nav">
+<a class="brand" href="../../">SCPF <span>Python library</span></a>
+<div class="site-search" data-search-index="../../search-index.json">
+<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
+       placeholder="Search API…" aria-label="Search SCPF documentation"
+       aria-expanded="false" aria-controls="site-search-results">
+<span class="site-search-shortcut" aria-hidden="true">/</span>
+<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+</div>
+<nav aria-label="Main"><a href="../../">Examples</a><a href="../../guide/">API Guide</a><a href="../../reference/">API Reference</a><a href="../../qualification/">Qualification</a><a href="../../cheatsheet/">Cheatsheet</a>
+<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a></nav></div></header>
+<div class="development-banner" role="status"><div class="wrap">
+<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
+</div></div>
+<main class="wrap">
+<div class="crumb"><a href="../">← Qualification</a> / Associative sketch pattern and mirror</div>
+
+<section class="hero small">
+  <p class="eyebrow">Forge model example</p>
+  <div class="qualification-status-line"><span class="qualification-status pass">PASS</span></div>
+  <h1>Associative sketch pattern and mirror</h1>
+</section>
+
+<section class="panel qualification-example-overview">
+  <h2>What this example makes</h2>
+  <p>SolidCraft saves one Dog holes Sketch and one Clamp slots Sketch with associative pattern/mirror relationships. Baseline geometry contains 8 Ø8 holes and 8 straight Slots. No expanded set of independent seed commands is emitted.</p>
+  <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Associative sketch pattern and mirror expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+  <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-iso.png" alt="Associative sketch pattern and mirror native SolidCraft preview"></a><figcaption>Native SolidCraft preview from the generated build output.</figcaption></figure>
+</section>
+
+<section class="panel">
+  <h2>Forge code</h2>
+  <p>This is the complete Forge source used for this example.</p>
+  <pre><code>&quot;&quot;&quot;Native associative Sketch pattern/mirror qualification.
+
+One Circle seed and one Slot seed drive all repeated cut geometry. Pattern
+counts and spacing stay as editable SolidCraft parameters.
+&quot;&quot;&quot;
+
+
+class SketchPatternMirror:
+    hole_diameter = 8.0
+    hole_columns = 4
+    hole_pitch = 25.0
+    slot_count = 2
+    slot_pitch = 50.0
+
+    SLOT_WIDTH = 8.0
+
+    def build(self):
+        board = Box(240, 160, 5, anchor=Anchor.BOTTOM)
+
+        with Sketch(name=&quot;Dog holes&quot;, on=board, parent=Anchor.TOP) as holes:
+            seed = holes.add(
+                Circle2D(d=self.hole_diameter),
+                offset=(-60, -45),
+            )
+            row = holes.rectangular_pattern(
+                seed,
+                count=self.hole_columns,
+                spacing=self.hole_pitch,
+                direction=Axis.X,
+            )
+            holes.mirror(row, axis=Axis.X)
+
+        board = board - holes.extrude(Depth.THROUGH_ALL)
+
+        with Sketch(name=&quot;Clamp slots&quot;, on=board, parent=Anchor.TOP) as slots:
+            seed = SlotCenterToCenter2D((20, 20), (40, 20), self.SLOT_WIDTH)
+            arm = slots.rectangular_pattern(
+                seed,
+                count=self.slot_count,
+                spacing=self.slot_pitch,
+                direction=Axis.X,
+            )
+            left = slots.mirror(arm, axis=Axis.Y)
+            slots.mirror(arm, axis=Axis.X)
+            slots.mirror(left, axis=Axis.X)
+
+        return board - slots.extrude(Depth.THROUGH_ALL)
+
+
+SketchPatternMirror()
+</code></pre>
+  <h3>API used</h3>
+  <p><code>seed = sketch.add(Circle2D(...)); sketch.rectangular_pattern(seed, ...); sketch.mirror(pattern, axis=Axis.X/Y); same flow for SlotCenterToCenter2D</code></p>
+</section>
+
+<section class="panel">
+  <h2>Reference code</h2>
+  <p>The same model is written independently with the reference libraries below.
+  This makes it easier to compare modelling style and the resulting shape.</p>
+  
+  <div class="qualification-reference-list">
+    <section class="qualification-reference-row"><div class="qualification-reference-source"><h4>PythonSCAD</h4><pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for sketch pattern/mirror qualification.&quot;&quot;&quot;
+
+from pythonscad import *
+
+CUT_HEIGHT = 9
+CUT_Z = -2
+
+
+def straight_slot(cx, cy, center_separation=20, width=8):
+    bar = cube([center_separation, width, CUT_HEIGHT], center=True).translate(
+        [cx, cy, 2.5]
+    )
+    left = cylinder(d=width, h=CUT_HEIGHT).translate(
+        [cx - center_separation / 2, cy, CUT_Z]
+    )
+    right = cylinder(d=width, h=CUT_HEIGHT).translate(
+        [cx + center_separation / 2, cy, CUT_Z]
+    )
+    return bar | left | right
+
+
+plate = cube([240, 160, 5], center=True).up(2.5)
+cutters = None
+
+for y in (-45, 45):
+    for x in (-60, -35, -10, 15):
+        hole = cylinder(d=8, h=CUT_HEIGHT).translate([x, y, CUT_Z])
+        cutters = hole if cutters is None else cutters | hole
+
+for y in (-20, 20):
+    for x in (-80, -30, 30, 80):
+        slot = straight_slot(x, y)
+        cutters = slot if cutters is None else cutters | slot
+
+model = plate - cutters
+</code></pre><p><a href="reference-pythonscad.py">Open PythonSCAD source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pythonscad/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pythonscad/model-iso.png" alt="Associative sketch pattern and mirror PythonSCAD reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pythonscad/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pythonscad/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-120.0, -80.0, 0.0], &#x27;max&#x27;: [120.0, 80.0, 5.0]}</code></td><td><code>{&#x27;min&#x27;: [-120.0, -80.0, 0.0], &#x27;max&#x27;: [120.0, 80.0, 5.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>181578.76140340505 mm³</code></td><td><code>181733.50320859582 mm³</code></td><td>difference 154.74180519077345 mm³; allowed 180.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>48 surface measurements</code></td><td><code>48/48 within tolerance</code></td><td>largest difference 0.116233 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>pyBOSL2</h4><pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for sketch pattern/mirror qualification.&quot;&quot;&quot;
+
+from pybosl2 import cuboid, cyl
+
+CUT_HEIGHT = 9
+
+
+def straight_slot(cx, cy, center_separation=20, width=8):
+    bar = cuboid([center_separation, width, CUT_HEIGHT]).translate([cx, cy, 2.5])
+    left = cyl(diameter=width, height=CUT_HEIGHT).translate(
+        [cx - center_separation / 2, cy, 2.5]
+    )
+    right = cyl(diameter=width, height=CUT_HEIGHT).translate(
+        [cx + center_separation / 2, cy, 2.5]
+    )
+    return bar | left | right
+
+
+plate = cuboid([240, 160, 5]).up(2.5)
+cutters = None
+
+for y in (-45, 45):
+    for x in (-60, -35, -10, 15):
+        hole = cyl(diameter=8, height=CUT_HEIGHT).translate([x, y, 2.5])
+        cutters = hole if cutters is None else cutters | hole
+
+for y in (-20, 20):
+    for x in (-80, -30, 30, 80):
+        slot = straight_slot(x, y)
+        cutters = slot if cutters is None else cutters | slot
+
+model = plate - cutters
+</code></pre><p><a href="reference-pybosl2.py">Open pyBOSL2 source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pybosl2/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pybosl2/model-iso.png" alt="Associative sketch pattern and mirror pyBOSL2 reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pybosl2/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pybosl2/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-120.0, -80.0, 0.0], &#x27;max&#x27;: [120.0, 80.0, 5.0]}</code></td><td><code>{&#x27;min&#x27;: [-120.0, -80.0, 0.0], &#x27;max&#x27;: [120.0, 80.0, 5.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>181578.76140340505 mm³</code></td><td><code>181733.5029449278 mm³</code></td><td>difference 154.74154152275878 mm³; allowed 180.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>48 surface measurements</code></td><td><code>48/48 within tolerance</code></td><td>largest difference 0.116234 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>CadQuery</h4><pre><code>&quot;&quot;&quot;CadQuery geometry reference for sketch pattern/mirror qualification.&quot;&quot;&quot;
+
+import cadquery as cq
+
+CUT_HEIGHT = 9
+CUT_Z = -2
+
+
+def circle_cut(x, y, diameter=8):
+    return (
+        cq.Workplane(&quot;XY&quot;)
+        .center(x, y)
+        .circle(diameter / 2)
+        .extrude(CUT_HEIGHT)
+        .translate((0, 0, CUT_Z))
+    )
+
+
+def straight_slot(cx, cy, overall_length=28, width=8):
+    return (
+        cq.Workplane(&quot;XY&quot;)
+        .center(cx, cy)
+        .slot2D(overall_length, width)
+        .extrude(CUT_HEIGHT)
+        .translate((0, 0, CUT_Z))
+    )
+
+
+plate = cq.Workplane(&quot;XY&quot;).box(240, 160, 5, centered=(True, True, False))
+cutters = None
+
+for y in (-45, 45):
+    for x in (-60, -35, -10, 15):
+        shape = circle_cut(x, y)
+        cutters = shape if cutters is None else cutters.union(shape)
+
+for y in (-20, 20):
+    for x in (-80, -30, 30, 80):
+        shape = straight_slot(x, y)
+        cutters = shape if cutters is None else cutters.union(shape)
+
+result = plate.cut(cutters)
+model = cq.Assembly()
+model.add(result, name=&quot;sketch_pattern_mirror&quot;)
+</code></pre><p><a href="reference-cadquery.py">Open CadQuery source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/cadquery/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/cadquery/model-iso.png" alt="Associative sketch pattern and mirror CadQuery reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/cadquery/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/cadquery/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-120.0, -80.0, 0.0], &#x27;max&#x27;: [120.0, 80.0, 5.0]}</code></td><td><code>{&#x27;min&#x27;: [-120.0, -80.0, 0.0], &#x27;max&#x27;: [120.0, 80.0, 5.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>181578.76140340505 mm³</code></td><td><code>181580.42765337252 mm³</code></td><td>difference 1.6662499674712308 mm³; allowed 180.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>48 surface measurements</code></td><td><code>48/48 within tolerance</code></td><td>largest difference 0.00124467 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>build123d</h4><pre><code>&quot;&quot;&quot;build123d geometry reference for sketch pattern/mirror qualification.&quot;&quot;&quot;
+
+from build123d import (
+    Align,
+    Axis,
+    Box,
+    BuildPart,
+    BuildSketch,
+    Circle,
+    Locations,
+    Mode,
+    SlotCenterToCenter,
+    extrude,
+)
+
+bottom = (Align.CENTER, Align.CENTER, Align.MIN)
+
+with BuildPart() as model:
+    Box(240, 160, 5, align=bottom)
+
+    with BuildSketch(model.faces().sort_by(Axis.Z)[-1]):
+        with Locations(*[
+            (x, y)
+            for y in (-45, 45)
+            for x in (-60, -35, -10, 15)
+        ]):
+            Circle(4)
+
+        with Locations(*[
+            (x, y)
+            for y in (-20, 20)
+            for x in (-80, -30, 30, 80)
+        ]):
+            SlotCenterToCenter(20, 8)
+
+    extrude(amount=-5, mode=Mode.SUBTRACT)
+</code></pre><p><a href="reference-build123d.py">Open build123d source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/build123d/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/build123d/model-iso.png" alt="Associative sketch pattern and mirror build123d reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/build123d/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/build123d/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-120.0, -80.0, 0.0], &#x27;max&#x27;: [120.0, 80.0, 5.0]}</code></td><td><code>{&#x27;min&#x27;: [-120.0, -80.0, 0.0], &#x27;max&#x27;: [120.0, 80.0, 5.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>181578.76140340505 mm³</code></td><td><code>181580.42765337252 mm³</code></td><td>difference 1.6662499674712308 mm³; allowed 180.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>48 surface measurements</code></td><td><code>48/48 within tolerance</code></td><td>largest difference 0.00124467 mm</td></tr></tbody></table></div></details></div></section>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>How Forge builds it in SolidCraft</h2>
+  <p>Forge binds the real native curves returned by the seed profile, feeds those ids into sketch.pattern.rectangular, binds the pattern curves, and feeds those into sketch.mirror. User Python never contains SolidCraft-generated ids.</p>
+  <details>
+    <summary>Show generated SolidCraft commands</summary>
+    <pre><code>parameters.add
+parameters.add
+parameters.add
+parameters.add
+parameters.add
+solid.box
+model.faces
+sketch.create
+sketch.circle.center
+sketch.pattern.rectangular
+sketch.mirror
+sketch.finish
+solid.extrude
+model.faces
+sketch.create
+sketch.slot.center_to_center
+sketch.pattern.rectangular
+sketch.mirror
+sketch.mirror
+sketch.mirror
+sketch.finish
+solid.extrude</code></pre>
+  </details>
+</section>
+
+<section class="panel"><h2>SolidCraft result</h2><p>Built and measured with <strong>SolidCraft 0.42.0</strong>. Open the measurement details to inspect body sizes and editable parameters.</p><details class="qualification-detail-block"><summary><strong>patterns mutated</strong> · 1 bodies</summary><h4>Editable parameters</h4><table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td><code>hole_diameter</code></td><td>10.0</td></tr><tr><td><code>hole_columns</code></td><td>4.0</td></tr><tr><td><code>hole_pitch</code></td><td>30.0</td></tr><tr><td><code>slot_count</code></td><td>2.0</td></tr><tr><td><code>slot_pitch</code></td><td>30.0</td></tr><tr><td><code>d4</code></td><td>10.0</td></tr></tbody></table><h4>Body size</h4><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>SketchPatternMirror</td><td><code>[-120, -80, 0]</code></td><td><code>[120, 80, 5]</code></td></tr></tbody></table></details><details class="qualification-detail-block"><summary><strong>Original model</strong> · 1 bodies</summary><h4>Editable parameters</h4><table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td><code>hole_diameter</code></td><td>8.0</td></tr><tr><td><code>hole_columns</code></td><td>4.0</td></tr><tr><td><code>hole_pitch</code></td><td>25.0</td></tr><tr><td><code>slot_count</code></td><td>2.0</td></tr><tr><td><code>slot_pitch</code></td><td>50.0</td></tr><tr><td><code>d4</code></td><td>8.0</td></tr></tbody></table><h4>Body size</h4><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>SketchPatternMirror</td><td><code>[-120, -80, 0]</code></td><td><code>[120, 80, 5]</code></td></tr></tbody></table></details><details class="qualification-detail-block qualification-semantic-checks"><summary><strong>Semantic validation</strong> · PASS · 13/13 checks passed</summary><div class="qualification-table-scroll"><table class="qualification-checks"><thead><tr><th>Status</th><th>Level</th><th>Check</th><th>Expected</th><th>Actual</th></tr></thead><tbody><tr><td><span class="qualification-status pass">PASS</span></td><td>Q4</td><td>declared target geometry</td><td><code>[{&quot;label&quot;: &quot;SketchPatternMirror&quot;, &quot;min&quot;: [-120, -80, 0], &quot;max&quot;: [120, 80, 5]}]</code></td><td><code>[{&quot;min&quot;: [-120.0, -80.0, 0.0], &quot;max&quot;: [120.0, 80.0, 5.000000000000001]}]</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q4</td><td>single patterned plate body</td><td><code>1</code></td><td><code>1</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q4</td><td>baseline seed/pattern parameters</td><td><code>{&quot;hole_columns&quot;: 4.0, &quot;hole_diameter&quot;: 8.0, &quot;hole_pitch&quot;: 25.0, &quot;slot_count&quot;: 2.0, &quot;slot_pitch&quot;: 50.0}</code></td><td><code>{&quot;hole_columns&quot;: 4.0, &quot;hole_diameter&quot;: 8.0, &quot;hole_pitch&quot;: 25.0, &quot;slot_count&quot;: 2.0, &quot;slot_pitch&quot;: 50.0}</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q4</td><td>baseline associative cuts remove expected material</td><td><code>181578.76140340505</code></td><td><code>181578.7614030834</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q4</td><td>one Dog holes and one Clamp slots sketch</td><td><code>[&quot;Dog holes&quot;, &quot;Clamp slots&quot;]</code></td><td><code>[&quot;Clamp slots&quot;, &quot;Dog holes&quot;]</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q4</td><td>both associative sketches solve</td><td><code>{&quot;Dog holes&quot;: &quot;solved&quot;, &quot;Clamp slots&quot;: &quot;solved&quot;}</code></td><td><code>{&quot;Dog holes&quot;: &quot;solved&quot;, &quot;Clamp slots&quot;: &quot;solved&quot;}</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q4</td><td>pattern/mirror geometry stays inside two Sketch features</td><td><code>[[&quot;BoxFeature&quot;, &quot;Box1&quot;], [&quot;Sketch&quot;, &quot;Dog holes&quot;], [&quot;ExtrudeFeature&quot;, &quot;Dog holes&quot;], [&quot;Sketch&quot;, &quot;Clamp slots&quot;], [&quot;ExtrudeFeature&quot;, &quot;Clamp slots&quot;]]</code></td><td><code>[[&quot;BoxFeature&quot;, &quot;Box1&quot;], [&quot;Sketch&quot;, &quot;Dog holes&quot;], [&quot;ExtrudeFeature&quot;, &quot;Dog holes&quot;], [&quot;Sketch&quot;, &quot;Clamp slots&quot;], [&quot;ExtrudeFeature&quot;, &quot;Clamp slots&quot;]]</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q5</td><td>declared mutation target geometry</td><td><code>[{&quot;label&quot;: &quot;SketchPatternMirror&quot;, &quot;min&quot;: [-120, -80, 0], &quot;max&quot;: [120, 80, 5]}]</code></td><td><code>[{&quot;min&quot;: [-120.0, -80.0, 0.0], &quot;max&quot;: [120.0, 80.0, 5.000000000000001]}]</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q5</td><td>saved pattern parameters changed</td><td><code>{&quot;hole_columns&quot;: 4.0, &quot;hole_diameter&quot;: 10.0, &quot;hole_pitch&quot;: 30.0, &quot;slot_count&quot;: 2.0, &quot;slot_pitch&quot;: 30.0}</code></td><td><code>{&quot;hole_columns&quot;: 4.0, &quot;hole_diameter&quot;: 10.0, &quot;hole_pitch&quot;: 30.0, &quot;slot_count&quot;: 2.0, &quot;slot_pitch&quot;: 30.0}</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q5</td><td>saved design keeps 8 holes and 8 slots after associative edits</td><td><code>180447.78804811274</code></td><td><code>180447.78805063973</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q5</td><td>saved spacing edits move the repeated sketch geometry</td><td><code>{&quot;different_from_baseline_x_by_more_than_mm&quot;: 0.01, &quot;baseline_x&quot;: 0.24914221233465159}</code></td><td><code>0.3264371540624268</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q5</td><td>mutation keeps the same two solved Sketch features</td><td><code>{&quot;Dog holes&quot;: &quot;solved&quot;, &quot;Clamp slots&quot;: &quot;solved&quot;}</code></td><td><code>{&quot;Dog holes&quot;: &quot;solved&quot;, &quot;Clamp slots&quot;: &quot;solved&quot;}</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>Q5</td><td>mutation preserves the two-sketch history</td><td><code>[[&quot;BoxFeature&quot;, &quot;Box1&quot;], [&quot;Sketch&quot;, &quot;Dog holes&quot;], [&quot;ExtrudeFeature&quot;, &quot;Dog holes&quot;], [&quot;Sketch&quot;, &quot;Clamp slots&quot;], [&quot;ExtrudeFeature&quot;, &quot;Clamp slots&quot;]]</code></td><td><code>[[&quot;BoxFeature&quot;, &quot;Box1&quot;], [&quot;Sketch&quot;, &quot;Dog holes&quot;], [&quot;ExtrudeFeature&quot;, &quot;Dog holes&quot;], [&quot;Sketch&quot;, &quot;Clamp slots&quot;], [&quot;ExtrudeFeature&quot;, &quot;Clamp slots&quot;]]</code></td></tr></tbody></table></div></details></section>
+
+<section class="panel qualification-visual-check"><h2>Visual result</h2><p>Actual is the SolidCraft render. Goal shows the expected shape. Overlay places both on top of each other so differences are easy to see.</p><p class="meta"><strong>Views checked:</strong> Top, Front, Iso</p><p class="meta"><strong>Image checks:</strong> expected shape PASS; saved render PASS.</p><section class="qualification-view" data-view="top"><h3>Top</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-top.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-top.png" alt="Associative sketch pattern and mirror top Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft top view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/goal-top.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/goal-top.png" alt="Associative sketch pattern and mirror top Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same top view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/overlay-top.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/overlay-top.png" alt="Associative sketch pattern and mirror top Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual top view</figcaption></figure></div></section><section class="qualification-view" data-view="front"><h3>Front</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-front.png" alt="Associative sketch pattern and mirror front Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft front view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/goal-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/goal-front.png" alt="Associative sketch pattern and mirror front Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same front view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/overlay-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/overlay-front.png" alt="Associative sketch pattern and mirror front Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual front view</figcaption></figure></div></section><section class="qualification-view" data-view="iso"><h3>Iso</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-iso.png" alt="Associative sketch pattern and mirror iso Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft iso view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/goal-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/goal-iso.png" alt="Associative sketch pattern and mirror iso Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same iso view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/overlay-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/overlay-iso.png" alt="Associative sketch pattern and mirror iso Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual iso view</figcaption></figure></div></section><details class="qualification-extra-views"><summary>Show extra saved-render views</summary><section class="qualification-view" data-view="right"><h3>Right</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="model-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="model-right.png" alt="Associative sketch pattern and mirror right Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft right view</figcaption></figure><figure class="qualification-visual-item"><a href="goal-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="goal-right.png" alt="Associative sketch pattern and mirror right Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same right view</figcaption></figure><figure class="qualification-visual-item"><a href="overlay-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="overlay-right.png" alt="Associative sketch pattern and mirror right Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual right view</figcaption></figure></div></section></details></section>
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Q1 · Q2 · Q3 · Q4 · Q5 · Q6</span></div>
+    <div class="qualification-case-test-evidence"><h3>Q1 and Q2 tests</h3><p>These are the exact automated tests used for this example.</p><ul><li><strong>Q1 PASS</strong><div><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/15193d0b241adc23bae932a4140dc6e5f37f831f/scpf/tests/test_sketch_patterns.py#L19"><code>scpf/tests/test_sketch_patterns.py::test_circle_rectangular_pattern_uses_bound_native_curves</code></a>, <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/15193d0b241adc23bae932a4140dc6e5f37f831f/scpf/tests/test_sketch_patterns.py#L80"><code>scpf/tests/test_sketch_patterns.py::test_slot_pattern_and_mirrors_reuse_operation_results</code></a>, <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/15193d0b241adc23bae932a4140dc6e5f37f831f/scpf/tests/test_sketch_patterns.py#L153"><code>scpf/tests/test_sketch_patterns.py::test_pattern_count_and_spacing_remain_native_parameters</code></a></div><div class="meta">Test run files: <a href="q1-case-evidence.txt">q1-case-evidence.txt</a></div></li><li><strong>Q2 PASS</strong><div><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/15193d0b241adc23bae932a4140dc6e5f37f831f/examples/sketch-pattern-mirror/tests/test_contract.py#L21"><code>examples/sketch-pattern-mirror/tests/test_contract.py::test_circle_seed_stays_one_native_profile_with_pattern_and_mirror</code></a>, <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/15193d0b241adc23bae932a4140dc6e5f37f831f/examples/sketch-pattern-mirror/tests/test_contract.py#L49"><code>examples/sketch-pattern-mirror/tests/test_contract.py::test_slot_seed_stays_one_native_profile_with_pattern_and_mirrors</code></a>, <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/15193d0b241adc23bae932a4140dc6e5f37f831f/examples/sketch-pattern-mirror/tests/test_contract.py#L84"><code>examples/sketch-pattern-mirror/tests/test_contract.py::test_pattern_parameters_have_correct_native_units</code></a></div><div class="meta">Test run files: <a href="q2-case-evidence.txt">q2-case-evidence.txt</a></div></li></ul></div>
+
+    <h3>Geometry checks</h3>
+    <p>These are the sizes and measurement points used by the automated checks.</p>
+    <div class="qualification-proof-contract"><div class="qualification-table-scroll"><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>SketchPatternMirror</td><td><code>[-120, -80, 0]</code></td><td><code>[120, 80, 5]</code></td></tr></tbody></table></div><ul class="qualification-proof-summary"><li><strong>Is the size check enough for this model?</strong> No — The Circle and Slot cuts do not change the plate envelope. Volume, 3D wall probes and saved-design mutation are required to prove the associative sketch pattern/mirror result.</li><li><strong>Views checked:</strong> top, front, iso</li><li><strong>Internal features checked:</strong> 16</li><li><strong>Expected volume:</strong> 181578.76140340505 mm³ (±180.0 mm³)</li><li><strong>Closed solid expected:</strong> True</li><li><strong>Surface points checked:</strong> 48</li></ul><details class="qualification-detail-block qualification-proof-details"><summary>Show all geometry check points</summary><h4>Internal features</h4><ul><li><strong>hole 1,1</strong>: centre <code>[-60.0, -45.0]</code>, diameter 8.0 mm, Z <code>[0.0, 5.0]</code></li><li><strong>hole 2,1</strong>: centre <code>[-35.0, -45.0]</code>, diameter 8.0 mm, Z <code>[0.0, 5.0]</code></li><li><strong>hole 3,1</strong>: centre <code>[-10.0, -45.0]</code>, diameter 8.0 mm, Z <code>[0.0, 5.0]</code></li><li><strong>hole 4,1</strong>: centre <code>[15.0, -45.0]</code>, diameter 8.0 mm, Z <code>[0.0, 5.0]</code></li><li><strong>hole 1,2</strong>: centre <code>[-60.0, 45.0]</code>, diameter 8.0 mm, Z <code>[0.0, 5.0]</code></li><li><strong>hole 2,2</strong>: centre <code>[-35.0, 45.0]</code>, diameter 8.0 mm, Z <code>[0.0, 5.0]</code></li><li><strong>hole 3,2</strong>: centre <code>[-10.0, 45.0]</code>, diameter 8.0 mm, Z <code>[0.0, 5.0]</code></li><li><strong>hole 4,2</strong>: centre <code>[15.0, 45.0]</code>, diameter 8.0 mm, Z <code>[0.0, 5.0]</code></li><li><strong>slot 1,1</strong>: width 8.0 mm, 2 centre-line points, Z <code>[0.0, 5.0]</code></li><li><strong>slot 2,1</strong>: width 8.0 mm, 2 centre-line points, Z <code>[0.0, 5.0]</code></li><li><strong>slot 3,1</strong>: width 8.0 mm, 2 centre-line points, Z <code>[0.0, 5.0]</code></li><li><strong>slot 4,1</strong>: width 8.0 mm, 2 centre-line points, Z <code>[0.0, 5.0]</code></li><li><strong>slot 1,2</strong>: width 8.0 mm, 2 centre-line points, Z <code>[0.0, 5.0]</code></li><li><strong>slot 2,2</strong>: width 8.0 mm, 2 centre-line points, Z <code>[0.0, 5.0]</code></li><li><strong>slot 3,2</strong>: width 8.0 mm, 2 centre-line points, Z <code>[0.0, 5.0]</code></li><li><strong>slot 4,2</strong>: width 8.0 mm, 2 centre-line points, Z <code>[0.0, 5.0]</code></li></ul><h4>Surface measurement points</h4><ul><li>hole 1,1 at z=0.5: point <code>[-60.0, -45.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 1,1 at z=2.5: point <code>[-60.0, -45.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 1,1 at z=4.5: point <code>[-60.0, -45.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 2,1 at z=0.5: point <code>[-35.0, -45.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 2,1 at z=2.5: point <code>[-35.0, -45.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 2,1 at z=4.5: point <code>[-35.0, -45.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 3,1 at z=0.5: point <code>[-10.0, -45.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 3,1 at z=2.5: point <code>[-10.0, -45.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 3,1 at z=4.5: point <code>[-10.0, -45.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 4,1 at z=0.5: point <code>[15.0, -45.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 4,1 at z=2.5: point <code>[15.0, -45.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 4,1 at z=4.5: point <code>[15.0, -45.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 1,2 at z=0.5: point <code>[-60.0, 45.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 1,2 at z=2.5: point <code>[-60.0, 45.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 1,2 at z=4.5: point <code>[-60.0, 45.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 2,2 at z=0.5: point <code>[-35.0, 45.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 2,2 at z=2.5: point <code>[-35.0, 45.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 2,2 at z=4.5: point <code>[-35.0, 45.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 3,2 at z=0.5: point <code>[-10.0, 45.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 3,2 at z=2.5: point <code>[-10.0, 45.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 3,2 at z=4.5: point <code>[-10.0, 45.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 4,2 at z=0.5: point <code>[15.0, 45.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 4,2 at z=2.5: point <code>[15.0, 45.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>hole 4,2 at z=4.5: point <code>[15.0, 45.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 1,1 at z=0.5: point <code>[-80.0, -20.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 1,1 at z=2.5: point <code>[-80.0, -20.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 1,1 at z=4.5: point <code>[-80.0, -20.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 2,1 at z=0.5: point <code>[-30.0, -20.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 2,1 at z=2.5: point <code>[-30.0, -20.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 2,1 at z=4.5: point <code>[-30.0, -20.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 3,1 at z=0.5: point <code>[30.0, -20.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 3,1 at z=2.5: point <code>[30.0, -20.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 3,1 at z=4.5: point <code>[30.0, -20.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 4,1 at z=0.5: point <code>[80.0, -20.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 4,1 at z=2.5: point <code>[80.0, -20.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 4,1 at z=4.5: point <code>[80.0, -20.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 1,2 at z=0.5: point <code>[-80.0, 20.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 1,2 at z=2.5: point <code>[-80.0, 20.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 1,2 at z=4.5: point <code>[-80.0, 20.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 2,2 at z=0.5: point <code>[-30.0, 20.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 2,2 at z=2.5: point <code>[-30.0, 20.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 2,2 at z=4.5: point <code>[-30.0, 20.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 3,2 at z=0.5: point <code>[30.0, 20.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 3,2 at z=2.5: point <code>[30.0, 20.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 3,2 at z=4.5: point <code>[30.0, 20.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 4,2 at z=0.5: point <code>[80.0, 20.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 4,2 at z=2.5: point <code>[80.0, 20.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>slot 4,2 at z=4.5: point <code>[80.0, 20.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li></ul></details><p class="meta"><a href="proof-contract.json">Open geometry check data →</a></p></div>
+
+    <h3>Saved-design test</h3><p><strong>Checked in the saved model. Change hole_diameter 8-&gt;10 mm, hole_pitch 25-&gt;30 mm and slot_pitch 50-&gt;30 mm in the saved .sc design. Without rerunning Python all existing pattern and mirror copies must follow the changed seed and spacing. Pattern counts remain native editable parameters, but SolidCraft 0.42 mirrors a fixed selected entity set and does not automatically adopt new entities added later by an upstream count change.</p>
+
+    <h3>Raw test files</h3>
+    <ul><li><a href="model.py">Forge fixture source</a></li><li><a href="reference-pythonscad.py">PythonSCAD reference source</a></li><li><a href="reference-pybosl2.py">pyBOSL2 reference source</a></li><li><a href="reference-cadquery.py">CadQuery reference source</a></li><li><a href="reference-build123d.py">build123d reference source</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/solidcraft.json">Generated command JSON in build output</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/results.json">results.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/measurements-patterns-mutated.json">measurements-patterns-mutated.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/measurements.json">measurements.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/joint-inspect.json">joint-inspect.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-patterns-mutated.sc">model-patterns-mutated.sc</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model.sc">model.sc</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model.step">model.step</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/qualification-result.json">qualification-result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/validation.json">validation.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/visual-validation.json">visual-validation.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/camera-front.json">camera-front.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/camera-iso.json">camera-iso.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/camera-right.json">camera-right.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/camera-top.json">camera-top.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/q1-case-evidence.txt">q1-case-evidence.txt</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/q2-case-evidence.txt">q2-case-evidence.txt</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model.png">Native snapshot: model.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-top.png">Native snapshot: model-top.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/goal-top.png">Native snapshot: goal-top.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/overlay-top.png">Native snapshot: overlay-top.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-front.png">Native snapshot: model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/goal-front.png">Native snapshot: goal-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/overlay-front.png">Native snapshot: overlay-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/visual-diff-front.png">Native snapshot: visual-diff-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-right.png">Native snapshot: model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/goal-right.png">Native snapshot: goal-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/overlay-right.png">Native snapshot: overlay-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/visual-diff-right.png">Native snapshot: visual-diff-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/model-iso.png">Native snapshot: model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/goal-iso.png">Native snapshot: goal-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/overlay-iso.png">Native snapshot: overlay-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/scpf/visual-diff-iso.png">Native snapshot: visual-diff-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pythonscad/result.json">Reference evidence: reference-pythonscad/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pythonscad/model.stl">Reference evidence: reference-pythonscad/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pythonscad/model-front.png">Reference evidence: reference-pythonscad/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pythonscad/model-right.png">Reference evidence: reference-pythonscad/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pythonscad/model-iso.png">Reference evidence: reference-pythonscad/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pybosl2/result.json">Reference evidence: reference-pybosl2/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pybosl2/model.stl">Reference evidence: reference-pybosl2/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pybosl2/model-front.png">Reference evidence: reference-pybosl2/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pybosl2/model-right.png">Reference evidence: reference-pybosl2/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/pybosl2/model-iso.png">Reference evidence: reference-pybosl2/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/cadquery/result.json">Reference evidence: reference-cadquery/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/cadquery/model.stl">Reference evidence: reference-cadquery/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/cadquery/model-front.png">Reference evidence: reference-cadquery/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/cadquery/model-right.png">Reference evidence: reference-cadquery/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/cadquery/model-iso.png">Reference evidence: reference-cadquery/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/build123d/result.json">Reference evidence: reference-build123d/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/build123d/model.stl">Reference evidence: reference-build123d/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/build123d/model-front.png">Reference evidence: reference-build123d/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/build123d/model-right.png">Reference evidence: reference-build123d/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/05f70e00643c02b851b9eb3c654d3de808f8ceba/pr/368/examples/sketch-pattern-mirror/build123d/model-iso.png">Reference evidence: reference-build123d/model-iso.png</a></li></ul>
+
+    <h3>Reference documentation</h3>
+    <ul><li><strong><a href="https://docs.solidcraft.io/guide/assemblies.html">SolidCraft</a>:</strong> The native saved design is the source of truth for the associative sketch pattern/mirror relationships and their saved-design mutation.</li><li><strong><a href="https://github.com/pythonscad/pythonscad">PythonSCAD</a>:</strong> Independent final geometry confirms the repeated cuts without relying on Forge&#x27;s command lowering.</li><li><strong><a href="https://cadquery.readthedocs.io/">CadQuery</a>:</strong> Independent final geometry confirms the expected hole and Slot positions.</li><li><strong><a href="https://build123d.readthedocs.io/en/stable/">build123d</a>:</strong> Independent final geometry confirms the expected profile repetition and cut result.</li></ul>
+  </div>
+</details>
+</main>
+
+<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+<a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a></div></footer>
+<script>(() => {
+  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
+  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
+
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    document.execCommand('copy');
+    helper.remove();
+  }
+
+  document.querySelectorAll('pre > code').forEach((code) => {
+    const pre = code.parentElement;
+    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-copy';
+    button.title = 'Copy code';
+    button.setAttribute('aria-label', 'Copy code');
+    button.innerHTML = copyIcon;
+    wrapper.appendChild(button);
+
+    button.addEventListener('click', async () => {
+      try {
+        await copyText(code.textContent);
+        button.innerHTML = doneIcon;
+        button.classList.add('copied');
+        button.title = 'Copied';
+        button.setAttribute('aria-label', 'Copied');
+        window.setTimeout(() => {
+          button.innerHTML = copyIcon;
+          button.classList.remove('copied');
+          button.title = 'Copy code';
+          button.setAttribute('aria-label', 'Copy code');
+        }, 1400);
+      } catch (_error) {
+        button.title = 'Copy failed';
+        button.setAttribute('aria-label', 'Copy failed');
+      }
+    });
+  });
+})();
+</script>
+<script>
+(() => {
+  const root = document.querySelector('.site-search');
+  if (!root) return;
+
+  const input = root.querySelector('.site-search-input');
+  const results = root.querySelector('.site-search-results');
+  const indexUrl = root.dataset.searchIndex;
+  let indexPromise = null;
+  let visible = [];
+
+  const normal = (value) => String(value || '')
+    .toLowerCase()
+    .replace(/[_.:/-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const raw = (value) => String(value || '').toLowerCase().trim();
+
+  function loadIndex() {
+    if (!indexPromise) {
+      indexPromise = fetch(indexUrl)
+        .then((response) => {
+          if (!response.ok) throw new Error('Search index unavailable');
+          return response.json();
+        })
+        .then((data) => data.entries || []);
+    }
+    return indexPromise;
+  }
+
+  function score(entry, query) {
+    const qRaw = raw(query);
+    const q = normal(query);
+    if (!q) return -1;
+
+    const titleRaw = raw(entry.title);
+    const title = normal(entry.title);
+    const aliases = entry.aliases || [];
+    const aliasRaw = aliases.map(raw);
+    const aliasText = normal(aliases.join(' '));
+    const haystack = normal([
+      entry.title,
+      entry.summary,
+      entry.keywords,
+      aliases.join(' '),
+    ].join(' '));
+
+    if (titleRaw === qRaw) return 1000;
+    if (aliasRaw.includes(qRaw)) return 920;
+    if (title.startsWith(q)) return 820;
+    if (aliasText.startsWith(q)) return 760;
+    if (title.includes(q)) return 680;
+    if (aliasText.includes(q)) return 620;
+    if (haystack.includes(q)) return 500;
+
+    const words = q.split(' ').filter(Boolean);
+    if (words.length && words.every((word) => haystack.includes(word))) {
+      return 380 + words.length * 10;
+    }
+    return -1;
+  }
+
+  function closeResults() {
+    results.hidden = true;
+    results.replaceChildren();
+    input.setAttribute('aria-expanded', 'false');
+    visible = [];
+  }
+
+  function render(entries, query) {
+    const ranked = entries
+      .map((entry, order) => ({entry, order, score: score(entry, query)}))
+      .filter((row) => row.score >= 0)
+      .sort((a, b) => b.score - a.score || a.order - b.order)
+      .slice(0, 10);
+
+    results.replaceChildren();
+    visible = ranked.map((row) => row.entry);
+    if (!ranked.length) {
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'No documentation found.';
+      results.appendChild(empty);
+    } else {
+      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
+      ranked.forEach(({entry}) => {
+        const link = document.createElement('a');
+        link.className = 'site-search-result';
+        link.href = new URL(entry.url, indexBase).href;
+
+        const heading = document.createElement('span');
+        heading.className = 'site-search-result-title';
+        heading.textContent = entry.title;
+
+        const kind = document.createElement('span');
+        kind.className = 'site-search-result-kind';
+        kind.textContent = entry.kind;
+
+        const summary = document.createElement('span');
+        summary.className = 'site-search-result-summary';
+        summary.textContent = entry.summary;
+
+        link.append(heading, kind, summary);
+        results.appendChild(link);
+      });
+    }
+    results.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+  }
+
+  async function search() {
+    const query = input.value.trim();
+    if (!query) {
+      closeResults();
+      return;
+    }
+    try {
+      render(await loadIndex(), query);
+    } catch (_error) {
+      results.replaceChildren();
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'Search is unavailable.';
+      results.appendChild(empty);
+      results.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  input.addEventListener('input', search);
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) search();
+  });
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeResults();
+      input.blur();
+    } else if (event.key === 'Enter' && visible.length) {
+      event.preventDefault();
+      results.querySelector('.site-search-result')?.click();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!root.contains(event.target)) closeResults();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const typing = target instanceof HTMLInputElement
+      || target instanceof HTMLTextAreaElement
+      || target instanceof HTMLSelectElement
+      || target?.isContentEditable;
+    const shortcut = (event.ctrlKey || event.metaKey)
+      && event.key.toLowerCase() === 'k';
+    const slash = event.key === '/' && !typing && !event.ctrlKey
+      && !event.metaKey && !event.altKey;
+    if (shortcut || slash) {
+      event.preventDefault();
+      input.focus();
+      input.select();
+    }
+  });
+})();
+</script>
+</body></html>
