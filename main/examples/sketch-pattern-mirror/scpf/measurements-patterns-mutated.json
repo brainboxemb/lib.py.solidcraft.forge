@@ -1,7 +1,7 @@
 {
   "bodies": [
     {
-      "area_mm2": 80041.06192993658,
+      "area_mm2": 80041.06192993665,
       "bbox": {
         "max": [
           120.0,
@@ -15,8 +15,8 @@
         ]
       },
       "center_of_mass": [
-        0.3264371540624332,
-        -5.993773894366717e-10,
+        0.3264371540624268,
+        -5.993840828352277e-10,
         2.499999999991267
       ],
       "closed": true,
@@ -123,7 +123,7 @@
     {
       "error": null,
       "id": 1,
-      "ms": 2.378963,
+      "ms": 2.1899900000000003,
       "name": "Box1",
       "rolled_back": false,
       "suppressed": false,
@@ -133,7 +133,7 @@
     {
       "error": null,
       "id": 2,
-      "ms": 0.37865400000000005,
+      "ms": 0.355286,
       "name": "Dog holes",
       "rolled_back": false,
       "suppressed": false,
@@ -143,7 +143,7 @@
     {
       "error": null,
       "id": 3,
-      "ms": 76.799746,
+      "ms": 61.882682,
       "name": "Dog holes",
       "rolled_back": false,
       "suppressed": false,
@@ -153,7 +153,7 @@
     {
       "error": null,
       "id": 4,
-      "ms": 1.920739,
+      "ms": 1.6646390000000002,
       "name": "Clamp slots",
       "rolled_back": false,
       "suppressed": false,
@@ -163,7 +163,7 @@
     {
       "error": null,
       "id": 5,
-      "ms": 130.579565,
+      "ms": 104.232769,
       "name": "Clamp slots",
       "rolled_back": false,
       "suppressed": false,
@@ -172,7 +172,7 @@
     }
   ],
   "total": {
-    "area_mm2": 80041.06192993658,
+    "area_mm2": 80041.06192993665,
     "edges": 132,
     "faces": 46,
     "mass_g": 232.77764658532527,
