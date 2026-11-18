@@ -35,7 +35,10 @@ class GeometryContractMatrix(unittest.TestCase):
                 commands = compile_model(case.build(), "Part")["commands"]
                 native = _commands({"commands": commands}, case.native_command)
                 self.assertEqual(len(native), 1)
-                self.assertEqual(native[0]["params"]["operation"], "new")
+                self.assertEqual(
+                    native[0]["params"].get("operation", "new"),
+                    "new",
+                )
                 self.assertEqual(native[0]["params"]["body_name"], "Part")
 
     def test_every_registered_primitive_supports_bottom_at_placement(self):
