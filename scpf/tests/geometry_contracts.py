@@ -53,7 +53,11 @@ class FeatureCase:
 GENERAL_SOLID = "general-solid"
 PRIMITIVE = "primitive"
 CSG = "csg"
-NATIVE_HOLE = "native-hole"
+SIMPLE_HOLE = "simple-hole"
+COUNTERBORE_HOLE = "counterbore-hole"
+COUNTERSINK_HOLE = "countersink-hole"
+THREADED_HOLE = "threaded-hole"
+SHEET_BODY = "sheet-body"
 JOINABLE = "joinable"
 DERIVED = "derived"
 
@@ -87,6 +91,16 @@ def _sketch_extrusion():
     return sketch.extrude(20)
 
 
+def _sheet_body():
+    with Sketch(name="Sheet Blank", plane="XY") as blank:
+        Rectangle2D(40, 30)
+    return blank.sheet_metal(
+        thickness=2,
+        bend_radius=2,
+        k_factor=0.5,
+    )
+
+
 def _box_parameterized(size):
     return Box(size, 40, 20, anchor=Anchor.BOTTOM)
 
@@ -103,24 +117,28 @@ PRIMITIVE_BODY_CASES = (
     BodyCase(
         "box", "box", "solid.box", _box, _box_parameterized,
         ("corner", (-15, -14, 7)), 20, 20,
-        frozenset((GENERAL_SOLID, PRIMITIVE, CSG, NATIVE_HOLE, JOINABLE)),
+        frozenset((GENERAL_SOLID, PRIMITIVE, CSG, SIMPLE_HOLE, COUNTERBORE_HOLE, COUNTERSINK_HOLE, THREADED_HOLE, JOINABLE)),
     ),
     BodyCase(
         "cylinder", "cylinder", "solid.cylinder", _cylinder,
         _cylinder_parameterized, ("base", (5, 6, 7)), 20, 20,
-        frozenset((GENERAL_SOLID, PRIMITIVE, CSG, NATIVE_HOLE, JOINABLE)),
+        frozenset((GENERAL_SOLID, PRIMITIVE, CSG, SIMPLE_HOLE, COUNTERBORE_HOLE, COUNTERSINK_HOLE, THREADED_HOLE, JOINABLE)),
     ),
     BodyCase(
         "sphere", "sphere", "solid.sphere", _sphere, _sphere_parameterized,
         ("center", (5, 6, 27)), 20, 40,
-        frozenset((GENERAL_SOLID, PRIMITIVE, CSG, NATIVE_HOLE, JOINABLE)),
+        frozenset((GENERAL_SOLID, PRIMITIVE, CSG, SIMPLE_HOLE, COUNTERBORE_HOLE, COUNTERSINK_HOLE, THREADED_HOLE, JOINABLE)),
     ),
 )
 
 DIRECT_FEATURE_BODY_CASES = PRIMITIVE_BODY_CASES + (
     BodyCase(
         "sketch-extrusion", None, None, _sketch_extrusion, None, None, 20, 20,
-        frozenset((GENERAL_SOLID, NATIVE_HOLE, JOINABLE)),
+        frozenset((GENERAL_SOLID, SIMPLE_HOLE, COUNTERBORE_HOLE, COUNTERSINK_HOLE, THREADED_HOLE, JOINABLE)),
+    ),
+    BodyCase(
+        "sheet-body", None, None, _sheet_body, None, None, 2, 2,
+        frozenset((GENERAL_SOLID, SHEET_BODY, SIMPLE_HOLE)),
     ),
 )
 
@@ -225,25 +243,25 @@ def _apply_threaded_hole(body, case):
 FEATURE_CASES = (
     FeatureCase(
         "hole",
-        NATIVE_HOLE,
+        SIMPLE_HOLE,
         "solid.hole",
         _apply_native_hole,
     ),
     FeatureCase(
         "counterbore-hole",
-        NATIVE_HOLE,
+        COUNTERBORE_HOLE,
         "solid.hole",
         _apply_counterbore_hole,
     ),
     FeatureCase(
         "countersink-hole",
-        NATIVE_HOLE,
+        COUNTERSINK_HOLE,
         "solid.hole",
         _apply_countersink_hole,
     ),
     FeatureCase(
         "threaded-hole",
-        NATIVE_HOLE,
+        THREADED_HOLE,
         "solid.hole",
         _apply_threaded_hole,
     ),
