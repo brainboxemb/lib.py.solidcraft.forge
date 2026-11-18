@@ -40,6 +40,7 @@ class SitePublishingContractTests(unittest.TestCase):
             workflow_run_id="42",
             qualification_level="q1-q6-full",
             qualification_status="pass",
+            build_commit="buildsha123",
         )
         provenance.validate_provenance(
             data,
@@ -57,6 +58,7 @@ class SitePublishingContractTests(unittest.TestCase):
                 workflow_run_id="42",
                 qualification_level="q1-q6-full",
                 qualification_status="fail",
+                build_commit="buildsha123",
             )
 
     def test_reused_provenance_records_original_qualification_commit(self):
@@ -84,10 +86,12 @@ class SitePublishingContractTests(unittest.TestCase):
                 evidence_commit="qualified123",
                 verification_file=verification,
                 workflow_run_id="42",
+                build_commit="buildsha123",
             )
 
         self.assertEqual(data["source_commit"], "site456")
         self.assertEqual(data["qualification"]["level"], "q1-q6-reused")
+        self.assertEqual(data["build_commit"], "buildsha123")
         self.assertEqual(
             data["qualification"]["source_commit"],
             "qualified123",
