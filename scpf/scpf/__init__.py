@@ -1,6 +1,6 @@
 """SCPF: readable Python CAD model descriptions compiled to SolidCraft."""
 from .core import (
-    Box, Cylinder, Sphere, Hole, Lip, SnapFit, Boss, Rest, Depth,
+    Box, Cylinder, Sphere, Hole, CounterboreHole, CountersinkHole, Lip, SnapFit, Boss, Rest, Depth,
     Rectangle2D, RoundedRectangle2D, Circle2D, Polygon2D,
     SlotCenterToCenter2D, SlotOverall2D, SlotCenterPoint2D,
     SlotArcThreePoint2D, SlotArcCenter2D,
@@ -12,7 +12,7 @@ from .runner import run_script, component, assembly, ModelParameterWarning
 from .model_objects import Placement
 
 __all__ = [
-    "Box", "Cylinder", "Sphere", "Hole", "Lip", "SnapFit", "Boss", "Rest",
+    "Box", "Cylinder", "Sphere", "Hole", "CounterboreHole", "CountersinkHole", "Lip", "SnapFit", "Boss", "Rest",
     "Depth", "Rectangle2D", "RoundedRectangle2D", "Circle2D", "Polygon2D",
     "SlotCenterToCenter2D", "SlotOverall2D", "SlotCenterPoint2D",
     "SlotArcThreePoint2D", "SlotArcCenter2D", "Shape", "Parameter",
