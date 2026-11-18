@@ -1,11 +1,9 @@
-"""Publishing/staging contract tests for generated Forge documentation."""
+"""Publishing contract tests for generated Forge output."""
 
 from __future__ import annotations
 
 import importlib.util
-import json
 from pathlib import Path
-import tempfile
 import unittest
 
 
@@ -52,70 +50,78 @@ class SitePublishingContractTests(unittest.TestCase):
                 qualification_status="fail",
             )
 
-    def test_full_workflow_promotes_only_after_qualification_gate(self):
+    def test_full_workflow_publishes_build_and_pages_after_gate(self):
         workflow = (
             ROOT / ".github" / "workflows" / "scpf.yml"
         ).read_text(encoding="utf-8")
 
         self.assertIn('      - "site/**"', workflow)
-        self.assertIn("publish_branch: qualified-output", workflow)
-        self.assertIn("publish_branch: preview-output", workflow)
-        self.assertIn("ref: qualified-output", workflow)
-        self.assertIn("ref: gh-pages", workflow)
+        self.assertIn("publish_branch: build", workflow)
+        self.assertIn("destination_dir: main", workflow)
+        self.assertIn("publish_branch: gh-pages", workflow)
+        self.assertNotIn("publish_branch: qualified-output", workflow)
+        self.assertNotIn("publish_branch: preview-output", workflow)
+        self.assertNotIn("ref: qualified-output", workflow)
+        self.assertNotIn("ref: preview-output", workflow)
+        self.assertIn("group: scpf-build-publish", workflow)
         self.assertIn("group: scpf-pages-publish", workflow)
+        self.assertIn("name: scpf-build-${{ github.sha }}", workflow)
         self.assertIn("name: scpf-publish-site-${{ github.sha }}", workflow)
-        self.assertIn("actions/download-artifact@v4", workflow)
 
         gate = workflow.index("- name: Enforce qualification status")
-        stable_stage = workflow.index("- name: Stage stable qualified output")
-        stable_publish = workflow.index(
-            "- name: Publish stable Pages root from qualified output"
-        )
-        preview_stage = workflow.index(
-            "- name: Stage qualified branch preview output"
-        )
-        self.assertLess(gate, preview_stage)
-        self.assertLess(gate, stable_stage)
-        self.assertLess(stable_stage, stable_publish)
+        assemble = workflow.index("- name: Assemble main technical build")
+        publish_build = workflow.index("- name: Publish main technical build")
+        publish_site = workflow.index("- name: Publish stable Pages root")
+        self.assertLess(gate, assemble)
+        self.assertLess(assemble, publish_build)
+        self.assertLess(assemble, publish_site)
 
-        self.assertNotIn(
-            '- name: Publish current library site',
-            workflow,
-        )
-
-    def test_pr_preview_stages_before_pages_sync(self):
+    def test_pr_owns_one_build_scope_and_one_pages_preview(self):
         workflow = (
             ROOT / ".github" / "workflows" / "preview.yml"
         ).read_text(encoding="utf-8")
-        stage = workflow.index("- name: Stage PR preview output")
-        checkout = workflow.index("- name: Checkout staged PR preview")
-        verify = workflow.index("- name: Verify staged PR preview")
-        publish = workflow.index(
-            "- name: Publish browseable PR preview from staged output"
-        )
 
-        self.assertIn("publish_branch: preview-output", workflow)
-        self.assertIn("ref: preview-output", workflow)
-        self.assertIn("group: scpf-pages-publish", workflow)
-        self.assertIn("actions/download-artifact@v4", workflow)
+        self.assertIn("publish_branch: build", workflow)
         self.assertIn(
-            "ref: ${{ github.event.pull_request.head.sha }}",
+            "destination_dir: pr/${{ github.event.pull_request.number }}",
             workflow,
         )
-        self.assertNotIn("force_orphan: true", workflow)
-        self.assertLess(stage, checkout)
-        self.assertLess(checkout, verify)
-        self.assertLess(verify, publish)
+        self.assertIn("publish_branch: gh-pages", workflow)
+        self.assertIn(
+            "destination_dir: previews/pr-${{ github.event.pull_request.number }}",
+            workflow,
+        )
+        self.assertNotIn("publish_branch: preview-output", workflow)
+        self.assertNotIn("publish_branch: qualified-output", workflow)
+        self.assertNotIn("/fast", workflow)
+        self.assertIn("name: cleanup-build", workflow)
+        self.assertIn("name: cleanup-preview", workflow)
+        self.assertIn("--kind build", workflow)
+        self.assertIn("--kind pages", workflow)
 
-    def test_agent_file_records_staging_and_promotion_rules(self):
+    def test_site_only_publication_preserves_pages_previews(self):
+        workflow = (
+            ROOT / ".github" / "workflows" / "site.yml"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn(
+            "python scripts/generated_output.py prepare-stable-pages",
+            workflow,
+        )
+        self.assertIn("ref: gh-pages", workflow)
+        self.assertIn("publish_branch: gh-pages", workflow)
+        self.assertNotIn("publish_branch: qualified-output", workflow)
+        self.assertNotIn("publish_branch: preview-output", workflow)
+
+    def test_agent_file_records_build_and_pages_rules(self):
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         for phrase in (
-            "Preview/staging output",
-            "Stable output",
-            "qualified-output",
-            "gh-pages",
-            "source branch -> branch-owned build -> preview page",
-            "main -> qualified-output -> stable gh-pages root",
+            "`build` contains generated technical build",
+            "`gh-pages` contains only the browseable website",
+            "build/pr/<number>/",
+            "gh-pages/previews/pr-<number>/",
+            "`preview-output` and `qualified-output` are not part",
+            "main -> technical build -> build/main/",
         ):
             self.assertIn(phrase, agents)
 
