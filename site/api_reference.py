@@ -244,6 +244,13 @@ METHOD_REFERENCES = (
     _method("Shape.chamfer", "Shape.chamfer()", Shape.chamfer, guide="features", guide_anchor="fillet"),
     _method("Shape.shell", "Shape.shell()", Shape.shell, guide="features", guide_anchor="shell"),
     _method(
+        "Shape.fold",
+        "Shape.fold()",
+        Shape.fold,
+        guide="features",
+        guide_anchor="features",
+    ),
+    _method(
         "Shape.rectangular_pattern",
         "Shape.rectangular_pattern()",
         Shape.rectangular_pattern,
@@ -272,6 +279,13 @@ METHOD_REFERENCES = (
         Sketch.mirror,
         guide="geometry",
         guide_anchor="pattern-mirror",
+    ),
+    _method(
+        "Sketch.sheet_metal",
+        "Sketch.sheet_metal()",
+        Sketch.sheet_metal,
+        guide="geometry",
+        guide_anchor="profiles",
     ),
     _method(
         "Sketch.extrude",
