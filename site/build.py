@@ -8,6 +8,7 @@ import argparse
 import html
 from importlib.metadata import version as package_version
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -56,6 +57,8 @@ finally:
     sys.path.pop(0)
 
 LIBRARY_URL = "https://github.com/brainboxemb/lib.py.solidcraft.forge"
+BUILD_BLOB_ROOT = LIBRARY_URL + "/blob/build"
+BUILD_RAW_ROOT = "https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build"
 CAD_SITE = "https://brainboxemb.github.io/2026-011-02.cad.solidcraft/"
 
 # Keep the public catalog deliberately small; advanced tests remain in the repo.
@@ -590,7 +593,7 @@ def _image_sort_key(name):
     return (10, name, 0)
 
 
-def _visual_view_html(case, view, native_images):
+def _visual_view_html(case, view, native_images, image_base=""):
     names = [
         (f"model-{view}.png", "Actual", f"Current SolidCraft {view} view"),
         (f"goal-{view}.png", "Goal", f"Expected geometry in the same {view} view"),
@@ -600,11 +603,12 @@ def _visual_view_html(case, view, native_images):
     for name, label, caption in names:
         if name not in native_images:
             continue
+        image_url = f"{image_base}/{name}" if image_base else name
         figures.append(
             '<figure class="qualification-visual-item">'
-            f'<a href="{escape(name)}" class="qualification-image-link" target="_blank" rel="noopener" '
+            f'<a href="{escape(image_url)}" class="qualification-image-link" target="_blank" rel="noopener" '
             f'title="Open full-size {escape(label)} image">'
-            f'<img src="{escape(name)}" '
+            f'<img src="{escape(image_url)}" '
             f'alt="{escape(case["title"])} {escape(view)} {escape(label)}" loading="lazy">'
             '</a>'
             f'<figcaption><strong>{escape(label)}</strong><br>{escape(caption)}</figcaption>'
@@ -621,11 +625,11 @@ def _visual_view_html(case, view, native_images):
     )
 
 
-def _render_visual_evidence(case, native_images, native_case=None):
+def _render_visual_evidence(case, native_images, native_case=None, image_base=""):
     geometry = proof_contract(case["slug"])["geometry"]
     required_views = geometry["required_views"]
     required = "".join(
-        _visual_view_html(case, view, native_images)
+        _visual_view_html(case, view, native_images, image_base)
         for view in required_views
     )
 
@@ -1207,7 +1211,7 @@ def page(title, body, *, stylesheet, home, cheatsheet):
 <span class="site-search-shortcut" aria-hidden="true">/</span>
 <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
 </div>
-<nav aria-label="Main"><a href="{escape(home)}">Examples</a><a href="{escape(home)}guide/">API Guide</a><a href="{escape(home)}reference/">API Reference</a><a href="{escape(cheatsheet)}">Cheatsheet</a>\n<a href="{LIBRARY_URL}">Source</a></nav></div></header>
+<nav aria-label="Main"><a href="{escape(home)}">Examples</a><a href="{escape(home)}guide/">API Guide</a><a href="{escape(home)}reference/">API Reference</a><a href="{escape(home)}qualification/">Qualification</a><a href="{escape(cheatsheet)}">Cheatsheet</a>\n<a href="{LIBRARY_URL}">Source</a></nav></div></header>
 <div class="development-banner" role="status"><div class="wrap">
 <strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
 </div></div>
@@ -1217,6 +1221,28 @@ def page(title, body, *, stylesheet, home, cheatsheet):
 <script>{COPY_SCRIPT}</script>
 <script>{SEARCH_SCRIPT}</script>
 </body></html>"""
+
+
+def build_scope_from_environment():
+    """Return the technical evidence scope for this site build.
+
+    Presentation-only builds reuse the last qualified main output. A workflow
+    that actually produces new PR technical evidence must set
+    SCPF_BUILD_SCOPE=pr/<number> explicitly.
+    """
+    return os.environ.get("SCPF_BUILD_SCOPE", "main").strip("/") or "main"
+
+
+def build_blob_url(scope, relative=""):
+    relative = str(relative).lstrip("/")
+    base = f"{BUILD_BLOB_ROOT}/{scope}"
+    return f"{base}/{relative}" if relative else base
+
+
+def build_raw_url(scope, relative=""):
+    relative = str(relative).lstrip("/")
+    base = f"{BUILD_RAW_ROOT}/{scope}"
+    return f"{base}/{relative}" if relative else base
 
 
 def text(path):
@@ -1235,6 +1261,7 @@ def build(
     diagram_root=None,
     reference_evidence_root=None,
     evidence_sha=None,
+    build_scope=None,
 ):
     """Compile the public site and attach verified qualification evidence.
 
@@ -1243,6 +1270,8 @@ def build(
     They are normally equal; site-only rebuilds may reuse older evidence.
     """
     evidence_sha = evidence_sha or sha
+    build_scope = build_scope or build_scope_from_environment()
+    build_output_url = build_blob_url(build_scope)
     verified = False
     metadata = {}
     if native_root is not None:
@@ -1833,8 +1862,730 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         encoding="utf-8",
     )
 
-    # Qualification evidence is technical build output. It is published on
-    # the generated `build` branch, not copied into the Pages website.
+    # Qualification pages explain the full contract for each native fixture:
+    # public API -> Forge model -> SolidCraft commands -> native evidence.
+    qualification_root = out / "qualification"
+    qualification_root.mkdir(exist_ok=True)
+    qualification_cards = {key: [] for key, _, _ in QUALIFICATION_GROUPS}
+    qualification_manifest = {}
+
+    for case in QUALIFICATION_CASES:
+        slug = case["slug"]
+        blocked_reason = case.get("blocked_reason")
+        source_path = ROOT / "examples" / slug / "scpf" / "model.py"
+        if blocked_reason:
+            commands = {
+                "commands": [],
+                "blocked_reason": blocked_reason,
+            }
+        else:
+            commands = run_script(source_path)
+        case_dir = qualification_root / slug
+        case_dir.mkdir(exist_ok=True)
+        case_proof = proof_contract(slug)
+        (case_dir / "proof-contract.json").write_text(
+            json.dumps(case_proof, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        source = text(source_path)
+        (case_dir / "model.py").write_text(source, encoding="utf-8")
+
+        reference_names = reference_implementations_for(case)
+        reference_exceptions = case.get("reference_exceptions", {})
+        reference_sources = {}
+        for reference_name in reference_names:
+            reference_path = (
+                ROOT / "examples" / slug / reference_name / "model.py"
+            )
+            if not reference_path.is_file():
+                raise ValueError(
+                    f"Qualification reference missing: {reference_path}"
+                )
+            reference_source = text(reference_path)
+            try:
+                compile(reference_source, str(reference_path), "exec")
+            except SyntaxError as exc:
+                raise ValueError(
+                    f"Invalid {reference_name} reference syntax: {reference_path}"
+                ) from exc
+            reference_sources[reference_name] = reference_source
+            (case_dir / f"reference-{reference_name}.py").write_text(
+                reference_source,
+                encoding="utf-8",
+            )
+
+        reference_exception_html = ""
+        if reference_exceptions:
+            items = "".join(
+                f'<li><strong>{escape(REFERENCE_IMPLEMENTATION_LABELS[name])}:</strong> '
+                f'{escape(reason)}</li>'
+                for name, reason in reference_exceptions.items()
+            )
+            reference_exception_html = (
+                '<div class="notice"><strong>Documented reference exceptions</strong>'
+                f'<ul>{items}</ul></div>'
+            )
+
+        reference_render_html = {}
+        reference_evidence_files = []
+        if reference_verified:
+            for reference_name in reference_names:
+                result_path = (
+                    reference_evidence_root / slug / reference_name / "result.json"
+                )
+                if not result_path.is_file():
+                    raise ValueError(f"Reference result missing: {result_path}")
+                result = json.loads(result_path.read_text(encoding="utf-8"))
+                if result.get("status") != "pass":
+                    raise ValueError(
+                        f"Reference result is not PASS: {slug}/{reference_name}"
+                    )
+                dest = case_dir / f"reference-{reference_name}"
+                dest.mkdir(exist_ok=True)
+                source_dir = result_path.parent
+                for name in (
+                    "result.json",
+                    "model.stl",
+                    "model-front.png",
+                    "model-right.png",
+                    "model-iso.png",
+                ):
+                    source_file = source_dir / name
+                    if not source_file.is_file() or source_file.stat().st_size == 0:
+                        raise ValueError(
+                            f"Reference evidence missing or empty: {source_file}"
+                        )
+                    reference_evidence_files.append(
+                        f"reference-{reference_name}/{name}"
+                    )
+                label = REFERENCE_IMPLEMENTATION_LABELS[reference_name]
+                reference_render_html[reference_name] = (
+                    '<figure class="qualification-reference-preview">'
+                    f'<a href="{escape(reference_raw_base + "/model-iso.png")}" '
+                    'class="qualification-image-link" target="_blank" rel="noopener">'
+                    f'<img src="{escape(reference_raw_base + "/model-iso.png")}" '
+                    f'alt="{escape(case["title"])} {label} reference render">'
+                    '</a>'
+                    f'<figcaption>Independently exported STL · '
+                    f'<a href="{escape(reference_blob_base + "/model.stl")}">Open STL in build output</a> · '
+                    f'<a href="{escape(reference_blob_base + "/result.json")}">Open measurements</a>'
+                    '</figcaption></figure>'
+                    + _render_reference_checks(result)
+                )
+
+        reference_rows = []
+        for reference_name in reference_names:
+            label = REFERENCE_IMPLEMENTATION_LABELS[reference_name]
+            render_html = reference_render_html.get(
+                reference_name,
+                '<div class="notice qualification-reference-missing">'
+                'Executable STL/render evidence was not supplied to this site build.'
+                '</div>',
+            )
+            reference_rows.append(
+                '<section class="qualification-reference-row">'
+                '<div class="qualification-reference-source">'
+                f'<h4>{escape(label)}</h4>'
+                f'<pre><code>{escape(reference_sources[reference_name])}</code></pre>'
+                f'<p><a href="reference-{reference_name}.py">'
+                f'Open {escape(label)} source →</a></p>'
+                '</div>'
+                '<div class="qualification-reference-output">'
+                + render_html
+                + '</div>'
+                '</section>'
+            )
+
+        diagram_html = ""
+        diagram_name = case.get("diagram")
+        plan_name = None
+        dxf_name = None
+        if diagram_name:
+            diagram_source = (
+                diagram_root / diagram_name
+                if diagram_root is not None
+                else ROOT / "qualification" / "diagrams" / diagram_name
+            )
+            if not diagram_source.is_file():
+                raise ValueError(f"Qualification diagram missing: {diagram_source}")
+            shutil.copyfile(diagram_source, case_dir / diagram_name)
+            dxf_source = diagram_source.with_suffix(".dxf")
+            if dxf_source.is_file():
+                dxf_name = dxf_source.name
+                shutil.copyfile(dxf_source, case_dir / dxf_name)
+            plan_source = ROOT / "qualification" / "diagrams" / f"{slug}.cadcraft.json"
+            if plan_source.is_file():
+                plan_name = plan_source.name
+                shutil.copyfile(plan_source, case_dir / plan_name)
+        else:
+            diagram_name = "setup.svg"
+            setup_svg = expected_setup_schematic(slug)
+            if setup_svg:
+                (case_dir / diagram_name).write_text(setup_svg, encoding="utf-8")
+            else:
+                diagram_name = None
+
+        if diagram_name:
+            if plan_name:
+                source_links = (
+                    f' <a href="{escape(plan_name)}">CadCraft source</a>'
+                    + (f' · <a href="{escape(dxf_name)}">DXF</a>' if dxf_name else "")
+                )
+                caption = (
+                    "Expected setup — technical drawing generated from the committed "
+                    "CadCraft command source; not verification output."
+                    + source_links
+                )
+            else:
+                caption = (
+                    "Expected setup — conceptual diagram, not verification output. "
+                    "Click for the full-size image."
+                )
+            diagram_html = (
+                '<figure class="qualification-setup-diagram">'
+                f'<a href="{escape(diagram_name)}" class="qualification-image-link" '
+                'target="_blank" rel="noopener" title="Open full-size setup diagram">'
+                f'<img src="{escape(diagram_name)}" alt="{escape(case["title"])} expected setup diagram">'
+                '</a>'
+                f'<figcaption>{caption}</figcaption>'
+                '</figure>'
+            )
+        joint_commands = [
+            command for command in commands["commands"]
+            if command["command"].startswith("joint.")
+        ]
+        lowering_detail = (
+            json.dumps(joint_commands, indent=2)
+            if joint_commands
+            else "\n".join(command["command"] for command in commands["commands"])
+        )
+
+        native_case = native_root / slug if verified else None
+        native_files = []
+        native_images = []
+        qualification_result = None
+        body_count = None
+        parameter_count = None
+        results_html = (
+            '<section class="panel"><h2>SolidCraft result</h2>'
+            '<div class="notice">No native SolidCraft result was supplied to this '
+            'site build.</div></section>'
+        )
+        preview_html = (
+            '<div class="notice">No native SolidCraft render was supplied to this site build.</div>'
+        )
+        case_preview_html = ""
+        status = "BLOCKED" if blocked_reason else "NOT RUN"
+        status_detail = blocked_reason or "Q1 Q2 documented"
+        if blocked_reason:
+            results_html = (
+                '<section class="panel"><h2>SolidCraft result</h2>'
+                '<div class="notice"><strong>BLOCKED</strong><p>'
+                + escape(blocked_reason)
+                + '</p><p>Forge stops before generating SolidCraft commands for '
+                'this case.</p></div></section>'
+            )
+            preview_html = (
+                '<div class="notice"><strong>BLOCKED</strong><p>'
+                + escape(blocked_reason)
+                + '</p></div>'
+            )
+            result_file = native_case / "qualification-result.json" if native_case is not None else None
+            if result_file is not None and result_file.is_file():
+                qualification_result = json.loads(result_file.read_text(encoding="utf-8"))
+                native_files.append(result_file.name)
+        elif native_case is not None and native_case.is_dir():
+            result_file = native_case / "qualification-result.json"
+            if not result_file.is_file():
+                raise ValueError(f"Structured qualification result missing: {result_file}")
+            qualification_result = json.loads(result_file.read_text(encoding="utf-8"))
+            if (
+                qualification_result.get("source_commit") != evidence_sha
+                or qualification_result.get("solidcraft_version") != metadata.get("solidcraft_version")
+            ):
+                raise ValueError(f"Qualification result does not match this build: {result_file}")
+            snapshot = native_case / "model.png"
+            if not snapshot.is_file() or snapshot.stat().st_size == 0:
+                raise ValueError(f"Qualification snapshot missing or empty: {snapshot}")
+
+            image_paths = sorted(
+                native_case.glob("*.png"),
+                key=lambda path: _image_sort_key(path.name),
+            )
+            for image in image_paths:
+                if image.stat().st_size == 0:
+                    raise ValueError(f"Qualification snapshot empty: {image}")
+                native_images.append(image.name)
+
+            for pattern in (
+                "results*.json",
+                "measurements*.json",
+                "change-*.json",
+                "parameters*.json",
+                "joint-*.json",
+                "model.json",
+                "model*.sc",
+                "model*.step",
+                "export-*.json",
+                "qualification-result.json",
+                "validation.json",
+                "visual-validation.json",
+                "camera-*.json",
+                "q1-case-evidence.txt",
+                "q2-case-evidence.txt",
+            ):
+                for evidence in sorted(native_case.glob(pattern)):
+                    native_files.append(evidence.name)
+            native_evidence_raw = build_raw_url(
+                build_scope, f"examples/{slug}/scpf"
+            )
+            native_evidence_blob = build_blob_url(
+                build_scope, f"examples/{slug}/scpf"
+            )
+            preview_html = _render_visual_evidence(
+                case,
+                native_images,
+                native_case,
+                native_evidence_raw,
+            )
+            case_preview = (
+                "model-iso.png" if "model-iso.png" in native_images
+                else "model.png" if "model.png" in native_images
+                else None
+            )
+            if case_preview:
+                case_preview_url = f"{native_evidence_raw}/{case_preview}"
+                case_preview_html = (
+                    '<figure class="qualification-case-preview">'
+                    f'<a href="{escape(case_preview_url)}" class="qualification-image-link" '
+                    'target="_blank" rel="noopener" title="Open full-size native preview">'
+                    f'<img src="{escape(case_preview_url)}" '
+                    f'alt="{escape(case["title"])} native SolidCraft preview">'
+                    '</a>'
+                    '<figcaption>Native SolidCraft preview from the generated build output.</figcaption>'
+                    '</figure>'
+                )
+            status, status_detail = _qualification_status(qualification_result)
+            results_html, body_count, parameter_count = _render_native_results(
+                native_case,
+                metadata["solidcraft_version"],
+            )
+
+        reference_items = []
+        for label, description in case["references"]:
+            url = REFERENCE_URLS.get(label)
+            label_html = (
+                f'<a href="{escape(url)}">{escape(label)}</a>'
+                if url else escape(label)
+            )
+            reference_items.append(
+                f"<li><strong>{label_html}:</strong> {escape(description)}</li>"
+            )
+
+        evidence_items = [
+            '<li><a href="model.py">Forge fixture source</a></li>',
+        ]
+        evidence_items.extend(
+            f'<li><a href="reference-{reference_name}.py">'
+            f'{escape(REFERENCE_IMPLEMENTATION_LABELS[reference_name])} '
+            'reference source</a></li>'
+            for reference_name in reference_names
+        )
+        native_evidence_blob = build_blob_url(
+            build_scope, f"examples/{slug}/scpf"
+        )
+        evidence_items.append(
+            '<li><a href="'
+            + escape(native_evidence_blob + '/solidcraft.json')
+            + '">Generated command JSON in build output</a></li>'
+        )
+        evidence_items.extend(
+            f'<li><a href="{escape(native_evidence_blob + "/" + name)}">'
+            f'{escape(name)}</a></li>'
+            for name in native_files
+        )
+        if native_images:
+            evidence_items.extend(
+                f'<li><a href="{escape(native_evidence_blob + "/" + name)}">'
+                f'Native snapshot: {escape(name)}</a></li>'
+                for name in native_images
+            )
+        for name in reference_evidence_files:
+            prefix, filename = name.split("/", 1)
+            implementation = prefix.removeprefix("reference-")
+            url = build_blob_url(
+                build_scope,
+                f"examples/{slug}/{implementation}/{filename}",
+            )
+            evidence_items.append(
+                f'<li><a href="{escape(url)}">'
+                f'Reference evidence: {escape(name)}</a></li>'
+            )
+
+        case_body = render_template(
+            "case.html",
+            title=escape(case["title"]),
+            status_badge=_qualification_badge_html(status),
+            technical_status=_qualification_status_html(status, status_detail),
+            case_preview=case_preview_html,
+            setup_diagram=diagram_html,
+            intent=escape(case["intent"]),
+            geometry_contract=_render_proof_contract(slug),
+            case_test_evidence=_render_case_test_evidence(
+                slug,
+                qualification_result,
+                evidence_sha,
+            ),
+            gallery=preview_html,
+            forge_api=escape(case["forge_api"]),
+            forge_model=escape(case["forge_model"]),
+            lowering=escape(case["lowering"]),
+            native_expectation=escape(case["native_expectation"]),
+            mutation_criterion=(
+                '<h3>Saved-design test</h3><p><strong>'
+                + ("Checked in the saved model. " if case.get("q5_required") else "No saved-model change is required. ")
+                + escape(case["mutation"]) + '</p>'
+            ),
+            mutation=escape(case["mutation"]),
+            evidence_items="".join(evidence_items),
+            results=results_html,
+            lowering_detail=escape(lowering_detail),
+            reference_items="".join(reference_items),
+            source=escape(source),
+            reference_rows="".join(reference_rows),
+            reference_exceptions=reference_exception_html,
+        )
+        (case_dir / "index.html").write_text(
+            page(
+                f"Qualification · {case['title']}",
+                case_body,
+                stylesheet="../../style.css",
+                home="../../",
+                cheatsheet="../../cheatsheet/",
+            ),
+            encoding="utf-8",
+        )
+
+        qualification_manifest[slug] = {
+            "title": case["title"],
+            "proof_contract": case_proof,
+            "status": status,
+            "status_detail": status_detail,
+            "command_count": len(commands["commands"]),
+            "reference_sources": [
+                f"reference-{reference_name}.py"
+                for reference_name in reference_names
+            ],
+            "reference_exceptions": reference_exceptions,
+            "native_evidence": native_files,
+            "native_images": native_images,
+            "reference_evidence": reference_evidence_files,
+            "qualification_status": (
+                qualification_result.get("status") if qualification_result else None
+            ),
+            "levels": (
+                qualification_result.get("levels") if qualification_result else {}
+            ),
+            "solidcraft_version": (
+                metadata.get("solidcraft_version") if verified else None
+            ),
+            "body_count": body_count,
+            "parameter_count": parameter_count,
+        }
+        card_preview = (
+            "model-iso.png" if "model-iso.png" in native_images
+            else "model.png" if "model.png" in native_images
+            else None
+        )
+        card_preview_url = (
+            build_raw_url(
+                build_scope,
+                f"examples/{slug}/scpf/{card_preview}",
+            )
+            if card_preview else None
+        )
+        card_image = (
+            f'<a href="{escape(slug)}/" class="qualification-card-image">'
+            f'<img src="{escape(card_preview_url)}" '
+            f'alt="{escape(case["title"])} native isometric preview" loading="lazy"></a>'
+            if card_preview_url else ""
+        )
+        qualification_cards[case["group"]].append(
+            f'<article class="reference qualification-card">{card_image}'
+            f'<div class="qualification-card-content">'
+            + _qualification_status_html(status, status_detail)
+            + f'<h2><a href="{escape(slug)}/">{escape(case["title"])}</a></h2>'
+            f'<p>{escape(case["intent"])}</p>'
+            f'<p><code>{escape(case["forge_api"])}</code></p>'
+            + (
+                f'<p class="meta">SolidCraft {escape(metadata.get("solidcraft_version"))}'
+                f' · {escape(body_count)} bodies · {escape(parameter_count)} parameters</p>'
+                if verified and body_count is not None else ""
+            )
+            + f'<a class="button" href="{escape(slug)}/">Open case sheet →</a></div></article>'
+        )
+
+    results_root = qualification_root / "results"
+    results_root.mkdir(exist_ok=True)
+    result_rows = []
+    for case in QUALIFICATION_CASES:
+        row = qualification_manifest[case["slug"]]
+        result_rows.append(
+            f"<tr><td><a href=\"../{escape(case['slug'])}/\">"
+            f"{escape(case['title'])}</a></td>"
+            f"<td>{_qualification_status_html(row['status'], row.get('status_detail', ''))}</td>"
+            f"<td>{escape(row.get('solidcraft_version') or '—')}</td>"
+            f"<td>{escape(row.get('body_count') if row.get('body_count') is not None else '—')}</td>"
+            f"<td>{escape(row.get('parameter_count') if row.get('parameter_count') is not None else '—')}</td>"
+            f"<td>{escape(len(row.get('native_evidence', [])))}</td></tr>"
+        )
+    results_body = render_template(
+        "results.html",
+        source_sha=escape(evidence_sha),
+        site_sha=escape(sha),
+        forge_version=escape(forge_version),
+        solidcraft_version=escape(
+            metadata.get("solidcraft_version") if verified else TESTED_SOLIDCRAFT_VERSION
+        ),
+        qualified_at=escape(qualified_at),
+        result_rows="".join(result_rows),
+    )
+    (results_root / "index.html").write_text(
+        page(
+            "Qualification results",
+            results_body,
+            stylesheet="../../style.css",
+            home="../../",
+            cheatsheet="../../cheatsheet/",
+        ),
+        encoding="utf-8",
+    )
+
+    level_rows = "".join(
+        f"<tr><td><strong>{escape(level)}</strong></td><td>{escape(title)}</td>"
+        f"<td>{escape(description)}</td></tr>"
+        for level, title, description in QUALIFICATION_LEVELS
+    )
+    group_sections = "".join(
+        f'<section class="section-heading"><h2>{escape(title)}</h2><p>{escape(description)}</p></section>'
+        f'<div class="reference-grid qualification-grid">{"".join(qualification_cards[key])}</div>'
+        for key, title, description in QUALIFICATION_GROUPS
+        if qualification_cards[key]
+    )
+    qualification_index = render_template(
+        "index.html",
+        source_sha=escape(evidence_sha),
+        site_sha=escape(sha),
+        forge_version=escape(forge_version),
+        solidcraft_version=escape(
+            metadata.get("solidcraft_version") if verified else TESTED_SOLIDCRAFT_VERSION
+        ),
+        qualified_at=escape(qualified_at),
+        build_output_url=escape(build_output_url),
+        level_rows=level_rows,
+        group_sections=group_sections,
+    )
+    coverage_root = qualification_root / "coverage"
+    coverage_root.mkdir(exist_ok=True)
+    case_slugs = {case["slug"] for case in QUALIFICATION_CASES}
+    validate_coverage_cases(QUALIFICATION_CASES)
+    if verified:
+        validate_coverage_results({"cases": qualification_manifest})
+
+    def coverage_case_links(cases):
+        links = []
+        for name in cases:
+            if name not in case_slugs:
+                raise ValueError(f"Unknown qualification evidence case: {name}")
+            links.append(f'<a href="../{escape(name)}/">{escape(name)}</a>')
+        return ", ".join(links) if links else "—"
+
+    def coverage_status_badge(label):
+        css = label.lower().replace(" ", "-")
+        return (
+            f'<span class="coverage-status {escape(css)}">'
+            f'{escape(label)}</span>'
+        )
+
+    solidcraft_rows = []
+    forge_status_counts = {"Supported": 0, "Partial": 0, "Missing": 0}
+    group_titles = dict(CAPABILITY_GROUPS)
+    group_status_counts = {
+        key: {"Supported": 0, "Partial": 0, "Missing": 0}
+        for key, _ in CAPABILITY_GROUPS
+    }
+    primitive_names = {"Box", "Cylinder", "Sphere", "Cone", "Torus"}
+    primitive_counts = {"Supported": 0, "Partial": 0, "Missing": 0}
+
+    for group, capability, solidcraft, status, forge, need, references, note in SOLIDCRAFT_CAPABILITIES:
+        if status not in forge_status_counts:
+            raise ValueError(f"Unknown Forge support status: {status}")
+        forge_status_counts[status] += 1
+        group_status_counts[group][status] += 1
+        if capability in primitive_names:
+            primitive_counts[status] += 1
+        solidcraft_rows.append(
+            f"<tr><td>{escape(group_titles.get(group, group))}</td>"
+            f"<td><strong>{escape(capability)}</strong></td>"
+            f"<td>{escape(solidcraft)}</td>"
+            f"<td>{coverage_status_badge(status)}</td>"
+            f"<td>{escape(forge)}</td><td>{escape(need)}</td></tr>"
+        )
+
+    area_summary_rows = []
+    for group, title in CAPABILITY_GROUPS:
+        counts = group_status_counts[group]
+        total = sum(counts.values())
+        area_summary_rows.append(
+            f"<tr><td><strong>{escape(title)}</strong></td>"
+            f"<td>{total}</td><td>{counts['Supported']}</td>"
+            f"<td>{counts['Partial']}</td><td>{counts['Missing']}</td></tr>"
+        )
+
+    export_rows = []
+    for api_name, (target, current, cases, note) in EXPORT_COVERAGE.items():
+        export_rows.append(
+            f"<tr><td><code>{escape(api_name)}</code></td>"
+            f"<td>{escape(target)}</td><td><strong>{escape(current)}</strong></td>"
+            f"<td>{coverage_case_links(cases)}</td><td>{escape(note)}</td></tr>"
+        )
+
+    capability_rows = []
+    qualification_counts = {"At target": 0, "Below target": 0, "Gap": 0}
+    qualification_group_counts = {}
+    for group, capability, target, current, cases, note in CAPABILITY_COVERAGE:
+        target_level = qualification_number(target)
+        current_level = qualification_number(current)
+        if current == "GAP":
+            qualification_status = "Gap"
+        elif current_level is not None and target_level is not None and current_level >= target_level:
+            qualification_status = "At target"
+        else:
+            qualification_status = "Below target"
+
+        qualification_counts[qualification_status] += 1
+        group_counts = qualification_group_counts.setdefault(
+            group, {"At target": 0, "Below target": 0, "Gap": 0}
+        )
+        group_counts[qualification_status] += 1
+
+        capability_rows.append(
+            f"<tr><td>{escape(group)}</td><td><code>{escape(capability)}</code></td>"
+            f"<td>{escape(target)}</td><td><strong>{escape(current)}</strong></td>"
+            f"<td>{coverage_status_badge(qualification_status)}</td>"
+            f"<td>{coverage_case_links(cases)}</td><td>{escape(note)}</td></tr>"
+        )
+
+    qualification_summary_rows = []
+    for group, counts in qualification_group_counts.items():
+        total = sum(counts.values())
+        qualification_summary_rows.append(
+            f"<tr><td><strong>{escape(group)}</strong></td>"
+            f"<td>{total}</td><td>{counts['At target']}</td>"
+            f"<td>{counts['Below target']}</td><td>{counts['Gap']}</td></tr>"
+        )
+
+    gap_exports = sum(1 for row in EXPORT_COVERAGE.values() if row[1] == "GAP")
+    gap_capabilities = qualification_counts["Gap"]
+    coverage_body = render_template(
+        "coverage.html",
+        capability_total=escape(len(SOLIDCRAFT_CAPABILITIES)),
+        forge_supported=escape(forge_status_counts["Supported"]),
+        forge_partial=escape(forge_status_counts["Partial"]),
+        forge_missing=escape(forge_status_counts["Missing"]),
+        primitive_total=escape(sum(primitive_counts.values())),
+        primitive_supported=escape(primitive_counts["Supported"]),
+        primitive_partial=escape(primitive_counts["Partial"]),
+        primitive_missing=escape(primitive_counts["Missing"]),
+        area_summary_rows="".join(area_summary_rows),
+        qualification_total=escape(sum(qualification_counts.values())),
+        qualification_at_target=escape(qualification_counts["At target"]),
+        qualification_below_target=escape(qualification_counts["Below target"]),
+        qualification_gap=escape(qualification_counts["Gap"]),
+        qualification_summary_rows="".join(qualification_summary_rows),
+        gap_exports=escape(gap_exports),
+        gap_capabilities=escape(gap_capabilities),
+        solidcraft_rows="".join(solidcraft_rows),
+        export_rows="".join(export_rows),
+        capability_rows="".join(capability_rows),
+    )
+    (coverage_root / "index.html").write_text(
+        page(
+            "Qualification coverage",
+            coverage_body,
+            stylesheet="../../style.css",
+            home="../../",
+            cheatsheet="../../cheatsheet/",
+        ),
+        encoding="utf-8",
+    )
+
+    joint_anatomy_root = qualification_root / "joint-anatomy"
+    joint_anatomy_root.mkdir(exist_ok=True)
+    joint_diagrams = (
+        "solidcraft-joint-anatomy",
+        "solidcraft-joint-references",
+        "corner-bracket-goal",
+        "corner-bracket-depth",
+        "corner-bracket-local-axes",
+        "corner-bracket-front-corners",
+    )
+    for diagram in joint_diagrams:
+        plan = ROOT / "qualification" / "diagrams" / f"{diagram}.cadcraft.json"
+        if not plan.is_file():
+            raise ValueError(f"CadCraft concept source missing: {plan}")
+        shutil.copyfile(plan, joint_anatomy_root / plan.name)
+
+    joint_anatomy_body = render_template(
+        "joint-anatomy.html",
+        source_sha=escape(sha),
+        solidcraft_version=escape(TESTED_SOLIDCRAFT_VERSION),
+        diagram_raw_base=escape(
+            build_raw_url(build_scope, "qualification/diagrams")
+        ),
+        diagram_blob_base=escape(
+            build_blob_url(build_scope, "qualification/diagrams")
+        ),
+    )
+    (joint_anatomy_root / "index.html").write_text(
+        page(
+            "SolidCraft joint anatomy",
+            joint_anatomy_body,
+            stylesheet="../../style.css",
+            home="../../",
+            cheatsheet="../../cheatsheet/",
+        ),
+        encoding="utf-8",
+    )
+
+    (qualification_root / "index.html").write_text(
+        page(
+            "Qualification",
+            qualification_index,
+            stylesheet="../style.css",
+            home="../",
+            cheatsheet="../cheatsheet/",
+        ),
+        encoding="utf-8",
+    )
+    (qualification_root / "manifest.json").write_text(
+        json.dumps(
+            {
+                "library_commit": sha,
+                "qualification_commit": evidence_sha,
+                "forge_version": forge_version,
+                "solidcraft_version": (
+                    metadata.get("solidcraft_version")
+                    if verified else TESTED_SOLIDCRAFT_VERSION
+                ),
+                "qualified_at": qualified_at,
+                "native_verified": verified,
+                "cases": qualification_manifest,
+            },
+            indent=2,
+        ) + "\n",
+        encoding="utf-8",
+    )
 
     sections = []
     for heading, items in CHEATSHEET:
@@ -1861,7 +2612,7 @@ Cheatsheet fragments describe API calls; a fragment alone is not a complete runn
     home = f"""<main class="wrap"><section class="hero"><p class="eyebrow">lib.py.solidcraft.forge / Python Forge</p>
 <h1>SCPF examples & API cheatsheet</h1><p class="meta">Tested SolidCraft version: {TESTED_SOLIDCRAFT_VERSION} · older releases rejected, newer releases warned</p><p>Small, readable Python examples to verify the SCPF command compiler.
 This is <strong>not</strong> the SolidCraft CAD model gallery.</p>
-<div class="actions"><a class="button primary" href="guide/">Read the API Guide →</a>\n<a class="button" href="reference/">API Reference →</a>\n<a class="button" href="cheatsheet/">Quick cheatsheet →</a>\n<a class="button" href="{CAD_SITE}">See real CAD models →</a></div></section>
+<div class="actions"><a class="button primary" href="guide/">Read the API Guide →</a>\n<a class="button" href="reference/">API Reference →</a>\n<a class="button" href="qualification/">Qualification →</a>\n<a class="button" href="cheatsheet/">Quick cheatsheet →</a>\n<a class="button" href="{CAD_SITE}">See real CAD models →</a></div></section>
 <section class="section-heading"><h2>Small public examples</h2><p>Each source produces its own native-command JSON.
 Source and commands are regenerated together by CI.</p></section>
 <div class="cards">{"".join(cards)}</div>
@@ -1888,6 +2639,10 @@ if __name__ == "__main__":
     parser.add_argument("--native", type=Path, help="Source-matched native screenshot directory")
     parser.add_argument("--diagram-root", type=Path, help="Generated qualification setup diagrams")
     parser.add_argument("--references", type=Path, help="Source-matched qualification reference evidence")
+    parser.add_argument(
+        "--build-scope",
+        help="Generated build branch scope, for example main or pr/326",
+    )
     options = parser.parse_args()
     build(
         options.out,
@@ -1896,5 +2651,6 @@ if __name__ == "__main__":
         diagram_root=options.diagram_root,
         reference_evidence_root=options.references,
         evidence_sha=options.evidence_sha,
+        build_scope=options.build_scope,
     )
     print(f"Built independent SCPF library site: {options.out}")
