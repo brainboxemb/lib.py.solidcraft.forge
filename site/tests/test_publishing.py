@@ -142,6 +142,18 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertNotIn("peaceiris/actions-gh-pages", workflow)
         self.assertNotIn("git push origin", workflow)
 
+    def test_reused_site_evidence_tracks_build_source_commit(self):
+        preview = (ROOT / ".github/workflows/preview.yml").read_text()
+        site = (ROOT / ".github/workflows/site.yml").read_text()
+
+        self.assertIn('EVIDENCE_SHA=', preview)
+        self.assertIn('--evidence-sha="$EVIDENCE_SHA"', preview)
+        self.assertIn('output/resolved/build.json', preview)
+
+        self.assertIn('EVIDENCE_SHA=', site)
+        self.assertIn('--evidence-sha="$EVIDENCE_SHA"', site)
+        self.assertIn('generated-build/main/build.json', site)
+
     def test_site_only_reads_build_main_not_actions_history(self):
         workflow = (ROOT / ".github/workflows/site.yml").read_text()
         self.assertIn("ref: build", workflow)
