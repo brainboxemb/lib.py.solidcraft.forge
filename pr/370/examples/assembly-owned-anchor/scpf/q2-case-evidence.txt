@@ -1,0 +1,10 @@
+$ /usr/local/bin/python -m unittest discover -s /workspace/examples/assembly-owned-anchor/tests -p test_contract.py -k test_named_assembly_anchor_resolves_to_native_corner_relationship -v
+
+test_named_assembly_anchor_resolves_to_native_corner_relationship (test_contract.AssemblyOwnedAnchorCommandTests.test_named_assembly_anchor_resolves_to_native_corner_relationship) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+OK
+
+matched_tests=1 status=PASS

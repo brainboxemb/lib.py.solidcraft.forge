@@ -1,0 +1,126 @@
+[
+  {
+    "display_value": 40.0,
+    "name": "d1_Panel_width",
+    "unit": "mm",
+    "value": 40.0
+  },
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "Panel",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Panel"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Panel"
+    ],
+    "feature": 3,
+    "ms": 2.872491,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "display_value": 60.0,
+    "name": "d2_Panel_2_width",
+    "unit": "mm",
+    "value": 60.0
+  },
+  {
+    "component": 4,
+    "grounded": false,
+    "name": "Panel 2",
+    "occurrence": 5,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Panel",
+      "Panel_2"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Panel_2"
+    ],
+    "feature": 6,
+    "ms": 1.445118,
+    "name": "Box2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "display_value": 80.0,
+    "name": "shared_width",
+    "unit": "mm",
+    "value": 80.0
+  },
+  {
+    "component": 7,
+    "grounded": false,
+    "name": "Panel 3",
+    "occurrence": 8,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Panel",
+      "Panel_2",
+      "Panel_3"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Panel_3"
+    ],
+    "feature": 9,
+    "ms": 1.453232,
+    "name": "Box3",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 7,
+    "occurrence": 10
+  },
+  {
+    "component": 11,
+    "grounded": false,
+    "name": "Panel 4",
+    "occurrence": 12,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Panel",
+      "Panel_2",
+      "Panel_3",
+      "Panel_4"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Panel_4"
+    ],
+    "feature": 13,
+    "ms": 1.501764,
+    "name": "Box4",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  }
+]

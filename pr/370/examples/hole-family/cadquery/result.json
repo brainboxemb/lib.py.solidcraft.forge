@@ -1,0 +1,133 @@
+{
+  "case": "hole-family",
+  "implementation": "cadquery",
+  "status": "pass",
+  "source": "examples/hole-family/cadquery/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      -60.0,
+      -20.0,
+      0.0
+    ],
+    "max": [
+      60.0,
+      20.0,
+      12.0
+    ]
+  },
+  "expected": {
+    "min": [
+      -60.0,
+      -20.0,
+      0.0
+    ],
+    "max": [
+      60.0,
+      20.0,
+      12.0
+    ]
+  },
+  "max_delta_mm": 0.0,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          -60.0,
+          -20.0,
+          0.0
+        ],
+        "max": [
+          60.0,
+          20.0,
+          12.0
+        ]
+      },
+      "expected": {
+        "min": [
+          -60.0,
+          -20.0,
+          0.0
+        ],
+        "max": [
+          60.0,
+          20.0,
+          12.0
+        ]
+      },
+      "max_delta_mm": 0.0,
+      "tolerance_mm": 0.5
+    },
+    "watertight": {
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    "surface_distance_probes": {
+      "status": "pass",
+      "probes": [
+        {
+          "label": "simple bore center",
+          "point": [
+            -45.0,
+            0.0,
+            6.0
+          ],
+          "actual_mm": 2.9990662664750465,
+          "expected_mm": 3.0,
+          "delta_mm": 0.0009337335249535172,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "counterbore recess wall",
+          "point": [
+            -10.5,
+            0.0,
+            10.0
+          ],
+          "actual_mm": 1.4995337462148943,
+          "expected_mm": 1.5,
+          "delta_mm": 0.0004662537851056747,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "countersink 90 degree cone",
+          "point": [
+            18.5,
+            0.0,
+            10.5
+          ],
+          "actual_mm": 0.703588398682677,
+          "expected_mm": 0.70710678,
+          "delta_mm": 0.0035183813173230716,
+          "tolerance_mm": 0.35,
+          "status": "pass"
+        },
+        {
+          "label": "M6 tap-drill core",
+          "point": [
+            45.0,
+            0.0,
+            6.0
+          ],
+          "actual_mm": 2.499221614622642,
+          "expected_mm": 2.5,
+          "delta_mm": 0.0007783853773579708,
+          "tolerance_mm": 0.35,
+          "status": "pass"
+        }
+      ]
+    }
+  },
+  "bounds_sufficient": false,
+  "bounds_reason": "All four Hole-family features leave the outer plate envelope unchanged. 3D probes are required for the simple bore, counterbore recess, countersink cone and threaded tap-drill envelope; native history separately proves thread metadata and modeled-thread intent."
+}

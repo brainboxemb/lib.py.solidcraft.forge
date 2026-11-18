@@ -1,0 +1,118 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 21061.23714959148,
+      "bbox": {
+        "max": [
+          50.0,
+          50.0,
+          26.0
+        ],
+        "min": [
+          -50.0,
+          -50.0,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        -4.5786055726728614e-10,
+        -3.642717553804404e-10,
+        8.074517468850846
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 6,
+      "face_types": {
+        "cylinder": 2,
+        "plane": 3
+      },
+      "faces": 5,
+      "kernel": {
+        "edges": 6,
+        "faces": 5,
+        "shells": 1,
+        "vertices": 4
+      },
+      "mass_g": 132.70011970446492,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "RoundTopSketch",
+      "notes": [],
+      "vertices": 4,
+      "volume_mm3": 102868.30984842242
+    }
+  ],
+  "body_count": 1,
+  "params": [],
+  "sketches": [
+    {
+      "curves": 1,
+      "dof": 1,
+      "id": 1,
+      "name": "Disc",
+      "profiles": 1,
+      "status": "solved",
+      "visible": false
+    },
+    {
+      "curves": 1,
+      "dof": 1,
+      "id": 3,
+      "name": "Hub",
+      "profiles": 1,
+      "status": "solved",
+      "visible": false
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 0.21065499999999998,
+      "name": "Disc",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 5.822245000000001,
+      "name": "Extrude1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 0.092042,
+      "name": "Hub",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 4,
+      "ms": 28.81898,
+      "name": "Hub",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 21061.23714959148,
+    "edges": 6,
+    "faces": 5,
+    "mass_g": 132.70011970446492,
+    "open_bodies_skipped": 0,
+    "vertices": 4,
+    "volume_mm3": 102868.30984842242
+  }
+}

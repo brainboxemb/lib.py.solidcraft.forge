@@ -1,0 +1,62 @@
+[
+  {
+    "component": 1,
+    "grounded": false,
+    "name": "PanelGroup",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "component": 3,
+    "grounded": true,
+    "name": "Panel",
+    "occurrence": 4,
+    "parent": 1
+  },
+  {
+    "bodies": [
+      "Panel"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Panel"
+    ],
+    "feature": 5,
+    "ms": 2.884634,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 3,
+    "occurrence": 6
+  },
+  {
+    "component": 7,
+    "grounded": false,
+    "name": "Frame",
+    "occurrence": 8,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Panel",
+      "Frame"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Frame"
+    ],
+    "feature": 9,
+    "ms": 1.507434,
+    "name": "Box2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  }
+]
