@@ -14,7 +14,7 @@ permissions:
 
 concurrency:
   group: full-safety-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/heads/qualification/') }}
 
 jobs:
   full:

@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-from importlib.metadata import version as package_version
 from pathlib import Path
 import subprocess
 import sys
@@ -15,6 +14,7 @@ if str(ROOT) not in sys.path:
 
 from qualification.cases import supported_case_slugs
 from qualification.case_selection import parse_case_selection
+from qualification.project_metadata import scpf_version
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 
 
@@ -189,7 +189,7 @@ def assemble_build(
                 else []
             ),
             "--forge-version",
-            package_version("scpf"),
+            scpf_version(),
             "--solidcraft-version",
             TESTED_SOLIDCRAFT_VERSION,
             "--workflow-run-id",

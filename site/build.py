@@ -6,7 +6,6 @@ This site deliberately contains only tiny fixtures and the SCPF cheatsheet.
 """
 import argparse
 import html
-from importlib.metadata import version as package_version
 import json
 import os
 from pathlib import Path
@@ -53,6 +52,7 @@ try:
     from qualification.expectations import EXPECTED_VISUAL_BOXES
     from qualification.geometry_contracts import proof_contract
     from qualification.case_evidence import evidence_for
+    from qualification.project_metadata import scpf_version
 finally:
     sys.path.pop(0)
 
@@ -1301,7 +1301,7 @@ def build(
     if build_manifest_data:
         toolchain = build_manifest_data.get("toolchain") or {}
         metadata = {
-            "forge_version": toolchain.get("forge_version") or package_version("scpf"),
+            "forge_version": toolchain.get("forge_version") or scpf_version(),
             "solidcraft_version": toolchain.get("solidcraft_version") or TESTED_SOLIDCRAFT_VERSION,
             "qualified_at": build_manifest_data.get("generated_at") or "mixed per-case evidence",
         }
@@ -1331,7 +1331,7 @@ def build(
             raise ValueError("Reference renders do not match the qualification evidence commit")
 
     forge_version = (
-        metadata["forge_version"] if verified else package_version("scpf")
+        metadata["forge_version"] if verified else scpf_version()
     )
     qualified_at = (
         metadata["qualified_at"] if verified else "not run in this site build"
