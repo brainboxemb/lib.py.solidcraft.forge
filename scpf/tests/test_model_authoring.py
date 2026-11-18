@@ -13,6 +13,30 @@ from scpf import Sketch
 ROOT = Path(__file__).resolve().parents[2]
 
 class ModelAuthoring(unittest.TestCase):
+    def test_every_public_core_api_name_is_available_to_model_scripts(self):
+        import scpf
+        from scpf import core
+        from scpf import runner
+
+        source = runner.__file__
+        runner_text = Path(source).read_text(encoding="utf-8")
+        public_core_names = {
+            name
+            for name in scpf.__all__
+            if hasattr(core, name)
+        }
+        missing = sorted(
+            name
+            for name in public_core_names
+            if f'"{name}": core.{name}' not in runner_text
+        )
+        self.assertEqual(
+            missing,
+            [],
+            "public core API missing from run_script authoring context",
+        )
+
+
     def test_model_imports_shared_components_when_run_from_nested_directory(self):
         """The CLI accepts 'model.py' while cwd is models/<name>/scpf."""
         with tempfile.TemporaryDirectory() as directory:
