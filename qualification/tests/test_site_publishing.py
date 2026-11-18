@@ -62,6 +62,9 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertIn("publish_branch: preview-output", workflow)
         self.assertIn("ref: qualified-output", workflow)
         self.assertIn("ref: gh-pages", workflow)
+        self.assertIn("group: scpf-pages-publish", workflow)
+        self.assertIn("name: scpf-publish-site-${{ github.sha }}", workflow)
+        self.assertIn("actions/download-artifact@v4", workflow)
 
         gate = workflow.index("- name: Enforce qualification status")
         stable_stage = workflow.index("- name: Stage stable qualified output")
@@ -93,6 +96,8 @@ class SitePublishingContractTests(unittest.TestCase):
 
         self.assertIn("publish_branch: preview-output", workflow)
         self.assertIn("ref: preview-output", workflow)
+        self.assertIn("group: scpf-pages-publish", workflow)
+        self.assertIn("actions/download-artifact@v4", workflow)
         self.assertIn(
             "ref: ${{ github.event.pull_request.head.sha }}",
             workflow,
