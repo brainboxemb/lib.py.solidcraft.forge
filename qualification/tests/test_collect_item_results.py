@@ -101,6 +101,22 @@ class CollectItemResultsTests(unittest.TestCase):
                 ),
                 "case\tstatus\nsimple-box\tPASS\n",
             )
+            self.assertEqual(
+                json.loads(
+                    (out / "qualification/native-validation.json").read_text(
+                        encoding="utf-8"
+                    )
+                )["simple-box"]["q4"],
+                "pass",
+            )
+            self.assertEqual(
+                json.loads(
+                    (out / "qualification/visual-validation.json").read_text(
+                        encoding="utf-8"
+                    )
+                )["simple-box"]["status"],
+                "pass",
+            )
 
     def test_collect_uses_existing_item_output_without_running_cad(self):
         with TemporaryDirectory() as temp:
