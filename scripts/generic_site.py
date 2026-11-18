@@ -22,10 +22,10 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from qualification.cases import (
-    CASE_BY_SLUG,
     reference_implementations_for,
     supported_case_slugs,
 )
+from qualification.case_selection import CASE_BY_SLUG
 from qualification.project_metadata import scpf_version
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 
