@@ -50,8 +50,7 @@ jobs:
       - name: Reuse existing immutable image
         id: existing
         run: |
-          if docker manifest inspect "${{ steps.meta.outputs.reference }}" >/dev/null 2>&1; then
-            docker pull "${{ steps.meta.outputs.reference }}"
+          if timeout 30s docker pull "${{ steps.meta.outputs.reference }}"; then
             docker tag \
               "${{ steps.meta.outputs.reference }}" \
               "qualification-local:${{ steps.meta.outputs.image_id }}"
