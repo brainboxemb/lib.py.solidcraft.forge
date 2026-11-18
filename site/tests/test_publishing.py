@@ -144,6 +144,7 @@ class SitePublishingContractTests(unittest.TestCase):
     def test_forge_workflow_is_thin_and_delegates_repository_work(self):
         workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
         pipeline = (ROOT / "scripts/forge_pipeline.py").read_text()
+        publication = (ROOT / "scripts/generic_publication.py").read_text()
         release = (ROOT / "scripts/release/publish_release.py").read_text()
 
         for required in (
@@ -156,29 +157,23 @@ class SitePublishingContractTests(unittest.TestCase):
             with self.subTest(required=required):
                 self.assertIn(required, workflow)
 
-        for required in (
-            "scripts/ci_preflight.py",
-            "scripts/verification_gate.py",
-            '"promote-overlay"',
-            "publish_generated.publish(",
-            "site/build.py",
-            "site/test_site.py",
-        ):
-            with self.subTest(required=required):
-                self.assertIn(required, pipeline)
-
+        self.assertIn("generic_publication.execute(", pipeline)
+        self.assertIn("qualification/item_gate.py", pipeline)
+        self.assertIn("\"publish\"", publication)
+        self.assertIn("\"build\"", publication)
+        self.assertIn("\"pages\"", publication)
+        self.assertIn("site/build.py", publication)
+        self.assertIn("site/test_site.py", publication)
         self.assertIn("validate(", release)
-        self.assertIn("GH_TOKEN: ${{ github.token }}", workflow)
+        self.assertIn("GH_TOKEN:", workflow)
         self.assertNotIn("gh workflow run", workflow)
         self.assertNotIn("peaceiris/actions-gh-pages", workflow)
         self.assertNotIn("setup_solidcraft.py", workflow)
         self.assertNotIn("setup_references.py", workflow)
-
-        # Pipeline details must stay out of Actions YAML.
         self.assertNotIn("scripts/verification_gate.py", workflow)
         self.assertNotIn("site/build.py", workflow)
         self.assertNotIn("site/test_site.py", workflow)
-        self.assertNotIn("scripts/generated_output.py promote-overlay", workflow)
+        self.assertNotIn("cad-ci build", workflow)
 
     def test_forge_workflow_reuses_image_and_pipeline_owns_one_case_smoke(self):
         workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
@@ -193,11 +188,13 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertNotIn("qualification/case_runner.py simple-box", workflow)
 
     def test_reused_site_evidence_tracks_build_source_commit(self):
-        pipeline = (ROOT / "scripts/forge_pipeline.py").read_text()
-        self.assertIn("evidence_sha", pipeline)
-        self.assertIn("f\"--evidence-sha={evidence_sha}\"", pipeline)
-        self.assertIn('"build.json"', pipeline)
-        self.assertIn('"main"', pipeline)
+        publication = (ROOT / "scripts/generic_publication.py").read_text()
+        adapter = (ROOT / "scripts/generic_site.py").read_text()
+        self.assertIn("source_commit", publication)
+        self.assertIn("build_commit", publication)
+        self.assertIn("\"build.json\"", adapter)
+        self.assertIn("artifact_path", adapter)
+        self.assertIn("command_path", adapter)
 
     def test_forge_recovery_trigger_is_repository_native_and_release_independent(self):
         workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
@@ -206,23 +203,23 @@ class SitePublishingContractTests(unittest.TestCase):
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 
         self.assertTrue(trigger.strip())
-        self.assertIn('.github/workflows/forge.trigger', planner)
-        self.assertIn('release": False', planner)
-        self.assertIn("main -> qualification -> build/main -> Pages", agents)
+        self.assertIn(".github/workflows/forge.trigger", planner)
+        self.assertIn("\"release\": False", planner)
+        self.assertIn("first generic baseline", agents)
         self.assertIn("Forge", agents)
-        self.assertIn(".github/workflows/forge.trigger", agents)
 
     def test_generated_branch_writes_use_retrying_publisher(self):
         workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
         pipeline = (ROOT / "scripts/forge_pipeline.py").read_text()
-        for source in (workflow, pipeline):
+        publication = (ROOT / "scripts/generic_publication.py").read_text()
+        for source in (workflow, pipeline, publication):
             self.assertNotIn("git push origin HEAD:build", source)
             self.assertNotIn("git push origin HEAD:gh-pages", source)
             self.assertNotIn("git push --force", source)
-        self.assertGreaterEqual(
-            pipeline.count("publish_generated.publish("),
-            5,
-        )
+        self.assertIn("\"publish\"", publication)
+        self.assertIn("\"build-cleanup\"", publication)
+        self.assertIn("\"pages-cleanup\"", publication)
+        self.assertNotIn("publish_generated.publish(", pipeline)
 
     def test_site_evidence_reuse_uses_same_risk_scope(self):
         selector = load_reuse_selector()
@@ -237,11 +234,12 @@ class SitePublishingContractTests(unittest.TestCase):
 
     def test_agent_file_points_to_normative_design(self):
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        design = (ROOT / "docs/11-generated-output.md").read_text(encoding="utf-8")
         self.assertIn("docs/11-generated-output.md", agents)
-        self.assertIn("schema-v2", agents)
-        self.assertIn("scripts/publish_generated.py", agents)
-        self.assertIn("immutable generated-branch commit SHA", agents)
-
+        self.assertIn("tool.cad.ci", agents)
+        self.assertIn("generic publisher", agents)
+        self.assertIn("schema-1", design)
+        self.assertIn("tool.cad.ci", design)
 
 if __name__ == "__main__":
     unittest.main()
