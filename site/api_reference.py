@@ -302,7 +302,7 @@ GROUP_REFERENCES = (
         "geometry-constructors",
         "Geometry constructors",
         (
-            "Box", "Cylinder", "Sphere",
+            "Box", "Cylinder", "Cone", "Sphere",
             "Rectangle2D", "RoundedRectangle2D", "Circle2D", "Polygon2D",
         ),
         summary="Direct 3D primitives and 2D profile constructors.",
