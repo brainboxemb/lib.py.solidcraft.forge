@@ -28,6 +28,7 @@ RUN apt-get update \
         libdbus-1-3 \
         libegl1 \
         libfontconfig1 \
+        libglib2.0-0 \
         libgl1 \
         libice6 \
         libsm6 \
