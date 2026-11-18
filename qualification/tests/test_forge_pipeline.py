@@ -85,7 +85,10 @@ class ForgePipelineTests(unittest.TestCase):
             "run_tool_cad_ci_case",
         ) as case_item, patch.object(
             forge_pipeline,
-            "docker_python",
+            "run_tool_cad_ci_evidence",
+        ) as evidence_item, patch.object(
+            forge_pipeline,
+            "python",
         ) as item_gate:
             forge_pipeline.qualify(ns)
 
@@ -93,7 +96,8 @@ class ForgePipelineTests(unittest.TestCase):
             "simple-box",
             ns.image,
         )
-        item_gate.assert_called_once_with(ns.image, *command)
+        evidence_item.assert_called_once_with("reference-suite", ns.image)
+        item_gate.assert_called_once_with(*command)
         self.assertEqual(command[0], "qualification/item_gate.py")
         self.assertNotIn("scripts/verification_gate.py", command)
 
@@ -139,6 +143,7 @@ class ForgePipelineTests(unittest.TestCase):
             ns.output_root / "tool-cad-ci-plan.json",
             ns.gate,
             ns.cases,
+            ns.reference_smoke,
         )
         preflight.assert_called_once_with(
             ns.source_sha,
