@@ -64,26 +64,26 @@ class ItemGateTests(unittest.TestCase):
                     workflow_run_id="42",
                 )
 
-        self.assertEqual(result, ("simple-box",))
-        collect.assert_called_once_with(
-            build_root=build_root,
-            out=root / "gate",
-            cases=("simple-box",),
-            source_sha="a" * 40,
-        )
-        self.assertEqual(
-            (root / "gate/references/evidence.txt").read_text(
-                encoding="utf-8"
-            ),
-            "ok\n",
-        )
-        self.assertEqual(
-            (root / "gate/diagrams/evidence.txt").read_text(
-                encoding="utf-8"
-            ),
-            "ok\n",
-        )
-        assemble.assert_called_once()
+            self.assertEqual(result, ("simple-box",))
+            collect.assert_called_once_with(
+                build_root=build_root,
+                out=root / "gate",
+                cases=("simple-box",),
+                source_sha="a" * 40,
+            )
+            self.assertEqual(
+                (root / "gate/references/evidence.txt").read_text(
+                    encoding="utf-8"
+                ),
+                "ok\n",
+            )
+            self.assertEqual(
+                (root / "gate/diagrams/evidence.txt").read_text(
+                    encoding="utf-8"
+                ),
+                "ok\n",
+            )
+            assemble.assert_called_once()
 
     def test_affected_native_gate_without_reference_policy_needs_no_evidence_item(self):
         with TemporaryDirectory() as temp:
