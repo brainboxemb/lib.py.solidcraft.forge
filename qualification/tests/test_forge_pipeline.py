@@ -85,7 +85,10 @@ class ForgePipelineTests(unittest.TestCase):
             "run_tool_cad_ci_case",
         ) as case_item, patch.object(
             forge_pipeline,
-            "docker_python",
+            "run_tool_cad_ci_evidence",
+        ) as evidence_item, patch.object(
+            forge_pipeline,
+            "python",
         ) as item_gate:
             forge_pipeline.qualify(ns)
 
@@ -93,7 +96,8 @@ class ForgePipelineTests(unittest.TestCase):
             "simple-box",
             ns.image,
         )
-        item_gate.assert_called_once_with(ns.image, *command)
+        evidence_item.assert_called_once_with("reference-suite", ns.image)
+        item_gate.assert_called_once_with(*command)
         self.assertEqual(command[0], "qualification/item_gate.py")
         self.assertNotIn("scripts/verification_gate.py", command)
 
@@ -102,6 +106,7 @@ class ForgePipelineTests(unittest.TestCase):
             gate="affected-q1-q2",
             required_level="affected-q1-q2",
             image="",
+            reference_smoke=False,
         )
         command = forge_pipeline.qualification_args(ns)
         with patch.object(
@@ -115,6 +120,28 @@ class ForgePipelineTests(unittest.TestCase):
 
         case_item.assert_not_called()
         legacy_gate.assert_called_once_with(*command)
+
+    def test_reference_item_can_run_for_cheap_gate(self):
+        ns = args(
+            gate="affected-q1-q2",
+            required_level="affected-q1-q2",
+            cases="simple-box",
+            reference_smoke=True,
+        )
+        with patch.object(
+            forge_pipeline,
+            "run_tool_cad_ci_case",
+        ) as case_item, patch.object(
+            forge_pipeline,
+            "run_tool_cad_ci_evidence",
+        ) as evidence_item, patch.object(
+            forge_pipeline,
+            "docker_python",
+        ):
+            forge_pipeline.qualify(ns)
+
+        case_item.assert_not_called()
+        evidence_item.assert_called_once_with("reference-suite", ns.image)
 
     def test_execute_pr_owns_full_repository_sequence(self):
         ns = args(pipeline_smoke=True, contracts=True)
@@ -139,6 +166,7 @@ class ForgePipelineTests(unittest.TestCase):
             ns.output_root / "tool-cad-ci-plan.json",
             ns.gate,
             ns.cases,
+            ns.reference_smoke,
         )
         preflight.assert_called_once_with(
             ns.source_sha,
@@ -187,6 +215,7 @@ class ForgePipelineTests(unittest.TestCase):
             ns.output_root / "tool-cad-ci-plan.json",
             ns.gate,
             ns.cases,
+            ns.reference_smoke,
         )
         stable.assert_called_once_with(ns)
         site.assert_called_once_with(

@@ -90,7 +90,23 @@ def selected_tool_cases(gate: str, cases: str) -> tuple[str, ...]:
     return tuple(slug for slug in supported if slug in requested)
 
 
-def run_tool_cad_ci_layers(out: Path, gate: str, cases: str) -> None:
+def evidence_items(gate: str, reference_smoke: bool) -> tuple[str, ...]:
+    """Return non-example generated items required by Forge's gate policy."""
+
+    result: list[str] = []
+    if reference_smoke or gate == "full-q1-q6":
+        result.append("reference-suite")
+    if gate == "full-q1-q6":
+        result.append("qualification-diagrams")
+    return tuple(result)
+
+
+def run_tool_cad_ci_layers(
+    out: Path,
+    gate: str,
+    cases: str,
+    reference_smoke: bool,
+) -> None:
     """Run selected cheap Forge test layers through the pinned generic tool.
 
     Forge has already decided the gate and affected cases. The generic runner
@@ -104,7 +120,11 @@ def run_tool_cad_ci_layers(out: Path, gate: str, cases: str) -> None:
     seen: set[str] = set()
 
     if gate not in {"preflight", "regenerate-derived"}:
-        items = ("library-tests", *selected)
+        items = (
+            "library-tests",
+            *selected,
+            *evidence_items(gate, reference_smoke),
+        )
         for item in items:
             plan = json.loads(
                 subprocess.check_output(
@@ -181,6 +201,27 @@ def run_tool_cad_ci_case(item: str, image: str) -> None:
             item,
             "--from",
             "native",
+        ],
+        env=env,
+    )
+
+
+def run_tool_cad_ci_evidence(item: str, image: str) -> None:
+    """Run one Forge-owned generated-evidence item in the selected image."""
+
+    if not image:
+        raise ValueError(f"{item} requires the qualification image")
+    env = tool_cad_ci_env()
+    env["FORGE_QUALIFICATION_IMAGE"] = image
+    run(
+        [
+            sys.executable,
+            str(tool_cad_ci_path()),
+            "run",
+            "--repo",
+            str(ROOT),
+            "--item",
+            item,
         ],
         env=env,
     )
@@ -309,13 +350,21 @@ def qualify(args: argparse.Namespace) -> None:
         return
 
     selected = selected_tool_cases(args.gate, args.cases)
-    if args.gate in {"affected-q1-q6", "full-q1-q6"}:
+    native_gate = args.gate in {"affected-q1-q6", "full-q1-q6"}
+    if native_gate:
         for slug in selected:
             run_tool_cad_ci_case(slug, args.image)
 
-        # The item gate only collects completed item output and adds Forge-owned
-        # reference/diagram evidence. It does not rerun the native case stages.
-        docker_python(args.image, *item_gate_args(args))
+    # Reference evidence can be required even when the selected Forge cases only
+    # need the cheap integration gate. Its generic item therefore follows the
+    # existing reference_smoke policy independently from native case execution.
+    for item in evidence_items(args.gate, args.reference_smoke):
+        run_tool_cad_ci_evidence(item, args.image)
+
+    if native_gate:
+        # Native/reference/diagram work is already complete. The item gate now
+        # only translates generic item output for the current site/build adapter.
+        python(*item_gate_args(args))
         return
 
     command = qualification_args(args)
@@ -529,6 +578,7 @@ def execute(args: argparse.Namespace) -> str | None:
         args.output_root / "tool-cad-ci-plan.json",
         args.gate,
         args.cases,
+        args.reference_smoke,
     )
     preflight(args.source_sha, args.output_root / "preflight-site")
 
