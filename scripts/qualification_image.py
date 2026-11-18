@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Resolve the immutable qualification-container identity."""
+"""Calculate immutable qualification-image metadata from versioned inputs."""
 
 from __future__ import annotations
 
@@ -27,12 +27,6 @@ def load_toolchain() -> dict:
     return data
 
 
-def tested_solidcraft_version() -> str:
-    namespace: dict[str, object] = {}
-    exec(VERSION_FILE.read_text(encoding="utf-8"), namespace)
-    return str(namespace["TESTED_SOLIDCRAFT_VERSION"])
-
-
 def image_id() -> str:
     digest = hashlib.sha256()
     for path in (DOCKERFILE, TOOLCHAIN, VERSION_FILE):
@@ -54,22 +48,26 @@ def metadata(repository: str) -> dict[str, str]:
         raise ValueError(
             "missing cadcraft toolchain fields: " + ", ".join(missing_cadcraft)
         )
-
     match = re.search(r"python:(\d+\.\d+)", data["python_image"])
     if match is None:
         raise ValueError(
             "python_image must contain a major.minor Python tag"
         )
     python_version = match.group(1)
-    solidcraft = tested_solidcraft_version()
+
+    namespace: dict[str, object] = {}
+    exec(VERSION_FILE.read_text(encoding="utf-8"), namespace)
+    solidcraft = str(namespace["TESTED_SOLIDCRAFT_VERSION"])
     digest = image_id()
     image = f"ghcr.io/{repository.lower()}/qualification"
-
     return {
         "image": image,
         "image_id": digest,
+        "tag": f"toolchain-{digest}",
         "reference": f"{image}:toolchain-{digest}",
-        "alias": f"{image}:sc-{solidcraft}-py-{python_version}",
+        "alias": (
+            f"{image}:sc-{solidcraft}-py-{python_version}"
+        ),
         "python": python_version,
         "python_image": data["python_image"],
         "solidcraft": solidcraft,

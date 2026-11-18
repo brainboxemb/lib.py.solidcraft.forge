@@ -1,37 +1,33 @@
-name: SCPF PR preview
+name: SCPF PR verification and preview
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened, ready_for_review, closed]
     paths:
       - "scpf/**"
       - "examples/**"
       - "qualification/**"
       - "site/**"
+      - "scripts/**"
       - "docs/**"
+      - ".github/workflows/**"
+      - "AGENTS.md"
       - "README.md"
       - "CHANGELOG.md"
-      - "scripts/release/**"
-      - "scripts/generated_output.py"
-      - "scripts/ci_preflight.py"
-      - ".github/workflows/preview.yml"
-      - ".github/workflows/release.yml"
-      - ".github/workflows/scpf.yml"
-      - ".github/workflows/scpf-affected.yml"
 
 permissions:
   contents: write
-
-concurrency:
-  group: scpf-preview-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  actions: write
 
 jobs:
-  preview:
-    if: github.event.action != 'closed'
+  merge-gate:
+    if: github.event.action != 'closed' && !startsWith(github.head_ref, 'qualification/')
     runs-on: ubuntu-latest
-    outputs:
-      has_cases: ${{ steps.preview_scope.outputs.has_cases }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    concurrency:
+      group: verify-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
         with:
@@ -42,356 +38,278 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install SCPF
+      - name: Install Forge and preflight dependencies
         run: python -m pip install -e ./scpf pillow pyyaml
 
-      - name: Read Forge version
-        shell: bash
+      - name: Determine verification scope
+        id: scope
         run: |
-          forge_version="$(python -c 'from importlib.metadata import version; print(version("scpf"))')"
-          echo "FORGE_VERSION=$forge_version" >> "$GITHUB_ENV"
-
-      - name: Determine affected preview scope
-        id: preview_scope
-        shell: bash
-        run: |
-          set -euo pipefail
           python qualification/preview_scope.py \
             --base "${{ github.event.pull_request.base.sha }}" \
             --head "${{ github.event.pull_request.head.sha }}" \
             --github-output "$GITHUB_OUTPUT"
 
       - name: Run repository preflight
-        shell: bash
         run: |
-          set -euo pipefail
           python scripts/ci_preflight.py \
             --source-sha "${{ github.event.pull_request.head.sha }}" \
-            --site-out output/site
+            --site-out output/preflight-site
 
-      - name: Publish verification plan
-        shell: bash
+      - name: Install SolidCraft for native/full gate
+        if: steps.scope.outputs.final_gate == 'affected-q1-q6' || steps.scope.outputs.final_gate == 'full-q1-q6'
         run: |
-          {
-            echo "### Verification plan"
-            echo ""
-            echo "- Affected cases: \`${{ steps.preview_scope.outputs.cases || 'none' }}\`"
-            echo "- PR gate: affected Q1/Q2 only"
-            echo "- Final gate: \`${{ steps.preview_scope.outputs.final_gate }}\`"
-            echo "- Reference smoke: \`${{ steps.preview_scope.outputs.reference_smoke }}\`"
-          } >> "$GITHUB_STEP_SUMMARY"
+          python qualification/setup_solidcraft.py \
+            --destination "$RUNNER_TEMP/solidcraft" \
+            --github-path "$GITHUB_PATH"
 
-      - name: Restore rendered CADCraft diagrams
-        id: cadcraft_diagrams
-        uses: actions/cache@v4
-        with:
-          path: output/diagrams
-          key: cadcraft-diagrams-v0.20.1-${{ hashFiles('qualification/diagrams/*.cadcraft.json', 'qualification/render_cadcraft_diagram.sh') }}
-
-      - name: Cache CADCraft CLI
-        if: steps.cadcraft_diagrams.outputs.cache-hit != 'true'
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/cadcraft/0.20.1-linux-x86_64
-          key: cadcraft-0.20.1-linux-x86_64
-
-      - name: Set up CADCraft CLI
-        if: steps.cadcraft_diagrams.outputs.cache-hit != 'true'
-        shell: bash
-        run: bash qualification/setup_cadcraft.sh
-
-      - name: Render technical qualification diagrams
-        if: steps.cadcraft_diagrams.outputs.cache-hit != 'true'
-        shell: bash
+      - name: Install reference environments when required
+        if: steps.scope.outputs.reference_smoke == 'true' || steps.scope.outputs.final_gate == 'full-q1-q6'
         run: |
-          set -euo pipefail
-          mkdir -p output/diagrams
-          for plan in qualification/diagrams/*.cadcraft.json; do
-            bash qualification/render_cadcraft_diagram.sh "$plan" output/diagrams
-          done
+          python qualification/setup_references.py \
+            --build123d-venv "$RUNNER_TEMP/build123d-venv" \
+            --github-env "$GITHUB_ENV"
 
-      - name: Run fast Python API tests
-        shell: bash
+      - name: Run selected merge gate
+        env:
+          SOLIDCRAFT_GPU: cpu
         run: |
-          set -euo pipefail
-          unset PYTHONPATH
-          cd "$RUNNER_TEMP"
-          python -m unittest discover -s "$GITHUB_WORKSPACE/scpf/tests" -v
-          if [ -n "${{ steps.preview_scope.outputs.cases }}" ]; then
-            python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
-              --level q1 \
-              --cases "${{ steps.preview_scope.outputs.cases }}" \
-              --out "$GITHUB_WORKSPACE/output/qualification"
+          args=()
+          if [ "${{ steps.scope.outputs.reference_smoke }}" = "true" ]; then
+            args+=(--reference-smoke)
           fi
-
-      - name: Run standard qualification tests
-        shell: bash
-        run: |
-          set -euo pipefail
-          unset PYTHONPATH
-          cd "$RUNNER_TEMP"
-          python "$GITHUB_WORKSPACE/qualification/testsuite.py"
-          if [ -n "${{ steps.preview_scope.outputs.cases }}" ]; then
-            python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
-              --level q2 \
-              --cases "${{ steps.preview_scope.outputs.cases }}" \
-              --out "$GITHUB_WORKSPACE/output/qualification"
-          fi
-
-      - name: Install pinned comparison libraries
-        if: steps.preview_scope.outputs.reference_smoke == 'true'
-        run: |
-          python -m pip install \
-            "pythonscad==1.1.2" \
-            "git+https://github.com/pinkfish/pybosl2@d4279910c12435ed7224b3406616e495db1c96ec" \
-            "cadquery==2.8.0" \
-            "trimesh>=4,<5" \
-            "matplotlib>=3.8,<4"
-
-      - name: Set up isolated build123d reference environment
-        if: steps.preview_scope.outputs.reference_smoke == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          python -m venv "$RUNNER_TEMP/build123d-venv"
-          "$RUNNER_TEMP/build123d-venv/bin/python" -m pip install \
-            "build123d==0.12.0"
-          echo "BUILD123D_PYTHON=$RUNNER_TEMP/build123d-venv/bin/python" >> "$GITHUB_ENV"
-
-      - name: Execute and render reference smoke case
-        if: steps.preview_scope.outputs.reference_smoke == 'true'
-        run: |
-          cases="${{ steps.preview_scope.outputs.cases }}"
-          if [ -z "$cases" ]; then
-            cases="simple-box"
-          fi
-          python qualification/reference_validation.py \
-            --cases "$cases" \
-            --out output/reference-smoke \
-            --source-sha "$GITHUB_SHA"
-
-      - name: Compile qualification tooling
-        shell: bash
-        run: |
-          set -euo pipefail
-          python -m py_compile \
-            qualification/camera.py \
-            qualification/goal_overlay.py \
-            qualification/native_validation.py \
-            qualification/reference_validation.py \
-            qualification/build123d_export.py \
-            qualification/preview_scope.py \
-            qualification/run_affected.py \
-            qualification/case_selection.py \
-            qualification/native_cases.py \
-            qualification/case_evidence.py \
-            qualification/run_case_evidence.py \
-            qualification/results.py \
-            qualification/report.py \
-            qualification/visual_validation.py \
-            scripts/release/validate_release.py
-
-      - name: Compile affected qualification fixtures
-        if: steps.preview_scope.outputs.has_cases == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          unset PYTHONPATH
-          mkdir -p output
-          cases="${{ steps.preview_scope.outputs.cases }}"
-          for model in ${cases//,/ }; do
-            python -m scpf "examples/$model/scpf/model.py" --out "output/$model.json"
-            python -m json.tool "output/$model.json" >/dev/null
-          done
-
-      - name: Assemble PR technical build
-        if: steps.preview_scope.outputs.has_cases == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          python scripts/generated_output.py assemble-build \
-            --output-root output \
-            --destination output/build \
+          python scripts/verification_gate.py \
+            --gate "${{ steps.scope.outputs.final_gate }}" \
+            --cases "${{ steps.scope.outputs.cases }}" \
+            --out output/gate \
+            --source-sha "${{ github.event.pull_request.head.sha }}" \
+            --build-out output/build \
             --scope pr \
             --source-ref "${{ github.head_ref }}" \
-            --source-commit "${{ github.event.pull_request.head.sha }}" \
             --pull-request "${{ github.event.pull_request.number }}" \
-            --forge-version "$FORGE_VERSION" \
+            --base-commit "${{ github.event.pull_request.base.sha }}" \
             --workflow-run-id "$GITHUB_RUN_ID" \
-            --qualification-level q1-q2-affected \
-            --qualification-status pass
-          python scripts/generated_output.py verify-build \
-            --root output/build \
-            --source-commit "${{ github.event.pull_request.head.sha }}"
-
-      - name: Upload PR technical build
-        if: steps.preview_scope.outputs.has_cases == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: scpf-build-pr-${{ github.event.pull_request.number }}
-          path: output/build
-          if-no-files-found: error
-          retention-days: 14
-
-      - name: Finalize Pages preview
-        shell: bash
-        run: |
-          set -euo pipefail
-          source_sha="${{ github.event.pull_request.head.sha }}"
-          python site/provenance.py write \
-            --out output/site/provenance.json \
-            --stage preview \
-            --source-ref "${{ github.head_ref }}" \
-            --source-commit "$source_sha" \
-            --pull-request "${{ github.event.pull_request.number }}" \
-            --forge-version "$FORGE_VERSION" \
-            --workflow-run-id "$GITHUB_RUN_ID" \
-            --qualification-level "q1-q2-affected" \
-            --qualification-status pass
-          python site/provenance.py verify \
-            --file output/site/provenance.json \
-            --stage preview \
-            --source-commit "$source_sha"
-
-      - name: Upload preview artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: scpf-preview-pr-${{ github.event.pull_request.number }}
-          path: output/site
-          if-no-files-found: error
-          retention-days: 14
-
-  publish-build:
-    name: publish-build
-    needs: preview
-    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository && needs.preview.outputs.has_cases == 'true'
-    runs-on: ubuntu-latest
-    concurrency:
-      group: scpf-build-publish
-      cancel-in-progress: false
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: scpf-build-pr-${{ github.event.pull_request.number }}
-          path: output/build
-
-      - name: Publish PR technical build
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: build
-          publish_dir: ./output/build
-          destination_dir: pr/${{ github.event.pull_request.number }}
-          enable_jekyll: true
-          commit_message: "Publish build PR #${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}"
-
-  publish-preview:
-    name: publish-preview
-    needs: preview
-    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    concurrency:
-      group: scpf-pages-publish
-      cancel-in-progress: false
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 1
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: scpf-preview-pr-${{ github.event.pull_request.number }}
-          path: output/site
-
-      - name: Verify built PR preview provenance
-        run: |
-          python site/provenance.py verify \
-            --file output/site/provenance.json \
-            --stage preview \
-            --source-commit "${{ github.event.pull_request.head.sha }}"
-
-      - name: Publish PR preview
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./output/site
-          destination_dir: previews/pr-${{ github.event.pull_request.number }}
-          commit_message: "Publish preview PR #${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}"
-
-  cleanup-build:
-    name: cleanup-build
-    if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    concurrency:
-      group: scpf-build-publish
-      cancel-in-progress: false
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.repository.default_branch }}
-          path: source
-          fetch-depth: 1
+            "${args[@]}"
 
       - uses: actions/checkout@v4
-        id: build_branch
-        continue-on-error: true
         with:
           ref: build
           path: generated-build
           fetch-depth: 1
 
-      - name: Remove closed PR build
-        if: steps.build_branch.outcome == 'success'
+      - name: Publish current PR technical overlay
+        id: publish_build
+        if: steps.scope.outputs.has_build == 'true' && github.event.pull_request.head.repo.full_name == github.repository
         run: |
-          python source/scripts/generated_output.py remove-pr \
-            --root generated-build \
-            --kind build \
-            --pull-request "${{ github.event.pull_request.number }}"
-          cd generated-build
-          if test -n "$(git status --porcelain)"; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -A
-            git commit -m "Remove build PR #${{ github.event.pull_request.number }}"
-            git push origin HEAD:build
-          fi
+          python scripts/publish_generated.py replace-dir \
+            --branch build \
+            --source output/build \
+            --destination "pr/${{ github.event.pull_request.number }}" \
+            --source-ref "${{ github.head_ref }}" \
+            --expected-source "${{ github.event.pull_request.head.sha }}" \
+            --repository "$GITHUB_REPOSITORY" \
+            --pull-request "${{ github.event.pull_request.number }}" \
+            --message "Publish build PR #${{ github.event.pull_request.number }}" \
+            --github-output "$GITHUB_OUTPUT"
 
-  cleanup-preview:
-    name: cleanup-preview
+      - name: Remove obsolete PR technical overlay
+        if: steps.scope.outputs.has_build != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          python scripts/publish_generated.py remove-dir \
+            --branch build \
+            --destination "pr/${{ github.event.pull_request.number }}" \
+            --source-ref "${{ github.head_ref }}" \
+            --expected-source "${{ github.event.pull_request.head.sha }}" \
+            --repository "$GITHUB_REPOSITORY" \
+            --pull-request "${{ github.event.pull_request.number }}" \
+            --message "Remove obsolete build PR #${{ github.event.pull_request.number }}"
+
+      - name: Resolve preview evidence
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          build_commit="${{ steps.publish_build.outputs.commit }}"
+          if [ -z "$build_commit" ]; then
+            build_commit="$(git -C generated-build rev-parse HEAD)"
+          fi
+          echo "BUILD_COMMIT=$build_commit" >> "$GITHUB_ENV"
+          if [ "${{ steps.scope.outputs.has_build }}" = "true" ]; then
+            python scripts/generated_output.py resolve-preview \
+              --main generated-build/main \
+              --overlay output/build \
+              --destination output/resolved
+          else
+            python scripts/generated_output.py resolve-preview \
+              --main generated-build/main \
+              --destination output/resolved
+          fi
+          python scripts/generated_output.py materialize-site-evidence \
+            --build-root output/resolved \
+            --destination output/evidence
+
+      - name: Build and test PR website
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          python site/build.py \
+            --out output/site \
+            --source-sha "${{ github.event.pull_request.head.sha }}" \
+            --native output/evidence/native \
+            --references output/evidence/references \
+            --diagram-root output/evidence/diagrams \
+            --build-manifest output/resolved/build.json \
+            --build-commit "$BUILD_COMMIT" \
+            --build-scope main
+          python site/test_site.py \
+            output/site "${{ github.event.pull_request.head.sha }}" \
+            --build-commit="$BUILD_COMMIT"
+          python site/provenance.py write-build \
+            --out output/site/provenance.json \
+            --stage preview \
+            --source-ref "${{ github.head_ref }}" \
+            --source-commit "${{ github.event.pull_request.head.sha }}" \
+            --pull-request "${{ github.event.pull_request.number }}" \
+            --build-commit "$BUILD_COMMIT" \
+            --build-manifest output/resolved/build.json \
+            --workflow-run-id "$GITHUB_RUN_ID"
+
+      - name: Publish PR website
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          python scripts/publish_generated.py replace-dir \
+            --branch gh-pages \
+            --source output/site \
+            --destination "previews/pr-${{ github.event.pull_request.number }}" \
+            --source-ref "${{ github.head_ref }}" \
+            --expected-source "${{ github.event.pull_request.head.sha }}" \
+            --repository "$GITHUB_REPOSITORY" \
+            --pull-request "${{ github.event.pull_request.number }}" \
+            --message "Publish preview PR #${{ github.event.pull_request.number }}"
+
+      - name: Upload verification diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scpf-pr-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}
+          path: |
+            output/gate
+            output/build
+            output/site
+          if-no-files-found: ignore
+          retention-days: 14
+
+  close:
     if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     concurrency:
-      group: scpf-pages-publish
+      group: close-pr-${{ github.event.pull_request.number }}
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.repository.default_branch }}
-          path: source
-          fetch-depth: 1
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Forge publication dependencies
+        run: python -m pip install -e ./scpf pillow pyyaml
+
+      - name: Fetch merged PR head for tree comparison
+        if: github.event.pull_request.merged == true
+        run: git fetch origin "refs/pull/${{ github.event.pull_request.number }}/head"
 
       - uses: actions/checkout@v4
-        id: pages_branch
-        continue-on-error: true
         with:
-          ref: gh-pages
-          path: generated-pages
+          ref: build
+          path: generated-build
           fetch-depth: 1
 
-      - name: Remove closed PR preview
-        if: steps.pages_branch.outcome == 'success'
+      - name: Prepare technical promotion
+        if: github.event.pull_request.merged == true && !startsWith(github.event.pull_request.head.ref, 'qualification/')
+        id: promote
         run: |
-          python source/scripts/generated_output.py remove-pr \
-            --root generated-pages \
-            --kind pages \
-            --pull-request "${{ github.event.pull_request.number }}"
-          cd generated-pages
-          if test -n "$(git status --porcelain)"; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -A
-            git commit -m "Remove preview PR #${{ github.event.pull_request.number }}"
-            git push origin HEAD:gh-pages
-          fi
+          python scripts/merge_promotion.py \
+            --base-sha "${{ github.event.pull_request.base.sha }}" \
+            --head-sha "${{ github.event.pull_request.head.sha }}" \
+            --merge-sha "${{ github.event.pull_request.merge_commit_sha }}" \
+            --current-main-sha "$(git rev-parse HEAD)" \
+            --pull-request "${{ github.event.pull_request.number }}" \
+            --build-root generated-build \
+            --destination output/main \
+            --workflow-run-id "$GITHUB_RUN_ID" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Publish promoted main technical evidence
+        if: github.event.pull_request.merged == true && steps.promote.outputs.promotable == 'true'
+        id: publish_main
+        run: |
+          python scripts/publish_generated.py replace-dir \
+            --branch build \
+            --source output/main \
+            --destination main \
+            --source-ref main \
+            --expected-source "${{ github.event.pull_request.merge_commit_sha }}" \
+            --message "Promote PR #${{ github.event.pull_request.number }} to build/main" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Build stable website from promoted evidence
+        if: github.event.pull_request.merged == true && steps.promote.outputs.promotable == 'true'
+        run: |
+          build_commit="${{ steps.publish_main.outputs.commit }}"
+          python scripts/generated_output.py materialize-site-evidence \
+            --build-root output/main \
+            --destination output/evidence
+          python site/build.py \
+            --out output/site \
+            --source-sha "${{ github.event.pull_request.merge_commit_sha }}" \
+            --native output/evidence/native \
+            --references output/evidence/references \
+            --diagram-root output/evidence/diagrams \
+            --build-manifest output/main/build.json \
+            --build-commit "$build_commit" \
+            --build-scope main
+          python site/test_site.py \
+            output/site "${{ github.event.pull_request.merge_commit_sha }}" \
+            --build-commit="$build_commit"
+          python site/provenance.py write-build \
+            --out output/site/provenance.json \
+            --stage stable \
+            --source-ref main \
+            --source-commit "${{ github.event.pull_request.merge_commit_sha }}" \
+            --build-commit "$build_commit" \
+            --build-manifest output/main/build.json \
+            --workflow-run-id "$GITHUB_RUN_ID"
+          python scripts/publish_generated.py replace-stable-pages \
+            --branch gh-pages \
+            --source output/site \
+            --source-ref main \
+            --expected-source "${{ github.event.pull_request.merge_commit_sha }}" \
+            --message "Publish stable site after PR #${{ github.event.pull_request.number }}"
+
+      - name: Request full safety rebuild when promotion is stale or incompatible
+        if: github.event.pull_request.merged == true && steps.promote.outputs.technical == 'true' && steps.promote.outputs.promotable != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run scpf.yml --ref main
+
+      - name: Requalify exact main commit for a release
+        if: github.event.pull_request.merged == true && (startsWith(github.event.pull_request.head.ref, 'qualification/') || (steps.promote.outputs.release_candidate == 'true' && steps.promote.outputs.promotable == 'true'))
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run scpf.yml --ref main
+
+      - name: Remove closed PR technical overlay
+        if: always()
+        run: |
+          python scripts/publish_generated.py remove-dir \
+            --branch build \
+            --destination "pr/${{ github.event.pull_request.number }}" \
+            --message "Remove build PR #${{ github.event.pull_request.number }}"
+
+      - name: Remove closed PR website preview
+        if: always()
+        run: |
+          python scripts/publish_generated.py remove-dir \
+            --branch gh-pages \
+            --destination "previews/pr-${{ github.event.pull_request.number }}" \
+            --message "Remove preview PR #${{ github.event.pull_request.number }}"

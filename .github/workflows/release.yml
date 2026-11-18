@@ -3,7 +3,7 @@ name: Publish SCPF release
 on:
   workflow_run:
     workflows:
-      - "SCPF Python package qualification"
+      - "SCPF full safety qualification"
     types:
       - completed
     branches:
@@ -49,6 +49,22 @@ jobs:
             echo "released=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Download immutable build evidence metadata
+        if: steps.existing.outputs.released != 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: scpf-qualification-${{ github.event.workflow_run.head_sha }}
+          path: qualified
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Read immutable build evidence commit
+        if: steps.existing.outputs.released != 'true'
+        shell: bash
+        run: |
+          build_sha="$(python -c 'import json; print(json.load(open("qualified/release-evidence.json"))["build_commit"])')"
+          echo "BUILD_SHA=$build_sha" >> "$GITHUB_ENV"
+
       - name: Validate release metadata
         if: steps.existing.outputs.released != 'true'
         shell: bash
@@ -81,6 +97,19 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git tag -a "$tag" "$TARGET_SHA" -m "SCPF $tag"
             git push origin "$tag"
+          fi
+
+          evidence_tag="evidence/$tag"
+          git fetch origin build --tags
+          if git show-ref --verify --quiet "refs/tags/$evidence_tag"; then
+            existing_build="$(git rev-list -n 1 "$evidence_tag")"
+            if [ "$existing_build" != "$BUILD_SHA" ]; then
+              echo "$evidence_tag already points to $existing_build, not $BUILD_SHA" >&2
+              exit 1
+            fi
+          else
+            git tag -a "$evidence_tag" "$BUILD_SHA" -m "SCPF $tag evidence"
+            git push origin "$evidence_tag"
           fi
 
           gh release create "$tag" \

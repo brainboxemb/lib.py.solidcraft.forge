@@ -44,8 +44,10 @@ The release PR must:
 
 ## Publishing after merge
 
-Merging the release PR to `main` starts the full
-`SCPF Python package qualification` again on the exact main commit.
+Merging a release PR promotes the already verified PR evidence when the squash
+merge tree is identical to the verified PR tree. The close workflow then starts
+`SCPF full safety qualification` again on the exact `main` commit before any
+release is published.
 
 The generic `Publish SCPF release` workflow is triggered only after that main
 qualification completes successfully. It then:

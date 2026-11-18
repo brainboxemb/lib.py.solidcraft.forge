@@ -23,13 +23,17 @@ def run_post_build_inspections(
     summary: Path,
     *,
     solidcraft_cli: str = "solidcraft-cli",
+    cases: tuple[str, ...] | None = None,
 ) -> None:
     """Execute every inspection registered in POST_BUILD_INSPECTIONS."""
     validate_runtime_metadata()
     summary.parent.mkdir(parents=True, exist_ok=True)
 
+    selected = set(cases) if cases is not None else set(POST_BUILD_INSPECTIONS)
     rows = ["case\tinspection\tstatus"]
     for slug, spec in POST_BUILD_INSPECTIONS.items():
+        if slug not in selected:
+            continue
         case_root = native_root / slug
         model = case_root / "model.sc"
         command = ROOT / spec["command"]
@@ -65,12 +69,23 @@ def main() -> int:
     parser.add_argument("--native-root", type=Path, required=True)
     parser.add_argument("--summary", type=Path, required=True)
     parser.add_argument("--solidcraft-cli", default="solidcraft-cli")
+    parser.add_argument(
+        "--cases",
+        default="",
+        help="optional comma-separated subset; default runs all registered inspections",
+    )
     args = parser.parse_args()
 
+    cases = tuple(
+        part.strip()
+        for part in args.cases.split(",")
+        if part.strip()
+    ) or None
     run_post_build_inspections(
         args.native_root,
         args.summary,
         solidcraft_cli=args.solidcraft_cli,
+        cases=cases,
     )
     return 0
 

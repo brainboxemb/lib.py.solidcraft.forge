@@ -1,22 +1,22 @@
-name: SCPF site-only deploy
+name: SCPF presentation-only site deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "site/**"
+      - "docs/**"
       - "qualification/templates/**"
+      - "AGENTS.md"
+      - "README.md"
       - ".github/workflows/site.yml"
-      - "scripts/reusable_qualification.py"
   workflow_dispatch: {}
 
 permissions:
   contents: write
-  actions: read
 
 concurrency:
-  group: scpf-pages-publish
+  group: publish-pages-main
   cancel-in-progress: false
 
 jobs:
@@ -31,7 +31,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Confirm reusable technical evidence
+      - name: Install Forge site dependencies
+        run: python -m pip install -e ./scpf pillow pyyaml
+
+      - name: Confirm this push is presentation-only
         id: scope
         run: |
           python scripts/reusable_qualification.py scope \
@@ -39,107 +42,53 @@ jobs:
             --head "$GITHUB_SHA" \
             --github-output "$GITHUB_OUTPUT"
 
-      - name: Install SCPF for site generation
+      - uses: actions/checkout@v4
         if: steps.scope.outputs.site_only == 'true'
-        run: python -m pip install -e ./scpf pillow
-
-      - name: Find reusable qualification evidence
-        if: steps.scope.outputs.site_only == 'true'
-        id: evidence
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          python scripts/reusable_qualification.py select \
-            --head "$GITHUB_SHA" \
-            --repository "$GITHUB_REPOSITORY" \
-            --github-output "$GITHUB_OUTPUT"
-
-      - name: Download qualification evidence
-        if: steps.scope.outputs.site_only == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p reused
-          gh run download "${{ steps.evidence.outputs.run_id }}"             --repo "$GITHUB_REPOSITORY"             --name "scpf-qualification-${{ steps.evidence.outputs.sha }}"             --dir reused
-          test -f reused/native/verification.json
-          test -f reused/references/summary.json
-
-      - name: Restore rendered CADCraft diagrams
-        if: steps.scope.outputs.site_only == 'true'
-        id: cadcraft_diagrams
-        uses: actions/cache@v4
         with:
-          path: output/diagrams
-          key: cadcraft-diagrams-v0.20.1-${{ hashFiles('qualification/diagrams/*.cadcraft.json', 'qualification/render_cadcraft_diagram.sh') }}
+          ref: build
+          path: generated-build
+          fetch-depth: 1
 
-      - name: Cache CADCraft CLI
-        if: steps.scope.outputs.site_only == 'true' && steps.cadcraft_diagrams.outputs.cache-hit != 'true'
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/cadcraft/0.20.1-linux-x86_64
-          key: cadcraft-0.20.1-linux-x86_64
-
-      - name: Build missing diagrams
-        if: steps.scope.outputs.site_only == 'true' && steps.cadcraft_diagrams.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          bash qualification/setup_cadcraft.sh
-          mkdir -p output/diagrams
-          for plan in qualification/diagrams/*.cadcraft.json; do
-            bash qualification/render_cadcraft_diagram.sh "$plan" output/diagrams
-          done
-
-      - name: Build and test site with reused qualification evidence
+      - name: Verify canonical technical baseline is reusable
         if: steps.scope.outputs.site_only == 'true'
-        shell: bash
         run: |
-          set -euo pipefail
-          evidence_sha="${{ steps.evidence.outputs.sha }}"
-          python site/build.py             --out output/site             --source-sha "$GITHUB_SHA"             --evidence-sha "$evidence_sha"             --native reused/native             --references reused/references             --diagram-root output/diagrams
-          python site/test_site.py output/site "$GITHUB_SHA"             --evidence-sha="$evidence_sha"             --require-native --require-references
+          python scripts/generated_output.py verify-current-hashes \
+            --root generated-build/main
+          echo "BUILD_COMMIT=$(git -C generated-build rev-parse HEAD)" >> "$GITHUB_ENV"
 
-      - name: Write reused qualification provenance
+      - name: Build site from canonical build/main evidence
         if: steps.scope.outputs.site_only == 'true'
-        shell: bash
         run: |
-          set -euo pipefail
-          python site/provenance.py write-reused \
+          python scripts/generated_output.py materialize-site-evidence \
+            --build-root generated-build/main \
+            --destination output/evidence
+          python site/build.py \
+            --out output/site \
+            --source-sha "$GITHUB_SHA" \
+            --native output/evidence/native \
+            --references output/evidence/references \
+            --diagram-root output/evidence/diagrams \
+            --build-manifest generated-build/main/build.json \
+            --build-commit "$BUILD_COMMIT" \
+            --build-scope main
+          python site/test_site.py \
+            output/site "$GITHUB_SHA" \
+            --build-commit="$BUILD_COMMIT"
+          python site/provenance.py write-build \
             --out output/site/provenance.json \
             --stage stable \
             --source-ref main \
             --source-commit "$GITHUB_SHA" \
-            --evidence-commit "${{ steps.evidence.outputs.sha }}" \
-            --verification reused/native/verification.json \
+            --build-commit "$BUILD_COMMIT" \
+            --build-manifest generated-build/main/build.json \
             --workflow-run-id "$GITHUB_RUN_ID"
-          python site/provenance.py verify \
-            --file output/site/provenance.json \
-            --stage stable \
-            --source-commit "$GITHUB_SHA"
 
-      - uses: actions/checkout@v4
-        if: steps.scope.outputs.site_only == 'true'
-        with:
-          ref: gh-pages
-          path: current-pages
-          fetch-depth: 1
-
-      - name: Prepare stable Pages root
+      - name: Publish stable presentation
         if: steps.scope.outputs.site_only == 'true'
         run: |
-          python scripts/generated_output.py prepare-stable-pages \
-            --site output/site \
-            --current-pages current-pages \
-            --destination output/pages-stable
-
-      - name: Publish current library site
-        if: steps.scope.outputs.site_only == 'true'
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./output/pages-stable
-          force_orphan: true
-          commit_message: "SCPF site-only build at ${{ github.sha }} using qualification ${{ steps.evidence.outputs.sha }}"
+          python scripts/publish_generated.py replace-stable-pages \
+            --branch gh-pages \
+            --source output/site \
+            --source-ref main \
+            --expected-source "$GITHUB_SHA" \
+            --message "Publish presentation-only site at $GITHUB_SHA"

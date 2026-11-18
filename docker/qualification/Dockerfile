@@ -85,7 +85,7 @@ RUN python -m pip install --upgrade pip setuptools wheel \
 RUN solidcraft-cli --version \
     && cadcraft-cli --version \
     && python --version \
-    && python -c "import pythonscad, pybosl2, cadquery, trimesh, matplotlib" \
+    && python -c "import cadquery, trimesh, matplotlib" \
     && /opt/build123d/bin/python -c "import build123d"
 
 WORKDIR /workspace

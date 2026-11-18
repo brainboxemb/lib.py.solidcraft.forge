@@ -1,0 +1,103 @@
+name: Qualification staged smoke
+
+on:
+  push:
+    branches-ignore:
+      - build
+      - gh-pages
+    paths:
+      - "scpf/**"
+      - "!scpf/scpf/version.py"
+      - "qualification/case_runner.py"
+      - "qualification/run_affected.py"
+      - "qualification/run_case_evidence.py"
+      - "qualification/native_cases.py"
+      - "qualification/native_validation.py"
+      - "qualification/visual_validation.py"
+      - "qualification/run_post_build_inspections.py"
+      - "qualification/cases.py"
+      - "qualification/case_selection.py"
+      - "examples/simple-box/**"
+      - ".github/workflows/qualification-smoke.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: qualification-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  simple-box:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve immutable image identity
+        id: meta
+        run: |
+          python scripts/qualification_image.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull qualification image
+        run: docker pull "${{ steps.meta.outputs.reference }}"
+
+      - name: Run complete simple-box case
+        run: |
+          mkdir -p "$RUNNER_TEMP/simple-box-case"
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -v "$RUNNER_TEMP/simple-box-case:/case-out" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.meta.outputs.reference }}" \
+            python qualification/case_runner.py simple-box \
+              --out /case-out
+
+      - name: Rerun only mutate stage
+        run: |
+          replay_state="$RUNNER_TEMP/simple-box-case/stages/simple-box/04-replay.json"
+          mutate_state="$RUNNER_TEMP/simple-box-case/stages/simple-box/08-mutate.json"
+          replay_before="$(sha256sum "$replay_state" | awk '{print $1}')"
+          mutate_before="$(sha256sum "$mutate_state" | awk '{print $1}')"
+
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -v "$RUNNER_TEMP/simple-box-case:/case-out" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.meta.outputs.reference }}" \
+            python qualification/case_runner.py simple-box \
+              --out /case-out \
+              --stage mutate
+
+          replay_after="$(sha256sum "$replay_state" | awk '{print $1}')"
+          mutate_after="$(sha256sum "$mutate_state" | awk '{print $1}')"
+
+          test "$replay_before" = "$replay_after"
+          test "$mutate_before" != "$mutate_after"
+          python -c 'import json,sys; p=json.load(open(sys.argv[1])); assert p["status"]=="pass"' "$mutate_state"
+          echo "single-stage rerun PASS; replay unchanged"
+
+      - name: Upload staged-case diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qualification-staged-smoke-${{ github.sha }}
+          path: ${{ runner.temp }}/simple-box-case
+          if-no-files-found: ignore
+          retention-days: 7

@@ -6,7 +6,6 @@ This site deliberately contains only tiny fixtures and the SCPF cheatsheet.
 """
 import argparse
 import html
-from importlib.metadata import version as package_version
 import json
 import os
 from pathlib import Path
@@ -53,12 +52,12 @@ try:
     from qualification.expectations import EXPECTED_VISUAL_BOXES
     from qualification.geometry_contracts import proof_contract
     from qualification.case_evidence import evidence_for
+    from qualification.project_metadata import scpf_version
 finally:
     sys.path.pop(0)
 
 LIBRARY_URL = "https://github.com/brainboxemb/lib.py.solidcraft.forge"
-BUILD_BLOB_ROOT = LIBRARY_URL + "/blob/build"
-BUILD_RAW_ROOT = "https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build"
+ACTIVE_BUILD_COMMIT = "build"
 CAD_SITE = "https://brainboxemb.github.io/2026-011-02.cad.solidcraft/"
 
 # Keep the public catalog deliberately small; advanced tests remain in the repo.
@@ -1235,14 +1234,28 @@ def build_scope_from_environment():
 
 def build_blob_url(scope, relative=""):
     relative = str(relative).lstrip("/")
-    base = f"{BUILD_BLOB_ROOT}/{scope}"
+    base = f"{LIBRARY_URL}/blob/{ACTIVE_BUILD_COMMIT}/{scope}"
     return f"{base}/{relative}" if relative else base
 
 
 def build_raw_url(scope, relative=""):
     relative = str(relative).lstrip("/")
-    base = f"{BUILD_RAW_ROOT}/{scope}"
+    base = (
+        "https://raw.githubusercontent.com/brainboxemb/"
+        f"lib.py.solidcraft.forge/{ACTIVE_BUILD_COMMIT}/{scope}"
+    )
     return f"{base}/{relative}" if relative else base
+
+
+def evidence_scope(build_manifest_data, slug, implementation, fallback):
+    record = (
+        ((build_manifest_data.get("cases") or {}).get(slug) or {})
+        .get("implementations", {})
+        .get(implementation)
+    )
+    if record and record.get("build_scope"):
+        return record["build_scope"]
+    return fallback
 
 
 def text(path):
@@ -1262,6 +1275,8 @@ def build(
     reference_evidence_root=None,
     evidence_sha=None,
     build_scope=None,
+    build_manifest=None,
+    build_commit=None,
 ):
     """Compile the public site and attach verified qualification evidence.
 
@@ -1269,12 +1284,29 @@ def build(
     qualified Forge/API commit that produced native/reference evidence.
     They are normally equal; site-only rebuilds may reuse older evidence.
     """
+    global ACTIVE_BUILD_COMMIT
     evidence_sha = evidence_sha or sha
     build_scope = build_scope or build_scope_from_environment()
+    ACTIVE_BUILD_COMMIT = build_commit or os.environ.get("SCPF_BUILD_COMMIT", "build")
     build_output_url = build_blob_url(build_scope)
-    verified = False
+    build_manifest_data = {}
+    if build_manifest is not None:
+        build_manifest_data = json.loads(Path(build_manifest).read_text(encoding="utf-8"))
+        if build_manifest_data.get("schema_version") != 2:
+            raise ValueError("Unsupported technical build manifest schema")
+        evidence_sha = build_manifest_data.get("source_commit") or evidence_sha
+
+    verified = bool(build_manifest_data)
     metadata = {}
-    if native_root is not None:
+    if build_manifest_data:
+        toolchain = build_manifest_data.get("toolchain") or {}
+        metadata = {
+            "forge_version": toolchain.get("forge_version") or scpf_version(),
+            "solidcraft_version": toolchain.get("solidcraft_version") or TESTED_SOLIDCRAFT_VERSION,
+            "qualified_at": build_manifest_data.get("generated_at") or "mixed per-case evidence",
+        }
+
+    if native_root is not None and not build_manifest_data:
         meta_file = native_root / "verification.json"
         if not meta_file.is_file():
             raise ValueError("Native directory is missing verification.json")
@@ -1287,9 +1319,9 @@ def build(
         if not metadata.get("forge_version") or not metadata.get("qualified_at"):
             raise ValueError("Native verification is missing Forge version or qualification time")
 
-    reference_verified = False
+    reference_verified = bool(build_manifest_data)
     reference_summary = {}
-    if reference_evidence_root is not None:
+    if reference_evidence_root is not None and not build_manifest_data:
         summary_file = reference_evidence_root / "summary.json"
         if not summary_file.is_file():
             raise ValueError("Reference directory is missing summary.json")
@@ -1299,7 +1331,7 @@ def build(
             raise ValueError("Reference renders do not match the qualification evidence commit")
 
     forge_version = (
-        metadata["forge_version"] if verified else package_version("scpf")
+        metadata["forge_version"] if verified else scpf_version()
     )
     qualified_at = (
         metadata["qualified_at"] if verified else "not run in this site build"
@@ -1339,9 +1371,24 @@ def build(
         (dest / "model.py").write_text(source, encoding="utf-8")
         (dest / "commands.json").write_text(json.dumps(commands, indent=2) + "\n", encoding="utf-8")
         count = len(commands["commands"])
+        case_record = (
+            ((build_manifest_data.get("cases") or {}).get(slug) or {})
+            .get("implementations", {})
+            .get("scpf")
+        )
+        native_levels = {"affected-q1-q6", "q1-q6-full", "full-q1-q6"}
+        case_verified = (
+            bool(
+                case_record
+                and case_record.get("status") == "pass"
+                and case_record.get("verification_level") in native_levels
+            )
+            if build_manifest_data
+            else verified
+        )
         screenshot = (
             native_root / slug / "model.png"
-            if verified and not blocked_reason
+            if case_verified and native_root is not None and not blocked_reason
             else None
         )
         if (
@@ -1941,12 +1988,18 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                         f"Reference result is not PASS: {slug}/{reference_name}"
                     )
                 source_dir = result_path.parent
-                reference_raw_base = build_raw_url(
+                reference_scope = evidence_scope(
+                    build_manifest_data,
+                    slug,
+                    reference_name,
                     build_scope,
+                )
+                reference_raw_base = build_raw_url(
+                    reference_scope,
                     f"examples/{slug}/{reference_name}",
                 )
                 reference_blob_base = build_blob_url(
-                    build_scope,
+                    reference_scope,
                     f"examples/{slug}/{reference_name}",
                 )
                 for name in (
@@ -2066,7 +2119,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             else "\n".join(command["command"] for command in commands["commands"])
         )
 
-        native_case = native_root / slug if verified else None
+        native_case = (
+            native_root / slug
+            if case_verified and native_root is not None
+            else None
+        )
         native_files = []
         native_images = []
         qualification_result = None
@@ -2105,8 +2162,13 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             if not result_file.is_file():
                 raise ValueError(f"Structured qualification result missing: {result_file}")
             qualification_result = json.loads(result_file.read_text(encoding="utf-8"))
+            expected_case_commit = (
+                case_record.get("source_commit")
+                if case_record is not None
+                else evidence_sha
+            )
             if (
-                qualification_result.get("source_commit") != evidence_sha
+                qualification_result.get("source_commit") != expected_case_commit
                 or qualification_result.get("solidcraft_version") != metadata.get("solidcraft_version")
             ):
                 raise ValueError(f"Qualification result does not match this build: {result_file}")
@@ -2142,11 +2204,17 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             ):
                 for evidence in sorted(native_case.glob(pattern)):
                     native_files.append(evidence.name)
+            native_scope = evidence_scope(
+                build_manifest_data,
+                slug,
+                "scpf",
+                build_scope,
+            )
             native_evidence_raw = build_raw_url(
-                build_scope, f"examples/{slug}/scpf"
+                native_scope, f"examples/{slug}/scpf"
             )
             native_evidence_blob = build_blob_url(
-                build_scope, f"examples/{slug}/scpf"
+                native_scope, f"examples/{slug}/scpf"
             )
             preview_html = _render_visual_evidence(
                 case,
@@ -2197,8 +2265,14 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             'reference source</a></li>'
             for reference_name in reference_names
         )
+        native_scope = evidence_scope(
+            build_manifest_data,
+            slug,
+            "scpf",
+            build_scope,
+        )
         native_evidence_blob = build_blob_url(
-            build_scope, f"examples/{slug}/scpf"
+            native_scope, f"examples/{slug}/scpf"
         )
         evidence_items.append(
             '<li><a href="'
@@ -2219,8 +2293,14 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         for name in reference_evidence_files:
             prefix, filename = name.split("/", 1)
             implementation = prefix.removeprefix("reference-")
-            url = build_blob_url(
+            implementation_scope = evidence_scope(
+                build_manifest_data,
+                slug,
+                implementation,
                 build_scope,
+            )
+            url = build_blob_url(
+                implementation_scope,
                 f"examples/{slug}/{implementation}/{filename}",
             )
             evidence_items.append(
@@ -2240,7 +2320,11 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             case_test_evidence=_render_case_test_evidence(
                 slug,
                 qualification_result,
-                evidence_sha,
+                (
+                    case_record.get("source_commit")
+                    if case_record is not None
+                    else evidence_sha
+                ),
             ),
             gallery=preview_html,
             forge_api=escape(case["forge_api"]),
@@ -2293,7 +2377,25 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 qualification_result.get("levels") if qualification_result else {}
             ),
             "solidcraft_version": (
-                metadata.get("solidcraft_version") if verified else None
+                metadata.get("solidcraft_version") if case_verified else None
+            ),
+            "evidence_source_commit": (
+                case_record.get("source_commit")
+                if case_record is not None
+                else (evidence_sha if case_verified else None)
+            ),
+            "input_hash": (
+                case_record.get("input_hash") if case_record is not None else None
+            ),
+            "verification_level": (
+                case_record.get("verification_level")
+                if case_record is not None
+                else None
+            ),
+            "evidence_build_scope": (
+                case_record.get("build_scope")
+                if case_record is not None
+                else build_scope
             ),
             "body_count": body_count,
             "parameter_count": parameter_count,
@@ -2305,7 +2407,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         )
         card_preview_url = (
             build_raw_url(
-                build_scope,
+                evidence_scope(build_manifest_data, slug, "scpf", build_scope),
                 f"examples/{slug}/scpf/{card_preview}",
             )
             if card_preview else None
@@ -2326,7 +2428,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             + (
                 f'<p class="meta">SolidCraft {escape(metadata.get("solidcraft_version"))}'
                 f' · {escape(body_count)} bodies · {escape(parameter_count)} parameters</p>'
-                if verified and body_count is not None else ""
+                if case_verified and body_count is not None else ""
             )
             + f'<a class="button" href="{escape(slug)}/">Open case sheet →</a></div></article>'
         )
@@ -2649,6 +2751,15 @@ if __name__ == "__main__":
         "--build-scope",
         help="Generated build branch scope, for example main or pr/326",
     )
+    parser.add_argument(
+        "--build-manifest",
+        type=Path,
+        help="Schema-v2 build.json used for per-case provenance",
+    )
+    parser.add_argument(
+        "--build-commit",
+        help="Immutable build branch commit used in evidence links",
+    )
     options = parser.parse_args()
     build(
         options.out,
@@ -2658,5 +2769,7 @@ if __name__ == "__main__":
         reference_evidence_root=options.references,
         evidence_sha=options.evidence_sha,
         build_scope=options.build_scope,
+        build_manifest=options.build_manifest,
+        build_commit=options.build_commit,
     )
     print(f"Built independent SCPF library site: {options.out}")

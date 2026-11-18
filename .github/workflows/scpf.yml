@@ -1,477 +1,180 @@
-name: SCPF Python package qualification
+name: SCPF full safety qualification
 
 on:
   push:
     branches:
-      - main
-      - "qualify/**"
       - "qualification/**"
-      - "site/**"
-    paths:
-      - "scpf/**"
-      - "examples/**"
-      - "qualification/**"
-      - "!qualification/templates/**"
-      - "scripts/release/**"
-      - "scripts/generated_output.py"
-      - "CHANGELOG.md"
-      - ".github/workflows/scpf.yml"
   workflow_dispatch: {}
+  schedule:
+    - cron: "17 3 * * 1"
 
 permissions:
   contents: write
+  packages: read
 
 concurrency:
-  # v2 separates the expanded native + reference-render gate from stale runs
-  # created before executable PythonSCAD/pyBOSL2 evidence became blocking.
-  group: scpf-qualification-v2-${{ github.ref }}
-  cancel-in-progress: true
+  group: full-safety-${{ github.ref }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/heads/qualification/') }}
 
 jobs:
-  package:
+  full:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install SCPF editable as an external-style package
-        run: python -m pip install -e ./scpf pillow
 
-      - name: Read qualified SolidCraft version from Forge
-        shell: bash
+      - name: Resolve immutable qualification image
+        id: image
         run: |
-          version="$(python -c 'from scpf.version import TESTED_SOLIDCRAFT_VERSION; print(TESTED_SOLIDCRAFT_VERSION)')"
-          forge_version="$(python -c 'from importlib.metadata import version; print(version("scpf"))')"
-          echo "SOLIDCRAFT_VERSION=$version" >> "$GITHUB_ENV"
-          echo "FORGE_VERSION=$forge_version" >> "$GITHUB_ENV"
-          echo "SolidCraft qualification target: $version"
-          echo "Forge package version: $forge_version"
+          python scripts/qualification_image.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --github-output "$GITHUB_OUTPUT"
 
-      - name: Restore rendered CADCraft diagrams
-        id: cadcraft_diagrams
-        uses: actions/cache@v4
+      - name: Login to GHCR
+        uses: docker/login-action@v3
         with:
-          path: output/diagrams
-          key: cadcraft-diagrams-v0.20.1-${{ hashFiles('qualification/diagrams/*.cadcraft.json', 'qualification/render_cadcraft_diagram.sh') }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Cache CADCraft CLI
-        if: steps.cadcraft_diagrams.outputs.cache-hit != 'true'
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/cadcraft/0.20.1-linux-x86_64
-          key: cadcraft-0.20.1-linux-x86_64
+      - name: Pull qualification image
+        run: docker pull "${{ steps.image.outputs.reference }}"
 
-      - name: Set up CADCraft CLI
-        if: steps.cadcraft_diagrams.outputs.cache-hit != 'true'
-        shell: bash
-        run: bash qualification/setup_cadcraft.sh
+      - name: Run repository preflight in qualification image
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.image.outputs.reference }}" \
+            python scripts/ci_preflight.py \
+              --source-sha "$GITHUB_SHA" \
+              --site-out output/preflight-site
 
-      - name: Render technical qualification diagrams
-        if: steps.cadcraft_diagrams.outputs.cache-hit != 'true'
-        shell: bash
+      - name: Run complete Q1-Q6 safety gate
         run: |
-          set -euo pipefail
-          mkdir -p output/diagrams
-          for plan in qualification/diagrams/*.cadcraft.json; do
-            bash qualification/render_cadcraft_diagram.sh "$plan" output/diagrams
-          done
-      - name: Run independent API regressions without PYTHONPATH
-        shell: bash
-        run: |
-          set -euo pipefail
-          unset PYTHONPATH
-          mkdir -p "$GITHUB_WORKSPACE/output/qualification"
-          cd "$RUNNER_TEMP"
-          python -m unittest discover -s "$GITHUB_WORKSPACE/scpf/tests" -v 2>&1 \
-            | tee "$GITHUB_WORKSPACE/output/qualification/q1-python-tests.txt"
-          python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
-            --level q1 --out "$GITHUB_WORKSPACE/output/qualification"
-      - name: Compile release tooling
-        run: python -m py_compile scripts/release/validate_release.py
-
-      - name: Run standard qualification tests (command contract)
-        shell: bash
-        run: |
-          set -euo pipefail
-          unset PYTHONPATH
-          mkdir -p "$GITHUB_WORKSPACE/output/qualification"
-          cd "$RUNNER_TEMP"
-          python "$GITHUB_WORKSPACE/qualification/testsuite.py" 2>&1 \
-            | tee "$GITHUB_WORKSPACE/output/qualification/q2-python-qualification-tests.txt"
-          python "$GITHUB_WORKSPACE/qualification/run_case_evidence.py" \
-            --level q2 --out "$GITHUB_WORKSPACE/output/qualification"
-      - name: Check abstract model-authoring fixture
-        shell: bash
-        run: |
-          set -euo pipefail
-          unset PYTHONPATH
-          cd "$RUNNER_TEMP"
-          python -m scpf check "$GITHUB_WORKSPACE/examples/model_authoring/scpf/model.py"
-
-      - name: Install pinned comparison libraries
-        run: |
-          python -m pip install \
-            "pythonscad==1.1.2" \
-            "git+https://github.com/pinkfish/pybosl2@d4279910c12435ed7224b3406616e495db1c96ec" \
-            "cadquery==2.8.0" \
-            "trimesh>=4,<5" \
-            "matplotlib>=3.8,<4"
-
-      - name: Set up isolated build123d reference environment
-        shell: bash
-        run: |
-          set -euo pipefail
-          python -m venv "$RUNNER_TEMP/build123d-venv"
-          "$RUNNER_TEMP/build123d-venv/bin/python" -m pip install \
-            "build123d==0.12.0"
-          echo "BUILD123D_PYTHON=$RUNNER_TEMP/build123d-venv/bin/python" >> "$GITHUB_ENV"
-
-      - name: Execute and render all reference implementations
-        shell: bash
-        run: |
-          set -euo pipefail
-          python qualification/reference_validation.py \
-            --cases all \
-            --out output/references \
+          args=(
+            --gate full-q1-q6
+            --out output/gate
             --source-sha "$GITHUB_SHA"
-
-      - name: Compile self-contained API fixtures
-        shell: bash
-        run: |
-          set -euo pipefail
-          unset PYTHONPATH
-          mkdir -p output/qualification
-          printf "case\tcommands\tstatus\n" > output/qualification/q2-command-contract.tsv
-          native_models="$(python -c 'from qualification.cases import supported_case_slugs; print(" ".join(supported_case_slugs()))')"
-          for model in $native_models plate; do
-            python -m scpf "examples/$model/scpf/model.py" --out "output/$model.json"
-            python -m json.tool "output/$model.json" >/dev/null
-            count="$(jq '.commands | length' "output/$model.json")"
-            printf "%s\t%s\tPASS\n" "$model" "$count" >> output/qualification/q2-command-contract.tsv
-          done
-      - name: Install official SolidCraft release (checksum-verified)
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd "$RUNNER_TEMP"
-          base="https://github.com/tangency-labs/solidcraft/releases/download/v${SOLIDCRAFT_VERSION}"
-          archive="solidcraft-${SOLIDCRAFT_VERSION}-linux-x86_64.tar.gz"
-          curl --fail --location --retry 3 --silent --show-error "$base/SHA256SUMS.txt" --output SHA256SUMS.txt
-          curl --fail --location --retry 3 --silent --show-error "$base/$archive" --output "$archive"
-          grep -F " $archive" SHA256SUMS.txt | sha256sum --check
-          tar -xzf "$archive"
-          echo "$RUNNER_TEMP/solidcraft-${SOLIDCRAFT_VERSION}-linux-x86_64/bin" >> "$GITHUB_PATH"
-      - name: Render each tiny API example in native SolidCraft
-        shell: bash
-        env:
-          SOLIDCRAFT_GPU: cpu
-        run: |
-          set -euo pipefail
-          unset PYTHONPATH
-          solidcraft-cli --version
-          mkdir -p output/native output/qualification
-          printf "case\tbuild\teval\tsnapshot\tstatus\n" > output/qualification/q3-q4-q6-native.tsv
-          native_models="$(python -c 'from qualification.cases import supported_case_slugs; print(" ".join(supported_case_slugs()))')"
-          for model in $native_models; do
-            mkdir -p "output/native/$model"
-            python -m scpf.headless "output/$model.json" \
-              --save "output/native/$model/model.sc" \
-              --out "output/native/$model/model.step" \
-              --results "output/native/$model/results.json" \
-              --replay-log "output/native/$model/replay-log.json"
-            solidcraft-cli eval "output/native/$model/model.sc" \
-              --json-out "output/native/$model/measurements.json"
-            jq -e '(.timeline | all(.error == null))' "output/native/$model/measurements.json"
-            solidcraft-cli run qualification/commands/inspect-joints.json \
-              --in "output/native/$model/model.sc" \
-              --param-check strict --results \
-              --json-out "output/native/$model/joint-inspect.json"
-            test -s "output/native/$model/model.step"
-            solidcraft-cli snapshot "output/native/$model/model.sc" \
-              --out "output/native/$model/model.png" --no-grid --no-axes
-            test -s "output/native/$model/model.png"
-
-            views="$(python -c 'import sys; from qualification.visual_validation import render_views; print(" ".join(render_views(sys.argv[1])))' "$model")"
-            for view in $views; do
-              camera="$(python qualification/camera.py \
-                "output/native/$model/measurements.json" "$view")"
-              printf '%s\n' "$camera" > "output/native/$model/camera-$view.json"
-              solidcraft-cli snapshot "output/native/$model/model.sc" \
-                --out "output/native/$model/model-$view.png" \
-                --width 720 --height 540 --camera "$camera" --no-grid --no-axes
-              test -s "output/native/$model/model-$view.png"
-              python qualification/goal_overlay.py \
-                --case "$model" \
-                --camera "output/native/$model/camera-$view.json" \
-                --actual "output/native/$model/model-$view.png" \
-                --goal "output/native/$model/goal-$view.png" \
-                --overlay "output/native/$model/overlay-$view.png"
-            done
-
-            printf "%s\tPASS\tPASS\tPASS\tPASS\n" "$model" >> output/qualification/q3-q4-q6-native.tsv
-          done
-          # Every registered native post-build inspection comes from
-          # qualification/native_cases.py. Adding a new inspection therefore
-          # automatically makes it part of the qualification run.
-          python qualification/run_post_build_inspections.py \
-            --native-root output/native \
-            --summary output/qualification/post-build-inspections.tsv
-
-          # Parameter-scope also records the published native parameter list.
-          solidcraft-cli run qualification/commands/parameter-scope/export-parameters.json \
-            --in output/native/parameter-scope/model.sc \
-            --param-check strict \
-            --json-out output/native/parameter-scope/parameters-export-results.json
-
-          # Every Q5 saved-design mutation comes from qualification/native_cases.py.
-          # Adding a q5_required case therefore cannot be forgotten here.
-          python qualification/run_mutations.py \
-            --native-root output/native \
-            --summary output/qualification/q5-parametric-mutation.tsv
-
-          python qualification/native_validation.py \
-            --native-root output/native \
-            --qualification-dir output/qualification
-
-          python qualification/visual_validation.py \
-            --native-root output/native \
-            --qualification-dir output/qualification
-
-          qualified_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          echo "QUALIFIED_AT=$qualified_at" >> "$GITHUB_ENV"
-          jq -n \
-            --arg source "$GITHUB_SHA" \
-            --arg forge "$FORGE_VERSION" \
-            --arg version "$SOLIDCRAFT_VERSION" \
-            --arg qualified_at "$qualified_at" \
-            '{source_commit:$source,forge_version:$forge,solidcraft_version:$version,
-              qualified_at:$qualified_at,verified:true,
-              levels:{q1:"python-api",q2:"command-contract",q3:"native-build",
-                      q4:"native-semantic-validation",q5:"parametric-mutation",
-                      q6:"expected-shape-plus-render-regression"}}' \
-            > output/native/verification.json
-      - name: Collect structured qualification results
-        shell: bash
-        run: |
-          set -euo pipefail
-          python qualification/results.py \
-            --qualification-dir output/qualification \
-            --native-root output/native \
-            --source-sha "$GITHUB_SHA" \
-            --forge-version "$FORGE_VERSION" \
-            --solidcraft-version "$SOLIDCRAFT_VERSION" \
-            --qualified-at "$QUALIFIED_AT"
-
-      - name: Build qualification report
-        if: always()
-        shell: bash
-        run: |
-          set -uo pipefail
-          if test -s output/qualification/results.json; then
-            python qualification/report.py \
-              --results output/qualification/results.json \
-              --out output/qualification/REPORT.md
-            cat output/qualification/REPORT.md >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "Structured qualification results were not produced." >> "$GITHUB_STEP_SUMMARY"
+          )
+          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            args+=(
+              --build-out output/build
+              --scope main
+              --source-ref main
+              --workflow-run-id "$GITHUB_RUN_ID"
+            )
           fi
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.image.outputs.reference }}" \
+            python scripts/verification_gate.py "${args[@]}"
 
-      - name: Upload qualification evidence
+      - name: Verify complete technical baseline
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.image.outputs.reference }}" \
+            python scripts/generated_output.py verify-build \
+              --root output/build \
+              --source-commit "$GITHUB_SHA" \
+              --require-complete
+
+      - name: Publish build/main
+        if: github.ref == 'refs/heads/main'
+        id: publish_build
+        run: |
+          python scripts/publish_generated.py replace-dir \
+            --branch build \
+            --source output/build \
+            --destination main \
+            --source-ref main \
+            --expected-source "$GITHUB_SHA" \
+            --message "Publish full build/main at $GITHUB_SHA" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Record immutable release evidence
+        if: github.ref == 'refs/heads/main'
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path("output/release-evidence.json").write_text(
+              json.dumps({
+                  "source_commit": os.environ["GITHUB_SHA"],
+                  "build_commit": "${{ steps.publish_build.outputs.commit }}",
+              }, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Build and test stable site
+        if: github.ref == 'refs/heads/main'
+        run: |
+          build_commit="${{ steps.publish_build.outputs.commit }}"
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            -e PYTHONPATH=/workspace/scpf:/workspace \
+            "${{ steps.image.outputs.reference }}" \
+            bash -lc "
+              python scripts/generated_output.py materialize-site-evidence \
+                --build-root output/build \
+                --destination output/evidence &&
+              python site/build.py \
+                --out output/site \
+                --source-sha '$GITHUB_SHA' \
+                --native output/evidence/native \
+                --references output/evidence/references \
+                --diagram-root output/evidence/diagrams \
+                --build-manifest output/build/build.json \
+                --build-commit '$build_commit' \
+                --build-scope main &&
+              python site/test_site.py \
+                output/site '$GITHUB_SHA' \
+                --build-commit='$build_commit' \
+                --require-native --require-references &&
+              python site/provenance.py write-build \
+                --out output/site/provenance.json \
+                --stage stable \
+                --source-ref main \
+                --source-commit '$GITHUB_SHA' \
+                --build-commit '$build_commit' \
+                --build-manifest output/build/build.json \
+                --workflow-run-id '$GITHUB_RUN_ID'
+            "
+
+      - name: Publish stable Pages
+        if: github.ref == 'refs/heads/main'
+        run: |
+          python scripts/publish_generated.py replace-stable-pages \
+            --branch gh-pages \
+            --source output/site \
+            --source-ref main \
+            --expected-source "$GITHUB_SHA" \
+            --message "Publish full qualified site at $GITHUB_SHA"
+
+      - name: Upload safety evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: scpf-qualification-${{ github.sha }}
           path: |
-            output/qualification
-            output/*.json
-            output/native
-            output/references
-          if-no-files-found: warn
-          retention-days: 30
-
-      - name: Build the lightweight library Pages site
-        shell: bash
-        run: |
-          set -euo pipefail
-          unset PYTHONPATH
-          python site/build.py \
-            --out output/site \
-            --source-sha "$GITHUB_SHA" \
-            --native output/native \
-            --references output/references \
-            --diagram-root output/diagrams
-          python site/test_site.py output/site "$GITHUB_SHA" \
-            --require-native --require-references
-      - name: Upload library site preview
-        uses: actions/upload-artifact@v4
-        with:
-          name: scpf-library-site
-          path: output/site
-          if-no-files-found: error
-      - name: Enforce qualification status
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          results = json.loads(
-              Path("output/qualification/results.json").read_text(encoding="utf-8")
-          )
-          failing = {
-              slug: case["status"]
-              for slug, case in results["cases"].items()
-              if case["status"] != "pass"
-          }
-          if failing:
-              for slug, status in failing.items():
-                  print(f"{slug}: {status.upper()}")
-              raise SystemExit(
-                  f"Qualification failed: {len(failing)} case(s) are not PASS"
-              )
-          print(f"Qualification passed: {len(results['cases'])} case(s)")
-          PY
-
-      - name: Assemble main technical build
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        shell: bash
-        run: |
-          set -euo pipefail
-          python scripts/generated_output.py assemble-build \
-            --output-root output \
-            --destination output/build \
-            --scope main \
-            --source-ref main \
-            --source-commit "$GITHUB_SHA" \
-            --forge-version "$FORGE_VERSION" \
-            --solidcraft-version "$SOLIDCRAFT_VERSION" \
-            --workflow-run-id "$GITHUB_RUN_ID" \
-            --qualification-level q1-q6-full \
-            --qualification-status pass
-          python scripts/generated_output.py verify-build \
-            --root output/build \
-            --source-commit "$GITHUB_SHA"
-
-      - name: Upload main technical build
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
-        with:
-          name: scpf-build-${{ github.sha }}
-          path: output/build
-          if-no-files-found: error
+            output/gate
+            output/build
+            output/site
+            output/release-evidence.json
+          if-no-files-found: ignore
           retention-days: 14
-
-      - name: Write publication provenance
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        shell: bash
-        run: |
-          python site/provenance.py write \
-            --out output/site/provenance.json \
-            --stage stable \
-            --source-ref main \
-            --source-commit "$GITHUB_SHA" \
-            --forge-version "$FORGE_VERSION" \
-            --solidcraft-version "$SOLIDCRAFT_VERSION" \
-            --workflow-run-id "$GITHUB_RUN_ID" \
-            --qualification-level "q1-q6-full" \
-            --qualification-status pass
-          python site/provenance.py verify \
-            --file output/site/provenance.json \
-            --stage stable \
-            --source-commit "$GITHUB_SHA"
-
-      - name: Upload qualified publication output
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
-        with:
-          name: scpf-publish-site-${{ github.sha }}
-          path: output/site
-          if-no-files-found: error
-          retention-days: 14
-
-  publish-build:
-    name: publish-build
-    needs: package
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    concurrency:
-      group: scpf-build-publish
-      cancel-in-progress: false
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: scpf-build-${{ github.sha }}
-          path: output/build
-
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.sha }}
-          path: source
-          fetch-depth: 1
-
-      - name: Verify main technical build
-        run: |
-          python source/scripts/generated_output.py verify-build \
-            --root output/build \
-            --source-commit "${{ github.sha }}"
-
-      - name: Publish main technical build
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: build
-          publish_dir: ./output/build
-          destination_dir: main
-          enable_jekyll: true
-          commit_message: "Publish main build at ${{ github.sha }}"
-
-  publish-site:
-    name: publish-site
-    needs: package
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    concurrency:
-      group: scpf-pages-publish
-      cancel-in-progress: false
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.sha }}
-          path: source
-          fetch-depth: 1
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: scpf-publish-site-${{ github.sha }}
-          path: output/site
-
-      - name: Verify built publication provenance
-        run: |
-          python source/site/provenance.py verify \
-            --file output/site/provenance.json \
-            --stage stable \
-            --source-commit "${{ github.sha }}"
-
-      - uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: current-pages
-          fetch-depth: 1
-
-      - name: Prepare stable Pages root
-        run: |
-          python source/scripts/generated_output.py prepare-stable-pages \
-            --site output/site \
-            --current-pages current-pages \
-            --destination output/pages-stable
-
-      - name: Publish stable Pages root
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./output/pages-stable
-          force_orphan: true
-          commit_message: "Publish qualified site at ${{ github.sha }}"

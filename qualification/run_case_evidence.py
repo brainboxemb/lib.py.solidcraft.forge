@@ -26,10 +26,18 @@ def _target_cwd(
     target: dict[str, str],
     caller_cwd: Path | None = None,
 ) -> Path:
-    """Keep Q1 isolated from the repo while model-local Q2 can import tooling."""
+    """Run Q1 from the package root so `import scpf` resolves the real package."""
     if target["file"].startswith("scpf/tests/"):
-        return caller_cwd or Path.cwd()
+        return caller_cwd or (ROOT / "scpf")
     return ROOT
+
+
+def _target_env() -> dict[str, str]:
+    env = dict(os.environ)
+    env["PYTHONPATH"] = os.pathsep.join(
+        [str(ROOT / "scpf"), str(ROOT)]
+    )
+    return env
 
 
 def _run_target(
@@ -50,12 +58,10 @@ def _run_target(
         "-v",
     ]
 
-    env = dict(os.environ)
-    env.pop("PYTHONPATH", None)
     completed = subprocess.run(
         command,
         cwd=_target_cwd(target),
-        env=env,
+        env=_target_env(),
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -111,6 +117,12 @@ def run(
         )
         if not passed:
             failures.append(slug)
+            print(
+                f"\n{level.upper()} evidence failure: {slug}",
+                file=sys.stderr,
+            )
+            for entry in log:
+                print(entry, file=sys.stderr)
 
     with (out / f"{level}-case-evidence.tsv").open(
         "w",

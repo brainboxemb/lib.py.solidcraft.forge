@@ -59,7 +59,11 @@ def check_workflows() -> None:
 def check_contract_tests() -> None:
     for pattern in (
         "test_preview_scope.py",
+        "test_impact.py",
         "test_generated_output.py",
+        "test_setup.py",
+        "test_merge_promotion.py",
+        "test_case_runner.py",
     ):
         run(
             [
@@ -75,19 +79,25 @@ def check_contract_tests() -> None:
             ]
         )
 
-    run(
-        [
-            sys.executable,
-            "-m",
-            "unittest",
-            "discover",
-            "-s",
-            "site/tests",
-            "-p",
-            "test_publishing.py",
-            "-v",
-        ]
-    )
+    for pattern in (
+        "test_publishing.py",
+        "test_publish_generated.py",
+        "test_reconcile_generated.py",
+        "test_qualification_image.py",
+    ):
+        run(
+            [
+                sys.executable,
+                "-m",
+                "unittest",
+                "discover",
+                "-s",
+                "site/tests",
+                "-p",
+                pattern,
+                "-v",
+            ]
+        )
 
 
 def check_site(source_sha: str, out: Path) -> None:

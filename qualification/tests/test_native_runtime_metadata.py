@@ -105,14 +105,53 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
             for slug in POST_BUILD_INSPECTIONS:
                 self.assertIn(f"{slug}\t", summary_text)
 
-    def test_workflow_uses_generic_post_build_runner(self):
+    def test_post_build_runner_can_limit_to_selected_cases(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            native_root = Path(tmp) / "native"
+            summary = Path(tmp) / "post-build.tsv"
+            slug = next(iter(POST_BUILD_INSPECTIONS))
+            case_root = native_root / slug
+            case_root.mkdir(parents=True)
+            (case_root / "model.sc").write_text("test model", encoding="utf-8")
+
+            with patch(
+                "qualification.run_post_build_inspections.subprocess.run"
+            ) as run:
+                run_post_build_inspections(
+                    native_root,
+                    summary,
+                    solidcraft_cli="solidcraft-test",
+                    cases=(slug,),
+                )
+
+            self.assertEqual(run.call_count, 1)
+            self.assertIn(f"{slug}\t", summary.read_text(encoding="utf-8"))
+
+    def test_case_runner_owns_generic_post_build_runner(self):
+        case_runner = (
+            ROOT / "qualification" / "case_runner.py"
+        ).read_text(encoding="utf-8")
+        affected_runner = (
+            ROOT / "qualification" / "run_affected.py"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn(
+            "run_post_build_inspections(",
+            case_runner,
+        )
+        self.assertNotIn(
+            "run_post_build_inspections(",
+            affected_runner,
+        )
+        for spec in POST_BUILD_INSPECTIONS.values():
+            self.assertNotIn(
+                f'"{spec["command"]}"',
+                affected_runner,
+            )
+
         workflow = (
             ROOT / ".github" / "workflows" / "scpf.yml"
         ).read_text(encoding="utf-8")
-        self.assertIn(
-            "python qualification/run_post_build_inspections.py",
-            workflow,
-        )
         for spec in POST_BUILD_INSPECTIONS.values():
             self.assertNotIn(
                 f"solidcraft-cli run {spec['command']}",

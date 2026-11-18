@@ -5,6 +5,8 @@ contract between the public Forge API, Forge's compiler model and native
 SolidCraft behaviour.  The site and site tests both consume this table.
 """
 
+from pathlib import Path
+
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 
 REFERENCE_URLS = {
@@ -598,3 +600,28 @@ def supported_qualification_cases() -> tuple[dict, ...]:
 def supported_case_slugs() -> tuple[str, ...]:
     """Slugs for cases that may enter command/native qualification."""
     return tuple(case["slug"] for case in supported_qualification_cases())
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def case_source_path(slug: str, implementation: str = "scpf") -> Path:
+    """Return the registered source model for one qualification implementation.
+
+    Existing cases use the historical examples/<slug>/<implementation>/model.py
+    convention. A case may override that location with a `sources` mapping so
+    qualification execution is not structurally tied to the examples tree.
+    """
+    case = next(
+        (row for row in QUALIFICATION_CASES if row["slug"] == slug),
+        None,
+    )
+    if case is None:
+        raise KeyError(slug)
+    override = (case.get("sources") or {}).get(implementation)
+    relative = (
+        Path(override)
+        if override
+        else Path("examples") / slug / implementation / "model.py"
+    )
+    return REPO_ROOT / relative

@@ -180,25 +180,25 @@ How cases are selected:
 - A changed `examples/<case>/...` path selects that case.
 - A changed Q1/Q2 test selects every case that names that test in
   `qualification/case_evidence.py`.
-- A Forge source change under `scpf/scpf/` must have at least one selected
-  proving case. If it does not, the selector fails. Add or update the proving
-  unit test/case instead of widening CI to every model.
+- Forge modules map to qualification cases through
+  `qualification/impact.py`. Unknown or unmapped technical inputs fail safe
+  to the full gate; do not silently classify them as presentation-only.
 - Changes to the case registry/evidence registry select all cases because they
   change the mapping itself.
 - Site/docs/workflow-only changes select no CAD case.
 - Reference libraries run only when reference implementation or
   reference-validation code changed.
 
-The selector also reports the required final gate. During iteration, the PR
-preview stays at preflight + affected Q1/Q2. Before promotion, run the reported
-final gate. Do not replace a missing proving case with `all` merely to make CI
-pass.
+The selector also reports the required final gate. Work on a source branch with
+cheap affected checks while implementing. Open a PR only when the implementation
+is reviewable; the PR merge gate then runs the reported final gate on that exact
+head/base pair. Do not create an early PR merely to use CI as the development
+loop.
 
 Site-only publication uses the same risk decision through
-`scripts/reusable_qualification.py`. It may reuse an earlier successful full
-qualification only when all changes since that run remain at `preflight` and
-no reference execution is required. Do not maintain a second hard-coded list
-of "safe" paths in a workflow.
+`scripts/reusable_qualification.py`. It reuses canonical `build/main`
+evidence only when current technical input hashes still match. Actions-run
+history is not an evidence database.
 
 `scripts/ci_preflight.py` is the first hard gate. Keep it cheap. It exists to
 catch broken Python, malformed workflow structure, broken publication
@@ -288,6 +288,12 @@ green.
 
 ## Generated build output and Pages publishing
 
+`docs/11-generated-output.md` is the normative publication design. Read it
+before changing build/Pages branches, previews, evidence links, publication
+workflows or cleanup. If code/workflows disagree with that document, fix the
+implementation or deliberately change the design first.
+
+
 Generated output has two branches with different jobs. Do not mix them with
 source branches.
 
@@ -329,9 +335,11 @@ Rules:
   `gh-pages/previews/pr-<number>/`.
 - Updating a PR replaces those same directories. Do not create `fast`,
   `full`, branch-name or staging variants.
-- Closing a PR removes both generated PR directories.
-- A successful full Q1-Q6 `main` run replaces `build/main/` and the stable
-  Pages root.
+- Closing a PR removes both generated PR directories. A merged technical PR
+  promotes its verified overlay before cleanup.
+- Normal technical merge promotion replaces only affected case/implementation
+  directories in the complete `build/main/` baseline. A scheduled/manual full
+  Q1-Q6 safety run may rebuild the complete baseline.
 - Replacing the stable Pages root must preserve `previews/`.
 - `preview-output` and `qualified-output` are not part of the architecture.
   Do not publish new data to them.
@@ -343,9 +351,9 @@ Rules:
   evidence belong on `build`; public qualification pages link to that output.
 - A presentation-only PR does not create `build/pr/<number>/`. Its Pages
   preview reuses the latest qualified `build/main/` evidence.
-- Every generated build has `build.json` with source ref/commit, PR number
-  when applicable, Forge/SolidCraft versions when known, workflow run,
-  qualification level/status and generation time.
+- Every generated build uses schema-v2 `build.json` with per-case and
+  per-implementation source commit, input hash, build scope and achieved
+  verification level. Mixed-age evidence must remain truthful.
 - Every generated website has `provenance.json` and is verified before
   publication.
 - Workflows orchestrate setup and publication. Path selection, build layout,
@@ -356,17 +364,21 @@ Rules:
 
 The intended flow is:
 
-`PR source -> technical build -> build/pr/<number>/`
+`PR source -> required merge gate -> sparse build/pr/<number>/`
 
-`PR source -> website build -> gh-pages/previews/pr-<number>/`
+`resolved build/main + PR overlay -> gh-pages/previews/pr-<number>/`
 
-and after full qualification:
+and after a technical merge:
 
-`main -> technical build -> build/main/`
+`verified PR overlay -> scoped promotion -> build/main/`
 
-`main -> website build -> stable gh-pages root`.
+`build/main -> stable gh-pages root`.
 
-Do not publish a failing or partially qualified build as stable.
+All public technical links use the immutable generated-branch commit SHA.
+Publication uses the retrying publisher in `scripts/publish_generated.py`;
+normal workflows must not force-push generated branches.
+
+Do not publish failing technical evidence as stable.
 
 ## Release discipline
 
