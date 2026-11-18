@@ -68,7 +68,9 @@ class ReferenceModelTests(unittest.TestCase):
                 self.assertNotIn("from scpf", source, (slug, reference))
                 if reference == "build123d":
                     self.assertIn("from build123d import", source)
-                    self.assertIn("BuildPart", source)
+                    # build123d supports both Builder and Algebra authoring.
+                    # Qualification must verify library independence, not force
+                    # one authoring style on every reference model.
                     self.assertNotIn("import cadquery", source)
                     self.assertNotIn("from pythonscad", source)
                     self.assertNotIn("from pybosl2", source)
