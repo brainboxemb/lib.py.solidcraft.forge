@@ -36,11 +36,11 @@ CASE_EVIDENCE = {
         "q1": [
             _target(
                 "scpf/tests/test_geometry_features.py",
-                "test_repeat_linear_requires_explicit_axes_and_valid_count",
+                "test_repeat_linear_is_not_part_of_the_public_shape_api",
             ),
             _target(
                 "scpf/tests/test_geometry_features.py",
-                "test_on_uses_faces_without_exposing_assembly_anchors",
+                "test_attached_hole_source_uses_native_rectangular_pattern",
             ),
         ],
         "q2": [
