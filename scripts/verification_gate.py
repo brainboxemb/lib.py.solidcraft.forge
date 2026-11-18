@@ -111,15 +111,16 @@ def run_gate(
         )
 
 
-def assemble_pr_build(
+def assemble_build(
     *,
     gate: str,
     cases: tuple[str, ...],
     out: Path,
     build_out: Path,
+    scope: str,
     source_ref: str,
     source_sha: str,
-    pull_request: int,
+    pull_request: int | None,
     workflow_run_id: str,
 ) -> None:
     if gate in {"preflight", "regenerate-derived"}:
@@ -139,13 +140,16 @@ def assemble_pr_build(
             "--destination",
             str(build_out),
             "--scope",
-            "pr",
+            scope,
             "--source-ref",
             source_ref,
             "--source-commit",
             source_sha,
-            "--pull-request",
-            str(pull_request),
+            *(
+                ["--pull-request", str(pull_request)]
+                if pull_request is not None
+                else []
+            ),
             "--forge-version",
             package_version("scpf"),
             "--solidcraft-version",
@@ -170,6 +174,7 @@ def main() -> int:
     parser.add_argument("--source-sha", required=True)
     parser.add_argument("--reference-smoke", action="store_true")
     parser.add_argument("--build-out", type=Path)
+    parser.add_argument("--scope", choices=("main", "pr"), default="pr")
     parser.add_argument("--source-ref")
     parser.add_argument("--pull-request", type=int)
     parser.add_argument("--workflow-run-id")
@@ -185,20 +190,18 @@ def main() -> int:
     )
 
     if args.build_out:
-        if not (
-            args.source_ref
-            and args.pull_request
-            and args.workflow_run_id
-        ):
+        if not (args.source_ref and args.workflow_run_id):
             raise SystemExit(
-                "--build-out requires --source-ref, --pull-request and "
-                "--workflow-run-id"
+                "--build-out requires --source-ref and --workflow-run-id"
             )
-        assemble_pr_build(
+        if args.scope == "pr" and not args.pull_request:
+            raise SystemExit("--scope pr requires --pull-request")
+        assemble_build(
             gate=args.gate,
             cases=cases,
             out=args.out,
             build_out=args.build_out,
+            scope=args.scope,
             source_ref=args.source_ref,
             source_sha=args.source_sha,
             pull_request=args.pull_request,

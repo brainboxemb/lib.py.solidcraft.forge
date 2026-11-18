@@ -1376,8 +1376,13 @@ def build(
             .get("implementations", {})
             .get("scpf")
         )
+        native_levels = {"affected-q1-q6", "q1-q6-full", "full-q1-q6"}
         case_verified = (
-            bool(case_record and case_record.get("status") == "pass")
+            bool(
+                case_record
+                and case_record.get("status") == "pass"
+                and case_record.get("verification_level") in native_levels
+            )
             if build_manifest_data
             else verified
         )
