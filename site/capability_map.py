@@ -17,9 +17,9 @@ SOLIDCRAFT_CAPABILITIES = [
     # group, capability, SolidCraft capability, Forge status, Forge today,
     # priority/target, reference model, note
     ("fundamentals", "Box", "Native box primitive.", "Supported", "Q6 · native-qualified in the current Forge subset.", "Core", "PythonSCAD + OpenSCAD", "Core rectangular solid."),
-    ("fundamentals", "Cylinder", "Native cylinder primitive, including axis-vector support.", "Supported", "Q6 · basic Z-axis primitive native-qualified.", "Core", "PythonSCAD + OpenSCAD", "General orientation remains a separate transform capability."),
+    ("fundamentals", "Cylinder", "Native cylinder primitive, including principal-axis support.", "Supported", "Q6 · principal-axis Cylinder behaviour is qualified through the shared primitive matrix and native primitive-csg case.", "Core", "PythonSCAD + OpenSCAD", "Arbitrary non-principal rotation remains a separate transform capability."),
     ("fundamentals", "Sphere", "Native sphere primitive.", "Supported", "Q6 · native-qualified through primitive CSG.", "Core", "PythonSCAD + OpenSCAD", "Core rounded primitive."),
-    ("fundamentals", "Cone", "Native cone primitive.", "Missing", "Not exposed in Forge.", "Later", "PythonSCAD + OpenSCAD", "Useful breadth, not needed for current frame work."),
+    ("fundamentals", "Cone", "Native cone / frustum primitive.", "Partial", "Q2 · public Cone semantics and native command lowering are covered; a dedicated Q6 visual case is still missing.", "Later Q6", "PythonSCAD + OpenSCAD", "Keep it in the shared primitive contract matrix; add native visual coverage when a real model needs it."),
     ("fundamentals", "Torus", "Native torus primitive.", "Missing", "Not exposed in Forge.", "Later", "PythonSCAD + OpenSCAD", "Useful breadth, not needed for current frame work."),
     ("fundamentals", "Boolean join / cut / intersect", "Native solid operations.", "Supported", "Q6", "Core", "PythonSCAD + OpenSCAD", "Operator syntax is a good fit."),
     ("fundamentals", "Translation", "Native primitive positions and occurrence moves.", "Supported", "Q6 for CSG; component move also supported.", "Core", "PythonSCAD + OpenSCAD", "Keep world movement distinct from local attachment offsets."),
