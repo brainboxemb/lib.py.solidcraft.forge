@@ -1,0 +1,371 @@
+{
+  "id": "sheet.manage_rules",
+  "input": {
+    "$defs": {
+      "LengthExpr": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "A length: a number in the design's length unit, or an expression such as \"w / 2\" or \"30 mm\"."
+      },
+      "NumberExpr": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "A number with no unit, or an expression such as \"k / 2\"."
+      },
+      "ReliefShape": {
+        "description": "notch, round, rectangular or tear, in any case (blanks around it are ignored).",
+        "pattern": "^[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*([Nn][Oo][Tt][Cc][Hh]|[Rr][Oo][Uu][Nn][Dd]|[Rr][Ee][Cc][Tt][Aa][Nn][Gg][Uu][Ll][Aa][Rr]|[Tt][Ee][Aa][Rr])[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*$",
+        "type": "string"
+      },
+      "SheetAngleDisplay": {
+        "description": "bend or included, ignoring case and surrounding blanks.",
+        "pattern": "^[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*([Bb][Ee][Nn][Dd]|[Ii][Nn][Cc][Ll][Uu][Dd][Ee][Dd])[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*$",
+        "type": "string"
+      },
+      "SheetRuleName": {
+        "description": "Trimmed, nonempty rule name, at most 128 bytes after trimming.",
+        "type": "string"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Create or edit a sheet metal rule, activate it, or delete it. Expressions may use design\nparameters; `Thickness` inside a rule's other expressions is that rule's thickness.\nThe handler evaluates dimensions and ranges against the design after checking the contract.",
+    "properties": {
+      "active": {
+        "description": "Make this the active rule. Default: true if there is no saved active rule, otherwise false.\nFalse leaves the active choice unchanged; ignored when deleting.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "angle_display": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SheetAngleDisplay"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "How DXF bend notes show angles: bend or included, ignoring case and surrounding blanks.\nIgnored when deleting."
+      },
+      "bend_radius": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Inner bend radius, nonnegative. Ignored when deleting."
+      },
+      "corner_relief": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Corner relief size across. Ignored when deleting."
+      },
+      "corner_relief_shape": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ReliefShape"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Corner relief shape. Ignored when deleting."
+      },
+      "delete": {
+        "description": "Delete the named saved rule instead of editing it. Default: false. Deleting the active\nrule clears that choice; listing then uses the first remaining rule, else built-in steel.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "gap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Gap between meeting flanges. Ignored when deleting."
+      },
+      "hem_gap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Inner radius of flat hems. Ignored when deleting."
+      },
+      "k_factor": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/NumberExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Neutral-axis fraction, from 0 to 1. Ignored when deleting."
+      },
+      "name": {
+        "$ref": "#/$defs/SheetRuleName",
+        "description": "The rule's name (trimmed, nonempty, at most 128 bytes). A new rule inherits the active\nrule's fields; an existing rule keeps fields not given here."
+      },
+      "relief_depth": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Bend relief depth. Ignored when deleting."
+      },
+      "relief_width": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Bend relief width. Ignored when deleting."
+      },
+      "thickness": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Thickness, more than 0 and less than 10000 mm. Ignored when deleting."
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "title": "ManageRulesParams",
+    "type": "object"
+  },
+  "label": "Sheet Metal Rules",
+  "output": {
+    "$defs": {
+      "RuleFeatureError": {
+        "description": "A feature that failed to rebuild after a rule was edited.",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "feature": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "feature",
+          "error"
+        ],
+        "type": "object"
+      },
+      "RuleReply": {
+        "description": "A saved rule's expressions, including the default bend-angle display which the saved\ndesign omits. These are expressions, not evaluated values.",
+        "properties": {
+          "angle_display": {
+            "type": "string"
+          },
+          "bend_radius": {
+            "type": "string"
+          },
+          "corner_relief": {
+            "type": "string"
+          },
+          "corner_relief_shape": {
+            "type": "string"
+          },
+          "gap": {
+            "type": "string"
+          },
+          "hem_gap": {
+            "type": "string"
+          },
+          "k_factor": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "relief_depth": {
+            "type": "string"
+          },
+          "relief_width": {
+            "type": "string"
+          },
+          "thickness": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "thickness",
+          "k_factor",
+          "bend_radius",
+          "relief_width",
+          "relief_depth",
+          "corner_relief",
+          "corner_relief_shape",
+          "hem_gap",
+          "gap",
+          "angle_display"
+        ],
+        "type": "object"
+      },
+      "RuleValuesReply": {
+        "description": "Evaluated rule values: lengths in millimetres, dimensionless K-factor and canonical choices.",
+        "properties": {
+          "angle_display": {
+            "type": "string"
+          },
+          "bend_radius": {
+            "format": "double",
+            "type": "number"
+          },
+          "corner_relief": {
+            "format": "double",
+            "type": "number"
+          },
+          "corner_relief_shape": {
+            "type": "string"
+          },
+          "gap": {
+            "format": "double",
+            "type": "number"
+          },
+          "hem_gap": {
+            "format": "double",
+            "type": "number"
+          },
+          "k_factor": {
+            "format": "double",
+            "type": "number"
+          },
+          "relief_depth": {
+            "format": "double",
+            "type": "number"
+          },
+          "relief_width": {
+            "format": "double",
+            "type": "number"
+          },
+          "thickness": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "thickness",
+          "k_factor",
+          "bend_radius",
+          "relief_width",
+          "relief_depth",
+          "corner_relief",
+          "corner_relief_shape",
+          "hem_gap",
+          "gap",
+          "angle_display"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "anyOf": [
+      {
+        "properties": {
+          "errors": {
+            "items": {
+              "$ref": "#/$defs/RuleFeatureError"
+            },
+            "type": "array"
+          },
+          "param_warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "rule": {
+            "$ref": "#/$defs/RuleReply"
+          },
+          "values": {
+            "$ref": "#/$defs/RuleValuesReply"
+          }
+        },
+        "required": [
+          "rule",
+          "values",
+          "errors"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "deleted": {
+            "type": "string"
+          },
+          "param_warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "deleted"
+        ],
+        "type": "object"
+      }
+    ],
+    "description": "A successful rule edit or deletion, preserving the existing reply alternatives.",
+    "title": "ManageRulesResult"
+  },
+  "params": "name (new or existing); thickness?, k_factor?, bend_radius?, relief_width?, relief_depth?, corner_relief?, hem_gap?, gap? (expressions; `Thickness` is the rule's; gap: between flanges that meet at a corner, whose ends are closed toward each other at any angle); corner_relief_shape?: notch|round|rectangular|tear (what is cut where two bends meet at a corner of the base: round and rectangular a relief `corner_relief` across; tear none, each bend's end is cut straight from the corner to its flange's end; default notch); angle_display?: bend|included (how the DXF bend notes read the bend angles: the bend angle, default, or the included angle left between the bend's sides, 180\u00b0 less it; the bend table gives both, and a flange's `angle` is always the bend angle); active?: bool; delete?: bool"
+}
