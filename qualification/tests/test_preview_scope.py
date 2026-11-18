@@ -22,7 +22,7 @@ class PreviewScopeTests(unittest.TestCase):
         paths = ["examples/slot-family/scpf/model.py"]
         cases = affected_cases(paths)
         self.assertEqual(cases, ("slot-family",))
-        self.assertEqual(final_gate(paths, cases), "affected-q1-q2")
+        self.assertEqual(final_gate(paths, cases), "affected-q1-q6")
 
     def test_q1_test_selects_cases_that_use_it_as_evidence(self):
         cases = affected_cases(["scpf/tests/test_native_slots.py"])

@@ -249,6 +249,9 @@ def classify_path(path: str) -> str:
     if path in GLOBAL_CASE_INPUTS:
         return "foundational"
     if path.startswith("examples/"):
+        parts = PurePosixPath(path).parts
+        if len(parts) >= 3 and parts[2] == "scpf":
+            return "native-sensitive"
         return "case"
     if path.startswith("qualification/"):
         if any(path.startswith(prefix) for prefix in DERIVED_PATH_PREFIXES):

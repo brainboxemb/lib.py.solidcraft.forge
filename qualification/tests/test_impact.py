@@ -36,10 +36,21 @@ class ImpactTests(unittest.TestCase):
             "full-q1-q6",
         )
 
-    def test_direct_case_change_selects_only_that_case(self):
+    def test_direct_scpf_case_change_selects_native_gate_for_one_case(self):
         paths = ["examples/simple-box/scpf/model.py"]
         self.assertEqual(affected_cases(paths), ("simple-box",))
-        self.assertEqual(final_gate(paths, ("simple-box",)), "affected-q1-q2")
+        self.assertEqual(
+            final_gate(paths, ("simple-box",)),
+            "affected-q1-q6",
+        )
+
+    def test_reference_case_change_stays_case_scoped(self):
+        paths = ["examples/simple-box/cadquery/model.py"]
+        self.assertEqual(affected_cases(paths), ("simple-box",))
+        self.assertEqual(
+            final_gate(paths, ("simple-box",)),
+            "affected-q1-q2",
+        )
 
     def test_q1_evidence_selects_its_cases(self):
         cases = affected_cases(["scpf/tests/test_native_slots.py"])
