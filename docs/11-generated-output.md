@@ -454,7 +454,7 @@ for unrelated PR namespaces.
 | PR reopened | classify current head again | recreate overlay only if technical | recreate preview |
 | PR closed, not merged | none | remove `pr/N` | remove preview |
 | technical PR merged | pre-merge gate already passed; promote/revalidate tree | overlay affected cases into main | rebuild stable site after build promotion |
-| presentation-only PR merged | validate current case hashes still match build/main | no technical write | rebuild stable site from build/main |
+| presentation-only PR merged | validate `build/main` is a complete passing baseline | no technical write | rebuild stable site from build/main |
 | verification failure | none published | no partial/stale candidate write; stale PR output may be removed | no new preview; stale PR preview may be removed |
 | force-push/rebase | recompute against new base/head | obsolete run rejected by freshness check | obsolete run rejected |
 | draft PR | preflight; expensive gate optional until ready | no durable technical publish unless explicitly requested | optional preview |
@@ -462,9 +462,10 @@ for unrelated PR namespaces.
 | workflow dispatch | explicit audited recovery inputs | scoped repair only | scoped repair only |
 | release | full gate | promote main and tag evidence | stable site uses tagged/immutable evidence |
 
-A presentation-only merge is permitted to reuse `build/main` only when current
-case input hashes still match that baseline. If technical inputs changed since
-the stored evidence, it is not presentation-only from the evidence perspective.
+A presentation-only merge may reuse the existing complete passing `build/main`
+baseline without recalculating every case input hash. The presentation-only
+classifier is the decision boundary: if any technical input changed, this path
+must refuse and the normal technical qualification/promotion flow is authoritative.
 
 ## 15. Derived output
 
@@ -619,8 +620,9 @@ Forbidden:
 10. A PR mutation cannot touch another PR namespace.
 11. Stable Pages replacement preserves all live previews.
 12. Site-only work does not execute technical model qualification.
-13. Site-only reuse is allowed only when current technical input hashes match
-    `build/main`.
+13. Site-only reuse requires a complete passing `build/main` baseline and a
+    presentation-only source classification; it does not recalculate every case
+    input hash.
 14. Technical PR evidence is promoted before merge cleanup removes it.
 15. A failed verification never publishes partial technical evidence.
 16. Cross-case derived reports are regenerated from resolved per-case evidence.
