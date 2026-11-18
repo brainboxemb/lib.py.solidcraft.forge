@@ -98,13 +98,11 @@ jobs:
       - name: Prove one-stage rerun
         if: steps.existing.outputs.exists != 'true'
         run: |
-          before="$(python - <<'PY'
-          import json
-          from pathlib import Path
-          root=Path("$RUNNER_TEMP/simple-box-case/stages/simple-box")
-          print(json.loads((root/"08-mutate.json").read_text())["started_at"])
-          PY
-          )"
+          replay_state="$RUNNER_TEMP/simple-box-case/stages/simple-box/04-replay.json"
+          mutate_state="$RUNNER_TEMP/simple-box-case/stages/simple-box/08-mutate.json"
+          replay_before="$(sha256sum "$replay_state" | awk '{print $1}')"
+          mutate_before="$(sha256sum "$mutate_state" | awk '{print $1}')"
+
           docker run --rm \
             -v "$GITHUB_WORKSPACE:/workspace" \
             -v "$RUNNER_TEMP/simple-box-case:/case-out" \
@@ -114,16 +112,15 @@ jobs:
             python qualification/case_runner.py simple-box \
               --out /case-out \
               --stage mutate
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          root=Path("$RUNNER_TEMP/simple-box-case/stages/simple-box")
-          mutate=json.loads((root/"08-mutate.json").read_text())
-          replay=json.loads((root/"04-replay.json").read_text())
-          assert mutate["status"] == "pass", mutate
-          assert replay["status"] == "pass", replay
-          print("single-stage rerun PASS")
-          PY
+
+          replay_after="$(sha256sum "$replay_state" | awk '{print $1}')"
+          mutate_after="$(sha256sum "$mutate_state" | awk '{print $1}')"
+
+          test "$replay_before" = "$replay_after"
+          test "$mutate_before" != "$mutate_after"
+
+          python -c 'import json,sys; p=json.load(open(sys.argv[1])); assert p["status"]=="pass"' "$mutate_state"
+          echo "single-stage rerun PASS; replay unchanged"
 
       - name: Upload staged-case diagnostics
         if: always()
