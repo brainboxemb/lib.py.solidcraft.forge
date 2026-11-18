@@ -126,6 +126,7 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertIn('"replay"', script)
         self.assertIn("FORGE_QUALIFICATION_IMAGE", script)
         self.assertIn('"docker"', script)
+        self.assertIn("finalize_item_result.py", script)
         self.assertFalse((ROOT / "examples/simple-box/ci.py").exists())
 
     def test_generated_evidence_items_are_independent_from_examples(self):
