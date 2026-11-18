@@ -2060,31 +2060,47 @@ def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
     return Shape("cylinder", (h, d, axis.value, _direction_selector(anchor)))
 
 
+def _validate_hole_direction(direction):
+    if direction is None:
+        return None
+    direction = tuple(direction)
+    if len(direction) != 3:
+        raise ValueError("Hole direction must be a 3D direction")
+    concrete = [_pv(v) for v in direction]
+    if not all(isfinite(v) for v in concrete) or concrete == [0, 0, 0]:
+        raise ValueError("Hole direction must be a finite non-zero direction")
+    return direction
+
+
 def _hole_feature(
     hole_type,
     *,
-    d,
+    d=None,
     depth=Depth.THROUGH_ALL,
     direction=None,
     counterbore_d=None,
     counterbore_depth=None,
     countersink_d=None,
     countersink_angle=None,
+    thread=None,
+    hand="right",
+    thread_depth=None,
+    modeled=False,
+    ease_out=None,
 ):
-    """Build one validated native Hole feature description."""
-    if _pv(d) <= 0:
+    """Build one validated native Hole-family feature description."""
+    if d is not None and _pv(d) <= 0:
         raise ValueError("hole diameter must be positive")
     if depth is not Depth.THROUGH_ALL and _pv(depth) <= 0:
         raise ValueError("hole depth must be positive or Depth.THROUGH_ALL")
-    if direction is not None:
-        direction = tuple(direction)
-        if len(direction) != 3:
-            raise ValueError("Hole direction must be a 3D direction")
-        concrete = [_pv(v) for v in direction]
-        if not all(isfinite(v) for v in concrete) or concrete == [0, 0, 0]:
-            raise ValueError("Hole direction must be a finite non-zero direction")
+    direction = _validate_hole_direction(direction)
 
-    if hole_type == "counterbore":
+    if hole_type == "simple":
+        if d is None:
+            raise ValueError("Hole requires d")
+    elif hole_type == "counterbore":
+        if d is None:
+            raise ValueError("CounterboreHole requires d")
         if counterbore_d is None or counterbore_depth is None:
             raise ValueError(
                 "CounterboreHole requires counterbore_d and counterbore_depth"
@@ -2096,6 +2112,8 @@ def _hole_feature(
         if _pv(counterbore_depth) <= 0:
             raise ValueError("counterbore depth must be positive")
     elif hole_type == "countersink":
+        if d is None:
+            raise ValueError("CountersinkHole requires d")
         if countersink_d is None:
             raise ValueError("CountersinkHole requires countersink_d")
         if _pv(countersink_d) <= _pv(d):
@@ -2107,7 +2125,23 @@ def _hole_feature(
             raise ValueError(
                 "countersink angle must be between 0 and 180 degrees"
             )
-    elif hole_type != "simple":
+    elif hole_type == "threaded":
+        if not isinstance(thread, str) or not thread.strip():
+            raise ValueError("ThreadedHole requires a thread designation")
+        if hand not in ("right", "left"):
+            raise ValueError("thread hand must be 'right' or 'left'")
+        if thread_depth is not None and _pv(thread_depth) <= 0:
+            raise ValueError("thread depth must be positive")
+        if ease_out is not None:
+            if isinstance(ease_out, str):
+                if ease_out not in ("standard", "short"):
+                    raise ValueError(
+                        "thread ease_out must be 'standard', 'short', or a positive length"
+                    )
+            elif _pv(ease_out) <= 0:
+                raise ValueError("thread ease_out length must be positive")
+        modeled = bool(modeled)
+    else:
         raise ValueError(f"unsupported hole type: {hole_type}")
 
     return Shape(
@@ -2121,21 +2155,17 @@ def _hole_feature(
             counterbore_depth,
             countersink_d,
             countersink_angle,
+            thread,
+            hand,
+            thread_depth,
+            modeled,
+            ease_out,
         ),
     )
 
 
 def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None):
-    """Create a simple drilled hole feature.
-
-    Parameters:
-        d: Finished hole diameter in mm.
-        depth: Hole depth in mm, or Depth.THROUGH_ALL.
-        direction: Optional non-zero XYZ direction vector for the hole axis.
-
-    Example:
-        Hole(d=4.3)
-    """
+    """Create a simple cylindrical hole feature."""
     return _hole_feature(
         "simple",
         d=d,
@@ -2152,15 +2182,7 @@ def CounterboreHole(
     depth=Depth.THROUGH_ALL,
     direction=None,
 ):
-    """Create a counterbored hole feature.
-
-    Parameters:
-        d: Finished through/blind hole diameter in mm.
-        counterbore_d: Counterbore diameter in mm.
-        counterbore_depth: Counterbore depth from the entry face in mm.
-        depth: Main hole depth in mm, or Depth.THROUGH_ALL.
-        direction: Optional non-zero XYZ direction vector for the hole axis.
-    """
+    """Create a hole with a cylindrical recess at its entry face."""
     return _hole_feature(
         "counterbore",
         d=d,
@@ -2179,15 +2201,7 @@ def CountersinkHole(
     depth=Depth.THROUGH_ALL,
     direction=None,
 ):
-    """Create a countersunk hole feature.
-
-    Parameters:
-        d: Finished through/blind hole diameter in mm.
-        countersink_d: Countersink diameter at the entry face in mm.
-        countersink_angle: Included countersink angle in degrees.
-        depth: Main hole depth in mm, or Depth.THROUGH_ALL.
-        direction: Optional non-zero XYZ direction vector for the hole axis.
-    """
+    """Create a hole with a conical countersink/chamfer at its entry face."""
     return _hole_feature(
         "countersink",
         d=d,
@@ -2195,6 +2209,36 @@ def CountersinkHole(
         direction=direction,
         countersink_d=countersink_d,
         countersink_angle=countersink_angle,
+    )
+
+
+def ThreadedHole(
+    *,
+    thread,
+    depth=Depth.THROUGH_ALL,
+    d=None,
+    direction=None,
+    hand="right",
+    thread_depth=None,
+    modeled=False,
+    ease_out=None,
+):
+    """Create a tapped hole.
+
+    The thread designation chooses SolidCraft's normal tapping drill unless
+    d is supplied explicitly. modeled=False keeps the thread as native thread
+    metadata; modeled=True asks SolidCraft to cut the thread geometry.
+    """
+    return _hole_feature(
+        "threaded",
+        d=d,
+        depth=depth,
+        direction=direction,
+        thread=thread,
+        hand=hand,
+        thread_depth=thread_depth,
+        modeled=modeled,
+        ease_out=ease_out,
     )
 
 
