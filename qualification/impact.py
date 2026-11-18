@@ -22,9 +22,15 @@ if str(ROOT) not in sys.path:
 
 from qualification.case_evidence import CASE_EVIDENCE
 from qualification.case_selection import CASE_BY_SLUG, CASE_SLUGS
-from qualification.cases import reference_implementations_for
+from qualification.cases import (
+    reference_implementations_for,
+    supported_case_slugs,
+)
 from qualification.geometry_contracts import proof_contract
 from qualification.native_cases import mutation_spec
+
+
+TECHNICAL_CASE_SLUGS = supported_case_slugs()
 
 
 RISK_ORDER = {
@@ -196,7 +202,7 @@ def case_dependencies(slug: str, repo_root: Path = ROOT) -> tuple[str, ...]:
 def affected_cases(paths: tuple[str, ...] | list[str], repo_root: Path = ROOT) -> tuple[str, ...]:
     normalized = tuple(_norm(path) for path in paths)
     if any(path in GLOBAL_CASE_INPUTS for path in normalized):
-        return CASE_SLUGS
+        return TECHNICAL_CASE_SLUGS
 
     selected: set[str] = set()
     for raw in normalized:
@@ -218,16 +224,16 @@ def affected_cases(paths: tuple[str, ...] | list[str], repo_root: Path = ROOT) -
     if changed_modules:
         dependency_map = {
             slug: set(case_dependencies(slug, repo_root))
-            for slug in CASE_SLUGS
+            for slug in TECHNICAL_CASE_SLUGS
         }
         for slug, dependencies in dependency_map.items():
             if changed_modules & dependencies:
                 selected.add(slug)
         unresolved = changed_modules - set().union(*dependency_map.values())
         if unresolved:
-            return CASE_SLUGS
+            return TECHNICAL_CASE_SLUGS
 
-    return tuple(slug for slug in CASE_SLUGS if slug in selected)
+    return tuple(slug for slug in TECHNICAL_CASE_SLUGS if slug in selected)
 
 
 def classify_path(path: str) -> str:

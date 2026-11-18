@@ -13,8 +13,12 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from qualification.case_selection import CASE_SLUGS
+from qualification.cases import supported_case_slugs
+from qualification.case_selection import parse_case_selection
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
+
+
+TECHNICAL_CASE_SLUGS = supported_case_slugs()
 
 
 def run(command: list[str], *, cwd: Path = ROOT) -> None:
@@ -23,10 +27,17 @@ def run(command: list[str], *, cwd: Path = ROOT) -> None:
 
 def selected_cases(value: str, gate: str) -> tuple[str, ...]:
     if gate == "full-q1-q6":
-        return tuple(CASE_SLUGS)
-    selected = tuple(part.strip() for part in value.split(",") if part.strip())
+        return tuple(TECHNICAL_CASE_SLUGS)
+    if not value.strip():
+        selected = ()
+    else:
+        selected = tuple(
+            slug
+            for slug in parse_case_selection(value)
+            if slug in TECHNICAL_CASE_SLUGS
+        )
     if gate not in {"preflight", "regenerate-derived"} and not selected:
-        raise ValueError(f"{gate} requires affected cases")
+        raise ValueError(f"{gate} requires supported affected cases")
     return selected
 
 

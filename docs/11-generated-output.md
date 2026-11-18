@@ -606,7 +606,7 @@ Forbidden:
 
 ## 22. Hard invariants
 
-1. `build/main` contains every registered case.
+1. `build/main` contains every technically supported qualification case; deliberately blocked documentation cases are represented only on the public site until they become technically supported.
 2. `build/pr/N` is sparse and contains only PR-owned changed evidence.
 3. A non-affected main case never disappears during affected promotion.
 4. Every case/implementation has its own input hash, source provenance and

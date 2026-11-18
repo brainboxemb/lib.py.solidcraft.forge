@@ -19,12 +19,16 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from qualification.case_selection import CASE_SLUGS
-from qualification.cases import reference_implementations_for
+from qualification.cases import (
+    reference_implementations_for,
+    supported_case_slugs,
+)
 from qualification.case_selection import CASE_BY_SLUG
 from qualification.impact import case_input_hash
 
 
 SCHEMA_VERSION = 2
+TECHNICAL_CASE_SLUGS = supported_case_slugs()
 ALLOWED_BUILD_TOP_LEVEL = {"build.json", "examples", "qualification"}
 LEVEL_RANK = {
     "preflight": 0,
@@ -72,10 +76,10 @@ def _known_case(repo_root: Path, slug: str) -> bool:
 def _selected_cases(value: str | None, output_root: Path, repo_root: Path) -> tuple[str, ...]:
     if value:
         requested = tuple(part.strip() for part in value.replace(" ", ",").split(",") if part.strip())
-        unknown = sorted(set(requested) - set(CASE_SLUGS))
+        unknown = sorted(set(requested) - set(TECHNICAL_CASE_SLUGS))
         if unknown:
             raise ValueError("unknown case(s): " + ", ".join(unknown))
-        return tuple(slug for slug in CASE_SLUGS if slug in requested)
+        return tuple(slug for slug in TECHNICAL_CASE_SLUGS if slug in requested)
 
     detected = set()
     for path in output_root.glob("*.json"):
@@ -89,7 +93,7 @@ def _selected_cases(value: str | None, output_root: Path, repo_root: Path) -> tu
                 for child in root.iterdir()
                 if child.is_dir() and _known_case(repo_root, child.name)
             )
-    return tuple(slug for slug in CASE_SLUGS if slug in detected)
+    return tuple(slug for slug in TECHNICAL_CASE_SLUGS if slug in detected)
 
 
 def _copy_reference_case(
@@ -287,7 +291,7 @@ def verify_build(
         )
 
     for slug, case in metadata.get("cases", {}).items():
-        if slug not in CASE_SLUGS:
+        if slug not in TECHNICAL_CASE_SLUGS:
             raise RuntimeError(f"unknown case in build manifest: {slug}")
         for implementation, record in case.get("implementations", {}).items():
             if not str(record.get("input_hash", "")).startswith("sha256:"):
@@ -314,7 +318,7 @@ def verify_build(
                 )
 
     if require_complete:
-        missing = sorted(set(CASE_SLUGS) - set(metadata.get("cases", {})))
+        missing = sorted(set(TECHNICAL_CASE_SLUGS) - set(metadata.get("cases", {})))
         if missing:
             raise RuntimeError(
                 "main build is missing registered cases: " + ", ".join(missing)
@@ -376,7 +380,7 @@ def verify_current_hashes(root: Path, *, repo_root: Path = ROOT) -> dict:
 
 
 def _complete_overlay(manifest: dict) -> bool:
-    return set(manifest.get("cases", {})) == set(CASE_SLUGS)
+    return set(manifest.get("cases", {})) == set(TECHNICAL_CASE_SLUGS)
 
 
 def _bootstrap_main_from_overlay(
@@ -474,7 +478,7 @@ def promote_overlay(
     merged["workflow_run_id"] = workflow_run_id
     merged["generated_at"] = _now()
 
-    current_cases = set(CASE_SLUGS)
+    current_cases = set(TECHNICAL_CASE_SLUGS)
     examples_root = destination / "examples"
     if examples_root.is_dir():
         for path in list(examples_root.iterdir()):
