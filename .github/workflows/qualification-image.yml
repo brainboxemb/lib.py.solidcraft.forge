@@ -82,47 +82,55 @@ jobs:
           cache-from: type=gha,scope=qualification-image
           cache-to: type=gha,mode=max,scope=qualification-image
 
-      - name: Run one-case integration smoke
+      - name: Run complete simple-box staged case
+        if: steps.existing.outputs.exists != 'true'
         run: |
-          mkdir -p "$RUNNER_TEMP/simple-box-smoke"
+          mkdir -p "$RUNNER_TEMP/simple-box-case"
           docker run --rm \
             -v "$GITHUB_WORKSPACE:/workspace" \
-            -v "$RUNNER_TEMP/simple-box-smoke:/smoke" \
+            -v "$RUNNER_TEMP/simple-box-case:/case-out" \
             -w /workspace \
             -e PYTHONPATH=/workspace/scpf:/workspace \
             qualification-local:${{ steps.meta.outputs.image_id }} \
-            python qualification/integration/simple_box.py --out /smoke/simple-box
+            python qualification/case_runner.py simple-box \
+              --out /case-out
 
-      - name: Run real one-case qualification gate
+      - name: Prove one-stage rerun
+        if: steps.existing.outputs.exists != 'true'
         run: |
-          mkdir -p "$RUNNER_TEMP/simple-box-gate"
+          before="$(python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("$RUNNER_TEMP/simple-box-case/stages/simple-box")
+          print(json.loads((root/"08-mutate.json").read_text())["started_at"])
+          PY
+          )"
           docker run --rm \
             -v "$GITHUB_WORKSPACE:/workspace" \
-            -v "$RUNNER_TEMP/simple-box-gate:/gate" \
+            -v "$RUNNER_TEMP/simple-box-case:/case-out" \
             -w /workspace \
             -e PYTHONPATH=/workspace/scpf:/workspace \
             qualification-local:${{ steps.meta.outputs.image_id }} \
-            python scripts/verification_gate.py \
-              --gate affected-q1-q6 \
-              --cases simple-box \
-              --out /gate/simple-box \
-              --source-sha "$GITHUB_SHA"
+            python qualification/case_runner.py simple-box \
+              --out /case-out \
+              --stage mutate
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("$RUNNER_TEMP/simple-box-case/stages/simple-box")
+          mutate=json.loads((root/"08-mutate.json").read_text())
+          replay=json.loads((root/"04-replay.json").read_text())
+          assert mutate["status"] == "pass", mutate
+          assert replay["status"] == "pass", replay
+          print("single-stage rerun PASS")
+          PY
 
-      - name: Upload one-case gate diagnostics
+      - name: Upload staged-case diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: qualification-image-gate-${{ github.sha }}
-          path: ${{ runner.temp }}/simple-box-gate
-          if-no-files-found: ignore
-          retention-days: 7
-
-      - name: Upload smoke diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: qualification-image-smoke-${{ github.sha }}
-          path: ${{ runner.temp }}/simple-box-smoke
+          name: qualification-image-simple-box-${{ github.sha }}
+          path: ${{ runner.temp }}/simple-box-case
           if-no-files-found: ignore
           retention-days: 7
 

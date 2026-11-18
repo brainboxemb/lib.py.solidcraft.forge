@@ -41,28 +41,20 @@ immutable tag.
 
 ## Smoke test
 
-The image build is not publishable until
-`qualification/integration/simple_box.py` passes against the current checkout:
-
-`Forge compile -> native SolidCraft replay -> eval -> saved-design parameter
-mutation -> native Q4/Q5 validation`.
-
-This intentionally tests one vertical integration path before the full
-qualification suite is allowed to consume the image.
-
-
-## One-case real gate
-
-After the fast vertical smoke passes, the image workflow also executes the
-repository's real gate:
+The image build is not publishable until the shared staged case runner passes:
 
 ```text
-verification_gate.py --gate affected-q1-q6 --cases simple-box
+python qualification/case_runner.py simple-box --out <output>
 ```
 
-That deliberately exercises the same Q1-Q6 orchestration later used by PR CI,
-but for exactly one qualification case. The complete case set is not used while
-developing the container.
+The workflow then reruns only the mutation stage against the same output:
+
+```text
+python qualification/case_runner.py simple-box --out <output> --stage mutate
+```
+
+This proves both the complete vertical case and independent stage reruns without
+maintaining a second Docker-specific qualification implementation.
 
 
 ## Compatibility trigger
