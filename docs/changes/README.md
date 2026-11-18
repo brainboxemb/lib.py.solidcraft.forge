@@ -46,3 +46,4 @@ Current records:
 - [0027-native-sketch-slot-family.md](0027-native-sketch-slot-family.md) — expose all five native SolidCraft Slot sketch constructors and keep their through-all cut-direction finding separate.
 - [0028-attached-through-all-direction.md](0028-attached-through-all-direction.md) — make attached Sketch through-all cuts emit the support-face direction explicitly so TOP cuts cannot silently miss the target body.
 - [0029-repeated-parent-attachments.md](0029-repeated-parent-attachments.md) — qualify two disconnected attachment graphs on repeated parent occurrences and decide #162 from current SolidCraft 0.42 evidence.
+- [0038-presentation-only-build-reuse.md](0038-presentation-only-build-reuse.md) — let presentation-only source changes reuse a complete passing `build/main` baseline without recalculating every qualification case hash.
