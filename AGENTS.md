@@ -194,6 +194,12 @@ preview stays at preflight + affected Q1/Q2. Before promotion, run the reported
 final gate. Do not replace a missing proving case with `all` merely to make CI
 pass.
 
+Site-only publication uses the same risk decision through
+`scripts/reusable_qualification.py`. It may reuse an earlier successful full
+qualification only when all changes since that run remain at `preflight` and
+no reference execution is required. Do not maintain a second hard-coded list
+of "safe" paths in a workflow.
+
 `scripts/ci_preflight.py` is the first hard gate. Keep it cheap. It exists to
 catch broken Python, malformed workflow structure, broken publication
 contracts and a broken website before third-party CAD libraries or native
