@@ -508,7 +508,11 @@ def check(
     assert "Placement(rotation=(axis, degrees))" in cheatsheet
     assert "copy().move(" not in cheatsheet
     assert "model.rotate(" not in cheatsheet
-    assert not (site / "qualification").exists()\n    assert 'href="qualification/"' not in home\n    assert ">Qualification</a>" not in home\n\n    manifest = json.loads((site / "manifest.json").read_text(encoding="utf-8"))
+    assert not (site / "qualification").exists()
+    assert 'href="qualification/"' not in home
+    assert ">Qualification</a>" not in home
+
+    manifest = json.loads((site / "manifest.json").read_text(encoding="utf-8"))
     assert (site / ".nojekyll").is_file()
     assert (site / "style.css").is_file()
     assert set(manifest["examples"]) == set(EXAMPLES)
