@@ -1,0 +1,884 @@
+{
+  "id": "sheet.flange",
+  "input": {
+    "$defs": {
+      "AngleExpr": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "An angle: a number of degrees, or an expression such as \"30 deg\" or \"a / 2\"."
+      },
+      "FlangeEdges": {
+        "description": "Points in mm on the sheet's top or bottom edges, 1 to 1000: each [x, y, z] or {\"x\", \"y\", \"z\"}, or {point: [x, y, z], angle?, height?, segments?} for an edge with its own angle and height (null: the feature's), or split into 1 to 64 segments that tile it.",
+        "items": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Point3"
+                }
+              ],
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "point"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "angle"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "height"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "segments"
+                    ]
+                  }
+                ],
+                "type": "object"
+              }
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "angle": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AngleExpr"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "height": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/LengthExpr"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "point": {
+                  "$ref": "#/$defs/Point3"
+                },
+                "segments": {
+                  "anyOf": [
+                    {
+                      "items": {
+                        "additionalProperties": false,
+                        "description": "One stretch of the edge: from and to are fractions 0\u20261 of the stretch the sheet still has there (the first from is 0, the last to is 1, and each from is the to of the one before); angle, height and flip are its own where given.",
+                        "properties": {
+                          "angle": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/$defs/AngleExpr"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "flip": {
+                            "anyOf": [
+                              {
+                                "type": "boolean"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "from": {
+                            "maximum": 1,
+                            "minimum": 0,
+                            "type": "number"
+                          },
+                          "height": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/$defs/LengthExpr"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "to": {
+                            "maximum": 1,
+                            "minimum": 0,
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "from",
+                          "to"
+                        ],
+                        "type": "object"
+                      },
+                      "maxItems": 64,
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "point"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "maxItems": 1000,
+        "minItems": 1,
+        "type": "array"
+      },
+      "FlangePosition": {
+        "description": "inside, outside (bend_outside is the same), middle, material_outside or tangent, in any case.",
+        "pattern": "^([Ii][Nn][Ss][Ii][Dd][Ee]|[Oo][Uu][Tt][Ss][Ii][Dd][Ee]|[Bb][Ee][Nn][Dd][__][Oo][Uu][Tt][Ss][Ii][Dd][Ee]|[Mm][Ii][Dd][Dd][Ll][Ee]|[Mm][Aa][Tt][Ee][Rr][Ii][Aa][Ll][__][Oo][Uu][Tt][Ss][Ii][Dd][Ee]|[Tt][Aa][Nn][Gg][Ee][Nn][Tt])$",
+        "type": "string"
+      },
+      "FlangeType": {
+        "description": "base, edge or contour, in any case.",
+        "pattern": "^([Bb][Aa][Ss][Ee]|[Ee][Dd][Gg][Ee]|[Cc][Oo][Nn][Tt][Oo][Uu][Rr])$",
+        "type": "string"
+      },
+      "HeightFrom": {
+        "description": "outer, inner or tangent, in any case (blanks around it are ignored).",
+        "pattern": "^[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*([Oo][Uu][Tt][Ee][Rr]|[Ii][Nn][Nn][Ee][Rr]|[Tt][Aa][Nn][Gg][Ee][Nn][Tt])[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*$",
+        "type": "string"
+      },
+      "IdOrName": {
+        "description": "A feature's id (a number) or its name.",
+        "type": [
+          "number",
+          "string"
+        ]
+      },
+      "LengthExpr": {
+        "anyOf": [
+          {
+            "exclusiveMaximum": 1000000000.0,
+            "exclusiveMinimum": -1000000000.0,
+            "type": "number"
+          },
+          {
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]",
+            "type": "string"
+          }
+        ],
+        "description": "A length: a number in the design's length unit, or an expression such as \"w / 2\" or \"30 mm\"."
+      },
+      "Point2": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A sketch point in mm: [x, y] or {\"x\", \"y\"}."
+      },
+      "Point3": {
+        "anyOf": [
+          {
+            "items": {
+              "exclusiveMaximum": 1000000000.0,
+              "exclusiveMinimum": -1000000000.0,
+              "type": "number"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          {
+            "properties": {
+              "x": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "y": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              },
+              "z": {
+                "exclusiveMaximum": 1000000000.0,
+                "exclusiveMinimum": -1000000000.0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A point in mm: [x, y, z] or {\"x\", \"y\", \"z\"}."
+      },
+      "Profiles": {
+        "anyOf": [
+          {
+            "pattern": "^[Aa][Ll][Ll]$",
+            "type": "string"
+          },
+          {
+            "maximum": 18446744073709551615,
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "items": {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "maxItems": 10000,
+            "minItems": 1,
+            "type": "array"
+          },
+          {
+            "items": {
+              "properties": {
+                "point": {
+                  "$ref": "#/$defs/Point2"
+                }
+              },
+              "required": [
+                "point"
+              ],
+              "type": "object"
+            },
+            "maxItems": 10000,
+            "minItems": 1,
+            "type": "array"
+          },
+          {
+            "items": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                {
+                  "properties": {
+                    "curves": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "items": {
+                            "type": "string"
+                          },
+                          "minItems": 1,
+                          "type": "array"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "curves"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "not": {
+                    "required": [
+                      "curves"
+                    ]
+                  },
+                  "properties": {
+                    "loops": {
+                      "items": {
+                        "properties": {
+                          "curves": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "minItems": 1,
+                                "type": "array"
+                              }
+                            ]
+                          },
+                          "outer": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "curves"
+                        ],
+                        "type": "object"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "loops"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 10000,
+            "minItems": 1,
+            "not": {
+              "items": {
+                "required": [
+                  "point"
+                ],
+                "type": "object"
+              }
+            },
+            "type": "array"
+          },
+          {
+            "anyOf": [
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "whole_boundaries"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              },
+              {
+                "not": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "whole_boundaries"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                "properties": {
+                  "offset_boundaries": {
+                    "items": {
+                      "maxLength": 512,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 128,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  }
+                },
+                "required": [
+                  "offset_boundaries"
+                ],
+                "type": "object"
+              },
+              {
+                "not": {
+                  "required": [
+                    "offset_boundaries"
+                  ]
+                },
+                "properties": {
+                  "associations": {
+                    "items": {
+                      "maxLength": 512,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 128,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "type": {
+                    "enum": [
+                      "offset_boundaries"
+                    ]
+                  }
+                },
+                "required": [
+                  "type",
+                  "associations"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Internal selections written by the app."
+          }
+        ],
+        "description": "Which sketch profiles to use: \"all\" (the default, any case), an index, or a list of indices, of {\"point\": [x, y]} inside a profile, or of curve selections (a list of curve ids, {\"curves\": [ids]} or {\"loops\": [...]}). Picks by index or point are stored by the curves around the profile."
+      },
+      "ReliefShape": {
+        "description": "notch, round, rectangular or tear, in any case (blanks around it are ignored).",
+        "pattern": "^[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*([Nn][Oo][Tt][Cc][Hh]|[Rr][Oo][Uu][Nn][Dd]|[Rr][Ee][Cc][Tt][Aa][Nn][Gg][Uu][Ll][Aa][Rr]|[Tt][Ee][Aa][Rr])[\\u0009-\\u000d\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028-\\u2029\\u202f\\u205f\\u3000]*$",
+        "type": "string"
+      },
+      "StringList": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "type": "array"
+          }
+        ],
+        "description": "A name, or a list of names."
+      },
+      "ThenSteps": {
+        "description": "Further bends, at most 16, each a flange on the far edge of the one before: its height, its angle (default 90 deg) and flip (true turns that bend the other way; default: the flange's).",
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "angle": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/AngleExpr"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "flip": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "height": {
+              "$ref": "#/$defs/LengthExpr"
+            }
+          },
+          "required": [
+            "height"
+          ],
+          "type": "object"
+        },
+        "maxItems": 16,
+        "type": "array"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "description": "Add a sheet metal flange: a base flange from sketch profiles, a contour flange along an open\nchain of sketch lines and tangent arcs, or edge flanges on a sheet's edges. Thickness, K-factor, bend radius\nand reliefs come from the sheet metal rule (`sheet.manage_rules`), so those keys are refused;\nan edge flange may set its own `radius` and corner relief. `participants` changes nothing.",
+    "properties": {
+      "angle": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/AngleExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Edge: the bend angle, more than 0 and at most 180\u00b0 (an edge's own `angle` replaces it).\nDefault: 90 deg."
+      },
+      "body": {
+        "default": null,
+        "description": "Edge: the sheet metal body. Default: the sheet with an edge nearest the first point.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "body_name": {
+        "default": null,
+        "description": "The new body's name.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "body_names": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/StringList"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Names for the new bodies, in order."
+      },
+      "corner_relief": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Edge: the size across of a round or rectangular corner relief, in place of the rule's.\nRefused on a base or contour flange."
+      },
+      "corner_relief_shape": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ReliefShape"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Edge: the shape of the relief cut where these flanges meet at a corner, in place of the\nrule's. Refused on a base or contour flange."
+      },
+      "curves": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/StringList"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Contour: the open chain's lines and arcs (curve ids), 1 to 1000. An arc is a bend of its\nown radius; it must meet the curves beside it tangentially."
+      },
+      "distance": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Contour: how far the flange runs from the sketch plane, positive."
+      },
+      "edges": {
+        "$ref": "#/$defs/FlangeEdges",
+        "description": "Edge: the edges that get a flange."
+      },
+      "flip": {
+        "default": null,
+        "description": "Base: the thickness goes to the other side of the sketch plane. Contour: the material goes\nto the other side of the chain. Edge: the flanges bend the other way. Default: false.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "height": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Edge: each flange's height, along the flange to its far edge, from where `height_from` says\n(an edge's own `height` replaces it). Required for an edge flange."
+      },
+      "height_from": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeightFrom"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Edge: where the height is measured from: the outer virtual sharp (outer), the inner virtual\nsharp (inner), or past 90\u00b0 the line square to the flange touching the bend's outside\n(tangent; up to 90\u00b0 the outer sharp). Default: outer."
+      },
+      "name": {
+        "default": null,
+        "description": "The feature's name in the timeline.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "participants": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/StringList"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The bodies taking part, each an existing body or `*`; what that changes depends on the\nfeature."
+      },
+      "position": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FlangePosition"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Edge: where the bend starts: inside (the outer virtual sharp on the edge), outside or\nbend_outside (the bend starting at the edge), middle (half-way), material_outside (the\ninner virtual sharp on the edge) or tangent (the bend's outer face tangent to the edge's\nface; below 90\u00b0 the bend's end on that face). Default: inside."
+      },
+      "profiles": {
+        "$ref": "#/$defs/Profiles",
+        "description": "Base: which of the sketch's profiles become the sheet. Default: all of them."
+      },
+      "radius": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LengthExpr"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Edge: the inner bend radius. Default: the sheet's rule's."
+      },
+      "reverse": {
+        "default": null,
+        "description": "Contour: the flange runs from the sketch plane the other way. Default: false.",
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "rule": {
+        "default": null,
+        "description": "Base and contour: the sheet metal rule, by name. Default: the active rule. Ignored by an\nedge flange, which takes its sheet's.",
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "segments": {
+        "default": null,
+        "description": "Edge: segments belong inside an `edges` item (`{point, segments}`), not here. A top-level\n`segments` is refused, naming where it goes, rather than ignored as an unknown key."
+      },
+      "sketch": {
+        "$ref": "#/$defs/IdOrName",
+        "description": "Base and contour: the sketch, by id or name. A base flange's default is the active sketch,\nelse the last one; a contour flange needs it."
+      },
+      "then": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ThenSteps"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Edge: further bends, each a flange on the far edge of the one before (at most 16). Refused\non a base or contour flange."
+      },
+      "type": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FlangeType"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Which flange: base, edge or contour, in any case. Default: edge when `edges` is given,\nelse contour when `curves` is given, else base."
+      }
+    },
+    "title": "FlangeParams",
+    "type": "object"
+  },
+  "label": "Flange",
+  "output": {
+    "$defs": {
+      "FeatureNotice": {
+        "description": "Something a feature's result tells the user without stopping them, with an action to take.",
+        "properties": {
+          "action": {
+            "$ref": "#/$defs/NoticeAction",
+            "description": "The command that changes the feature as the notice offers."
+          },
+          "contact": {
+            "description": "How the bodies split off touched the others: `along_edge`, `at_point` or `touching` (along\na line or at a point their boundaries don't hold).",
+            "type": "string"
+          },
+          "message": {
+            "description": "The text to show.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "contact",
+          "action"
+        ],
+        "type": "object"
+      },
+      "NoticeAction": {
+        "description": "A command a notice offers to run.",
+        "properties": {
+          "command": {
+            "description": "The command's id.",
+            "type": "string"
+          },
+          "label": {
+            "description": "The action's label.",
+            "type": "string"
+          },
+          "params": {
+            "description": "Its parameters."
+          }
+        },
+        "required": [
+          "label",
+          "command",
+          "params"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "What a feature command returns.",
+    "properties": {
+      "bodies": {
+        "description": "Every body after the feature.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "changed_bodies": {
+        "description": "Bodies that were there before and now have other geometry.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "created_bodies": {
+        "description": "The bodies the feature made.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "feature": {
+        "description": "The new feature's id.",
+        "format": "uint64",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "ms": {
+        "description": "How long the feature took to evaluate, in milliseconds.",
+        "format": "double",
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "name": {
+        "description": "The new feature's name.",
+        "type": "string"
+      },
+      "notice": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FeatureNotice"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "A join that split pieces into bodies of their own because they touch the others only along\nan edge or at a point (its `touching: separate`): what to tell the user, and the edit that\nmakes them one body instead. Left out otherwise, also when the join kept pieces that touch\nnothing in one body."
+      },
+      "param_warnings": {
+        "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "removed_bodies": {
+        "description": "Bodies that are gone.",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "warning": {
+        "description": "A warning from the evaluation (a Boolean that needed a retry, a reference found again\nelsewhere), or `null`.",
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "feature",
+      "name",
+      "bodies",
+      "created_bodies",
+      "changed_bodies",
+      "removed_bodies",
+      "warning",
+      "ms"
+    ],
+    "title": "FeatureResult",
+    "type": "object"
+  },
+  "params": "base: sketch + profiles? (rule?, flip?) | contour: sketch + curves (open chain of lines and tangent arcs) + distance (rule?, flip?, reverse?) | edge: edges: [[x,y,z] on top/bottom edges, or {point: [x,y,z], angle?, height?, segments?} for an edge with its own angle and height, or split into 1\u202664 segments [{from, to, angle?, height?, flip?}] that tile the stretch the sheet still has there (from, to are fractions 0\u20261 of it, first from 0, last to 1; consecutive segments that match make one bend)] + height (along the flange, to its far edge), angle? (default 90 deg), radius? (default: rule), height_from?: outer|inner|tangent (where the height is measured from: the outer virtual sharp (default), the inner virtual sharp, or past 90 deg the line square to the flange touching the bend's outside (tangent; up to 90 deg the outer sharp)), position?: inside|outside|middle|material_outside|tangent (where the bend starts: the outer virtual sharp on the edge (default), the bend starting at the edge (bend_outside is the same), half way, the inner virtual sharp on the edge, or the bend's outer face tangent to the edge's face (below 90 deg the bend's end on that face)), flip?, body?, corner_relief_shape?: notch|round|rectangular|tear and corner_relief? (size across): the relief at the corners these flanges make (default: the rule's); then?: [{angle?, height, flip?}] further bends (at most 16), each a flange on the far edge of the one before, flip: true turns that bend the other way (edge only); type?: base|edge|contour (default from the inputs); name?, body_name? (the new body). Thickness, K-factor and bend radius come from the rule (sheet.manage_rules); passing them here is refused, and so is the corner relief on a base or contour flange"
+}
