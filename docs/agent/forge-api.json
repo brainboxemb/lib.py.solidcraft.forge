@@ -162,6 +162,13 @@
       "guide": "guide/features/#shell",
       "signature": "Shape.shell(self, thickness, *, open=<Faces.TOP: 'top'>)"
     },
+    "Shape.fold": {
+      "kind": "callable",
+      "summary": "Fold existing sheet material along one straight line.",
+      "reference": "reference/Shape.fold/",
+      "guide": "guide/features/#features",
+      "signature": "Shape.fold(self, *, line, angle=90, fixed=None, position='centerline', flip=False)"
+    },
     "Sketch": {
       "kind": "callable",
       "summary": "Create an explicit named 2D sketch scope.",
@@ -521,6 +528,13 @@
       "reference": "reference/Sketch.mirror/",
       "guide": "guide/geometry/#pattern-mirror",
       "signature": "Sketch.mirror(self, source, *, axis)"
+    },
+    "Sketch.sheet_metal": {
+      "kind": "callable",
+      "summary": "Create a native sheet-metal body from this closed flat Sketch.",
+      "reference": "reference/Sketch.sheet_metal/",
+      "guide": "guide/geometry/#profiles",
+      "signature": "Sketch.sheet_metal(self, *, thickness, bend_radius, k_factor=0.5, rule_name='Forge Sheet')"
     },
     "Shape.fillet": {
       "kind": "callable",
