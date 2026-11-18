@@ -849,6 +849,7 @@ def run_script(path: str | Path) -> dict:
         "dataclass": dataclass,
         "Box": core.Box,
         "Cylinder": core.Cylinder,
+        "Cone": core.Cone,
         "Hole": core.Hole,
         "CounterboreHole": core.CounterboreHole,
         "CountersinkHole": core.CountersinkHole,

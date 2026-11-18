@@ -13,6 +13,7 @@ from scpf import (
     CounterboreHole,
     CountersinkHole,
     Cylinder,
+    Cone,
     Hole,
     Rectangle2D,
     Sketch,
@@ -81,6 +82,10 @@ def _cylinder():
     return Cylinder(d=40, h=20, anchor=Anchor.BOTTOM)
 
 
+def _cone():
+    return Cone(d=40, top_d=32, h=20, anchor=Anchor.BOTTOM)
+
+
 def _sphere():
     return Sphere(20)
 
@@ -109,6 +114,10 @@ def _cylinder_parameterized(size):
     return Cylinder(d=size, h=20, anchor=Anchor.BOTTOM)
 
 
+def _cone_parameterized(size):
+    return Cone(d=size, top_d=size - 8, h=20, anchor=Anchor.BOTTOM)
+
+
 def _sphere_parameterized(size):
     return Sphere(size / 2)
 
@@ -122,6 +131,11 @@ PRIMITIVE_BODY_CASES = (
     BodyCase(
         "cylinder", "cylinder", "solid.cylinder", _cylinder,
         _cylinder_parameterized, ("base", (5, 6, 7)), 20, 20,
+        frozenset((GENERAL_SOLID, PRIMITIVE, CSG, SIMPLE_HOLE, COUNTERBORE_HOLE, COUNTERSINK_HOLE, THREADED_HOLE, JOINABLE)),
+    ),
+    BodyCase(
+        "cone", "cone", "solid.cone", _cone, _cone_parameterized,
+        ("base", (5, 6, 7)), 20, 20,
         frozenset((GENERAL_SOLID, PRIMITIVE, CSG, SIMPLE_HOLE, COUNTERBORE_HOLE, COUNTERSINK_HOLE, THREADED_HOLE, JOINABLE)),
     ),
     BodyCase(

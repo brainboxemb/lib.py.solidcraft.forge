@@ -11,6 +11,7 @@ from .core import (
     _box_corner_from_anchor,
     _sphere_center_from_anchor,
     _cylinder_base_from_anchor,
+    _cone_base_from_anchor,
     _pv as pv,
     command_value,
     number_text,
@@ -18,7 +19,7 @@ from .core import (
 from .compiler import ModelError, _command, _require_positive
 
 
-CSG_PRIMITIVE_KINDS = frozenset(("box", "sphere", "cylinder"))
+CSG_PRIMITIVE_KINDS = frozenset(("box", "sphere", "cylinder", "cone"))
 
 
 def _half(dim, negative=False):
@@ -112,6 +113,23 @@ def _csg_primitive(shape, body_name, operation, *, offset=(0, 0, 0)):
                       base=[command_value(value) for value in base],
                       axis=axis, operation=operation)
         command = "solid.cylinder"
+    elif kind == "cone":
+        height, diameter, top_diameter, axis, anchor = data
+        _require_positive(height, "cone height")
+        _require_positive(diameter, "cone diameter")
+        top_value = pv(top_diameter)
+        if top_value < 0:
+            raise ModelError("cone top diameter must be zero or positive")
+        base = _cone_base_from_anchor(height, axis, offset, anchor)
+        params = dict(
+            height=command_value(height),
+            diameter=command_value(diameter),
+            top_diameter=command_value(top_diameter),
+            base=[command_value(value) for value in base],
+            axis=axis,
+            operation=operation,
+        )
+        command = "solid.cone"
     else:
         raise ModelError(f"not a supported CSG primitive: {kind}")
 
@@ -135,8 +153,8 @@ def _csg_apply(shape, name, operation, offset=(0, 0, 0)):
         )
     if shape.kind == "placed3d":
         child, x, y, z = shape.data
-        if child.kind != "cylinder":
-            raise ModelError("Only Cylinder supports 3D CSG placement")
+        if child.kind not in ("cylinder", "cone"):
+            raise ModelError("Only Cylinder and Cone support 3D CSG placement")
         return _csg_apply(
             child, name, operation,
             (command_value(x), command_value(y), command_value(z)),
@@ -164,8 +182,8 @@ def _csg_new(shape, name, offset=(0, 0, 0)):
         )
     if shape.kind == "placed3d":
         child, x, y, z = shape.data
-        if child.kind != "cylinder":
-            raise ModelError("Only Cylinder is supported by 3D placement")
+        if child.kind not in ("cylinder", "cone"):
+            raise ModelError("Only Cylinder and Cone are supported by 3D placement")
         return _csg_new(child, name, (command_value(x), command_value(y), command_value(z)))
     if shape.kind == "translated":
         child, delta = shape.data

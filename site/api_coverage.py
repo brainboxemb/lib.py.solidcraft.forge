@@ -11,6 +11,7 @@ from scpf.version import TESTED_SOLIDCRAFT_VERSION
 EXPORT_COVERAGE = {
     "Box": ("Q6", "Q6", ["simple-box"], "Native primitive and parameter baseline."),
     "Cylinder": ("Q6", "Q6", ["primitive-csg"], f"Native principal-axis Cylinder is qualified with explicit Axis.X in SolidCraft {TESTED_SOLIDCRAFT_VERSION}; Axis.Y/Z use the same primitive field."),
+    "Cone": ("Q2", "Q2", [], f"Public Cone/frustum semantics, parameter preservation and CSG combinations are covered by the shared geometry contract matrix; the pinned SolidCraft {TESTED_SOLIDCRAFT_VERSION} command snapshot proves the native solid.cone contract. A dedicated Q6 visual fixture remains separate capability work."),
     "Sphere": ("Q6", "Q6", ["primitive-csg"], f"Primitive CSG creation is native-qualified in SolidCraft {TESTED_SOLIDCRAFT_VERSION}."),
     "Hole": ("Q6", "Q6", ["hole-family", "anchored-holes"], "Simple native Hole.at() is qualified directly by hole-family; anchored-holes separately qualifies face-relative repeated placement."),
     "CounterboreHole": ("Q6", "Q6", ["hole-family"], "Native cylindrical counterbore intent is command-, geometry- and visual-qualified."),
@@ -72,7 +73,7 @@ CAPABILITY_COVERAGE = [
     ("Primitive objects", "Box", "Q6", "Q6", ["simple-box"], "Native parameterized box baseline."),
     ("Primitive objects", "Cylinder(axis=Axis.X/Y/Z)", "Q6", "Q6", ["primitive-csg"], "Principal-axis native cylinder lowering passed native build, measurement and visual qualification."),
     ("Primitive objects", "Sphere", "Q6", "Q6", ["primitive-csg"], "Sphere passed native build, measurement and visual qualification."),
-    ("Primitive objects", "Cone", "Q6", "GAP", [], "Not yet exposed through the public Forge API."),
+    ("Primitive objects", "Cone / frustum", "Q2", "Q2", [], "Public native solid.cone lowering is covered by the shared primitive matrix and pinned command contract; add a dedicated native visual qualification case for Q6."),
     ("Primitive objects", "Torus", "Q6", "GAP", [], "Not yet exposed through the public Forge API."),
     ("Primitive CSG", "union / difference / intersection", "Q6", "Q6", ["primitive-csg"], "All three Boolean operators passed native SolidCraft qualification."),
     ("Shape transforms", "Shape.move(x,y,z)", "Q6", "Q6", ["primitive-csg"], "Translated primitive passed native SolidCraft qualification."),

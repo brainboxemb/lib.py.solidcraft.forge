@@ -2,7 +2,7 @@
 
 Generated from the pinned SolidCraft runtime command registry.
 
-Forge-referenced commands: **47**
+Forge-referenced commands: **48**
 
 - `browser.visibility` → `contracts/browser.visibility.json`
 - `component.activate` → `contracts/component.activate.json`
@@ -42,6 +42,7 @@ Forge-referenced commands: **47**
 - `sketch.text` → `contracts/sketch.text.json`
 - `solid.box` → `contracts/solid.box.json`
 - `solid.chamfer` → `contracts/solid.chamfer.json`
+- `solid.cone` → `contracts/solid.cone.json`
 - `solid.cylinder` → `contracts/solid.cylinder.json`
 - `solid.extrude` → `contracts/solid.extrude.json`
 - `solid.fillet` → `contracts/solid.fillet.json`

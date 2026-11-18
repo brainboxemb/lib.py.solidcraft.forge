@@ -88,6 +88,7 @@ The public signatures are:
 ```python
 Box(length, width, thickness, *, anchor=Anchor.CENTER)
 Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER)
+Cone(*, d, top_d=0, h, axis=Axis.Z, anchor=Anchor.CENTER)
 Sphere(radius, *, anchor=Anchor.CENTER)
 ```
 
@@ -106,6 +107,9 @@ owns:
   native `corner`.
 - Cylinder always maps to native `base`; Forge derives that base from axis,
   height, diameter and the selected anchor.
+- Cone maps to native `solid.cone` with `diameter`, `top_diameter`, `height`,
+  `axis` and a derived native `base`. Because a cone/frustum has unequal end
+  radii, Forge supports CENTER and the two axial end anchors only.
 - Sphere maps to native `center`; Forge derives the center from the selected
   tangent/center anchor.
 
