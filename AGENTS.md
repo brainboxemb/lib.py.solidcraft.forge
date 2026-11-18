@@ -197,6 +197,10 @@ How cases are selected:
   independently for each qualification slug from the normalized build manifest.
   Never carry case verification state across example/qualification loop
   iterations.
+- Presentation-only site builds may reuse older qualified build evidence.
+  In that case the site source commit and qualification evidence commit are
+  intentionally different; validate qualification pages against
+  `build.json.source_commit`, not blindly against the current site source SHA.
 
 The selector also reports the required final gate. Work on a source branch with
 cheap affected checks while implementing. Open a PR only when the implementation
