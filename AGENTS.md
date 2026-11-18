@@ -405,6 +405,8 @@ green.
 
 ## Generated build output and Pages publishing
 
+Read `docs/11-generated-output.md` before changing build storage or Pages publication. It is the normative generated-output design.
+
 Forge consumes the pinned released `tool.cad.ci` revision for durable build
 output and generated-branch publication. Forge does not maintain a second
 build-store or Git publication implementation.
@@ -487,8 +489,7 @@ The normal flow is:
 
 `main source -> selected Forge items -> partial generic main update -> stable Pages`.
 
-The first cutover to the generic build-store must use a full passing main gate
-so `build/main` is complete before later partial updates are allowed.
+The first generic baseline is created only during the cutover full main gate. That run must pass before `build/main` is accepted and later partial updates are allowed.
 
 Do not publish failing technical evidence as stable.
 
