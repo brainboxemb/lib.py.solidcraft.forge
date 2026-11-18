@@ -20,6 +20,9 @@ EXPECTED_BOUNDS = {
     "anchored-holes": [
         {"label": "AnchoredHoles", "min": [0, 0, 0], "max": [100, 60, 10]},
     ],
+    "hole-family": [
+        {"label": "HoleFamily", "min": [-60, -20, 0], "max": [60, 20, 12]},
+    ],
     "top-sketch-after-chamfer": [
         {"label": "TopSketchAfterChamfer", "min": [-50, -35, 0], "max": [50, 35, 10]},
     ],
@@ -312,6 +315,7 @@ REQUIRED_VISUAL_VIEWS.update({
     # Hole profiles are clearest normal to the plate; the right view separates
     # both Y positions and exposes the full Z depth.
     "anchored-holes": ("top", "right", "iso"),
+    "hole-family": ("top", "front", "iso"),
     "top-sketch-after-chamfer": ("top", "front", "iso"),
     # Pattern/slot cases need a normal profile view plus an orthogonal view
     # that makes the through-cut depth visible.
@@ -417,6 +421,15 @@ EXPECTED_VISUAL_FEATURES["anchored-holes"] = [
     _through_hole("rear hole Ø8 through", 50, 50, 8, 0, 10),
 ]
 
+EXPECTED_VISUAL_FEATURES["hole-family"] = [
+    _through_hole("simple Ø6", -45, 0, 6, 0, 12),
+    _through_hole("counterbore main Ø6", -15, 0, 6, 0, 12),
+    _through_hole("counterbore recess Ø12 x 4", -15, 0, 12, 8, 12),
+    _through_hole("countersink main Ø6", 15, 0, 6, 0, 12),
+    _through_hole("countersink entry Ø12", 15, 0, 12, 12, 12),
+    _through_hole("M6 tap drill Ø5", 45, 0, 5, 0, 12),
+]
+
 EXPECTED_VISUAL_FEATURES["top-sketch-after-chamfer"] = [
     _through_hole("center hole Ø12 through", 0, 0, 12, 0, 10),
 ]
@@ -510,6 +523,10 @@ _BOUNDS_ASSESSMENTS = {
     "anchored-holes": {
         "sufficient": False,
         "reason": "The holes do not change the outer plate bounds. Volume and 3D hole-wall probes are required.",
+    },
+    "hole-family": {
+        "sufficient": False,
+        "reason": "All four Hole-family features leave the outer plate envelope unchanged. 3D probes are required for the simple bore, counterbore recess, countersink cone and threaded tap-drill envelope; native history separately proves thread metadata and modeled-thread intent.",
     },
     "top-sketch-after-chamfer": {
         "sufficient": False,
@@ -627,6 +644,35 @@ _BOUNDS_ASSESSMENTS = {
 
 
 _GEOMETRY_DETAILS = {
+    "hole-family": {
+        "watertight": True,
+        "surface_distance_probes": [
+            {
+                "label": "simple bore center",
+                "point": [-45.0, 0.0, 6.0],
+                "distance_mm": 3.0,
+                "tolerance_mm": 0.30,
+            },
+            {
+                "label": "counterbore recess wall",
+                "point": [-10.5, 0.0, 10.0],
+                "distance_mm": 1.5,
+                "tolerance_mm": 0.30,
+            },
+            {
+                "label": "countersink 90 degree cone",
+                "point": [18.5, 0.0, 10.5],
+                "distance_mm": 0.70710678,
+                "tolerance_mm": 0.35,
+            },
+            {
+                "label": "M6 tap-drill core",
+                "point": [45.0, 0.0, 6.0],
+                "distance_mm": 2.5,
+                "tolerance_mm": 0.35,
+            },
+        ],
+    },
     "anchored-holes": {
         "volume_mm3": 100.0 * 60.0 * 10.0 - 2.0 * math.pi * 4.0**2 * 10.0,
         "volume_tolerance_mm3": 55.0,
