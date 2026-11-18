@@ -72,6 +72,32 @@ CASE_EVIDENCE = {
             ),
         ],
     },
+    "sheet-fold": {
+        "q1": [
+            _target(
+                "scpf/tests/test_sheet_metal.py",
+                "test_blank_hole_and_fold_lower_to_native_sheet_history",
+            ),
+            _target(
+                "scpf/tests/test_sheet_metal.py",
+                "test_sheet_rule_and_fold_parameter_units_are_correct",
+            ),
+            _target(
+                "scpf/tests/test_sheet_metal.py",
+                "test_sheet_metal_and_fold_validate_authoring_contract",
+            ),
+        ],
+        "q2": [
+            _target(
+                "qualification/tests/test_sheet_fold.py",
+                "test_sheet_fold_uses_native_sheet_history",
+            ),
+            _target(
+                "qualification/tests/test_sheet_fold.py",
+                "test_sheet_rule_and_fold_parameters_have_native_units",
+            ),
+        ],
+    },
     "top-sketch-after-chamfer": {
         "q1": [
             _target(
