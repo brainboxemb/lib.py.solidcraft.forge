@@ -49,3 +49,4 @@ Current records:
 - [0038-presentation-only-build-reuse.md](0038-presentation-only-build-reuse.md) — let presentation-only source changes reuse a complete passing `build/main` baseline without recalculating every qualification case hash.
 - [0039-simple-main-qualification-trigger.md](0039-simple-main-qualification-trigger.md) — add one simple `main -> qualification -> build/main -> Pages` recovery trigger (#343).
 - [0040-preserve-staged-qualification-results.md](0040-preserve-staged-qualification-results.md) — preserve the schema-v4 per-case result after staged Q1–Q6 qualification (#345).
+- [0041-one-forge-workflow.md](0041-one-forge-workflow.md) — expose one normal Forge workflow and keep only the qualification image as a performance worker (#346).
