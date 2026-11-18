@@ -1,0 +1,292 @@
+{
+  "schema": 1,
+  "source_commit": "fc834c100b8d8e4dbf12814535339a27e8014cc1",
+  "results": {
+    "simple-box": {
+      "pythonscad": {
+        "case": "simple-box",
+        "implementation": "pythonscad",
+        "status": "pass",
+        "source": "examples/simple-box/pythonscad/model.py",
+        "stl": "model.stl",
+        "images": [
+          "model-front.png",
+          "model-right.png",
+          "model-iso.png"
+        ],
+        "bounds": {
+          "min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "max": [
+            20.0,
+            15.0,
+            10.0
+          ]
+        },
+        "expected": {
+          "min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "max": [
+            20.0,
+            15.0,
+            10.0
+          ]
+        },
+        "max_delta_mm": 0.0,
+        "tolerance_mm": 0.5,
+        "checks": {
+          "bounds": {
+            "status": "pass",
+            "actual": {
+              "min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max": [
+                20.0,
+                15.0,
+                10.0
+              ]
+            },
+            "expected": {
+              "min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max": [
+                20.0,
+                15.0,
+                10.0
+              ]
+            },
+            "max_delta_mm": 0.0,
+            "tolerance_mm": 0.5
+          }
+        },
+        "bounds_sufficient": true,
+        "bounds_reason": "This case is one rectangular solid. Its body size fully describes the visible geometry. The saved SolidCraft model is checked separately to confirm that the dimensions remain editable parameters."
+      },
+      "pybosl2": {
+        "case": "simple-box",
+        "implementation": "pybosl2",
+        "status": "pass",
+        "source": "examples/simple-box/pybosl2/model.py",
+        "stl": "model.stl",
+        "images": [
+          "model-front.png",
+          "model-right.png",
+          "model-iso.png"
+        ],
+        "bounds": {
+          "min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "max": [
+            20.0,
+            15.0,
+            10.0
+          ]
+        },
+        "expected": {
+          "min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "max": [
+            20.0,
+            15.0,
+            10.0
+          ]
+        },
+        "max_delta_mm": 0.0,
+        "tolerance_mm": 0.5,
+        "checks": {
+          "bounds": {
+            "status": "pass",
+            "actual": {
+              "min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max": [
+                20.0,
+                15.0,
+                10.0
+              ]
+            },
+            "expected": {
+              "min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max": [
+                20.0,
+                15.0,
+                10.0
+              ]
+            },
+            "max_delta_mm": 0.0,
+            "tolerance_mm": 0.5
+          }
+        },
+        "bounds_sufficient": true,
+        "bounds_reason": "This case is one rectangular solid. Its body size fully describes the visible geometry. The saved SolidCraft model is checked separately to confirm that the dimensions remain editable parameters."
+      },
+      "cadquery": {
+        "case": "simple-box",
+        "implementation": "cadquery",
+        "status": "pass",
+        "source": "examples/simple-box/cadquery/model.py",
+        "stl": "model.stl",
+        "images": [
+          "model-front.png",
+          "model-right.png",
+          "model-iso.png"
+        ],
+        "bounds": {
+          "min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "max": [
+            20.0,
+            15.0,
+            10.0
+          ]
+        },
+        "expected": {
+          "min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "max": [
+            20.0,
+            15.0,
+            10.0
+          ]
+        },
+        "max_delta_mm": 0.0,
+        "tolerance_mm": 0.5,
+        "checks": {
+          "bounds": {
+            "status": "pass",
+            "actual": {
+              "min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max": [
+                20.0,
+                15.0,
+                10.0
+              ]
+            },
+            "expected": {
+              "min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max": [
+                20.0,
+                15.0,
+                10.0
+              ]
+            },
+            "max_delta_mm": 0.0,
+            "tolerance_mm": 0.5
+          }
+        },
+        "bounds_sufficient": true,
+        "bounds_reason": "This case is one rectangular solid. Its body size fully describes the visible geometry. The saved SolidCraft model is checked separately to confirm that the dimensions remain editable parameters."
+      },
+      "build123d": {
+        "case": "simple-box",
+        "implementation": "build123d",
+        "status": "pass",
+        "source": "examples/simple-box/build123d/model.py",
+        "stl": "model.stl",
+        "images": [
+          "model-front.png",
+          "model-right.png",
+          "model-iso.png"
+        ],
+        "bounds": {
+          "min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "max": [
+            20.0,
+            15.0,
+            10.0
+          ]
+        },
+        "expected": {
+          "min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "max": [
+            20.0,
+            15.0,
+            10.0
+          ]
+        },
+        "max_delta_mm": 0.0,
+        "tolerance_mm": 0.5,
+        "checks": {
+          "bounds": {
+            "status": "pass",
+            "actual": {
+              "min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max": [
+                20.0,
+                15.0,
+                10.0
+              ]
+            },
+            "expected": {
+              "min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max": [
+                20.0,
+                15.0,
+                10.0
+              ]
+            },
+            "max_delta_mm": 0.0,
+            "tolerance_mm": 0.5
+          }
+        },
+        "bounds_sufficient": true,
+        "bounds_reason": "This case is one rectangular solid. Its body size fully describes the visible geometry. The saved SolidCraft model is checked separately to confirm that the dimensions remain editable parameters."
+      }
+    }
+  }
+}
