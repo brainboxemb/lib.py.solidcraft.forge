@@ -1277,8 +1277,15 @@ class Shape:
             if not isinstance(value, (list, tuple)) or len(value) not in (2, 3):
                 raise ValueError(f"{label} must be an XY or XYZ point")
             result = tuple(value) if len(value) == 3 else (value[0], value[1], 0)
-            concrete = tuple(_pv(v) for v in result)
-            if not all(isfinite(v) for v in concrete):
+            if not all(
+                isinstance(v, (int, float)) and not isinstance(v, bool)
+                for v in result
+            ):
+                raise ValueError(
+                    f"{label} coordinates must be fixed numbers; "
+                    "associative fold lines require a Sketch line"
+                )
+            if not all(isfinite(v) for v in result):
                 raise ValueError(f"{label} must contain finite coordinates")
             return result
 
