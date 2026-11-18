@@ -1,9 +1,9 @@
-$ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m unittest discover -s /home/runner/work/lib.py.solidcraft.forge/lib.py.solidcraft.forge/examples/assembly-owned-anchor/tests -p test_contract.py -k test_named_assembly_anchor_resolves_to_native_corner_relationship -v
+$ /usr/local/bin/python -m unittest discover -s /workspace/examples/assembly-owned-anchor/tests -p test_contract.py -k test_named_assembly_anchor_resolves_to_native_corner_relationship -v
 
 test_named_assembly_anchor_resolves_to_native_corner_relationship (test_contract.AssemblyOwnedAnchorCommandTests.test_named_assembly_anchor_resolves_to_native_corner_relationship) ... ok
 
 ----------------------------------------------------------------------
-Ran 1 test in 0.004s
+Ran 1 test in 0.003s
 
 OK
 

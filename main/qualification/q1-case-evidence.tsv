@@ -1,33 +1,33 @@
-case	status	tests	evidence
-simple-box	PASS	"[{""file"":""scpf/tests/test_model_authoring.py"",""test"":""test_plain_model_class_fields_become_parameters""}]"	case-evidence/q1/simple-box.txt
-anchored-holes	PASS	"[{""file"":""scpf/tests/test_geometry_features.py"",""test"":""test_repeat_linear_is_not_part_of_the_public_shape_api""},{""file"":""scpf/tests/test_geometry_features.py"",""test"":""test_attached_hole_source_uses_native_rectangular_pattern""}]"	case-evidence/q1/anchored-holes.txt
-hole-family	PASS	"[{""file"":""scpf/tests/test_hole_family.py"",""test"":""test_all_hole_variants_lower_one_to_one_to_native_hole""},{""file"":""scpf/tests/test_hole_family.py"",""test"":""test_hole_family_validates_feature_specific_dimensions""},{""file"":""scpf/tests/test_hole_family.py"",""test"":""test_threaded_hole_keeps_cosmetic_and_modeled_intent_distinct""}]"	case-evidence/q1/hole-family.txt
-sheet-fold	PASS	"[{""file"":""scpf/tests/test_sheet_metal.py"",""test"":""test_blank_hole_and_fold_lower_to_native_sheet_history""},{""file"":""scpf/tests/test_sheet_metal.py"",""test"":""test_sheet_rule_and_fold_parameter_units_are_correct""},{""file"":""scpf/tests/test_sheet_metal.py"",""test"":""test_sheet_metal_and_fold_validate_authoring_contract""}]"	case-evidence/q1/sheet-fold.txt
-top-sketch-after-chamfer	PASS	"[{""file"":""scpf/tests/test_headless.py"",""test"":""test_numeric_vector_selector_tolerates_kernel_float_noise""},{""file"":""scpf/tests/test_sketch_attachment.py"",""test"":""test_top_attached_sketch_uses_same_face_query_after_edge_features""}]"	case-evidence/q1/top-sketch-after-chamfer.txt
-parameter-scope	PASS	"[{""file"":""scpf/tests/test_component_definitions.py"",""test"":""test_component_defaults_are_fixed_unless_included""}]"	case-evidence/q1/parameter-scope.txt
-parent-derived-child-size	PASS	"[{""file"":""scpf/tests/test_component_definitions.py"",""test"":""test_parent_expression_remains_an_expression_in_child_geometry""}]"	case-evidence/q1/parent-derived-child-size.txt
-components	PASS	"[{""file"":""scpf/tests/test_assembly_placement.py"",""test"":""test_copy_accepts_placement_override""}]"	case-evidence/q1/components.txt
-repeated-parent-attachments	PASS	"[{""file"":""scpf/tests/test_assembly_attachments.py"",""test"":""test_repeated_parent_attachments_keep_distinct_targets""}]"	case-evidence/q1/repeated-parent-attachments.txt
-assembly-decorator	PASS	"[{""file"":""scpf/tests/test_component_definitions.py"",""test"":""test_imported_assembly_class_uses_object_syntax""}]"	case-evidence/q1/assembly-decorator.txt
-group-hierarchy	PASS	"[{""file"":""scpf/tests/test_assembly_placement.py"",""test"":""test_named_group_creates_real_nested_native_component""}]"	case-evidence/q1/group-hierarchy.txt
-attach-angle	PASS	"[{""file"":""scpf/tests/test_assembly_attachments.py"",""test"":""test_attach_angle_is_emitted_as_native_joint_turn""}]"	case-evidence/q1/attach-angle.txt
-parametric-attach	PASS	"[{""file"":""scpf/tests/test_assembly_attachments.py"",""test"":""test_parametric_attach_keeps_gap_as_native_joint_expression""}]"	case-evidence/q1/parametric-attach.txt
-parametric-offset	PASS	"[{""file"":""scpf/tests/test_assembly_attachments.py"",""test"":""test_parametric_attach_keeps_in_plane_offset_expression""}]"	case-evidence/q1/parametric-offset.txt
-parametric-anchor	PASS	"[{""file"":""scpf/tests/test_component_definitions.py"",""test"":""test_component_preserves_parent_parameter_dependency""}]"	case-evidence/q1/parametric-anchor.txt
-corner-anchor	PASS	"[{""file"":""scpf/tests/test_assembly_attachments.py"",""test"":""test_corner_anchor_compiles_to_native_edge_and_corner_origins""}]"	case-evidence/q1/corner-anchor.txt
-anchor-topology-mutation	PASS	"[{""file"":""scpf/tests/test_assembly_attachments.py"",""test"":""test_named_topology_anchor_is_inlined_as_edge_reference""}]"	case-evidence/q1/anchor-topology-mutation.txt
-assembly-owned-anchor	PASS	"[{""file"":""scpf/tests/test_assembly_attachments.py"",""test"":""test_assembly_can_own_named_attachment_anchor""}]"	case-evidence/q1/assembly-owned-anchor.txt
-four-corner-l	PASS	"[{""file"":""scpf/tests/test_assembly_placement.py"",""test"":""test_symbolic_ordinary_copy_placement_keeps_parameter""}]"	case-evidence/q1/four-corner-l.txt
-eight-corner-brackets	PASS	"[{""file"":""scpf/tests/test_assembly_placement.py"",""test"":""test_symbolic_ordinary_copy_placement_keeps_parameter""}]"	case-evidence/q1/eight-corner-brackets.txt
-eight-flightcase-corners	PASS	"[{""file"":""scpf/tests/test_assembly_placement.py"",""test"":""test_symbolic_copy_with_rotation_uses_bound_native_move""}]"	case-evidence/q1/eight-flightcase-corners.txt
-xz-anchor	PASS	"[{""file"":""scpf/tests/test_component_definitions.py"",""test"":""test_xz_rectangular_component_uses_standard_corner_anchor""}]"	case-evidence/q1/xz-anchor.txt
-round-top-sketch	PASS	"[{""file"":""scpf/tests/test_sketch_attachment.py"",""test"":""test_top_attached_sketch_supports_circular_extrusion_body""},{""file"":""scpf/tests/test_sketch_attachment.py"",""test"":""test_explicit_plane_origin_sketch_supports_circular_body""}]"	case-evidence/q1/round-top-sketch.txt
-circle-negative-extrude	PASS	"[{""file"":""scpf/tests/test_sketch_profiles.py"",""test"":""test_circle_in_with_sketch_negative_extrusion""}]"	case-evidence/q1/circle-negative-extrude.txt
-sketch-pattern-mirror	PASS	"[{""file"":""scpf/tests/test_sketch_patterns.py"",""test"":""test_circle_rectangular_pattern_uses_bound_native_curves""},{""file"":""scpf/tests/test_sketch_patterns.py"",""test"":""test_slot_pattern_and_mirrors_reuse_operation_results""},{""file"":""scpf/tests/test_sketch_patterns.py"",""test"":""test_pattern_count_and_spacing_remain_native_parameters""}]"	case-evidence/q1/sketch-pattern-mirror.txt
-selective-profile-extrude	PASS	"[{""file"":""scpf/tests/test_sketch_patterns.py"",""test"":""test_pattern_can_feed_one_selective_profile_extrusion""}]"	case-evidence/q1/selective-profile-extrude.txt
-circular-feature-pattern	PASS	"[{""file"":""scpf/tests/test_geometry_features.py"",""test"":""test_circular_pattern_emits_one_native_feature_pattern""},{""file"":""scpf/tests/test_geometry_features.py"",""test"":""test_circular_pattern_validates_shared_feature_and_axis_options""}]"	case-evidence/q1/circular-feature-pattern.txt
-rectangular-pattern	PASS	"[{""file"":""scpf/tests/test_geometry_features.py"",""test"":""test_rectangular_pattern_requires_applied_extrude_feature""}]"	case-evidence/q1/rectangular-pattern.txt
-slot-family	PASS	"[{""file"":""scpf/tests/test_native_slots.py"",""test"":""test_all_five_slot_variants_lower_one_to_one""},{""file"":""scpf/tests/test_native_slots.py"",""test"":""test_arc_center_requires_one_end_definition""}]"	case-evidence/q1/slot-family.txt
-rounded-rectangle-sketch	PASS	"[{""file"":""scpf/tests/test_geometry_features.py"",""test"":""test_rounded_rectangle_sketch_compiles_to_true_native_arcs""}]"	case-evidence/q1/rounded-rectangle-sketch.txt
-primitive-csg	PASS	"[{""file"":""scpf/tests/test_geometry_primitives.py"",""test"":""test_move_translates_a_csg_composite_without_changing_sizes""},{""file"":""scpf/tests/test_geometry_primitives.py"",""test"":""test_cylinder_axis_lowers_directly_to_native_axis""}]"	case-evidence/q1/primitive-csg.txt
-bracket	PASS	"[{""file"":""scpf/tests/test_sketch_profiles.py"",""test"":""test_positioned_xz_polygon_keeps_parameterized_y_plane""},{""file"":""scpf/tests/test_sketch_extrusion.py"",""test"":""test_sketch_extrude_signed_distance_and_sym""}]"	case-evidence/q1/bracket.txt
+case	status	evidence
+simple-box	PASS	case-evidence/q1/simple-box.txt
+anchored-holes	PASS	case-evidence/q1/anchored-holes.txt
+hole-family	PASS	case-evidence/q1/hole-family.txt
+sheet-fold	PASS	case-evidence/q1/sheet-fold.txt
+top-sketch-after-chamfer	PASS	case-evidence/q1/top-sketch-after-chamfer.txt
+parameter-scope	PASS	case-evidence/q1/parameter-scope.txt
+parent-derived-child-size	PASS	case-evidence/q1/parent-derived-child-size.txt
+components	PASS	case-evidence/q1/components.txt
+repeated-parent-attachments	PASS	case-evidence/q1/repeated-parent-attachments.txt
+assembly-decorator	PASS	case-evidence/q1/assembly-decorator.txt
+group-hierarchy	PASS	case-evidence/q1/group-hierarchy.txt
+attach-angle	PASS	case-evidence/q1/attach-angle.txt
+parametric-attach	PASS	case-evidence/q1/parametric-attach.txt
+parametric-offset	PASS	case-evidence/q1/parametric-offset.txt
+parametric-anchor	PASS	case-evidence/q1/parametric-anchor.txt
+corner-anchor	PASS	case-evidence/q1/corner-anchor.txt
+anchor-topology-mutation	PASS	case-evidence/q1/anchor-topology-mutation.txt
+assembly-owned-anchor	PASS	case-evidence/q1/assembly-owned-anchor.txt
+four-corner-l	PASS	case-evidence/q1/four-corner-l.txt
+eight-corner-brackets	PASS	case-evidence/q1/eight-corner-brackets.txt
+eight-flightcase-corners	PASS	case-evidence/q1/eight-flightcase-corners.txt
+xz-anchor	PASS	case-evidence/q1/xz-anchor.txt
+round-top-sketch	PASS	case-evidence/q1/round-top-sketch.txt
+circle-negative-extrude	PASS	case-evidence/q1/circle-negative-extrude.txt
+sketch-pattern-mirror	PASS	case-evidence/q1/sketch-pattern-mirror.txt
+selective-profile-extrude	PASS	case-evidence/q1/selective-profile-extrude.txt
+circular-feature-pattern	PASS	case-evidence/q1/circular-feature-pattern.txt
+rectangular-pattern	PASS	case-evidence/q1/rectangular-pattern.txt
+slot-family	PASS	case-evidence/q1/slot-family.txt
+rounded-rectangle-sketch	PASS	case-evidence/q1/rounded-rectangle-sketch.txt
+primitive-csg	PASS	case-evidence/q1/primitive-csg.txt
+bracket	PASS	case-evidence/q1/bracket.txt

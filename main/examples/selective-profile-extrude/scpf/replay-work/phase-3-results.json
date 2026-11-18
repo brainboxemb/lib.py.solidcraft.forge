@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Selected holes",
+    "sketch": 2
+  },
+  {
+    "center": null,
+    "constraints": [
+      "k2",
+      "k3",
+      "k4",
+      "k5",
+      "k6",
+      "k7"
+    ],
+    "created": {
+      "constraints": [
+        "k2",
+        "k3",
+        "k4",
+        "k5",
+        "k6",
+        "k7"
+      ],
+      "curves": [
+        "c2",
+        "c3",
+        "c4"
+      ],
+      "dimensions": [],
+      "points": [
+        "p1",
+        "p2",
+        "p3"
+      ]
+    },
+    "curves": [
+      "c2",
+      "c3",
+      "c4"
+    ],
+    "pattern": "pat1",
+    "sketch": {
+      "dof": 2,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 4,
+    "sketch": 2
+  },
+  {
+    "bodies": [
+      "SelectiveProfileExtrude"
+    ],
+    "changed_bodies": [
+      "SelectiveProfileExtrude"
+    ],
+    "created_bodies": [],
+    "feature": 3,
+    "ms": 30.11548,
+    "name": "Selected holes",
+    "removed_bodies": [],
+    "warning": null
+  }
+]

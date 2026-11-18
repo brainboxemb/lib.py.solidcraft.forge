@@ -1,9 +1,9 @@
-$ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m unittest discover -s /home/runner/work/lib.py.solidcraft.forge/lib.py.solidcraft.forge/examples/parametric-offset/tests -p test_contract.py -k test_parametric_offset_command_contract -v
+$ /usr/local/bin/python -m unittest discover -s /workspace/examples/parametric-offset/tests -p test_contract.py -k test_parametric_offset_command_contract -v
 
 test_parametric_offset_command_contract (test_contract.CommandContractTests.test_parametric_offset_command_contract) ... ok
 
 ----------------------------------------------------------------------
-Ran 1 test in 0.003s
+Ran 1 test in 0.002s
 
 OK
 

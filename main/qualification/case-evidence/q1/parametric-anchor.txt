@@ -1,9 +1,9 @@
-$ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m unittest discover -s /home/runner/work/lib.py.solidcraft.forge/lib.py.solidcraft.forge/scpf/tests -p test_component_definitions.py -k test_component_preserves_parent_parameter_dependency -v
+$ /usr/local/bin/python -m unittest discover -s /workspace/scpf/tests -p test_component_definitions.py -k test_component_preserves_parent_parameter_dependency -v
 
 test_component_preserves_parent_parameter_dependency (test_component_definitions.ComponentDefinitionTests.test_component_preserves_parent_parameter_dependency) ... ok
 
 ----------------------------------------------------------------------
-Ran 1 test in 0.002s
+Ran 1 test in 0.001s
 
 OK
 
