@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-11-18
+
 ### Added
 
 - Added the first native sheet-metal workflow: `Sketch.sheet_metal(...)`
@@ -16,6 +18,12 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
   `sheet.fold` history. The `sheet-fold` qualification verifies one
   through hole before the bend, formed geometry and recovery of the original
   80 × 40 × 2 mm flat pattern with its Ø6 cutout (issue #305).
+
+### Changed
+
+- Qualification now runs in a version-pinned reusable container and exposes
+  each case as independently rerunnable stages. A failed stage can be rerun
+  without rebuilding earlier native evidence.
 
 ### Removed
 
