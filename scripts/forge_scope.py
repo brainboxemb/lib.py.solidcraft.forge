@@ -43,10 +43,16 @@ PIPELINE_PATHS = frozenset(
         ".github/workflows/scpf.yml",
         ".github/workflows/site.yml",
         ".github/workflows/solidcraft-contracts.yml",
+        "scripts/ci_preflight.py",
+        "scripts/forge_pipeline.py",
         "scripts/forge_scope.py",
+        "scripts/qualification_image.py",
+        "scripts/release/publish_release.py",
+        "qualification/tests/test_forge_pipeline.py",
         "qualification/tests/test_forge_scope.py",
         "qualification/tests/test_generated_output.py",
         "site/tests/test_publishing.py",
+        "site/tests/test_qualification_image.py",
     }
 )
 
