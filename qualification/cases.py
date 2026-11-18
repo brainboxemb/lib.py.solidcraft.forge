@@ -101,7 +101,7 @@ QUALIFICATION_CASES = [
         "native_expectation": "One plate with two through holes at the requested Y spacing and no feature errors.",
         "mutation": "No saved-design mutation in this fixture; geometry and feature placement are measured at Q4.",
         "references": [
-            ("OpenSCAD", "Comparable geometry would normally use difference() and repeated cylinders; Forge intentionally prefers SolidCraft hole features."),
+            ("OpenSCAD", "Comparable geometry normally uses difference() and repeated cylinders. This case qualifies face-relative repeated placement through a generated Sketch/cut; native solid.hole is qualified separately by hole-family."),
         ],
     },
     {
