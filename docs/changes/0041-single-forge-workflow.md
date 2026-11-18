@@ -19,7 +19,7 @@ which Action represented the desired end result.
 Keep exactly one active workflow file:
 
 ```text
-.github/workflows/forge.yml
+.github/workflows/scpf.yml
 name: Forge
 ```
 
@@ -79,7 +79,7 @@ risk classification.
 
 Regression tests require:
 
-- exactly one active `.yml` workflow file, `forge.yml`;
+- exactly one active `.yml` workflow file, `scpf.yml`;
 - planner coverage for PR/main/manual/trigger/schedules/cleanup/release;
 - one-case pipeline smoke for orchestration changes;
 - immutable image reuse before rebuild;
