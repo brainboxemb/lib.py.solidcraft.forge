@@ -12,7 +12,7 @@ from geometry_contracts import (
     DERIVED_FEATURE_BODY_CASES,
     FEATURE_BODY_CASES,
     FEATURE_CASES,
-    NATIVE_HOLE,
+    SIMPLE_HOLE,
     PRIMITIVE_BODY_CASES,
     cases_with,
 )
@@ -171,7 +171,7 @@ class GeometryContractMatrix(unittest.TestCase):
                     )
 
     def test_native_hole_contract_supports_sequential_features(self):
-        for case in cases_with(NATIVE_HOLE):
+        for case in cases_with(SIMPLE_HOLE):
             with self.subTest(body=case.name):
                 body = case.build()
                 for x in (-5, 5):
