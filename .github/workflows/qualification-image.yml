@@ -69,7 +69,7 @@ jobs:
             -w /workspace \
             -e PYTHONPATH=/workspace/scpf:/workspace \
             qualification-local:${{ steps.meta.outputs.image_id }} \
-            python qualification/integration/simple_box.py --out /smoke
+            python qualification/integration/simple_box.py --out /smoke/simple-box
 
       - name: Upload smoke diagnostics
         if: always()

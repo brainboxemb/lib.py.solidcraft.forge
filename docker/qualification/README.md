@@ -2,6 +2,8 @@
 
 This image contains the slow-changing qualification toolchain only.
 
+The Python base image is pinned by OCI digest so rebuilding the same toolchain does not silently move to a different base image.
+
 It contains:
 
 - Python 3.12;
