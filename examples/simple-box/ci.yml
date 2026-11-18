@@ -1,6 +1,5 @@
-# One example is one CI item. Cheap integration proof and native SolidCraft
-# proof are ordered steps of the same item, so generated output has one owner.
-# Forge decides how far the item must run; tool.cad.ci only executes the range.
+# One Forge example is one CI item. The integration step writes cheap case
+# evidence through command compilation; the native step resumes at replay.
 id: simple-box
 kind: example
 watch:
@@ -16,7 +15,16 @@ strategy:
   reuse: true
 steps:
   - id: integration
-    run: [python, -m, unittest, discover, -s, tests, -p, "test_*.py", -v]
+    run: [python, ../../scripts/example_ci.py, integration]
+    outputs:
+      - case/simple-box.json
+      - case/stages/simple-box/01-q1.json
+      - case/stages/simple-box/02-q2.json
+      - case/stages/simple-box/03-compile.json
+      - case/qualification/case-evidence/q1/simple-box.txt
+      - case/qualification/case-evidence/q2/simple-box.txt
   - id: native
     run: [python, ../../scripts/example_ci.py, native]
-    outputs: [native-case]
+    outputs:
+      - case/native/simple-box
+      - case/stages/simple-box/13-gate.json
