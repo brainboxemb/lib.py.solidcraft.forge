@@ -215,29 +215,28 @@ recalculating every case input hash. Any technical source change must use the
 normal technical qualification/promotion flow. Actions-run history is not an
 evidence database.
 
-### Qualify main recovery path
+### One Forge workflow and main recovery
 
-When the current published state is out of sync, the operational recovery use
-case is always:
+GitHub Actions exposes one operational workflow: **Forge**.
+
+The workflow owns PR verification, main qualification/promotion, Pages,
+closed-PR cleanup, scheduled reconcile/full safety and release publication.
+Those are jobs/phases of one operation, not separate workflows the operator
+must choose between.
+
+The normal recovery use case remains:
 
 `main -> qualification -> build/main -> Pages`
 
-Use the **Qualify main** workflow for this. Do not create a temporary
-`qualification/**` branch and do not involve the release workflow merely to
-repair Pages or `build/main`.
+Do not create a temporary `qualification/**` branch merely to repair generated
+state. Change `.github/workflows/forge.trigger` on `main`, or use the
+parameterless **Run workflow** action on `main`. Both fully qualify the exact
+current `main` commit before replacing `build/main` and stable Pages.
 
-The workflow qualifies the exact current `main` commit, replaces
-`build/main` only after successful qualification, then builds/tests and
-publishes stable Pages from that same baseline.
-
-A normal commit that changes `.github/workflows/qualify-main.trigger` on `main` is the
-repository-native way to request this recovery. The trigger file carries no
-model/source semantics; it is only an explicit operational signal. The same
-workflow may also expose a parameterless manual Run workflow action in GitHub.
-
-Do not require an operator or agent to choose Q1/Q2/Q6/full for this recovery
-entry point. The workflow owns the qualification policy. Release work remains a
-separate process under `docs/10-release-process.md`.
+The operator never chooses Q1/Q2/Q6/full. `scripts/forge_scope.py` owns the
+risk decision. A manual/trigger recovery is release-independent; release
+publication is considered only when an intentional package-version change
+reaches `main`.
 
 `scripts/ci_preflight.py` is the first hard gate. Keep it cheap. It exists to
 catch broken Python, malformed workflow structure, broken publication
@@ -463,8 +462,11 @@ Do not publish failing technical evidence as stable.
 ## Release discipline
 
 Keep user-visible changes under `[Unreleased]` in `CHANGELOG.md` during
-normal development. Do not create or move release tags manually. For a release,
-follow `docs/10-release-process.md`: use a `qualification/**` release branch,
-bump only `scpf/pyproject.toml`, date the changelog section, require full Q1-Q6
-on the release head and main head, then let the generic release workflow create
-the annotated tag and GitHub Release.
+normal development. Do not create or move release tags manually.
+
+For a release, follow `docs/10-release-process.md`: prepare a normal release
+PR, bump only `scpf/pyproject.toml`, date the changelog section and merge only
+after the required PR verification. The resulting version change on `main`
+selects full Q1-Q6 in the same **Forge** workflow. Only after that exact main
+run succeeds may its release job create the source/evidence tags and GitHub
+Release.
