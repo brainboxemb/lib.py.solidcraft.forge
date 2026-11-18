@@ -17,6 +17,7 @@ class BodyCase:
     native_command: str | None
     build: Callable[[], object]
     build_parameterized: Callable[[object], object] | None
+    bottom_at_expected: tuple[str, tuple[float, float, float]] | None
     entry_z: float
     through_depth: float
     capabilities: frozenset[str]
@@ -71,24 +72,25 @@ def _sphere_parameterized(size):
 
 PRIMITIVE_BODY_CASES = (
     BodyCase(
-        "box", "box", "solid.box", _box, _box_parameterized, 20, 20,
+        "box", "box", "solid.box", _box, _box_parameterized,
+        ("corner", (-15, -14, 7)), 20, 20,
         frozenset((GENERAL_SOLID, PRIMITIVE, CSG, NATIVE_HOLE, JOINABLE)),
     ),
     BodyCase(
         "cylinder", "cylinder", "solid.cylinder", _cylinder,
-        _cylinder_parameterized, 20, 20,
+        _cylinder_parameterized, ("base", (5, 6, 7)), 20, 20,
         frozenset((GENERAL_SOLID, PRIMITIVE, CSG, NATIVE_HOLE, JOINABLE)),
     ),
     BodyCase(
         "sphere", "sphere", "solid.sphere", _sphere, _sphere_parameterized,
-        20, 40,
+        ("center", (5, 6, 27)), 20, 40,
         frozenset((GENERAL_SOLID, PRIMITIVE, CSG, NATIVE_HOLE, JOINABLE)),
     ),
 )
 
 DIRECT_FEATURE_BODY_CASES = PRIMITIVE_BODY_CASES + (
     BodyCase(
-        "sketch-extrusion", None, None, _sketch_extrusion, None, 20, 20,
+        "sketch-extrusion", None, None, _sketch_extrusion, None, None, 20, 20,
         frozenset((GENERAL_SOLID, NATIVE_HOLE, JOINABLE)),
     ),
 )
@@ -123,6 +125,7 @@ def _derived_primitive_cases():
                     None,
                     None,
                     build,
+                    None,
                     None,
                     base.entry_z,
                     base.through_depth,
