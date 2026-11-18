@@ -1,0 +1,10 @@
+$ /usr/local/bin/python -m unittest discover -s /workspace/scpf/tests -p test_assembly_attachments.py -k test_assembly_can_own_named_attachment_anchor -v
+
+test_assembly_can_own_named_attachment_anchor (test_assembly_attachments.AssemblyAttachmentTests.test_assembly_can_own_named_attachment_anchor) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+OK
+
+matched_tests=1 status=PASS

@@ -1,0 +1,204 @@
+{
+  "case": "circular-feature-pattern",
+  "status": "pass",
+  "views": {
+    "front": {
+      "status": "pass",
+      "image": "model-front.png",
+      "diff": "visual-diff-front.png",
+      "metrics": {
+        "mean_abs": 0.0,
+        "changed_pixel_fraction": 0.0
+      },
+      "limits": {
+        "mean_abs": 6.0,
+        "changed_pixel_fraction": 0.08
+      }
+    },
+    "right": {
+      "status": "pass",
+      "image": "model-right.png",
+      "diff": "visual-diff-right.png",
+      "metrics": {
+        "mean_abs": 0.0,
+        "changed_pixel_fraction": 0.0
+      },
+      "limits": {
+        "mean_abs": 6.0,
+        "changed_pixel_fraction": 0.08
+      }
+    },
+    "iso": {
+      "status": "pass",
+      "image": "model-iso.png",
+      "diff": "visual-diff-iso.png",
+      "metrics": {
+        "mean_abs": 0.0,
+        "changed_pixel_fraction": 0.0
+      },
+      "limits": {
+        "mean_abs": 6.0,
+        "changed_pixel_fraction": 0.08
+      }
+    }
+  },
+  "missing": [],
+  "regression": {
+    "status": "pass",
+    "views": {
+      "front": {
+        "status": "pass",
+        "image": "model-front.png",
+        "diff": "visual-diff-front.png",
+        "metrics": {
+          "mean_abs": 0.0,
+          "changed_pixel_fraction": 0.0
+        },
+        "limits": {
+          "mean_abs": 6.0,
+          "changed_pixel_fraction": 0.08
+        }
+      },
+      "right": {
+        "status": "pass",
+        "image": "model-right.png",
+        "diff": "visual-diff-right.png",
+        "metrics": {
+          "mean_abs": 0.0,
+          "changed_pixel_fraction": 0.0
+        },
+        "limits": {
+          "mean_abs": 6.0,
+          "changed_pixel_fraction": 0.08
+        }
+      },
+      "iso": {
+        "status": "pass",
+        "image": "model-iso.png",
+        "diff": "visual-diff-iso.png",
+        "metrics": {
+          "mean_abs": 0.0,
+          "changed_pixel_fraction": 0.0
+        },
+        "limits": {
+          "mean_abs": 6.0,
+          "changed_pixel_fraction": 0.08
+        }
+      }
+    },
+    "missing": []
+  },
+  "expected_shape": {
+    "status": "pass",
+    "required_views": [
+      "top",
+      "front",
+      "iso"
+    ],
+    "feature_count": 6,
+    "features": [
+      {
+        "type": "through_hole",
+        "label": "hole 1",
+        "center": [
+          30.0,
+          0.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 2",
+        "center": [
+          15.000000000000004,
+          25.980762113533157
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 3",
+        "center": [
+          -14.999999999999993,
+          25.98076211353316
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 4",
+        "center": [
+          -30.0,
+          3.67394039744206e-15
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 5",
+        "center": [
+          -15.000000000000014,
+          -25.980762113533153
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 6",
+        "center": [
+          15.000000000000004,
+          -25.980762113533157
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      }
+    ],
+    "views": {
+      "top": {
+        "status": "pass",
+        "actual": "model-top.png",
+        "camera": "camera-top.json",
+        "goal": "goal-top.png",
+        "overlay": "overlay-top.png"
+      },
+      "front": {
+        "status": "pass",
+        "actual": "model-front.png",
+        "camera": "camera-front.json",
+        "goal": "goal-front.png",
+        "overlay": "overlay-front.png"
+      },
+      "iso": {
+        "status": "pass",
+        "actual": "model-iso.png",
+        "camera": "camera-iso.json",
+        "goal": "goal-iso.png",
+        "overlay": "overlay-iso.png"
+      }
+    },
+    "missing": []
+  }
+}
