@@ -1,7 +1,18 @@
-"""Explicit Sketch contract tests."""
+"""Sketch contract tests."""
 import unittest
 
-from scpf import Sketch
+from scpf import (
+    Anchor,
+    Box,
+    CENTER,
+    Rectangle2D,
+    Circle2D,
+    Depth,
+    Edges,
+    Sketch,
+    Parameter,
+)
+from scpf.compiler import ModelError, compile_model
 
 class SketchExtrusionTests(unittest.TestCase):
     def test_sketch_extrude_signed_distance_and_sym(self):
