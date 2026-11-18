@@ -32,6 +32,11 @@ native-verification state independently for every qualification slug. Site
 generation must not reuse `case_record`, `case_verified`, or any equivalent
 state from an earlier examples/qualification loop iteration.
 
+Presentation-only site builds may have a different current source commit and
+qualification evidence commit. Their site tests must use the selected
+`build.json.source_commit` as the evidence SHA rather than assuming the site
+source SHA produced the reused qualification evidence.
+
 ## Persistent output
 
 A successful affected/full Q1–Q6 run must contain:
