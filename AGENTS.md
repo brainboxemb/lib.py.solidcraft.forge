@@ -202,6 +202,30 @@ recalculating every case input hash. Any technical source change must use the
 normal technical qualification/promotion flow. Actions-run history is not an
 evidence database.
 
+### Qualify main recovery path
+
+When the current published state is out of sync, the operational recovery use
+case is always:
+
+`main -> qualification -> build/main -> Pages`
+
+Use the **Qualify main** workflow for this. Do not create a temporary
+`qualification/**` branch and do not involve the release workflow merely to
+repair Pages or `build/main`.
+
+The workflow qualifies the exact current `main` commit, replaces
+`build/main` only after successful qualification, then builds/tests and
+publishes stable Pages from that same baseline.
+
+A normal commit that changes `qualification/main.trigger` on `main` is the
+repository-native way to request this recovery. The trigger file carries no
+model/source semantics; it is only an explicit operational signal. The same
+workflow may also expose a parameterless manual Run workflow action in GitHub.
+
+Do not require an operator or agent to choose Q1/Q2/Q6/full for this recovery
+entry point. The workflow owns the qualification policy. Release work remains a
+separate process under `docs/10-release-process.md`.
+
 `scripts/ci_preflight.py` is the first hard gate. Keep it cheap. It exists to
 catch broken Python, malformed workflow structure, broken publication
 contracts and a broken website before third-party CAD libraries or native
