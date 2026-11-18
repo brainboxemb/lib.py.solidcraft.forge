@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "docs/operations/qualify-main.trigger"
+      - ".github/workflows/qualify-main.trigger"
   workflow_dispatch: {}
 
 permissions:
