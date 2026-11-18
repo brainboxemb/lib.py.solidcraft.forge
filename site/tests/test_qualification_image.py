@@ -64,6 +64,21 @@ class QualificationImageTests(unittest.TestCase):
         )[1].split("- name: Publish readable main alias", 1)[0]
         self.assertNotIn("github.ref == 'refs/heads/main'", immutable)
 
+    def test_staged_smoke_consumes_image_without_building_it(self):
+        workflow = (
+            qualification_image.ROOT
+            / ".github"
+            / "workflows"
+            / "qualification-smoke.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("docker pull", workflow)
+        self.assertIn("qualification/case_runner.py simple-box", workflow)
+        self.assertIn("--stage mutate", workflow)
+        self.assertIn("replay_before", workflow)
+        self.assertNotIn("docker/build-push-action", workflow)
+        self.assertNotIn("pip install", workflow)
+        self.assertNotIn("apt-get", workflow)
+
     def test_dockerfile_contains_no_tool_version_literals(self):
         dockerfile = qualification_image.DOCKERFILE.read_text(encoding="utf-8")
         values = qualification_image.metadata(

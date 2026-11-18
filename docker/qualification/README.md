@@ -64,3 +64,14 @@ However, the same isolated workflow reruns the one-case compatibility gate when
 the relevant Forge or qualification runner changes. On `main`, if the
 immutable GHCR tag already exists, the workflow pulls and tests that exact image
 instead of rebuilding or overwriting it.
+
+
+## Staged consumer smoke
+
+Normal Forge/case-runner changes do not build the container. The
+`qualification-smoke.yml` workflow pulls the immutable toolchain image and
+executes the shared case runner.
+
+It first runs the complete `simple-box` case, then reruns only `mutate` on
+the same output directory. CI asserts that the replay-stage state is unchanged
+while the mutation-stage state is renewed.
