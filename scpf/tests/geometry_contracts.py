@@ -7,7 +7,18 @@ contracts then exercise every compatible feature automatically.
 from dataclasses import dataclass
 from typing import Callable
 
-from scpf import Anchor, Box, Cylinder, Hole, Rectangle2D, Sketch, Sphere
+from scpf import (
+    Anchor,
+    Box,
+    CounterboreHole,
+    CountersinkHole,
+    Cylinder,
+    Hole,
+    Rectangle2D,
+    Sketch,
+    Sphere,
+    ThreadedHole,
+)
 
 
 @dataclass(frozen=True)
@@ -154,20 +165,87 @@ def cases_with(capability):
     )
 
 
+def _place_hole(body, case, feature):
+    return body + feature.at(0, 0, case.entry_z)
+
+
 def _apply_native_hole(body, case):
-    return body + Hole(
-        d=6,
-        depth=case.through_depth,
-        direction=(0, 0, -1),
-    ).at(0, 0, case.entry_z)
+    return _place_hole(
+        body,
+        case,
+        Hole(
+            d=6,
+            depth=case.through_depth,
+            direction=(0, 0, -1),
+        ),
+    )
+
+
+def _apply_counterbore_hole(body, case):
+    return _place_hole(
+        body,
+        case,
+        CounterboreHole(
+            d=6,
+            counterbore_d=10,
+            counterbore_depth=3,
+            depth=case.through_depth,
+            direction=(0, 0, -1),
+        ),
+    )
+
+
+def _apply_countersink_hole(body, case):
+    return _place_hole(
+        body,
+        case,
+        CountersinkHole(
+            d=6,
+            countersink_d=10,
+            countersink_angle=90,
+            depth=case.through_depth,
+            direction=(0, 0, -1),
+        ),
+    )
+
+
+def _apply_threaded_hole(body, case):
+    return _place_hole(
+        body,
+        case,
+        ThreadedHole(
+            thread="M6",
+            d=5,
+            depth=case.through_depth,
+            direction=(0, 0, -1),
+        ),
+    )
 
 
 FEATURE_CASES = (
     FeatureCase(
-        "native-hole",
+        "hole",
         NATIVE_HOLE,
         "solid.hole",
         _apply_native_hole,
+    ),
+    FeatureCase(
+        "counterbore-hole",
+        NATIVE_HOLE,
+        "solid.hole",
+        _apply_counterbore_hole,
+    ),
+    FeatureCase(
+        "countersink-hole",
+        NATIVE_HOLE,
+        "solid.hole",
+        _apply_countersink_hole,
+    ),
+    FeatureCase(
+        "threaded-hole",
+        NATIVE_HOLE,
+        "solid.hole",
+        _apply_threaded_hole,
     ),
 )
 
