@@ -73,7 +73,7 @@ class ForgePipelineTests(unittest.TestCase):
             forge_pipeline.qualify(ns)
 
         case_item.assert_called_once_with(
-            "case-simple-box",
+            "simple-box",
             ns.image,
         )
         legacy_gate.assert_called_once_with(ns.image, *command)
