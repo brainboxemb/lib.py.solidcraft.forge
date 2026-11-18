@@ -2,8 +2,8 @@
 
 - Forge: `0.10.0`
 - SolidCraft: `0.42.0`
-- Commit: `3f813ff556aa0b3cae047f1144289923aa0e394c`
-- Qualified at: `2026-11-18T13:26:54Z`
+- Commit: `bad49fff427b47a18ce0f49513ce0e7d1e589ed3`
+- Qualified at: `2026-11-18T13:51:37Z`
 - Result schema: `4`
 
 ## Qualification cases
