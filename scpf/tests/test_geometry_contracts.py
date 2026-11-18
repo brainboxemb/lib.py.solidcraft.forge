@@ -122,6 +122,27 @@ class GeometryContractMatrix(unittest.TestCase):
                         all(row["params"].get("targets") == ["Part"] for row in native)
                     )
 
+    def test_every_feature_contract_preserves_primitive_parameters(self):
+        for feature in FEATURE_CASES:
+            for case in PRIMITIVE_BODY_CASES:
+                if feature.capability not in case.capabilities:
+                    continue
+                with self.subTest(feature=feature.name, body=case.name):
+                    size = Parameter("size", 30)
+                    body = case.build_parameterized(size)
+                    body = feature.apply(body, case)
+                    document = compile_model(body, "Part")
+
+                    parameters = _commands(document, "parameters.add")
+                    self.assertIn(
+                        "size",
+                        [row["params"]["name"] for row in parameters],
+                    )
+                    self.assertEqual(
+                        len(_commands(document, feature.native_command)),
+                        feature.expected_count,
+                    )
+
     def test_native_hole_contract_supports_sequential_features(self):
         for case in cases_with(NATIVE_HOLE):
             with self.subTest(body=case.name):
