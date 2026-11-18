@@ -1,8 +1,7 @@
-# CI items live beside the Forge code or case that owns their behaviour.
-# A folder becomes an item only when it contains ci.yml, so these globs can
-# grow with the examples catalog without maintaining a second central list.
+# CI items live beside the Forge code or example that owns their behaviour.
+# A folder becomes an item only when it contains ci.yml, so the examples glob
+# grows with the catalog without maintaining a second central list.
 schema: 1
 items:
   - scpf/tests
-  - examples/*/tests
   - examples/*
