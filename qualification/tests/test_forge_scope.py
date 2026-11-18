@@ -49,6 +49,18 @@ class ForgeScopeTests(unittest.TestCase):
         self.assertTrue(plan["pipeline_smoke"])
         self.assertTrue(plan["needs_image"])
 
+    def test_generic_publication_change_uses_pipeline_smoke(self):
+        plan = self.scope.make_plan(
+            event_name="pull_request",
+            paths=(
+                "scripts/generic_publication.py",
+                "scripts/generic_site.py",
+            ),
+        )
+        self.assertEqual(plan["gate"], "preflight")
+        self.assertTrue(plan["pipeline_smoke"])
+        self.assertTrue(plan["needs_image"])
+
     def test_native_case_change_selects_affected_q1_q6(self):
         plan = self.scope.make_plan(
             event_name="pull_request",
