@@ -17,6 +17,10 @@ from .core import (
 )
 from .compiler import ModelError, _command, _require_positive
 
+
+CSG_PRIMITIVE_KINDS = frozenset(("box", "sphere", "cylinder"))
+
+
 def _half(dim, negative=False):
     if isinstance(dim, Parameter):
         return _native_expression(
@@ -133,7 +137,7 @@ def _csg_apply(shape, name, operation, offset=(0, 0, 0)):
     if shape.kind == "translated":
         child, delta = shape.data
         return _csg_apply(child, name, operation, _shift(offset, delta))
-    if shape.kind in ("box", "sphere", "cylinder"):
+    if shape.kind in CSG_PRIMITIVE_KINDS:
         return [_csg_primitive(shape, name, operation, offset=offset)]
     if shape.kind == "union" and operation in ("cut", "join"):
         left, right = shape.data
@@ -150,7 +154,7 @@ def _csg_new(shape, name, offset=(0, 0, 0)):
     if shape.kind == "translated":
         child, delta = shape.data
         return _csg_new(child, name, _shift(offset, delta))
-    if shape.kind in ("box", "sphere", "cylinder"):
+    if shape.kind in CSG_PRIMITIVE_KINDS:
         return [_csg_primitive(shape, name, "new", offset=offset)]
     if shape.kind == "intersection":
         left, right = shape.data
