@@ -11,12 +11,15 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 import subprocess
+import sys
 import tomllib
-
-from scripts.release.validate_release import validate
 
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.release.validate_release import validate
 
 
 def run(args: list[str], *, capture: bool = False, check: bool = True) -> subprocess.CompletedProcess:
