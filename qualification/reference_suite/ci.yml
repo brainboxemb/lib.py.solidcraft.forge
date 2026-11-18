@@ -1,0 +1,22 @@
+# External-library comparison evidence is one independent generated item.
+# Ordinary Forge/SCPF changes do not invalidate these reference implementations.
+id: reference-suite
+kind: evidence
+watch:
+  - examples/*/pythonscad/**
+  - examples/*/pybosl2/**
+  - examples/*/cadquery/**
+  - examples/*/build123d/**
+  - qualification/reference_validation.py
+  - qualification/reference_*.py
+  - qualification/geometry_contracts.py
+  - qualification/expectations.py
+  - qualification/cases.py
+  - docker/qualification/**
+  - scripts/qualification_evidence_ci.py
+strategy:
+  reuse: true
+steps:
+  - id: build
+    run: [python, ../../scripts/qualification_evidence_ci.py, references]
+    outputs: [references]
