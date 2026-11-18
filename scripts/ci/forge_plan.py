@@ -27,11 +27,28 @@ PIPELINE_SMOKE_CASE = "simple-box"
 PIPELINE_SMOKE_PATHS = (
     ".github/workflows/forge.yml",
     "scripts/ci/forge_plan.py",
+    "scripts/ci/forge_gate.py",
     "scripts/ci/forge_site.py",
     "scripts/ci/forge_release.py",
     "scripts/generated_output.py",
     "scripts/verification_gate.py",
     "site/build.py",
+)
+
+PIPELINE_ONLY_EXACT = frozenset(
+    {
+        "AGENTS.md",
+        "qualification/impact.py",
+        "docs/10-release-process.md",
+        "docs/11-generated-output.md",
+        "docs/changes/0041-one-forge-workflow.md",
+        "docs/changes/README.md",
+    }
+)
+PIPELINE_ONLY_PREFIXES = (
+    ".github/workflows/",
+    "scripts/ci/",
+    "site/tests/",
 )
 
 CONTRACT_PATHS = (
@@ -44,6 +61,15 @@ CONTRACT_PATHS = (
 
 def pipeline_smoke_required(paths: tuple[str, ...]) -> bool:
     return any(path in PIPELINE_SMOKE_PATHS for path in paths)
+
+
+def pipeline_only_change(paths: tuple[str, ...]) -> bool:
+    """True only for a CI/workflow refactor with no product/toolchain change."""
+    return bool(paths) and pipeline_smoke_required(paths) and all(
+        path in PIPELINE_ONLY_EXACT
+        or any(path.startswith(prefix) for prefix in PIPELINE_ONLY_PREFIXES)
+        for path in paths
+    )
 
 
 def contract_check_required(paths: tuple[str, ...]) -> bool:
@@ -78,8 +104,7 @@ def make_plan(
     if (
         event_name == "pull_request"
         and not forced_full
-        and pipeline_smoke_required(paths)
-        and gate != FULL_GATE
+        and pipeline_only_change(paths)
     ):
         gate = "affected-q1-q6"
         cases = (PIPELINE_SMOKE_CASE,)
