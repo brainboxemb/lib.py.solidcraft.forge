@@ -1,6 +1,22 @@
 name: SCPF repository preflight
 
 on:
+  push:
+    branches-ignore:
+      - main
+      - build
+      - gh-pages
+    paths:
+      - "scpf/**"
+      - "examples/**"
+      - "qualification/**"
+      - "site/**"
+      - "scripts/**"
+      - "docs/**"
+      - ".github/workflows/**"
+      - "AGENTS.md"
+      - "README.md"
+      - "CHANGELOG.md"
   pull_request:
     paths:
       - "scpf/**"
@@ -18,7 +34,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: scpf-preflight-${{ github.event.pull_request.number }}
+  group: scpf-preflight-${{ github.event.pull_request.number || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
@@ -27,7 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
       - uses: actions/setup-python@v5
@@ -40,4 +56,4 @@ jobs:
       - name: Run repository preflight
         run: |
           python scripts/ci_preflight.py \
-            --source-sha "${{ github.event.pull_request.head.sha }}"
+            --source-sha "${{ github.event.pull_request.head.sha || github.sha }}"

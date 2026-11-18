@@ -53,7 +53,8 @@ def prepare(
     cases = affected_cases(paths)
     gate = final_gate(paths, cases)
     result = {
-        "technical": bool(cases) or gate == "regenerate-derived",
+        "technical": gate != "preflight",
+        "release_candidate": "scpf/pyproject.toml" in paths,
         "cases": ",".join(cases),
         "final_gate": gate,
         "tree_match": tree_sha(head_sha) == tree_sha(merge_sha),

@@ -291,6 +291,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run scpf.yml --ref main
 
+      - name: Requalify exact main commit for a release
+        if: github.event.pull_request.merged == true && steps.promote.outputs.release_candidate == 'true' && steps.promote.outputs.promotable == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run scpf.yml --ref main
+
       - name: Remove closed PR technical overlay
         run: |
           python scripts/publish_generated.py remove-dir \
