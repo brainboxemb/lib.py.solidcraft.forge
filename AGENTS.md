@@ -246,15 +246,20 @@ green.
 Generated site output has three separate states. Do not mix them.
 
 1. **Source branch** — editable Forge code and documentation.
-2. **Preview/staging output** — build output owned by one PR or branch.
+2. **PR preview artifact** — verified output for one pull request.
 3. **Stable output** — the last fully qualified `main` build.
 
 Rules:
 
-- A branch or PR may only replace its own preview output.
+- Keep one hosted preview per pull request.
 - Preview output must never overwrite stable output.
-- Preview Pages live under a branch/PR-specific path such as
+- Preview Pages live only under the PR path, for example
   `previews/pr-123/`.
+- Updating a PR replaces that same preview directory; do not add `fast`,
+  `full` or branch-specific sibling previews.
+- Remove that directory when the pull request closes.
+- Qualification branches may run full qualification and keep CI artifacts, but
+  do not publish a second Pages preview for the branch.
 - Only a fully successful `main` Q1-Q6 qualification may replace stable
   output.
 - Stable publishable output lives on the generated `qualified-output`
@@ -264,12 +269,13 @@ Rules:
 - Promote already-built output to Pages; do not independently rebuild the site
   during publication.
 - Replacing the stable Pages root must preserve the `previews/` subtree.
-- Updating one preview must not touch the stable root or another preview.
+- Updating or removing one preview must not touch the stable root or another
+  preview.
 - Every generated preview/stable output must contain `provenance.json` with
   at least the source branch/PR, source commit, Forge version, SolidCraft
   version when applicable, workflow run id, qualification status/level and
   generation time.
-- Verify provenance before promotion. The source commit in stable output must
+- Verify provenance before publication. The source commit in stable output must
   match the successful `main` qualification commit.
 - Keep heavy qualification evidence such as STEP files, complete native build
   trees and large render sets as CI artifacts. Generated Git branches contain
@@ -283,7 +289,7 @@ Rules:
 
 The intended flow is:
 
-`source branch -> branch-owned build -> preview page`
+`pull request -> verified artifact -> gh-pages preview`
 
 and, only after full qualification:
 

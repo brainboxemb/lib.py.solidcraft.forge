@@ -2,6 +2,7 @@ name: SCPF PR preview
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, closed]
     paths:
       - "scpf/**"
       - "examples/**"
@@ -25,6 +26,7 @@ concurrency:
 
 jobs:
   preview:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -199,7 +201,7 @@ jobs:
   publish-preview:
     name: publish-preview
     needs: preview
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     concurrency:
       group: scpf-pages-publish
@@ -223,37 +225,51 @@ jobs:
             --stage preview \
             --source-commit "${{ github.event.pull_request.head.sha }}"
 
-      - name: Stage PR preview output
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: preview-output
-          publish_dir: ./output/site
-          destination_dir: previews/pr-${{ github.event.pull_request.number }}/fast
-          keep_files: true
-          commit_message: "Stage fast preview PR #${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}"
-
-      - name: Checkout staged PR preview
-        uses: actions/checkout@v4
-        with:
-          ref: preview-output
-          path: staged-preview
-          fetch-depth: 1
-
-      - name: Verify staged PR preview
-        shell: bash
-        run: |
-          python site/provenance.py verify \
-            --file "staged-preview/previews/pr-${{ github.event.pull_request.number }}/fast/provenance.json" \
-            --stage preview \
-            --source-commit "${{ github.event.pull_request.head.sha }}"
-
-      - name: Publish browseable PR preview from staged output
+      - name: Publish PR preview
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ./staged-preview/previews/pr-${{ github.event.pull_request.number }}/fast
-          destination_dir: previews/pr-${{ github.event.pull_request.number }}/fast
+          publish_dir: ./output/site
+          destination_dir: previews/pr-${{ github.event.pull_request.number }}
           keep_files: true
-          commit_message: "Sync staged fast preview PR #${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}"
+          commit_message: "Publish preview PR #${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}"
+
+  cleanup-preview:
+    name: cleanup-preview
+    if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    concurrency:
+      group: scpf-pages-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: source
+          fetch-depth: 1
+
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: pages
+          fetch-depth: 1
+
+      - name: Remove closed PR preview
+        id: cleanup
+        run: |
+          python source/site/preview_cleanup.py \
+            --pages-root pages \
+            --pull-request "${{ github.event.pull_request.number }}" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Commit preview cleanup
+        if: steps.cleanup.outputs.changed == 'true'
+        working-directory: pages
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Remove preview PR #${{ github.event.pull_request.number }}"
+          git push origin HEAD:gh-pages
