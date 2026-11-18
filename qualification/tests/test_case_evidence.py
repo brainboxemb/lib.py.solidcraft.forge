@@ -1,9 +1,11 @@
 """Qualification case-specific Q1/Q2 evidence metadata."""
 
+from pathlib import Path
 import unittest
 
 from qualification.case_evidence import CASE_EVIDENCE, validate_case_evidence
 from qualification.cases import supported_qualification_cases
+from qualification.run_case_evidence import ROOT, _target_cwd
 
 
 class CaseEvidenceMetadataTests(unittest.TestCase):
@@ -14,6 +16,23 @@ class CaseEvidenceMetadataTests(unittest.TestCase):
             for case in supported_qualification_cases()
         }
         self.assertEqual(set(CASE_EVIDENCE), expected)
+
+    def test_case_runner_preserves_q1_isolation_and_runs_q2_from_repo(self):
+        outside = Path("/tmp/outside-repo")
+        self.assertEqual(
+            _target_cwd(
+                {"file": "scpf/tests/test_geometry_features.py"},
+                caller_cwd=outside,
+            ),
+            outside,
+        )
+        self.assertEqual(
+            _target_cwd(
+                {"file": "examples/simple-box/tests/test_contract.py"},
+                caller_cwd=outside,
+            ),
+            ROOT,
+        )
 
     def test_q1_and_q2_use_separate_test_layers(self):
         for slug, levels in CASE_EVIDENCE.items():
@@ -28,7 +47,7 @@ class CaseEvidenceMetadataTests(unittest.TestCase):
                 )
                 self.assertTrue(
                     all(
-                        row["file"].startswith("qualification/tests/")
+                        row["file"].startswith(f"examples/{slug}/tests/")
                         for row in levels["q2"]
                     )
                 )

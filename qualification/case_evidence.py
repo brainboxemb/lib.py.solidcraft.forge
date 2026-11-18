@@ -1,8 +1,8 @@
 """Case-specific Q1/Q2 test evidence for qualification.
 
 Q1 targets live in scpf/tests and prove public Python API, validation or
-compiler behaviour. Q2 targets live in qualification/tests and assert the
-command contract of the exact qualification fixture.
+compiler behaviour. Q2 targets live beside the qualification example under
+examples/<case>/tests and assert the command contract of that fixture.
 """
 
 from pathlib import Path
@@ -27,7 +27,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_simple_box.py",
+                "examples/simple-box/tests/test_contract.py",
                 "test_box_lowers_directly_to_native_solid_box",
             ),
         ],
@@ -45,7 +45,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_case_command_gaps.py",
+                "examples/anchored-holes/tests/test_contract.py",
                 "test_anchored_holes_command_contract",
             ),
         ],
@@ -67,7 +67,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_hole_family.py",
+                "examples/hole-family/tests/test_contract.py",
                 "test_hole_family_uses_four_native_hole_features",
             ),
         ],
@@ -89,11 +89,11 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_sheet_fold.py",
+                "examples/sheet-fold/tests/test_contract.py",
                 "test_sheet_fold_uses_native_sheet_history",
             ),
             _target(
-                "qualification/tests/test_sheet_fold.py",
+                "examples/sheet-fold/tests/test_contract.py",
                 "test_sheet_rule_and_fold_parameters_have_native_units",
             ),
         ],
@@ -111,7 +111,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_top_sketch_after_chamfer.py",
+                "examples/top-sketch-after-chamfer/tests/test_contract.py",
                 "test_chamfer_precedes_native_face_query_and_attached_sketch",
             ),
         ],
@@ -125,7 +125,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_parameter_scope.py",
+                "examples/parameter-scope/tests/test_contract.py",
                 "test_generated_parameter_contract",
             ),
         ],
@@ -139,7 +139,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_parent_derived_child_size.py",
+                "examples/parent-derived-child-size/tests/test_contract.py",
                 "test_child_dimensions_keep_parent_expressions",
             ),
         ],
@@ -153,7 +153,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_case_command_gaps.py",
+                "examples/components/tests/test_contract.py",
                 "test_components_command_contract",
             ),
         ],
@@ -167,7 +167,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_repeated_parent_attachments.py",
+                "examples/repeated-parent-attachments/tests/test_contract.py",
                 "test_two_authored_rigid_joints_use_bound_occurrences",
             ),
         ],
@@ -181,7 +181,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_assembly_decorator.py",
+                "examples/assembly-decorator/tests/test_contract.py",
                 "test_imported_assembly_lowers_to_reusable_native_occurrences",
             ),
         ],
@@ -195,7 +195,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_group_hierarchy.py",
+                "examples/group-hierarchy/tests/test_contract.py",
                 "test_group_lowers_to_real_nested_component",
             ),
         ],
@@ -209,7 +209,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_attach_angle.py",
+                "examples/attach-angle/tests/test_contract.py",
                 "test_quarter_turn_is_emitted_on_rigid_joint",
             ),
         ],
@@ -223,7 +223,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_case_command_gaps.py",
+                "examples/parametric-attach/tests/test_contract.py",
                 "test_parametric_attach_command_contract",
             ),
         ],
@@ -237,7 +237,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_case_command_gaps.py",
+                "examples/parametric-offset/tests/test_contract.py",
                 "test_parametric_offset_command_contract",
             ),
         ],
@@ -251,7 +251,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_case_command_gaps.py",
+                "examples/parametric-anchor/tests/test_contract.py",
                 "test_parametric_anchor_command_contract",
             ),
         ],
@@ -265,7 +265,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_case_command_gaps.py",
+                "examples/corner-anchor/tests/test_contract.py",
                 "test_corner_anchor_command_contract",
             ),
         ],
@@ -279,7 +279,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_anchor_topology_mutation.py",
+                "examples/anchor-topology-mutation/tests/test_contract.py",
                 "test_fixed_topology_pick_is_inlined",
             ),
         ],
@@ -293,7 +293,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_assembly_owned_anchor.py",
+                "examples/assembly-owned-anchor/tests/test_contract.py",
                 "test_named_assembly_anchor_resolves_to_native_corner_relationship",
             ),
         ],
@@ -307,7 +307,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_four_corner_l.py",
+                "examples/four-corner-l/tests/test_contract.py",
                 "test_parametric_profile_placement_uses_replay_variables",
             ),
         ],
@@ -321,7 +321,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_eight_corner_brackets.py",
+                "examples/eight-corner-brackets/tests/test_contract.py",
                 "test_parametric_profile_placement_uses_replay_variables",
             ),
         ],
@@ -335,7 +335,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_eight_flightcase_corners.py",
+                "examples/eight-flightcase-corners/tests/test_contract.py",
                 "test_parametric_corner_placement_uses_replay_variables",
             ),
         ],
@@ -349,7 +349,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_case_command_gaps.py",
+                "examples/xz-anchor/tests/test_contract.py",
                 "test_xz_anchor_command_contract",
             ),
         ],
@@ -367,7 +367,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_round_top_sketch.py",
+                "examples/round-top-sketch/tests/test_contract.py",
                 "test_top_face_query_is_used_after_circular_base_extrusion",
             ),
         ],
@@ -381,7 +381,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_circle_negative_extrude.py",
+                "examples/circle-negative-extrude/tests/test_contract.py",
                 "test_signed_distance_preserves_negative_native_direction",
             ),
         ],
@@ -403,15 +403,15 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_sketch_pattern_mirror.py",
+                "examples/sketch-pattern-mirror/tests/test_contract.py",
                 "test_circle_seed_stays_one_native_profile_with_pattern_and_mirror",
             ),
             _target(
-                "qualification/tests/test_sketch_pattern_mirror.py",
+                "examples/sketch-pattern-mirror/tests/test_contract.py",
                 "test_slot_seed_stays_one_native_profile_with_pattern_and_mirrors",
             ),
             _target(
-                "qualification/tests/test_sketch_pattern_mirror.py",
+                "examples/sketch-pattern-mirror/tests/test_contract.py",
                 "test_pattern_parameters_have_correct_native_units",
             ),
         ],
@@ -425,11 +425,11 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_selective_profile_extrude.py",
+                "examples/selective-profile-extrude/tests/test_contract.py",
                 "test_one_pattern_and_one_selective_native_extrusion",
             ),
             _target(
-                "qualification/tests/test_selective_profile_extrude.py",
+                "examples/selective-profile-extrude/tests/test_contract.py",
                 "test_saved_design_mutation_changes_seed_and_pattern_spacing",
             ),
         ],
@@ -447,11 +447,11 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_circular_feature_pattern.py",
+                "examples/circular-feature-pattern/tests/test_contract.py",
                 "test_emits_one_native_circular_feature_pattern",
             ),
             _target(
-                "qualification/tests/test_circular_feature_pattern.py",
+                "examples/circular-feature-pattern/tests/test_contract.py",
                 "test_count_parameter_is_dimensionless_and_pcd_is_length",
             ),
         ],
@@ -465,11 +465,11 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_rectangular_pattern.py",
+                "examples/rectangular-pattern/tests/test_contract.py",
                 "test_emits_one_native_feature_pattern",
             ),
             _target(
-                "qualification/tests/test_rectangular_pattern.py",
+                "examples/rectangular-pattern/tests/test_contract.py",
                 "test_count_parameters_are_dimensionless",
             ),
         ],
@@ -487,7 +487,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_slot_family.py",
+                "examples/slot-family/tests/test_contract.py",
                 "test_slot_family_command_contract",
             ),
         ],
@@ -501,7 +501,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_rounded_rectangle_sketch.py",
+                "examples/rounded-rectangle-sketch/tests/test_contract.py",
                 "test_named_sketch_uses_native_rounded_rectangle",
             ),
         ],
@@ -519,7 +519,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_primitive_csg.py",
+                "examples/primitive-csg/tests/test_contract.py",
                 "test_generated_command_contract",
             ),
         ],
@@ -537,7 +537,7 @@ CASE_EVIDENCE = {
         ],
         "q2": [
             _target(
-                "qualification/tests/test_case_command_gaps.py",
+                "examples/bracket/tests/test_contract.py",
                 "test_bracket_command_contract",
             ),
         ],
@@ -558,7 +558,7 @@ def validate_case_evidence() -> None:
     for slug, levels in CASE_EVIDENCE.items():
         for level, prefix in (
             ("q1", "scpf/tests/"),
-            ("q2", "qualification/tests/"),
+            ("q2", f"examples/{slug}/tests/"),
         ):
             targets = levels.get(level) or []
             if not targets:
