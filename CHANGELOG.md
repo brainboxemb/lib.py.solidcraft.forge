@@ -8,6 +8,10 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Fixed
+
+- `Cylinder`-based primitive bodies can now receive explicitly placed native `Hole` features with `+`, including after joined Cylinder features (issue #297).
+
 ## [0.9.0] - 2026-11-17
 
 ### Added
