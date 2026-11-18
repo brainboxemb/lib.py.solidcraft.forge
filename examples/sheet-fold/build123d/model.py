@@ -2,7 +2,6 @@
 
 from build123d import (
     Align,
-    Axis,
     Cylinder,
     Plane,
     Polyline,
