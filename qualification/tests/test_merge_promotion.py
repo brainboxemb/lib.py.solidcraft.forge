@@ -19,11 +19,11 @@ class MergePromotionTests(unittest.TestCase):
     def test_final_gate_levels_are_explicit(self):
         self.assertEqual(
             REQUIRED_LEVEL["affected-integration"],
-            "affected-integration",
+            "integration",
         )
         self.assertEqual(
             REQUIRED_LEVEL["affected-native"],
-            "affected-native",
+            "native",
         )
         self.assertEqual(
             REQUIRED_LEVEL["full-native"],
