@@ -50,3 +50,28 @@ SolidCraft runtime workflow.
 The package keeps its own tested SolidCraft compatibility guard. CI must verify
 that its declared `SOLIDCRAFT_VERSION` agrees with the package/runtime build
 contract rather than silently maintaining unrelated version literals.
+
+
+## Shared runtime efficiency
+
+Library ownership and runtime packaging are separate concerns.
+
+`lib.py.cad.verfication` remains an independently designed, tested and
+released Python library. The immutable SolidCraft runtime may and should
+preinstall an exact released version when that library is used by essentially
+every model verification.
+
+Therefore:
+
+- `runtime.json` pins the verification-library release version and exact
+  commit that is installed in the image;
+- changing that pin intentionally changes the immutable runtime image ID;
+- model verification must use the library already present in that image rather
+  than reinstalling the same package for every model;
+- preinstallation does not transfer verification-code ownership to Forge;
+- Forge must not copy or modify verification-library implementation inside this
+  repository.
+
+The same principle applies to other stable libraries used by nearly every
+runtime invocation: preinstalling them is an efficiency choice, while their
+code ownership remains with their own package/repository.

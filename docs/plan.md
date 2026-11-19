@@ -8,68 +8,76 @@ detail and history; this plan states what is current and what follows.
 
 ## Current goal
 
-Restore the verification ownership boundary found during the #378 audit.
+Complete #438: update the shared immutable SolidCraft runtime to released
+`lib.py.cad.verfication` **0.10.0** at exact commit
+`b5e68133f7a119eb8b876a3c0628cc1963bd09a2`.
 
-Released `lib.py.cad.verfication` 0.7.0 at exact commit
-`a7b2eede634508d3c04a115a201ea91b9d0e2714` now contains:
+The verification library remains independently designed, tested and released,
+but is intentionally preinstalled in the shared runtime image because every
+model verification uses it. This avoids reinstalling the same released package
+for every model check.
 
-- generic numeric/vector/bounds/body-envelope comparisons;
-- generic visual primitives and one-view orchestration;
-- generic semantic result composition;
-- generic exact-value and predicate verification helpers.
+Release 0.10.0 provides:
 
-Forge #432 has already proved the numeric/bounds migration on its branch. The
-next required step is #434: rebuild the immutable Forge runtime with 0.7.0 so
-#432 can remove the remaining local `require_equal` / `require_true`
-helpers before merge.
+- generic comparison/assertion/reporting mechanics;
+- the SolidCraft verification adapter;
+- declarative `SolidCraftVerification`;
+- baseline, saved-design and inspection execution;
+- partial timeline contracts that do not force generated SolidCraft names into
+  model-specific expectations.
 
 ## Execution order
 
-1. Complete #434:
-   - pin verification-library 0.7.0 exact commit in `runtime.json`;
-   - publish the resulting immutable runtime image;
+1. Complete #438:
+   - pin verification-library 0.10.0 exact commit in
+     `docker/solidcraft_runtime/runtime.json`;
+   - use the already-published immutable runtime image produced from that
+     definition;
    - update root `cad-ci.yml` to that exact image;
-   - prove normal Forge CI with the new runtime.
-2. Rebase/refresh #432 on the new main:
-   - retain the already-green numeric/vector/bounds library migration;
-   - replace all remaining local `require_equal` / `require_true` helpers
-     with released `require_equal()` / `require_condition()`;
-   - re-audit all 32 model verifiers.
-3. Resume #430:
-   - keep SolidCraft rendering/camera/model data in Forge;
-   - use released `verify_visual_view()` for generic visual verification.
-4. Expand visual verification to the next ten models, then the remaining
-   catalog.
-5. Complete #378 diagrams and final verification summary.
-6. Complete #366 only after #378 is complete.
-7. Return to verification-library #4 for the final ownership audit.
+   - prove normal Forge CI against it.
+2. Complete #440 with **simple-box only**:
+   - keep only model-specific expectation/mutation data in the model;
+   - keep Forge compilation/replay in a shared Forge producer path;
+   - let released `run_solidcraft_verification()` own the actual verification;
+   - remove simple-box's procedural `verify_model.py`;
+   - change no other model verifier in that proof PR.
+3. Continue umbrella issue #432 only after #440 is green, using small reviewable
+   model batches.
+4. Resolve verification-library #44/#45 before migrating models that need
+   partial parameter/sketch contracts. Do not work around those gaps in Forge.
+5. Resume #430 visual verification after the model-verification boundary is
+   proven.
+6. Complete #378 diagrams and final verification summary.
+7. Complete #366 only after #378 verification output is complete.
+8. Run the final ownership audit and close/rewrite obsolete historical issues.
 
-## Open issue assessment — 2026-11-19
+## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #434 Update Forge verification runtime to lib.py.cad.verfication 0.7.0 | now | Required before #432 can consume the final generic assertion helpers. Keep runtime build definition and CI runtime expectation separate. |
-| #432 Use released CAD verification comparisons in model verifiers | blocked on #434 | Numeric/vector/bounds migration is green on the branch. Do not merge until runtime 0.7.0 exists and local exact/predicate helpers are also removed. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked on #432 | Generic visual orchestration is released in library 0.6.0+, but visual work resumes only after the ownership cleanup is complete. |
-| #391 Extract reusable CAD verification library from Forge | effectively complete / adoption in progress | Reusable library functionality now reaches 0.7.0. Keep open until #378 consumer adoption and final audit are complete. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | now | Reference F5/F6 is complete for all 32 models. Current work is ownership cleanup, then F7-F11. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Starts only after #378 verification output is complete. |
-| #357 Fix Sketch.add() default handling for native Slot profiles | later | Forge API defect independent of the verification migration. |
-| #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | CLI quality work, not a blocker for current migration. |
+| #438 Update Forge verification runtime to lib.py.cad.verfication 0.10.0 | now | Runtime-only prerequisite. The released verification library stays preinstalled in the shared runtime for efficiency. |
+| #440 Prove declarative SolidCraft verification with simple-box | next | First consumer proof after #438. Exactly one model; establishes the final launcher/definition shape. |
+| #432 Use released declarative CAD verification in model verification | blocked | Umbrella migration. Continue only after #440 proves the one-model path. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after the model-verification ownership path is stable. |
+| #391 Extract reusable CAD verification library from Forge | blocked | Reusable library functionality is released through 0.10.0. Close only after remaining shared checker code is removed from Forge. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | now | Migration umbrella; current path is #438, #440, then staged #432 migration. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Starts after #378 verification output is complete. |
+| #357 Fix Sketch.add() default handling for native Slot profiles | later | Forge API defect independent of current verification work. |
+| #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | CLI quality work, not a blocker for current verification work. |
 | #355 Support current SolidCraft parametric Slot API in Forge | later | Product/API work after current migration. |
 | #354 Support standalone sketch extrusions as boolean operands | later | Product/API work after current migration. |
 | #349 Coverage: expose the remaining SolidCraft SOLID › CREATE features in Forge | later | Feature-coverage backlog. |
 | #347 Patterns should accept any applied Shape feature, not only Sketch.extrude | later | Forge feature backlog. |
-| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to the superseded qualification architecture; reassess after #378/#366. |
-| #335 Use build123d Sheet Metal for the sheet-fold qualification reference | later | Reference-quality improvement, not required for ownership cleanup. |
-| #325 Research: determine root cause of HUB75 AnchorFrame regression | later | Model/API investigation independent of current migration. |
-| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete / reassess | Old qualification terminology/design; measure final CAD-CI behavior before deciding what remains. |
-| #175 Change 0005: qualify HUB75-like AnchorFrame orientation against known-good Placement poses | later | Domain verification backlog after generic migration. |
-| #82 Reconsider automatic hiding of the SolidCraft Joints folder | later | Product behavior issue independent of migration. |
-| #81 Support inline AnchorFrame references for rotated occurrences | later | Forge API backlog independent of migration. |
+| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture; reassess after #378/#366. |
+| #335 Use build123d Sheet Metal for the sheet-fold qualification reference | later | Reference-quality improvement, not required for ownership migration. |
+| #325 Research: determine root cause of HUB75 AnchorFrame regression | later | Independent model/API investigation. |
+| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Predates the current reusable runtime/CAD-CI design; reassess after the current migration. |
+| #175 Change 0005: qualify HUB75-like AnchorFrame orientation against known-good Placement poses | later | Domain verification backlog. |
+| #82 Reconsider automatic hiding of the SolidCraft Joints folder | later | Independent product behavior. |
+| #81 Support inline AnchorFrame references for rotated occurrences | later | Forge API backlog. |
 | #9 SCPF: first-class Sketch objects, constraints and face workplanes | later | Major Forge feature backlog. |
 | #8 Add generic hollow primitives: Tube, RectTube and OvalTube | later | Forge feature backlog. |
 | #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
 
 Immediate chain:
-`#434 -> #432 -> #430 -> visual expansion -> diagrams -> summary -> #366 -> verification-library #4 final audit`.
+`#438 -> #440 simple-box -> #432 batches -> #430 -> diagrams -> summary -> #366 -> final ownership audit`.
