@@ -1,0 +1,10 @@
+section: features
+title: Flat sheet, through hole and 90° fold
+tagline: Native sheet-metal history with a recoverable flat pattern
+description: >
+  An 80 × 40 mm flat sheet blank with one through hole and one 90 degree native fold using a shared sheet rule.
+parameters: 80 × 40 × 2 mm sheet; R2 bend, K=0.5, 90° fold, Ø6 hole
+stages:
+  - Create the flat rectangular Blank sketch
+  - Create native sheet material and cut the Ø6 hole while flat
+  - Fold the sheet 90 degrees and preserve the developed flat pattern

@@ -1,0 +1,10 @@
+section: associativity
+title: Attachments on repeated parent occurrences
+tagline: Two disconnected joint graphs follow one shared parent height
+description: >
+  Two Parent occurrences share one height parameter and each owns a Marker attached from parent TOP to child BOTTOM.
+parameters: Parent height 40 mm; second parent at X=60 mm; editable shared parent_height
+stages:
+  - Create two occurrences of one Parent definition
+  - Attach one Marker to the TOP face of each Parent occurrence
+  - Keep both attachment graphs dependent on the shared parent_height
