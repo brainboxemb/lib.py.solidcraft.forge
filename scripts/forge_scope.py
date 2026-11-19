@@ -201,7 +201,7 @@ def make_plan(
     operation = "pr" if event_name == "pull_request" else "main"
     site_only = operation == "main" and gate == "preflight"
     needs_image = (
-        gate in {"affected-native", "full-native"}
+        gate in {"regenerate-derived", "affected-native", "full-native"}
         or reference_smoke
         or pipeline_smoke
         or contracts
