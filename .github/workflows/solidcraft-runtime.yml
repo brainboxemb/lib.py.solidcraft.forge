@@ -9,6 +9,10 @@ on:
       - scpf/scpf/version.py
       - .github/workflows/solidcraft-runtime.yml
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   packages: write
