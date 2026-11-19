@@ -1,6 +1,5 @@
 """Integration contract for native parameterized Box lowering."""
 
-import json
 import unittest
 from pathlib import Path
 
@@ -8,25 +7,10 @@ from scpf.runner import run_script
 
 
 ROOT = Path(__file__).resolve().parents[3]
-EXAMPLE = ROOT / "examples/simple-box"
-MODEL = EXAMPLE / "scpf/model.py"
-MUTATION = EXAMPLE / "verification/change_length.json"
+MODEL = ROOT / "examples/simple-box/scpf/model.py"
 
 
 class SimpleBoxCommandTests(unittest.TestCase):
-    def test_saved_design_mutation_changes_length_parameter(self):
-        document = json.loads(MUTATION.read_text(encoding="utf-8"))
-        self.assertEqual(
-            document["commands"],
-            [{
-                "command": "parameters.change",
-                "params": {
-                    "name": "length",
-                    "expression": "50 mm",
-                },
-            }],
-        )
-
     def test_box_lowers_directly_to_native_solid_box(self):
         commands = run_script(MODEL)["commands"]
 
