@@ -247,7 +247,7 @@ state. Change `.github/workflows/forge.trigger` on `main`, or use the
 parameterless **Run workflow** action on `main`. Both fully qualify the exact
 current `main` commit before replacing `build/main` and stable Pages.
 
-The operator never chooses Q1/Q2/Q6/full. `scripts/forge_scope.py` owns the
+The operator never chooses integration/native/full-native. `scripts/forge_scope.py` owns the
 risk decision. A manual/trigger recovery is release-independent; release
 publication is considered only when an intentional package-version change
 reaches `main`.
