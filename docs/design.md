@@ -55,36 +55,40 @@ one from the other.
 ## Verification
 
 Model/reference commands consume `FORGE_RUNTIME_IMAGE` from their environment.
-They pull and run that exact immutable image. Generic comparison/reporting code
-stays in released `lib.py.cad.verfication`; Forge keeps only its own policy,
-adapters and expected data.
+They pull and run that exact immutable image. Verification behavior stays in released `lib.py.cad.verfication`, including
+CAD-tool-specific adapters. Forge keeps only Forge compilation and
+model-specific expected data.
 
 
 ## Verification adapter boundary
 
-Forge model verification has three layers:
+Forge model verification has this ownership flow:
 
 ```text
-SolidCraft/model adapter
-  -> normalized consumer values
-  -> released cad_verification functions
-  -> model-specific pass/fail policy and evidence
+Forge model-specific expectation data
+  -> released cad_verification CAD-tool adapter
+     -> CAD-tool result/schema interpretation
+     -> released generic comparison/assertion functions
+     -> verification evidence
 ```
 
-The SolidCraft/model adapter may know the SolidCraft measurement JSON schema and
-extract values such as parameters, bodies, bounds, timeline rows and feature
-state. Those extraction rules are engine-specific and stay in Forge.
+For SolidCraft, the adapter lives in
+`cad_verification.adapters.solidcraft`. Forge must not maintain a parallel
+SolidCraft/model adapter.
 
-Once values are ordinary scalars, vectors, bounds, body envelopes, images or
-semantic statuses, comparison/composition uses released
-`lib.py.cad.verfication` functions. Forge must not keep parallel generic
-comparison math such as `close()`, `vector_close()`, `bbox_close()` or
-`bounds_match()`.
+Forge keeps model-specific values such as expected bodies, parameters, history,
+mutations, views, cameras and tolerances. The verification library knows how
+those declarations are checked against SolidCraft.
 
-Reference execution remains a thin Forge adapter because choosing/running
-PythonSCAD, pyBOSL2, CadQuery and build123d is consumer policy. Its exported STL
-geometry is validated by the library.
+Forge compilation/replay that produces the initial SolidCraft design remains a
+Forge producer responsibility. Shared SolidCraft evaluation, mutation,
+inspection, result parsing and checking belong to the released verification
+adapter.
 
-Visual rendering remains a Forge adapter because SolidCraft snapshot commands,
-view selection and camera conversion are engine/model policy. Generic visual
-verification after rendering belongs to the library.
+The same structure may later apply to OpenSCAD, FreeCAD, CadQuery or other CAD
+tools: tool-specific checking belongs to a sibling verification adapter, while
+model-specific reference data stays in Forge.
+
+Forge must not keep parallel comparison math or result-schema helpers such as
+`close()`, `vector_close()`, `bbox_close()`, `bounds_match()` or a
+shared `solidcraft_measurements.py`.
