@@ -1,6 +1,6 @@
-# Migration step 2: Forge tool plus one host-side verified example.
-# Later PRs add the remaining examples, then native/model verification.
+# Migration step 3: Forge tool plus every host-side verified example.
+# Native/model verification is added in later PRs.
 schema: 1
 items:
   - scpf
-  - examples/simple-box
+  - examples/*
