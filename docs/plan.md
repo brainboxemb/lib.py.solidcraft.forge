@@ -8,44 +8,46 @@ detail and history; this plan states what is current and what follows.
 
 ## Current goal
 
-Complete #432: finish restoring the verification ownership boundary across all
-32 model verifiers now that the immutable Forge runtime on `main` contains
-released `lib.py.cad.verfication` 0.7.0.
+Complete the verification ownership correction without adding another checker
+layer to Forge.
 
-Forge keeps SolidCraft measurement parsing, model expectations, history rules,
-mutations and other domain policy. Generic comparison and verification-failure
-mechanics come from the released verification library.
+Forge keeps the Forge library, models and model-specific expectation data.
+`lib.py.cad.verfication` owns both generic verification mechanics and
+CAD-tool-specific verification adapters.
+
+#432 is currently blocked on `lib.py.cad.verfication#32`. The SolidCraft
+adapter must be independently designed, tested and released there before Forge
+consumer code continues.
 
 ## Execution order
 
-1. Complete #432:
-   - keep the existing numeric/vector/bounds migration to
-     `compare_scalar()`, `compare_vector()`, `compare_bounds()` and
-     `match_body_envelopes()`;
-   - replace remaining local exact-value and predicate helpers with released
-     `require_equal()` and `require_condition()`;
-   - remove local generic `close`, `vector_close`, `bbox_close`,
-     `bounds_match`, `require_bounds`, `require_equal` and
-     `require_true` implementations;
-   - re-audit all 32 model verifiers;
-   - prove the complete affected Forge CI graph against the runtime already
-     merged through #434.
-2. Resume #430 using released `verify_visual_view()` while keeping
-   SolidCraft rendering, camera conversion and model/view policy in Forge.
-3. Expand visual verification to the next ten models and then the remaining
+1. Complete and release `lib.py.cad.verfication#32` with the SolidCraft
+   verification adapter.
+2. Resume #432 with one representative model:
+   - keep model-specific expected values/data in Forge;
+   - pass those declarations to the released SolidCraft adapter;
+   - remove Forge-local SolidCraft result parsing/eval/mutate/inspect helpers;
+   - remove local generic comparison/assertion helpers;
+   - remove `verification/solidcraft_measurements.py`.
+3. Expand the proven #432 path to the remaining 31 model verifiers and run the
+   complete affected Forge CI graph.
+4. Resume #430 using released verification APIs. Forge keeps model-specific
+   view/camera/baseline data; reusable SolidCraft rendering/checking behavior
+   belongs in the verification library adapter.
+5. Expand visual verification to the next ten models and then the remaining
    catalog.
-4. Complete #378 diagrams and final verification summary.
-5. Complete #366 only after #378 verification output is complete.
-6. Run the final migration/ownership audit and close or rewrite obsolete
+6. Complete #378 diagrams and final verification summary.
+7. Complete #366 only after #378 verification output is complete.
+8. Run the final migration/ownership audit and close or rewrite obsolete
    historical issues.
 
 ## Open issue assessment — 2026-11-19
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #432 Use released CAD verification comparisons in model verifiers | now | Active ownership cleanup. Runtime 0.7.0 is now on main; finish removal of generic comparison/equality/predicate mechanics from all model verifiers and prove full CI. |
+| #432 Use released CAD verification adapter in model verification | blocked | Blocked on `lib.py.cad.verfication#32` and its release. After release prove one model first, then migrate the remaining catalog. |
 | #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after #432. Generic one-view orchestration is released; Forge must retain only rendering, camera and model policy. |
-| #391 Extract reusable CAD verification library from Forge | effectively complete but still open | Reusable mechanics are released through 0.7.0. Keep open while Forge completes consumer adoption and the final ownership audit. |
+| #391 Extract reusable CAD verification library from Forge | blocked | The generic mechanics are released, but the ownership audit exposed remaining SolidCraft checker knowledge in Forge. Close only after #32 is released and #432 removes it. |
 | #378 Use explicit Forge verification stages instead of integration/native gates | now | Main migration umbrella. Reference verification is complete; current work is ownership cleanup followed by visual, diagram and summary evidence. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Starts after #378 verification output is complete. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Forge API defect independent of the current verification migration. |
@@ -66,4 +68,4 @@ mechanics come from the released verification library.
 | #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
 
 Immediate chain:
-`#432 -> #430 -> visual expansion -> diagrams -> summary -> #366 -> final migration audit`.
+`verification-library #32 -> release -> #432 one model -> #432 remaining models -> #430 -> visual expansion -> diagrams -> summary -> #366 -> final migration audit`.
