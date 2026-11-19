@@ -50,7 +50,7 @@ class ItemGateTests(unittest.TestCase):
                 "assemble_build",
             ) as assemble:
                 result = item_gate.execute(
-                    gate="full-q1-q6",
+                    gate="full-native",
                     cases_value="",
                     out=root / "gate",
                     build_out=root / "build-out",
@@ -103,7 +103,7 @@ class ItemGateTests(unittest.TestCase):
                 "assemble_build",
             ):
                 item_gate.execute(
-                    gate="affected-q1-q6",
+                    gate="affected-native",
                     cases_value="simple-box",
                     out=root / "gate",
                     build_out=root / "build-out",
@@ -137,7 +137,7 @@ class ItemGateTests(unittest.TestCase):
                 "assemble_build",
             ):
                 item_gate.execute(
-                    gate="affected-q1-q6",
+                    gate="affected-native",
                     cases_value="simple-box",
                     out=root / "gate",
                     build_out=root / "build-out",
@@ -163,7 +163,7 @@ class ItemGateTests(unittest.TestCase):
             root = Path(temp)
             with self.assertRaisesRegex(ValueError, "does not support"):
                 item_gate.execute(
-                    gate="affected-q1-q2",
+                    gate="affected-integration",
                     cases_value="simple-box",
                     out=root / "gate",
                     build_out=root / "build-out",

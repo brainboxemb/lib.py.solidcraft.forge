@@ -63,15 +63,15 @@ class ForgeScopeTests(unittest.TestCase):
         self.assertTrue(plan["pipeline_smoke"])
         self.assertTrue(plan["needs_image"])
 
-    def test_native_case_change_selects_affected_q1_q6(self):
+    def test_native_case_change_selects_affected_native(self):
         plan = self.scope.make_plan(
             event_name="pull_request",
             paths=("examples/simple-box/scpf/model.py",),
         )
-        self.assertEqual(plan["gate"], "affected-q1-q6")
+        self.assertEqual(plan["gate"], "affected-native")
         self.assertEqual(plan["cases"], "simple-box")
 
-    def test_main_never_promotes_q1_q2_only_case_evidence(self):
+    def test_main_never_promotes_integration_only_case_evidence(self):
         pr = self.scope.make_plan(
             event_name="pull_request",
             paths=("examples/simple-box/build123d/model.py",),
@@ -81,9 +81,9 @@ class ForgeScopeTests(unittest.TestCase):
             ref_name="main",
             paths=("examples/simple-box/build123d/model.py",),
         )
-        self.assertEqual(pr["gate"], "affected-q1-q2")
+        self.assertEqual(pr["gate"], "affected-integration")
         self.assertTrue(pr["reference_smoke"])
-        self.assertEqual(main["gate"], "affected-q1-q6")
+        self.assertEqual(main["gate"], "affected-native")
         self.assertEqual(main["cases"], "simple-box")
 
     def test_main_presentation_change_reuses_existing_build(self):
@@ -101,7 +101,7 @@ class ForgeScopeTests(unittest.TestCase):
             ref_name="main",
             paths=(".github/workflows/forge.trigger",),
         )
-        self.assertEqual(plan["gate"], "full-q1-q6")
+        self.assertEqual(plan["gate"], "full-native")
         self.assertTrue(plan["needs_image"])
         self.assertFalse(plan["site_only"])
 
@@ -110,7 +110,7 @@ class ForgeScopeTests(unittest.TestCase):
             event_name="workflow_dispatch",
             ref_name="main",
         )
-        self.assertEqual(plan["gate"], "full-q1-q6")
+        self.assertEqual(plan["gate"], "full-native")
         self.assertFalse(plan["release"])
 
     def test_main_version_change_is_release_candidate(self):
@@ -119,7 +119,7 @@ class ForgeScopeTests(unittest.TestCase):
             ref_name="main",
             paths=("scpf/pyproject.toml", "CHANGELOG.md"),
         )
-        self.assertEqual(plan["gate"], "full-q1-q6")
+        self.assertEqual(plan["gate"], "full-native")
         self.assertTrue(plan["release"])
 
     def test_manual_run_off_main_is_rejected(self):
@@ -135,7 +135,7 @@ class ForgeScopeTests(unittest.TestCase):
             schedule=self.scope.WEEKLY_FULL_CRON,
         )
         self.assertEqual(plan["operation"], "main")
-        self.assertEqual(plan["gate"], "full-q1-q6")
+        self.assertEqual(plan["gate"], "full-native")
 
     def test_daily_schedule_is_reconcile_only(self):
         plan = self.scope.make_plan(

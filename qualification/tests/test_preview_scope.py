@@ -22,17 +22,17 @@ class PreviewScopeTests(unittest.TestCase):
         paths = ["examples/slot-family/scpf/model.py"]
         cases = affected_cases(paths)
         self.assertEqual(cases, ("slot-family",))
-        self.assertEqual(final_gate(paths, cases), "affected-q1-q6")
+        self.assertEqual(final_gate(paths, cases), "affected-native")
 
     def test_q1_test_selects_cases_that_use_it_as_evidence(self):
-        cases = affected_cases(["scpf/tests/test_native_slots.py"])
+        cases = affected_cases(["examples/slot-family/tests/test_contract.py"])
         self.assertEqual(cases, ("slot-family",))
 
     def test_foundational_forge_change_requires_full_final_gate(self):
         paths = ["scpf/scpf/replay.py"]
         cases = affected_cases(paths)
         self.assertTrue(cases)
-        self.assertEqual(final_gate(paths, cases), "full-q1-q6")
+        self.assertEqual(final_gate(paths, cases), "full-native")
 
     def test_global_case_registry_change_selects_all_cases(self):
         cases = affected_cases(["qualification/case_evidence.py"])
