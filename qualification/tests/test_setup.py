@@ -4,7 +4,6 @@ import unittest
 
 from qualification.setup_solidcraft import checksum_for
 from qualification.setup_references import load_toolchain, pip_specs
-from qualification.run_case_evidence import _target_cwd
 
 
 class SetupTests(unittest.TestCase):
@@ -16,15 +15,6 @@ class SetupTests(unittest.TestCase):
             digest,
         )
 
-    def test_integration_case_evidence_runs_from_package_root(self):
-        cwd = _target_cwd(
-            {
-                "file": "scpf/tests/test_model_authoring.py",
-                "test": "test_plain_model_class_fields_become_parameters",
-            }
-        )
-        self.assertEqual(cwd.name, "scpf")
-        self.assertTrue((cwd / "scpf" / "__init__.py").is_file())
 
     def test_reference_specs_come_from_versioned_toolchain(self):
         specs = pip_specs(load_toolchain())

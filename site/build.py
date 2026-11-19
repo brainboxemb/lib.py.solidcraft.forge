@@ -23,7 +23,7 @@ from evidence import scpf_case_state
 from api_coverage import (
     EXPORT_COVERAGE,
     CAPABILITY_COVERAGE,
-    qualification_number,
+    coverage_rank,
     validate_coverage_cases,
     validate_coverage_results,
 )
@@ -52,7 +52,6 @@ try:
     )
     from qualification.expectations import EXPECTED_VISUAL_BOXES
     from qualification.geometry_contracts import proof_contract
-    from qualification.case_evidence import evidence_for
     from qualification.project_metadata import scpf_version
 finally:
     sys.path.pop(0)
@@ -2549,8 +2548,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     qualification_counts = {"At target": 0, "Below target": 0, "Gap": 0}
     qualification_group_counts = {}
     for group, capability, target, current, cases, note in CAPABILITY_COVERAGE:
-        target_level = qualification_number(target)
-        current_level = qualification_number(current)
+        target_level = coverage_rank(target)
+        current_level = coverage_rank(current)
         if current == "GAP":
             qualification_status = "Gap"
         elif current_level is not None and target_level is not None and current_level >= target_level:
