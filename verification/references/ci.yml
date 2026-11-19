@@ -1,13 +1,62 @@
-# Independent reference verification for current Forge model items.
+# Independent reference verification for the currently migrated contract batch.
 id: reference-verification
 kind: verification
 watch:
-  - examples/*/ci.yml
-  - examples/*/verification/reference_geometry.json
-  - examples/*/pythonscad/**
-  - examples/*/pybosl2/**
-  - examples/*/cadquery/**
-  - examples/*/build123d/**
+  - examples/simple-box/verification/reference_geometry.json
+  - examples/simple-box/pythonscad/**
+  - examples/simple-box/pybosl2/**
+  - examples/simple-box/cadquery/**
+  - examples/simple-box/build123d/**
+  - examples/anchor-topology-mutation/verification/reference_geometry.json
+  - examples/anchor-topology-mutation/pythonscad/**
+  - examples/anchor-topology-mutation/pybosl2/**
+  - examples/anchor-topology-mutation/cadquery/**
+  - examples/anchor-topology-mutation/build123d/**
+  - examples/anchored-holes/verification/reference_geometry.json
+  - examples/anchored-holes/pythonscad/**
+  - examples/anchored-holes/pybosl2/**
+  - examples/anchored-holes/cadquery/**
+  - examples/anchored-holes/build123d/**
+  - examples/assembly-decorator/verification/reference_geometry.json
+  - examples/assembly-decorator/pythonscad/**
+  - examples/assembly-decorator/pybosl2/**
+  - examples/assembly-decorator/cadquery/**
+  - examples/assembly-decorator/build123d/**
+  - examples/assembly-owned-anchor/verification/reference_geometry.json
+  - examples/assembly-owned-anchor/pythonscad/**
+  - examples/assembly-owned-anchor/pybosl2/**
+  - examples/assembly-owned-anchor/cadquery/**
+  - examples/assembly-owned-anchor/build123d/**
+  - examples/attach-angle/verification/reference_geometry.json
+  - examples/attach-angle/pythonscad/**
+  - examples/attach-angle/pybosl2/**
+  - examples/attach-angle/cadquery/**
+  - examples/attach-angle/build123d/**
+  - examples/bracket/verification/reference_geometry.json
+  - examples/bracket/pythonscad/**
+  - examples/bracket/pybosl2/**
+  - examples/bracket/cadquery/**
+  - examples/bracket/build123d/**
+  - examples/circle-negative-extrude/verification/reference_geometry.json
+  - examples/circle-negative-extrude/pythonscad/**
+  - examples/circle-negative-extrude/pybosl2/**
+  - examples/circle-negative-extrude/cadquery/**
+  - examples/circle-negative-extrude/build123d/**
+  - examples/circular-feature-pattern/verification/reference_geometry.json
+  - examples/circular-feature-pattern/pythonscad/**
+  - examples/circular-feature-pattern/pybosl2/**
+  - examples/circular-feature-pattern/cadquery/**
+  - examples/circular-feature-pattern/build123d/**
+  - examples/components/verification/reference_geometry.json
+  - examples/components/pythonscad/**
+  - examples/components/pybosl2/**
+  - examples/components/cadquery/**
+  - examples/components/build123d/**
+  - examples/corner-anchor/verification/reference_geometry.json
+  - examples/corner-anchor/pythonscad/**
+  - examples/corner-anchor/pybosl2/**
+  - examples/corner-anchor/cadquery/**
+  - examples/corner-anchor/build123d/**
   - verification/reference_validation.py
   - verification/build123d_export.py
   - scripts/verification_evidence.py
@@ -23,11 +72,61 @@ steps:
       - examples/simple-box/pybosl2/**
       - examples/simple-box/cadquery/**
       - examples/simple-box/build123d/**
+      - examples/anchor-topology-mutation/verification/reference_geometry.json
+      - examples/anchor-topology-mutation/pythonscad/**
+      - examples/anchor-topology-mutation/pybosl2/**
+      - examples/anchor-topology-mutation/cadquery/**
+      - examples/anchor-topology-mutation/build123d/**
+      - examples/anchored-holes/verification/reference_geometry.json
+      - examples/anchored-holes/pythonscad/**
+      - examples/anchored-holes/pybosl2/**
+      - examples/anchored-holes/cadquery/**
+      - examples/anchored-holes/build123d/**
+      - examples/assembly-decorator/verification/reference_geometry.json
+      - examples/assembly-decorator/pythonscad/**
+      - examples/assembly-decorator/pybosl2/**
+      - examples/assembly-decorator/cadquery/**
+      - examples/assembly-decorator/build123d/**
+      - examples/assembly-owned-anchor/verification/reference_geometry.json
+      - examples/assembly-owned-anchor/pythonscad/**
+      - examples/assembly-owned-anchor/pybosl2/**
+      - examples/assembly-owned-anchor/cadquery/**
+      - examples/assembly-owned-anchor/build123d/**
+      - examples/attach-angle/verification/reference_geometry.json
+      - examples/attach-angle/pythonscad/**
+      - examples/attach-angle/pybosl2/**
+      - examples/attach-angle/cadquery/**
+      - examples/attach-angle/build123d/**
+      - examples/bracket/verification/reference_geometry.json
+      - examples/bracket/pythonscad/**
+      - examples/bracket/pybosl2/**
+      - examples/bracket/cadquery/**
+      - examples/bracket/build123d/**
+      - examples/circle-negative-extrude/verification/reference_geometry.json
+      - examples/circle-negative-extrude/pythonscad/**
+      - examples/circle-negative-extrude/pybosl2/**
+      - examples/circle-negative-extrude/cadquery/**
+      - examples/circle-negative-extrude/build123d/**
+      - examples/circular-feature-pattern/verification/reference_geometry.json
+      - examples/circular-feature-pattern/pythonscad/**
+      - examples/circular-feature-pattern/pybosl2/**
+      - examples/circular-feature-pattern/cadquery/**
+      - examples/circular-feature-pattern/build123d/**
+      - examples/components/verification/reference_geometry.json
+      - examples/components/pythonscad/**
+      - examples/components/pybosl2/**
+      - examples/components/cadquery/**
+      - examples/components/build123d/**
+      - examples/corner-anchor/verification/reference_geometry.json
+      - examples/corner-anchor/pythonscad/**
+      - examples/corner-anchor/pybosl2/**
+      - examples/corner-anchor/cadquery/**
+      - examples/corner-anchor/build123d/**
       - verification/reference_validation.py
       - verification/build123d_export.py
       - scripts/verification_evidence.py
       - scripts/solidcraft_runtime.py
       - docker/solidcraft_runtime/**
-    run: [python, ../../scripts/verification_evidence.py, verify_references, simple-box]
+    run: [python, ../../scripts/verification_evidence.py, verify_references, "simple-box,anchor-topology-mutation,anchored-holes,assembly-decorator,assembly-owned-anchor,attach-angle,bracket,circle-negative-extrude,circular-feature-pattern,components,corner-anchor"]
     outputs:
       - references
