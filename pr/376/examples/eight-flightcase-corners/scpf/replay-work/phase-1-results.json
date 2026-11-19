@@ -1,0 +1,141 @@
+[
+  {
+    "display_value": 120.0,
+    "name": "case_width",
+    "unit": "mm",
+    "value": 120.0
+  },
+  {
+    "display_value": 80.0,
+    "name": "case_depth",
+    "unit": "mm",
+    "value": 80.0
+  },
+  {
+    "display_value": 60.0,
+    "name": "case_height",
+    "unit": "mm",
+    "value": 60.0
+  },
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "CaseBlock",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "CaseBlock"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "CaseBlock"
+    ],
+    "feature": 3,
+    "ms": 2.640135,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "CaseBlock"
+    ],
+    "changed_bodies": [
+      "CaseBlock"
+    ],
+    "created_bodies": [],
+    "feature": 4,
+    "ms": 43.809191999999996,
+    "name": "Fillet1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 5,
+    "grounded": false,
+    "name": "FlightcaseCorner",
+    "occurrence": 6,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "CaseBlock",
+      "FlightcaseCorner"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "FlightcaseCorner"
+    ],
+    "feature": 7,
+    "ms": 1.433714,
+    "name": "Box2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "CaseBlock",
+      "FlightcaseCorner"
+    ],
+    "changed_bodies": [
+      "FlightcaseCorner"
+    ],
+    "created_bodies": [],
+    "feature": 8,
+    "ms": 6.444967,
+    "name": "Box3",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "CaseBlock",
+      "FlightcaseCorner"
+    ],
+    "changed_bodies": [
+      "FlightcaseCorner"
+    ],
+    "created_bodies": [],
+    "feature": 9,
+    "ms": 8.976008,
+    "name": "Box4",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 5,
+    "occurrence": 10
+  },
+  {
+    "component": 5,
+    "occurrence": 11
+  },
+  {
+    "component": 5,
+    "occurrence": 12
+  },
+  {
+    "component": 5,
+    "occurrence": 13
+  },
+  {
+    "component": 5,
+    "occurrence": 14
+  },
+  {
+    "component": 5,
+    "occurrence": 15
+  },
+  {
+    "component": 5,
+    "occurrence": 16
+  }
+]

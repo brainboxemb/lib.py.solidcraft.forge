@@ -1,0 +1,89 @@
+{
+  "case": "bracket",
+  "geometry": "pass",
+  "saved_design": "not-required",
+  "checks": [
+    {
+      "name": "declared target geometry",
+      "level": "geometry",
+      "status": "pass",
+      "expected": [
+        {
+          "label": "Bracket",
+          "min": [
+            0,
+            -12,
+            -40
+          ],
+          "max": [
+            40,
+            12,
+            0
+          ]
+        }
+      ],
+      "actual": [
+        {
+          "min": [
+            0.0,
+            -12.0,
+            -40.0
+          ],
+          "max": [
+            40.0,
+            12.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "single L body",
+      "level": "geometry",
+      "status": "pass",
+      "expected": 1,
+      "actual": 1
+    },
+    {
+      "name": "L-profile bounds",
+      "level": "geometry",
+      "status": "pass",
+      "expected": {
+        "min": [
+          0,
+          -12,
+          -40
+        ],
+        "max": [
+          40,
+          12,
+          0
+        ]
+      },
+      "actual": {
+        "max": [
+          40.0,
+          12.0,
+          0.0
+        ],
+        "min": [
+          0.0,
+          -12.0,
+          -40.0
+        ]
+      }
+    },
+    {
+      "name": "shared geometry volume",
+      "level": "geometry",
+      "status": "pass",
+      "expected": {
+        "volume_mm3": 19584.0,
+        "tolerance_mm3": 1.0
+      },
+      "actual": {
+        "volume_mm3": 19584.0
+      }
+    }
+  ]
+}

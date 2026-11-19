@@ -1,0 +1,270 @@
+{
+  "case": "xz-anchor",
+  "geometry": "pass",
+  "saved_design": "pass",
+  "checks": [
+    {
+      "name": "declared target geometry",
+      "level": "geometry",
+      "status": "pass",
+      "expected": [
+        {
+          "label": "Board",
+          "min": [
+            -20,
+            0,
+            0
+          ],
+          "max": [
+            20,
+            12,
+            20
+          ]
+        },
+        {
+          "label": "right Marker",
+          "min": [
+            10,
+            -10,
+            10
+          ],
+          "max": [
+            20,
+            0,
+            20
+          ]
+        },
+        {
+          "label": "left Marker",
+          "min": [
+            -20,
+            -10,
+            10
+          ],
+          "max": [
+            -10,
+            0,
+            20
+          ]
+        }
+      ],
+      "actual": [
+        {
+          "min": [
+            -20.0,
+            0.0,
+            0.0
+          ],
+          "max": [
+            20.0,
+            12.0,
+            20.0
+          ]
+        },
+        {
+          "min": [
+            10.0,
+            -10.0,
+            10.0
+          ],
+          "max": [
+            20.0,
+            0.0,
+            20.0
+          ]
+        },
+        {
+          "min": [
+            -20.0,
+            -10.0,
+            10.0
+          ],
+          "max": [
+            -10.0,
+            0.0,
+            20.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "two markers",
+      "level": "geometry",
+      "status": "pass",
+      "expected": 2,
+      "actual": 2
+    },
+    {
+      "name": "right BACK_TOP corner alignment",
+      "level": "geometry",
+      "status": "pass",
+      "expected": {
+        "min": [
+          10.0,
+          -10,
+          10
+        ],
+        "max": [
+          20.0,
+          0,
+          20
+        ]
+      },
+      "actual": [
+        [
+          [
+            10.0,
+            -10.0,
+            10.0
+          ],
+          [
+            20.0,
+            0.0,
+            20.0
+          ]
+        ],
+        [
+          [
+            -20.0,
+            -10.0,
+            10.0
+          ],
+          [
+            -10.0,
+            0.0,
+            20.0
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "left BACK_TOP corner alignment",
+      "level": "geometry",
+      "status": "pass",
+      "expected": {
+        "min": [
+          -20.0,
+          -10,
+          10
+        ],
+        "max": [
+          -10.0,
+          0,
+          20
+        ]
+      },
+      "actual": [
+        [
+          [
+            10.0,
+            -10.0,
+            10.0
+          ],
+          [
+            20.0,
+            0.0,
+            20.0
+          ]
+        ],
+        [
+          [
+            -20.0,
+            -10.0,
+            10.0
+          ],
+          [
+            -10.0,
+            0.0,
+            20.0
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "right corner follows size mutation",
+      "level": "saved_design",
+      "status": "pass",
+      "expected": {
+        "min": [
+          30.0,
+          -10,
+          30
+        ],
+        "max": [
+          40.0,
+          0,
+          40
+        ]
+      },
+      "actual": [
+        [
+          [
+            30.0,
+            -10.0,
+            30.0
+          ],
+          [
+            40.0,
+            0.0,
+            40.0
+          ]
+        ],
+        [
+          [
+            -40.0,
+            -10.0,
+            30.0
+          ],
+          [
+            -30.0,
+            0.0,
+            40.0
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "left corner follows size mutation",
+      "level": "saved_design",
+      "status": "pass",
+      "expected": {
+        "min": [
+          -40.0,
+          -10,
+          30
+        ],
+        "max": [
+          -30.0,
+          0,
+          40
+        ]
+      },
+      "actual": [
+        [
+          [
+            30.0,
+            -10.0,
+            30.0
+          ],
+          [
+            40.0,
+            0.0,
+            40.0
+          ]
+        ],
+        [
+          [
+            -40.0,
+            -10.0,
+            30.0
+          ],
+          [
+            -30.0,
+            0.0,
+            40.0
+          ]
+        ]
+      ]
+    }
+  ]
+}

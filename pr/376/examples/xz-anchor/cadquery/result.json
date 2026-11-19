@@ -1,0 +1,71 @@
+{
+  "case": "xz-anchor",
+  "implementation": "cadquery",
+  "status": "pass",
+  "source": "examples/xz-anchor/cadquery/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      -20.0,
+      -10.0,
+      0.0
+    ],
+    "max": [
+      20.0,
+      12.0,
+      20.0
+    ]
+  },
+  "expected": {
+    "min": [
+      -20.0,
+      -10.0,
+      0.0
+    ],
+    "max": [
+      20.0,
+      12.0,
+      20.0
+    ]
+  },
+  "max_delta_mm": 0.0,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          -20.0,
+          -10.0,
+          0.0
+        ],
+        "max": [
+          20.0,
+          12.0,
+          20.0
+        ]
+      },
+      "expected": {
+        "min": [
+          -20.0,
+          -10.0,
+          0.0
+        ],
+        "max": [
+          20.0,
+          12.0,
+          20.0
+        ]
+      },
+      "max_delta_mm": 0.0,
+      "tolerance_mm": 0.5
+    }
+  },
+  "bounds_sufficient": true,
+  "bounds_reason": "The board and marker positions describe the visible XZ placement. After resizing the saved model, the markers must still use the same selected anchors."
+}
