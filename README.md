@@ -11,6 +11,7 @@ CAD geometry and feature history.
 
 - SCPF package: **0.11.0**
 - Tested SolidCraft runtime: **0.42.0**
+- CAD verification library: **0.1.0** (`187f486f4d7bca85fd708f1c61d175c44ff34128`)
 
 The package version is defined in `scpf/pyproject.toml`.
 The tested SolidCraft version is defined in
@@ -94,7 +95,7 @@ docker/
     runtime.json
 ```
 
-`scripts/solidcraft_runtime.py` resolves and checks the immutable image reference.
+`scripts/solidcraft_runtime.py` resolves and checks the immutable image reference. The runtime pins the released `lib.py.cad.verfication` 0.1.0 commit and verifies the installed package version while building the image.
 The normal Forge workflow only requires that image to exist; it never builds or
 publishes it. The separate SolidCraft runtime workflow owns image build/publish
 and can be started explicitly with `workflow_dispatch`.
