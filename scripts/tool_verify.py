@@ -29,7 +29,7 @@ def forge_package() -> Path:
     wheels = tuple((Path(output_root) / "dist").glob("scpf-*.whl"))
     if len(wheels) != 1:
         raise RuntimeError(
-            f"expected exactly one Forge wheel dependency, found {len(wheels)}"
+            f"expected exactly one built Forge package, found {len(wheels)}"
         )
     return wheels[0].resolve()
 
@@ -44,6 +44,7 @@ def python_environment(package: Path) -> dict[str, str]:
         parts.append(existing)
     env["PYTHONPATH"] = os.pathsep.join(parts)
     return env
+
 
 def item_slug() -> str:
     """Return the example slug selected by the generic CAD-CI item."""
