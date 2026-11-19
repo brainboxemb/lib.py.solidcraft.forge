@@ -34,7 +34,6 @@ def tool_build() -> None:
             "pip",
             "wheel",
             "--no-deps",
-            "--no-build-isolation",
             "--wheel-dir",
             str(dist),
             str(ROOT / "scpf"),
