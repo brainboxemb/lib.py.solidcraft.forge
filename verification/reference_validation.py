@@ -155,8 +155,7 @@ def verify_one(
         "geometry": evidence,
     }
     (target / "verification.json").write_text(
-        json.dumps(result, indent=2, sort_keys=True) + "
-",
+        json.dumps(result, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     return result
@@ -205,8 +204,7 @@ def main() -> int:
         "models": models,
     }
     (args.out / "verification.json").write_text(
-        json.dumps(report, indent=2, sort_keys=True) + "
-",
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     print(
