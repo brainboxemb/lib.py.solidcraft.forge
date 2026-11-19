@@ -8,19 +8,7 @@ issues preserve the history.
 
 ## Current work: finish the CAD-CI migration
 
-### 1. Release the reusable CAD verification library — lib.py.cad.verfication #5
-
-Forge currently consumes `lib.py.cad.verfication` from an exact development
-commit. Complete and formally release version 0.1.0 before treating the library
-as the reusable released verification dependency.
-
-After the release:
-- record the released version and exact commit in Forge runtime metadata;
-- rebuild/publish the immutable SolidCraft runtime with that released revision.
-
-Remove this section when the library release is complete and Forge consumes it.
-
-### 2. Complete the Forge verification contract — #378
+### 1. Complete the Forge verification contract — #378
 
 The 32 historical model cases now have `model_verify`, but that is only the
 native model layer.
@@ -44,7 +32,7 @@ verification mechanics.
 
 Remove this section when #378 is complete.
 
-### 3. Make accepted verification output durable on the build branch — #366
+### 2. Make accepted verification output durable on the build branch — #366
 
 A verification result is complete only after its accepted item output has been
 written durably to the `build` branch under the corresponding source item path.
@@ -61,7 +49,7 @@ Do not use or recreate the old central `qualification/` build layout.
 When durable build storage is complete, replace this section with the remaining
 Pages work only.
 
-### 4. Publish Pages from accepted durable build output — #366
+### 3. Publish Pages from accepted durable build output — #366
 
 After durable item output is authoritative:
 
@@ -72,7 +60,7 @@ After durable item output is authoritative:
 
 Remove this section when #366 is merged.
 
-### 5. Final migration audit
+### 4. Final migration audit
 
 After the previous sections are complete:
 
