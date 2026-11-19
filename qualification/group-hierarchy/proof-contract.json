@@ -95,8 +95,8 @@
   "solidcraft_only": {
     "native_expectation": "Two 10 x 2 x 20 mm panels remain nested under PanelGroup and one 35 x 10 x 40 mm frame remains at root; native BOM inspection must preserve that hierarchy.",
     "generated_relationship": "Forge emits component.create(name='PanelGroup'), creates Panel with parent='PanelGroup', copies its occurrence, and creates Frame at the design root.",
-    "q5_required": false,
-    "q5_reason": "No saved-design mutation in this fixture; it isolates persisted native grouping and hierarchy.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation in this fixture; it isolates persisted native grouping and hierarchy.",
     "mutation": null
   }
 }

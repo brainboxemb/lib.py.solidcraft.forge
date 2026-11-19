@@ -343,8 +343,8 @@
   "solidcraft_only": {
     "native_expectation": "SolidCraft saves one plate with six slot cuts and one native rectangular pattern History feature that references the original Slot cut.",
     "generated_relationship": "Forge emits the source Sketch/cut once, then exactly one solid.pattern.rectangular with features=['Slot']; columns/rows are dimensionless native parameters and pitches remain millimetre parameters.",
-    "q5_required": true,
-    "q5_reason": "Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature.",
+    "saved_design_required": true,
+    "saved_design_reason": "Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature.",
     "mutation": "Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature."
   }
 }

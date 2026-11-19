@@ -199,8 +199,8 @@
   "solidcraft_only": {
     "native_expectation": "One vertical angle profile wraps each front-left, front-right, rear-right and rear-left rounded side corner. All four occupy Z=22..38 on the 60 mm frame.",
     "generated_relationship": "Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id.",
-    "q5_required": true,
-    "q5_reason": "Change frame_width/depth from 120x80 to 160x120 mm in the saved .sc design; all four profiles follow the calculated corner positions while remaining centred at the same frame height.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change frame_width/depth from 120x80 to 160x120 mm in the saved .sc design; all four profiles follow the calculated corner positions while remaining centred at the same frame height.",
     "mutation": "Change frame_width/depth from 120x80 to 160x120 mm in the saved .sc design; all four profiles follow the calculated corner positions while remaining centred at the same frame height."
   }
 }

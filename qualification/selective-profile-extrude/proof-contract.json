@@ -178,8 +178,8 @@
   "solidcraft_only": {
     "native_expectation": "SolidCraft saves one Selected holes Sketch containing the associative four-circle pattern and one cut ExtrudeFeature that removes exactly three profiles while leaving the fourth region uncut.",
     "generated_relationship": "Forge emits the Circle and native sketch pattern once, then passes three fixed point selections directly to solid.extrude profiles with exact_regions=true. No profile indices, generated curve ids or deleted pattern copies appear in user Python.",
-    "q5_required": true,
-    "q5_reason": "Change hole_diameter 8->10 mm and hole_pitch 20->24 mm in the saved .sc design. Without rerunning Python the three selected cuts must follow their associated pattern profiles, including profiles whose centres move away from the original pick points; the unselected profile remains uncut.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change hole_diameter 8->10 mm and hole_pitch 20->24 mm in the saved .sc design. Without rerunning Python the three selected cuts must follow their associated pattern profiles, including profiles whose centres move away from the original pick points; the unselected profile remains uncut.",
     "mutation": "Change hole_diameter 8->10 mm and hole_pitch 20->24 mm in the saved .sc design. Without rerunning Python the three selected cuts must follow their associated pattern profiles, including profiles whose centres move away from the original pick points; the unselected profile remains uncut."
   }
 }

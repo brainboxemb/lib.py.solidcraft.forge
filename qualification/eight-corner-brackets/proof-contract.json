@@ -355,8 +355,8 @@
   "solidcraft_only": {
     "native_expectation": "Each rounded vertical side corner carries exactly two outside angle profiles. On the 60 mm frame they occupy Z=0..16 and Z=44..60.",
     "generated_relationship": "Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id.",
-    "q5_required": true,
-    "q5_reason": "Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow the calculated X/Y positions and each upper member moves to Z=74..90.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow the calculated X/Y positions and each upper member moves to Z=74..90.",
     "mutation": "Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow the calculated X/Y positions and each upper member moves to Z=74..90."
   }
 }

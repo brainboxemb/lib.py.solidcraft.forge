@@ -165,8 +165,8 @@
   "solidcraft_only": {
     "native_expectation": "One plate contains four editable native Hole features: \u00d86 simple, \u00d86/\u00d812 x 4 counterbore, \u00d86/\u00d812 90\u00b0 countersink, and an M6 modeled threaded hole using an explicit \u00d85 tap drill.",
     "generated_relationship": "Each Forge Hole-family object lowers one-to-one to one native solid.hole command. Counterbore and countersink use the native hole type fields; ThreadedHole uses native thread metadata/modeling fields. No sketch or helper subtraction solid is synthesized.",
-    "q5_required": false,
-    "q5_reason": "No saved-design mutation is required in this first Hole-family qualification; Q1-Q4 prove API, native command identity and geometry while Q6 proves the visible forms.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation is required in this first Hole-family qualification; unit, integration and native geometry checks prove API, native command identity and geometry while visual proves the visible forms.",
     "mutation": null
   }
 }

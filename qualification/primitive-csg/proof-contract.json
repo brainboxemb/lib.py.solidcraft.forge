@@ -86,8 +86,8 @@
   "solidcraft_only": {
     "native_expectation": "SolidCraft accepts the complete CSG command path, produces one valid clipped body and evaluates the native timeline without errors.",
     "generated_relationship": "solid.sphere(new), solid.box(join), one X-axis solid.cylinder(cut), then solid.box(intersect).",
-    "q5_required": false,
-    "q5_reason": "No saved-design mutation in this case; it isolates primitive CSG lowering. Parametric edits are covered by dedicated Q5 cases.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation in this case; it isolates primitive CSG lowering. Parametric edits are covered by dedicated saved-design cases.",
     "mutation": null
   }
 }

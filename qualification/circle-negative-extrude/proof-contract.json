@@ -58,8 +58,8 @@
   "solidcraft_only": {
     "native_expectation": "One 20 mm diameter cylindrical body spans X/Y -10..10 mm and Z -30..0 mm, with an error-free saved SolidCraft timeline.",
     "generated_relationship": "The signed Forge distance is normalized to a positive native distance plus solid.extrude(direction='negative').",
-    "q5_required": false,
-    "q5_reason": "No saved-design mutation in this fixture; it isolates direct circle-profile lowering and negative extrusion semantics.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation in this fixture; it isolates direct circle-profile lowering and negative extrusion semantics.",
     "mutation": null
   }
 }

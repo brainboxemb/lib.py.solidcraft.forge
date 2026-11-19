@@ -71,8 +71,8 @@
   "solidcraft_only": {
     "native_expectation": "The result is one joined body: an 80 x 60 x 5 mm base plate with a centered 40 x 30 x 8 mm rounded pad on top. The Rounded pad sketch has one closed profile made from four straight edges and four corner arcs. SolidCraft 0.42 also adds one construction diagonal between opposite arc centres; that construction line is not part of the profile.",
     "generated_relationship": "The named explicit Sketch emits one sketch.rectangle.rounded with true arc corners, then a native solid.extrude(operation='join').",
-    "q5_required": false,
-    "q5_reason": "No saved-design mutation in this fixture; it isolates explicit rounded-rectangle sketch geometry and native join extrusion.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation in this fixture; it isolates explicit rounded-rectangle sketch geometry and native join extrusion.",
     "mutation": null
   }
 }

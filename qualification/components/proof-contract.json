@@ -69,8 +69,8 @@
   "solidcraft_only": {
     "native_expectation": "Two identical blocks touch face-to-face at X=20 while retaining one shared editable component definition.",
     "generated_relationship": "Forge creates one Block component definition and one occurrence.copy with translate=[40,0,0]. No joint.create and no later occurrence.move are needed.",
-    "q5_required": false,
-    "q5_reason": "No mutation in this base case; parameter-driven Placement is qualified separately.",
+    "saved_design_required": false,
+    "saved_design_reason": "No mutation in this base case; parameter-driven Placement is qualified separately.",
     "mutation": null
   }
 }

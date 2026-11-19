@@ -69,8 +69,8 @@
   "solidcraft_only": {
     "native_expectation": "The marker moves within the selected corner anchor's local attachment plane.",
     "generated_relationship": "The computed child seed pose retains the symbolic local offset, then the actual relationship is joint.create(type='planar', values=[u,v,angle]). The seed move is not an additional joint.",
-    "q5_required": true,
-    "q5_reason": "Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm.",
     "mutation": "Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm."
   }
 }

@@ -95,8 +95,8 @@
   "solidcraft_only": {
     "native_expectation": "Left and right markers attach to their respective front-top corners with mirrored spatial results.",
     "generated_relationship": "Two joint.create commands use the Board corner topology plus explicit RightMarker and LeftMarker occurrence references. No generated Component:N name is required.",
-    "q5_required": true,
-    "q5_reason": "Change board width/height from 40x20 to 80x40 mm; both markers follow their own corners.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change board width/height from 40x20 to 80x40 mm; both markers follow their own corners.",
     "mutation": "Change board width/height from 40x20 to 80x40 mm; both markers follow their own corners."
   }
 }

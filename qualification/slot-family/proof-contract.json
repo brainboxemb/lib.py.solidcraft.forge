@@ -446,8 +446,8 @@
   "solidcraft_only": {
     "native_expectation": "SolidCraft saves one plate, one Slot family sketch containing five closed profiles and one error-free cut extrusion. The native timeline must not contain sketch.rectangle.rounded as a substitute for Slot construction.",
     "generated_relationship": "Each public constructor emits exactly its matching sketch.slot.* command; the sketch is finished once and one native cut extrusion removes all five profiles.",
-    "q5_required": false,
-    "q5_reason": "No Q5 mutation is required; this case isolates the five native sketch construction methods and their saved feature history.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation is required; this case isolates the five native sketch construction methods and their saved feature history.",
     "mutation": null
   }
 }

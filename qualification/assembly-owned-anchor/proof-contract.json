@@ -95,8 +95,8 @@
   "solidcraft_only": {
     "native_expectation": "The marker sits on the base front-top-right corner while an unrelated companion occurrence remains part of the same assembly.",
     "generated_relationship": "with_anchor()/anchor() are Forge-side semantic indirection only. The resulting native joint is the same topology-backed FRONT_TOP_RIGHT relationship that a direct attach would emit; no extra native helper object is required.",
-    "q5_required": true,
-    "q5_reason": "Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the marker created through the assembly-owned name must follow the moved corner without rerunning Python.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the marker created through the assembly-owned name must follow the moved corner without rerunning Python.",
     "mutation": "Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the marker created through the assembly-owned name must follow the moved corner without rerunning Python."
   }
 }

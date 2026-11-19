@@ -135,8 +135,8 @@
   "solidcraft_only": {
     "native_expectation": "One plate with two through holes at the requested Y spacing, one source cut and one native rectangular pattern feature.",
     "generated_relationship": "Forge emits one attached Hole sketch/cut and one native solid.pattern.rectangular history feature. No Forge-side repeat helper or expanded duplicate profiles are used.",
-    "q5_required": false,
-    "q5_reason": "No saved-design mutation in this fixture; geometry and feature placement are measured at Q4.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation in this fixture; geometry and feature placement are measured at geometry.",
     "mutation": null
   }
 }

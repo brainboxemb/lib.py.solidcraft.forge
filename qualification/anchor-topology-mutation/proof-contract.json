@@ -69,8 +69,8 @@
   "solidcraft_only": {
     "native_expectation": "On the 40x20x20 board the marker is centered on the front-top-left corner selected by the explicit topology pick.",
     "generated_relationship": "AnchorTopology is inlined into joint.create as edge/on/corner plus optional z/x. No persistent joint.origin and no Forge-side recomputation of the pick coordinates occurs after the saved design is mutated.",
-    "q5_required": true,
-    "q5_reason": "Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the unchanged native relationship must move the marker to the new front-top-left corner without rerunning Python.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the unchanged native relationship must move the marker to the new front-top-left corner without rerunning Python.",
     "mutation": "Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the unchanged native relationship must move the marker to the new front-top-left corner without rerunning Python."
   }
 }

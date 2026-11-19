@@ -307,8 +307,8 @@
   "solidcraft_only": {
     "native_expectation": "SolidCraft saves one plate with six through holes and one native CircularPatternFeature that references the original BoltHole cut.",
     "generated_relationship": "Forge emits the source Sketch/cut once, then exactly one solid.pattern.circular with features=['BoltHole']; bolts is a dimensionless native count parameter and pcd remains a millimetre parameter used by the source profile position.",
-    "q5_required": true,
-    "q5_reason": "Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature.",
+    "saved_design_required": true,
+    "saved_design_reason": "Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature.",
     "mutation": "Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature."
   }
 }

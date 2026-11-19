@@ -459,8 +459,8 @@
   "solidcraft_only": {
     "native_expectation": "Each of the eight case corners is wrapped by three connected plates: one horizontal and two vertical. The protector outer envelope is a fixed 24x24x24 mm at every corner.",
     "generated_relationship": "Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id.",
-    "q5_required": true,
-    "q5_reason": "Change case_width/depth/height from 120x80x60 to 160x120x90 mm; all protectors follow the calculated corner positions without rerunning Python, while every protector remains exactly 24x24x24 mm.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change case_width/depth/height from 120x80x60 to 160x120x90 mm; all protectors follow the calculated corner positions without rerunning Python, while every protector remains exactly 24x24x24 mm.",
     "mutation": "Change case_width/depth/height from 120x80x60 to 160x120x90 mm; all protectors follow the calculated corner positions without rerunning Python, while every protector remains exactly 24x24x24 mm."
   }
 }

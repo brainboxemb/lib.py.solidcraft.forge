@@ -69,8 +69,8 @@
   "solidcraft_only": {
     "native_expectation": "Two identical 10 x 10 x 20 mm posts remain at X=-15 and X=+15 while the imported @assembly result builds from a replay-safe component/copy command plan.",
     "generated_relationship": "The Python-only @assembly wrapper disappears during lowering: Forge emits one Post component definition and one copied occurrence placed directly by occurrence.copy; no occurrence.move is needed.",
-    "q5_required": false,
-    "q5_reason": "No saved-design mutation in this fixture; it isolates imported @assembly construction and native lowering.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation in this fixture; it isolates imported @assembly construction and native lowering.",
     "mutation": null
   }
 }

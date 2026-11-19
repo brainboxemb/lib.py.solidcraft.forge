@@ -71,8 +71,8 @@
   "solidcraft_only": {
     "native_expectation": "A clean 40 mm L profile with 12 mm arms and 24 mm symmetric extrusion width.",
     "generated_relationship": "Native XZ sketch/polygon plus symmetric extrusion. No assembly commands are present yet.",
-    "q5_required": false,
-    "q5_reason": "Not yet an attachment mutation case. This component is intentionally the geometry baseline for upcoming multi-orientation anchor tests.",
+    "saved_design_required": false,
+    "saved_design_reason": "Not yet an attachment mutation case. This component is intentionally the geometry baseline for upcoming multi-orientation anchor tests.",
     "mutation": null
   }
 }

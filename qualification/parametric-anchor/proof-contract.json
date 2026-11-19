@@ -69,8 +69,8 @@
   "solidcraft_only": {
     "native_expectation": "The attached block stays on the parent's right face.",
     "generated_relationship": "joint.create uses a native face reference derived from the parent occurrence; the parent width remains a SolidCraft parameter.",
-    "q5_required": true,
-    "q5_reason": "Change base_width from 40 to 80 mm in the saved design; the block follows the moved RIGHT face.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change base_width from 40 to 80 mm in the saved design; the block follows the moved RIGHT face.",
     "mutation": "Change base_width from 40 to 80 mm in the saved design; the block follows the moved RIGHT face."
   }
 }

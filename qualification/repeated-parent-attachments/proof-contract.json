@@ -116,13 +116,13 @@
     ],
     "visual_features": [],
     "bounds_sufficient": true,
-    "bounds_reason": "Four rectangular body bounds expose both parent heights and both child positions. Q5 mutation separately proves that both disconnected native joint graphs follow the shared parent-height change."
+    "bounds_reason": "Four rectangular body bounds expose both parent heights and both child positions. saved-design mutation separately proves that both disconnected native joint graphs follow the shared parent-height change."
   },
   "solidcraft_only": {
     "native_expectation": "Both markers sit on their own parent TOP face. After parent_height changes in the saved design, both disconnected joint graphs must rebuild so both markers follow the changed top faces.",
     "generated_relationship": "Forge creates one Parent definition plus one translated copy and one Marker definition plus one copy. Each Marker receives its symbolic computed seed Placement through a replay-bound occurrence.move, followed by exactly one authored rigid joint.create to its replay-bound Parent occurrence. No generated placement joint is allowed.",
-    "q5_required": true,
-    "q5_reason": "Change parent_height from 40 to 60 mm in the saved .sc design; both Parent occurrences become 60 mm tall and both Marker occurrences move from Z=40..50 to Z=60..70 without rerunning Python.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change parent_height from 40 to 60 mm in the saved .sc design; both Parent occurrences become 60 mm tall and both Marker occurrences move from Z=40..50 to Z=60..70 without rerunning Python.",
     "mutation": "Change parent_height from 40 to 60 mm in the saved .sc design; both Parent occurrences become 60 mm tall and both Marker occurrences move from Z=40..50 to Z=60..70 without rerunning Python."
   }
 }

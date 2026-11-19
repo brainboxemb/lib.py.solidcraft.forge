@@ -43,8 +43,8 @@
   "solidcraft_only": {
     "native_expectation": "One rectangular solid with the requested 40 x 30 x 10 mm dimensions and an error-free timeline.",
     "generated_relationship": "parameters.add for the public dimensions, followed directly by native solid.box; no sketch is synthesized.",
-    "q5_required": true,
-    "q5_reason": "Required because this case explicitly claims an editable native Box. Change length from 40 to 50 mm in the saved .sc design; the Box must rebuild to 50 x 30 x 10 mm without rerunning Python.",
+    "saved_design_required": true,
+    "saved_design_reason": "Required because this case explicitly claims an editable native Box. Change length from 40 to 50 mm in the saved .sc design; the Box must rebuild to 50 x 30 x 10 mm without rerunning Python.",
     "mutation": "Required because this case explicitly claims an editable native Box. Change length from 40 to 50 mm in the saved .sc design; the Box must rebuild to 50 x 30 x 10 mm without rerunning Python."
   }
 }

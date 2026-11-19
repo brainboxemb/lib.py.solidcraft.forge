@@ -82,8 +82,8 @@
   "solidcraft_only": {
     "native_expectation": "SolidCraft 0.42 keeps one connected sheet-metal body with the \u00d86 hole on the fixed flat, one native Fold feature and a flat pattern that recovers the original rectangular blank and cutout.",
     "generated_relationship": "Forge emits one sheet.manage_rules, one Blank sketch, one sheet.flange(type='base'), one native solid.hole and one native sheet.fold. No solid.extrude or fused-solid bend approximation is used.",
-    "q5_required": false,
-    "q5_reason": "No Q5 mutation is required in this first sheet-metal qualification. Q1-Q4 prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation is required in this first sheet-metal qualification. unit, integration and native geometry checks prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.",
     "mutation": null
   }
 }
