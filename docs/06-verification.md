@@ -46,22 +46,20 @@ model-verification wrapper:
 The shared wrapper is `scripts/model_verify.py`. Model-specific expectations
 remain under `examples/<model>/verification/`.
 
-The runtime is defined by:
+The shared immutable verification runtime is defined by:
 
 ```text
 docker/solidcraft_runtime/Dockerfile
 docker/solidcraft_runtime/runtime.json
 ```
 
-Runtime lifecycle is separate from normal Forge CI:
+The runtime includes SolidCraft plus the versioned reference/visual/diagram toolchain used by #378. Runtime lifecycle remains separate from normal Forge CI:
 
 - `.github/workflows/solidcraft-runtime.yml` checks/builds/publishes the immutable image and supports `workflow_dispatch`;
 - `.github/workflows/scpf.yml` only resolves the required reference and checks that it already exists when the CAD-CI plan contains a model item;
 - a missing image fails Forge CI instead of being built implicitly.
 
-At the current migration point, `simple-box` is the first migrated
-`model_verify` item. Issue #395 tracks the next ten historical qualification
-models.
+All 32 historical model cases now have native `model_verify` coverage. Issue #378 tracks the remaining reference, visual, diagram and summary verification layers.
 
 ## Historical integration tests
 

@@ -25,7 +25,7 @@ This repository contains:
 - command lowering and runners;
 - Forge unit tests and release-verification examples;
 - historical model-verification fixtures under `examples/`;
-- the immutable SolidCraft runtime used by `model_verify`.
+- the immutable verification runtime used by model, reference, visual and diagram verification.
 
 Product CAD models live in the separate
 [2026-011-02.cad.solidcraft](https://github.com/brainboxemb/2026-011-02.cad.solidcraft)
@@ -81,12 +81,11 @@ Per-model SolidCraft checking is separate:
 - `model_verify` compiles one migrated model with the exact built Forge
   package and verifies the resulting native model in SolidCraft.
 
-At the current migration point, `simple-box` is the first migrated model.
-Issue #395 tracks the next ten historical qualification models.
+All 32 historical model cases now have native `model_verify` coverage. Issue #378 tracks the remaining reference, visual, diagram and summary verification layers.
 
-## Native SolidCraft runtime
+## Verification runtime
 
-Native model verification uses one runtime definition:
+Forge verification uses one immutable runtime definition:
 
 ```text
 docker/
@@ -95,7 +94,7 @@ docker/
     runtime.json
 ```
 
-`scripts/solidcraft_runtime.py` resolves and checks the immutable image reference. The runtime pins the released `lib.py.cad.verfication` 0.1.0 commit and verifies the installed package version while building the image.
+`scripts/solidcraft_runtime.py` resolves and checks the immutable image reference. The runtime pins the released `lib.py.cad.verfication` 0.1.0 commit and verifies the installed package version while building the image. It also contains the versioned reference/visual/diagram toolchain: CADCraft 0.20.1, PythonSCAD 1.1.2, the pinned pyBOSL2 commit, CadQuery 2.8.0 and build123d 0.12.0.
 The normal Forge workflow only requires that image to exist; it never builds or
 publishes it. The separate SolidCraft runtime workflow owns image build/publish
 and can be started explicitly with `workflow_dispatch`.
