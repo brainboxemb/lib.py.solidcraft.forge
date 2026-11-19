@@ -1,7 +1,7 @@
 """Shared machine-readable geometry and proof contracts for qualification.
 
-This file is the source of truth for baseline geometry. Native Q4 checks,
-independent reference checks and Q6 goal rendering all consume the same
+This file is the source of truth for baseline geometry. Native geometry checks, independent reference checks and visual goal
+rendering all consume the same
 geometry contract. SolidCraft-only history, relationship and mutation
 expectations are kept in a separate section of the proof contract.
 """
@@ -160,7 +160,7 @@ EXPECTED_BOUNDS = {
     ],
 }
 
-# Visual overlays may use a more detailed decomposition than the Q4 outer
+# Visual overlays may use a more detailed decomposition than the native outer
 # bounds. In particular an L-profile can be mirrored/rotated incorrectly while
 # retaining the same overall bounding box, so draw its two arms separately.
 EXPECTED_VISUAL_BOXES = dict(EXPECTED_BOUNDS)
