@@ -13,8 +13,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def forge_wheel() -> Path:
-    """Return the Forge wheel exposed by the forge-tool dependency."""
+def forge_package() -> Path:
+    """Return the built Forge package exposed by the forge-tool dependency."""
 
     raw = os.environ.get("CAD_CI_DEPENDENCIES_JSON", "").strip()
     if not raw:
@@ -34,12 +34,12 @@ def forge_wheel() -> Path:
     return wheels[0].resolve()
 
 
-def python_environment(wheel: Path) -> dict[str, str]:
-    """Return an environment that imports Forge from the built wheel."""
+def python_environment(package: Path) -> dict[str, str]:
+    """Return an environment that imports Forge from the built package."""
 
     env = dict(os.environ)
     existing = env.get("PYTHONPATH", "")
-    parts = [str(wheel), str(ROOT)]
+    parts = [str(package), str(ROOT)]
     if existing:
         parts.append(existing)
     env["PYTHONPATH"] = os.pathsep.join(parts)
@@ -63,8 +63,8 @@ def output_root() -> Path:
     return Path(value).resolve()
 
 
-def run_contract_tests(slug: str, wheel: Path) -> None:
-    """Run the example-owned host-side contract tests against the built wheel."""
+def run_contract_tests(slug: str, package: Path) -> None:
+    """Run the example-owned host-side contract tests against the built package."""
 
     tests = ROOT / "examples" / slug / "tests"
     subprocess.run(
@@ -80,15 +80,15 @@ def run_contract_tests(slug: str, wheel: Path) -> None:
             "-v",
         ],
         cwd=ROOT,
-        env=python_environment(wheel),
+        env=python_environment(package),
         check=True,
     )
 
 
-def compile_commands(slug: str, wheel: Path) -> dict:
+def compile_commands(slug: str, package: Path) -> dict:
     """Compile the example model to its replayable SolidCraft document."""
 
-    sys.path.insert(0, str(wheel))
+    sys.path.insert(0, str(package))
     from scpf.runner import run_script
 
     model = ROOT / "examples" / slug / "scpf" / "model.py"
@@ -105,9 +105,9 @@ def main() -> int:
     """Verify one example and write its replayable command document."""
 
     slug = item_slug()
-    wheel = forge_wheel()
-    run_contract_tests(slug, wheel)
-    document = compile_commands(slug, wheel)
+    package = forge_package()
+    run_contract_tests(slug, package)
+    document = compile_commands(slug, package)
 
     destination = output_root() / "solidcraft.json"
     destination.parent.mkdir(parents=True, exist_ok=True)
