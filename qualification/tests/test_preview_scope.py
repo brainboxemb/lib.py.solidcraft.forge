@@ -24,7 +24,7 @@ class PreviewScopeTests(unittest.TestCase):
         self.assertEqual(cases, ("slot-family",))
         self.assertEqual(final_gate(paths, cases), "affected-native")
 
-    def test_q1_test_selects_cases_that_use_it_as_evidence(self):
+    def test_example_integration_test_selects_its_case(self):
         cases = affected_cases(["examples/slot-family/tests/test_contract.py"])
         self.assertEqual(cases, ("slot-family",))
 
@@ -35,7 +35,7 @@ class PreviewScopeTests(unittest.TestCase):
         self.assertEqual(final_gate(paths, cases), "full-native")
 
     def test_global_case_registry_change_selects_all_cases(self):
-        cases = affected_cases(["qualification/case_evidence.py"])
+        cases = affected_cases(["qualification/cases.py"])
         self.assertGreater(len(cases), 10)
 
     def test_reference_validation_requires_reference_smoke(self):
