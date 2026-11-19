@@ -1,0 +1,30 @@
+# SolidCraft model verification for corner-anchor.
+id: corner-anchor
+kind: model
+needs:
+  - forge-tool
+watch:
+  - examples/corner-anchor/scpf/**
+  - examples/corner-anchor/model.yml
+  - examples/corner-anchor/verification/**
+  - scripts/forge_example.py
+  - scripts/model_verify.py
+  - scripts/solidcraft_runtime.py
+  - docker/solidcraft_runtime/**
+strategy:
+  reuse: true
+steps:
+  - id: model_verify
+    inputs:
+      - examples/corner-anchor/scpf/**
+      - examples/corner-anchor/model.yml
+      - examples/corner-anchor/verification/**
+      - scripts/forge_example.py
+      - scripts/model_verify.py
+      - scripts/solidcraft_runtime.py
+      - docker/solidcraft_runtime/**
+      - scpf/scpf/version.py
+    run: [python, ../../scripts/model_verify.py]
+    outputs:
+      - solidcraft.json
+      - model_verify

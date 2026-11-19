@@ -1,0 +1,10 @@
+section: anchors
+title: Anchors on XZ-profile extrusion
+tagline: Standard corner anchors work on an XZ-authored board
+description: >
+  A Board authored from an XZ polygon and extruded in Y exposes standard corner anchors used by independent left and right Marker components.
+parameters: Board 40 × 12 × 20 mm; two 10 mm Marker cubes
+stages:
+  - Create the Board from an XZ profile
+  - Extrude the profile in Y
+  - Attach left and right Markers to standard BACK_TOP corners

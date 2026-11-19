@@ -1,0 +1,30 @@
+# SolidCraft model verification for anchor-topology-mutation.
+id: anchor-topology-mutation
+kind: model
+needs:
+  - forge-tool
+watch:
+  - examples/anchor-topology-mutation/scpf/**
+  - examples/anchor-topology-mutation/model.yml
+  - examples/anchor-topology-mutation/verification/**
+  - scripts/forge_example.py
+  - scripts/model_verify.py
+  - scripts/solidcraft_runtime.py
+  - docker/solidcraft_runtime/**
+strategy:
+  reuse: true
+steps:
+  - id: model_verify
+    inputs:
+      - examples/anchor-topology-mutation/scpf/**
+      - examples/anchor-topology-mutation/model.yml
+      - examples/anchor-topology-mutation/verification/**
+      - scripts/forge_example.py
+      - scripts/model_verify.py
+      - scripts/solidcraft_runtime.py
+      - docker/solidcraft_runtime/**
+      - scpf/scpf/version.py
+    run: [python, ../../scripts/model_verify.py]
+    outputs:
+      - solidcraft.json
+      - model_verify

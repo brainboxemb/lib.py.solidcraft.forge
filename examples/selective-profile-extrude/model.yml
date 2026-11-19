@@ -1,0 +1,10 @@
+section: associativity
+title: Selective Sketch profile extrusion
+tagline: One associative pattern keeps all profiles while a cut selects only three
+description: >
+  A patterned Circle sketch retains four generated profiles while one native extrusion selects only the intended three closed regions.
+parameters: 120 × 60 × 5 mm plate; Ø8 holes; 20 mm pattern pitch
+stages:
+  - Create the plate and one Circle seed
+  - Generate the associative four-profile sketch pattern
+  - Cut only the selected closed profiles through the plate

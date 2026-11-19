@@ -1,0 +1,10 @@
+section: fundamentals
+title: Primitive CSG
+tagline: Direct primitives and Boolean operators form one native CSG result
+description: >
+  Sphere, Box and X-axis Cylinder primitives are translated and combined with union, subtraction and intersection independently of feature-history modelling.
+parameters: Sphere R20; 30 mm Box extension; Ø8 X-axis bore; 50 mm clipping Box
+stages:
+  - Create and union the Sphere and translated Box
+  - Subtract the centered X-axis Cylinder bore
+  - Intersect the result with the clipping Box

@@ -1,0 +1,10 @@
+section: components
+title: Four centred vertical L-profiles
+tagline: One L-profile definition is placed around all four frame corners
+description: >
+  A parametric frame reuses one short L-profile component at each side corner with assembly-calculated positions and rotations.
+parameters: Frame 120 × 80 × 60 mm; L-profile arm 28 mm, thickness 4 mm, height 16 mm
+stages:
+  - Create the parameterized FrameBlock
+  - Create one reusable LProfile definition
+  - Place four rotated occurrences around the frame corners

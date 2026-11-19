@@ -1,0 +1,10 @@
+section: fundamentals
+title: Minimal L-profile
+tagline: A simple XZ L-profile provides a clean reusable geometry baseline
+description: >
+  An L-shaped polygon is authored in XZ and symmetrically extruded without holes, fillets or secondary features.
+parameters: 24 mm extrusion width; 40 mm arms; 12 mm arm thickness
+stages:
+  - Create the L-shaped XZ polygon
+  - Finish the explicit Profile sketch
+  - Extrude the profile symmetrically through 24 mm

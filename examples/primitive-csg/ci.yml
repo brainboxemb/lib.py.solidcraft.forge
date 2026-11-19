@@ -1,0 +1,30 @@
+# SolidCraft model verification for primitive-csg.
+id: primitive-csg
+kind: model
+needs:
+  - forge-tool
+watch:
+  - examples/primitive-csg/scpf/**
+  - examples/primitive-csg/model.yml
+  - examples/primitive-csg/verification/**
+  - scripts/forge_example.py
+  - scripts/model_verify.py
+  - scripts/solidcraft_runtime.py
+  - docker/solidcraft_runtime/**
+strategy:
+  reuse: true
+steps:
+  - id: model_verify
+    inputs:
+      - examples/primitive-csg/scpf/**
+      - examples/primitive-csg/model.yml
+      - examples/primitive-csg/verification/**
+      - scripts/forge_example.py
+      - scripts/model_verify.py
+      - scripts/solidcraft_runtime.py
+      - docker/solidcraft_runtime/**
+      - scpf/scpf/version.py
+    run: [python, ../../scripts/model_verify.py]
+    outputs:
+      - solidcraft.json
+      - model_verify

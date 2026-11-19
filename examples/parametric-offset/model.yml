@@ -1,0 +1,10 @@
+section: associativity
+title: Editable local offset at an attachment
+tagline: Attachment-plane offset keeps its local coordinate meaning
+description: >
+  A Marker is corner-attached to a Base with a symbolic local planar offset that remains editable in the saved SolidCraft relationship.
+parameters: Base 40 × 30 × 20 mm; Marker 10 mm cube; local shift 5 mm
+stages:
+  - Create the Base and Marker components
+  - Attach matching corner references
+  - Apply the symbolic local attachment-plane offset
