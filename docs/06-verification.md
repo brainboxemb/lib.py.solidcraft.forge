@@ -1,48 +1,50 @@
 # Verification
 
-Forge currently uses three concrete verification layers.
+Forge uses separate tool-release verification and per-model verification.
 
-## Forge package tests
+## Forge release verification
 
-From the repository root:
+The Forge tool item is `scpf/ci.yml` and runs:
 
-```powershell
-python -m pip install -e ./scpf
-python -m unittest discover -s scpf/tests -v
+```text
+tool_build -> tool_test -> tool_verify
 ```
 
-In CAD-CI these are `tool_build` and `tool_test` from `scpf/ci.yml`.
+`tool_build` creates the installable SCPF wheel.
 
-This layer covers reusable Forge API and compiler behaviour.
+`tool_test` runs the reusable unit-test suite under `scpf/tests/` against the
+built package.
 
-## Example command verification
+`tool_verify` is the final Forge release-verification step. It uses the fixed
+representative example set:
 
-Check one example without starting SolidCraft:
+- `simple-box`
+- `anchored-holes`
+- `components`
+- `corner-anchor`
+- `custom-anchor`
 
-```powershell
-python -m scpf check examples/simple-box/scpf/model.py
-```
+The first four run their example-owned command-contract tests and compile with
+the exact built wheel. `custom-anchor` is an intentional negative example: it
+proves that the currently unsupported rotated-parent attachment is rejected
+with the expected Forge model error.
 
-Compile the model when reviewing generated commands:
+The generated release-verification evidence is stored below the Forge tool
+item's `tool_verify/` output.
 
-```powershell
-python -m scpf examples/simple-box/scpf/model.py --out output/simple-box.json
-```
+## Model verification
 
-The example's `tool_verify` step executes the Forge model and its
-example-owned command-contract tests. Its generated command document is
-`solidcraft.json` in the CAD-CI item output.
+`model_verify` is independent of Forge release verification.
 
-Example-specific command assertions live under
-`examples/<example>/tests/`.
+A migrated model is a CAD-CI model item that depends on `forge-tool`. The
+model-verification wrapper:
 
-## Native model verification
+1. obtains the exact wheel produced by `tool_build`;
+2. compiles that model to its own `solidcraft.json`;
+3. runs the model-owned verifier in the immutable SolidCraft runtime.
 
-Migrated examples also contain a `model_verify` step after `tool_verify`.
-
-`scripts/model_verify.py` receives the exact Forge package produced by the
-`forge-tool` dependency, pulls the immutable SolidCraft runtime image and
-runs the example's `verification/verify_model.py`.
+The shared wrapper is `scripts/model_verify.py`. Model-specific expectations
+remain under `examples/<model>/verification/`.
 
 The runtime is defined by:
 
@@ -51,19 +53,24 @@ docker/solidcraft_runtime/Dockerfile
 docker/solidcraft_runtime/runtime.json
 ```
 
-Native expectations remain under
-`examples/<example>/verification/`.
+At the current migration point, `simple-box` is the first migrated
+`model_verify` item. Issue #395 tracks the next ten historical qualification
+models.
 
-At the current migration point, `simple-box` has `model_verify`. Issue #395
-tracks the next ten examples.
+## Historical integration tests
+
+Example-owned tests under `examples/<example>/tests/` are still useful
+command-contract tests. Their historical `integration` label does not make
+every historical model a Forge `tool_verify` release example.
 
 ## Layer meaning
 
 | Layer | Proves |
 | --- | --- |
-| `tool_test` | reusable Forge Python/API/compiler rules |
-| `tool_verify` | one example executes and produces the expected command contract |
-| `model_verify` | that command document produces the expected SolidCraft model |
+| `tool_build` | the distributable Forge package can be built |
+| `tool_test` | reusable Forge Python/API/compiler rules pass against that package |
+| `tool_verify` | the built Forge package passes the fixed release example set |
+| `model_verify` | one migrated model produces the expected native SolidCraft result |
 
 The removed repository-wide qualification runner and numbered qualification
 levels are historical terminology, not current step names.

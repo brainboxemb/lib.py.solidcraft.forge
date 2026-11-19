@@ -1,34 +1,30 @@
-# Forge command-contract verification plus one SolidCraft model verification.
+# SolidCraft model verification for the first migrated historical model.
 id: simple-box
-kind: example
+kind: model
 needs:
   - forge-tool
 watch:
-  - examples/simple-box/**
-  - scripts/tool_verify.py
+  - examples/simple-box/scpf/**
+  - examples/simple-box/model.yml
+  - examples/simple-box/verification/**
+  - scripts/forge_example.py
   - scripts/model_verify.py
   - scripts/solidcraft_runtime.py
   - docker/solidcraft_runtime/**
 strategy:
   reuse: true
 steps:
-  - id: tool_verify
-    inputs:
-      - examples/simple-box/scpf/**
-      - examples/simple-box/tests/**
-      - scripts/tool_verify.py
-    run: [python, ../../scripts/tool_verify.py]
-    outputs:
-      - solidcraft.json
-
   - id: model_verify
     inputs:
+      - examples/simple-box/scpf/**
       - examples/simple-box/model.yml
       - examples/simple-box/verification/**
+      - scripts/forge_example.py
       - scripts/model_verify.py
       - scripts/solidcraft_runtime.py
       - docker/solidcraft_runtime/**
       - scpf/scpf/version.py
     run: [python, ../../scripts/model_verify.py]
     outputs:
+      - solidcraft.json
       - model_verify
