@@ -1,17 +1,17 @@
 # CURRENT CAD CI MIGRATION STATE
 
-Only the following files are active CAD-CI infrastructure in migration step 1:
+Migration step 2 adds exactly one host-side verified example.
+
+Active CAD-CI infrastructure:
 
 - `.github/workflows/scpf.yml` — thin caller of released `tool.cad.ci`;
-- `cad-ci.yml` — discovers only the Forge Python tool;
-- `scpf/ci.yml` — defines `tool_build` and `tool_test`;
-- `scripts/tool_ci.py` — Forge-specific build/test commands.
+- `cad-ci.yml` — discovers `forge-tool` and `simple-box` only;
+- `scpf/ci.yml` + `scripts/tool_ci.py` — `tool_build` and `tool_test`;
+- `examples/simple-box/ci.yml` + `scripts/tool_verify.py` — host-side `tool_verify` and replayable `solidcraft.json`.
 
-Legacy Forge CI scheduling, example CI files, native/qualification CI items and
-generated-output publication orchestration have been removed. Do not recreate
-them beside the new stack. Add each next CI surface in its own migration PR:
-one example first, then the remaining examples, then native/model groups, then
-publication.
+No other examples, native/model verification, reference/diagram generation or
+publication are active yet. Add those only in the later migration PR assigned
+to that layer; do not recreate the removed Forge scheduler.
 
 This migration-state section overrides older CI/publication descriptions later
 in this file until those sections are rewritten by the corresponding migration
