@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "views": {
+    "front": {
+      "baseline": "baselines/front.png"
+    },
+    "right": {
+      "baseline": "baselines/right.png"
+    },
+    "iso": {
+      "baseline": "baselines/iso.png"
+    }
+  },
+  "render": {
+    "width": 720,
+    "height": 540
+  },
+  "regression": {
+    "width": 96,
+    "height": 72,
+    "changed_pixel_threshold": 12,
+    "max_mean_difference": 6,
+    "max_changed_fraction": 0.08
+  },
+  "baseline_provenance": {
+    "approval": "approved",
+    "source_commit": "8acad149cdaaef729c2cd6f6929b9c73bf785ec8",
+    "review_source_commit": "5a8c5253db8c75200af286078f59e9699a85d142",
+    "historical_manifest_solidcraft_version": "0.30.1",
+    "verified_during_solidcraft_0_42_0_qualification": true
+  },
+  "expected_boxes": [
+    {
+      "label": "SimpleBox",
+      "minimum": [
+        -20,
+        -15,
+        0
+      ],
+      "maximum": [
+        20,
+        15,
+        10
+      ]
+    }
+  ]
+}

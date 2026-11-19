@@ -108,10 +108,13 @@ model bounds:
 - top = yaw 0°, pitch +90°;
 - iso = yaw -45°, pitch +32°.
 
-SolidCraft's orthographic half-height is 0.4 × camera distance. The generic
-`OrthographicCamera` therefore uses the same yaw/pitch in degrees and
-`distance = 0.4 × SolidCraft distance`. This preserves the historical
-front X-right/Z-up and top X-right/Y-up projection semantics while using the
+SolidCraft's orthographic half-height is 0.4 × camera distance. SolidCraft
+and the verification library use the same yaw direction but opposite pitch sign
+for the equivalent view. The generic `OrthographicCamera` therefore uses the
+same yaw, the negated SolidCraft pitch, and
+`distance = 0.4 × SolidCraft distance`. In particular SolidCraft top
+`+90°` maps to library top `-90°`. This preserves the historical front
+X-right/Z-up and top X-right/Y-up projection semantics while using the
 verification library for actual projection/drawing.
 
 ### Baselines
