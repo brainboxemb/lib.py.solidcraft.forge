@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -40,
+    -30,
+    0
+  ],
+  "bounds_max": [
+    40,
+    30,
+    13
+  ],
+  "bounds_tolerance_mm": 0.5,
+  "volume_mm3": 33428.31853071796,
+  "volume_tolerance_mm3": 60,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "rounded pad corner",
+      "point": [
+        20,
+        15,
+        9
+      ],
+      "distance_mm": 2.0710678118654755,
+      "tolerance_mm": 0.3
+    }
+  ]
+}

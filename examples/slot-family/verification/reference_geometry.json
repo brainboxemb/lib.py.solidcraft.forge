@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -80,
+    -60,
+    0
+  ],
+  "bounds_max": [
+    80,
+    60,
+    5
+  ],
+  "bounds_tolerance_mm": 0.5,
+  "volume_mm3": 89526.65799554957,
+  "volume_tolerance_mm3": 55,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "center-to-center slot at z=0.5",
+      "point": [
+        -50,
+        -35,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "center-to-center slot at z=2.5",
+      "point": [
+        -50,
+        -35,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "center-to-center slot at z=4.5",
+      "point": [
+        -50,
+        -35,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "overall slot at z=0.5",
+      "point": [
+        5,
+        -35,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "overall slot at z=2.5",
+      "point": [
+        5,
+        -35,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "overall slot at z=4.5",
+      "point": [
+        5,
+        -35,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "center-point slot at z=0.5",
+      "point": [
+        55,
+        -35,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "center-point slot at z=2.5",
+      "point": [
+        55,
+        -35,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "center-point slot at z=4.5",
+      "point": [
+        55,
+        -35,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "three-point arc slot at z=0.5",
+      "point": [
+        -35,
+        38,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "three-point arc slot at z=2.5",
+      "point": [
+        -35,
+        38,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "three-point arc slot at z=4.5",
+      "point": [
+        -35,
+        38,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "center arc slot at z=0.5",
+      "point": [
+        46,
+        35.392304845413264,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "center arc slot at z=2.5",
+      "point": [
+        46,
+        35.392304845413264,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "center arc slot at z=4.5",
+      "point": [
+        46,
+        35.392304845413264,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    }
+  ]
+}
