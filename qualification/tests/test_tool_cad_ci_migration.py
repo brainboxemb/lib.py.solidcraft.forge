@@ -168,11 +168,23 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         ):
             self.assertIn(phrase, agents)
 
-        evidence_doc = (
-            ROOT / "qualification/case_evidence.py"
+        qualification = (
+            ROOT / "qualification/README.md"
         ).read_text(encoding="utf-8")
-        self.assertIn("legacy keys", evidence_doc)
-        self.assertIn("library unit tests", evidence_doc)
+        for phrase in (
+            "integration",
+            "native_model",
+            "geometry",
+            "saved_design",
+            "visual",
+        ):
+            self.assertIn(phrase, qualification)
+        for legacy in (
+            "case_evidence.py",
+            "run_case_evidence.py",
+            "run_affected.py",
+        ):
+            self.assertFalse((ROOT / "qualification" / legacy).exists())
 
 
 if __name__ == "__main__":
