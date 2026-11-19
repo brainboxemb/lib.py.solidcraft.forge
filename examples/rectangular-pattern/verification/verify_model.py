@@ -12,6 +12,10 @@ from typing import Any
 import yaml
 
 from cad_verification import (
+    BodyEnvelope,
+    compare_scalar,
+    compare_vector,
+    match_body_envelopes,
     CheckOutcome,
     VerificationCheck,
     VerificationContext,
@@ -20,6 +24,7 @@ from cad_verification import (
     verify,
 )
 from scpf.headless import run_document
+from verification.solidcraft_measurements import measured_body_envelopes
 
 
 EXAMPLE = Path(__file__).resolve().parents[1]
@@ -54,71 +59,6 @@ def load_json(path: Path) -> Any:
     """Read JSON evidence produced by SolidCraft."""
 
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def close(actual: float, expected: float, tolerance: float = 1e-3) -> bool:
-    """Return whether two engineering values match within tolerance."""
-
-    return abs(float(actual) - float(expected)) <= tolerance
-
-
-def vector_close(actual, expected, tolerance: float = 1e-3) -> bool:
-    """Compare equally-sized numeric vectors."""
-
-    return (
-        len(actual) == len(expected)
-        and all(close(a, b, tolerance) for a, b in zip(actual, expected))
-    )
-
-
-def bbox_close(body: dict[str, Any], minimum, maximum, tolerance: float = 1e-3) -> bool:
-    """Compare one body's axis-aligned bounds."""
-
-    return (
-        vector_close(body["bbox"]["min"], minimum, tolerance)
-        and vector_close(body["bbox"]["max"], maximum, tolerance)
-    )
-
-
-def bounds_match(data: dict[str, Any], expected, tolerance: float = 1e-3) -> bool:
-    """Match body bounds without depending on native body ordering."""
-
-    actual = [
-        (body["bbox"]["min"], body["bbox"]["max"])
-        for body in data.get("bodies", [])
-        if isinstance(body.get("bbox"), dict)
-    ]
-    if len(actual) != len(expected):
-        return False
-    remaining = list(actual)
-    for minimum, maximum in expected:
-        hit = next(
-            (
-                index
-                for index, (lo, hi) in enumerate(remaining)
-                if vector_close(lo, minimum, tolerance)
-                and vector_close(hi, maximum, tolerance)
-            ),
-            None,
-        )
-        if hit is None:
-            return False
-        remaining.pop(hit)
-    return not remaining
-
-
-def require_bounds(label: str, data: dict[str, Any], expected, tolerance: float = 1e-3) -> None:
-    """Require the declared model bounds."""
-
-    require_true(
-        label,
-        bounds_match(data, expected, tolerance),
-        expected=expected,
-        actual=[
-            (body["bbox"]["min"], body["bbox"]["max"])
-            for body in data.get("bodies", [])
-        ],
-    )
 
 
 def parameters(data: dict[str, Any]) -> dict[str, float]:
@@ -243,21 +183,32 @@ def geometry_check(ctx: VerificationContext) -> CheckOutcome:
     measurements = native / "measurements.json"
     data = evaluate(native / "model.sc", measurements)
     expected_bounds = [[[-60,-40,0],[60,40,4]]]
-    require_bounds("baseline bounds", data, expected_bounds, 0.01)
+    match_body_envelopes(
+        tuple(
+            BodyEnvelope(
+                tuple(minimum),
+                tuple(maximum),
+                f"baseline bounds {index + 1}",
+            )
+            for index, (minimum, maximum) in enumerate(expected_bounds)
+        ),
+        measured_body_envelopes(data),
+        0.01,
+    )
 
     require_equal("body count", data.get("body_count"), 1)
     body = data["bodies"][0]
     expected_volume = 120.0 * 80.0 * 4.0 - 6.0 * (10.0 * 6.0 + math.pi * 3.0**2) * 4.0
     faces = body.get("face_types", {})
-    require_true(
-        "3 x 2 Slot pattern geometry",
-        close(body["volume_mm3"], expected_volume, 0.01)
-        and body.get("faces") == 30
-        and faces.get("cylinder") == 12
-        and faces.get("plane") == 18,
-        expected={"volume_mm3": expected_volume, "faces": 30, "cylinder": 12, "plane": 18},
-        actual={"volume_mm3": body["volume_mm3"], "faces": body.get("faces"), "face_types": faces},
+    compare_scalar(
+        expected_volume,
+        body["volume_mm3"],
+        0.01,
+        label="3 x 2 Slot pattern volume",
     )
+    require_equal("3 x 2 Slot pattern face count", body.get("faces"), 30)
+    require_equal("3 x 2 Slot cylinder faces", faces.get("cylinder"), 12)
+    require_equal("3 x 2 Slot plane faces", faces.get("plane"), 18)
     sketch = next((row for row in data.get("sketches", []) if row.get("name") == "Slot"), None)
     require_true(
         "source Slot sketch",
@@ -301,7 +252,18 @@ def saved_design_check(ctx: VerificationContext) -> CheckOutcome:
     mutate(native / "model.sc", MUTATION, mutated)
     data = evaluate(mutated, measurements)
     expected_bounds = [[[-60,-40,0],[60,40,4]]]
-    require_bounds("mutated bounds", data, expected_bounds, 0.01)
+    match_body_envelopes(
+        tuple(
+            BodyEnvelope(
+                tuple(minimum),
+                tuple(maximum),
+                f"mutated bounds {index + 1}",
+            )
+            for index, (minimum, maximum) in enumerate(expected_bounds)
+        ),
+        measured_body_envelopes(data),
+        0.01,
+    )
 
     expected_parameters = {"columns": 2.0, "pitch": 30.0, "rows": 2.0, "row_pitch": 28.0}
     require_equal("mutated pattern parameters", parameters(data), expected_parameters)
@@ -315,20 +277,20 @@ def saved_design_check(ctx: VerificationContext) -> CheckOutcome:
         2.0,
     ]
     faces = body.get("face_types", {})
-    require_true(
-        "2 x 2 rebuilt Slot pattern",
-        close(body["volume_mm3"], expected_volume, 0.01)
-        and body.get("faces") == 22
-        and faces.get("cylinder") == 8
-        and faces.get("plane") == 14,
-        expected={"volume_mm3": expected_volume, "faces": 22, "cylinder": 8, "plane": 14},
-        actual={"volume_mm3": body["volume_mm3"], "faces": body.get("faces"), "face_types": faces},
+    compare_scalar(
+        expected_volume,
+        body["volume_mm3"],
+        0.01,
+        label="2 x 2 rebuilt Slot volume",
     )
-    require_true(
-        "mutated Slot layout center",
-        vector_close(body["center_of_mass"], expected_center, 0.001),
-        expected=expected_center,
-        actual=body["center_of_mass"],
+    require_equal("2 x 2 Slot pattern face count", body.get("faces"), 22)
+    require_equal("2 x 2 Slot cylinder faces", faces.get("cylinder"), 8)
+    require_equal("2 x 2 Slot plane faces", faces.get("plane"), 14)
+    compare_vector(
+        expected_center,
+        body["center_of_mass"],
+        0.001,
+        label="mutated Slot layout center",
     )
     sketch = next((row for row in data.get("sketches", []) if row.get("name") == "Slot"), None)
     require_true(
