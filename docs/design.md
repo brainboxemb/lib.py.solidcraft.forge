@@ -58,3 +58,40 @@ Model/reference commands consume `FORGE_RUNTIME_IMAGE` from their environment.
 They pull and run that exact immutable image. Verification behavior stays in released `lib.py.cad.verfication`, including
 CAD-tool-specific adapters. Forge keeps Forge compilation and model-specific
 expected data.
+
+
+## Runtime package composition
+
+The immutable runtime is deliberately a reusable execution environment, not
+only a CAD-engine binary image.
+
+It may contain exact released application libraries and stable dependencies
+that are required by nearly every verification run. In particular:
+
+```text
+SolidCraft runtime image
+  SolidCraft
+  reference CAD tooling
+  released lib.py.cad.verfication
+  stable shared Python dependencies
+```
+
+`lib.py.cad.verfication` is still developed and released independently. The
+runtime consumes that release as a build input through
+`docker/solidcraft_runtime/runtime.json`.
+
+This gives two useful properties at the same time:
+
+1. ownership remains clean: reusable CAD verification behavior is implemented
+   and tested in the verification-library repository;
+2. execution remains efficient: model checks reuse one prebuilt image instead
+   of installing the verification package and its common dependencies on every
+   invocation.
+
+The runtime image hash therefore changes when the pinned verification-library
+release changes. That is intentional and makes the exact verification code part
+of the reproducible execution environment.
+
+The exact built Forge wheel remains separate because Forge itself is the code
+being qualified. The runtime must not substitute a preinstalled Forge package
+for that built wheel.
