@@ -37,8 +37,8 @@ per-case evidence without executing model cases.
 **Technical case change**  
 Changes the input hash of one or more qualification cases.
 
-**Native-sensitive change**  
-Changes Forge behavior that requires native SolidCraft validation for affected
+**Model-sensitive change**  
+Changes Forge behavior that requires SolidCraft model verification for affected
 cases.
 
 **Foundational change**  
@@ -76,9 +76,9 @@ gh-pages
 | --- | --- |
 | editable source | `main` / PR source branch |
 | command JSON | `build` |
-| native SolidCraft files | `build` |
+| model verification files | `build` |
 | STEP/SC/STL | `build` |
-| native renders | `build` |
+| model verification renders | `build` |
 | measurements/validation JSON | `build` |
 | reference-library results/renders | `build` |
 | per-case verification metadata | `build` |
@@ -178,7 +178,7 @@ Example shape:
           "source_commit": "...",
           "source_tree": "...",
           "input_hash": "sha256:...",
-          "verification_level": "full-native",
+          "verification_level": "tool_qualification",
           "status": "pass",
           "generated_at": "..."
         },
@@ -231,13 +231,13 @@ maximum risk class of all changed inputs.
 | Class | Typical inputs | Default action |
 | --- | --- | --- |
 | presentation | `site/**`, normal docs, CSS, public templates | preflight/site only |
-| publication infrastructure | publication scripts/workflows/provenance | preflight + publication contract/integration tests |
+| publication infrastructure | publication scripts/workflows/provenance | preflight + publication contract/tool_verify tests |
 | derived | technical report/diagram generators | regenerate derived output only |
 | case | case source/contract/reference source | affected cases |
-| native-sensitive | geometry/attachment implementation used by mapped cases | affected native gate |
-| foundational | compiler, replay, runtime/headless core | full final gate |
-| toolchain | SolidCraft version, Python/toolchain, reference dependency pins | full final gate |
-| unknown | anything not classified | full final gate |
+| model-sensitive | geometry/attachment implementation used by mapped cases | model_verify |
+| foundational | compiler, replay, runtime/headless core | full target verification stage |
+| toolchain | SolidCraft version, Python/toolchain, reference dependency pins | full target verification stage |
+| unknown | anything not classified | full target verification stage |
 
 Unknown paths fail safe to the highest class.
 
@@ -265,23 +265,23 @@ Normal development runs only affected cheap tests/evidence.
 
 A Forge source change with no mapped proving case is an error.
 
-### 9.3 Pre-merge final gate
+### 9.3 Pre-merge target verification stage
 
-Every PR has one `merge-gate` status on the current PR head.
+Every PR has one `merge verification` status on the current PR head.
 
 | Risk | Merge gate |
 | --- | --- |
 | presentation/publication infrastructure | preflight + relevant publication tests |
 | derived-only | regenerate/validate derived output |
-| ordinary case | affected-integration |
-| native-sensitive | affected-native |
-| foundational/toolchain/release | full-native |
+| ordinary case | tool_verify |
+| model-sensitive | model_verify |
+| foundational/toolchain/release | tool_qualification |
 
 The merge gate runs **before merge**. Branch protection requires it for the
 current head commit and requires the PR to be current with its merge base
 (prefer a merge queue; otherwise require the branch to be up to date).
 
-The merge-gate result records both PR-head SHA and base SHA. A base change
+The merge verification result records both PR-head SHA and base SHA. A base change
 invalidates the result.
 
 A technical PR is not merged first and qualified afterwards.
@@ -295,7 +295,7 @@ Run the complete registered full native qualification set on `main` on a schedul
 weekly) and on manual request.
 
 This is a safety net for an incomplete dependency map or selector bug. It does
-not replace the pre-merge gate.
+not replace the pre-merge verification.
 
 A failing scheduled run:
 
@@ -307,9 +307,9 @@ A failing scheduled run:
 
 A technical PR may publish a sparse `build/pr/N` **candidate overlay** after
 successful iteration verification. Per-case metadata records the achieved level
-(for example integration); the preview must show that level honestly.
+(for example tool_verify); the preview must show that level honestly.
 
-The pre-merge gate may update/upgrade the same current-head overlay. Evidence is
+The pre-merge verification may update/upgrade the same current-head overlay. Evidence is
 **promotable** only when every affected case meets the final level required by
 the risk classifier.
 
@@ -450,7 +450,7 @@ for unrelated PR namespaces.
 | Event | Verification | Build effect | Pages effect |
 | --- | --- | --- | --- |
 | presentation-only PR update | preflight | remove stale `pr/N` if PR was previously technical | replace preview using main evidence |
-| technical PR update | affected iteration checks; final gate when merge-ready | update current-head sparse candidate `pr/N` only after passing checks | replace preview using overlay+main and show achieved level |
+| technical PR update | affected iteration checks; target verification stage when merge-ready | update current-head sparse candidate `pr/N` only after passing checks | replace preview using overlay+main and show achieved level |
 | PR reopened | classify current head again | recreate overlay only if technical | recreate preview |
 | PR closed, not merged | none | remove `pr/N` | remove preview |
 | technical PR merged | the main Forge run reclassifies the exact merge commit and runs the required stable gate | merge a verified sparse main candidate into `build/main` | rebuild stable site after build promotion |
@@ -459,7 +459,7 @@ for unrelated PR namespaces.
 | force-push/rebase | recompute against new base/head | obsolete run rejected by freshness check | obsolete run rejected |
 | draft PR | preflight; expensive gate optional until ready | no durable technical publish unless explicitly requested | optional preview |
 | fork PR | read-only verification only | no write | no public preview from untrusted code |
-| workflow dispatch on main | full-native recovery of exact current main | replace verified `build/main` | rebuild stable site |
+| workflow dispatch on main | tool_qualification recovery of exact current main | replace verified `build/main` | rebuild stable site |
 | release | full gate | promote main and tag evidence | stable site uses tagged/immutable evidence |
 
 A presentation-only merge may reuse the existing complete passing `build/main`
@@ -506,7 +506,7 @@ This makes the system self-healing if a close event or publish job is lost.
 Recovery does not expose a menu of CI phases.
 
 A parameterless manual **Forge** run on `main`, or a normal commit changing
-`.github/workflows/forge.trigger`, runs full-native on the exact current main
+`.github/workflows/forge.trigger`, runs tool_qualification on the exact current main
 commit and republishes `build/main` plus stable Pages only after success.
 
 Scheduled reconcile remains an internal phase of the same Forge workflow. It
@@ -636,7 +636,7 @@ Forbidden:
 18. Publication correctness does not depend on a GitHub concurrency queue.
 19. Fork PR code never receives write-capable publication credentials.
 20. Release evidence has an immutable build reference.
-21. A merge-gate result is invalid when its recorded base SHA is no longer the
+21. A merge verification result is invalid when its recorded base SHA is no longer the
     PR's current merge base.
 22. Candidate PR evidence is never presented as having a higher verification
     level than it actually achieved.
@@ -645,13 +645,13 @@ Forbidden:
 
 ## 23. Acceptance scenarios
 
-Implementation is not complete until automated/integration tests demonstrate all
+Implementation is not complete until automated/tool_verify tests demonstrate all
 of these.
 
 ### A. Presentation-only PR
 
 - affected hashes: none;
-- no reference/native execution;
+- no reference/model execution;
 - no `build/pr/N`;
 - one preview;
 - Qualification HTML uses immutable `build/main` links.
@@ -663,7 +663,7 @@ of these.
 - `build/pr/N` contains only that candidate overlay;
 - its manifest records the actually achieved verification level;
 - preview resolves affected case from PR overlay and all others from main;
-- promotion remains blocked until the required final gate has passed.
+- promotion remains blocked until the required target verification stage has passed.
 
 ### C. Affected promotion
 
@@ -708,7 +708,7 @@ Start three publications close together for distinct namespaces.
 
 ### I. Technical squash merge
 
-- pre-merge gate passes;
+- pre-merge verification passes;
 - merge tree equals verified PR tree;
 - PR evidence is promoted without rebuilding;
 - cleanup occurs after promotion.
@@ -742,7 +742,7 @@ Reject a change if any answer is unclear:
 
 1. What risk class is this change?
 2. Which case input hashes change?
-3. Which final gate is required before merge?
+3. Which target verification stage is required before merge?
 4. Which immutable build commit supplies site evidence?
 5. Which exact namespace may be mutated?
 6. How is stale/out-of-order publication rejected?
@@ -762,7 +762,7 @@ Implement in this order:
 2. deterministic input hashes + dependency map/classifier;
 3. retrying freshness-aware publication library;
 4. immutable build-commit links/provenance;
-5. pre-merge merge-gate and promotion-before-cleanup flow;
+5. pre-merge merge verification and promotion-before-cleanup flow;
 6. derived-output regeneration;
 7. reconcile/live audit;
 8. workflow simplification to orchestration only;
