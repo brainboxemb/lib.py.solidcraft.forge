@@ -11,8 +11,9 @@ reference pages must not become a second API specification.
 | Short API meaning and usage constraints | Structured public docstrings next to that implementation | Generated API Reference |
 | Cross-object design rules that cannot sensibly live on one Python object | `docs/05-cad-api-design.md` | API design/contract page |
 | How to solve a modelling task | `site/guides.py` and executable examples | API Guide and examples |
-| Qualification evidence | qualification sources/results | Qualification pages |
-| Agent routing | `AGENTS.md` | Repository instructions |
+| Example command verification | `examples/<example>/tests/` + generated `solidcraft.json` | CAD-CI item result |
+| Native model verification | `examples/<example>/verification/` | CAD-CI `model_verify` result |
+| Repository architecture summary | `AGENTS.md` | Repository instructions |
 
 Do not manually copy signatures, enum-member lists, defaults or supported
 values into hand-maintained guide text. Guide pages may and should show relevant
@@ -77,18 +78,14 @@ This keeps the two views complementary without creating a click maze:
 - **Reference:** complete lookup for `Faces` and `Shape.on()`, including the
   same generated facts and links back to worked usage.
 
-## Version-pinned external API data
+## SolidCraft runtime evidence
 
-A version snapshot is not complete merely because it lists command names. For
-external engines such as SolidCraft, local version-pinned data must preserve
-enough command/schema semantics to answer routine implementation questions
-without reopening upstream source or a website. When runtime introspection is
-needed to fill a gap, cache the reusable result under the corresponding pinned
-version and record its provenance.
+Forge API facts come from Forge code and docstrings. Native SolidCraft behaviour
+is verified by example-owned `model_verify` checks in the immutable
+`solidcraft_runtime`.
 
-This requirement is deliberately separate from Forge's own API source of truth:
-Forge API facts come from Forge code/docstrings; external-engine facts come from
-the pinned external snapshot/runtime.
+The former generated SolidCraft command snapshot was removed during the CAD-CI
+cleanup because it no longer had an active verification path.
 
 ## Agent documentation
 

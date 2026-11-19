@@ -1,46 +1,20 @@
-# Forge CAD design
+# Design documents
 
-Normative design changes are recorded chronologically in
-[`docs/changes/`](../changes/README.md).
+This directory contains both current design notes and historical records.
 
-The numbered change records contain the use case, public API decision, native
-SolidCraft command contract, lowering rules and required qualification evidence.
-A later design change must add a new numbered record instead of rewriting an
-older decision.
+Current operational documentation is primarily:
 
-General cross-cutting public API rules remain in
-[`docs/05-cad-api-design.md`](../05-cad-api-design.md).
+- `docs/05-cad-api-design.md`
+- `docs/06-verification.md`
+- `docs/09-documentation-architecture.md`
+- `docs/10-release-process.md`
+- `docs/11-generated-output.md`
+- `docs/design/test-architecture.md`
 
-For the SCPF 0.3.0 occurrence-placement redesign, use
-[`0001-position-api-design.md`](../changes/0001-position-api-design.md).
+Audit, remediation, requalification and closeout files under this directory
+record earlier development states. They may use terminology or workflow
+structures that are no longer active.
 
-
-## Foundational audit
-
-The 2026-11 compiler/object-model audit is recorded in
-[the foundational audit](audit-2026-11.md).
-
-The qualification-integrity remediation is complete. The renewed qualification
-of the published SCPF v0.6.0 behaviour under the corrected Q1-Q6 gates, plus the
-successful downstream CAD pin, is recorded in
-[SCPF v0.6.0 renewed qualification](requalification-v0.6.0.md), with the same
-facts available as [machine-readable JSON](requalification-v0.6.0.json).
-
-The target compiler boundaries and invariants are defined in
-[Forge compiler architecture and invariants](forge-architecture.md).
-
-The ten reusable-component foundation scenarios and their current executable
-qualification mapping are recorded in
-[the foundational component/occurrence contract closeout](foundation-contract-closeout.md).
-
-The audit is intentionally performed against `main`; exploratory PRs are
-evidence only and are not implementation sources.
-
-
-The dependency-ordered implementation sequence is in
-[the foundational remediation plan](remediation-plan.md). Product changes must
-follow that order unless this architecture is deliberately revised.
-
-
-The verification layers and migration of current tests are defined in
-[Forge test and qualification architecture](test-architecture.md).
+`forge-architecture.md` remains useful for Forge modelling/lowering concepts;
+its older verification terminology should be read as historical where it
+differs from the current verification documents above.

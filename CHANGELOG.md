@@ -10,6 +10,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Fixed
 
+- Removed remaining legacy qualification infrastructure and refreshed active repository documentation for the current CAD-CI, `tool_verify`, `model_verify`, and `solidcraft_runtime` architecture.
+
 - Presentation-only main changes now reuse the existing complete `build/main`
   technical baseline without recalculating every qualification case input hash.
   Technical changes still require the normal qualification/promotion path

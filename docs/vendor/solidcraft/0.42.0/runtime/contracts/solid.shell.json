@@ -1,7 +1,0 @@
-{
-  "id": "solid.shell",
-  "input": null,
-  "label": "Shell",
-  "output": null,
-  "params": "faces: [[x,y,z] points on the faces to remove, or face names from model.faces; none: a closed hollow body]; thickness: expr; direction?: inside|outside|both; tangent_chain?: bool (also open faces joined smoothly to the picked ones); body? (needed with no faces when there are several bodies)"
-}
