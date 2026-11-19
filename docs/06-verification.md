@@ -61,6 +61,24 @@ The runtime includes SolidCraft plus the versioned reference/visual/diagram tool
 
 All 32 historical model cases now have native `model_verify` coverage. Issue #378 tracks the remaining reference, visual, diagram and summary verification layers.
 
+## Independent reference verification
+
+`verification/references/ci.yml` owns the shared `verify_references` action.
+
+The verifier discovers the current model-verification catalog from `kind: model`
+items. The first migration proof runs `simple-box` through all four existing
+reference implementations; the next #378 step expands the same item to the
+complete model catalog. Each selected reference exports an STL and validates:
+
+- model bounds against the Forge-owned geometry contract;
+- watertightness where the contract requires it;
+- volume where bounds alone are insufficient;
+- surface-distance probes for holes, slots, curved surfaces and CSG details.
+
+The reference item is independent from `forge-tool`: a Forge compiler-only
+change does not regenerate independent comparison geometry. Reference source,
+geometry-contract, runtime or model-catalog changes do.
+
 ## Historical integration tests
 
 Example-owned tests under `examples/<example>/tests/` are still useful
@@ -75,6 +93,7 @@ every historical model a Forge `tool_verify` release example.
 | `tool_test` | reusable Forge Python/API/compiler rules pass against that package |
 | `tool_verify` | the built Forge package passes the fixed release example set |
 | `model_verify` | one migrated model produces the expected native SolidCraft result |
+| `verify_references` | independent comparison libraries reproduce the declared model geometry |
 
 The removed repository-wide qualification runner and numbered qualification
 levels are historical terminology, not current step names.

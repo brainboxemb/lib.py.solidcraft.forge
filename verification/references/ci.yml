@@ -1,0 +1,34 @@
+# First independent comparison-library verification path; expand after this proof.
+id: reference-verification
+kind: verification
+watch:
+  - examples/*/ci.yml
+  - examples/*/pythonscad/**
+  - examples/*/pybosl2/**
+  - examples/*/cadquery/**
+  - examples/*/build123d/**
+  - verification/geometry_contracts.py
+  - verification/reference_validation.py
+  - verification/build123d_export.py
+  - scripts/verification_evidence.py
+  - scripts/solidcraft_runtime.py
+  - docker/solidcraft_runtime/**
+strategy:
+  reuse: true
+steps:
+  - id: verify_references
+    inputs:
+      - examples/*/ci.yml
+      - examples/*/pythonscad/**
+      - examples/*/pybosl2/**
+      - examples/*/cadquery/**
+      - examples/*/build123d/**
+      - verification/geometry_contracts.py
+      - verification/reference_validation.py
+      - verification/build123d_export.py
+      - scripts/verification_evidence.py
+      - scripts/solidcraft_runtime.py
+      - docker/solidcraft_runtime/**
+    run: [python, ../../scripts/verification_evidence.py, verify_references, simple-box]
+    outputs:
+      - references

@@ -81,7 +81,14 @@ Per-model SolidCraft checking is separate:
 - `model_verify` compiles one migrated model with the exact built Forge
   package and verifies the resulting native model in SolidCraft.
 
-All 32 historical model cases now have native `model_verify` coverage. Issue #378 tracks the remaining reference, visual, diagram and summary verification layers.
+Shared independent geometry evidence is also a normal CAD-CI item:
+
+- `verify_references` runs the PythonSCAD, pyBOSL2, CadQuery and build123d
+  reference models through one shared verification item. The first migration
+  proof covers `simple-box`; the following #378 step expands the same item to
+  all current `kind: model` items.
+
+All 32 historical model cases now have native `model_verify` coverage. Issue #378 tracks the remaining visual, diagram and summary verification layers.
 
 ## Verification runtime
 

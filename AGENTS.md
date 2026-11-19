@@ -24,6 +24,10 @@ The active CI structure is defined by:
 - `scripts/tool_verify.py`
 - `scripts/forge_example.py`
 - `scripts/model_verify.py`
+- `scripts/verification_evidence.py`
+- `verification/references/ci.yml`
+- `verification/reference_validation.py`
+- `verification/geometry_contracts.py`
 - `scripts/solidcraft_runtime.py`
 - `docker/solidcraft_runtime/`
 
@@ -43,8 +47,7 @@ example set. It is not a stage that every model item must run.
 Migrated model items use `model_verify`. That step compiles the model with the
 exact built Forge wheel and verifies the resulting model in SolidCraft.
 
-At the current migration point, `simple-box` is the first model-verification
-item. Issue #395 tracks the next ten historical qualification models.
+All 32 historical model cases have `model_verify`. `verification/references/ci.yml` now contains the first `simple-box` proof of the shared independent-reference path. Issue #378 expands that path to the full model catalog and then restores visual, diagram and summary layers.
 
 ## Model ownership
 
@@ -101,6 +104,7 @@ historical and are not part of the current runtime path.
 - `scpf/tests/` — reusable Forge API/compiler tests.
 - the fixed release examples — Forge `tool_verify`.
 - `examples/<model>/verification/` — native SolidCraft model checks.
+- `verification/references/` — shared independent comparison-library verification.
 
 `docs/design/test-architecture.md` contains the detailed test split.
 

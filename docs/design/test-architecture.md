@@ -73,3 +73,15 @@ history.
 Forge owns its tool-release checks, model verification code and immutable
 SolidCraft runtime. The old central qualification runner is not part of the
 active architecture.
+
+
+## Independent reference verification
+
+`verification/references/ci.yml` is a separate reusable CAD-CI item. Its
+`verify_references` step executes the existing PythonSCAD, pyBOSL2, CadQuery
+and build123d sources. The first migration proof selects `simple-box`; the next
+#378 step expands the same item to every current model item. Exported geometry
+is checked against `verification/geometry_contracts.py`.
+
+This layer is independent evidence. It does not import Forge geometry
+implementation to calculate expected bounds or detailed surface probes.

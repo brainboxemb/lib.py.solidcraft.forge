@@ -1,5 +1,6 @@
-# Forge tool plus model items that have completed the model-verification migration.
+# Forge tool, model verification items, and shared verification evidence.
 schema: 1
 items:
   - scpf
   - examples/*
+  - verification/references

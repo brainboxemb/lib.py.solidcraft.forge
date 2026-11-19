@@ -16,7 +16,8 @@ jobs:
 
   runtime_check:
     needs: plan
-    if: ${{ contains(needs.plan.outputs.plan_json, '"kind":"model"') }}
+    if: ${{ contains(needs.plan.outputs.plan_json, '"kind":"model"') ||
+             contains(needs.plan.outputs.plan_json, '"kind":"verification"') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -34,7 +35,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Resolve immutable SolidCraft runtime
+      - name: Resolve immutable verification runtime
         id: metadata
         run: |
           python scripts/solidcraft_runtime.py metadata \
@@ -48,7 +49,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Require SolidCraft runtime image
+      - name: Require verification runtime image
         run: |
           python scripts/solidcraft_runtime.py require \
             --reference "${{ steps.metadata.outputs.reference }}"
