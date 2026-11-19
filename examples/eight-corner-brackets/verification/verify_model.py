@@ -12,6 +12,8 @@ from typing import Any
 import yaml
 
 from cad_verification import (
+    BodyEnvelope,
+    match_body_envelopes,
     CheckOutcome,
     VerificationCheck,
     VerificationContext,
@@ -20,6 +22,7 @@ from cad_verification import (
     verify,
 )
 from scpf.headless import run_document
+from verification.solidcraft_measurements import measured_body_envelopes
 
 
 EXAMPLE = Path(__file__).resolve().parents[1]
@@ -54,71 +57,6 @@ def load_json(path: Path) -> Any:
     """Read JSON evidence produced by SolidCraft."""
 
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def close(actual: float, expected: float, tolerance: float = 1e-3) -> bool:
-    """Return whether two engineering values match within tolerance."""
-
-    return abs(float(actual) - float(expected)) <= tolerance
-
-
-def vector_close(actual, expected, tolerance: float = 1e-3) -> bool:
-    """Compare equally-sized numeric vectors."""
-
-    return (
-        len(actual) == len(expected)
-        and all(close(a, b, tolerance) for a, b in zip(actual, expected))
-    )
-
-
-def bbox_close(body: dict[str, Any], minimum, maximum, tolerance: float = 1e-3) -> bool:
-    """Compare one body's axis-aligned bounds."""
-
-    return (
-        vector_close(body["bbox"]["min"], minimum, tolerance)
-        and vector_close(body["bbox"]["max"], maximum, tolerance)
-    )
-
-
-def bounds_match(data: dict[str, Any], expected, tolerance: float = 1e-3) -> bool:
-    """Match body bounds without depending on native body ordering."""
-
-    actual = [
-        (body["bbox"]["min"], body["bbox"]["max"])
-        for body in data.get("bodies", [])
-        if isinstance(body.get("bbox"), dict)
-    ]
-    if len(actual) != len(expected):
-        return False
-    remaining = list(actual)
-    for minimum, maximum in expected:
-        hit = next(
-            (
-                index
-                for index, (lo, hi) in enumerate(remaining)
-                if vector_close(lo, minimum, tolerance)
-                and vector_close(hi, maximum, tolerance)
-            ),
-            None,
-        )
-        if hit is None:
-            return False
-        remaining.pop(hit)
-    return not remaining
-
-
-def require_bounds(label: str, data: dict[str, Any], expected, tolerance: float = 1e-3) -> None:
-    """Require the declared model bounds."""
-
-    require_true(
-        label,
-        bounds_match(data, expected, tolerance),
-        expected=expected,
-        actual=[
-            (body["bbox"]["min"], body["bbox"]["max"])
-            for body in data.get("bodies", [])
-        ],
-    )
 
 
 def parameters(data: dict[str, Any]) -> dict[str, float]:
@@ -243,7 +181,18 @@ def geometry_check(ctx: VerificationContext) -> CheckOutcome:
     measurements = native / "measurements.json"
     data = evaluate(native / "model.sc", measurements)
     expected_bounds = [[[-60,-40,0],[60,40,60]],[[-64,-44,0],[-32,-12,16]],[[-64,-44,44],[-32,-12,60]],[[32,-44,0],[64,-12,16]],[[32,-44,44],[64,-12,60]],[[32,12,0],[64,44,16]],[[32,12,44],[64,44,60]],[[-64,12,0],[-32,44,16]],[[-64,12,44],[-32,44,60]]]
-    require_bounds("baseline bounds", data, expected_bounds, 1e-3)
+    match_body_envelopes(
+        tuple(
+            BodyEnvelope(
+                tuple(minimum),
+                tuple(maximum),
+                f"baseline bounds {index + 1}",
+            )
+            for index, (minimum, maximum) in enumerate(expected_bounds)
+        ),
+        measured_body_envelopes(data),
+        1e-3,
+    )
 
     require_equal("frame plus eight brackets", data.get("body_count"), 9)
 
@@ -268,7 +217,18 @@ def saved_design_check(ctx: VerificationContext) -> CheckOutcome:
     mutate(native / "model.sc", MUTATION, mutated)
     data = evaluate(mutated, measurements)
     expected_bounds = [[[-80,-60,0],[80,60,90]],[[-84,-64,0],[-52,-32,16]],[[-84,-64,74],[-52,-32,90]],[[52,-64,0],[84,-32,16]],[[52,-64,74],[84,-32,90]],[[52,32,0],[84,64,16]],[[52,32,74],[84,64,90]],[[-84,32,0],[-52,64,16]],[[-84,32,74],[-52,64,90]]]
-    require_bounds("mutated bounds", data, expected_bounds, 1e-3)
+    match_body_envelopes(
+        tuple(
+            BodyEnvelope(
+                tuple(minimum),
+                tuple(maximum),
+                f"mutated bounds {index + 1}",
+            )
+            for index, (minimum, maximum) in enumerate(expected_bounds)
+        ),
+        measured_body_envelopes(data),
+        1e-3,
+    )
 
     require_equal("mutated body count", data.get("body_count"), 9)
 
