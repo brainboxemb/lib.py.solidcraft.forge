@@ -3,6 +3,7 @@ id: simple-box
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/simple-box/scpf/**
   - examples/simple-box/model.yml

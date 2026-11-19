@@ -3,6 +3,7 @@ id: components
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/components/scpf/**
   - examples/components/model.yml

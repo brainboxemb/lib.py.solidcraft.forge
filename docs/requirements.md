@@ -50,3 +50,27 @@ SolidCraft runtime workflow.
 The package keeps its own tested SolidCraft compatibility guard. CI must verify
 that its declared `SOLIDCRAFT_VERSION` agrees with the package/runtime build
 contract rather than silently maintaining unrelated version literals.
+
+
+## Runtime package boundary
+
+The immutable SolidCraft runtime is an efficient reusable execution
+environment. It may preinstall:
+
+- SolidCraft and CAD/reference command-line tools;
+- stable Python libraries required by those tools;
+- stable, frequently reused Python dependencies needed by verification.
+
+The runtime must not embed the released Forge/SCPF package or
+`lib.py.cad.verfication` itself.
+
+Those application libraries are supplied separately at verification run time.
+A release of either application library must not change the runtime image ID or
+require a runtime image rebuild.
+
+Preinstalled Python dependencies must satisfy the supported dependency ranges
+of the separately supplied verification package.
+
+The runtime dependency list must be explicit. A dependency may not remain in
+the image solely because it used to arrive transitively through an application
+library.

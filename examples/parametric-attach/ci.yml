@@ -3,6 +3,7 @@ id: parametric-attach
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/parametric-attach/scpf/**
   - examples/parametric-attach/model.yml

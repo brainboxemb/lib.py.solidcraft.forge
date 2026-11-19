@@ -3,6 +3,7 @@ id: selective-profile-extrude
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/selective-profile-extrude/scpf/**
   - examples/selective-profile-extrude/model.yml

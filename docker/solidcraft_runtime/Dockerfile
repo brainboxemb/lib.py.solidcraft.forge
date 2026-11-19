@@ -2,16 +2,15 @@ ARG PYTHON_IMAGE
 FROM ${PYTHON_IMAGE}
 
 ARG SOLIDCRAFT_VERSION
-ARG CAD_VERIFICATION_VERSION
-ARG CAD_VERIFICATION_COMMIT
 ARG CADCRAFT_VERSION
 ARG CADCRAFT_SHA256
 ARG PYTHONSCAD_VERSION
 ARG PYBOSL2_COMMIT
 ARG CADQUERY_VERSION
 ARG BUILD123D_VERSION
+ARG PILLOW_SPEC
 ARG TRIMESH_SPEC
-ARG MATPLOTLIB_SPEC
+ARG SCIPY_SPEC
 
 LABEL org.opencontainers.image.source="https://github.com/brainboxemb/lib.py.solidcraft.forge"
 
@@ -19,7 +18,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    MPLBACKEND=Agg \
     SOLIDCRAFT_GPU=cpu \
     BUILD123D_PYTHON=/opt/build123d/bin/python \
     PATH=/opt/solidcraft/bin:/opt/cadcraft/bin:$PATH
@@ -75,21 +73,19 @@ RUN set -eux; \
 
 RUN python -m pip install --upgrade pip setuptools wheel \
     && python -m pip install \
-        "PyYAML==6.0.3" \
-        "Pillow" \
+        "Pillow${PILLOW_SPEC}" \
         "pythonscad==${PYTHONSCAD_VERSION}" \
         "git+https://github.com/pinkfish/pybosl2@${PYBOSL2_COMMIT}" \
         "cadquery==${CADQUERY_VERSION}" \
         "trimesh${TRIMESH_SPEC}" \
-        "matplotlib${MATPLOTLIB_SPEC}" \
-        "https://github.com/brainboxemb/lib.py.cad.verfication/archive/${CAD_VERIFICATION_COMMIT}.zip" \
+        "scipy${SCIPY_SPEC}" \
     && python -m venv /opt/build123d \
     && /opt/build123d/bin/python -m pip install --upgrade pip setuptools wheel \
     && /opt/build123d/bin/python -m pip install "build123d==${BUILD123D_VERSION}"
 
 RUN solidcraft-cli --version \
     && cadcraft-cli --version \
-    && python -c "import importlib.metadata as m, cad_verification, cadquery, matplotlib, trimesh, yaml; actual=m.version('brainboxemb-cad-verification-lib'); expected='${CAD_VERIFICATION_VERSION}'; assert actual == expected, f'cad-verification {actual} != {expected}'" \
+    && python -c "import PIL, cadquery, scipy, trimesh" \
     && /opt/build123d/bin/python -c "import build123d"
 
 WORKDIR /workspace

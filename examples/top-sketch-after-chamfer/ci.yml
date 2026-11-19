@@ -3,6 +3,7 @@ id: top-sketch-after-chamfer
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/top-sketch-after-chamfer/scpf/**
   - examples/top-sketch-after-chamfer/model.yml

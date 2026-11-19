@@ -3,6 +3,7 @@ id: rectangular-pattern
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/rectangular-pattern/scpf/**
   - examples/rectangular-pattern/model.yml

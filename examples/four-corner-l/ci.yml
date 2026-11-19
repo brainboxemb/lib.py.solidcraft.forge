@@ -3,6 +3,7 @@ id: four-corner-l
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/four-corner-l/scpf/**
   - examples/four-corner-l/model.yml

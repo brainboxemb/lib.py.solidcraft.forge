@@ -58,3 +58,37 @@ Model/reference commands consume `FORGE_RUNTIME_IMAGE` from their environment.
 They pull and run that exact immutable image. Verification behavior stays in released `lib.py.cad.verfication`, including
 CAD-tool-specific adapters. Forge keeps Forge compilation and model-specific
 expected data.
+
+
+## Runtime versus application packages
+
+The runtime image and the application packages have different lifecycles.
+
+```text
+immutable CAD runtime image
+  SolidCraft
+  CADCraft
+  PythonSCAD / pyBOSL2 / CadQuery / build123d
+  stable shared Python dependencies
+
+verification invocation
+  exact built Forge wheel
+  exact released cad-verification package
+  model-specific definition/data
+```
+
+The verification package is not a Docker build input. Its version/commit is
+therefore absent from `docker/solidcraft_runtime/runtime.json` and from the
+runtime image hash.
+
+Stable dependencies may deliberately remain in the image for efficiency. For
+the current verification package this includes Pillow, trimesh and scipy. They
+are runtime dependency inputs in their own right rather than being installed
+transitively by installing the verification package.
+
+The verification invocation supplies the exact verification package separately
+and makes it importable together with the exact Forge wheel. The package is
+tested against the dependency versions present in the runtime.
+
+PyYAML and matplotlib remain in the image only if a current CAD/reference
+runtime path demonstrably needs them; otherwise #438 removes them.

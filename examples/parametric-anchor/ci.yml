@@ -3,6 +3,7 @@ id: parametric-anchor
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/parametric-anchor/scpf/**
   - examples/parametric-anchor/model.yml

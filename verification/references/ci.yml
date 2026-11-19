@@ -1,6 +1,8 @@
 # Independent reference verification for every current Forge model item.
 id: reference-verification
 kind: verification
+needs:
+  - verification-library
 watch:
   - examples/*/verification/reference_geometry.json
   - examples/*/pythonscad/**
