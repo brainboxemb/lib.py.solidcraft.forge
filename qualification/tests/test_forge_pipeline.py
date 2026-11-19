@@ -67,16 +67,6 @@ class ForgePipelineTests(unittest.TestCase):
             forge_pipeline.supported_case_slugs(),
         )
 
-    def test_pr_qualification_arguments_are_complete(self):
-        command = forge_pipeline.qualification_args(args())
-        self.assertEqual(command[0], "scripts/verification_gate.py")
-        self.assertIn("affected-native", command)
-        self.assertIn("simple-box", command)
-        self.assertIn("--reference-smoke", command)
-        self.assertIn("--base-commit", command)
-        self.assertIn("--pull-request", command)
-        self.assertIn("351", command)
-
     def test_native_gate_collects_items_instead_of_rerunning_legacy_gate(self):
         ns = args()
         command = forge_pipeline.item_gate_args(ns)
@@ -108,18 +98,21 @@ class ForgePipelineTests(unittest.TestCase):
             image="",
             reference_smoke=False,
         )
-        command = forge_pipeline.qualification_args(ns)
         with patch.object(
             forge_pipeline,
             "run_tool_cad_ci_case",
         ) as case_item, patch.object(
             forge_pipeline,
+            "run_tool_cad_ci_evidence",
+        ) as evidence_item, patch.object(
+            forge_pipeline,
             "python",
-        ) as legacy_gate:
+        ) as adapter:
             forge_pipeline.qualify(ns)
 
         case_item.assert_not_called()
-        legacy_gate.assert_called_once_with(*command)
+        evidence_item.assert_not_called()
+        adapter.assert_not_called()
 
     def test_reference_item_can_run_for_cheap_gate(self):
         ns = args(
