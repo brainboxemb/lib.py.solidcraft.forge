@@ -1,0 +1,57 @@
+[
+  {
+    "display_value": 40.0,
+    "name": "base_width",
+    "unit": "mm",
+    "value": 40.0
+  },
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "Base",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Base"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Base"
+    ],
+    "feature": 3,
+    "ms": 2.417688,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 4,
+    "grounded": false,
+    "name": "Block",
+    "occurrence": 5,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Base",
+      "Block"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Block"
+    ],
+    "feature": 6,
+    "ms": 1.169391,
+    "name": "Box2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  }
+]

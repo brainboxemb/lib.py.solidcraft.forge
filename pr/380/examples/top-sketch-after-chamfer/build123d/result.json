@@ -1,0 +1,127 @@
+{
+  "case": "top-sketch-after-chamfer",
+  "implementation": "build123d",
+  "status": "pass",
+  "source": "examples/top-sketch-after-chamfer/build123d/model.py",
+  "stl": "model.stl",
+  "images": [
+    "model-front.png",
+    "model-right.png",
+    "model-iso.png"
+  ],
+  "bounds": {
+    "min": [
+      -50.0,
+      -35.0,
+      0.0
+    ],
+    "max": [
+      50.0,
+      35.0,
+      10.0
+    ]
+  },
+  "expected": {
+    "min": [
+      -50.0,
+      -35.0,
+      0.0
+    ],
+    "max": [
+      50.0,
+      35.0,
+      10.0
+    ]
+  },
+  "max_delta_mm": 0.0,
+  "tolerance_mm": 0.5,
+  "checks": {
+    "bounds": {
+      "status": "pass",
+      "actual": {
+        "min": [
+          -50.0,
+          -35.0,
+          0.0
+        ],
+        "max": [
+          50.0,
+          35.0,
+          10.0
+        ]
+      },
+      "expected": {
+        "min": [
+          -50.0,
+          -35.0,
+          0.0
+        ],
+        "max": [
+          50.0,
+          35.0,
+          10.0
+        ]
+      },
+      "max_delta_mm": 0.0,
+      "tolerance_mm": 0.5
+    },
+    "watertight": {
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    "volume": {
+      "status": "pass",
+      "actual_mm3": 67589.495314068,
+      "expected_mm3": 67589.02664470767,
+      "delta_mm3": 0.46866936032893136,
+      "tolerance_mm3": 45.0
+    },
+    "surface_distance_probes": {
+      "status": "pass",
+      "probes": [
+        {
+          "label": "center hole at z=1",
+          "point": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "actual_mm": 5.9981349073137995,
+          "expected_mm": 6.0,
+          "delta_mm": 0.001865092686200498,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "center hole at z=5",
+          "point": [
+            0.0,
+            0.0,
+            5.0
+          ],
+          "actual_mm": 5.9981349073137995,
+          "expected_mm": 6.0,
+          "delta_mm": 0.001865092686200498,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        },
+        {
+          "label": "center hole at z=9",
+          "point": [
+            0.0,
+            0.0,
+            9.0
+          ],
+          "actual_mm": 5.9981349073137995,
+          "expected_mm": 6.0,
+          "delta_mm": 0.001865092686200498,
+          "tolerance_mm": 0.3,
+          "status": "pass"
+        }
+      ]
+    }
+  },
+  "bounds_sufficient": false,
+  "bounds_reason": "The outer bounds do not prove the four corner chamfers or the through hole. Volume, cylindrical-wall probes and native timeline/sketch checks are required."
+}

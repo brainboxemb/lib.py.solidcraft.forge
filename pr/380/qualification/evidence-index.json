@@ -1,0 +1,326 @@
+{
+  "cases": {
+    "anchor-topology-mutation": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "anchored-holes": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "assembly-decorator": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "assembly-owned-anchor": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "attach-angle": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "bracket": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "circle-negative-extrude": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "circular-feature-pattern": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "components": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "corner-anchor": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "eight-corner-brackets": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "eight-flightcase-corners": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "four-corner-l": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "group-hierarchy": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "hole-family": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "parameter-scope": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "parametric-anchor": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "parametric-attach": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "parametric-offset": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "parent-derived-child-size": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "primitive-csg": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "rectangular-pattern": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "repeated-parent-attachments": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "round-top-sketch": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "rounded-rectangle-sketch": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "selective-profile-extrude": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "sheet-fold": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "simple-box": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "sketch-pattern-mirror": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "slot-family": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "top-sketch-after-chamfer": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    },
+    "xz-anchor": {
+      "implementations": [
+        "build123d",
+        "cadquery",
+        "pybosl2",
+        "pythonscad",
+        "scpf"
+      ],
+      "minimum_verification_rank": 1
+    }
+  },
+  "generated_from_build_schema": 2,
+  "schema_version": 1
+}
