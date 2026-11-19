@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Resolve and inspect the immutable SolidCraft model-verification runtime.
+"""Resolve and inspect the immutable Forge verification runtime.
 
-This script owns Forge-specific runtime metadata only. CAD-CI remains the sole
-CI planner/execution engine; this module never selects items or executes model
-verification.
+The runtime contains SolidCraft plus the pinned reference, visual and diagram
+toolchain used by Forge verification. This script owns runtime metadata only.
+CAD-CI remains the sole planner/execution engine.
 """
 
 from __future__ import annotations
@@ -28,32 +28,41 @@ ABSENT_MARKERS = (
     "manifest_unknown",
 )
 
+REQUIRED_CONFIG_FIELDS = {
+    "python_image",
+    "cad_verification_version",
+    "cad_verification_commit",
+    "cadcraft_version",
+    "cadcraft_sha256",
+    "pythonscad_version",
+    "pybosl2_commit",
+    "cadquery_version",
+    "build123d_version",
+    "trimesh_spec",
+    "matplotlib_spec",
+}
+
 
 class ImageLookupError(RuntimeError):
     """Registry lookup failed without proving that the image is absent."""
 
 
 def load_config() -> dict:
-    """Load and validate versioned runtime inputs."""
+    """Load and validate every versioned runtime input."""
 
     data = json.loads(CONFIG.read_text(encoding="utf-8"))
     if data.get("schema") != 1:
-        raise ValueError("unsupported SolidCraft runtime schema")
-    required = {
-        "python_image",
-        "cad_verification_version",
-        "cad_verification_commit",
-    }
-    missing = sorted(required - set(data))
+        raise ValueError("unsupported verification runtime schema")
+    missing = sorted(REQUIRED_CONFIG_FIELDS - set(data))
     if missing:
         raise ValueError(
-            "missing SolidCraft runtime fields: " + ", ".join(missing)
+            "missing verification runtime fields: " + ", ".join(missing)
         )
     return data
 
 
 def solidcraft_version() -> str:
-    """Read the tested SolidCraft version from Forge's single source of truth."""
+    """Read the tested SolidCraft version from Forge's source of truth."""
 
     namespace: dict[str, object] = {}
     exec(VERSION_FILE.read_text(encoding="utf-8"), namespace)
@@ -79,21 +88,25 @@ def metadata(repository: str) -> dict[str, str]:
     digest = image_id()
     image = f"ghcr.io/{repository.lower()}/solidcraft-runtime"
     reference = f"{image}:runtime-{digest}"
-    return {
+
+    values = {
         "image": image,
         "image_id": digest,
         "reference": reference,
-        "python_image": str(config["python_image"]),
         "solidcraft_version": solidcraft_version(),
-        "cad_verification_version": str(
-            config["cad_verification_version"]
-        ),
-        "cad_verification_commit": str(config["cad_verification_commit"]),
-        "environment_json": json.dumps(
-            {"FORGE_RUNTIME_IMAGE": reference},
-            separators=(",", ":"),
-        ),
     }
+    values.update(
+        {
+            key: str(value)
+            for key, value in config.items()
+            if key != "schema"
+        }
+    )
+    values["environment_json"] = json.dumps(
+        {"FORGE_RUNTIME_IMAGE": reference},
+        separators=(",", ":"),
+    )
+    return values
 
 
 def image_exists(reference: str) -> bool:
@@ -131,13 +144,13 @@ def require_image(reference: str) -> None:
         return
 
     raise RuntimeError(
-        "required SolidCraft runtime image is missing: "
+        "required Forge verification runtime image is missing: "
         f"{reference}. Run the 'SolidCraft runtime' workflow first."
     )
 
 
 def write_github_output(path: Path, values: dict[str, str]) -> None:
-    """Append simple scalar outputs to a GitHub Actions output file."""
+    """Append scalar outputs to a GitHub Actions output file."""
 
     with path.open("a", encoding="utf-8") as handle:
         for key, value in values.items():
