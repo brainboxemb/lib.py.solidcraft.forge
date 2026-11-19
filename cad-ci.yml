@@ -1,5 +1,10 @@
-# Forge tool plus model items that have completed the model-verification migration.
+# Forge CI items and repository-wide runtime expectation.
 schema: 1
+
+variables:
+  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/lib.py.solidcraft.forge/solidcraft-runtime:runtime-2cea661b57fcaf0b72bd409165738e762e239f44e1690ef78e3c76cf37d56c2f"
+  SOLIDCRAFT_VERSION: "0.42.0"
+
 items:
   - scpf
   - examples/*

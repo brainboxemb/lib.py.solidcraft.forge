@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Resolve and inspect the immutable Forge verification runtime.
+"""Build-time metadata and registry checks for the immutable Forge runtime.
 
 The runtime contains SolidCraft plus the pinned reference, visual and diagram
-toolchain used by Forge verification. This script owns runtime metadata only.
-CAD-CI remains the sole planner/execution engine.
+toolchain used by Forge verification. This script belongs to runtime
+build/publication. Normal Forge CI receives its expected immutable image through
+root cad-ci.yml instead of resolving it here.
 """
 
 from __future__ import annotations
@@ -101,10 +102,6 @@ def metadata(repository: str) -> dict[str, str]:
             for key, value in config.items()
             if key != "schema"
         }
-    )
-    values["environment_json"] = json.dumps(
-        {"FORGE_RUNTIME_IMAGE": reference},
-        separators=(",", ":"),
     )
     return values
 
