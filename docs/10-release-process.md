@@ -40,16 +40,16 @@ The release PR must:
    has separately been requalified;
 6. have no active non-comment lines in
    `docs/design/release-blockers.txt`;
-7. pass the PR gate selected by the repository risk classifier.
+7. pass the PR verification stage selected by the repository planner.
 
 Changing `scpf/pyproject.toml` is a toolchain/release input. After merge, the
-single **Forge** workflow therefore requires full-native on the exact new
+single **Forge** workflow therefore requires tool_qualification on the exact new
 `main` commit before its release job is eligible.
 
 ## Publishing after merge
 
 After merge, the same **Forge** workflow runs on the exact new `main` commit.
-Because the package version changed, it selects full-native, publishes the
+Because the package version changed, it selects tool_qualification, publishes the
 resulting verified `build/main` and stable Pages, and only then allows the
 release job in that same workflow to continue.
 
@@ -79,7 +79,7 @@ Downstream CAD repositories should record both:
 This keeps human-readable release intent and reproducible source checkout
 together.
 
-Downstream native CI should additionally verify that
+Downstream model verification CI should additionally verify that
 `scpf.version.TESTED_SOLIDCRAFT_VERSION` matches the SolidCraft version used
 for that CAD baseline.
 
