@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from scripts import qualification_image
+from scripts import container_image_status, qualification_image
 
 
 class QualificationImageTests(unittest.TestCase):
@@ -80,6 +80,82 @@ class QualificationImageTests(unittest.TestCase):
         self.assertIn("ARG PYTHON_IMAGE", dockerfile)
         self.assertIn("ARG SOLIDCRAFT_VERSION", dockerfile)
         self.assertIn("ARG CADCRAFT_VERSION", dockerfile)
+
+    def test_container_manifest_present_is_not_downloaded(self):
+        completed = __import__("subprocess").CompletedProcess(
+            args=["docker"],
+            returncode=0,
+            stdout='{"schemaVersion": 2}',
+            stderr="",
+        )
+        with patch.object(
+            container_image_status.subprocess,
+            "run",
+            return_value=completed,
+        ) as run:
+            self.assertTrue(
+                container_image_status.inspect(
+                    "ghcr.io/brainboxemb/example:immutable"
+                )
+            )
+
+        command = run.call_args.args[0]
+        self.assertEqual(command[:3], ["docker", "manifest", "inspect"])
+        self.assertNotIn("pull", command)
+
+    def test_container_manifest_unknown_is_explicitly_absent(self):
+        completed = __import__("subprocess").CompletedProcess(
+            args=["docker"],
+            returncode=1,
+            stdout="",
+            stderr="manifest unknown: manifest unknown",
+        )
+        with patch.object(
+            container_image_status.subprocess,
+            "run",
+            return_value=completed,
+        ):
+            self.assertFalse(
+                container_image_status.inspect(
+                    "ghcr.io/brainboxemb/example:missing"
+                )
+            )
+
+    def test_container_auth_or_network_error_is_not_absent(self):
+        for message in (
+            "unauthorized: authentication required",
+            "dial tcp: network is unreachable",
+            "context deadline exceeded",
+        ):
+            with self.subTest(message=message):
+                completed = __import__("subprocess").CompletedProcess(
+                    args=["docker"],
+                    returncode=1,
+                    stdout="",
+                    stderr=message,
+                )
+                with patch.object(
+                    container_image_status.subprocess,
+                    "run",
+                    return_value=completed,
+                ):
+                    with self.assertRaises(
+                        container_image_status.ImageLookupError
+                    ):
+                        container_image_status.inspect(
+                            "ghcr.io/brainboxemb/example:immutable"
+                        )
+
+    def test_workflow_inspects_manifest_before_full_pull(self):
+        workflow = (
+            qualification_image.ROOT
+            / ".github"
+            / "workflows"
+            / "scpf.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("scripts/container_image_status.py", workflow)
+        self.assertNotIn("timeout 30s docker pull", workflow)
+        self.assertIn("docker pull", workflow)
 
     def test_image_id_changes_when_dockerfile_changes(self):
         with tempfile.TemporaryDirectory() as tmp:
