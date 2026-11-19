@@ -62,9 +62,19 @@ It does not decide CI scope or verification policy.
 
 ## External comparison libraries
 
-PythonSCAD, pyBOSL2, CadQuery and build123d may express comparable modelling
-intent. They do not define Forge behaviour and do not prove SolidCraft saved
-history.
+Every current model item owns four independent comparison sources:
+
+- PythonSCAD;
+- pyBOSL2;
+- CadQuery;
+- build123d.
+
+The shared reference-verification item discovers model-local
+`reference_geometry.json` contracts and validates each exported STL through
+released `lib.py.cad.verfication`.
+
+These libraries express comparable modelling intent. They do not define Forge
+behaviour and do not prove SolidCraft saved history.
 
 ## CAD-CI ownership
 

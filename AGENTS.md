@@ -43,9 +43,10 @@ example set. It is not a stage that every model item must run.
 Migrated model items use `model_verify`. That step compiles the model with the
 exact built Forge wheel and verifies the resulting model in SolidCraft.
 
-All historical model items have native `model_verify` coverage. Simple-box
-also proves the released independent-reference path; issue #378 tracks expansion
-of reference, visual, diagram and summary verification.
+All 32 historical model items have native `model_verify` coverage and
+model-local independent-reference geometry contracts. The shared reference item
+runs PythonSCAD, pyBOSL2, CadQuery and build123d for the complete catalog.
+Issue #378 now continues with visual, diagram and summary verification.
 
 ## Model ownership
 
