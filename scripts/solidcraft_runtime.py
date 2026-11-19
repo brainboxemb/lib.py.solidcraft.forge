@@ -39,7 +39,11 @@ def load_config() -> dict:
     data = json.loads(CONFIG.read_text(encoding="utf-8"))
     if data.get("schema") != 1:
         raise ValueError("unsupported SolidCraft runtime schema")
-    required = {"python_image", "cad_verification_commit"}
+    required = {
+        "python_image",
+        "cad_verification_version",
+        "cad_verification_commit",
+    }
     missing = sorted(required - set(data))
     if missing:
         raise ValueError(
@@ -81,6 +85,9 @@ def metadata(repository: str) -> dict[str, str]:
         "reference": reference,
         "python_image": str(config["python_image"]),
         "solidcraft_version": solidcraft_version(),
+        "cad_verification_version": str(
+            config["cad_verification_version"]
+        ),
         "cad_verification_commit": str(config["cad_verification_commit"]),
         "environment_json": json.dumps(
             {"FORGE_RUNTIME_IMAGE": reference},

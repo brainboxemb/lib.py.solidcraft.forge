@@ -2,6 +2,7 @@ ARG PYTHON_IMAGE
 FROM ${PYTHON_IMAGE}
 
 ARG SOLIDCRAFT_VERSION
+ARG CAD_VERIFICATION_VERSION
 ARG CAD_VERIFICATION_COMMIT
 
 LABEL org.opencontainers.image.source="https://github.com/brainboxemb/lib.py.solidcraft.forge"
@@ -54,6 +55,6 @@ RUN python -m pip install --upgrade pip setuptools \
         "https://github.com/brainboxemb/lib.py.cad.verfication/archive/${CAD_VERIFICATION_COMMIT}.zip"
 
 RUN solidcraft-cli --version \
-    && python -c "import cad_verification, yaml"
+    && python -c "import importlib.metadata as m, cad_verification, yaml; actual=m.version('brainboxemb-cad-verification-lib'); expected='${CAD_VERIFICATION_VERSION}'; assert actual == expected, f'cad-verification {actual} != {expected}'"
 
 WORKDIR /workspace
