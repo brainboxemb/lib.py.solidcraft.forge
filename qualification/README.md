@@ -1,65 +1,80 @@
 # Forge qualification
 
-Qualification proves the public Forge API and its lowering against native
-SolidCraft. The qualified SolidCraft version comes from
-`scpf.version.TESTED_SOLIDCRAFT_VERSION`.
+Qualification proves the public Forge API and its lowering against the selected
+SolidCraft version from `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## Ownership
 
-The repository has three test layers:
+Forge uses five explicit stages:
 
-1. `scpf/tests/` contains **library unit tests** for Forge API, validation and
-   compiler behaviour.
-2. `examples/<case>/tests/` contains **integration tests** for one concrete
-   example and its generated SolidCraft command contract.
-3. Native **qualification** proves the saved SolidCraft model, geometry,
-   saved-design behaviour where applicable, and visual result.
+1. **`tool_build`** builds/packages the Python Forge tool.
+2. **`tool_test`** runs the Forge/SCPF unit-test suite.
+3. **`tool_verify`** runs an example and verifies the generated SolidCraft
+   command contract.
+4. **`model_verify`** executes that command contract in SolidCraft and verifies
+   the resulting model.
+5. **`tool_qualification`** records that the tool and every required model
+   verification passed for this Forge/SolidCraft combination.
 
-Each supported `examples/<case>` folder is one `tool.cad.ci` item. The
-generic CI tool does not understand any of the meanings above. Forge supplies
-the commands and interprets their output.
+`tool.cad.ci` is generic. It does not understand these stage names; Forge owns
+their meaning and commands.
+
+## Tool item
+
+The `scpf` CI item owns:
+
+- `tool_build`: build one installable Forge wheel;
+- `tool_test`: run the Forge unit tests.
+
+The tool item output is reusable like any other generic CI item.
 
 ## Example item
 
-An example item has two ordered steps:
+Each supported `examples/<case>` folder owns one CI item with two ordered
+steps:
 
-- `integration`: run the example-owned tests and compile the replayable
-  SolidCraft command document;
-- `native`: resume that same item at native replay in the immutable
-  qualification image, then evaluate, inspect, render, mutate when required,
-  validate, and gate the result.
+- `tool_verify`: run the example-owned contract tests and compile the
+  replayable SolidCraft command document;
+- `model_verify`: execute the compiled document in SolidCraft, measure and
+  inspect the model, run saved-design mutation when required, render expected
+  views, and write the model result.
 
-The item keeps all output below its own mirrored build path. The final native
-step writes:
+The final per-model result is:
 
-`case/native/<slug>/qualification-result.json`
+`case/model_verify/<slug>/qualification-result.json`
 
-The result schema uses semantic checks:
+Its semantic checks include:
 
-- `integration`
-- `native_model`
+- `tool_verify`
+- `model_verify`
 - `geometry`
 - `saved_design`
 - `visual`
 
-There are no numbered qualification levels in the current result contract.
+## Tool qualification
+
+`qualification/tool_qualification/ci.yml` depends on the Forge tool item and
+all registered examples. Its `tool_qualification` step performs no CAD work.
+It checks the completed dependency results and writes one aggregate
+`tool-qualification.json`.
+
+Therefore "qualified" means that the tool built, the unit tests passed, and all
+required model verifications passed against the selected SolidCraft version.
 
 ## Saved-design checks
 
-A saved-design check is required only when the case claims that a relationship
-must recompute after editing the saved native design. Examples include parameter
-expressions, attachment values, topology-following relationships and native
-feature parameters.
+A saved-design check is required only when a case claims that a relationship
+must recompute after editing the saved SolidCraft design. The case registry
+records this as `saved_design_required`.
 
-The case registry records this as `saved_design_required`. A required case
-must have one reusable mutation in `qualification/native_cases.py`.
-The native validator reports `saved_design: pass|fail`; a case that does not
+A required case has one reusable mutation in `qualification/native_cases.py`.
+The model validator reports `saved_design: pass|fail`; a case that does not
 need mutation reports `not-required`.
 
 ## Shared geometry proof
 
 `qualification/geometry_contracts.py` owns the machine-readable geometry
-target. Native validation, independent references and expected-shape rendering
+target. Model validation, independent references and expected-shape rendering
 consume the same target.
 
 Bounds alone are used only when they prove the intended shape. Cases with
@@ -67,37 +82,35 @@ internal or ambiguous geometry add volume, surface-distance or other declared
 checks. Visual regression is additional evidence, not a replacement for
 geometric checks.
 
-## Selection and gates
+## Selection
 
-`qualification/impact.py` maps changed paths to affected example cases.
-`scripts/forge_scope.py` chooses one semantic gate:
+`qualification/impact.py` maps changed paths to affected examples.
+`scripts/forge_scope.py` then selects one target stage:
 
-- `preflight`: no technical CAD item needs to run;
-- `affected-integration`: selected examples run through integration only;
-- `affected-native`: selected examples run through native qualification;
-- `full-native`: all supported examples plus required shared evidence items.
+- `none`
+- `tool_verify`
+- `model_verify`
+- `tool_qualification`
 
-Unknown technical inputs fail safe to `full-native`.
+Unknown technical inputs fail safe to `tool_qualification`.
 
-Library and integration checks are the normal edit loop. Native qualification is
-run only when the change can affect native SolidCraft behaviour or when a full
-safety/release gate is required.
+Reference and diagram verification are independent shared items. They are run
+when their inputs change and as part of a complete qualification run.
 
 ## References
 
 Every qualification case may have independent PythonSCAD, pyBOSL2, CadQuery and
 build123d comparison implementations. These are comparison models, not Forge
-specifications. The independent reference-suite is its own generic CI item and
-runs only when Forge policy requires it.
+specifications. The independent reference-suite is its own generic CI item.
 
 A reference exception is allowed only for a documented technical mismatch.
-Missing required reference evidence fails qualification.
+Missing required reference evidence fails the relevant verification.
 
 ## Build and Pages
 
 Technical item output is durable build data. Website rendering is Forge-owned
 presentation. `tool.cad.ci` owns the generic build-store and generated-branch
-publication mechanisms; it does not interpret qualification results.
+publication mechanisms; it does not interpret Forge verification results.
 
 Presentation-only changes may reuse the latest passing technical baseline.
 Provenance must preserve the source commit and evidence commit separately.

@@ -1,4 +1,4 @@
-"""Selected native qualification metadata must cover every saved-design case."""
+"""Model verification metadata must cover every saved-design case."""
 
 from pathlib import Path
 import re
@@ -22,8 +22,8 @@ from scpf.version import TESTED_SOLIDCRAFT_VERSION
 ROOT = Path(__file__).resolve().parents[2]
 
 
-class NativeRuntimeMetadataTests(unittest.TestCase):
-    def test_every_case_has_native_validator(self):
+class ModelVerificationMetadataTests(unittest.TestCase):
+    def test_every_case_has_model_validator(self):
         self.assertEqual(set(VALIDATORS), set(CASE_SLUGS))
 
     def test_every_saved_design_case_has_one_reusable_mutation(self):
@@ -68,10 +68,10 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
 
     def test_post_build_runner_executes_every_registered_inspection(self):
         with tempfile.TemporaryDirectory() as tmp:
-            native_root = Path(tmp) / "native"
+            model_root = Path(tmp) / "model_verify"
             summary = Path(tmp) / "post-build.tsv"
             for slug in POST_BUILD_INSPECTIONS:
-                case_root = native_root / slug
+                case_root = model_root / slug
                 case_root.mkdir(parents=True)
                 (case_root / "model.sc").write_text(
                     "test model",
@@ -82,7 +82,7 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
                 "qualification.run_post_build_inspections.subprocess.run"
             ) as run:
                 run_post_build_inspections(
-                    native_root,
+                    model_root,
                     summary,
                     solidcraft_cli="solidcraft-test",
                 )
@@ -92,7 +92,7 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
             for slug, spec in POST_BUILD_INSPECTIONS.items():
                 with self.subTest(case=slug):
                     expected_output = str(
-                        native_root / slug / spec["output"]
+                        model_root / slug / spec["output"]
                     )
                     matching = [
                         args for args in calls
@@ -107,10 +107,10 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
 
     def test_post_build_runner_can_limit_to_selected_cases(self):
         with tempfile.TemporaryDirectory() as tmp:
-            native_root = Path(tmp) / "native"
+            model_root = Path(tmp) / "model_verify"
             summary = Path(tmp) / "post-build.tsv"
             slug = next(iter(POST_BUILD_INSPECTIONS))
-            case_root = native_root / slug
+            case_root = model_root / slug
             case_root.mkdir(parents=True)
             (case_root / "model.sc").write_text("test model", encoding="utf-8")
 
@@ -118,7 +118,7 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
                 "qualification.run_post_build_inspections.subprocess.run"
             ) as run:
                 run_post_build_inspections(
-                    native_root,
+                    model_root,
                     summary,
                     solidcraft_cli="solidcraft-test",
                     cases=(slug,),
@@ -144,12 +144,12 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
                 workflow,
             )
 
-    def test_documented_native_version_uses_forge_target(self):
-        native = next(
+    def test_documented_model_verify_version_uses_forge_target(self):
+        model_verify = next(
             row for row in QUALIFICATION_LEVELS
-            if row[0] == "Native model"
+            if row[0] == "Model verify"
         )
-        self.assertIn(f"SolidCraft {TESTED_SOLIDCRAFT_VERSION}", native[2])
+        self.assertIn(f"SolidCraft {TESTED_SOLIDCRAFT_VERSION}", model_verify[2])
 
         def strings(value):
             if isinstance(value, str):

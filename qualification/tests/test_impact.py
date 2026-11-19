@@ -1,4 +1,4 @@
-"""Tests for risk classification and deterministic affected-case selection."""
+"""Tests for deterministic Forge impact and target-stage selection."""
 
 from pathlib import Path
 import tempfile
@@ -10,49 +10,49 @@ from qualification.impact import (
     case_input_hash,
     classify,
     classify_path,
-    final_gate,
+    target_stage,
 )
 
 
 class ImpactTests(unittest.TestCase):
-    def test_presentation_is_cheap(self):
+    def test_presentation_needs_no_tool_stage(self):
         paths = ["site/build.py", "docs/11-generated-output.md"]
         self.assertEqual(classify(paths), "presentation")
         self.assertEqual(affected_cases(paths), ())
-        self.assertEqual(final_gate(paths, ()), "preflight")
+        self.assertEqual(target_stage(paths, ()), "none")
 
-    def test_unknown_path_fails_safe(self):
+    def test_unknown_path_fails_safe_to_tool_qualification(self):
         self.assertEqual(classify_path("mystery/input.bin"), "unknown")
         self.assertEqual(
-            final_gate(["mystery/input.bin"], ()),
-            "full-native",
+            target_stage(["mystery/input.bin"], ()),
+            "tool_qualification",
         )
 
-    def test_foundational_compiler_change_selects_all_cases(self):
+    def test_foundational_compiler_change_selects_all_cases_and_qualification(self):
         cases = affected_cases(["scpf/scpf/compiler.py"])
         self.assertGreater(len(cases), 10)
         self.assertEqual(
-            final_gate(["scpf/scpf/compiler.py"], cases),
-            "full-native",
+            target_stage(["scpf/scpf/compiler.py"], cases),
+            "tool_qualification",
         )
 
-    def test_direct_scpf_case_change_selects_native_gate_for_one_case(self):
+    def test_direct_forge_example_change_selects_model_verify(self):
         paths = ["examples/simple-box/scpf/model.py"]
         self.assertEqual(affected_cases(paths), ("simple-box",))
         self.assertEqual(
-            final_gate(paths, ("simple-box",)),
-            "affected-native",
+            target_stage(paths, ("simple-box",)),
+            "model_verify",
         )
 
-    def test_reference_case_change_stays_case_scoped(self):
+    def test_reference_example_change_selects_tool_verify(self):
         paths = ["examples/simple-box/cadquery/model.py"]
         self.assertEqual(affected_cases(paths), ("simple-box",))
         self.assertEqual(
-            final_gate(paths, ("simple-box",)),
-            "affected-integration",
+            target_stage(paths, ("simple-box",)),
+            "tool_verify",
         )
 
-    def test_example_integration_change_selects_its_case(self):
+    def test_example_test_change_selects_its_case(self):
         cases = affected_cases(["examples/slot-family/tests/test_contract.py"])
         self.assertIn("slot-family", cases)
 
@@ -61,12 +61,9 @@ class ImpactTests(unittest.TestCase):
         self.assertIn("scpf/scpf/compiler.py", deps)
         self.assertIn("scpf/scpf/replay.py", deps)
 
-    def test_hash_changes_when_case_source_changes(self):
+    def test_case_hash_has_stable_sha256_shape(self):
         original = case_input_hash("simple-box")
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            # A minimal copy is intentionally not enough to resolve the full
-            # dependency closure; this test only proves stable prefix/format.
+        with tempfile.TemporaryDirectory():
             self.assertTrue(original.startswith("sha256:"))
             self.assertEqual(len(original), len("sha256:") + 64)
 

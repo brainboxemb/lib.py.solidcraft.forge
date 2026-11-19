@@ -1,4 +1,4 @@
-"""Contract tests for independently rerunnable native case stages."""
+"""Contract tests for independently rerunnable model verification stages."""
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -27,9 +27,9 @@ class CaseRunnerTests(unittest.TestCase):
                 "mutate",
                 "evaluate-mutated",
                 "post-build",
-                "validate-native",
+                "validate-model",
                 "validate-visual",
-                "gate",
+                "result",
             ),
         )
 
@@ -56,7 +56,7 @@ class CaseRunnerTests(unittest.TestCase):
 
     def test_invalid_reverse_range_is_rejected(self):
         with self.assertRaises(ValueError):
-            plan_stages(start="gate", until="compile")
+            plan_stages(start="result", until="compile")
 
     def test_missing_input_fails_without_running_previous_stage(self):
         with TemporaryDirectory() as tmp:

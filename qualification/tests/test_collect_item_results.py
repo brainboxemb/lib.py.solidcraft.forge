@@ -30,7 +30,7 @@ class CollectItemResultsTests(unittest.TestCase):
                 {"status": "pass"},
             )
             write_json(
-                case / "native/simple-box/validation.json",
+                case / "model_verify/simple-box/validation.json",
                 {"geometry": "pass", "saved_design": "pass"},
             )
 
@@ -42,11 +42,11 @@ class CollectItemResultsTests(unittest.TestCase):
                 (out / "stages/simple-box/01-compile.json").is_file()
             )
             self.assertTrue(
-                (out / "native/simple-box/validation.json").is_file()
+                (out / "model_verify/simple-box/validation.json").is_file()
             )
             self.assertFalse((out / "qualification/case-evidence").exists())
 
-    def test_materialize_rejects_integration_only_item(self):
+    def test_materialize_rejects_tool_verify_only_item(self):
         with TemporaryDirectory() as temp:
             root = Path(temp)
             item = root / "build/examples/simple-box"

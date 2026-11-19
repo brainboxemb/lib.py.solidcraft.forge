@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Translate a semantic Forge gate into the transitional generated-build form.
+"""Package completed Forge verification output for the transitional build format.
 
-Native and integration execution already happens through tool.cad.ci items.
-This module only keeps the old generated-build adapter working until the build
-and Pages cut-over removes that format completely.
+Verification itself is owned by the generic item steps. This adapter only
+translates completed item output until the Pages/publication update removes the
+old generated-build format.
 """
 
 from __future__ import annotations
@@ -33,10 +33,10 @@ def run(command: list[str], *, cwd: Path = ROOT) -> None:
     subprocess.run(command, cwd=cwd, check=True)
 
 
-def selected_cases(value: str, gate: str) -> tuple[str, ...]:
-    """Resolve the concrete example set selected by Forge policy."""
+def selected_cases(value: str, stage: str) -> tuple[str, ...]:
+    """Return cases represented by the current verification stage."""
 
-    if gate == "full-native":
+    if stage == "tool_qualification":
         return tuple(TECHNICAL_CASE_SLUGS)
 
     selected = (
@@ -48,14 +48,29 @@ def selected_cases(value: str, gate: str) -> tuple[str, ...]:
         if value.strip()
         else ()
     )
-    if gate in {"affected-integration", "affected-native"} and not selected:
-        raise ValueError(f"{gate} requires supported affected cases")
+    if stage == "model_verify" and not selected:
+        raise ValueError("model_verify requires at least one selected case")
     return selected
+
+
+def publication_level(
+    stage: str,
+    *,
+    verify_references: bool,
+    verify_diagrams: bool,
+) -> str:
+    """Return the transitional build-manifest strength label."""
+
+    if stage in {"tool_verify", "model_verify", "tool_qualification"}:
+        return stage
+    if verify_references or verify_diagrams:
+        return "evidence"
+    return "none"
 
 
 def assemble_build(
     *,
-    gate: str,
+    stage: str,
     cases: tuple[str, ...],
     out: Path,
     build_out: Path,
@@ -65,17 +80,19 @@ def assemble_build(
     pull_request: int | None,
     base_commit: str | None,
     workflow_run_id: str,
+    verify_references: bool = False,
+    verify_diagrams: bool = False,
 ) -> None:
-    """Package already-produced item output for the transitional build format."""
+    """Package already-produced item output for the current site adapter."""
 
-    if gate == "preflight":
+    level = publication_level(
+        stage,
+        verify_references=verify_references,
+        verify_diagrams=verify_diagrams,
+    )
+    if level == "none":
         return
-    level = {
-        "regenerate-derived": "derived",
-        "affected-integration": "integration",
-        "affected-native": "native",
-        "full-native": "full-native",
-    }[gate]
+
     run(
         [
             sys.executable,
@@ -121,7 +138,11 @@ def main() -> int:
     """Expose the transitional build adapter for local diagnostics."""
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--gate", required=True)
+    parser.add_argument(
+        "--stage",
+        choices=("none", "tool_verify", "model_verify", "tool_qualification"),
+        required=True,
+    )
     parser.add_argument("--cases", default="")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--source-sha", required=True)
@@ -131,19 +152,20 @@ def main() -> int:
     parser.add_argument("--pull-request", type=int)
     parser.add_argument("--base-commit")
     parser.add_argument("--workflow-run-id")
-    # Kept for CLI compatibility during the cut-over; execution is item-owned.
-    parser.add_argument("--reference-smoke", action="store_true")
+    parser.add_argument("--verify-references", action="store_true")
+    parser.add_argument("--verify-diagrams", action="store_true")
     args = parser.parse_args()
 
-    cases = selected_cases(args.cases, args.gate)
+    cases = selected_cases(args.cases, args.stage)
     if not args.build_out:
         return 0
     if not (args.source_ref and args.workflow_run_id):
         raise SystemExit("--build-out requires --source-ref and --workflow-run-id")
     if args.scope == "pr" and not args.pull_request:
         raise SystemExit("--scope pr requires --pull-request")
+
     assemble_build(
-        gate=args.gate,
+        stage=args.stage,
         cases=cases,
         out=args.out,
         build_out=args.build_out,
@@ -153,6 +175,8 @@ def main() -> int:
         pull_request=args.pull_request,
         base_commit=args.base_commit,
         workflow_run_id=args.workflow_run_id,
+        verify_references=args.verify_references,
+        verify_diagrams=args.verify_diagrams,
     )
     return 0
 

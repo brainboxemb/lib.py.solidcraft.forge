@@ -2,7 +2,7 @@
 """Run CI owned by one Forge example item.
 
 The generic CI tool supplies the item identity and output directory. Forge owns
-the integration tests, command compilation, native SolidCraft runtime and all
+the tool verification tests, command compilation, SolidCraft model execution and all
 qualification checks.
 """
 
@@ -57,8 +57,8 @@ def qualification_image() -> str:
     return value
 
 
-def run_integration() -> None:
-    """Run the example command-contract tests, then compile its command JSON."""
+def run_tool_verify() -> None:
+    """Verify the example command contract and compile its SolidCraft command JSON."""
 
     slug = item_slug()
     tests = ROOT / "examples" / slug / "tests"
@@ -92,8 +92,8 @@ def run_integration() -> None:
     )
 
 
-def run_native() -> None:
-    """Resume the compiled case at native replay inside the selected image."""
+def run_model_verify() -> None:
+    """Execute and verify the compiled model inside the selected SolidCraft image."""
 
     slug = item_slug()
     out = case_output()
@@ -147,13 +147,13 @@ def main() -> int:
     """Dispatch the example-owned CI operation."""
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("operation", choices=("integration", "native"))
+    parser.add_argument("operation", choices=("tool_verify", "model_verify"))
     args = parser.parse_args()
 
-    if args.operation == "integration":
-        run_integration()
+    if args.operation == "tool_verify":
+        run_tool_verify()
     else:
-        run_native()
+        run_model_verify()
     return 0
 
 

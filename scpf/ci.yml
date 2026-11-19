@@ -1,0 +1,16 @@
+# Build and unit-test the Forge Python tool itself.
+id: forge-tool
+kind: tool
+watch:
+  - scpf/scpf/**
+  - scpf/tests/**
+  - scpf/pyproject.toml
+  - scripts/tool_ci.py
+strategy:
+  reuse: true
+steps:
+  - id: tool_build
+    run: [python, ../scripts/tool_ci.py, tool_build]
+    outputs: [dist]
+  - id: tool_test
+    run: [python, ../scripts/tool_ci.py, tool_test]

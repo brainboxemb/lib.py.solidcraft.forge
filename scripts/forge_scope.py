@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Plan one Forge Actions run from event metadata and changed paths."""
+"""Plan one Forge Actions run from event metadata and changed paths.
+
+The planner returns concrete Forge work: a target verification stage, selected
+example cases and optional shared evidence checks. It does not invent a second
+"gate" vocabulary.
+"""
 
 from __future__ import annotations
 
@@ -12,23 +17,14 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from qualification.impact import affected_cases, changed_paths, classify, final_gate
+from qualification.impact import affected_cases, changed_paths, classify, target_stage
 from qualification.preview_scope import reference_smoke_reasons
 
 
 WEEKLY_FULL_CRON = "17 3 * * 1"
 RECONCILE_CRON = "41 4 * * *"
 FORGE_TRIGGER = ".github/workflows/forge.trigger"
-REQUIRED_LEVEL = {
-    "preflight": "",
-    "regenerate-derived": "derived",
-    "affected-integration": "integration",
-    "affected-native": "native",
-    "full-native": "full-native",
-}
 
-# Workflow/orchestration-only changes prove the complete machinery with one
-# real native case instead of requalifying the entire catalog.
 PIPELINE_PATHS = frozenset(
     {
         ".github/workflows/forge.yml",
@@ -52,6 +48,7 @@ PIPELINE_PATHS = frozenset(
         "qualification/item_gate.py",
         "qualification/reference_suite/ci.yml",
         "qualification/diagrams/ci.yml",
+        "qualification/tool_qualification/ci.yml",
         "qualification/tests/test_item_gate.py",
         "qualification/tests/test_tool_cad_ci_migration.py",
         "scripts/release/publish_release.py",
@@ -75,6 +72,8 @@ def _norm(path: str) -> str:
 
 
 def contract_snapshot_required(paths: tuple[str, ...] | list[str]) -> bool:
+    """Return whether the pinned SolidCraft command snapshot must be checked."""
+
     for raw in paths:
         path = _norm(raw)
         if path in CONTRACT_FILES:
@@ -87,6 +86,8 @@ def contract_snapshot_required(paths: tuple[str, ...] | list[str]) -> bool:
 
 
 def pipeline_only(paths: tuple[str, ...] | list[str]) -> bool:
+    """Return whether changes affect only CI orchestration/presentation."""
+
     normalized = tuple(_norm(path) for path in paths)
     if not normalized:
         return False
@@ -96,11 +97,28 @@ def pipeline_only(paths: tuple[str, ...] | list[str]) -> bool:
         if path in PIPELINE_PATHS:
             has_pipeline_change = True
             continue
-        kind = classify((path,))
-        if kind in {"presentation", "publication"}:
+        if classify((path,)) in {"presentation", "publication"}:
             continue
         return False
     return has_pipeline_change
+
+
+def empty_plan(operation: str) -> dict:
+    """Return a no-technical-work plan for cleanup/reconcile operations."""
+
+    return {
+        "operation": operation,
+        "risk": "presentation",
+        "stage": "none",
+        "cases": "",
+        "verify_references": False,
+        "verify_diagrams": False,
+        "verify_pipeline": False,
+        "verify_contracts": False,
+        "needs_image": False,
+        "site_only": False,
+        "release": False,
+    }
 
 
 def make_plan(
@@ -113,35 +131,13 @@ def make_plan(
     schedule: str = "",
     paths: tuple[str, ...] | list[str] | None = None,
 ) -> dict:
+    """Return the concrete Forge work required for one workflow event."""
+
     if event_name == "pull_request" and event_action == "closed":
-        return {
-            "operation": "cleanup",
-            "risk": "presentation",
-            "gate": "preflight",
-            "required_level": "",
-            "cases": "",
-            "reference_smoke": False,
-            "pipeline_smoke": False,
-            "contracts": False,
-            "needs_image": False,
-            "site_only": False,
-            "release": False,
-        }
+        return empty_plan("cleanup")
 
     if event_name == "schedule" and schedule == RECONCILE_CRON:
-        return {
-            "operation": "reconcile",
-            "risk": "presentation",
-            "gate": "preflight",
-            "required_level": "",
-            "cases": "",
-            "reference_smoke": False,
-            "pipeline_smoke": False,
-            "contracts": False,
-            "needs_image": False,
-            "site_only": False,
-            "release": False,
-        }
+        return empty_plan("reconcile")
 
     if event_name == "workflow_dispatch" and ref_name != "main":
         raise ValueError("manual Forge qualification is only allowed on main")
@@ -152,12 +148,12 @@ def make_plan(
         return {
             "operation": "main",
             "risk": "foundational",
-            "gate": "full-native",
-            "required_level": "full-native",
+            "stage": "tool_qualification",
             "cases": "",
-            "reference_smoke": True,
-            "pipeline_smoke": False,
-            "contracts": False,
+            "verify_references": True,
+            "verify_diagrams": True,
+            "verify_pipeline": False,
+            "verify_contracts": False,
             "needs_image": True,
             "site_only": False,
             "release": False,
@@ -173,54 +169,60 @@ def make_plan(
     else:
         selected_paths = tuple(_norm(path) for path in paths)
 
-    contracts = contract_snapshot_required(selected_paths)
-    pipeline_smoke = pipeline_only(selected_paths)
+    verify_contracts = contract_snapshot_required(selected_paths)
+    verify_pipeline = pipeline_only(selected_paths)
 
     if event_name == "push" and FORGE_TRIGGER in selected_paths:
-        gate = "full-native"
         cases = ()
         risk = "foundational"
-        reference_smoke = True
-        pipeline_smoke = False
-    elif pipeline_smoke:
-        gate = "preflight"
+        stage = "tool_qualification"
+        verify_references = True
+        verify_diagrams = True
+        verify_pipeline = False
+    elif verify_pipeline:
         cases = ()
         risk = "publication"
-        reference_smoke = False
+        stage = "none"
+        verify_references = False
+        verify_diagrams = False
     else:
         cases = affected_cases(selected_paths)
         risk = classify(selected_paths)
-        gate = final_gate(selected_paths, cases)
-        reference_smoke = bool(reference_smoke_reasons(selected_paths))
-
-    # Stable build/main is a native-qualified baseline. A main promotion may
-    # not replace a previously native case with only integration evidence.
-    if event_name == "push" and gate == "affected-integration":
-        gate = "affected-native"
+        stage = target_stage(selected_paths, cases)
+        verify_references = bool(reference_smoke_reasons(selected_paths))
+        verify_diagrams = risk == "derived"
 
     operation = "pr" if event_name == "pull_request" else "main"
-    site_only = operation == "main" and gate == "preflight"
-    needs_image = (
-        gate in {"regenerate-derived", "affected-native", "full-native"}
-        or reference_smoke
-        or pipeline_smoke
-        or contracts
-    )
 
-    release = (
-        operation == "main"
-        and "scpf/pyproject.toml" in selected_paths
+    # Stable main never replaces a model-verified result with only tool_verify.
+    if operation == "main" and stage == "tool_verify":
+        stage = "model_verify"
+
+    if stage == "tool_qualification":
+        verify_references = True
+        verify_diagrams = True
+
+    site_only = operation == "main" and stage == "none" and not (
+        verify_references or verify_diagrams
     )
+    needs_image = (
+        stage in {"model_verify", "tool_qualification"}
+        or verify_references
+        or verify_diagrams
+        or verify_pipeline
+        or verify_contracts
+    )
+    release = operation == "main" and "scpf/pyproject.toml" in selected_paths
 
     return {
         "operation": operation,
         "risk": risk,
-        "gate": gate,
-        "required_level": REQUIRED_LEVEL[gate],
+        "stage": stage,
         "cases": ",".join(cases),
-        "reference_smoke": reference_smoke,
-        "pipeline_smoke": pipeline_smoke,
-        "contracts": contracts,
+        "verify_references": verify_references,
+        "verify_diagrams": verify_diagrams,
+        "verify_pipeline": verify_pipeline,
+        "verify_contracts": verify_contracts,
         "needs_image": needs_image,
         "site_only": site_only,
         "release": release,

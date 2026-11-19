@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Assemble a Forge native gate from completed tool.cad.ci item output.
+"""Assemble publication input from completed Forge CI items.
 
-Example items already contain the real case stages. Reference and diagram
-evidence are separate generic items. This module only translates those
-consumer-owned outputs into the transitional Forge build shape still used by
-the current site publisher.
+Model verification, tool qualification, reference checks and diagrams are
+already complete when this adapter runs. It only copies consumer-owned outputs
+into the transitional site/build shape.
 """
 
 from __future__ import annotations
@@ -22,9 +21,6 @@ if str(ROOT) not in sys.path:
 
 from qualification.collect_item_results import collect_from_items
 from scripts.verification_gate import assemble_build, selected_cases
-
-
-NATIVE_GATES = {"affected-native", "full-native"}
 
 
 def copy_completed_item_output(
@@ -59,12 +55,13 @@ def copy_completed_item_output(
 
 def execute(
     *,
-    gate: str,
+    stage: str,
     cases_value: str,
     out: Path,
     build_out: Path,
     source_sha: str,
-    reference_smoke: bool,
+    verify_references: bool,
+    verify_diagrams: bool,
     scope: str,
     source_ref: str,
     pull_request: int | None,
@@ -74,27 +71,26 @@ def execute(
 ) -> tuple[str, ...]:
     """Collect completed CI items and assemble current publication input."""
 
-    if gate not in NATIVE_GATES:
-        raise ValueError(f"item native gate does not support {gate}")
-    cases = selected_cases(cases_value, gate)
+    cases = selected_cases(cases_value, stage)
 
-    collect_from_items(
-        build_root=build_root,
-        out=out,
-        cases=cases,
-        source_sha=source_sha,
-    )
+    if stage in {"model_verify", "tool_qualification"}:
+        collect_from_items(
+            build_root=build_root,
+            out=out,
+            cases=cases,
+            source_sha=source_sha,
+        )
+    else:
+        out.mkdir(parents=True, exist_ok=True)
 
-    # These are normal generic CI items. Forge knows what their files mean;
-    # tool.cad.ci only guarantees that the item output is complete and current.
-    if reference_smoke or gate == "full-native":
+    if verify_references:
         copy_completed_item_output(
             build_root=build_root,
             item_path=Path("qualification/reference_suite"),
             output_name="references",
             destination=out / "references",
         )
-    if gate == "full-native":
+    if verify_diagrams:
         copy_completed_item_output(
             build_root=build_root,
             item_path=Path("qualification/diagrams"),
@@ -103,7 +99,7 @@ def execute(
         )
 
     assemble_build(
-        gate=gate,
+        stage=stage,
         cases=cases,
         out=out,
         build_out=build_out,
@@ -113,21 +109,28 @@ def execute(
         pull_request=pull_request,
         base_commit=base_commit,
         workflow_run_id=workflow_run_id,
+        verify_references=verify_references,
+        verify_diagrams=verify_diagrams,
     )
     return cases
 
 
 def main() -> int:
-    """Parse pipeline arguments and build the native gate from item output."""
+    """Parse pipeline arguments and build publication input from CI items."""
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--gate", choices=sorted(NATIVE_GATES), required=True)
+    parser.add_argument(
+        "--stage",
+        choices=("none", "tool_verify", "model_verify", "tool_qualification"),
+        required=True,
+    )
     parser.add_argument("--cases", default="")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--build-out", type=Path, required=True)
     parser.add_argument("--build-root", type=Path, default=ROOT / "build")
     parser.add_argument("--source-sha", required=True)
-    parser.add_argument("--reference-smoke", action="store_true")
+    parser.add_argument("--verify-references", action="store_true")
+    parser.add_argument("--verify-diagrams", action="store_true")
     parser.add_argument("--scope", choices=("main", "pr"), required=True)
     parser.add_argument("--source-ref", required=True)
     parser.add_argument("--pull-request", type=int)
@@ -139,13 +142,14 @@ def main() -> int:
         raise SystemExit("--scope pr requires --pull-request")
 
     execute(
-        gate=args.gate,
+        stage=args.stage,
         cases_value=args.cases,
         out=args.out,
         build_out=args.build_out,
         build_root=args.build_root,
         source_sha=args.source_sha,
-        reference_smoke=args.reference_smoke,
+        verify_references=args.verify_references,
+        verify_diagrams=args.verify_diagrams,
         scope=args.scope,
         source_ref=args.source_ref,
         pull_request=args.pull_request,

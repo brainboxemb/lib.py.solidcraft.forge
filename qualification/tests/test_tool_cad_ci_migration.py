@@ -1,4 +1,4 @@
-"""Contract tests for the Forge tool.cad.ci migration."""
+"""Contract tests for the Forge tool.cad.ci integration."""
 
 from pathlib import Path
 import unittest
@@ -24,8 +24,8 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         )
         self.assertEqual(sha, TOOL_COMMIT)
 
-    def test_root_config_discovers_owned_test_and_case_folders(self):
-        """Forge keeps integration and native case ownership beside examples."""
+    def test_root_config_discovers_tool_examples_and_qualification(self):
+        """Each Forge responsibility has one consumer-owned generic CI item."""
 
         config = yaml.safe_load(
             (ROOT / "cad-ci.yml").read_text(encoding="utf-8")
@@ -33,45 +33,30 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertEqual(
             config["items"],
             [
-                "scpf/tests",
+                "scpf",
                 "examples/*",
                 "qualification/reference_suite",
                 "qualification/diagrams",
+                "qualification/tool_qualification",
             ],
         )
 
-        library = yaml.safe_load(
-            (ROOT / "scpf/tests/ci.yml").read_text(encoding="utf-8")
-        )
-        case = yaml.safe_load(
-            (ROOT / "examples/simple-box/ci.yml").read_text(
-                encoding="utf-8"
-            )
-        )
+    def test_forge_tool_item_has_build_then_unit_test(self):
+        """The Python tool itself has explicit build and unit-test stages."""
 
-        self.assertEqual(library["kind"], "library-test")
-        self.assertEqual(case["kind"], "example")
-        self.assertEqual(
-            [step["id"] for step in case["steps"]],
-            ["integration", "native"],
+        tool = yaml.safe_load(
+            (ROOT / "scpf/ci.yml").read_text(encoding="utf-8")
         )
+        self.assertEqual(tool["id"], "forge-tool")
         self.assertEqual(
-            case["steps"][0]["outputs"],
-            [
-                "case/simple-box.json",
-                "case/stages/simple-box/01-compile.json",
-            ],
+            [step["id"] for step in tool["steps"]],
+            ["tool_build", "tool_test"],
         )
-        self.assertEqual(
-            case["steps"][1]["outputs"],
-            [
-                "case/native/simple-box",
-                "case/stages/simple-box/11-gate.json",
-            ],
-        )
+        self.assertEqual(tool["steps"][0]["outputs"], ["dist"])
+        self.assertFalse((ROOT / "scpf/tests/ci.yml").exists())
 
-    def test_every_supported_case_has_one_example_item(self):
-        """Every native case has one non-overlapping example-owned CI item."""
+    def test_every_supported_example_has_tool_and_model_verification(self):
+        """One example item owns command verification and SolidCraft verification."""
 
         for slug in supported_case_slugs():
             with self.subTest(slug=slug):
@@ -84,14 +69,14 @@ class ToolCadCiMigrationTests(unittest.TestCase):
                 self.assertEqual(config["kind"], "example")
                 self.assertEqual(
                     [step["id"] for step in config["steps"]],
-                    ["integration", "native"],
+                    ["tool_verify", "model_verify"],
                 )
                 self.assertEqual(
                     config["steps"][0]["run"],
                     [
                         "python",
                         "../../scripts/example_ci.py",
-                        "integration",
+                        "tool_verify",
                     ],
                 )
                 self.assertEqual(
@@ -99,16 +84,45 @@ class ToolCadCiMigrationTests(unittest.TestCase):
                     [
                         "python",
                         "../../scripts/example_ci.py",
-                        "native",
+                        "model_verify",
                     ],
                 )
                 self.assertIn(
-                    f"case/stages/{slug}/11-gate.json",
+                    f"case/model_verify/{slug}",
+                    config["steps"][1]["outputs"],
+                )
+                self.assertIn(
+                    f"case/stages/{slug}/11-result.json",
                     config["steps"][1]["outputs"],
                 )
 
-    def test_shared_example_runner_uses_tool_identity_and_output_path(self):
-        """SolidCraft runtime semantics remain in Forge's shared runner."""
+    def test_tool_qualification_depends_on_tool_and_all_models(self):
+        """Qualification aggregates passing dependencies instead of rerunning CAD."""
+
+        config = yaml.safe_load(
+            (
+                ROOT / "qualification/tool_qualification/ci.yml"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(config["id"], "tool-qualification")
+        self.assertEqual(
+            [step["id"] for step in config["steps"]],
+            ["tool_qualification"],
+        )
+        self.assertIn("forge-tool", config["needs"])
+        self.assertEqual(
+            set(config["needs"]) - {"forge-tool"},
+            set(supported_case_slugs()),
+        )
+
+        script = (
+            ROOT / "scripts/tool_qualification.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("model_verify", script)
+        self.assertNotIn("solidcraft-cli", script)
+
+    def test_example_runner_uses_tool_identity_and_runner_user(self):
+        """SolidCraft model verification stays Forge-owned and writable."""
 
         script = (
             ROOT / "scripts/example_ci.py"
@@ -116,78 +130,48 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertIn("CAD_CI_ITEM", script)
         self.assertIn("CAD_CI_OUTPUT", script)
         self.assertIn("qualification/case_runner.py", script)
-        self.assertIn('"--stage"', script)
-        self.assertIn('"compile"', script)
-        self.assertIn('"--from"', script)
-        self.assertIn('"replay"', script)
+        self.assertIn('"tool_verify"', script)
+        self.assertIn('"model_verify"', script)
         self.assertIn("FORGE_QUALIFICATION_IMAGE", script)
-        self.assertIn('"docker"', script)
         self.assertIn('"--user"', script)
         self.assertIn("os.getuid()", script)
         self.assertIn("os.getgid()", script)
         self.assertIn("finalize_item_result.py", script)
-        self.assertFalse((ROOT / "examples/simple-box/ci.py").exists())
 
-    def test_generated_evidence_items_are_independent_from_examples(self):
-        """Reference and diagram outputs have non-overlapping generic owners."""
-
-        references = yaml.safe_load(
-            (ROOT / "qualification/reference_suite/ci.yml").read_text(
-                encoding="utf-8"
-            )
-        )
-        diagrams = yaml.safe_load(
-            (ROOT / "qualification/diagrams/ci.yml").read_text(
-                encoding="utf-8"
-            )
-        )
-        self.assertEqual(references["id"], "reference-suite")
-        self.assertEqual(references["steps"][0]["outputs"], ["references"])
-        self.assertEqual(diagrams["id"], "qualification-diagrams")
-        self.assertEqual(diagrams["steps"][0]["outputs"], ["rendered"])
-        self.assertNotIn("scpf/scpf/**", references["watch"])
-
-    def test_workflow_only_bootstraps_the_pinned_tool(self):
-        """Selection and test execution stay in tested Python, not YAML."""
+    def test_workflow_only_bootstraps_the_generic_tool(self):
+        """Selection and execution policy stay in tested Python, not YAML."""
 
         workflow = (
             ROOT / ".github/workflows/scpf.yml"
         ).read_text(encoding="utf-8")
-        self.assertIn(
-            "python scripts/bootstrap_cad_ci.py",
-            workflow,
-        )
+        self.assertIn("python scripts/bootstrap_cad_ci.py", workflow)
         self.assertNotIn("cad-ci run", workflow)
         self.assertNotIn("cad-ci plan", workflow)
+        self.assertIn("needs.plan.outputs.stage", workflow)
+        self.assertNotIn("needs.plan.outputs.gate", workflow)
 
-    def test_new_docs_name_the_three_real_test_layers(self):
-        """Repository guidance names the three real test layers."""
+    def test_docs_use_the_five_explicit_forge_stages(self):
+        """Repository guidance exposes one understandable verification model."""
 
-        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        text = (
+            (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+            + "\n"
+            + (ROOT / "qualification/README.md").read_text(encoding="utf-8")
+        )
         for phrase in (
-            "Library unit tests",
-            "Integration tests",
-            "Qualification",
+            "tool_build",
+            "tool_test",
+            "tool_verify",
+            "model_verify",
+            "tool_qualification",
         ):
-            self.assertIn(phrase, agents)
-
-        qualification = (
-            ROOT / "qualification/README.md"
-        ).read_text(encoding="utf-8")
-        for phrase in (
-            "integration",
-            "native_model",
-            "geometry",
-            "saved_design",
-            "visual",
-        ):
-            self.assertIn(phrase, qualification)
+            self.assertIn(phrase, text)
         for legacy in (
-            "case_evidence.py",
-            "run_case_evidence.py",
-            "run_affected.py",
+            "affected-integration",
+            "affected-native",
+            "full-native",
         ):
-            self.assertFalse((ROOT / "qualification" / legacy).exists())
+            self.assertNotIn(legacy, text)
 
 
 if __name__ == "__main__":

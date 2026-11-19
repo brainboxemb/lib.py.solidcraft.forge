@@ -1,0 +1,48 @@
+# Final Forge qualification result. Dependencies must already be passing.
+id: tool-qualification
+kind: qualification
+needs:
+  - forge-tool
+  - anchor-topology-mutation
+  - anchored-holes
+  - assembly-decorator
+  - assembly-owned-anchor
+  - attach-angle
+  - bracket
+  - circle-negative-extrude
+  - circular-feature-pattern
+  - components
+  - corner-anchor
+  - eight-corner-brackets
+  - eight-flightcase-corners
+  - four-corner-l
+  - group-hierarchy
+  - hole-family
+  - parameter-scope
+  - parametric-anchor
+  - parametric-attach
+  - parametric-offset
+  - parent-derived-child-size
+  - primitive-csg
+  - rectangular-pattern
+  - repeated-parent-attachments
+  - round-top-sketch
+  - rounded-rectangle-sketch
+  - selective-profile-extrude
+  - sheet-fold
+  - simple-box
+  - sketch-pattern-mirror
+  - slot-family
+  - top-sketch-after-chamfer
+  - xz-anchor
+watch:
+  - scpf/pyproject.toml
+  - scpf/scpf/version.py
+  - qualification/cases.py
+  - scripts/tool_qualification.py
+strategy:
+  reuse: true
+steps:
+  - id: tool_qualification
+    run: [python, ../../scripts/tool_qualification.py]
+    outputs: [tool-qualification.json]

@@ -92,8 +92,8 @@ def materialize_case(
         aggregate_root / "stages" / slug,
     )
     _copy_tree(
-        case / "native" / slug,
-        aggregate_root / "native" / slug,
+        case / "model_verify" / slug,
+        aggregate_root / "model_verify" / slug,
     )
 
 

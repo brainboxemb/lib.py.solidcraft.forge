@@ -25,12 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       operation: ${{ steps.plan.outputs.operation }}
-      gate: ${{ steps.plan.outputs.gate }}
-      required_level: ${{ steps.plan.outputs.required_level }}
+      stage: ${{ steps.plan.outputs.stage }}
       cases: ${{ steps.plan.outputs.cases }}
-      reference_smoke: ${{ steps.plan.outputs.reference_smoke }}
-      pipeline_smoke: ${{ steps.plan.outputs.pipeline_smoke }}
-      contracts: ${{ steps.plan.outputs.contracts }}
+      verify_references: ${{ steps.plan.outputs.verify_references }}
+      verify_diagrams: ${{ steps.plan.outputs.verify_diagrams }}
+      verify_pipeline: ${{ steps.plan.outputs.verify_pipeline }}
+      verify_contracts: ${{ steps.plan.outputs.verify_contracts }}
       needs_image: ${{ steps.plan.outputs.needs_image }}
       release: ${{ steps.plan.outputs.release }}
     steps:
@@ -153,13 +153,6 @@ jobs:
           cache-from: type=gha,scope=qualification-image
           cache-to: type=gha,mode=max,scope=qualification-image
 
-      - name: Publish newly built qualification image
-        if: needs.plan.outputs.needs_image == 'true' && steps.image_cache.outputs.exists != 'true'
-        run: |
-          docker tag \
-            "qualification-local:${{ steps.image.outputs.image_id }}" \
-            "${{ steps.image.outputs.reference }}"
-          docker push "${{ steps.image.outputs.reference }}"
       - name: Run Forge pipeline
         id: pipeline
         run: |
@@ -169,13 +162,13 @@ jobs:
             --base-sha "$BASE_SHA" \
             --source-ref "$SOURCE_REF" \
             --pull-request "$PR_NUMBER" \
-            --gate "${{ needs.plan.outputs.gate }}" \
+            --stage "${{ needs.plan.outputs.stage }}" \
             --cases "${{ needs.plan.outputs.cases }}" \
-            --required-level "${{ needs.plan.outputs.required_level }}" \
-            --reference-smoke "${{ needs.plan.outputs.reference_smoke }}" \
-            --pipeline-smoke "${{ needs.plan.outputs.pipeline_smoke }}" \
+            --verify-references "${{ needs.plan.outputs.verify_references }}" \
+            --verify-diagrams "${{ needs.plan.outputs.verify_diagrams }}" \
+            --verify-pipeline "${{ needs.plan.outputs.verify_pipeline }}" \
             --image-built "${{ steps.image_cache.outputs.exists == 'false' }}" \
-            --contracts "${{ needs.plan.outputs.contracts }}" \
+            --verify-contracts "${{ needs.plan.outputs.verify_contracts }}" \
             --image "${{ steps.image_cache.outputs.run_image }}" \
             --solidcraft-version "${{ steps.image.outputs.solidcraft }}" \
             --repository "$GITHUB_REPOSITORY" \

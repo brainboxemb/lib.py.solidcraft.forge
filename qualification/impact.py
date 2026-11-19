@@ -37,7 +37,7 @@ RISK_ORDER = {
     "publication": 1,
     "derived": 2,
     "case": 3,
-    "native-sensitive": 4,
+    "model-sensitive": 4,
     "foundational": 5,
     "toolchain": 6,
     "unknown": 7,
@@ -238,20 +238,20 @@ def classify_path(path: str) -> str:
     if path in FOUNDATIONAL_MODULES:
         return "foundational"
     if path.startswith("scpf/scpf/") and path.endswith(".py"):
-        return "native-sensitive"
+        return "model-sensitive"
     if path in GLOBAL_CASE_INPUTS:
         return "foundational"
     if path.startswith("examples/"):
         parts = PurePosixPath(path).parts
         if len(parts) >= 3 and parts[2] == "scpf":
-            return "native-sensitive"
+            return "model-sensitive"
         return "case"
     if path.startswith("qualification/"):
         if any(path.startswith(prefix) for prefix in DERIVED_PATH_PREFIXES):
             return "derived"
         if path.startswith("qualification/tests/"):
             return "case"
-        return "native-sensitive"
+        return "model-sensitive"
     if path in PUBLICATION_PATHS or path.startswith("site/tests/"):
         return "publication"
     if path.startswith(".github/workflows/"):
@@ -272,17 +272,20 @@ def classify(paths: tuple[str, ...] | list[str]) -> str:
     return max(classes, key=RISK_ORDER.__getitem__)
 
 
-def final_gate(paths: tuple[str, ...] | list[str], cases: tuple[str, ...]) -> str:
+def target_stage(
+    paths: tuple[str, ...] | list[str],
+    cases: tuple[str, ...],
+) -> str:
+    """Return the highest explicit Forge stage required by changed paths."""
+
     risk = classify(paths)
-    if risk in {"presentation", "publication"}:
-        return "preflight"
-    if risk == "derived":
-        return "regenerate-derived"
+    if risk in {"presentation", "publication", "derived"}:
+        return "none"
     if risk == "case":
-        return "affected-integration" if cases else "full-native"
-    if risk == "native-sensitive":
-        return "affected-native" if cases else "full-native"
-    return "full-native"
+        return "tool_verify" if cases else "tool_qualification"
+    if risk == "model-sensitive":
+        return "model_verify" if cases else "tool_qualification"
+    return "tool_qualification"
 
 
 def _hash_file(hasher, path: Path, repo_root: Path) -> None:
@@ -365,20 +368,20 @@ def main() -> int:
     paths = changed_paths(args.base, args.head)
     cases = affected_cases(paths)
     risk = classify(paths)
-    gate = final_gate(paths, cases)
+    stage = target_stage(paths, cases)
     print("Changed paths:")
     for path in paths:
         print(f"  - {path}")
     print(f"Risk class: {risk}")
     print("Affected cases: " + (", ".join(cases) if cases else "none"))
-    print(f"Final gate: {gate}")
+    print(f"Target stage: {stage}")
 
     if args.github_output:
         with args.github_output.open("a", encoding="utf-8") as handle:
             handle.write(f"risk={risk}\n")
             handle.write(f"cases={','.join(cases)}\n")
             handle.write(f"has_cases={'true' if cases else 'false'}\n")
-            handle.write(f"final_gate={gate}\n")
+            handle.write(f"stage={stage}\n")
     return 0
 
 

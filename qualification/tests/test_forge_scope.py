@@ -1,4 +1,4 @@
-"""Tests for the single Forge workflow planner."""
+"""Tests for Forge planning with explicit verification stages."""
 
 from __future__ import annotations
 
@@ -23,127 +23,97 @@ class ForgeScopeTests(unittest.TestCase):
     def setUp(self):
         self.scope = load_scope()
 
-    def test_pr_presentation_change_is_preflight_only(self):
+    def test_presentation_change_needs_no_tool_stage(self):
         plan = self.scope.make_plan(
             event_name="pull_request",
             paths=("docs/changes/0041-single-forge-workflow.md",),
         )
         self.assertEqual(plan["operation"], "pr")
-        self.assertEqual(plan["gate"], "preflight")
+        self.assertEqual(plan["stage"], "none")
         self.assertFalse(plan["needs_image"])
 
-    def test_pipeline_only_change_uses_one_native_smoke_not_full_catalog(self):
+    def test_pipeline_change_runs_pipeline_verification(self):
         plan = self.scope.make_plan(
             event_name="pull_request",
             paths=(
                 ".github/workflows/scpf.yml",
                 "scripts/forge_scope.py",
                 "scripts/forge_pipeline.py",
-                "scripts/ci_preflight.py",
-                "qualification/tests/test_forge_pipeline.py",
-                "site/tests/test_qualification_image.py",
-                "AGENTS.md",
             ),
         )
-        self.assertEqual(plan["gate"], "preflight")
-        self.assertTrue(plan["pipeline_smoke"])
+        self.assertEqual(plan["stage"], "none")
+        self.assertTrue(plan["verify_pipeline"])
         self.assertTrue(plan["needs_image"])
 
-    def test_generic_evidence_ci_change_uses_pipeline_smoke(self):
-        plan = self.scope.make_plan(
-            event_name="pull_request",
-            paths=(
-                "cad-ci.yml",
-                "scripts/qualification_evidence_ci.py",
-                "qualification/reference_suite/ci.yml",
-                "qualification/diagrams/ci.yml",
-            ),
-        )
-        self.assertEqual(plan["gate"], "preflight")
-        self.assertTrue(plan["pipeline_smoke"])
-        self.assertTrue(plan["needs_image"])
-
-    def test_derived_diagram_change_resolves_native_image(self):
+    def test_diagram_change_selects_diagram_verification(self):
         plan = self.scope.make_plan(
             event_name="pull_request",
             paths=("qualification/diagrams/corner-bracket-goal.cadcraft.json",),
         )
-        self.assertEqual(plan["gate"], "regenerate-derived")
+        self.assertEqual(plan["stage"], "none")
+        self.assertTrue(plan["verify_diagrams"])
         self.assertTrue(plan["needs_image"])
 
-    def test_native_case_change_selects_affected_native(self):
+    def test_example_model_change_selects_model_verify(self):
         plan = self.scope.make_plan(
             event_name="pull_request",
             paths=("examples/simple-box/scpf/model.py",),
         )
-        self.assertEqual(plan["gate"], "affected-native")
+        self.assertEqual(plan["stage"], "model_verify")
         self.assertEqual(plan["cases"], "simple-box")
 
-    def test_main_never_promotes_integration_only_case_evidence(self):
-        pr = self.scope.make_plan(
+    def test_reference_change_selects_tool_verify_on_pr(self):
+        plan = self.scope.make_plan(
             event_name="pull_request",
             paths=("examples/simple-box/build123d/model.py",),
         )
-        main = self.scope.make_plan(
+        self.assertEqual(plan["stage"], "tool_verify")
+        self.assertEqual(plan["cases"], "simple-box")
+        self.assertTrue(plan["verify_references"])
+
+    def test_main_never_replaces_model_result_with_tool_verify_only(self):
+        plan = self.scope.make_plan(
             event_name="push",
             ref_name="main",
             paths=("examples/simple-box/build123d/model.py",),
         )
-        self.assertEqual(pr["gate"], "affected-integration")
-        self.assertTrue(pr["reference_smoke"])
-        self.assertEqual(main["gate"], "affected-native")
-        self.assertEqual(main["cases"], "simple-box")
+        self.assertEqual(plan["stage"], "model_verify")
+        self.assertEqual(plan["cases"], "simple-box")
 
-    def test_main_presentation_change_reuses_existing_build(self):
-        plan = self.scope.make_plan(
-            event_name="push",
-            ref_name="main",
-            paths=("site/style.css",),
-        )
-        self.assertEqual(plan["gate"], "preflight")
-        self.assertTrue(plan["site_only"])
-
-    def test_forge_trigger_forces_full_main(self):
+    def test_trigger_selects_tool_qualification(self):
         plan = self.scope.make_plan(
             event_name="push",
             ref_name="main",
             paths=(".github/workflows/forge.trigger",),
         )
-        self.assertEqual(plan["gate"], "full-native")
-        self.assertTrue(plan["needs_image"])
-        self.assertFalse(plan["site_only"])
+        self.assertEqual(plan["stage"], "tool_qualification")
+        self.assertTrue(plan["verify_references"])
+        self.assertTrue(plan["verify_diagrams"])
 
-    def test_manual_run_is_full_recovery_without_release(self):
+    def test_manual_main_run_selects_tool_qualification(self):
         plan = self.scope.make_plan(
             event_name="workflow_dispatch",
             ref_name="main",
         )
-        self.assertEqual(plan["gate"], "full-native")
+        self.assertEqual(plan["stage"], "tool_qualification")
         self.assertFalse(plan["release"])
 
-    def test_main_version_change_is_release_candidate(self):
+    def test_version_change_is_release_candidate_and_tool_qualification(self):
         plan = self.scope.make_plan(
             event_name="push",
             ref_name="main",
             paths=("scpf/pyproject.toml", "CHANGELOG.md"),
         )
-        self.assertEqual(plan["gate"], "full-native")
+        self.assertEqual(plan["stage"], "tool_qualification")
         self.assertTrue(plan["release"])
 
-    def test_manual_run_off_main_is_rejected(self):
-        with self.assertRaisesRegex(ValueError, "only allowed on main"):
-            self.scope.make_plan(
-                event_name="workflow_dispatch",
-                ref_name="feature/test",
-            )
-
-    def test_weekly_schedule_is_full(self):
+    def test_weekly_schedule_selects_tool_qualification(self):
         plan = self.scope.make_plan(
             event_name="schedule",
             schedule=self.scope.WEEKLY_FULL_CRON,
         )
         self.assertEqual(plan["operation"], "main")
-        self.assertEqual(plan["gate"], "full-native")
+        self.assertEqual(plan["stage"], "tool_qualification")
 
     def test_daily_schedule_is_reconcile_only(self):
         plan = self.scope.make_plan(
@@ -151,6 +121,7 @@ class ForgeScopeTests(unittest.TestCase):
             schedule=self.scope.RECONCILE_CRON,
         )
         self.assertEqual(plan["operation"], "reconcile")
+        self.assertEqual(plan["stage"], "none")
 
     def test_closed_pr_is_cleanup_only(self):
         plan = self.scope.make_plan(
@@ -159,12 +130,12 @@ class ForgeScopeTests(unittest.TestCase):
         )
         self.assertEqual(plan["operation"], "cleanup")
 
-    def test_contract_snapshot_needs_image(self):
+    def test_contract_snapshot_requires_solidcraft_image(self):
         plan = self.scope.make_plan(
             event_name="pull_request",
             paths=("docs/vendor/solidcraft/0.42.0/runtime/contracts/solid.box.json",),
         )
-        self.assertTrue(plan["contracts"])
+        self.assertTrue(plan["verify_contracts"])
         self.assertTrue(plan["needs_image"])
 
 

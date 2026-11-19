@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Normalize one or more completed Forge example outputs.
 
-The result schema uses the checks Forge actually performs: integration,
-native-model, geometry, saved-design and visual checks. Historical Q-number
+The result schema uses the checks Forge actually performs: tool_verify,
+model_verify, geometry, saved-design and visual checks. Historical Q-number
 labels are intentionally not part of this contract.
 """
 
@@ -112,7 +112,7 @@ def collect(
 
     output_root = Path(output_root)
     stages_root = output_root / "stages"
-    native_root = output_root / "native"
+    model_root = output_root / "model_verify"
     selected = (
         tuple(case["slug"] for case in QUALIFICATION_CASES)
         if cases is None
@@ -134,14 +134,14 @@ def collect(
         if slug not in selected_set:
             continue
 
-        case_dir = native_root / slug
+        case_dir = model_root / slug
         case_dir.mkdir(parents=True, exist_ok=True)
         validation = _read_json(case_dir / "validation.json")
         visual = _read_json(case_dir / "visual-validation.json")
 
         compile_status = _stage_status(stages_root, slug, "compile")
         command_count = _command_count(output_root, slug)
-        integration_status = (
+        tool_verify_status = (
             "pass"
             if compile_status == "pass" and command_count is not None
             else "fail"
@@ -149,16 +149,16 @@ def collect(
             else "missing"
         )
 
-        native_stage_statuses = {
+        model_stage_statuses = {
             name: _stage_status(stages_root, slug, name)
-            for name in ("replay", "evaluate", "gate")
+            for name in ("replay", "evaluate", "result")
         }
-        if all(value == "pass" for value in native_stage_statuses.values()):
-            native_status = "pass"
-        elif "fail" in native_stage_statuses.values():
-            native_status = "fail"
+        if all(value == "pass" for value in model_stage_statuses.values()):
+            model_verify_status = "pass"
+        elif "fail" in model_stage_statuses.values():
+            model_verify_status = "fail"
         else:
-            native_status = "missing"
+            model_verify_status = "missing"
 
         geometry_status = _normal_status(validation.get("geometry"))
         saved_required = mutation_spec(slug) is not None
@@ -173,7 +173,7 @@ def collect(
 
         images = _existing_names(case_dir, ("*.png",))
         images.sort(key=lambda name: (name != "model.png", name))
-        native_files = _existing_names(
+        model_files = _existing_names(
             case_dir,
             (
                 "results*.json",
@@ -193,16 +193,16 @@ def collect(
         )
 
         checks = {
-            "integration": {
-                "status": integration_status,
+            "tool_verify": {
+                "status": tool_verify_status,
                 "commands": command_count,
             },
-            "native_model": {
-                "status": native_status,
-                "stages": native_stage_statuses,
+            "model_verify": {
+                "status": model_verify_status,
+                "stages": model_stage_statuses,
                 "evidence": [
                     name
-                    for name in native_files
+                    for name in model_files
                     if name in {"results.json", "model.sc", "model.step"}
                 ],
             },
@@ -210,7 +210,7 @@ def collect(
                 "status": geometry_status,
                 "evidence": [
                     name
-                    for name in native_files
+                    for name in model_files
                     if name.startswith("measurements")
                     or name.startswith("joint-")
                     or name == "results-bom.json"
@@ -229,7 +229,7 @@ def collect(
                 "evidence": (
                     [
                         name
-                        for name in native_files
+                        for name in model_files
                         if name in {
                             mutation_spec(slug)["save"],
                             mutation_spec(slug)["measurements"],
@@ -247,7 +247,7 @@ def collect(
                 "images": images,
                 "evidence": [
                     name
-                    for name in native_files
+                    for name in model_files
                     if name == "visual-validation.json"
                     or name.startswith("visual-diff-")
                     or name.startswith("goal-")
@@ -259,12 +259,12 @@ def collect(
         blocked_reason = case.get("blocked_reason")
         if blocked_reason:
             for name, check in checks.items():
-                if name != "integration":
+                if name != "tool_verify":
                     check["status"] = "blocked"
 
         required = [
-            checks["integration"]["status"],
-            checks["native_model"]["status"],
+            checks["tool_verify"]["status"],
+            checks["model_verify"]["status"],
             checks["geometry"]["status"],
             checks["visual"]["status"],
         ]
@@ -294,7 +294,7 @@ def collect(
             "blocked_reason": blocked_reason,
             "checks": checks,
             "evidence": {
-                "native_files": native_files,
+                "model_files": model_files,
                 "images": images,
             },
         }

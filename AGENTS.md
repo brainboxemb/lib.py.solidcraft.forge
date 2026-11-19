@@ -82,35 +82,30 @@ important flow without reconstructing it from implementation details.
 
 ## TEST LAYERS
 
-Use three test layers. Do not use numbered qualification levels.
+Use one explicit Forge verification model:
 
-1. **Library unit tests** under `scpf/tests/` prove Forge API, validation and
-   compiler behaviour.
-2. **Integration tests** under `examples/<case>/tests/` prove a concrete
-   example and its generated SolidCraft command contract.
-3. **Qualification** proves the native SolidCraft model, geometry,
-   saved-design behaviour when required, and visual result.
+1. **`tool_build`** builds/packages the Python Forge tool.
+2. **`tool_test`** runs Forge/SCPF unit tests.
+3. **`tool_verify`** runs an example and verifies the generated SolidCraft
+   command contract. This step does not judge a SolidCraft model.
+4. **`model_verify`** executes that example in SolidCraft and verifies the
+   resulting model, geometry, saved-design behaviour when required and visuals.
+5. **`tool_qualification`** is the final aggregate result: the Forge tool and
+   every required model verification passed for the selected SolidCraft version.
 
-Each `examples/<case>` folder owns one generic `tool.cad.ci` item. Its
-`integration` step is cheap and host-side. Its `native` step resumes from
-the compiled command document in the immutable SolidCraft qualification image.
-The structured result uses semantic checks: `integration`, `native_model`,
-`geometry`, `saved_design`, and `visual`.
+Do not introduce a second vocabulary such as integration/native gates or
+numbered qualification levels. The planner selects concrete cases plus the
+highest stage they need.
 
-`tool.cad.ci` must not know what qualification means. It only plans and runs
+Each `examples/<case>` folder owns one generic `tool.cad.ci` item with
+`tool_verify` and `model_verify` steps. The `scpf` item owns
+`tool_build` and `tool_test`. The `tool-qualification` item depends on the
+tool item plus every registered example and only writes the aggregate result.
+
+`tool.cad.ci` must not know what these names mean. It only plans and runs
 items/steps, records reusable state, owns generic build storage, and publishes
-generic build/Pages trees. Forge owns case selection, native runtime choice,
-all qualification checks, and the website content.
-
-Before implementing any foundational compiler change:
-
-1. read these constraints first;
-2. read `docs/05-cad-api-design.md`;
-3. check the relevant current design/change record;
-4. if an implementation would violate any rule above, stop the implementation
-   and fix/clarify the design record first.
-
-# SCPF repository instructions
+generic build/Pages trees. Forge owns stage meaning, case selection, SolidCraft
+runtime choice, model checks, and website content.
 
 ## Read the minimum context
 
@@ -164,13 +159,13 @@ semantically.
 6. Update derived user documentation/examples.
 7. Keep a model's command-contract tests under `examples/<case>/tests/`.
    Keep only qualification-tooling tests under `qualification/tests/`.
-8. Run the relevant library unit tests and affected integration examples first, then only affected native qualification items while iterating.
-9. Run the full native qualification gate before promotion/release.
+8. Run tool_build/tool_test first, then affected examples through tool_verify and only the required model_verify steps while iterating.
+9. Run tool_qualification before promotion/release.
 
 When sibling methods use the same public selector or option type, treat that as
 one API. Put shared validation/resolution in one code path where practical and
 cover every supported variant with unit tests for every applicable sibling
-method. A product-specific model or native qualification case does not replace
+method. A product-specific model or model verification case does not replace
 that unit-test matrix.
 
 Forge describes CAD intent and lowers it to SolidCraft commands. SolidCraft is
@@ -198,34 +193,34 @@ comment. Do not fake associativity with unexplained coordinates.
 ## Verification scope
 
 Do not run every model after every edit. `qualification/impact.py` and
-`scripts/forge_scope.py` select the smallest safe scope from changed paths.
+`scripts/forge_scope.py` select concrete example cases and one target stage.
 
-| Gate | When | What runs |
+| Target stage | When | What runs |
 | --- | --- | --- |
-| `preflight` | Presentation/publication-only work | Python/workflow/site contract checks only |
-| `affected-integration` | Example/reference work that needs no native SolidCraft proof | Library tests plus selected example integration items |
-| `affected-native` | Native/geometry-sensitive changes | Selected example items through their native step |
-| `full-native` | Foundational compiler/runtime changes, SolidCraft promotion, release, scheduled safety run | Every registered example plus required reference/diagram items |
+| `none` | Presentation/publication-only work | Repository/site contracts only |
+| `tool_verify` | Example/reference work that only changes generated commands | `tool_build`, `tool_test`, then selected examples through `tool_verify` |
+| `model_verify` | A change can affect SolidCraft model behaviour | Selected examples continue through `model_verify` |
+| `tool_qualification` | Foundational compiler/runtime changes, SolidCraft promotion, release, scheduled safety run | Tool build/test plus every registered example through `model_verify`, then the aggregate qualification result |
+
+Shared reference and diagram verification are selected independently when their
+inputs change or when `tool_qualification` runs.
 
 Case selection rules:
 
 - A changed `examples/<case>/...` path selects that case.
 - Example-owned tests under `examples/<case>/tests/` belong to that same case.
 - Forge modules map to affected cases through `qualification/impact.py`.
-  Unknown or unmapped technical inputs fail safe to `full-native`.
-- Site/docs/workflow-only changes select no CAD case.
+  Unknown or unmapped technical inputs fail safe to `tool_qualification`.
+- Site/docs/workflow-only changes select no model case.
 - Reference-library changes are owned by the independent reference-suite item.
-- The canonical per-case result is
-  `native/<case>/qualification-result.json`, schema v5. It contains semantic
-  checks, not numbered levels.
-- Stage-state JSON is rerun/debug evidence. It is not a second qualification
-  result format.
+- The canonical per-model result is
+  `model_verify/<case>/qualification-result.json`.
+- Stage-state JSON is rerun/debug evidence. It is not a second result format.
 - Presentation-only Pages builds may reuse older passing technical evidence.
-  The site source commit and evidence commit may therefore differ; provenance
-  must state both.
+  Provenance must state source and evidence commits separately.
 
-The operator never chooses a numbered qualification level.
-`scripts/forge_scope.py` owns the risk decision. Workflows stay thin:
+The operator does not choose a verification stage manually.
+`scripts/forge_scope.py` derives it from changed paths. Workflows stay thin:
 GitHub-specific setup belongs in Actions; repository behaviour belongs in
 tested Python modules.
 
@@ -247,7 +242,7 @@ state. Change `.github/workflows/forge.trigger` on `main`, or use the
 parameterless **Run workflow** action on `main`. Both fully qualify the exact
 current `main` commit before replacing `build/main` and stable Pages.
 
-The operator never chooses integration/native/full-native. `scripts/forge_scope.py` owns the
+The operator never chooses tool_verify/model_verify/tool_qualification. `scripts/forge_scope.py` owns the
 risk decision. A manual/trigger recovery is release-independent; release
 publication is considered only when an intentional package-version change
 reaches `main`.
@@ -270,14 +265,15 @@ SolidCraft are started.
 
 Keep the edit-check loop short:
 
-- Library unit tests and integration tests require no SolidCraft.
-- Native qualification supports selected cases and resumes from the compiled
-  integration output.
+- `tool_build`, `tool_test` and `tool_verify` require no SolidCraft model
+  execution.
+- `model_verify` runs only selected examples while iterating.
+- `tool_qualification` is reserved for foundational/release/safety runs and
+  aggregates already completed model results rather than inventing another CAD
+  test implementation.
 - Time compile/replay/eval/render/mutation stages before optimizing startup.
-- Reuse a persistent native process only when measurement shows it helps and
+- Reuse a persistent SolidCraft process only when measurement shows it helps and
   case isolation remains reliable.
-- `full-native` is mandatory for SolidCraft-version promotion and final
-  release/main safety qualification.
 
 A qualification case is a fixed comparison target. Do not change expected
 geometry or external reference implementations merely because Forge syntax or
@@ -321,8 +317,8 @@ When writing or changing an SCPF model:
 5. Run `python -m scpf check path/to/model.py`.
 6. Compile the model to command JSON when reviewing the generated SolidCraft
    operations.
-7. Do not describe a model as working until its relevant library and integration checks pass.
-8. Do not claim native SolidCraft behaviour unless the relevant native qualification item actually ran.
+7. Do not describe a model as working until its relevant library and tool verification checks pass.
+8. Do not claim SolidCraft model behaviour unless the relevant model verification item actually ran.
 
 A downstream CAD model such as Simple MFT belongs in the CAD model repository.
 Forge qualification models should stay small and abstract so a failure proves
@@ -412,9 +408,9 @@ pr/<number>/
 
 The item path mirrors the source path. For example,
 `examples/simple-box/cadquery/model.py` produces technical output under
-`examples/simple-box/cadquery/`; native Forge/SolidCraft output for
+`examples/simple-box/cadquery/`; Forge model-verification output for
 `examples/simple-box/scpf/model.py` lives under
-`examples/simple-box/scpf/`. Do not create top-level `native/`,
+`examples/simple-box/scpf/`. Do not create top-level `model_verify/`,
 `references/` or other producer-oriented trees on the `build` branch.
 Only cross-case reports belong under `qualification/`.
 
@@ -434,7 +430,7 @@ Rules:
 - Closing a PR removes both generated PR directories. A merged technical PR
   promotes its verified overlay before cleanup.
 - Normal technical merge promotion replaces only affected case/implementation
-  directories in the complete `build/main/` baseline. A scheduled/manual full-native safety run may rebuild the complete baseline.
+  directories in the complete `build/main/` baseline. A scheduled/manual tool_qualification safety run may rebuild the complete baseline.
 - Replacing the stable Pages root must preserve `previews/`.
 - `preview-output` and `qualified-output` are not part of the architecture.
   Do not publish new data to them.
@@ -442,7 +438,7 @@ Rules:
   the stable Pages root merely to stage publication.
 - `gh-pages/qualification/` is the public readable qualification section.
   It contains HTML, documentation source and presentation-only material.
-  Generated commands, native files, renders, measurements and reference
+  Generated commands, model verification files, renders, measurements and reference
   evidence belong on `build`; public qualification pages link to that output.
 - A presentation-only PR does not create `build/pr/<number>/`. Its Pages
   preview reuses the latest qualified `build/main/` evidence.
@@ -482,6 +478,6 @@ normal development. Do not create or move release tags manually.
 
 For a release, follow `docs/10-release-process.md`: prepare a normal release
 PR, bump only `scpf/pyproject.toml`, date the changelog section and merge only
-after the required PR verification. The resulting version change on `main` selects `full-native` in the same **Forge** workflow. Only after that exact main
+after the required PR verification. The resulting version change on `main` selects `tool_qualification` in the same **Forge** workflow. Only after that exact main
 run succeeds may its release job create the source/evidence tags and GitHub
 Release.

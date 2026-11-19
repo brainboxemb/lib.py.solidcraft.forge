@@ -13,15 +13,15 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from qualification.impact import affected_cases, changed_paths, final_gate
+from qualification.impact import affected_cases, changed_paths, classify, target_stage
 from scripts.generated_output import load_manifest, promote_overlay
 
 
 REQUIRED_LEVEL = {
-    "regenerate-derived": "derived",
-    "affected-integration": "integration",
-    "affected-native": "native",
-    "full-native": "full-native",
+    "tool_verify": "tool_verify",
+    "model_verify": "model_verify",
+    "tool_qualification": "tool_qualification",
+    "evidence": "evidence",
 }
 
 
@@ -52,14 +52,15 @@ def prepare(
 ) -> dict:
     paths = changed_paths(base_sha, head_sha)
     cases = affected_cases(paths)
-    gate = final_gate(paths, cases)
+    stage = target_stage(paths, cases)
+    risk = classify(paths)
     result = {
-        "technical": gate != "preflight",
+        "technical": risk not in {"presentation", "publication"},
         "current_main": current_main_sha,
         "merge_is_current_main": merge_sha == current_main_sha,
         "release_candidate": "scpf/pyproject.toml" in paths,
         "cases": ",".join(cases),
-        "final_gate": gate,
+        "target_stage": stage,
         "tree_match": tree_sha(head_sha) == tree_sha(merge_sha),
         "promotable": False,
     }
@@ -81,10 +82,10 @@ def prepare(
     if not result["tree_match"]:
         return result
 
-    required = REQUIRED_LEVEL.get(gate)
+    required = REQUIRED_LEVEL.get(stage if stage != "none" else "evidence")
     if not required:
         raise RuntimeError(
-            f"technical merge has unsupported final gate {gate}"
+            f"technical merge has unsupported target stage {stage}"
         )
     promote_overlay(
         build_root / "main",

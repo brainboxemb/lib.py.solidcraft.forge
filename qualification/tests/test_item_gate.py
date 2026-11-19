@@ -1,4 +1,4 @@
-"""Tests for assembling a native Forge gate from completed generic items."""
+"""Tests for assembling publication input from completed CI items."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
-from unittest.mock import call, patch
+from unittest.mock import patch
 
 from qualification import item_gate
 
@@ -24,7 +24,7 @@ def write_item(root: Path, path: str, output: str) -> None:
 
 
 class ItemGateTests(unittest.TestCase):
-    def test_execute_collects_cases_and_materializes_evidence_items(self):
+    def test_model_verify_collects_cases_and_requested_evidence(self):
         with TemporaryDirectory() as temp:
             root = Path(temp)
             build_root = root / "build"
@@ -50,13 +50,14 @@ class ItemGateTests(unittest.TestCase):
                 "assemble_build",
             ) as assemble:
                 result = item_gate.execute(
-                    gate="full-native",
-                    cases_value="",
-                    out=root / "gate",
+                    stage="model_verify",
+                    cases_value="simple-box",
+                    out=root / "result",
                     build_out=root / "build-out",
                     build_root=build_root,
                     source_sha="a" * 40,
-                    reference_smoke=False,
+                    verify_references=True,
+                    verify_diagrams=True,
                     scope="pr",
                     source_ref="feature/test",
                     pull_request=12,
@@ -67,25 +68,25 @@ class ItemGateTests(unittest.TestCase):
             self.assertEqual(result, ("simple-box",))
             collect.assert_called_once_with(
                 build_root=build_root,
-                out=root / "gate",
+                out=root / "result",
                 cases=("simple-box",),
                 source_sha="a" * 40,
             )
             self.assertEqual(
-                (root / "gate/references/evidence.txt").read_text(
+                (root / "result/references/evidence.txt").read_text(
                     encoding="utf-8"
                 ),
                 "ok\n",
             )
             self.assertEqual(
-                (root / "gate/diagrams/evidence.txt").read_text(
+                (root / "result/diagrams/evidence.txt").read_text(
                     encoding="utf-8"
                 ),
                 "ok\n",
             )
             assemble.assert_called_once()
 
-    def test_affected_native_gate_without_reference_policy_needs_no_evidence_item(self):
+    def test_tool_verify_does_not_collect_model_results(self):
         with TemporaryDirectory() as temp:
             root = Path(temp)
             with patch.object(
@@ -95,21 +96,19 @@ class ItemGateTests(unittest.TestCase):
             ), patch.object(
                 item_gate,
                 "collect_from_items",
-            ), patch.object(
-                item_gate,
-                "copy_completed_item_output",
-            ) as copy_evidence, patch.object(
+            ) as collect, patch.object(
                 item_gate,
                 "assemble_build",
             ):
                 item_gate.execute(
-                    gate="affected-native",
+                    stage="tool_verify",
                     cases_value="simple-box",
-                    out=root / "gate",
+                    out=root / "result",
                     build_out=root / "build-out",
                     build_root=root / "build",
                     source_sha="a" * 40,
-                    reference_smoke=False,
+                    verify_references=False,
+                    verify_diagrams=False,
                     scope="pr",
                     source_ref="feature/test",
                     pull_request=12,
@@ -117,15 +116,15 @@ class ItemGateTests(unittest.TestCase):
                     workflow_run_id="42",
                 )
 
-        copy_evidence.assert_not_called()
+        collect.assert_not_called()
 
-    def test_reference_smoke_materializes_only_reference_suite(self):
+    def test_reference_verification_materializes_only_reference_item(self):
         with TemporaryDirectory() as temp:
             root = Path(temp)
             with patch.object(
                 item_gate,
                 "selected_cases",
-                return_value=("simple-box",),
+                return_value=(),
             ), patch.object(
                 item_gate,
                 "collect_from_items",
@@ -137,13 +136,14 @@ class ItemGateTests(unittest.TestCase):
                 "assemble_build",
             ):
                 item_gate.execute(
-                    gate="affected-native",
-                    cases_value="simple-box",
-                    out=root / "gate",
+                    stage="none",
+                    cases_value="",
+                    out=root / "result",
                     build_out=root / "build-out",
                     build_root=root / "build",
                     source_sha="a" * 40,
-                    reference_smoke=True,
+                    verify_references=True,
+                    verify_diagrams=False,
                     scope="pr",
                     source_ref="feature/test",
                     pull_request=12,
@@ -155,27 +155,8 @@ class ItemGateTests(unittest.TestCase):
             build_root=root / "build",
             item_path=Path("qualification/reference_suite"),
             output_name="references",
-            destination=root / "gate/references",
+            destination=root / "result/references",
         )
-
-    def test_non_native_gate_is_rejected(self):
-        with TemporaryDirectory() as temp:
-            root = Path(temp)
-            with self.assertRaisesRegex(ValueError, "does not support"):
-                item_gate.execute(
-                    gate="affected-integration",
-                    cases_value="simple-box",
-                    out=root / "gate",
-                    build_out=root / "build-out",
-                    build_root=root / "build",
-                    source_sha="a" * 40,
-                    reference_smoke=False,
-                    scope="pr",
-                    source_ref="feature/test",
-                    pull_request=12,
-                    base_commit=None,
-                    workflow_run_id="42",
-                )
 
 
 if __name__ == "__main__":

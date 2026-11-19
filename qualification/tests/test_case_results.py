@@ -16,7 +16,7 @@ def write_json(path: Path, value: dict) -> None:
 
 
 def passing_case(root: Path, slug: str = "simple-box") -> None:
-    """Write the smallest complete staged/native evidence set for one case."""
+    """Write the smallest complete staged model-verification evidence set for one case."""
 
     write_json(
         root / f"{slug}.json",
@@ -26,20 +26,20 @@ def passing_case(root: Path, slug: str = "simple-box") -> None:
         (1, "compile"),
         (2, "replay"),
         (3, "evaluate"),
-        (11, "gate"),
+        (11, "result"),
     ):
         write_json(
             root / "stages" / slug / f"{number:02d}-{stage}.json",
             {"status": "pass"},
         )
 
-    native = root / "native" / slug
+    model = root / "model_verify" / slug
     write_json(
-        native / "validation.json",
+        model / "validation.json",
         {"geometry": "pass", "saved_design": "pass"},
     )
     write_json(
-        native / "visual-validation.json",
+        model / "visual-validation.json",
         {
             "status": "pass",
             "regression": {"status": "pass"},
@@ -55,9 +55,9 @@ def passing_case(root: Path, slug: str = "simple-box") -> None:
         "model.sc",
         "model.step",
     ):
-        (native / name).parent.mkdir(parents=True, exist_ok=True)
-        (native / name).write_text("{}\n", encoding="utf-8")
-    (native / "model.png").write_bytes(b"png")
+        (model / name).parent.mkdir(parents=True, exist_ok=True)
+        (model / name).write_text("{}\n", encoding="utf-8")
+    (model / "model.png").write_bytes(b"png")
 
 
 class SemanticResultTests(unittest.TestCase):
@@ -82,15 +82,15 @@ class SemanticResultTests(unittest.TestCase):
             self.assertEqual(
                 tuple(case["checks"]),
                 (
-                    "integration",
-                    "native_model",
+                    "tool_verify",
+                    "model_verify",
                     "geometry",
                     "saved_design",
                     "visual",
                 ),
             )
-            self.assertEqual(case["checks"]["integration"]["status"], "pass")
-            self.assertEqual(case["checks"]["native_model"]["status"], "pass")
+            self.assertEqual(case["checks"]["tool_verify"]["status"], "pass")
+            self.assertEqual(case["checks"]["model_verify"]["status"], "pass")
             self.assertEqual(case["checks"]["geometry"]["status"], "pass")
             self.assertEqual(case["checks"]["saved_design"]["status"], "pass")
             self.assertEqual(case["checks"]["visual"]["status"], "pass")
@@ -98,7 +98,7 @@ class SemanticResultTests(unittest.TestCase):
             persisted = json.loads(
                 (
                     root
-                    / "native/simple-box/qualification-result.json"
+                    / "model_verify/simple-box/qualification-result.json"
                 ).read_text(encoding="utf-8")
             )
             self.assertEqual(persisted["checks"], case["checks"])
@@ -121,7 +121,7 @@ class SemanticResultTests(unittest.TestCase):
                 cases=("simple-box",),
             )["cases"]["simple-box"]
 
-            self.assertEqual(case["checks"]["integration"]["status"], "missing")
+            self.assertEqual(case["checks"]["tool_verify"]["status"], "missing")
             self.assertEqual(case["status"], "incomplete")
 
     def test_failed_geometry_check_fails_case(self):
@@ -129,7 +129,7 @@ class SemanticResultTests(unittest.TestCase):
             root = Path(temp)
             passing_case(root)
             write_json(
-                root / "native/simple-box/validation.json",
+                root / "model_verify/simple-box/validation.json",
                 {"geometry": "fail", "saved_design": "pass"},
             )
 

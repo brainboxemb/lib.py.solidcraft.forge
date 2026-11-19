@@ -38,7 +38,7 @@ def load_provenance_module():
 
 
 class SiteEvidenceTests(unittest.TestCase):
-    def test_each_case_resolves_its_own_native_verification_state(self):
+    def test_each_case_resolves_its_own_model_verification_state(self):
         evidence = load_site_evidence()
         manifest = {
             "cases": {
@@ -46,7 +46,7 @@ class SiteEvidenceTests(unittest.TestCase):
                     "implementations": {
                         "scpf": {
                             "status": "pass",
-                            "verification_level": "full-native",
+                            "verification_level": "tool_qualification",
                         }
                     }
                 },
@@ -54,7 +54,7 @@ class SiteEvidenceTests(unittest.TestCase):
                     "implementations": {
                         "scpf": {
                             "status": "pass",
-                            "verification_level": "integration",
+                            "verification_level": "tool_verify",
                         }
                     }
                 },
@@ -71,16 +71,16 @@ class SiteEvidenceTests(unittest.TestCase):
             manifest, "missing-case"
         )
 
-        self.assertEqual(first_record["verification_level"], "full-native")
+        self.assertEqual(first_record["verification_level"], "tool_qualification")
         self.assertTrue(first_verified)
-        self.assertEqual(second_record["verification_level"], "integration")
+        self.assertEqual(second_record["verification_level"], "tool_verify")
         self.assertFalse(second_verified)
         self.assertIsNone(missing_record)
         self.assertFalse(missing_verified)
 
-    def test_native_verification_levels_are_explicit(self):
+    def test_model_verification_levels_are_explicit(self):
         evidence = load_site_evidence()
-        for level in ("native", "full-native"):
+        for level in ("model_verify", "tool_qualification"):
             with self.subTest(level=level):
                 record, verified = evidence.scpf_case_state(
                     {
@@ -199,7 +199,7 @@ class SitePublishingContractTests(unittest.TestCase):
         self.assertIn('"build.json"', pipeline)
         self.assertIn('"main"', pipeline)
 
-    def test_forge_recovery_trigger_is_repository_native_and_release_independent(self):
+    def test_forge_recovery_trigger_is_repository_owned_and_release_independent(self):
         workflow = (ROOT / ".github/workflows/scpf.yml").read_text()
         trigger = (ROOT / ".github" / "workflows" / "forge.trigger").read_text()
         planner = (ROOT / "scripts/forge_scope.py").read_text()

@@ -31,11 +31,11 @@ SCHEMA_VERSION = 2
 TECHNICAL_CASE_SLUGS = supported_case_slugs()
 ALLOWED_BUILD_TOP_LEVEL = {"build.json", "examples", "qualification"}
 LEVEL_RANK = {
-    "preflight": 0,
-    "derived": 0,
-    "integration": 1,
-    "native": 2,
-    "full-native": 3,
+    "none": 0,
+    "evidence": 0,
+    "tool_verify": 1,
+    "model_verify": 2,
+    "tool_qualification": 3,
     "reference": 1,
 }
 
@@ -84,7 +84,7 @@ def _selected_cases(value: str | None, output_root: Path, repo_root: Path) -> tu
     for path in output_root.glob("*.json"):
         if _known_case(repo_root, path.stem):
             detected.add(path.stem)
-    for base in ("native", "references", "reference-smoke"):
+    for base in ("model_verify", "references", "reference-smoke"):
         root = output_root / base
         if root.is_dir():
             detected.update(
@@ -158,9 +158,9 @@ def assemble_build(
                 destination / "examples" / slug / "scpf" / "solidcraft.json",
             )
 
-        native = output_root / "native" / slug
-        if native.is_dir():
-            _copy_tree(native, destination / "examples" / slug / "scpf")
+        model = output_root / "model_verify" / slug
+        if model.is_dir():
+            _copy_tree(model, destination / "examples" / slug / "scpf")
 
         scpf_target = destination / "examples" / slug / "scpf"
         if scpf_target.is_dir():
@@ -210,10 +210,10 @@ def assemble_build(
     diagrams = output_root / "diagrams"
     _copy_tree(diagrams, destination / "qualification" / "diagrams")
 
-    native_verification = output_root / "native" / "verification.json"
-    if native_verification.is_file():
+    model_verification = output_root / "model_verify" / "verification.json"
+    if model_verification.is_file():
         _copy_file(
-            native_verification,
+            model_verification,
             destination / "qualification" / "native-verification.json",
         )
 
@@ -441,7 +441,7 @@ def promote_overlay(
     except RuntimeError:
         if (
             LEVEL_RANK.get(required_level, -1)
-            >= LEVEL_RANK["full-native"]
+            >= LEVEL_RANK["tool_qualification"]
             and _complete_overlay(overlay_manifest)
         ):
             return _bootstrap_main_from_overlay(
@@ -592,10 +592,10 @@ def materialize_site_evidence(build_root: Path, destination: Path) -> None:
     verify_build(build_root)
     if destination.exists():
         shutil.rmtree(destination)
-    native = destination / "native"
+    model_verify = destination / "model_verify"
     references = destination / "references"
     diagrams = destination / "diagrams"
-    native.mkdir(parents=True)
+    model_verify.mkdir(parents=True)
     references.mkdir(parents=True)
 
     manifest = load_manifest(build_root)
@@ -603,7 +603,7 @@ def materialize_site_evidence(build_root: Path, destination: Path) -> None:
         for implementation in case.get("implementations", {}):
             source = build_root / "examples" / slug / implementation
             if implementation == "scpf":
-                _copy_tree(source, native / slug)
+                _copy_tree(source, model_verify / slug)
             else:
                 _copy_tree(source, references / slug / implementation)
 

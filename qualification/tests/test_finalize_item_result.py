@@ -14,7 +14,7 @@ class FinalizeItemResultTests(unittest.TestCase):
     def test_finalize_normalizes_existing_evidence_and_requires_pass(self):
         with TemporaryDirectory() as temp:
             out = Path(temp)
-            target = out / "native/simple-box/qualification-result.json"
+            target = out / "model_verify/simple-box/qualification-result.json"
             with patch.object(
                 finalize_item_result,
                 "collect_results",

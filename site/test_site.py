@@ -34,7 +34,7 @@ from qualification.geometry_contracts import proof_contract
 def check(
     site: Path,
     sha: str,
-    require_native: bool = False,
+    require_model_verify: bool = False,
     require_references: bool = False,
     evidence_sha: str | None = None,
     build_commit: str | None = None,
@@ -807,7 +807,7 @@ def check(
                         implementation,
                     )
                     assert html.escape(reason) in page_text, (slug, implementation)
-        if require_native:
+        if require_model_verify:
             validate_coverage_results(qualification_manifest)
             manifest_case = qualification_manifest["cases"][slug]
             result_path = site / "qualification" / slug / "qualification-result.json"
@@ -866,8 +866,8 @@ def check(
             assert "qualification-result.json" in page_text, slug
             assert "validation.json" in page_text, slug
             checks = manifest_case["checks"]
-            assert checks["integration"]["status"] == "pass", slug
-            assert checks["native_model"]["status"] == "pass", slug
+            assert checks["tool_verify"]["status"] == "pass", slug
+            assert checks["model_verify"]["status"] == "pass", slug
             assert checks["geometry"]["status"] == "pass", slug
 
             for removed_heading in (
@@ -954,11 +954,11 @@ def check(
         "python -m scpf",
     ):
         assert concept in cheatsheet, concept
-    # The library page has only tiny fixtures. CAD models and native renders
+    # The library page has only tiny fixtures. CAD models and model verification renders
     # MUST NOT be copied into this independent site.
     assert not (site / "models").exists()
     assert not (site / "previews").exists()
-    assert not list(site.rglob("native.png"))
+    assert not list(site.rglob("model-verify.png"))
     for suffix in (".sc", ".step", ".stl"):
         assert not list((site / "qualification").rglob(f"*{suffix}")), suffix
     for name in (
@@ -973,7 +973,7 @@ def check(
     qualification_by_slug = {
         case["slug"]: case for case in QUALIFICATION_CASES
     }
-    native_case_slugs = {
+    model_verify_case_slugs = {
         case["slug"] for case in QUALIFICATION_CASES
         if not case.get("blocked_reason")
     }
@@ -997,15 +997,15 @@ def check(
             assert len(commands) == info["command_count"] > 0
         image = site / info["preview"]
         assert image.is_file() and image.stat().st_size > 0
-        assert info["preview_kind"] in ("native-snapshot", "schematic")
+        assert info["preview_kind"] in ("model-verify-snapshot", "schematic")
         assert f'src="{image.name}"' in page
         assert f'examples/{slug}/{image.name}' in home
-        if require_native and slug in native_case_slugs:
-            assert info["preview_kind"] == "native-snapshot", slug
-        if info["preview_kind"] == "native-snapshot":
+        if require_model_verify and slug in model_verify_case_slugs:
+            assert info["preview_kind"] == "model-verify-snapshot", slug
+        if info["preview_kind"] == "model-verify-snapshot":
             assert image.suffix == ".png"
             assert image.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
-            assert f"Native SolidCraft {TESTED_SOLIDCRAFT_VERSION} render" in page
+            assert f"SolidCraft {TESTED_SOLIDCRAFT_VERSION} render" in page
         else:
             assert image.suffix == ".svg"
             if blocked_reason:
@@ -1030,7 +1030,7 @@ if __name__ == "__main__":
     check(
         Path(sys.argv[1]),
         sys.argv[2],
-        require_native="--require-native" in extra,
+        require_model_verify="--require-model-verify" in extra,
         require_references="--require-references" in extra,
         evidence_sha=evidence_sha,
         build_commit=build_commit,

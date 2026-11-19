@@ -463,8 +463,8 @@ def _qualification_status(result):
         "blocked": "BLOCKED",
     }
     names = (
-        ("integration", "Integration"),
-        ("native_model", "Native model"),
+        ("tool_verify", "Tool verify"),
+        ("model_verify", "Model verify"),
         ("geometry", "Geometry"),
         ("saved_design", "Saved design"),
         ("visual", "Visual"),
@@ -534,11 +534,11 @@ def _test_target_url(source_sha, target):
 
 
 def _render_case_test_evidence(slug, result, source_sha):
-    """Render the example-owned integration tests without legacy level labels."""
+    """Render the example-owned tool verification tests without legacy level labels."""
 
     status = (
         (result or {}).get("checks", {})
-        .get("integration", {})
+        .get("tool_verify", {})
         .get("status", "not-run")
     )
     label = {
@@ -1263,7 +1263,7 @@ def render_template(name, **values):
 def build(
     out,
     sha,
-    native_root=None,
+    model_verify_root=None,
     diagram_root=None,
     reference_evidence_root=None,
     evidence_sha=None,
@@ -1274,7 +1274,7 @@ def build(
     """Compile the public site and attach verified qualification evidence.
 
     sha is the current site/source commit. evidence_sha is the already
-    qualified Forge/API commit that produced native/reference evidence.
+    qualified Forge/API commit that produced model/reference evidence.
     They are normally equal; site-only rebuilds may reuse older evidence.
     """
     global ACTIVE_BUILD_COMMIT
@@ -1299,16 +1299,16 @@ def build(
             "qualified_at": build_manifest_data.get("generated_at") or "mixed per-case evidence",
         }
 
-    if native_root is not None and not build_manifest_data:
-        meta_file = native_root / "verification.json"
+    if model_verify_root is not None and not build_manifest_data:
+        meta_file = model_verify_root / "verification.json"
         if not meta_file.is_file():
-            raise ValueError("Native directory is missing verification.json")
+            raise ValueError("Model verification directory is missing verification.json")
         metadata = json.loads(meta_file.read_text(encoding="utf-8"))
         verified = (metadata.get("source_commit") == evidence_sha
                     and metadata.get("verified") is True
                     and metadata.get("solidcraft_version") == TESTED_SOLIDCRAFT_VERSION)
         if not verified:
-            raise ValueError("Native screenshots do not match the qualification evidence commit")
+            raise ValueError("Model verification screenshots do not match the qualification evidence commit")
         if not metadata.get("forge_version") or not metadata.get("qualified_at"):
             raise ValueError("Native verification is missing Forge version or qualification time")
 
@@ -1370,8 +1370,8 @@ def build(
             fallback_verified=verified,
         )
         screenshot = (
-            native_root / slug / "model.png"
-            if case_verified and native_root is not None and not blocked_reason
+            model_verify_root / slug / "model.png"
+            if case_verified and model_verify_root is not None and not blocked_reason
             else None
         )
         if (
@@ -1381,9 +1381,9 @@ def build(
         ):
             shutil.copyfile(screenshot, dest / "preview.png")
             preview_path = "preview.png"
-            preview_kind = "native-snapshot"
+            preview_kind = "model-verify-snapshot"
             preview_caption = (
-                f"Native SolidCraft {TESTED_SOLIDCRAFT_VERSION} render, "
+                f"SolidCraft {TESTED_SOLIDCRAFT_VERSION} render, "
                 "verified against this source commit."
             )
         else:
@@ -1395,7 +1395,7 @@ def build(
                 if blocked_reason
                 else (
                     "Schematic illustration only; this example is not part of the "
-                    "current native screenshot set."
+                    "current model verification screenshot set."
                 )
             )
         manifest["examples"][slug] = {"source": f"examples/{slug}/model.py",
@@ -2108,8 +2108,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         )
 
         native_case = (
-            native_root / slug
-            if case_verified and native_root is not None
+            model_verify_root / slug
+            if case_verified and model_verify_root is not None
             else None
         )
         native_files = []
@@ -2222,7 +2222,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                     f'<img src="{escape(case_preview_url)}" '
                     f'alt="{escape(case["title"])} native SolidCraft preview">'
                     '</a>'
-                    '<figcaption>Native SolidCraft preview from the generated build output.</figcaption>'
+                    '<figcaption>SolidCraft preview from the generated build output.</figcaption>'
                     '</figure>'
                 )
             status, status_detail = _qualification_status(qualification_result)
@@ -2730,7 +2730,7 @@ if __name__ == "__main__":
     parser.add_argument("--out", type=Path, default=ROOT / "output" / "site")
     parser.add_argument("--source-sha", required=True)
     parser.add_argument("--evidence-sha", help="Qualified source commit for reused evidence")
-    parser.add_argument("--native", type=Path, help="Source-matched native screenshot directory")
+    parser.add_argument("--model-verify", type=Path, help="Source-matched model verification screenshot directory")
     parser.add_argument("--diagram-root", type=Path, help="Generated qualification setup diagrams")
     parser.add_argument("--references", type=Path, help="Source-matched qualification reference evidence")
     parser.add_argument(
@@ -2750,7 +2750,7 @@ if __name__ == "__main__":
     build(
         options.out,
         options.source_sha,
-        native_root=options.native,
+        model_verify_root=options.model_verify,
         diagram_root=options.diagram_root,
         reference_evidence_root=options.references,
         evidence_sha=options.evidence_sha,

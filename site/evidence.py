@@ -1,12 +1,12 @@
 """Resolve per-case generated build evidence for the public site."""
 
-NATIVE_VERIFICATION_LEVELS = frozenset(
-    {"native", "full-native"}
+MODEL_VERIFICATION_LEVELS = frozenset(
+    {"model_verify", "tool_qualification"}
 )
 
 
 def scpf_case_state(build_manifest_data, slug, *, fallback_verified=False):
-    """Return the SCPF build record and whether it carries native qualification."""
+    """Return the SCPF build record and whether it carries model verification."""
     record = (
         ((build_manifest_data.get("cases") or {}).get(slug) or {})
         .get("implementations", {})
@@ -16,7 +16,7 @@ def scpf_case_state(build_manifest_data, slug, *, fallback_verified=False):
         verified = bool(
             record
             and record.get("status") == "pass"
-            and record.get("verification_level") in NATIVE_VERIFICATION_LEVELS
+            and record.get("verification_level") in MODEL_VERIFICATION_LEVELS
         )
     else:
         verified = bool(fallback_verified)

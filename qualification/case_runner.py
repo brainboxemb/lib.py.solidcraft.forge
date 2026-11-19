@@ -52,9 +52,9 @@ STAGES = (
     "mutate",
     "evaluate-mutated",
     "post-build",
-    "validate-native",
+    "validate-model",
     "validate-visual",
-    "gate",
+    "result",
 )
 STAGE_INDEX = {name: index + 1 for index, name in enumerate(STAGES)}
 
@@ -71,8 +71,8 @@ class CaseContext:
     outputs: list[Path] = field(default_factory=list)
 
     @property
-    def native(self) -> Path:
-        return self.out / "native" / self.slug
+    def model_verify(self) -> Path:
+        return self.out / "model_verify" / self.slug
 
     @property
     def qualification(self) -> Path:
@@ -234,12 +234,12 @@ def _compile(ctx: CaseContext) -> StageOutcome:
 def _replay(ctx: CaseContext) -> StageOutcome:
     replay_path = ctx.out / f"{ctx.slug}.json"
     ctx.require(replay_path)
-    ctx.native.mkdir(parents=True, exist_ok=True)
+    ctx.model_verify.mkdir(parents=True, exist_ok=True)
     outputs = (
-        ctx.native / "model.sc",
-        ctx.native / "model.step",
-        ctx.native / "results.json",
-        ctx.native / "replay-log.json",
+        ctx.model_verify / "model.sc",
+        ctx.model_verify / "model.step",
+        ctx.model_verify / "results.json",
+        ctx.model_verify / "replay-log.json",
     )
     replay = json.loads(replay_path.read_text(encoding="utf-8"))
     run_document(
@@ -249,16 +249,16 @@ def _replay(ctx: CaseContext) -> StageOutcome:
         results_out=outputs[2],
         replay_log_out=outputs[3],
         env=_env(),
-        work_dir=ctx.native / "replay-work",
+        work_dir=ctx.model_verify / "replay-work",
     )
     ctx.produces(*outputs)
     return StageOutcome()
 
 
 def _evaluate(ctx: CaseContext) -> StageOutcome:
-    model = ctx.native / "model.sc"
+    model = ctx.model_verify / "model.sc"
     ctx.require(model)
-    target = ctx.native / "measurements.json"
+    target = ctx.model_verify / "measurements.json"
     _run(
         [
             "solidcraft-cli",
@@ -273,10 +273,10 @@ def _evaluate(ctx: CaseContext) -> StageOutcome:
 
 
 def _inspect(ctx: CaseContext) -> StageOutcome:
-    model = ctx.native / "model.sc"
+    model = ctx.model_verify / "model.sc"
     command = ROOT / "qualification" / "commands" / "inspect-joints.json"
     ctx.require(model, command)
-    target = ctx.native / "joint-inspect.json"
+    target = ctx.model_verify / "joint-inspect.json"
     _run(
         [
             "solidcraft-cli",
@@ -296,12 +296,12 @@ def _inspect(ctx: CaseContext) -> StageOutcome:
 
 
 def _render(ctx: CaseContext) -> StageOutcome:
-    model = ctx.native / "model.sc"
-    measurements = ctx.native / "measurements.json"
+    model = ctx.model_verify / "model.sc"
+    measurements = ctx.model_verify / "measurements.json"
     ctx.require(model, measurements)
     data = json.loads(measurements.read_text(encoding="utf-8"))
 
-    baseline = ctx.native / "model.png"
+    baseline = ctx.model_verify / "model.png"
     _run(
         [
             "solidcraft-cli",
@@ -316,10 +316,10 @@ def _render(ctx: CaseContext) -> StageOutcome:
     ctx.produces(baseline)
 
     for view in render_views(ctx.slug):
-        camera_path = ctx.native / f"camera-{view}.json"
-        actual = ctx.native / f"model-{view}.png"
-        goal = ctx.native / f"goal-{view}.png"
-        overlay = ctx.native / f"overlay-{view}.png"
+        camera_path = ctx.model_verify / f"camera-{view}.json"
+        actual = ctx.model_verify / f"model-{view}.png"
+        goal = ctx.model_verify / f"goal-{view}.png"
+        overlay = ctx.model_verify / f"overlay-{view}.png"
         camera = camera_for(data, view)
         camera_path.write_text(
             json.dumps(camera, separators=(",", ":")) + "\n",
@@ -357,10 +357,10 @@ def _mutate(ctx: CaseContext) -> StageOutcome:
     spec = mutation_spec(ctx.slug)
     if spec is None:
         return StageOutcome("skipped", "case has no saved-design mutation")
-    model = ctx.native / "model.sc"
+    model = ctx.model_verify / "model.sc"
     command = ROOT / spec["command"]
     ctx.require(model, command)
-    target = ctx.native / spec["save"]
+    target = ctx.model_verify / spec["save"]
     _run(
         [
             "solidcraft-cli",
@@ -382,9 +382,9 @@ def _evaluate_mutated(ctx: CaseContext) -> StageOutcome:
     spec = mutation_spec(ctx.slug)
     if spec is None:
         return StageOutcome("skipped", "case has no saved-design mutation")
-    model = ctx.native / spec["save"]
+    model = ctx.model_verify / spec["save"]
     ctx.require(model)
-    target = ctx.native / spec["measurements"]
+    target = ctx.model_verify / spec["measurements"]
     _run(
         [
             "solidcraft-cli",
@@ -402,29 +402,29 @@ def _post_build(ctx: CaseContext) -> StageOutcome:
     spec = POST_BUILD_INSPECTIONS.get(ctx.slug)
     if spec is None:
         return StageOutcome("skipped", "case has no post-build inspection")
-    model = ctx.native / "model.sc"
+    model = ctx.model_verify / "model.sc"
     command = ROOT / spec["command"]
     ctx.require(model, command)
     summary = ctx.stages / "post-build" / "summary.tsv"
     run_post_build_inspections(
-        ctx.out / "native",
+        ctx.out / "model_verify",
         summary,
         cases=(ctx.slug,),
     )
-    target = ctx.native / spec["output"]
+    target = ctx.model_verify / spec["output"]
     ctx.produces(target, summary)
     return StageOutcome()
 
 
-def _validate_native(ctx: CaseContext) -> StageOutcome:
-    baseline = ctx.native / "measurements.json"
+def _validate_model(ctx: CaseContext) -> StageOutcome:
+    baseline = ctx.model_verify / "measurements.json"
     ctx.require(baseline)
     spec = mutation_spec(ctx.slug)
     if spec is not None:
-        ctx.require(ctx.native / spec["measurements"])
+        ctx.require(ctx.model_verify / spec["measurements"])
 
-    result = VALIDATORS[ctx.slug](ctx.native).result()
-    target = ctx.native / "validation.json"
+    result = VALIDATORS[ctx.slug](ctx.model_verify).result()
+    target = ctx.model_verify / "validation.json"
     target.write_text(
         json.dumps(result, indent=2) + "\n",
         encoding="utf-8",
@@ -438,24 +438,24 @@ def _validate_native(ctx: CaseContext) -> StageOutcome:
         failures.append(f"saved_design={result['saved_design']}")
     if failures:
         raise RuntimeError(
-            f"{ctx.slug}: native validation failed: " + ", ".join(failures)
+            f"{ctx.slug}: model validation failed: " + ", ".join(failures)
         )
     return StageOutcome()
 
 
 def _validate_visual(ctx: CaseContext) -> StageOutcome:
     required = [
-        ctx.native / f"model-{view}.png"
+        ctx.model_verify / f"model-{view}.png"
         for view in render_views(ctx.slug)
     ]
     ctx.require(*required)
     baselines = load_baselines().get("cases", {})
     result = validate_visual_case(
-        ctx.native,
+        ctx.model_verify,
         ctx.slug,
         baselines.get(ctx.slug),
     )
-    target = ctx.native / "visual-validation.json"
+    target = ctx.model_verify / "visual-validation.json"
     target.write_text(
         json.dumps(result, indent=2) + "\n",
         encoding="utf-8",
@@ -468,9 +468,9 @@ def _validate_visual(ctx: CaseContext) -> StageOutcome:
     return StageOutcome()
 
 
-def _gate(ctx: CaseContext) -> StageOutcome:
-    native_path = ctx.native / "validation.json"
-    visual_path = ctx.native / "visual-validation.json"
+def _result(ctx: CaseContext) -> StageOutcome:
+    native_path = ctx.model_verify / "validation.json"
+    visual_path = ctx.model_verify / "visual-validation.json"
     ctx.require(native_path, visual_path)
     native = json.loads(native_path.read_text(encoding="utf-8"))
     visual = json.loads(visual_path.read_text(encoding="utf-8"))
@@ -483,9 +483,9 @@ def _gate(ctx: CaseContext) -> StageOutcome:
         failures.append(f"visual={visual['status']}")
     if failures:
         raise RuntimeError(
-            f"{ctx.slug}: gate failed: " + ", ".join(failures)
+            f"{ctx.slug}: model verification failed: " + ", ".join(failures)
         )
-    target = ctx.stages / "gate" / "result.json"
+    target = ctx.stages / "result" / "result.json"
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(
         json.dumps(
@@ -515,9 +515,9 @@ STAGE_RUNNERS: dict[str, Callable[[CaseContext], StageOutcome]] = {
     "mutate": _mutate,
     "evaluate-mutated": _evaluate_mutated,
     "post-build": _post_build,
-    "validate-native": _validate_native,
+    "validate-model": _validate_model,
     "validate-visual": _validate_visual,
-    "gate": _gate,
+    "result": _result,
 }
 
 

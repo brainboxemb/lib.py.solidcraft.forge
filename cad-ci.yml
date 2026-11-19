@@ -1,9 +1,9 @@
-# CI items live beside the Forge code or generated evidence that owns behaviour.
-# The generic tool discovers folders only; names such as example/reference have
-# no built-in meaning.
+# Consumer-owned Forge CI items. tool.cad.ci only discovers, orders, runs and
+# reuses these items; it assigns no meaning to their names.
 schema: 1
 items:
-  - scpf/tests
+  - scpf
   - examples/*
   - qualification/reference_suite
   - qualification/diagrams
+  - qualification/tool_qualification

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Finalize one self-contained Forge example item.
 
-The finalizer reads the command, stage and native evidence already produced by
+The finalizer reads the command, stage and model-verification evidence already produced by
 that item and writes one semantic qualification-result.json. It never reruns
 SolidCraft.
 """
@@ -48,7 +48,7 @@ def finalize(out: Path, slug: str, source_sha: str) -> dict:
     case = result.get("cases", {}).get(slug)
     if not isinstance(case, dict) or case.get("status") != "pass":
         raise RuntimeError(f"{slug}: structured item result is not passing")
-    target = out / "native" / slug / "qualification-result.json"
+    target = out / "model_verify" / slug / "qualification-result.json"
     if not target.is_file() or target.stat().st_size == 0:
         raise RuntimeError(f"{slug}: qualification-result.json was not written")
     return case

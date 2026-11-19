@@ -1,5 +1,5 @@
-# One Forge example is one CI item. Integration proves the generated command
-# contract and compilation; native resumes the same item from replay onward.
+# One Forge example is one CI item. tool_verify proves the generated
+# SolidCraft command contract; model_verify executes and checks the CAD model.
 id: circular-feature-pattern
 kind: example
 watch:
@@ -24,13 +24,13 @@ watch:
 strategy:
   reuse: true
 steps:
-  - id: integration
-    run: [python, ../../scripts/example_ci.py, integration]
+  - id: tool_verify
+    run: [python, ../../scripts/example_ci.py, tool_verify]
     outputs:
       - case/circular-feature-pattern.json
       - case/stages/circular-feature-pattern/01-compile.json
-  - id: native
-    run: [python, ../../scripts/example_ci.py, native]
+  - id: model_verify
+    run: [python, ../../scripts/example_ci.py, model_verify]
     outputs:
-      - case/native/circular-feature-pattern
-      - case/stages/circular-feature-pattern/11-gate.json
+      - case/model_verify/circular-feature-pattern
+      - case/stages/circular-feature-pattern/11-result.json

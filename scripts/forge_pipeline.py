@@ -75,11 +75,11 @@ def tool_cad_ci_env() -> dict[str, str]:
     return {"PYTHONPATH": os.pathsep.join(parts)}
 
 
-def selected_tool_cases(gate: str, cases: str) -> tuple[str, ...]:
-    """Return supported example items selected by Forge's domain policy."""
+def selected_tool_cases(stage: str, cases: str) -> tuple[str, ...]:
+    """Return concrete example items selected for this Forge stage."""
 
     supported = supported_case_slugs()
-    if gate == "full-native":
+    if stage == "tool_qualification":
         return tuple(supported)
 
     requested = {
@@ -90,65 +90,79 @@ def selected_tool_cases(gate: str, cases: str) -> tuple[str, ...]:
     return tuple(slug for slug in supported if slug in requested)
 
 
-def evidence_items(gate: str, reference_smoke: bool) -> tuple[str, ...]:
-    """Return non-example generated items required by Forge's gate policy."""
+def evidence_items(
+    verify_references: bool,
+    verify_diagrams: bool,
+) -> tuple[str, ...]:
+    """Return shared evidence items selected explicitly by Forge."""
 
     result: list[str] = []
-    if reference_smoke or gate == "full-native":
+    if verify_references:
         result.append("reference-suite")
-    if gate in {"regenerate-derived", "full-native"}:
+    if verify_diagrams:
         result.append("qualification-diagrams")
     return tuple(result)
 
 
+def has_build_output(args: argparse.Namespace) -> bool:
+    """Return whether this run produces a technical build overlay."""
+
+    return (
+        args.stage in {"model_verify", "tool_qualification"}
+        or args.verify_references
+        or args.verify_diagrams
+    )
+
+
 def run_tool_cad_ci_layers(
     out: Path,
-    gate: str,
+    stage: str,
     cases: str,
-    reference_smoke: bool,
+    verify_references: bool,
+    verify_diagrams: bool,
 ) -> None:
-    """Run selected cheap Forge test layers through the pinned generic tool.
+    """Run Forge build/test and selected example tool verification.
 
-    Forge has already decided the gate and affected cases. The generic runner
-    receives only concrete item names and an integration step boundary.
+    The generic CI runner receives only concrete item names and a concrete step
+    boundary. Forge owns the meaning of tool_build, tool_test and tool_verify.
     """
 
     tool = tool_cad_ci_path()
     out.parent.mkdir(parents=True, exist_ok=True)
-    selected = selected_tool_cases(gate, cases)
+    selected = selected_tool_cases(stage, cases)
     rows: list[dict] = []
     seen: set[str] = set()
 
-    if gate not in {"preflight", "regenerate-derived"}:
-        items = (
-            "library-tests",
-            *selected,
-            *evidence_items(gate, reference_smoke),
-        )
-        for item in items:
-            plan = json.loads(
-                subprocess.check_output(
-                    [
-                        sys.executable,
-                        str(tool),
-                        "plan",
-                        "--repo",
-                        str(ROOT),
-                        "--item",
-                        item,
-                        "--json",
-                    ],
-                    cwd=ROOT,
-                    env={**os.environ, **tool_cad_ci_env()},
-                    text=True,
-                )
+    items = (
+        *(("forge-tool",) if stage != "none" else ()),
+        *selected,
+        *evidence_items(verify_references, verify_diagrams),
+    )
+    for item in items:
+        plan = json.loads(
+            subprocess.check_output(
+                [
+                    sys.executable,
+                    str(tool),
+                    "plan",
+                    "--repo",
+                    str(ROOT),
+                    "--item",
+                    item,
+                    "--json",
+                ],
+                cwd=ROOT,
+                env={**os.environ, **tool_cad_ci_env()},
+                text=True,
             )
-            for row in plan:
-                item_id = row.get("id")
-                if isinstance(item_id, str) and item_id not in seen:
-                    seen.add(item_id)
-                    rows.append(row)
+        )
+        for row in plan:
+            item_id = row.get("id")
+            if isinstance(item_id, str) and item_id not in seen:
+                seen.add(item_id)
+                rows.append(row)
 
+    if stage != "none":
         run(
             [
                 sys.executable,
@@ -157,7 +171,7 @@ def run_tool_cad_ci_layers(
                 "--repo",
                 str(ROOT),
                 "--item",
-                "library-tests",
+                "forge-tool",
             ],
             env=tool_cad_ci_env(),
         )
@@ -172,7 +186,7 @@ def run_tool_cad_ci_layers(
                     "--item",
                     slug,
                     "--until",
-                    "integration",
+                    "tool_verify",
                 ],
                 env=tool_cad_ci_env(),
             )
@@ -182,8 +196,8 @@ def run_tool_cad_ci_layers(
         encoding="utf-8",
     )
 
-def run_tool_cad_ci_case(item: str, image: str) -> None:
-    """Run one Forge-owned native case item with its resolved runtime image."""
+def run_model_verify(item: str, image: str) -> None:
+    """Run one Forge-owned model verification step in SolidCraft."""
 
     if not image:
         raise ValueError(f"{item} requires the qualification image")
@@ -200,7 +214,28 @@ def run_tool_cad_ci_case(item: str, image: str) -> None:
             "--item",
             item,
             "--from",
-            "native",
+            "model_verify",
+        ],
+        env=env,
+    )
+
+
+def run_tool_qualification(image: str) -> None:
+    """Run the aggregate Forge qualification after all required model checks."""
+
+    if not image:
+        raise ValueError("tool_qualification requires the SolidCraft image")
+    env = tool_cad_ci_env()
+    env["FORGE_QUALIFICATION_IMAGE"] = image
+    run(
+        [
+            sys.executable,
+            str(tool_cad_ci_path()),
+            "run",
+            "--repo",
+            str(ROOT),
+            "--item",
+            "tool-qualification",
         ],
         env=env,
     )
@@ -300,11 +335,11 @@ python scripts/solidcraft_snapshot.py \
 
 
 def item_gate_args(args: argparse.Namespace) -> list[str]:
-    """Build arguments for collecting already-completed native example items."""
+    """Build arguments for the transitional publication adapter."""
 
     command = [
         "qualification/item_gate.py",
-        "--gate", args.gate,
+        "--stage", args.stage,
         "--cases", args.cases,
         "--out", str(args.output_root / "gate"),
         "--build-out", str(args.output_root / "build"),
@@ -313,8 +348,10 @@ def item_gate_args(args: argparse.Namespace) -> list[str]:
         "--source-ref", args.source_ref,
         "--workflow-run-id", args.workflow_run_id,
     ]
-    if args.reference_smoke:
-        command.append("--reference-smoke")
+    if args.verify_references:
+        command.append("--verify-references")
+    if args.verify_diagrams:
+        command.append("--verify-diagrams")
     if args.base_sha:
         command += ["--base-commit", args.base_sha]
     if args.operation == "pr":
@@ -323,36 +360,28 @@ def item_gate_args(args: argparse.Namespace) -> list[str]:
 
 
 def qualify(args: argparse.Namespace) -> None:
-    """Run the selected Forge gate without duplicating native CAD execution."""
+    """Run selected model verification and the optional aggregate qualification."""
 
-    if args.gate == "preflight":
-        return
+    selected = selected_tool_cases(args.stage, args.cases)
 
-    selected = selected_tool_cases(args.gate, args.cases)
-    native_gate = args.gate in {"affected-native", "full-native"}
-    if native_gate:
+    if args.stage == "model_verify":
         for slug in selected:
-            run_tool_cad_ci_case(slug, args.image)
+            run_model_verify(slug, args.image)
+    elif args.stage == "tool_qualification":
+        run_tool_qualification(args.image)
 
-    # Reference evidence can be required even when the selected Forge cases only
-    # need the cheap integration gate. Its generic item therefore follows the
-    # existing reference_smoke policy independently from native case execution.
-    for item in evidence_items(args.gate, args.reference_smoke):
+    for item in evidence_items(args.verify_references, args.verify_diagrams):
         run_tool_cad_ci_evidence(item, args.image)
 
-    if native_gate:
-        # Native/reference/diagram work is already complete. The item gate now
-        # only translates generic item output for the current site/build adapter.
+    if has_build_output(args):
+        # The publication adapter only translates completed generic item output.
+        # It performs no additional model verification.
         python(*item_gate_args(args))
-
-    # Integration and derived-output gates are complete once their generic items
-    # have passed. There is no second numbered qualification runner.
-    return
 
 
 def publish_pr_candidate(args: argparse.Namespace) -> str:
     destination = f"pr/{args.pull_request}"
-    if args.gate == "preflight":
+    if not has_build_output(args):
         if args.publish:
             publish_generated.publish(
                 branch="build",
@@ -387,7 +416,7 @@ def resolve_preview(args: argparse.Namespace, build_commit: str) -> None:
         "--main", str(args.generated_build / "main"),
         "--destination", str(resolved),
     ]
-    if args.gate != "preflight":
+    if has_build_output(args):
         command += ["--overlay", str(args.output_root / "build")]
     python(*command)
     python(
@@ -402,7 +431,7 @@ def resolve_preview(args: argparse.Namespace, build_commit: str) -> None:
         "site/build.py",
         "--out", str(site),
         "--source-sha", args.source_sha,
-        "--native", str(evidence / "native"),
+        "--model-verify", str(evidence / "model_verify"),
         "--references", str(evidence / "references"),
         "--diagram-root", str(evidence / "diagrams"),
         "--build-manifest", str(manifest),
@@ -442,7 +471,7 @@ def resolve_preview(args: argparse.Namespace, build_commit: str) -> None:
 
 
 def stable_build(args: argparse.Namespace) -> tuple[Path, str, str]:
-    if args.gate == "preflight":
+    if not has_build_output(args):
         root = args.generated_build / "main"
         python("scripts/generated_output.py", "verify-build", "--root", str(root), "--require-complete")
         build_commit = output(["git", "-C", str(args.generated_build), "rev-parse", "HEAD"])
@@ -453,7 +482,7 @@ def stable_build(args: argparse.Namespace) -> tuple[Path, str, str]:
             "--main", str(args.generated_build / "main"),
             "--overlay", str(args.output_root / "build"),
             "--destination", str(root),
-            "--required-level", args.required_level,
+            "--required-level", args.stage,
             "--source-commit", args.source_sha,
             "--workflow-run-id", args.workflow_run_id,
         )
@@ -494,7 +523,7 @@ def build_stable_site(args: argparse.Namespace, root: Path, build_commit: str, e
         "site/build.py",
         "--out", str(site),
         "--source-sha", args.source_sha,
-        "--native", str(evidence / "native"),
+        "--model-verify", str(evidence / "model_verify"),
         "--references", str(evidence / "references"),
         "--diagram-root", str(evidence / "diagrams"),
         "--build-manifest", str(manifest),
@@ -506,7 +535,7 @@ def build_stable_site(args: argparse.Namespace, root: Path, build_commit: str, e
         str(site), args.source_sha,
         f"--evidence-sha={evidence_sha}",
         f"--build-commit={build_commit}",
-        "--require-native",
+        "--require-model-verify",
         "--require-references",
     )
     python(
@@ -552,18 +581,19 @@ def execute(args: argparse.Namespace) -> str | None:
 
     run_tool_cad_ci_layers(
         args.output_root / "tool-cad-ci-plan.json",
-        args.gate,
+        args.stage,
         args.cases,
-        args.reference_smoke,
+        args.verify_references,
+        args.verify_diagrams,
     )
     preflight(args.source_sha, args.output_root / "preflight-site")
 
-    if args.pipeline_smoke or args.image_built:
+    if args.verify_pipeline or args.image_built:
         if not args.image:
             raise ValueError("pipeline/image smoke requires --image")
         smoke_image(args.image, args.smoke_out)
 
-    if args.contracts:
+    if args.verify_contracts:
         if not args.image:
             raise ValueError("contract verification requires --image")
         if not args.solidcraft_version:
@@ -607,13 +637,17 @@ def parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--base-sha", default="")
     run_parser.add_argument("--source-ref", required=True)
     run_parser.add_argument("--pull-request", type=int, default=0)
-    run_parser.add_argument("--gate", required=True)
+    run_parser.add_argument(
+        "--stage",
+        choices=("none", "tool_verify", "model_verify", "tool_qualification"),
+        required=True,
+    )
     run_parser.add_argument("--cases", default="")
-    run_parser.add_argument("--required-level", default="")
-    run_parser.add_argument("--reference-smoke", type=parse_bool, default=False)
-    run_parser.add_argument("--pipeline-smoke", type=parse_bool, default=False)
+    run_parser.add_argument("--verify-references", type=parse_bool, default=False)
+    run_parser.add_argument("--verify-diagrams", type=parse_bool, default=False)
+    run_parser.add_argument("--verify-pipeline", type=parse_bool, default=False)
     run_parser.add_argument("--image-built", type=parse_bool, default=False)
-    run_parser.add_argument("--contracts", type=parse_bool, default=False)
+    run_parser.add_argument("--verify-contracts", type=parse_bool, default=False)
     run_parser.add_argument("--image", default="")
     run_parser.add_argument("--solidcraft-version", default="")
     run_parser.add_argument("--repository", default=os.environ.get("GITHUB_REPOSITORY", ""))

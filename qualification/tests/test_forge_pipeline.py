@@ -1,4 +1,4 @@
-"""Focused tests for the reproducible Forge pipeline entrypoint."""
+"""Focused tests for the Forge pipeline with explicit verification stages."""
 
 from __future__ import annotations
 
@@ -17,13 +17,13 @@ def args(**overrides):
         "base_sha": "b" * 40,
         "source_ref": "feature/test",
         "pull_request": 351,
-        "gate": "affected-native",
+        "stage": "model_verify",
         "cases": "simple-box",
-        "required_level": "native",
-        "reference_smoke": True,
-        "pipeline_smoke": False,
+        "verify_references": True,
+        "verify_diagrams": False,
+        "verify_pipeline": False,
         "image_built": False,
-        "contracts": False,
+        "verify_contracts": False,
         "image": "qualification:test",
         "solidcraft_version": "0.42.0",
         "repository": "BrainboxEmb/lib.py.solidcraft.forge",
@@ -40,192 +40,133 @@ def args(**overrides):
 
 
 class ForgePipelineTests(unittest.TestCase):
-    def test_parse_bool_accepts_ci_values(self):
-        for value in ("true", "1", "yes", "on"):
-            with self.subTest(value=value):
-                self.assertTrue(forge_pipeline.parse_bool(value))
-        for value in ("false", "0", "no", "off", ""):
-            with self.subTest(value=value):
-                self.assertFalse(forge_pipeline.parse_bool(value))
-        with self.assertRaises(argparse.ArgumentTypeError):
-            forge_pipeline.parse_bool("maybe")
-
-    def test_selected_tool_cases_follow_forge_gate_selection(self):
+    def test_selected_cases_are_explicit_or_complete_for_qualification(self):
         self.assertEqual(
             forge_pipeline.selected_tool_cases(
-                "affected-native",
+                "model_verify",
                 "simple-box,anchored-holes",
             ),
             ("simple-box", "anchored-holes"),
         )
         self.assertEqual(
-            forge_pipeline.selected_tool_cases("preflight", ""),
+            forge_pipeline.selected_tool_cases("none", ""),
             (),
         )
         self.assertEqual(
-            forge_pipeline.selected_tool_cases("full-native", ""),
+            forge_pipeline.selected_tool_cases("tool_qualification", ""),
             forge_pipeline.supported_case_slugs(),
         )
 
-    def test_native_gate_collects_items_instead_of_rerunning_legacy_gate(self):
+    def test_evidence_items_follow_explicit_booleans(self):
+        self.assertEqual(
+            forge_pipeline.evidence_items(True, True),
+            ("reference-suite", "qualification-diagrams"),
+        )
+        self.assertEqual(forge_pipeline.evidence_items(False, False), ())
+
+    def test_model_verify_runs_selected_models_then_publication_adapter(self):
         ns = args()
         command = forge_pipeline.item_gate_args(ns)
         with patch.object(
-            forge_pipeline,
-            "run_tool_cad_ci_case",
-        ) as case_item, patch.object(
-            forge_pipeline,
-            "run_tool_cad_ci_evidence",
-        ) as evidence_item, patch.object(
-            forge_pipeline,
-            "python",
-        ) as item_gate:
-            forge_pipeline.qualify(ns)
-
-        case_item.assert_called_once_with(
-            "simple-box",
-            ns.image,
-        )
-        evidence_item.assert_called_once_with("reference-suite", ns.image)
-        item_gate.assert_called_once_with(*command)
-        self.assertEqual(command[0], "qualification/item_gate.py")
-        self.assertNotIn("scripts/verification_gate.py", command)
-
-    def test_qualify_skips_native_case_item_for_cheap_gate(self):
-        ns = args(
-            gate="affected-integration",
-            required_level="integration",
-            image="",
-            reference_smoke=False,
-        )
-        with patch.object(
-            forge_pipeline,
-            "run_tool_cad_ci_case",
-        ) as case_item, patch.object(
-            forge_pipeline,
-            "run_tool_cad_ci_evidence",
-        ) as evidence_item, patch.object(
-            forge_pipeline,
-            "python",
+            forge_pipeline, "run_model_verify"
+        ) as model_verify, patch.object(
+            forge_pipeline, "run_tool_qualification"
+        ) as tool_qualification, patch.object(
+            forge_pipeline, "run_tool_cad_ci_evidence"
+        ) as evidence, patch.object(
+            forge_pipeline, "python"
         ) as adapter:
             forge_pipeline.qualify(ns)
 
-        case_item.assert_not_called()
-        evidence_item.assert_not_called()
-        adapter.assert_not_called()
+        model_verify.assert_called_once_with("simple-box", ns.image)
+        tool_qualification.assert_not_called()
+        evidence.assert_called_once_with("reference-suite", ns.image)
+        adapter.assert_called_once_with(*command)
+        self.assertIn("--stage", command)
+        self.assertIn("model_verify", command)
 
-    def test_reference_item_can_run_for_cheap_gate(self):
+    def test_tool_qualification_runs_aggregate_item_once(self):
         ns = args(
-            gate="affected-integration",
-            required_level="integration",
-            cases="simple-box",
-            reference_smoke=True,
+            stage="tool_qualification",
+            cases="",
+            verify_references=True,
+            verify_diagrams=True,
         )
         with patch.object(
-            forge_pipeline,
-            "run_tool_cad_ci_case",
-        ) as case_item, patch.object(
-            forge_pipeline,
-            "run_tool_cad_ci_evidence",
-        ) as evidence_item, patch.object(
-            forge_pipeline,
-            "docker_python",
-        ):
+            forge_pipeline, "run_model_verify"
+        ) as model_verify, patch.object(
+            forge_pipeline, "run_tool_qualification"
+        ) as tool_qualification, patch.object(
+            forge_pipeline, "run_tool_cad_ci_evidence"
+        ) as evidence, patch.object(
+            forge_pipeline, "python"
+        ) as adapter:
             forge_pipeline.qualify(ns)
 
-        case_item.assert_not_called()
-        evidence_item.assert_called_once_with("reference-suite", ns.image)
+        model_verify.assert_not_called()
+        tool_qualification.assert_called_once_with(ns.image)
+        self.assertEqual(
+            evidence.call_args_list,
+            [
+                call("reference-suite", ns.image),
+                call("qualification-diagrams", ns.image),
+            ],
+        )
+        adapter.assert_called_once()
 
-    def test_execute_pr_owns_full_repository_sequence(self):
-        ns = args(pipeline_smoke=True, contracts=True)
+    def test_tool_verify_does_not_run_solidcraft_model(self):
+        ns = args(
+            stage="tool_verify",
+            verify_references=False,
+            image="",
+        )
         with patch.object(
-                 forge_pipeline,
-                 "run_tool_cad_ci_layers",
-             ) as tool_layers, \
-             patch.object(forge_pipeline, "preflight") as preflight, \
-             patch.object(forge_pipeline, "smoke_image") as smoke, \
-             patch.object(forge_pipeline, "verify_contracts") as contracts, \
-             patch.object(forge_pipeline, "qualify") as qualify, \
-             patch.object(
-                 forge_pipeline,
-                 "publish_pr_candidate",
-                 return_value="build-commit",
-             ) as publish_candidate, \
-             patch.object(forge_pipeline, "resolve_preview") as preview:
-            result = forge_pipeline.execute(ns)
+            forge_pipeline, "run_model_verify"
+        ) as model_verify, patch.object(
+            forge_pipeline, "run_tool_qualification"
+        ) as tool_qualification, patch.object(
+            forge_pipeline, "python"
+        ) as adapter:
+            forge_pipeline.qualify(ns)
 
-        self.assertIsNone(result)
-        tool_layers.assert_called_once_with(
-            ns.output_root / "tool-cad-ci-plan.json",
-            ns.gate,
-            ns.cases,
-            ns.reference_smoke,
-        )
-        preflight.assert_called_once_with(
-            ns.source_sha,
-            ns.output_root / "preflight-site",
-        )
-        smoke.assert_called_once_with(ns.image, ns.smoke_out)
-        contracts.assert_called_once_with(
-            ns.image,
-            ns.solidcraft_version,
-            ns.contract_out,
-        )
-        qualify.assert_called_once_with(ns)
-        publish_candidate.assert_called_once_with(ns)
-        preview.assert_called_once_with(ns, "build-commit")
+        model_verify.assert_not_called()
+        tool_qualification.assert_not_called()
+        adapter.assert_not_called()
+        self.assertFalse(forge_pipeline.has_build_output(ns))
 
-    def test_new_image_is_smoke_tested_even_without_pipeline_change(self):
-        ns = args(pipeline_smoke=False, image_built=True)
-        with patch.object(forge_pipeline, "run_tool_cad_ci_layers"), \
-             patch.object(forge_pipeline, "preflight"), \
-             patch.object(forge_pipeline, "smoke_image") as smoke, \
-             patch.object(forge_pipeline, "qualify"), \
-             patch.object(
-                 forge_pipeline,
-                 "publish_pr_candidate",
-                 return_value="build-commit",
-             ), \
-             patch.object(forge_pipeline, "resolve_preview"):
+    def test_execute_passes_concrete_stage_selection_to_item_runner(self):
+        ns = args(verify_pipeline=True, verify_contracts=True)
+        with patch.object(
+            forge_pipeline, "run_tool_cad_ci_layers"
+        ) as layers, patch.object(
+            forge_pipeline, "preflight"
+        ), patch.object(
+            forge_pipeline, "smoke_image"
+        ), patch.object(
+            forge_pipeline, "verify_contracts"
+        ), patch.object(
+            forge_pipeline, "qualify"
+        ), patch.object(
+            forge_pipeline, "publish_pr_candidate", return_value="build"
+        ), patch.object(
+            forge_pipeline, "resolve_preview"
+        ):
             forge_pipeline.execute(ns)
-        smoke.assert_called_once_with(ns.image, ns.smoke_out)
 
-    def test_execute_main_promotes_then_builds_stable_site(self):
-        ns = args(operation="main", pull_request=0, source_ref="main")
-        with patch.object(forge_pipeline, "run_tool_cad_ci_layers") as tool_layers, \
-             patch.object(forge_pipeline, "preflight"), \
-             patch.object(forge_pipeline, "qualify"), \
-             patch.object(
-                 forge_pipeline,
-                 "stable_build",
-                 return_value=(Path("output/main"), "build-commit", "evidence"),
-             ) as stable, \
-             patch.object(forge_pipeline, "build_stable_site") as site:
-            result = forge_pipeline.execute(ns)
-
-        self.assertEqual(result, "build-commit")
-        tool_layers.assert_called_once_with(
+        layers.assert_called_once_with(
             ns.output_root / "tool-cad-ci-plan.json",
-            ns.gate,
+            ns.stage,
             ns.cases,
-            ns.reference_smoke,
-        )
-        stable.assert_called_once_with(ns)
-        site.assert_called_once_with(
-            ns,
-            Path("output/main"),
-            "build-commit",
-            "evidence",
+            ns.verify_references,
+            ns.verify_diagrams,
         )
 
-    def test_cleanup_uses_retrying_generated_branch_publisher(self):
+    def test_cleanup_removes_build_and_pages_preview(self):
         with patch.object(
-            forge_pipeline.publish_generated,
-            "publish",
+            forge_pipeline.publish_generated, "publish"
         ) as publish:
             forge_pipeline.cleanup(351)
 
-        self.assertEqual(publish.call_count, 2)
         self.assertEqual(
             publish.call_args_list,
             [

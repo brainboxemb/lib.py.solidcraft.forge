@@ -29,8 +29,8 @@ class QualificationReportTemplateTests(unittest.TestCase):
                     "title": "Demo case",
                     "status": "pass",
                     "checks": {
-                        "integration": {"status": "pass"},
-                        "native_model": {"status": "pass"},
+                        "tool_verify": {"status": "pass"},
+                        "model_verify": {"status": "pass"},
                         "geometry": {"status": "pass"},
                         "saved_design": {"status": "not-required"},
                         "visual": {
@@ -53,7 +53,7 @@ class QualificationReportTemplateTests(unittest.TestCase):
             "| demo | PASS | PASS | PASS | PASS | NOT-REQUIRED | PASS |",
             report,
         )
-        self.assertIn("../native/demo/model.png", report)
+        self.assertIn("../model_verify/demo/model.png", report)
         for legacy in (" Q1 ", " Q2 ", " Q3 ", " Q4 ", " Q5 ", " Q6 "):
             self.assertNotIn(legacy, report)
 

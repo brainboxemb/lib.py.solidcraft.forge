@@ -15,7 +15,7 @@ from qualification.impact import (
     affected_cases,
     changed_paths,
     classify,
-    final_gate,
+    target_stage,
 )
 
 
@@ -81,7 +81,7 @@ def main() -> int:
     paths = changed_paths(args.base, args.head)
     cases = affected_cases(paths)
     risk = classify(paths)
-    gate = final_gate(paths, cases)
+    stage = target_stage(paths, cases)
     reference_reasons = reference_smoke_reasons(paths)
 
     print("Changed paths:")
@@ -89,7 +89,7 @@ def main() -> int:
         print(f"  - {path}")
     print(f"Risk class: {risk}")
     print("Affected cases: " + (", ".join(cases) if cases else "none"))
-    print(f"Final gate: {gate}")
+    print(f"Target stage: {stage}")
     print(
         "Reference smoke: "
         + ("required" if reference_reasons else "skipped")
@@ -103,12 +103,12 @@ def main() -> int:
             handle.write(f"cases={','.join(cases)}\n")
             handle.write(f"has_cases={'true' if cases else 'false'}\n")
             handle.write(
-                f"has_build={'true' if gate != 'preflight' else 'false'}\n"
+                f"has_build={'true' if stage != 'none' else 'false'}\n"
             )
             handle.write(
                 f"reference_smoke={'true' if reference_reasons else 'false'}\n"
             )
-            handle.write(f"final_gate={gate}\n")
+            handle.write(f"stage={stage}\n")
     return 0
 
 

@@ -32,8 +32,8 @@ def render(data: dict) -> str:
                 (
                     slug,
                     str(case.get("status", "missing")).upper(),
-                    _status(checks.get("integration", {})),
-                    _status(checks.get("native_model", {})),
+                    _status(checks.get("tool_verify", {})),
+                    _status(checks.get("model_verify", {})),
                     _status(checks.get("geometry", {})),
                     _status(checks.get("saved_design", {})),
                     _status(checks.get("visual", {})),
@@ -46,7 +46,7 @@ def render(data: dict) -> str:
             images.append(
                 f"### {slug}\n\n"
                 + "\n".join(
-                    f"- [{name}](../native/{slug}/{name})"
+                    f"- [{name}](../model_verify/{slug}/{name})"
                     for name in visual_images
                 )
             )
