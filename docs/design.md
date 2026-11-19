@@ -58,3 +58,64 @@ Model/reference commands consume `FORGE_RUNTIME_IMAGE` from their environment.
 They pull and run that exact immutable image. Generic comparison/reporting code
 stays in released `lib.py.cad.verfication`; Forge keeps only its own policy,
 adapters and expected data.
+
+
+## Visual verification flow
+
+Visual verification is part of each model's normal verification output, not a
+second CI runner.
+
+```text
+model_verify
+  -> saved model.sc + measurements.json
+  -> Forge SolidCraft visual adapter
+     -> deterministic SolidCraft camera
+     -> solidcraft-cli snapshot
+     -> camera JSON + actual PNG
+  -> released cad_verification visual APIs
+     -> normalized actual/baseline
+     -> regression metrics + diff PNG
+     -> independent expected-shape goal PNG
+     -> expected-shape overlay PNG
+     -> structured view evidence
+```
+
+### Model-local data
+
+A model may own:
+
+```text
+examples/<model>/verification/
+  visual.json
+  baselines/
+    <view>.png
+```
+
+`visual.json` contains only Forge/model policy: required views, render and
+normalization dimensions, comparison thresholds, expected boxes/features and
+baseline provenance. It does not implement image comparison or projection.
+
+### Camera conversion
+
+Forge derives a deterministic SolidCraft orthographic camera from measured
+model bounds:
+
+- target = center of the complete measured body envelope;
+- framing size = largest XYZ span, minimum 1 mm;
+- SolidCraft distance = size × 1.65;
+- front = yaw 0°, pitch 0°;
+- right = yaw -90°, pitch 0°;
+- top = yaw 0°, pitch +90°;
+- iso = yaw -45°, pitch +32°.
+
+SolidCraft's orthographic half-height is 0.4 × camera distance. The generic
+`OrthographicCamera` therefore uses the same yaw/pitch in degrees and
+`distance = 0.4 × SolidCraft distance`. This preserves the historical
+front X-right/Z-up and top X-right/Y-up projection semantics while using the
+verification library for actual projection/drawing.
+
+### Baselines
+
+Existing approved visual baselines are migrated as the model's baseline PNGs
+with their provenance retained. CI compares against those files. It may report a
+missing baseline, but it must not approve or replace one automatically.

@@ -47,3 +47,38 @@ SolidCraft runtime workflow.
 The package keeps its own tested SolidCraft compatibility guard. CI must verify
 that its declared `SOLIDCRAFT_VERSION` agrees with the package/runtime build
 contract rather than silently maintaining unrelated version literals.
+
+
+## Visual verification
+
+Forge visual verification separates domain policy from generic image mechanics.
+
+Forge owns:
+- which views a model requires;
+- conversion from measured SolidCraft model bounds to a deterministic
+  SolidCraft snapshot camera;
+- the exact approved model-local baseline images;
+- model-local expected boxes/features;
+- the decision that a visual view is required.
+
+Released `lib.py.cad.verfication` owns:
+- image normalization;
+- image comparison metrics;
+- deterministic diff images;
+- orthographic point projection;
+- generic expected boxes/holes/slots;
+- goal and overlay drawing;
+- structured visual evidence values.
+
+Visual evidence must use the same physical camera projection for the actual
+SolidCraft snapshot and the independent expected-shape overlay.
+
+The historical render contract remains:
+- native snapshot size 720 x 540 pixels;
+- normalized regression size 96 x 72 pixels;
+- changed pixel threshold 12;
+- maximum mean absolute difference 6.0;
+- maximum changed-pixel fraction 0.08.
+
+Approved baselines are versioned with the model that owns them. A current render
+must never silently become its own approved baseline during CI.
