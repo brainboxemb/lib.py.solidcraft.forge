@@ -1,0 +1,10 @@
+section: associativity
+title: Native attachment clocking angle
+tagline: Joint clocking stays a native 90 degree attachment value
+description: >
+  A rectangular Arm is attached to a Base with a 90 degree clocking angle so orientation remains relationship intent rather than baked child geometry.
+parameters: Base 60 × 60 × 10 mm; Arm 30 × 10 × 6 mm; attachment angle 90°
+stages:
+  - Create the Base and reusable Arm components
+  - Attach Arm TOP-to-BOTTOM with a 90 degree joint angle
+  - Keep the rotated Arm orientation in native attachment history

@@ -1,0 +1,10 @@
+section: features
+title: Native circular feature pattern
+tagline: One source cut is repeated by a native circular History pattern
+description: >
+  A plate receives one source through-hole cut and SolidCraft repeats that feature around a pitch circle as one editable circular pattern.
+parameters: 100 × 100 × 6 mm plate; six Ø8 holes on 60 mm PCD
+stages:
+  - Create the plate and one BoltHole sketch
+  - Apply one source through-hole cut
+  - Repeat that cut with one native circular feature pattern

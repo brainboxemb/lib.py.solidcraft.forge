@@ -8,16 +8,7 @@ issues preserve the history.
 
 ## Current work: finish the CAD-CI migration
 
-### 1. Migrate the remaining historical qualification models
-
-Continue in the historical qualification registry order until every required
-model has a `model_verify` path.
-
-Use one reviewable migration PR per agreed batch.
-
-Remove this section when the model catalog migration is complete.
-
-### 2. Finish durable build output and Pages publication — #366
+### 1. Finish durable build output and Pages publication — #366
 
 Move the remaining build-output and GitHub Pages publication work onto the
 released generic CAD-CI infrastructure.
@@ -27,7 +18,7 @@ Forge or model verification merely to build the site.
 
 Remove this section when #366 is merged.
 
-### 3. Final migration audit
+### 2. Final migration audit
 
 After the previous sections are complete:
 

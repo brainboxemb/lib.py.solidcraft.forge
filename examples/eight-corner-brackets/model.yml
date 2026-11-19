@@ -1,0 +1,10 @@
+section: components
+title: "Eight vertical L-profiles: two per side corner"
+tagline: One reusable L-profile is placed at top and bottom of each frame corner
+description: >
+  A parametric frame reuses one L-profile component in eight calculated placements, two on every rounded side corner.
+parameters: Frame 120 × 80 × 60 mm; L-profile arm 28 mm, thickness 4 mm, height 16 mm
+stages:
+  - Create the parameterized FrameBlock
+  - Create one reusable LProfile definition
+  - Place eight calculated top and bottom corner occurrences

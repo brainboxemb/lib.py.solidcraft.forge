@@ -1,0 +1,10 @@
+section: associativity
+title: Associative sketch pattern and mirror
+tagline: Native sketch patterns and mirrors drive repeated holes and slots
+description: >
+  One Circle seed and one Slot seed generate repeated cut geometry through native sketch pattern and mirror relationships rather than Python-expanded copies.
+parameters: 240 × 160 × 5 mm plate; Ø8 holes; 25 mm hole pitch; 8 mm slots
+stages:
+  - Create the plate and Dog holes sketch
+  - Pattern and mirror the Circle seed before one cut
+  - Pattern and mirror the Slot seed before one cut

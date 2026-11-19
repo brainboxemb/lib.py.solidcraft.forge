@@ -1,0 +1,10 @@
+section: features
+title: Explicit rounded-rectangle sketch pad
+tagline: RoundedRectangle2D remains true native rounded sketch geometry
+description: >
+  A named face-attached Sketch uses RoundedRectangle2D to create a joined rounded pad with native straight and arc sketch geometry.
+parameters: 80 × 60 × 5 mm base; 40 × 30 × 8 mm pad; 5 mm corner radius
+stages:
+  - Create the native Box base
+  - Create a named TOP-face rounded-rectangle Sketch
+  - Join the rounded pad extrusion to the base

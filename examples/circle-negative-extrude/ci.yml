@@ -1,0 +1,30 @@
+# SolidCraft model verification for circle-negative-extrude.
+id: circle-negative-extrude
+kind: model
+needs:
+  - forge-tool
+watch:
+  - examples/circle-negative-extrude/scpf/**
+  - examples/circle-negative-extrude/model.yml
+  - examples/circle-negative-extrude/verification/**
+  - scripts/forge_example.py
+  - scripts/model_verify.py
+  - scripts/solidcraft_runtime.py
+  - docker/solidcraft_runtime/**
+strategy:
+  reuse: true
+steps:
+  - id: model_verify
+    inputs:
+      - examples/circle-negative-extrude/scpf/**
+      - examples/circle-negative-extrude/model.yml
+      - examples/circle-negative-extrude/verification/**
+      - scripts/forge_example.py
+      - scripts/model_verify.py
+      - scripts/solidcraft_runtime.py
+      - docker/solidcraft_runtime/**
+      - scpf/scpf/version.py
+    run: [python, ../../scripts/model_verify.py]
+    outputs:
+      - solidcraft.json
+      - model_verify

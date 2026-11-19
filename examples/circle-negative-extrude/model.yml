@@ -1,0 +1,10 @@
+section: fundamentals
+title: Negative circle profile extrusion
+tagline: An explicit Circle2D sketch extrudes along negative Z
+description: >
+  One minimal circular profile verifies explicit sketch authoring and a signed negative extrusion direction.
+parameters: Ø20 mm profile; 30 mm negative extrusion
+stages:
+  - Create an explicit XY Sketch
+  - Add the Ø20 Circle2D profile
+  - Extrude the sketch 30 mm in negative Z
