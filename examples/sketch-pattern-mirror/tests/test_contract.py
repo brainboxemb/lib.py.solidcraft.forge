@@ -1,4 +1,4 @@
-"""Q1/Q2 contract for generic associative sketch pattern/mirror handles."""
+"""integration contract for generic associative sketch pattern/mirror handles."""
 
 import json
 import unittest

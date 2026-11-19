@@ -1,4 +1,4 @@
-"""Q2 command contract for parametric-offset."""
+"""integration command contract for parametric-offset."""
 
 from pathlib import Path
 import unittest

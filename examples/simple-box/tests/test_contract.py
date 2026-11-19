@@ -18,7 +18,7 @@ class SimpleBoxCommandTests(unittest.TestCase):
             case for case in QUALIFICATION_CASES
             if case["slug"] == "simple-box"
         )
-        self.assertTrue(case["q5_required"])
+        self.assertTrue(case["saved_design_required"])
         spec = mutation_spec("simple-box")
         document = json.loads(
             (ROOT / spec["command"]).read_text(encoding="utf-8")

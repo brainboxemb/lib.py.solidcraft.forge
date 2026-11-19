@@ -1,4 +1,4 @@
-"""Q1/Q2 contract for native rectangular feature patterns."""
+"""integration contract for native rectangular feature patterns."""
 import json
 import unittest
 from pathlib import Path
@@ -69,16 +69,16 @@ class RectangularPatternQualificationTests(unittest.TestCase):
         self.assertEqual(params["pitch"], "mm")
         self.assertEqual(params["row_pitch"], "mm")
 
-    def test_q5_is_required_for_native_pattern_parameters(self):
+    def test_saved_design_is_required_for_native_pattern_parameters(self):
         case = next(
             case for case in QUALIFICATION_CASES
             if case["slug"] == "rectangular-pattern"
         )
-        self.assertTrue(case["q5_required"])
+        self.assertTrue(case["saved_design_required"])
         self.assertIn("columns", case["mutation"])
         self.assertIn("pitch", case["mutation"])
 
-    def test_q5_mutation_changes_count_and_spacing(self):
+    def test_saved_design_mutation_changes_count_and_spacing(self):
         spec = mutation_spec("rectangular-pattern")
         self.assertIsNotNone(spec)
         command_path = ROOT / spec["command"]
