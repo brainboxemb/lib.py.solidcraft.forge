@@ -111,7 +111,7 @@ CAPABILITY_COVERAGE = [
     ("Assemblies", "gap", "Saved design", "Visual", ["parametric-attach"], "Saved-design mutation qualified."),
     ("Assemblies", "local planar offset=(u,v)", "Saved design", "Visual", ["parametric-offset"], "Current semantics explicitly local to joint frame."),
     ("Assemblies", "angle", "Visual", "Visual", ["attach-angle"], "A non-square child is quarter-turned by the native rigid-joint angle and verified by bounds plus visual regression."),
-    ("Assemblies", "as_built=True", "Visual", "Integration", [], "Command-level tests cover joint.as_built, but no dedicated native qualification case currently proves native-visual."),
+    ("Assemblies", "as_built=True", "Visual", "Integration", [], "Command-level tests cover joint.as_built, but no dedicated qualification case currently proves both native and visual behaviour."),
     ("Assemblies", "standard face anchors", "Saved design", "Visual", ["parametric-anchor"], "Parent topology mutation qualified."),
     ("Assemblies", "standard corner anchors", "Saved design", "Visual", ["corner-anchor", "xz-anchor"], "Width/height mutation and mirrored corners qualified."),
     ("Assemblies", "eight profiles as two per vertical side corner", "Visual", "Visual", ["eight-corner-brackets"], "The 4-profile baseline is duplicated in Z so each rounded vertical side corner has one lower and one upper angle profile."),
