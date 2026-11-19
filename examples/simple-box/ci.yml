@@ -1,25 +1,21 @@
-# First migrated Forge example: host-side contract verification only.
+# Host-side verification for one Forge example.
 id: simple-box
 kind: example
 needs:
   - forge-tool
 watch:
-  - examples/simple-box/scpf/**
-  - examples/simple-box/tests/**
-  - qualification/cases.py
-  - qualification/native_cases.py
-  - qualification/commands/simple-box/**
+  - examples/simple-box/**
+  - qualification/**/*.py
+  - qualification/commands/**
   - scripts/tool_verify.py
 strategy:
   reuse: true
 steps:
   - id: tool_verify
     inputs:
-      - examples/simple-box/scpf/**
-      - examples/simple-box/tests/**
-      - qualification/cases.py
-      - qualification/native_cases.py
-      - qualification/commands/simple-box/**
+      - examples/simple-box/**
+      - qualification/**/*.py
+      - qualification/commands/**
       - scripts/tool_verify.py
     run: [python, ../../scripts/tool_verify.py]
     outputs:
