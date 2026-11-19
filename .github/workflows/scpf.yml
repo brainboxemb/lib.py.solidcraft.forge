@@ -12,11 +12,12 @@ jobs:
   plan:
     permissions:
       contents: read
-    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-plan.yml@e09e86b42ee42c3171b30d031dbb84b939635ad4
+    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-plan.yml@c2db9e6b6553052df12d2498e9436ba7be056fe6
 
   runtime_check:
     needs: plan
-    if: ${{ contains(needs.plan.outputs.plan_json, '"kind":"model"') }}
+    if: ${{ contains(needs.plan.outputs.plan_json, '"kind":"model"') ||
+             contains(needs.plan.outputs.plan_json, '"kind":"verification"') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -65,7 +66,7 @@ jobs:
     permissions:
       contents: read
       packages: read
-    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-run.yml@e09e86b42ee42c3171b30d031dbb84b939635ad4
+    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-run.yml@c2db9e6b6553052df12d2498e9436ba7be056fe6
     with:
       source_sha: ${{ needs.plan.outputs.source_sha }}
       base_sha: ${{ needs.plan.outputs.base_sha }}
