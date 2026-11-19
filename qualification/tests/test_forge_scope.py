@@ -63,6 +63,14 @@ class ForgeScopeTests(unittest.TestCase):
         self.assertTrue(plan["pipeline_smoke"])
         self.assertTrue(plan["needs_image"])
 
+    def test_derived_diagram_change_resolves_native_image(self):
+        plan = self.scope.make_plan(
+            event_name="pull_request",
+            paths=("qualification/diagrams/corner-bracket-goal.cadcraft.json",),
+        )
+        self.assertEqual(plan["gate"], "regenerate-derived")
+        self.assertTrue(plan["needs_image"])
+
     def test_native_case_change_selects_affected_native(self):
         plan = self.scope.make_plan(
             event_name="pull_request",
