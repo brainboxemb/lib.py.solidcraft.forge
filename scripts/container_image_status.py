@@ -56,11 +56,19 @@ def inspect(reference: str) -> bool:
     )
 
 
-def write_github_output(path: Path, *, exists: bool) -> None:
-    """Write the explicit image-presence result for GitHub Actions."""
+def write_github_output(
+    path: Path,
+    *,
+    exists: bool,
+    reference: str,
+    fallback_reference: str,
+) -> None:
+    """Write presence plus the image reference that later steps should run."""
 
+    run_image = reference if exists else fallback_reference
     with path.open("a", encoding="utf-8") as handle:
         handle.write(f"exists={'true' if exists else 'false'}\n")
+        handle.write(f"run_image={run_image}\n")
 
 
 def main() -> int:
@@ -68,13 +76,19 @@ def main() -> int:
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reference", required=True)
+    parser.add_argument("--fallback-reference", required=True)
     parser.add_argument("--github-output", type=Path)
     args = parser.parse_args()
 
     exists = inspect(args.reference)
     print("present" if exists else "absent")
     if args.github_output:
-        write_github_output(args.github_output, exists=exists)
+        write_github_output(
+            args.github_output,
+            exists=exists,
+            reference=args.reference,
+            fallback_reference=args.fallback_reference,
+        )
     return 0
 
 
