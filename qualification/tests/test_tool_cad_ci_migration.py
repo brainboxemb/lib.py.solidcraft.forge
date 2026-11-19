@@ -122,6 +122,9 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertIn('"replay"', script)
         self.assertIn("FORGE_QUALIFICATION_IMAGE", script)
         self.assertIn('"docker"', script)
+        self.assertIn('"--user"', script)
+        self.assertIn("os.getuid()", script)
+        self.assertIn("os.getgid()", script)
         self.assertIn("finalize_item_result.py", script)
         self.assertFalse((ROOT / "examples/simple-box/ci.py").exists())
 
