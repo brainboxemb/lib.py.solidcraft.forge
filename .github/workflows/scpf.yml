@@ -114,17 +114,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Resolve cached qualification image
+      - name: Check immutable qualification image
         if: needs.plan.outputs.needs_image == 'true'
         id: image_cache
         run: |
-          if timeout 30s docker pull "${{ steps.image.outputs.reference }}"; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "run_image=${{ steps.image.outputs.reference }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "run_image=qualification-local:${{ steps.image.outputs.image_id }}" >> "$GITHUB_OUTPUT"
-          fi
+          python scripts/container_image_status.py \
+            --reference "${{ steps.image.outputs.reference }}" \
+            --fallback-reference "qualification-local:${{ steps.image.outputs.image_id }}" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Pull existing qualification image
+        if: needs.plan.outputs.needs_image == 'true' && steps.image_cache.outputs.exists == 'true'
+        run: docker pull "${{ steps.image.outputs.reference }}"
 
       - name: Set up Docker buildx
         if: needs.plan.outputs.needs_image == 'true' && steps.image_cache.outputs.exists != 'true'
