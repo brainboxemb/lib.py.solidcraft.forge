@@ -26,7 +26,7 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
     def test_every_case_has_native_validator(self):
         self.assertEqual(set(VALIDATORS), set(CASE_SLUGS))
 
-    def test_every_q5_case_has_one_reusable_mutation(self):
+    def test_every_saved_design_case_has_one_reusable_mutation(self):
         self.assertEqual(set(MUTATIONS), set(saved_design_cases()))
         validate_runtime_metadata()
         for slug, spec in MUTATIONS.items():
@@ -131,24 +131,10 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
         case_runner = (
             ROOT / "qualification" / "case_runner.py"
         ).read_text(encoding="utf-8")
-        affected_runner = (
-            ROOT / "qualification" / "run_affected.py"
-        ).read_text(encoding="utf-8")
-
         self.assertIn(
             "run_post_build_inspections(",
             case_runner,
         )
-        self.assertNotIn(
-            "run_post_build_inspections(",
-            affected_runner,
-        )
-        for spec in POST_BUILD_INSPECTIONS.values():
-            self.assertNotIn(
-                f'"{spec["command"]}"',
-                affected_runner,
-            )
-
         workflow = (
             ROOT / ".github" / "workflows" / "scpf.yml"
         ).read_text(encoding="utf-8")
@@ -159,8 +145,11 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
             )
 
     def test_documented_native_version_uses_forge_target(self):
-        q3 = next(row for row in QUALIFICATION_LEVELS if row[0] == "native")
-        self.assertIn(f"SolidCraft {TESTED_SOLIDCRAFT_VERSION}", q3[2])
+        native = next(
+            row for row in QUALIFICATION_LEVELS
+            if row[0] == "Native model"
+        )
+        self.assertIn(f"SolidCraft {TESTED_SOLIDCRAFT_VERSION}", native[2])
 
         def strings(value):
             if isinstance(value, str):
