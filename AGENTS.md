@@ -82,19 +82,25 @@ important flow without reconstructing it from implementation details.
 
 ## TEST LAYERS
 
-Use three conceptual test layers:
+Use three test layers. Do not use numbered qualification levels.
 
 1. **Library unit tests** under `scpf/tests/` prove Forge API, validation and
    compiler behaviour.
 2. **Integration tests** under `examples/<case>/tests/` prove a concrete
    example and its generated SolidCraft command contract.
-3. **Qualification** proves the required native SolidCraft result, saved-design
-   behaviour and visual/semantic checks for a qualification item.
+3. **Qualification** proves the native SolidCraft model, geometry,
+   saved-design behaviour when required, and visual result.
 
-The current qualification runner still writes the historical field names
-`Q1` and `Q2` for focused library/integration evidence. Those are
-transitional result labels in the old runner, not separate architecture layers.
-Do not introduce Q1/Q2 terminology into new tool.cad.ci item design.
+Each `examples/<case>` folder owns one generic `tool.cad.ci` item. Its
+`integration` step is cheap and host-side. Its `native` step resumes from
+the compiled command document in the immutable SolidCraft qualification image.
+The structured result uses semantic checks: `integration`, `native_model`,
+`geometry`, `saved_design`, and `visual`.
+
+`tool.cad.ci` must not know what qualification means. It only plans and runs
+items/steps, records reusable state, owns generic build storage, and publishes
+generic build/Pages trees. Forge owns case selection, native runtime choice,
+all qualification checks, and the website content.
 
 Before implementing any foundational compiler change:
 
@@ -159,7 +165,7 @@ semantically.
 7. Keep a model's command-contract tests under `examples/<case>/tests/`.
    Keep only qualification-tooling tests under `qualification/tests/`.
 8. Run the relevant library unit tests and affected integration examples first, then only affected native qualification items while iterating.
-9. Run full Q1-Q6 before promotion/release.
+9. Run the full native qualification gate before promotion/release.
 
 When sibling methods use the same public selector or option type, treat that as
 one API. Put shared validation/resolution in one code path where practical and
@@ -189,60 +195,39 @@ When another library lacks a SolidCraft-style associative relationship, compare
 the visible geometry and state the semantic limitation in a short source
 comment. Do not fake associativity with unexplained coordinates.
 
-## Verification levels
+## Verification scope
 
-Do not run every model after every edit. The changed paths and proving tests
-define the scope.
+Do not run every model after every edit. `qualification/impact.py` and
+`scripts/forge_scope.py` select the smallest safe scope from changed paths.
 
-`qualification/preview_scope.py` is the executable selector for PR work. It
-must agree with these rules:
-
-| Stage | When | What runs |
+| Gate | When | What runs |
 | --- | --- | --- |
-| Preflight | Every relevant PR update | Compile all Python, validate workflow structure, run CI contract tests, build/test the website |
-| Affected Q1/Q2 | Normal API/model development | All cheap Forge unit tests plus Q1/Q2 evidence and command compilation only for selected cases |
-| Affected Q1-Q6 | Final check for native/geometry-sensitive work | `qualification/run_affected.py --cases <selected>` |
-| Full Q1-Q6 | Foundational compiler/replay/runtime changes, SolidCraft promotion, release | Every registered case plus the normal full reference/native gate |
+| `preflight` | Presentation/publication-only work | Python/workflow/site contract checks only |
+| `affected-integration` | Example/reference work that needs no native SolidCraft proof | Library tests plus selected example integration items |
+| `affected-native` | Native/geometry-sensitive changes | Selected example items through their native step |
+| `full-native` | Foundational compiler/runtime changes, SolidCraft promotion, release, scheduled safety run | Every registered example plus required reference/diagram items |
 
-How cases are selected:
+Case selection rules:
 
 - A changed `examples/<case>/...` path selects that case.
-- A changed Q1/Q2 test selects every case that names that test in
-  `qualification/case_evidence.py`.
-- Forge modules map to qualification cases through
-  `qualification/impact.py`. Unknown or unmapped technical inputs fail safe
-  to the full gate; do not silently classify them as presentation-only.
-- Changes to the case registry/evidence registry select all cases because they
-  change the mapping itself.
+- Example-owned tests under `examples/<case>/tests/` belong to that same case.
+- Forge modules map to affected cases through `qualification/impact.py`.
+  Unknown or unmapped technical inputs fail safe to `full-native`.
 - Site/docs/workflow-only changes select no CAD case.
-- Reference libraries run only when reference implementation or
-  reference-validation code changed.
-- Every affected/full Q1-Q6 staged run must finish by collecting the canonical
-  schema-v4 `native/<case>/qualification-result.json` through
-  `qualification/results.py`. Stage-state JSON is rerun/debug evidence; it is
-  not a replacement result format. Build and Pages consume the canonical
-  per-case result.
-- Site generation must resolve `case_record` and native verification state
-  independently for each qualification slug from the normalized build manifest.
-  Never carry case verification state across example/qualification loop
-  iterations.
-- Presentation-only site builds may reuse older qualified build evidence.
-  In that case the site source commit and qualification evidence commit are
-  intentionally different; validate qualification pages against
-  `build.json.source_commit`, not blindly against the current site source SHA.
+- Reference-library changes are owned by the independent reference-suite item.
+- The canonical per-case result is
+  `native/<case>/qualification-result.json`, schema v5. It contains semantic
+  checks, not numbered levels.
+- Stage-state JSON is rerun/debug evidence. It is not a second qualification
+  result format.
+- Presentation-only Pages builds may reuse older passing technical evidence.
+  The site source commit and evidence commit may therefore differ; provenance
+  must state both.
 
-The selector also reports the required final gate. Work on a source branch with
-cheap affected checks while implementing. Open a PR only when the implementation
-is reviewable; the PR merge gate then runs the reported final gate on that exact
-head/base pair. Do not create an early PR merely to use CI as the development
-loop.
-
-Site-only publication uses the same risk decision through
-`scripts/reusable_qualification.py`. For a presentation-only source change it
-may reuse a structurally valid, complete passing `build/main` baseline without
-recalculating every case input hash. Any technical source change must use the
-normal technical qualification/promotion flow. Actions-run history is not an
-evidence database.
+The operator never chooses a numbered qualification level.
+`scripts/forge_scope.py` owns the risk decision. Workflows stay thin:
+GitHub-specific setup belongs in Actions; repository behaviour belongs in
+tested Python modules.
 
 ### One Forge workflow and main recovery
 
@@ -285,24 +270,20 @@ SolidCraft are started.
 
 Keep the edit-check loop short:
 
-- Library unit tests and integration tests require no SolidCraft. The current runner still records their focused evidence in legacy Q1/Q2 fields until that runner is migrated.
-- Native qualification must support selected cases.
-- Time compile/build/eval/snapshot/mutation steps before optimizing startup.
-- Reuse a supported persistent native process only when measured useful and
+- Library unit tests and integration tests require no SolidCraft.
+- Native qualification supports selected cases and resumes from the compiled
+  integration output.
+- Time compile/replay/eval/render/mutation stages before optimizing startup.
+- Reuse a persistent native process only when measurement shows it helps and
   case isolation remains reliable.
-- Full Q1-Q6 is mandatory for SolidCraft-version promotion and final
-  main-branch qualification.
+- `full-native` is mandatory for SolidCraft-version promotion and final
+  release/main safety qualification.
 
-A qualification case is a fixed comparison target. Do not change its expected
-geometry or its PythonSCAD, pyBOSL2, CadQuery or build123d reference code merely because
-Forge changes its defaults or syntax. Migrate the Forge/SCPF fixture so it
-continues to produce the established case. Change expected geometry and
-external references only when the task explicitly changes that qualification
-case itself.
-
-When intentionally changing a qualification model, update its regression/native
-checks and all required reference implementations.
-
+A qualification case is a fixed comparison target. Do not change expected
+geometry or external reference implementations merely because Forge syntax or
+defaults change. Migrate the Forge fixture so it continues to produce the
+established case. Change the expected target only when the task explicitly
+changes that qualification case.
 
 ## Unit-test geometry contracts
 
@@ -321,8 +302,7 @@ geometry rule.
   registry as the primitive-pair CSG tests. Do not maintain a second list.
 - Keep a focused standalone regression only when the failure is genuinely
   specific and cannot be expressed as a shared API contract.
-- When reorganising tests, preserve existing coverage and update qualification
-  Q1 evidence paths in the same change.
+- When reorganising tests, preserve existing coverage and update the owning example integration tests in the same change.
 
 See `scpf/tests/README.md` for the current test layout.
 
@@ -342,8 +322,7 @@ When writing or changing an SCPF model:
 6. Compile the model to command JSON when reviewing the generated SolidCraft
    operations.
 7. Do not describe a model as working until its relevant library and integration checks pass.
-8. Do not claim native SolidCraft behaviour unless the relevant Q3+ validation
-   actually ran.
+8. Do not claim native SolidCraft behaviour unless the relevant native qualification item actually ran.
 
 A downstream CAD model such as Simple MFT belongs in the CAD model repository.
 Forge qualification models should stay small and abstract so a failure proves
@@ -455,8 +434,7 @@ Rules:
 - Closing a PR removes both generated PR directories. A merged technical PR
   promotes its verified overlay before cleanup.
 - Normal technical merge promotion replaces only affected case/implementation
-  directories in the complete `build/main/` baseline. A scheduled/manual full
-  Q1-Q6 safety run may rebuild the complete baseline.
+  directories in the complete `build/main/` baseline. A scheduled/manual full-native safety run may rebuild the complete baseline.
 - Replacing the stable Pages root must preserve `previews/`.
 - `preview-output` and `qualified-output` are not part of the architecture.
   Do not publish new data to them.
@@ -504,7 +482,6 @@ normal development. Do not create or move release tags manually.
 
 For a release, follow `docs/10-release-process.md`: prepare a normal release
 PR, bump only `scpf/pyproject.toml`, date the changelog section and merge only
-after the required PR verification. The resulting version change on `main`
-selects full Q1-Q6 in the same **Forge** workflow. Only after that exact main
+after the required PR verification. The resulting version change on `main` selects `full-native` in the same **Forge** workflow. Only after that exact main
 run succeeds may its release job create the source/evidence tags and GitHub
 Release.
