@@ -1,159 +1,75 @@
 # Forge repository plan
 
-Status: current repository plan.
+This file contains only current unfinished repository work.
 
-This is the single current implementation plan for the Forge repository.
-The active work is the CAD-CI migration described below. Historical issues,
-pull requests and old qualification documents remain useful history, but they
-do not replace this plan.
+Completed work is removed from this plan after it is merged. Permanent design
+decisions belong in the normal repository documentation; Git history and closed
+issues preserve the history.
 
-## Current work: CAD-CI migration
+## Current work: finish the CAD-CI migration
 
-### Responsibilities
+### 1. Separate Forge release verification from model verification — #401
 
-The generic CI implementation lives outside Forge:
+Make the active CI structure match the intended responsibilities:
 
-- `tool.cad.ci` owns planning, SCons execution, dependency traversal, caching
-  and reusable build state.
-- `lib.py.cad.verfication` owns reusable CAD/model verification helpers.
-- Forge owns only Forge-specific build, release verification and model
-  verification commands.
+- `tool_build`, `tool_test` and `tool_verify` form the Forge release
+  verification chain;
+- `tool_verify` uses the fixed representative Forge examples;
+- historical qualification models are not kept as `tool_verify` items merely
+  because they previously had integration tests;
+- per-model SolidCraft verification uses `model_verify`;
+- `tool.cad.ci` remains the only generic CI runner.
 
-Forge must not add a second runner, scheduler, cache engine or generic result
-layer.
+When #401 is merged, remove this section from the plan.
 
-### Forge release verification
+### 2. Migrate the next 10 historical qualification models — #395
 
-Forge itself has one release-verification chain:
+Add `model_verify` for:
 
-```text
-tool_build -> tool_test -> tool_verify
-```
+1. `anchored-holes`
+2. `hole-family`
+3. `sheet-fold`
+4. `top-sketch-after-chamfer`
+5. `parameter-scope`
+6. `parent-derived-child-size`
+7. `components`
+8. `repeated-parent-attachments`
+9. `assembly-decorator`
+10. `group-hierarchy`
 
-### tool_build
+Use historical Forge commit
+`be40b09e7454a90e87d83768a9e7453c52ba5d76` as the migration reference for
+model expectations, mutations and inspections.
 
-Build the distributable SCPF/Forge Python package.
+When #395 is merged, remove this section from the plan.
 
-### tool_test
+### 3. Migrate the remaining historical qualification models
 
-Run the reusable Forge unit-test suite from `scpf/tests/`.
+Continue in the historical qualification registry order until every required
+model has a `model_verify` path.
 
-### tool_verify
+Use one reviewable migration PR per agreed batch.
 
-Verify the **built Forge package** with the fixed representative example set.
+Remove this section when the model catalog migration is complete.
 
-The representative Forge examples are:
+### 4. Finish durable build output and Pages publication — #366
 
-1. `simple-box`
-2. `anchored-holes`
-3. `components`
-4. `corner-anchor`
-5. `custom-anchor`
+Move the remaining build-output and GitHub Pages publication work onto the
+released generic CAD-CI infrastructure.
 
-These are release verification for Forge. They prove that the built tool can
-execute representative Python models and emit the expected SolidCraft command
-structure.
+Publication consumes existing build/verification evidence and must not rerun
+Forge or model verification merely to build the site.
 
-`tool_verify` is **not** a per-model verification stage. The historical model
-catalog must not be added to `tool_verify` merely because those models once had
-integration tests.
+Remove this section when #366 is merged.
 
-The five-example set is explicit. Do not infer or expand it from the model
-catalog.
+### 5. Final migration audit
 
-### Model verification
+After the previous sections are complete:
 
-`model_verify` verifies one CAD model in SolidCraft.
+- confirm no obsolete qualification/CI architecture remains active;
+- run the complete intended CI verification;
+- confirm unchanged targets are reusable/CURRENT where expected;
+- confirm the active documentation matches the final implementation.
 
-The source set for this migration is the historical qualification catalog from
-Forge commit:
-
-`be40b09e7454a90e87d83768a9e7453c52ba5d76`
-
-That catalog contains 32 model-verification cases.
-
-For each migrated model, `model_verify` owns the checks required by that
-model's historical contract, including where applicable:
-
-- native SolidCraft model creation;
-- geometry and feature-history checks;
-- saved-design parameter or relationship mutation;
-- model-specific post-build inspections;
-- other current executable evidence required for that model.
-
-A model does not need `tool_verify` in order to be a model-verification item.
-If one of the five Forge release examples is also present in the historical
-model catalog, the same source model may participate in both responsibilities,
-but the two verification responsibilities remain independent.
-
-### Model metadata
-
-Migrated models use a local `model.yml` with exactly these generic English
-fields:
-
-- `section`
-- `title`
-- `tagline`
-- `description`
-- `parameters`
-- `stages`
-
-Technical expectations, geometry assertions, mutations and SolidCraft commands
-do not belong in `model.yml`.
-
-### Migration order
-
-The migration is completed in small reviewable PRs:
-
-1. Forge tool build and unit-test path.
-2. Forge `tool_verify` with the five representative release examples.
-3. One complete model-verification path: `simple-box`.
-4. The next ten historical qualification models (#395):
-   - `anchored-holes`
-   - `hole-family`
-   - `sheet-fold`
-   - `top-sketch-after-chamfer`
-   - `parameter-scope`
-   - `parent-derived-child-size`
-   - `components`
-   - `repeated-parent-attachments`
-   - `assembly-decorator`
-   - `group-hierarchy`
-5. The remaining historical qualification models.
-6. Durable build output and Pages publication (#366).
-7. Final repository audit and full CI verification.
-
-Each logical migration step uses its own branch and pull request.
-
-### Historical integration tests
-
-The pre-cut-over repository had example-owned integration tests under
-`examples/<case>/tests/`.
-
-Those tests remain useful evidence for Forge command behaviour, but the old
-label `integration` does not decide the new CI ownership automatically.
-
-- reusable Forge behaviour belongs in `tool_test`;
-- the fixed representative release examples belong in `tool_verify`;
-- per-model SolidCraft behaviour belongs in `model_verify`.
-
-Do not recreate the old qualification runner or its gate terminology.
-
-### Runtime and execution boundaries
-
-- SolidCraft model verification uses the immutable `solidcraft_runtime`.
-- The runtime contains SolidCraft and the pinned reusable verification library,
-  but no model-specific contracts.
-- Model expectations remain local to the Forge repository/model.
-- Runtime preparation is driven from the CAD-CI plan, not hardcoded to one
-  model name.
-- A second unchanged CI run must leave reusable targets CURRENT.
-- Unrelated model targets must remain CURRENT when one model changes.
-
-### Publication boundary
-
-Build-output storage and GitHub Pages publication are a later migration step
-tracked by #366.
-
-Publication must consume already produced build/verification evidence. It must
-not rerun Forge or model verification merely to build the website.
+When this audit passes, remove this section. If no other work is planned,
+`docs/plan.md` may then contain only the next repository work or be removed.
