@@ -121,7 +121,7 @@ class QualificationCameraTests(unittest.TestCase):
                     self.assertEqual(reference.size, REFERENCE_SIZE)
                     self.assertEqual(reference.mode, "L")
 
-    def test_q6_requires_regression_and_expected_shape_evidence(self):
+    def test_visual_requires_regression_and_expected_shape_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
             case_dir = Path(tmp)
             for view in ("front", "right", "iso", "top"):

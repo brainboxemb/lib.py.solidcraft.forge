@@ -159,7 +159,7 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
             )
 
     def test_documented_native_version_uses_forge_target(self):
-        q3 = next(row for row in QUALIFICATION_LEVELS if row[0] == "Q3")
+        q3 = next(row for row in QUALIFICATION_LEVELS if row[0] == "native")
         self.assertIn(f"SolidCraft {TESTED_SOLIDCRAFT_VERSION}", q3[2])
 
         def strings(value):

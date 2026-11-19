@@ -16,7 +16,7 @@ class SetupTests(unittest.TestCase):
             digest,
         )
 
-    def test_q1_case_evidence_runs_from_package_root(self):
+    def test_integration_case_evidence_runs_from_package_root(self):
         cwd = _target_cwd(
             {
                 "file": "scpf/tests/test_model_authoring.py",
