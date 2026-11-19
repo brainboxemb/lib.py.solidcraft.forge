@@ -53,6 +53,12 @@ docker/solidcraft_runtime/Dockerfile
 docker/solidcraft_runtime/runtime.json
 ```
 
+Runtime lifecycle is separate from normal Forge CI:
+
+- `.github/workflows/solidcraft-runtime.yml` checks/builds/publishes the immutable image and supports `workflow_dispatch`;
+- `.github/workflows/scpf.yml` only resolves the required reference and checks that it already exists when the CAD-CI plan contains a model item;
+- a missing image fails Forge CI instead of being built implicitly.
+
 At the current migration point, `simple-box` is the first migrated
 `model_verify` item. Issue #395 tracks the next ten historical qualification
 models.
