@@ -9,6 +9,7 @@ watch:
   - examples/simple-box/verification/**
   - scripts/forge_example.py
   - scripts/model_verify.py
+  - verification/visual_validation.py
   - scripts/solidcraft_runtime.py
   - docker/solidcraft_runtime/**
 strategy:
@@ -21,6 +22,7 @@ steps:
       - examples/simple-box/verification/**
       - scripts/forge_example.py
       - scripts/model_verify.py
+      - verification/visual_validation.py
       - scripts/solidcraft_runtime.py
       - docker/solidcraft_runtime/**
       - scpf/scpf/version.py

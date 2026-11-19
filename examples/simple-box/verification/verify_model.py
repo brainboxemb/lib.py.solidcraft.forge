@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import sys
 from typing import Any
 
 import yaml
@@ -22,8 +23,14 @@ from scpf.headless import run_document
 
 
 EXAMPLE = Path(__file__).resolve().parents[1]
+ROOT = EXAMPLE.parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from verification.visual_validation import verify_visual
 MODEL_METADATA = EXAMPLE / "model.yml"
 MUTATION = EXAMPLE / "verification" / "change_length.json"
+VISUAL_CONFIG = EXAMPLE / "verification" / "visual.json"
 MODEL_FIELDS = {
     "section",
     "title",
@@ -198,6 +205,39 @@ def geometry_check(ctx: VerificationContext) -> CheckOutcome:
     )
 
 
+
+
+def visual_check(ctx: VerificationContext) -> CheckOutcome:
+    """Verify deterministic simple-box renders and expected-shape evidence."""
+
+    native = ctx.output_dir / "native"
+    visual = ctx.output_dir / "visual"
+    report = verify_visual(
+        model=native / "model.sc",
+        measurements_path=native / "measurements.json",
+        config_path=VISUAL_CONFIG,
+        output_dir=visual,
+    )
+
+    if report["status"] != "pass":
+        raise VerificationFailure(
+            "simple-box visual verification",
+            evidence=report,
+        )
+
+    artifacts = tuple(
+        sorted(
+            path
+            for path in visual.rglob("*")
+            if path.is_file()
+        )
+    )
+    return CheckOutcome.passed(
+        evidence=report,
+        artifacts=artifacts,
+    )
+
+
 def saved_design_check(ctx: VerificationContext) -> CheckOutcome:
     """Change only the saved native length and prove the Box rebuilds."""
 
@@ -259,7 +299,7 @@ def saved_design_check(ctx: VerificationContext) -> CheckOutcome:
 
 
 def main() -> int:
-    """Run the three explicit simple-box model verification checks."""
+    """Run the explicit simple-box model verification checks."""
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, required=True)
@@ -282,6 +322,7 @@ def main() -> int:
         (
             VerificationCheck("replay", replay_check),
             VerificationCheck("geometry", geometry_check),
+            VerificationCheck("visual", visual_check),
             VerificationCheck("saved_design", saved_design_check),
         ),
     )

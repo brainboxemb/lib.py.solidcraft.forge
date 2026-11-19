@@ -122,3 +122,10 @@ verification library for actual projection/drawing.
 Existing approved visual baselines are migrated as the model's baseline PNGs
 with their provenance retained. CI compares against those files. It may report a
 missing baseline, but it must not approve or replace one automatically.
+
+
+The `VisualViewEvidence.expected_shape_status` field records whether the
+declared model-local expected geometry could be projected and emitted as goal
+and overlay evidence. It does not claim an additional automated pixel match.
+Automated pass/fail remains the approved-baseline regression; native geometry
+verification remains the dimensional/semantic check.
