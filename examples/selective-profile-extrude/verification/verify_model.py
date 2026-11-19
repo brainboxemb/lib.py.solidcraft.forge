@@ -12,6 +12,9 @@ from typing import Any
 import yaml
 
 from cad_verification import (
+    BodyEnvelope,
+    compare_scalar,
+    match_body_envelopes,
     CheckOutcome,
     VerificationCheck,
     VerificationContext,
@@ -20,6 +23,7 @@ from cad_verification import (
     verify,
 )
 from scpf.headless import run_document
+from verification.solidcraft_measurements import measured_body_envelopes
 
 
 EXAMPLE = Path(__file__).resolve().parents[1]
@@ -54,71 +58,6 @@ def load_json(path: Path) -> Any:
     """Read JSON evidence produced by SolidCraft."""
 
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def close(actual: float, expected: float, tolerance: float = 1e-3) -> bool:
-    """Return whether two engineering values match within tolerance."""
-
-    return abs(float(actual) - float(expected)) <= tolerance
-
-
-def vector_close(actual, expected, tolerance: float = 1e-3) -> bool:
-    """Compare equally-sized numeric vectors."""
-
-    return (
-        len(actual) == len(expected)
-        and all(close(a, b, tolerance) for a, b in zip(actual, expected))
-    )
-
-
-def bbox_close(body: dict[str, Any], minimum, maximum, tolerance: float = 1e-3) -> bool:
-    """Compare one body's axis-aligned bounds."""
-
-    return (
-        vector_close(body["bbox"]["min"], minimum, tolerance)
-        and vector_close(body["bbox"]["max"], maximum, tolerance)
-    )
-
-
-def bounds_match(data: dict[str, Any], expected, tolerance: float = 1e-3) -> bool:
-    """Match body bounds without depending on native body ordering."""
-
-    actual = [
-        (body["bbox"]["min"], body["bbox"]["max"])
-        for body in data.get("bodies", [])
-        if isinstance(body.get("bbox"), dict)
-    ]
-    if len(actual) != len(expected):
-        return False
-    remaining = list(actual)
-    for minimum, maximum in expected:
-        hit = next(
-            (
-                index
-                for index, (lo, hi) in enumerate(remaining)
-                if vector_close(lo, minimum, tolerance)
-                and vector_close(hi, maximum, tolerance)
-            ),
-            None,
-        )
-        if hit is None:
-            return False
-        remaining.pop(hit)
-    return not remaining
-
-
-def require_bounds(label: str, data: dict[str, Any], expected, tolerance: float = 1e-3) -> None:
-    """Require the declared model bounds."""
-
-    require_true(
-        label,
-        bounds_match(data, expected, tolerance),
-        expected=expected,
-        actual=[
-            (body["bbox"]["min"], body["bbox"]["max"])
-            for body in data.get("bodies", [])
-        ],
-    )
 
 
 def parameters(data: dict[str, Any]) -> dict[str, float]:
@@ -243,7 +182,18 @@ def geometry_check(ctx: VerificationContext) -> CheckOutcome:
     measurements = native / "measurements.json"
     data = evaluate(native / "model.sc", measurements)
     expected_bounds = [[[-60,-30,0],[60,30,5]]]
-    require_bounds("baseline bounds", data, expected_bounds, 0.01)
+    match_body_envelopes(
+        tuple(
+            BodyEnvelope(
+                tuple(minimum),
+                tuple(maximum),
+                f"baseline bounds {index + 1}",
+            )
+            for index, (minimum, maximum) in enumerate(expected_bounds)
+        ),
+        measured_body_envelopes(data),
+        0.01,
+    )
 
     require_equal("body count", data.get("body_count"), 1)
     expected_parameters = {"hole_diameter": 8.0, "hole_pitch": 20.0}
@@ -258,21 +208,22 @@ def geometry_check(ctx: VerificationContext) -> CheckOutcome:
     expected_volume = 120.0 * 60.0 * 5.0 - 3.0 * math.pi * 4.0**2 * 5.0
     removed_volume = math.pi * 4.0**2 * 5.0
     expected_center_x = -(removed_volume * (-30.0 - 10.0 + 30.0)) / expected_volume
-    require_true(
-        "three selected profiles",
-        close(body["volume_mm3"], expected_volume, 0.05)
-        and body.get("face_types", {}).get("cylinder") == 3,
-        expected={"volume_mm3": expected_volume, "cylindrical_faces": 3},
-        actual={
-            "volume_mm3": body["volume_mm3"],
-            "cylindrical_faces": body.get("face_types", {}).get("cylinder"),
-        },
+    compare_scalar(
+        expected_volume,
+        body["volume_mm3"],
+        0.05,
+        label="three selected profiles volume",
     )
-    require_true(
-        "unselected profile remains filled",
-        close(body["center_of_mass"][0], expected_center_x, 0.001),
-        expected=expected_center_x,
-        actual=body["center_of_mass"][0],
+    require_equal(
+        "three selected profiles cylindrical faces",
+        body.get("face_types", {}).get("cylinder"),
+        3,
+    )
+    compare_scalar(
+        expected_center_x,
+        body["center_of_mass"][0],
+        0.001,
+        label="unselected profile remains filled",
     )
     sketches = {row.get("name"): row for row in data.get("sketches", [])}
     selected = sketches.get("Selected holes")
@@ -310,7 +261,18 @@ def saved_design_check(ctx: VerificationContext) -> CheckOutcome:
     mutate(native / "model.sc", MUTATION, mutated)
     data = evaluate(mutated, measurements)
     expected_bounds = [[[-60,-30,0],[60,30,5]]]
-    require_bounds("mutated bounds", data, expected_bounds, 0.01)
+    match_body_envelopes(
+        tuple(
+            BodyEnvelope(
+                tuple(minimum),
+                tuple(maximum),
+                f"mutated bounds {index + 1}",
+            )
+            for index, (minimum, maximum) in enumerate(expected_bounds)
+        ),
+        measured_body_envelopes(data),
+        0.01,
+    )
 
     expected_parameters = {"hole_diameter": 10.0, "hole_pitch": 24.0}
     actual_parameters = parameters(data)
@@ -324,21 +286,22 @@ def saved_design_check(ctx: VerificationContext) -> CheckOutcome:
     expected_volume = 120.0 * 60.0 * 5.0 - 3.0 * math.pi * 5.0**2 * 5.0
     removed_volume = math.pi * 5.0**2 * 5.0
     expected_center_x = -(removed_volume * (-30.0 - 6.0 + 42.0)) / expected_volume
-    require_true(
-        "mutated selected profiles",
-        close(body["volume_mm3"], expected_volume, 0.05)
-        and body.get("face_types", {}).get("cylinder") == 3,
-        expected={"volume_mm3": expected_volume, "cylindrical_faces": 3},
-        actual={
-            "volume_mm3": body["volume_mm3"],
-            "cylindrical_faces": body.get("face_types", {}).get("cylinder"),
-        },
+    compare_scalar(
+        expected_volume,
+        body["volume_mm3"],
+        0.05,
+        label="mutated selected profiles volume",
     )
-    require_true(
-        "profile selection follows moved pattern",
-        close(body["center_of_mass"][0], expected_center_x, 0.001),
-        expected=expected_center_x,
-        actual=body["center_of_mass"][0],
+    require_equal(
+        "mutated selected profiles cylindrical faces",
+        body.get("face_types", {}).get("cylinder"),
+        3,
+    )
+    compare_scalar(
+        expected_center_x,
+        body["center_of_mass"][0],
+        0.001,
+        label="profile selection follows moved pattern",
     )
     sketches = {row.get("name"): row for row in data.get("sketches", [])}
     selected = sketches.get("Selected holes")

@@ -11,6 +11,10 @@ from typing import Any
 import yaml
 
 from cad_verification import (
+    BodyEnvelope,
+    compare_scalar,
+    compare_vector,
+    match_body_envelopes,
     CheckOutcome,
     VerificationCheck,
     VerificationContext,
@@ -19,6 +23,7 @@ from cad_verification import (
     verify,
 )
 from scpf.headless import run_document
+from verification.solidcraft_measurements import measured_body_envelopes
 
 
 EXAMPLE = Path(__file__).resolve().parents[1]
@@ -53,48 +58,6 @@ def load_json(path: Path) -> Any:
     """Read JSON evidence produced by SolidCraft."""
 
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def close(actual: float, expected: float, tolerance: float = 1e-3) -> bool:
-    """Return whether two engineering values match within tolerance."""
-
-    return abs(float(actual) - float(expected)) <= tolerance
-
-
-def vector_close(actual, expected, tolerance: float = 1e-3) -> bool:
-    """Compare equally-sized numeric vectors."""
-
-    return (
-        len(actual) == len(expected)
-        and all(close(a, b, tolerance) for a, b in zip(actual, expected))
-    )
-
-
-def bounds_match(data: dict[str, Any], expected, tolerance: float = 1e-3) -> bool:
-    """Match body bounds without depending on SolidCraft body ordering."""
-
-    actual = [
-        (body["bbox"]["min"], body["bbox"]["max"])
-        for body in data.get("bodies", [])
-        if isinstance(body.get("bbox"), dict)
-    ]
-    if len(actual) != len(expected):
-        return False
-    remaining = list(actual)
-    for minimum, maximum in expected:
-        hit = next(
-            (
-                index
-                for index, (lo, hi) in enumerate(remaining)
-                if vector_close(lo, minimum, tolerance)
-                and vector_close(hi, maximum, tolerance)
-            ),
-            None,
-        )
-        if hit is None:
-            return False
-        remaining.pop(hit)
-    return not remaining
 
 
 def parameters(data: dict[str, Any]) -> dict[str, float]:
@@ -239,11 +202,17 @@ def geometry_check(ctx: VerificationContext) -> CheckOutcome:
         ([-40.0, -20.0, 0.0], [21.64380551, 20.0, 21.64380551]),
     ]
     require_equal("body count", data.get("body_count"), 1)
-    require_true(
-        "formed sheet bounds",
-        bounds_match(data, expected_bounds, 0.01),
-        expected=expected_bounds,
-        actual=[body.get("bbox") for body in data.get("bodies", [])],
+    match_body_envelopes(
+        tuple(
+            BodyEnvelope(
+                tuple(minimum),
+                tuple(maximum),
+                f"formed sheet bounds {index + 1}",
+            )
+            for index, (minimum, maximum) in enumerate(expected_bounds)
+        ),
+        measured_body_envelopes(data),
+        0.01,
     )
 
     body = data["bodies"][0]
@@ -257,11 +226,11 @@ def geometry_check(ctx: VerificationContext) -> CheckOutcome:
         },
     )
     expected_volume = 80.0 * 40.0 * 2.0 - 3.141592653589793 * 3.0**2 * 2.0
-    require_true(
-        "sheet volume",
-        close(body.get("volume_mm3", 0), expected_volume, 0.01),
-        expected={"volume_mm3": expected_volume, "tolerance_mm3": 0.01},
-        actual={"volume_mm3": body.get("volume_mm3")},
+    compare_scalar(
+        expected_volume,
+        body.get("volume_mm3", 0),
+        0.01,
+        label="sheet volume",
     )
 
     timeline = [
@@ -324,12 +293,16 @@ def flat_pattern_check(ctx: VerificationContext) -> CheckOutcome:
 
     size = flat.get("flat_size_mm")
     require_true(
-        "flat blank size",
-        isinstance(size, list)
-        and len(size) == 3
-        and vector_close(size, [80.0, 40.0, 2.0], 0.001),
-        expected=[80.0, 40.0, 2.0],
+        "flat blank size available",
+        isinstance(size, list) and len(size) == 3,
+        expected="three numeric flat dimensions",
         actual=size,
+    )
+    compare_vector(
+        [80.0, 40.0, 2.0],
+        size,
+        0.001,
+        label="flat blank size",
     )
 
     cutouts = flat.get("cutout_shapes", [])
@@ -339,40 +312,66 @@ def flat_pattern_check(ctx: VerificationContext) -> CheckOutcome:
         else None
     )
     require_true(
-        "flat-pattern hole",
-        isinstance(circle, dict)
-        and vector_close(circle.get("center", []), [-20.0, 0.0], 0.001)
-        and close(circle.get("radius", -1), 3.0, 0.001),
-        expected={"center": [-20.0, 0.0], "radius": 3.0},
+        "flat-pattern hole available",
+        isinstance(circle, dict),
+        expected="one circular cutout",
         actual=circle,
+    )
+    compare_vector(
+        [-20.0, 0.0],
+        circle.get("center", []),
+        0.001,
+        label="flat-pattern hole center",
+    )
+    compare_scalar(
+        3.0,
+        circle.get("radius", -1),
+        0.001,
+        label="flat-pattern hole radius",
     )
 
     bends = flat.get("bends", [])
     bend = bends[0] if len(bends) == 1 else None
     require_true(
-        "qualified bend",
-        isinstance(bend, dict)
-        and close(bend.get("angle_deg", 0), 90.0, 0.001)
-        and close(bend.get("radius", 0), 2.0, 0.001)
-        and close(bend.get("allowance", 0), 4.71238898038469, 0.001),
-        expected={
-            "angle_deg": 90.0,
-            "radius": 2.0,
-            "allowance": 4.71238898038469,
-        },
+        "qualified bend available",
+        isinstance(bend, dict),
+        expected="one bend record",
         actual=bend,
     )
-    require_true(
-        "shared sheet rule",
-        flat.get("rule") == "SheetFold Rule"
-        and close(flat.get("thickness", 0), 2.0, 0.001)
-        and close(flat.get("k_factor", 0), 0.5, 0.001),
-        expected={"rule": "SheetFold Rule", "thickness": 2.0, "k_factor": 0.5},
-        actual={
-            "rule": flat.get("rule"),
-            "thickness": flat.get("thickness"),
-            "k_factor": flat.get("k_factor"),
-        },
+    compare_scalar(
+        90.0,
+        bend.get("angle_deg", 0),
+        0.001,
+        label="qualified bend angle",
+    )
+    compare_scalar(
+        2.0,
+        bend.get("radius", 0),
+        0.001,
+        label="qualified bend radius",
+    )
+    compare_scalar(
+        4.71238898038469,
+        bend.get("allowance", 0),
+        0.001,
+        label="qualified bend allowance",
+    )
+    require_equal(
+        "shared sheet rule name",
+        flat.get("rule"),
+        "SheetFold Rule",
+    )
+    compare_scalar(
+        2.0,
+        flat.get("thickness", 0),
+        0.001,
+        label="shared sheet thickness",
+    )
+    compare_scalar(
+        0.5,
+        flat.get("k_factor", 0),
+        0.001,
+        label="shared sheet k-factor",
     )
 
     return CheckOutcome.passed(
