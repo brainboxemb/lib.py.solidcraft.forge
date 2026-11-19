@@ -1,4 +1,4 @@
-"""Q2 command contract for TOP-attached Sketch after native chamfer."""
+"""integration command contract for TOP-attached Sketch after native chamfer."""
 
 import unittest
 from pathlib import Path

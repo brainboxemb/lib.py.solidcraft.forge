@@ -1,4 +1,4 @@
-"""Q2 command contract for anchored-holes."""
+"""integration command contract for anchored-holes."""
 
 from pathlib import Path
 import unittest

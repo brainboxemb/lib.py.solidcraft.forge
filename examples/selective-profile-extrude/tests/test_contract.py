@@ -1,4 +1,4 @@
-"""Q2 contract for selective Sketch profile extrusion."""
+"""integration contract for selective Sketch profile extrusion."""
 
 import json
 import unittest

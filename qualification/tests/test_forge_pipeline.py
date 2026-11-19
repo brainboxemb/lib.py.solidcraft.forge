@@ -17,9 +17,9 @@ def args(**overrides):
         "base_sha": "b" * 40,
         "source_ref": "feature/test",
         "pull_request": 351,
-        "gate": "affected-q1-q6",
+        "gate": "affected-native",
         "cases": "simple-box",
-        "required_level": "affected-q1-q6",
+        "required_level": "native",
         "reference_smoke": True,
         "pipeline_smoke": False,
         "image_built": False,
@@ -53,7 +53,7 @@ class ForgePipelineTests(unittest.TestCase):
     def test_selected_tool_cases_follow_forge_gate_selection(self):
         self.assertEqual(
             forge_pipeline.selected_tool_cases(
-                "affected-q1-q6",
+                "affected-native",
                 "simple-box,anchored-holes",
             ),
             ("simple-box", "anchored-holes"),
@@ -63,19 +63,9 @@ class ForgePipelineTests(unittest.TestCase):
             (),
         )
         self.assertEqual(
-            forge_pipeline.selected_tool_cases("full-q1-q6", ""),
+            forge_pipeline.selected_tool_cases("full-native", ""),
             forge_pipeline.supported_case_slugs(),
         )
-
-    def test_pr_qualification_arguments_are_complete(self):
-        command = forge_pipeline.qualification_args(args())
-        self.assertEqual(command[0], "scripts/verification_gate.py")
-        self.assertIn("affected-q1-q6", command)
-        self.assertIn("simple-box", command)
-        self.assertIn("--reference-smoke", command)
-        self.assertIn("--base-commit", command)
-        self.assertIn("--pull-request", command)
-        self.assertIn("351", command)
 
     def test_native_gate_collects_items_instead_of_rerunning_legacy_gate(self):
         ns = args()
@@ -103,28 +93,31 @@ class ForgePipelineTests(unittest.TestCase):
 
     def test_qualify_skips_native_case_item_for_cheap_gate(self):
         ns = args(
-            gate="affected-q1-q2",
-            required_level="affected-q1-q2",
+            gate="affected-integration",
+            required_level="integration",
             image="",
             reference_smoke=False,
         )
-        command = forge_pipeline.qualification_args(ns)
         with patch.object(
             forge_pipeline,
             "run_tool_cad_ci_case",
         ) as case_item, patch.object(
             forge_pipeline,
+            "run_tool_cad_ci_evidence",
+        ) as evidence_item, patch.object(
+            forge_pipeline,
             "python",
-        ) as legacy_gate:
+        ) as adapter:
             forge_pipeline.qualify(ns)
 
         case_item.assert_not_called()
-        legacy_gate.assert_called_once_with(*command)
+        evidence_item.assert_not_called()
+        adapter.assert_not_called()
 
     def test_reference_item_can_run_for_cheap_gate(self):
         ns = args(
-            gate="affected-q1-q2",
-            required_level="affected-q1-q2",
+            gate="affected-integration",
+            required_level="integration",
             cases="simple-box",
             reference_smoke=True,
         )

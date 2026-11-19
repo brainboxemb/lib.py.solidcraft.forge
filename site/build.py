@@ -23,7 +23,7 @@ from evidence import scpf_case_state
 from api_coverage import (
     EXPORT_COVERAGE,
     CAPABILITY_COVERAGE,
-    qualification_number,
+    coverage_rank,
     validate_coverage_cases,
     validate_coverage_results,
 )
@@ -52,7 +52,6 @@ try:
     )
     from qualification.expectations import EXPECTED_VISUAL_BOXES
     from qualification.geometry_contracts import proof_contract
-    from qualification.case_evidence import evidence_for
     from qualification.project_metadata import scpf_version
 finally:
     sys.path.pop(0)
@@ -452,6 +451,8 @@ def _format_vector(values):
 
 
 def _qualification_status(result):
+    """Return one compact semantic qualification summary for the website."""
+
     labels = {
         "pass": "PASS",
         "fail": "FAIL",
@@ -461,19 +462,25 @@ def _qualification_status(result):
         "not-required": "N/R",
         "blocked": "BLOCKED",
     }
+    names = (
+        ("integration", "Integration"),
+        ("native_model", "Native model"),
+        ("geometry", "Geometry"),
+        ("saved_design", "Saved design"),
+        ("visual", "Visual"),
+    )
     details = []
-    for name in ("q1", "q2", "q3", "q4", "q5", "q6"):
-        state = result.get("levels", {}).get(name, {}).get("status", "missing")
-        q = name.upper()
+    checks = result.get("checks", {})
+    for key, title in names:
+        state = checks.get(key, {}).get("status", "missing")
         if state == "pass":
-            details.append(q)
+            details.append(title)
         elif state == "not-required":
-            details.append(f"{q} N/R")
+            details.append(f"{title} N/R")
         else:
-            details.append(f"{q} {labels.get(state, state.upper())}")
+            details.append(f"{title} {labels.get(state, state.upper())}")
     overall_state = result.get("status", "incomplete")
     return labels.get(overall_state, overall_state.upper()), " · ".join(details)
-
 
 def _qualification_badge_html(overall):
     status_class = {
@@ -527,54 +534,39 @@ def _test_target_url(source_sha, target):
 
 
 def _render_case_test_evidence(slug, result, source_sha):
-    rows = []
-    for level in ("q1", "q2"):
-        level_result = (
-            result.get("levels", {}).get(level, {})
-            if result is not None
-            else {}
-        )
-        status = level_result.get("status", "not-run")
-        label = {
-            "pass": "PASS",
-            "fail": "FAIL",
-            "missing": "MISSING",
-            "blocked": "BLOCKED",
-            "not-run": "NOT RUN",
-        }.get(status, status.upper())
+    """Render the example-owned integration tests without legacy level labels."""
 
-        targets = level_result.get("tests") or list(evidence_for(slug, level))
-        target_links = ", ".join(
-            (
-                f'<a href="{escape(_test_target_url(source_sha, target))}">'
-                f'<code>{escape(target["file"])}::{escape(target["test"])}</code>'
-                '</a>'
-            )
-            for target in targets
-        )
-        evidence_links = " ".join(
-            f'<a href="{escape(name)}">{escape(name)}</a>'
-            for name in level_result.get("evidence", [])
-        )
-        evidence_html = (
-            f'<div class="meta">Test run files: {evidence_links}</div>'
-            if evidence_links
-            else ""
-        )
-        rows.append(
+    status = (
+        (result or {}).get("checks", {})
+        .get("integration", {})
+        .get("status", "not-run")
+    )
+    label = {
+        "pass": "PASS",
+        "fail": "FAIL",
+        "missing": "MISSING",
+        "blocked": "BLOCKED",
+        "not-run": "NOT RUN",
+    }.get(status, status.upper())
+
+    tests_dir = ROOT / "examples" / slug / "tests"
+    links = []
+    for path in sorted(tests_dir.glob("test_*.py")):
+        relative = path.relative_to(ROOT).as_posix()
+        url = f"{LIBRARY_URL}/blob/{source_sha}/{relative}"
+        links.append(
             '<li>'
-            f'<strong>{level.upper()} {escape(label)}</strong>'
-            f'<div>{target_links}</div>'
-            f'{evidence_html}'
+            f'<a href="{escape(url)}"><code>{escape(relative)}</code></a>'
             '</li>'
         )
 
     return (
         '<div class="qualification-case-test-evidence">'
-        '<h3>Q1 and Q2 tests</h3>'
-        '<p>These are the exact automated tests used for this example.</p>'
+        '<h3>Integration tests</h3>'
+        f'<p><strong>{escape(label)}</strong> — these example-owned tests prove '
+        'the generated SolidCraft command contract before native execution.</p>'
         '<ul>'
-        + "".join(rows)
+        + "".join(links)
         + '</ul></div>'
     )
 
@@ -2135,7 +2127,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         )
         case_preview_html = ""
         status = "BLOCKED" if blocked_reason else "NOT RUN"
-        status_detail = blocked_reason or "Q1 Q2 documented"
+        status_detail = blocked_reason or "Integration documented; native result not supplied"
         if blocked_reason:
             results_html = (
                 '<section class="panel"><h2>SolidCraft result</h2>'
@@ -2195,8 +2187,6 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
                 "validation.json",
                 "visual-validation.json",
                 "camera-*.json",
-                "q1-case-evidence.txt",
-                "q2-case-evidence.txt",
             ):
                 for evidence in sorted(native_case.glob(pattern)):
                     native_files.append(evidence.name)
@@ -2329,7 +2319,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             native_expectation=escape(case["native_expectation"]),
             mutation_criterion=(
                 '<h3>Saved-design test</h3><p><strong>'
-                + ("Checked in the saved model. " if case.get("q5_required") else "No saved-model change is required. ")
+                + ("Checked in the saved model. " if case.get("saved_design_required") else "No saved-model change is required. ")
                 + escape(case["mutation"]) + '</p>'
             ),
             mutation=escape(case["mutation"]),
@@ -2369,8 +2359,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             "qualification_status": (
                 qualification_result.get("status") if qualification_result else None
             ),
-            "levels": (
-                qualification_result.get("levels") if qualification_result else {}
+            "checks": (
+                qualification_result.get("checks") if qualification_result else {}
             ),
             "solidcraft_version": (
                 metadata.get("solidcraft_version") if case_verified else None
@@ -2558,8 +2548,8 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
     qualification_counts = {"At target": 0, "Below target": 0, "Gap": 0}
     qualification_group_counts = {}
     for group, capability, target, current, cases, note in CAPABILITY_COVERAGE:
-        target_level = qualification_number(target)
-        current_level = qualification_number(current)
+        target_level = coverage_rank(target)
+        current_level = coverage_rank(current)
         if current == "GAP":
             qualification_status = "Gap"
         elif current_level is not None and target_level is not None and current_level >= target_level:

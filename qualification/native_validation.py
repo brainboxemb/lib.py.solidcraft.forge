@@ -89,7 +89,7 @@ def _check_declared_bounds(
     data: dict,
     case: str,
     *,
-    level: str = "q4",
+    level: str = "geometry",
     mutation: bool = False,
     tol: float = TOL,
 ):
@@ -152,7 +152,7 @@ class Validation:
         self.case = case
         self.checks: list[dict[str, Any]] = []
 
-    def check(self, name: str, condition: bool, expected=None, actual=None, level: str = "q4"):
+    def check(self, name: str, condition: bool, expected=None, actual=None, level: str = "geometry"):
         self.checks.append({
             "name": name,
             "level": level,
@@ -164,14 +164,14 @@ class Validation:
     def status(self, level: str) -> str:
         rows = [row for row in self.checks if row["level"] == level]
         if not rows:
-            return "not-required" if level == "q5" else "review"
+            return "not-required" if level == "saved_design" else "review"
         return "pass" if all(row["status"] == "pass" for row in rows) else "fail"
 
     def result(self) -> dict:
         return {
             "case": self.case,
-            "q4": self.status("q4"),
-            "q5": self.status("q5"),
+            "geometry": self.status("geometry"),
+            "saved_design": self.status("saved_design"),
             "checks": self.checks,
         }
 
@@ -192,7 +192,7 @@ def validate_simple_box(root: Path) -> Validation:
         v,
         m,
         "simple-box",
-        level="q5",
+        level="saved_design",
         mutation=True,
     )
     v.check(
@@ -200,7 +200,7 @@ def validate_simple_box(root: Path) -> Validation:
         params(m) == {"length": 50.0, "width": 30.0, "height": 10.0},
         {"length": 50.0, "width": 30.0, "height": 10.0},
         params(m),
-        "q5",
+        "saved_design",
     )
     v.check(
         "native Box rebuilds after length mutation",
@@ -208,7 +208,7 @@ def validate_simple_box(root: Path) -> Validation:
         and bbox_close(m["bodies"][0], [-25, -15, 0], [25, 15, 10]),
         {"min": [-25, -15, 0], "max": [25, 15, 10]},
         m["bodies"][0]["bbox"] if m.get("bodies") else None,
-        "q5",
+        "saved_design",
     )
 
     return v
@@ -489,11 +489,11 @@ def validate_parameter_scope(root: Path) -> Validation:
     )
 
     m = load(root / "measurements-shared-width-100.json")
-    _check_declared_bounds(v, m, "parameter-scope", level="q5", mutation=True)
+    _check_declared_bounds(v, m, "parameter-scope", level="saved_design", mutation=True)
     v.check("mutated shared width", params(m).get("shared_width") == 100.0, 100.0,
-            params(m).get("shared_width"), "q5")
+            params(m).get("shared_width"), "saved_design")
     v.check("dependent widths rebuild", widths(m) == [40.0, 50.0, 60.0, 100.0, 100.0],
-            [40, 50, 60, 100, 100], widths(m), "q5")
+            [40, 50, 60, 100, 100], widths(m), "saved_design")
     return v
 
 
@@ -521,7 +521,7 @@ def validate_parent_derived_child_size(root: Path) -> Validation:
         v,
         m,
         "parent-derived-child-size",
-        level="q5",
+        level="saved_design",
         mutation=True,
     )
     v.check(
@@ -529,7 +529,7 @@ def validate_parent_derived_child_size(root: Path) -> Validation:
         params(m) == {"base_width": 160.0, "base_depth": 120.0},
         {"base_width": 160.0, "base_depth": 120.0},
         params(m),
-        "q5",
+        "saved_design",
     )
     v.check(
         "child rebuilds from parent expressions",
@@ -537,7 +537,7 @@ def validate_parent_derived_child_size(root: Path) -> Validation:
         == [(80.0, 60.0, 6.0), (160.0, 120.0, 10.0)],
         [(80.0, 60.0, 6.0), (160.0, 120.0, 10.0)],
         sorted(body_size(body) for body in m["bodies"]),
-        "q5",
+        "saved_design",
     )
     return v
 
@@ -606,7 +606,7 @@ def validate_repeated_parent_attachments(root: Path) -> Validation:
         v,
         m,
         "repeated-parent-attachments",
-        level="q5",
+        level="saved_design",
         mutation=True,
     )
     v.check(
@@ -614,7 +614,7 @@ def validate_repeated_parent_attachments(root: Path) -> Validation:
         params(m).get("parent_height") == 60.0,
         60.0,
         params(m).get("parent_height"),
-        "q5",
+        "saved_design",
     )
     markers2 = bodies_named(m, "Marker")
     mutated_marker_bounds = sorted(
@@ -634,7 +634,7 @@ def validate_repeated_parent_attachments(root: Path) -> Validation:
         ],
         [(-5.0, 60.0, 70.0), (55.0, 60.0, 70.0)],
         mutated_marker_bounds,
-        "q5",
+        "saved_design",
     )
     return v
 
@@ -769,10 +769,10 @@ def validate_parametric_attach(root: Path) -> Validation:
             {"min": [30, -10, 0], "max": [50, 10, 10]}, block["bbox"])
 
     m = load(root / "measurements-gap-30.json")
-    _check_declared_bounds(v, m, "parametric-attach", level="q5", mutation=True)
+    _check_declared_bounds(v, m, "parametric-attach", level="saved_design", mutation=True)
     block2 = one_body(m, "Block")
     v.check("30 mm gap mutation", bbox_close(block2, [50, -10, 0], [70, 10, 10]),
-            {"min": [50, -10, 0], "max": [70, 10, 10]}, block2["bbox"], "q5")
+            {"min": [50, -10, 0], "max": [70, 10, 10]}, block2["bbox"], "saved_design")
     return v
 
 
@@ -789,11 +789,11 @@ def validate_parametric_offset(root: Path) -> Validation:
             {"min": [10, -25, 15], "max": [20, -15, 25]}, marker["bbox"])
 
     m = load(root / "measurements-shift-10.json")
-    _check_declared_bounds(v, m, "parametric-offset", level="q5", mutation=True)
+    _check_declared_bounds(v, m, "parametric-offset", level="saved_design", mutation=True)
     marker2 = one_body(m, "Marker")
     v.check("10 mm local offset mutation",
             bbox_close(marker2, [10, -25, 20], [20, -15, 30]),
-            {"min": [10, -25, 20], "max": [20, -15, 30]}, marker2["bbox"], "q5")
+            {"min": [10, -25, 20], "max": [20, -15, 30]}, marker2["bbox"], "saved_design")
     return v
 
 
@@ -804,11 +804,11 @@ def validate_parametric_anchor(root: Path) -> Validation:
     v.check("RIGHT-to-LEFT baseline",
             bbox_close(one_body(d, "Block"), [20, -10, 0], [40, 10, 10]))
     m = load(root / "measurements-width-80.json")
-    _check_declared_bounds(v, m, "parametric-anchor", level="q5", mutation=True)
+    _check_declared_bounds(v, m, "parametric-anchor", level="saved_design", mutation=True)
     v.check("RIGHT anchor follows width mutation",
             bbox_close(one_body(m, "Block"), [40, -10, 0], [60, 10, 10]),
             {"min": [40, -10, 0], "max": [60, 10, 10]},
-            one_body(m, "Block")["bbox"], "q5")
+            one_body(m, "Block")["bbox"], "saved_design")
     return v
 
 
@@ -824,11 +824,11 @@ def validate_corner_anchor(root: Path) -> Validation:
             {"min": [10, -25, 10], "max": [20, -15, 20]}, marker["bbox"])
 
     m = load(root / "measurements-size-80x40.json")
-    _check_declared_bounds(v, m, "corner-anchor", level="q5", mutation=True)
+    _check_declared_bounds(v, m, "corner-anchor", level="saved_design", mutation=True)
     marker2 = one_body(m, "Marker")
     v.check("corner follows 80x40 mutation",
             bbox_close(marker2, [30, -25, 30], [40, -15, 40]),
-            {"min": [30, -25, 30], "max": [40, -15, 40]}, marker2["bbox"], "q5")
+            {"min": [30, -25, 30], "max": [40, -15, 40]}, marker2["bbox"], "saved_design")
     return v
 
 
@@ -853,7 +853,7 @@ def validate_assembly_owned_anchor(root: Path) -> Validation:
         v,
         m,
         "assembly-owned-anchor",
-        level="q5",
+        level="saved_design",
         mutation=True,
     )
     v.check(
@@ -861,7 +861,7 @@ def validate_assembly_owned_anchor(root: Path) -> Validation:
         params(m) == {"base_width": 80.0, "base_height": 40.0},
         {"base_width": 80.0, "base_height": 40.0},
         params(m),
-        "q5",
+        "saved_design",
     )
     v.check(
         "named anchor keeps native corner associativity",
@@ -872,7 +872,7 @@ def validate_assembly_owned_anchor(root: Path) -> Validation:
         ),
         {"min": [30, -25, 30], "max": [40, -15, 40]},
         one_body(m, "Marker")["bbox"],
-        "q5",
+        "saved_design",
     )
     return v
 
@@ -898,7 +898,7 @@ def validate_anchor_topology_mutation(root: Path) -> Validation:
         v,
         m,
         "anchor-topology-mutation",
-        level="q5",
+        level="saved_design",
         mutation=True,
     )
     v.check(
@@ -906,7 +906,7 @@ def validate_anchor_topology_mutation(root: Path) -> Validation:
         params(m) == {"base_width": 80.0, "base_height": 40.0},
         {"base_width": 80.0, "base_height": 40.0},
         params(m),
-        "q5",
+        "saved_design",
     )
     v.check(
         "fixed topology pick follows resized corner",
@@ -917,7 +917,7 @@ def validate_anchor_topology_mutation(root: Path) -> Validation:
         ),
         {"min": [-45, -20, 35], "max": [-35, -10, 45]},
         one_body(m, "Marker")["bbox"],
-        "q5",
+        "saved_design",
     )
     return v
 
@@ -930,7 +930,7 @@ def validate_four_corner_l(root: Path) -> Validation:
     v.check("frame bounds", bbox_close(frame, [-60, -40, 0], [60, 40, 60]))
 
     m = load(root / "measurements-size-160x120.json")
-    _check_declared_bounds(v, m, "four-corner-l", level="q5", mutation=True)
+    _check_declared_bounds(v, m, "four-corner-l", level="saved_design", mutation=True)
     return v
 
 
@@ -955,11 +955,11 @@ def validate_eight_flightcase_corners(root: Path) -> Validation:
         v,
         m,
         "eight-flightcase-corners",
-        level="q5",
+        level="saved_design",
         mutation=True,
     )
     v.check("nine bodies after saved-design mutation",
-            m["body_count"] == 9, 9, m["body_count"], "q5")
+            m["body_count"] == 9, 9, m["body_count"], "saved_design")
     v.check(
         "case dimensions changed",
         params(m) == {
@@ -969,7 +969,7 @@ def validate_eight_flightcase_corners(root: Path) -> Validation:
         },
         {"case_width": 160.0, "case_depth": 120.0, "case_height": 90.0},
         params(m),
-        "q5",
+        "saved_design",
     )
     mutated_sizes = sorted(
         body_size(body)
@@ -980,7 +980,7 @@ def validate_eight_flightcase_corners(root: Path) -> Validation:
         mutated_sizes == baseline_sizes == [(24.0, 24.0, 24.0)] * 8,
         [(24.0, 24.0, 24.0)] * 8,
         mutated_sizes,
-        "q5",
+        "saved_design",
     )
     return v
 
@@ -997,11 +997,11 @@ def validate_eight_corner_brackets(root: Path) -> Validation:
         v,
         m,
         "eight-corner-brackets",
-        level="q5",
+        level="saved_design",
         mutation=True,
     )
     v.check("nine bodies after saved-design mutation",
-            m["body_count"] == 9, 9, m["body_count"], "q5")
+            m["body_count"] == 9, 9, m["body_count"], "saved_design")
     return v
 
 
@@ -1038,7 +1038,7 @@ def validate_xz_anchor(root: Path) -> Validation:
     for side, (emin, emax) in expected2.items():
         hit = any(bbox_close(b, emin, emax) for b in markers2)
         v.check(f"{side} corner follows size mutation", hit,
-                {"min": emin, "max": emax}, actual2, "q5")
+                {"min": emin, "max": emax}, actual2, "saved_design")
     return v
 
 
@@ -1215,13 +1215,13 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
         timeline,
     )
 
-    # Q5 mutates only the already-saved SolidCraft design. Python is not rerun.
+    # The saved-design check mutates only the existing SolidCraft design. Python is not rerun.
     m = load(root / "measurements-patterns-mutated.json")
     _check_declared_bounds(
         v,
         m,
         "sketch-pattern-mirror",
-        level="q5",
+        level="saved_design",
         mutation=True,
         tol=0.01,
     )
@@ -1244,7 +1244,7 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
             name: actual_mutated_parameters.get(name)
             for name in mutated_parameters
         },
-        "q5",
+        "saved_design",
     )
 
     if m["bodies"]:
@@ -1260,7 +1260,7 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
             close(body["volume_mm3"], expected_volume, 0.05),
             expected_volume,
             body["volume_mm3"],
-            "q5",
+            "saved_design",
         )
         baseline_center_x = d["bodies"][0]["center_of_mass"][0]
         mutated_center_x = body["center_of_mass"][0]
@@ -1272,7 +1272,7 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
                 "baseline_x": baseline_center_x,
             },
             mutated_center_x,
-            "q5",
+            "saved_design",
         )
 
     mutated_sketches = {
@@ -1291,7 +1291,7 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
             name: mutated_sketches.get(name, {}).get("status")
             for name in ("Dog holes", "Clamp slots")
         },
-        "q5",
+        "saved_design",
     )
     mutated_timeline = [
         (row.get("type"), row.get("name"))
@@ -1302,7 +1302,7 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
         mutated_timeline == expected_timeline,
         expected_timeline,
         mutated_timeline,
-        "q5",
+        "saved_design",
     )
 
     return v
@@ -1415,7 +1415,7 @@ def validate_selective_profile_extrude(root: Path) -> Validation:
         v,
         m,
         "selective-profile-extrude",
-        level="q5",
+        level="saved_design",
         mutation=True,
         tol=0.01,
     )
@@ -1435,7 +1435,7 @@ def validate_selective_profile_extrude(root: Path) -> Validation:
             name: actual_mutated_parameters.get(name)
             for name in mutated_parameters
         },
-        "q5",
+        "saved_design",
     )
 
     if m["bodies"]:
@@ -1465,7 +1465,7 @@ def validate_selective_profile_extrude(root: Path) -> Validation:
                     "face_types", {}
                 ).get("cylinder"),
             },
-            "q5",
+            "saved_design",
         )
         v.check(
             "saved selection follows moved profiles and leaves +18 mm uncut",
@@ -1476,7 +1476,7 @@ def validate_selective_profile_extrude(root: Path) -> Validation:
             ),
             expected_center_x,
             body["center_of_mass"][0],
-            "q5",
+            "saved_design",
         )
 
     mutated_sketches = {
@@ -1494,7 +1494,7 @@ def validate_selective_profile_extrude(root: Path) -> Validation:
             name: row.get("status")
             for name, row in mutated_sketches.items()
         },
-        "q5",
+        "saved_design",
     )
     mutated_timeline = [
         (row.get("type"), row.get("name"))
@@ -1505,7 +1505,7 @@ def validate_selective_profile_extrude(root: Path) -> Validation:
         mutated_timeline == expected_timeline,
         expected_timeline,
         mutated_timeline,
-        "q5",
+        "saved_design",
     )
     return v
 
@@ -1604,7 +1604,7 @@ def validate_circular_feature_pattern(root: Path) -> Validation:
         v,
         m,
         "circular-feature-pattern",
-        level="q5",
+        level="saved_design",
         mutation=True,
         tol=0.01,
     )
@@ -1617,14 +1617,14 @@ def validate_circular_feature_pattern(root: Path) -> Validation:
         params(m) == expected_mutated_parameters,
         expected_mutated_parameters,
         params(m),
-        "q5",
+        "saved_design",
     )
     v.check(
         "mutated pattern remains one body",
         m["body_count"] == 1,
         1,
         m["body_count"],
-        "q5",
+        "saved_design",
     )
     if m["bodies"]:
         body = m["bodies"][0]
@@ -1645,7 +1645,7 @@ def validate_circular_feature_pattern(root: Path) -> Validation:
                 "volume_mm3": body["volume_mm3"],
                 "cylindrical_faces": faces.get("cylinder"),
             },
-            "q5",
+            "saved_design",
         )
 
     mutated_timeline = [
@@ -1657,7 +1657,7 @@ def validate_circular_feature_pattern(root: Path) -> Validation:
         mutated_timeline == expected_timeline,
         expected_timeline,
         mutated_timeline,
-        "q5",
+        "saved_design",
     )
     return v
 
@@ -1726,7 +1726,7 @@ def validate_rectangular_pattern(root: Path) -> Validation:
         timeline,
     )
 
-    # Q5: mutate the existing saved design, never rerun the Python model.
+    # Saved-design check: mutate the existing saved design, never rerun the Python model.
     # Decreasing columns to 2 lets pitch grow to 30 mm while all four slots
     # remain fully inside the 120 x 80 mm plate.
     m = load(root / "measurements-columns-2-pitch-30.json")
@@ -1734,7 +1734,7 @@ def validate_rectangular_pattern(root: Path) -> Validation:
         v,
         m,
         "rectangular-pattern",
-        level="q5",
+        level="saved_design",
         mutation=True,
         tol=0.01,
     )
@@ -1749,14 +1749,14 @@ def validate_rectangular_pattern(root: Path) -> Validation:
         params(m) == expected_parameters,
         expected_parameters,
         params(m),
-        "q5",
+        "saved_design",
     )
     v.check(
         "mutated pattern remains one body",
         m["body_count"] == 1,
         1,
         m["body_count"],
-        "q5",
+        "saved_design",
     )
     if m["bodies"]:
         body = m["bodies"][0]
@@ -1787,14 +1787,14 @@ def validate_rectangular_pattern(root: Path) -> Validation:
                 "faces": body["faces"],
                 "face_types": faces,
             },
-            "q5",
+            "saved_design",
         )
         v.check(
             "30 mm pitch moves the rebuilt Slot layout",
             vector_close(body["center_of_mass"], expected_center, 0.001),
             expected_center,
             body["center_of_mass"],
-            "q5",
+            "saved_design",
         )
 
     mutated_sketch = next(
@@ -1809,7 +1809,7 @@ def validate_rectangular_pattern(root: Path) -> Validation:
         and mutated_sketch.get("status") == "solved",
         {"name": "Slot", "curves": 5, "profiles": 1, "status": "solved"},
         mutated_sketch,
-        "q5",
+        "saved_design",
     )
     mutated_timeline = [
         (row.get("type"), row.get("name"))
@@ -1820,7 +1820,7 @@ def validate_rectangular_pattern(root: Path) -> Validation:
         mutated_timeline == expected_timeline,
         expected_timeline,
         mutated_timeline,
-        "q5",
+        "saved_design",
     )
 
     return v
@@ -2031,7 +2031,7 @@ def main() -> int:
     supported = set(supported_case_slugs())
     selected = tuple(case for case in requested if case in supported)
     args.qualification_dir.mkdir(parents=True, exist_ok=True)
-    rows = ["case\tq4\tq5\n"]
+    rows = ["case\tgeometry\tsaved_design\n"]
     summary = {}
 
     for case in selected:
@@ -2043,7 +2043,7 @@ def main() -> int:
             json.dumps(result, indent=2) + "\n",
             encoding="utf-8",
         )
-        rows.append(f"{case}\t{result['q4'].upper()}\t{result['q5'].upper()}\n")
+        rows.append(f"{case}\t{result['geometry'].upper()}\t{result['saved_design'].upper()}\n")
 
     (args.qualification_dir / "native-validation.tsv").write_text(
         "".join(rows), encoding="utf-8"
@@ -2054,7 +2054,7 @@ def main() -> int:
 
     failed = [
         case for case, result in summary.items()
-        if "fail" in (result["q4"], result["q5"])
+        if "fail" in (result["geometry"], result["saved_design"])
     ]
     print(f"Validated {len(summary)} native cases")
     if failed:

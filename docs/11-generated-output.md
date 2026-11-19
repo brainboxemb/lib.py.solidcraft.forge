@@ -178,7 +178,7 @@ Example shape:
           "source_commit": "...",
           "source_tree": "...",
           "input_hash": "sha256:...",
-          "verification_level": "q1-q6",
+          "verification_level": "full-native",
           "status": "pass",
           "generated_at": "..."
         },
@@ -273,9 +273,9 @@ Every PR has one `merge-gate` status on the current PR head.
 | --- | --- |
 | presentation/publication infrastructure | preflight + relevant publication tests |
 | derived-only | regenerate/validate derived output |
-| ordinary case | affected Q1/Q2 |
-| native-sensitive | affected Q1-Q6 |
-| foundational/toolchain/release | full Q1-Q6 |
+| ordinary case | affected-integration |
+| native-sensitive | affected-native |
+| foundational/toolchain/release | full-native |
 
 The merge gate runs **before merge**. Branch protection requires it for the
 current head commit and requires the PR to be current with its merge base
@@ -291,7 +291,7 @@ write no generated branches, so cancelling obsolete verification is safe.
 
 ### 9.4 Scheduled full safety run
 
-Run the complete registered Q1-Q6 set on `main` on a schedule (initially
+Run the complete registered full native qualification set on `main` on a schedule (initially
 weekly) and on manual request.
 
 This is a safety net for an incomplete dependency map or selector bug. It does
@@ -307,7 +307,7 @@ A failing scheduled run:
 
 A technical PR may publish a sparse `build/pr/N` **candidate overlay** after
 successful iteration verification. Per-case metadata records the achieved level
-(for example Q1/Q2); the preview must show that level honestly.
+(for example integration); the preview must show that level honestly.
 
 The pre-merge gate may update/upgrade the same current-head overlay. Evidence is
 **promotable** only when every affected case meets the final level required by
@@ -459,7 +459,7 @@ for unrelated PR namespaces.
 | force-push/rebase | recompute against new base/head | obsolete run rejected by freshness check | obsolete run rejected |
 | draft PR | preflight; expensive gate optional until ready | no durable technical publish unless explicitly requested | optional preview |
 | fork PR | read-only verification only | no write | no public preview from untrusted code |
-| workflow dispatch on main | full Q1-Q6 recovery of exact current main | replace verified `build/main` | rebuild stable site |
+| workflow dispatch on main | full-native recovery of exact current main | replace verified `build/main` | rebuild stable site |
 | release | full gate | promote main and tag evidence | stable site uses tagged/immutable evidence |
 
 A presentation-only merge may reuse the existing complete passing `build/main`
@@ -506,7 +506,7 @@ This makes the system self-healing if a close event or publish job is lost.
 Recovery does not expose a menu of CI phases.
 
 A parameterless manual **Forge** run on `main`, or a normal commit changing
-`.github/workflows/forge.trigger`, runs full Q1-Q6 on the exact current main
+`.github/workflows/forge.trigger`, runs full-native on the exact current main
 commit and republishes `build/main` plus stable Pages only after success.
 
 Scheduled reconcile remains an internal phase of the same Forge workflow. It

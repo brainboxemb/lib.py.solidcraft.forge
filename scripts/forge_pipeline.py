@@ -79,7 +79,7 @@ def selected_tool_cases(gate: str, cases: str) -> tuple[str, ...]:
     """Return supported example items selected by Forge's domain policy."""
 
     supported = supported_case_slugs()
-    if gate == "full-q1-q6":
+    if gate == "full-native":
         return tuple(supported)
 
     requested = {
@@ -94,9 +94,9 @@ def evidence_items(gate: str, reference_smoke: bool) -> tuple[str, ...]:
     """Return non-example generated items required by Forge's gate policy."""
 
     result: list[str] = []
-    if reference_smoke or gate == "full-q1-q6":
+    if reference_smoke or gate == "full-native":
         result.append("reference-suite")
-    if gate == "full-q1-q6":
+    if gate in {"regenerate-derived", "full-native"}:
         result.append("qualification-diagrams")
     return tuple(result)
 
@@ -247,8 +247,8 @@ def smoke_image(image: str, out: Path) -> None:
         extra_mounts=((out, "/case-out"),),
     )
 
-    replay = out / "stages" / "simple-box" / "04-replay.json"
-    mutate = out / "stages" / "simple-box" / "08-mutate.json"
+    replay = out / "stages" / "simple-box" / "02-replay.json"
+    mutate = out / "stages" / "simple-box" / "06-mutate.json"
     replay_before = hashlib.sha256(replay.read_bytes()).hexdigest()
     mutate_before = hashlib.sha256(mutate.read_bytes()).hexdigest()
 
@@ -299,27 +299,6 @@ python scripts/solidcraft_snapshot.py \
     ])
 
 
-def qualification_args(args: argparse.Namespace) -> list[str]:
-    command = [
-        "scripts/verification_gate.py",
-        "--gate", args.gate,
-        "--cases", args.cases,
-        "--out", str(args.output_root / "gate"),
-        "--source-sha", args.source_sha,
-        "--build-out", str(args.output_root / "build"),
-        "--scope", args.operation,
-        "--source-ref", args.source_ref,
-        "--workflow-run-id", args.workflow_run_id,
-    ]
-    if args.reference_smoke:
-        command.append("--reference-smoke")
-    if args.base_sha:
-        command += ["--base-commit", args.base_sha]
-    if args.operation == "pr":
-        command += ["--pull-request", str(args.pull_request)]
-    return command
-
-
 def item_gate_args(args: argparse.Namespace) -> list[str]:
     """Build arguments for collecting already-completed native example items."""
 
@@ -350,7 +329,7 @@ def qualify(args: argparse.Namespace) -> None:
         return
 
     selected = selected_tool_cases(args.gate, args.cases)
-    native_gate = args.gate in {"affected-q1-q6", "full-q1-q6"}
+    native_gate = args.gate in {"affected-native", "full-native"}
     if native_gate:
         for slug in selected:
             run_tool_cad_ci_case(slug, args.image)
@@ -365,13 +344,10 @@ def qualify(args: argparse.Namespace) -> None:
         # Native/reference/diagram work is already complete. The item gate now
         # only translates generic item output for the current site/build adapter.
         python(*item_gate_args(args))
-        return
 
-    command = qualification_args(args)
-    if args.image:
-        docker_python(args.image, *command)
-    else:
-        python(*command)
+    # Integration and derived-output gates are complete once their generic items
+    # have passed. There is no second numbered qualification runner.
+    return
 
 
 def publish_pr_candidate(args: argparse.Namespace) -> str:

@@ -20,7 +20,6 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from qualification.case_evidence import CASE_EVIDENCE
 from qualification.case_selection import CASE_BY_SLUG, CASE_SLUGS
 from qualification.cases import (
     reference_implementations_for,
@@ -57,7 +56,6 @@ FOUNDATIONAL_MODULES = frozenset(
 
 GLOBAL_CASE_INPUTS = frozenset(
     {
-        "qualification/case_evidence.py",
         "qualification/case_selection.py",
         "qualification/cases.py",
         "qualification/impact.py",
@@ -183,9 +181,10 @@ def case_dependencies(slug: str, repo_root: Path = ROOT) -> tuple[str, ...]:
     seeds = set(FOUNDATIONAL_MODULES)
     source = repo_root / "examples" / slug / "scpf" / "model.py"
     seeds.update(_public_symbol_modules(source))
-    for level in ("q1", "q2"):
-        for target in CASE_EVIDENCE[slug][level]:
-            seeds.update(_public_symbol_modules(repo_root / target["file"]))
+    tests = repo_root / "examples" / slug / "tests"
+    if tests.is_dir():
+        for test in sorted(tests.glob("test_*.py")):
+            seeds.update(_public_symbol_modules(test))
 
     graph = _internal_module_graph(repo_root)
     stack = list(seeds)
@@ -209,12 +208,6 @@ def affected_cases(paths: tuple[str, ...] | list[str], repo_root: Path = ROOT) -
         parts = PurePosixPath(raw).parts
         if len(parts) >= 2 and parts[0] == "examples" and parts[1] in CASE_BY_SLUG:
             selected.add(parts[1])
-
-    changed = set(normalized)
-    for slug, levels in CASE_EVIDENCE.items():
-        for level in ("q1", "q2"):
-            if any(target["file"] in changed for target in levels[level]):
-                selected.add(slug)
 
     changed_modules = {
         path
@@ -286,10 +279,10 @@ def final_gate(paths: tuple[str, ...] | list[str], cases: tuple[str, ...]) -> st
     if risk == "derived":
         return "regenerate-derived"
     if risk == "case":
-        return "affected-q1-q2" if cases else "full-q1-q6"
+        return "affected-integration" if cases else "full-native"
     if risk == "native-sensitive":
-        return "affected-q1-q6" if cases else "full-q1-q6"
-    return "full-q1-q6"
+        return "affected-native" if cases else "full-native"
+    return "full-native"
 
 
 def _hash_file(hasher, path: Path, repo_root: Path) -> None:
@@ -335,7 +328,10 @@ def case_input_hash(
     if implementation == "scpf":
         for path in case_dependencies(slug, repo_root):
             _hash_file(hasher, repo_root / path, repo_root)
-        _hash_json(hasher, "evidence", CASE_EVIDENCE[slug])
+        tests = repo_root / "examples" / slug / "tests"
+        if tests.is_dir():
+            for path in sorted(p for p in tests.rglob("*.py") if p.is_file()):
+                _hash_file(hasher, path, repo_root)
     else:
         runner = repo_root / "qualification" / "reference_validation.py"
         if runner.is_file():

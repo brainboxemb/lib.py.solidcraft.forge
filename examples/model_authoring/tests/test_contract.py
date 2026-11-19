@@ -1,4 +1,4 @@
-"""Q1/Q2 qualification for the abstract model-authoring fixture."""
+"""integration qualification for the abstract model-authoring fixture."""
 from pathlib import Path
 import unittest
 

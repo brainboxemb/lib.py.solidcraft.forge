@@ -58,19 +58,15 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertEqual(
             case["steps"][0]["outputs"],
             [
-                "case/stages/simple-box/01-q1.json",
-                "case/stages/simple-box/02-q2.json",
                 "case/simple-box.json",
-                "case/stages/simple-box/03-compile.json",
-                "case/qualification/case-evidence/q1/simple-box.txt",
-                "case/qualification/case-evidence/q2/simple-box.txt",
+                "case/stages/simple-box/01-compile.json",
             ],
         )
         self.assertEqual(
             case["steps"][1]["outputs"],
             [
                 "case/native/simple-box",
-                "case/stages/simple-box/13-gate.json",
+                "case/stages/simple-box/11-gate.json",
             ],
         )
 
@@ -107,7 +103,7 @@ class ToolCadCiMigrationTests(unittest.TestCase):
                     ],
                 )
                 self.assertIn(
-                    f"case/stages/{slug}/13-gate.json",
+                    f"case/stages/{slug}/11-gate.json",
                     config["steps"][1]["outputs"],
                 )
 
@@ -120,12 +116,16 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertIn("CAD_CI_ITEM", script)
         self.assertIn("CAD_CI_OUTPUT", script)
         self.assertIn("qualification/case_runner.py", script)
-        self.assertIn('"--until"', script)
+        self.assertIn('"--stage"', script)
         self.assertIn('"compile"', script)
         self.assertIn('"--from"', script)
         self.assertIn('"replay"', script)
         self.assertIn("FORGE_QUALIFICATION_IMAGE", script)
         self.assertIn('"docker"', script)
+        self.assertIn('"--user"', script)
+        self.assertIn("os.getuid()", script)
+        self.assertIn("os.getgid()", script)
+        self.assertIn("finalize_item_result.py", script)
         self.assertFalse((ROOT / "examples/simple-box/ci.py").exists())
 
     def test_generated_evidence_items_are_independent_from_examples(self):
@@ -161,7 +161,7 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertNotIn("cad-ci plan", workflow)
 
     def test_new_docs_name_the_three_real_test_layers(self):
-        """Repository guidance must not present Q1/Q2 as architecture."""
+        """Repository guidance names the three real test layers."""
 
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         for phrase in (
@@ -171,11 +171,23 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         ):
             self.assertIn(phrase, agents)
 
-        evidence_doc = (
-            ROOT / "qualification/case_evidence.py"
+        qualification = (
+            ROOT / "qualification/README.md"
         ).read_text(encoding="utf-8")
-        self.assertIn("legacy keys", evidence_doc)
-        self.assertIn("library unit tests", evidence_doc)
+        for phrase in (
+            "integration",
+            "native_model",
+            "geometry",
+            "saved_design",
+            "visual",
+        ):
+            self.assertIn(phrase, qualification)
+        for legacy in (
+            "case_evidence.py",
+            "run_case_evidence.py",
+            "run_affected.py",
+        ):
+            self.assertFalse((ROOT / "qualification" / legacy).exists())
 
 
 if __name__ == "__main__":

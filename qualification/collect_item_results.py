@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Collect Forge qualification evidence from completed tool.cad.ci example items.
+"""Collect results from completed generic Forge example items.
 
-The generic runner stores each example below build/examples/<slug>. This module
-translates those consumer-owned item outputs into the aggregate shape still
-used by Forge's result collector and website. It never runs SolidCraft.
+Each example owns one self-contained item output. This module materializes those
+outputs into the temporary aggregate tree used by the Forge site/build adapter.
+It does not run SolidCraft and does not invent a second verification model.
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ def _now() -> str:
 
 
 def _read_json(path: Path) -> dict:
-    """Read one required JSON object and name the missing/invalid file."""
+    """Read one required JSON object and name a missing or invalid file."""
 
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -69,12 +69,7 @@ def _copy_tree(source: Path, target: Path) -> None:
 
 
 def validate_item(build_root: Path, slug: str) -> Path:
-    """Return the case output of one completed generic example item.
-
-    The runner writes item.json only when the final configured step completed.
-    Requiring that state prevents a cheap integration-only run from being
-    mistaken for a native-qualified item.
-    """
+    """Return the case output of one completed generic example item."""
 
     item_root = build_root / "examples" / slug
     state = _read_json(item_root / "item.json")
@@ -88,12 +83,9 @@ def materialize_case(
     aggregate_root: Path,
     slug: str,
 ) -> None:
-    """Copy one completed item into Forge's temporary aggregate result shape."""
+    """Copy one completed example item into Forge's aggregate result tree."""
 
     case = validate_item(build_root, slug)
-
-    # Keep this translation local to Forge. The generic store deliberately does
-    # not know that these files are commands, stage records or native evidence.
     _copy_file(case / f"{slug}.json", aggregate_root / f"{slug}.json")
     _copy_tree(
         case / "stages" / slug,
@@ -102,61 +94,6 @@ def materialize_case(
     _copy_tree(
         case / "native" / slug,
         aggregate_root / "native" / slug,
-    )
-    for level in ("q1", "q2"):
-        _copy_file(
-            case / "qualification" / "case-evidence" / level / f"{slug}.txt",
-            aggregate_root
-            / "qualification"
-            / "case-evidence"
-            / level
-            / f"{slug}.txt",
-        )
-
-
-def write_validation_summaries(
-    aggregate_root: Path,
-    cases: tuple[str, ...],
-) -> None:
-    """Write the two legacy TSV summaries still consumed by results.collect."""
-
-    qualification = aggregate_root / "qualification"
-    qualification.mkdir(parents=True, exist_ok=True)
-    native_rows = ["case\tq4\tq5\n"]
-    visual_rows = ["case\tstatus\n"]
-    native_summary: dict[str, dict] = {}
-    visual_summary: dict[str, dict] = {}
-
-    for slug in cases:
-        native = _read_json(
-            aggregate_root / "native" / slug / "validation.json"
-        )
-        visual = _read_json(
-            aggregate_root / "native" / slug / "visual-validation.json"
-        )
-        native_summary[slug] = native
-        visual_summary[slug] = visual
-        q4 = str(native.get("q4", "missing")).upper()
-        q5 = str(native.get("q5", "missing")).upper()
-        status = str(visual.get("status", "missing")).upper()
-        native_rows.append(f"{slug}\t{q4}\t{q5}\n")
-        visual_rows.append(f"{slug}\t{status}\n")
-
-    (qualification / "native-validation.json").write_text(
-        json.dumps(native_summary, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    (qualification / "visual-validation.json").write_text(
-        json.dumps(visual_summary, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    (qualification / "native-validation.tsv").write_text(
-        "".join(native_rows),
-        encoding="utf-8",
-    )
-    (qualification / "visual-validation.tsv").write_text(
-        "".join(visual_rows),
-        encoding="utf-8",
     )
 
 
@@ -167,7 +104,7 @@ def collect_from_items(
     cases: tuple[str, ...],
     source_sha: str,
 ) -> dict:
-    """Collect selected completed items without rerunning any qualification."""
+    """Collect selected completed items without rerunning any CAD operation."""
 
     if not cases:
         raise ValueError("at least one example item is required")
@@ -177,17 +114,13 @@ def collect_from_items(
 
     for slug in cases:
         materialize_case(build_root, out, slug)
-    write_validation_summaries(out, cases)
 
     result = collect_results(
-        out / "qualification",
-        out / "native",
+        out,
         source_sha,
         scpf_version(),
         TESTED_SOLIDCRAFT_VERSION,
         _now(),
-        output_root=out,
-        stages_root=out / "stages",
         cases=cases,
     )
     incomplete = [

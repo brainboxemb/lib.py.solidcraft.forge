@@ -1,15 +1,25 @@
-# One Forge example is one CI item. The integration step writes cheap case
-# evidence through command compilation; the native step resumes at replay.
+# One Forge example is one CI item. Integration proves the generated command
+# contract and compilation; native resumes the same item from replay onward.
 id: parametric-offset
 kind: example
 watch:
-  - examples/parametric-offset/**
+  - examples/parametric-offset/scpf/**
+  - examples/parametric-offset/tests/**
   - scpf/scpf/**
   - qualification/case_runner.py
+  - qualification/case_selection.py
   - qualification/cases.py
+  - qualification/camera.py
+  - qualification/goal_overlay.py
   - qualification/native_cases.py
   - qualification/native_validation.py
+  - qualification/run_post_build_inspections.py
   - qualification/visual_validation.py
+  - qualification/commands/**
+  - qualification/finalize_item_result.py
+  - qualification/collect_item_results.py
+  - qualification/results.py
+  - qualification/project_metadata.py
   - scripts/example_ci.py
 strategy:
   reuse: true
@@ -18,13 +28,9 @@ steps:
     run: [python, ../../scripts/example_ci.py, integration]
     outputs:
       - case/parametric-offset.json
-      - case/stages/parametric-offset/01-q1.json
-      - case/stages/parametric-offset/02-q2.json
-      - case/stages/parametric-offset/03-compile.json
-      - case/qualification/case-evidence/q1/parametric-offset.txt
-      - case/qualification/case-evidence/q2/parametric-offset.txt
+      - case/stages/parametric-offset/01-compile.json
   - id: native
     run: [python, ../../scripts/example_ci.py, native]
     outputs:
       - case/native/parametric-offset
-      - case/stages/parametric-offset/13-gate.json
+      - case/stages/parametric-offset/11-gate.json

@@ -24,7 +24,7 @@ from qualification.collect_item_results import collect_from_items
 from scripts.verification_gate import assemble_build, selected_cases
 
 
-NATIVE_GATES = {"affected-q1-q6", "full-q1-q6"}
+NATIVE_GATES = {"affected-native", "full-native"}
 
 
 def copy_completed_item_output(
@@ -87,14 +87,14 @@ def execute(
 
     # These are normal generic CI items. Forge knows what their files mean;
     # tool.cad.ci only guarantees that the item output is complete and current.
-    if reference_smoke or gate == "full-q1-q6":
+    if reference_smoke or gate == "full-native":
         copy_completed_item_output(
             build_root=build_root,
             item_path=Path("qualification/reference_suite"),
             output_name="references",
             destination=out / "references",
         )
-    if gate == "full-q1-q6":
+    if gate == "full-native":
         copy_completed_item_output(
             build_root=build_root,
             item_path=Path("qualification/diagrams"),

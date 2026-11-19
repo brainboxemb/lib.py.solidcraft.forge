@@ -1,4 +1,4 @@
-"""Q1/Q2 contract for native circular feature patterns."""
+"""integration contract for native circular feature patterns."""
 
 import json
 import unittest
@@ -55,12 +55,12 @@ class CircularFeaturePatternQualificationTests(unittest.TestCase):
             1,
         )
 
-    def test_q5_mutates_pattern_count_in_saved_design(self):
+    def test_saved_design_mutates_pattern_count_in_saved_design(self):
         case = next(
             case for case in QUALIFICATION_CASES
             if case["slug"] == "circular-feature-pattern"
         )
-        self.assertTrue(case["q5_required"])
+        self.assertTrue(case["saved_design_required"])
 
         spec = mutation_spec("circular-feature-pattern")
         self.assertIsNotNone(spec)

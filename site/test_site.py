@@ -23,12 +23,12 @@ from api_coverage import (
     CAPABILITY_COVERAGE,
     validate_coverage_cases,
     validate_coverage_results,
+    coverage_rank,
 )
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 import scpf
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from qualification.geometry_contracts import proof_contract
-from qualification.case_evidence import evidence_for
 
 
 def check(
@@ -555,14 +555,14 @@ def check(
         assert title in coverage_page, title
     for group, capability, target, current, cases, note in CAPABILITY_COVERAGE:
         assert capability in coverage_page, capability
-        assert target.startswith("Q")
-        assert current == "GAP" or current.startswith("Q")
+        assert coverage_rank(target) is not None
+        assert current == "GAP" or coverage_rank(current) is not None
     assert "Functional qualification:</strong>" in coverage_page
     assert "Qualification by area" in coverage_page
     assert "At target" in coverage_page
     assert "Below target" in coverage_page
     assert "Basic vertical-edge fillet is command-, native- and visual-qualified" in coverage_page
-    assert "no dedicated native qualification case currently proves Q3-Q6" in coverage_page
+    assert "no dedicated qualification case currently proves both native and visual behaviour" in coverage_page
     assert "<code>Edges</code>" in coverage_page
     for status_class in (
         "coverage-status supported",
@@ -610,7 +610,7 @@ def check(
         assert f"/qualification/diagrams/{diagram}.svg" in joint_anatomy_page
         assert f"/qualification/diagrams/{diagram}.dxf" in joint_anatomy_page
         assert f'href="{diagram}.cadcraft.json"' in joint_anatomy_page
-    assert "Q1" in qualification_index and "Q6" in qualification_index
+    assert "Integration" in qualification_index and "Visual" in qualification_index
     assert 'class="reference-grid qualification-grid"' in qualification_index
     assert qualification_manifest["library_commit"] == sha
     assert qualification_manifest["qualification_commit"] == evidence_sha
@@ -642,7 +642,7 @@ def check(
             "SolidCraft result",
             "Reference code",
             "Technical test details",
-            "Q1 and Q2 tests",
+            "Integration tests",
             "Geometry checks",
             "Saved-design test",
             "Raw test files",
@@ -654,10 +654,10 @@ def check(
         ):
             assert heading in page_text, (slug, heading)
         for old_heading in (
-            "Case-specific Q1/Q2 evidence",
+            "Case-specific numbered evidence",
             "Shared geometry contract",
             "SolidCraft-only checks",
-            "Q5 applicability",
+            "Legacy saved-design applicability",
             "Pass criteria",
             "Implementation under test",
             "Generated SolidCraft relationship",
@@ -666,14 +666,13 @@ def check(
         assert '<details class="panel qualification-technical-details">' in page_text, slug
         assert '<details class="panel qualification-technical-details" open>' not in page_text, slug
         assert case["title"] in page_text
-        for level in ("q1", "q2"):
-            for target in evidence_for(slug, level):
-                assert target["file"] in page_text, (slug, level, target)
-                assert target["test"] in page_text, (slug, level, target)
+        tests_dir = ROOT / "examples" / slug / "tests"
+        for target in sorted(tests_dir.glob("test_*.py")):
+            assert target.relative_to(ROOT).as_posix() in page_text, (slug, target)
         assert case["mutation"] in html.unescape(page_text), slug
         saved_label = (
             "Checked in the saved model."
-            if case.get("q5_required")
+            if case.get("saved_design_required")
             else "No saved-model change is required."
         )
         assert saved_label in page_text, slug
@@ -861,25 +860,21 @@ def check(
             assert "<h2>Visual result</h2>" in page_text, slug
             assert "<h2>Reference code</h2>" in page_text, slug
             assert "<strong>Technical test details</strong>" in page_text, slug
-            assert "<h3>Q1 and Q2 tests</h3>" in page_text, slug
+            assert "<h3>Integration tests</h3>" in page_text, slug
             assert "<h3>Geometry checks</h3>" in page_text, slug
             assert "<h3>Saved-design test</h3>" in page_text, slug
-            assert "q1-case-evidence.txt" in page_text, slug
-            assert "q2-case-evidence.txt" in page_text, slug
-            for level in ("q1", "q2"):
-                level_result = manifest_case["levels"][level]
-                assert level_result["status"] == "pass", (slug, level)
-                assert level_result["tests"], (slug, level)
-                assert level_result["evidence"], (slug, level)
-                for target in level_result["tests"]:
-                    assert target["file"] in page_text, (slug, level, target)
-                    assert target["test"] in page_text, (slug, level, target)
+            assert "qualification-result.json" in page_text, slug
+            assert "validation.json" in page_text, slug
+            checks = manifest_case["checks"]
+            assert checks["integration"]["status"] == "pass", slug
+            assert checks["native_model"]["status"] == "pass", slug
+            assert checks["geometry"]["status"] == "pass", slug
 
             for removed_heading in (
                 "1. Test setup",
                 "Test goal",
                 "Pass criteria",
-                "Case-specific Q1/Q2 evidence",
+                "Case-specific numbered evidence",
                 "Shared geometry contract",
                 "SolidCraft-only checks",
                 "Implementation under test",
@@ -900,14 +895,14 @@ def check(
             assert f"/examples/{slug}/scpf/goal-iso.png" in page_text, slug
             assert f"/examples/{slug}/scpf/overlay-iso.png" in page_text, slug
             assert f"/examples/{slug}/scpf/model-iso.png" in qualification_index, slug
-            q6 = manifest_case["levels"]["q6"]
+            visual = manifest_case["checks"]["visual"]
             visual_result_path = site / "qualification" / slug / "visual-validation.json"
             assert not visual_result_path.exists(), slug
             if manifest_case["qualification_status"] == "pass":
-                assert q6["status"] == "pass", slug
-                assert q6["regression_status"] == "pass", slug
-                assert q6["expected_shape_status"] == "pass", slug
-                assert q6["required_views"] == geometry["required_views"], slug
+                assert visual["status"] == "pass", slug
+                assert visual["regression_status"] == "pass", slug
+                assert visual["expected_shape_status"] == "pass", slug
+                assert visual["required_views"] == geometry["required_views"], slug
                 assert "<strong>Image checks:</strong>" in page_text, slug
                 assert "expected shape PASS" in page_text, slug
                 assert "saved render PASS" in page_text, slug

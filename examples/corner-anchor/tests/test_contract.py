@@ -1,4 +1,4 @@
-"""Q2 command contract for corner-anchor."""
+"""integration command contract for corner-anchor."""
 
 from pathlib import Path
 import unittest

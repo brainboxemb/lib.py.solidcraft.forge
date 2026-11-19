@@ -33,11 +33,9 @@ ALLOWED_BUILD_TOP_LEVEL = {"build.json", "examples", "qualification"}
 LEVEL_RANK = {
     "preflight": 0,
     "derived": 0,
-    "q1-q2-affected": 1,
-    "affected-q1-q2": 1,
-    "affected-q1-q6": 2,
-    "q1-q6-full": 3,
-    "full-q1-q6": 3,
+    "integration": 1,
+    "native": 2,
+    "full-native": 3,
     "reference": 1,
 }
 
@@ -443,7 +441,7 @@ def promote_overlay(
     except RuntimeError:
         if (
             LEVEL_RANK.get(required_level, -1)
-            >= LEVEL_RANK["q1-q6-full"]
+            >= LEVEL_RANK["full-native"]
             and _complete_overlay(overlay_manifest)
         ):
             return _bootstrap_main_from_overlay(

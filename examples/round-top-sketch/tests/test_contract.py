@@ -1,4 +1,4 @@
-"""Q2 contract for TOP-attached Sketches on round bodies."""
+"""integration contract for TOP-attached Sketches on round bodies."""
 
 import unittest
 from pathlib import Path

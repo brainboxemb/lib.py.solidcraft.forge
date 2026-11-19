@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the qualification Markdown report from structured result JSON."""
+"""Render the semantic Forge qualification report from one external template."""
 
 from __future__ import annotations
 
@@ -13,69 +13,66 @@ ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / "qualification" / "templates" / "report.md"
 
 
-def _status(level: dict) -> str:
-    status = level.get("status", "missing")
-    return {
-        "pass": "PASS",
-        "not-required": "N/R",
-        "missing": "MISSING",
-    }.get(status, status.upper())
+def _status(check: dict) -> str:
+    """Return a compact uppercase check status."""
+
+    return str(check.get("status", "missing")).upper()
 
 
-def render(results: dict) -> str:
+def render(data: dict) -> str:
+    """Render one human-readable report from semantic case checks."""
+
     rows = []
-    image_sections = []
-    for slug, case in results["cases"].items():
-        levels = case["levels"]
+    images = []
+    for slug, case in data.get("cases", {}).items():
+        checks = case.get("checks", {})
         rows.append(
             "| "
             + " | ".join(
-                [
-                    f"`{slug}`",
-                    case["status"].upper(),
-                    _status(levels["q1"]),
-                    _status(levels["q2"]),
-                    _status(levels["q3"]),
-                    _status(levels["q4"]),
-                    _status(levels["q5"]),
-                    _status(levels["q6"]),
-                ]
+                (
+                    slug,
+                    str(case.get("status", "missing")).upper(),
+                    _status(checks.get("integration", {})),
+                    _status(checks.get("native_model", {})),
+                    _status(checks.get("geometry", {})),
+                    _status(checks.get("saved_design", {})),
+                    _status(checks.get("visual", {})),
+                )
             )
             + " |"
         )
-
-        images = levels["q6"].get("images", [])
-        if images:
-            image_sections.append(f"### {case['title']} (`{slug}`)")
-            image_sections.append("")
-            image_sections.extend(
-                f"- `../native/{slug}/{name}`"
-                for name in images
+        visual_images = checks.get("visual", {}).get("images", [])
+        if visual_images:
+            images.append(
+                f"### {slug}\n\n"
+                + "\n".join(
+                    f"- [{name}](../native/{slug}/{name})"
+                    for name in visual_images
+                )
             )
-            image_sections.append("")
 
     template = Template(TEMPLATE.read_text(encoding="utf-8"))
     return template.substitute(
-        source_commit=results["source_commit"],
-        forge_version=results["forge_version"],
-        solidcraft_version=results["solidcraft_version"],
-        qualified_at=results["qualified_at"],
-        schema_version=results["schema_version"],
+        forge_version=data.get("forge_version", ""),
+        solidcraft_version=data.get("solidcraft_version", ""),
+        source_commit=data.get("source_commit", ""),
+        qualified_at=data.get("qualified_at", ""),
+        schema_version=data.get("schema_version", ""),
         case_rows="\n".join(rows),
-        image_sections="\n".join(image_sections).rstrip() or "No native images were produced.",
+        image_sections="\n\n".join(images) or "No visual evidence.",
     )
 
 
 def main() -> int:
+    """Render a results JSON file to Markdown."""
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
-
-    results = json.loads(args.results.read_text(encoding="utf-8"))
+    data = json.loads(args.results.read_text(encoding="utf-8"))
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(render(results), encoding="utf-8")
-    print(f"Wrote qualification report: {args.out}")
+    args.out.write_text(render(data), encoding="utf-8")
     return 0
 
 

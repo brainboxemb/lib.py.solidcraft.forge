@@ -1,15 +1,15 @@
 # SCPF Forge qualification
 
-- Forge: `$forge_version`
-- SolidCraft: `$solidcraft_version`
-- Commit: `$source_commit`
-- Qualified at: `$qualified_at`
-- Result schema: `$schema_version`
+- Forge: $forge_version
+- SolidCraft: $solidcraft_version
+- Commit: $source_commit
+- Qualified at: $qualified_at
+- Result schema: $schema_version
 
 ## Qualification cases
 
-| Case | Overall | Q1 | Q2 | Q3 | Q4 | Q5 | Q6 |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+| Case | Overall | Integration | Native model | Geometry | Saved design | Visual |
+| --- | --- | --- | --- | --- | --- | --- |
 $case_rows
 
 ## Native visual evidence
@@ -18,19 +18,22 @@ $image_sections
 
 ## Result data
 
-The machine-readable source of this report is `results.json`. Each native case
-directory also contains its own `qualification-result.json`, together with the
-SolidCraft measurements, saved models, STEP exports and PNG snapshots used as
-evidence.
+The machine-readable source is results.json. Each native case directory also
+contains qualification-result.json plus the measurements, saved models, exports
+and renders used as evidence.
 
 ## Qualification model
 
-- **Q1 — Python API:** public API validation and compiler invariants.
-- **Q2 — Command contract:** generated SolidCraft command JSON is complete and inspectable.
-- **Q3 — Native build:** SolidCraft accepts the command plan and saves an editable design.
-- **Q4 — Native semantic validation:** body bounds, feature evidence and joint/anchor relationships are checked against independent expected geometry.
-- **Q5 — Parametric mutation:** required saved designs re-solve correctly after parameter changes.
-- **Q6 — Visual regression:** fixed front/right/isometric native views are compared with approved reference rasters and diff overlays are retained.
+- **Integration:** the example-owned tests pass and Forge compiles a replayable
+  SolidCraft command document.
+- **Native model:** SolidCraft replays that document and saves the expected
+  editable native design.
+- **Geometry:** measured geometry and native history match the declared proof
+  contract.
+- **Saved design:** cases that claim associativity still pass after editing the
+  saved SolidCraft model. Cases without such a claim report NOT-REQUIRED.
+- **Visual:** fixed-camera renders satisfy both expected-shape and regression
+  checks.
 
-The report structure comes from `qualification/templates/report.md`; CI supplies
-the result data but does not construct the document with inline shell markup.
+The report structure comes from qualification/templates/report.md; CI only
+supplies result data.

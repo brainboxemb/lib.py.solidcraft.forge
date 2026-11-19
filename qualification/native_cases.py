@@ -138,11 +138,11 @@ POST_BUILD_INSPECTIONS = {
 }
 
 
-def q5_required_cases() -> tuple[str, ...]:
+def saved_design_cases() -> tuple[str, ...]:
     return tuple(
         case["slug"]
         for case in supported_qualification_cases()
-        if case.get("q5_required", False)
+        if case.get("saved_design_required", False)
     )
 
 
@@ -151,7 +151,7 @@ def mutation_spec(slug: str) -> dict | None:
 
 
 def validate_runtime_metadata() -> None:
-    expected = set(q5_required_cases())
+    expected = set(saved_design_cases())
     actual = set(MUTATIONS)
     if expected != actual:
         missing = sorted(expected - actual)

@@ -34,7 +34,7 @@ class GeneratedOutputTests(unittest.TestCase):
             "solidcraft_version": "0.42.0",
             "workflow_run_id": "99",
             "qualification": {
-                "level": "affected-q1-q6" if scope == "pr" else "q1-q6-full",
+                "level": "native" if scope == "pr" else "full-native",
                 "status": "pass",
             },
         }
@@ -67,7 +67,7 @@ class GeneratedOutputTests(unittest.TestCase):
             self.assertFalse((target / "examples" / "components").exists())
             record = data["cases"]["simple-box"]["implementations"]["scpf"]
             self.assertEqual(record["source_commit"], "abc123")
-            self.assertEqual(record["verification_level"], "affected-q1-q6")
+            self.assertEqual(record["verification_level"], "native")
 
     def test_complete_main_baseline_does_not_recalculate_case_hashes(self):
         with TemporaryDirectory() as temp:
@@ -83,7 +83,7 @@ class GeneratedOutputTests(unittest.TestCase):
                 "pull_request": None,
                 "workflow_run_id": "1",
                 "toolchain": {},
-                "verification": {"level": "q1-q6-full", "status": "pass"},
+                "verification": {"level": "full-native", "status": "pass"},
                 "generated_at": "2026-01-01T00:00:00Z",
                 "cases": {},
             }
@@ -94,7 +94,7 @@ class GeneratedOutputTests(unittest.TestCase):
                             "source_commit": "qualified",
                             "build_scope": "main",
                             "input_hash": "sha256:" + "4" * 64,
-                            "verification_level": "q1-q6-full",
+                            "verification_level": "full-native",
                             "status": "pass",
                             "generated_at": "2026-01-01T00:00:00Z",
                         }
@@ -135,7 +135,7 @@ class GeneratedOutputTests(unittest.TestCase):
                 "pull_request": None,
                 "workflow_run_id": "1",
                 "toolchain": {},
-                "verification": {"level": "q1-q6-full", "status": "pass"},
+                "verification": {"level": "full-native", "status": "pass"},
                 "generated_at": "2026-01-01T00:00:00Z",
                 "cases": {
                     "simple-box": {
@@ -144,7 +144,7 @@ class GeneratedOutputTests(unittest.TestCase):
                                 "source_commit": "qualified",
                                 "build_scope": "main",
                                 "input_hash": "sha256:" + "5" * 64,
-                                "verification_level": "q1-q6-full",
+                                "verification_level": "full-native",
                                 "status": "pass",
                                 "generated_at": "2026-01-01T00:00:00Z",
                             }
@@ -210,11 +210,11 @@ class GeneratedOutputTests(unittest.TestCase):
                 "pull_request": None,
                 "workflow_run_id": "1",
                 "toolchain": {},
-                "verification": {"level": "q1-q6-full", "status": "pass"},
+                "verification": {"level": "full-native", "status": "pass"},
                 "generated_at": "2026-01-01T00:00:00Z",
                 "cases": {
-                    "simple-box": {"implementations": {"scpf": record("old", "q1-q6-full", "main")}},
-                    "components": {"implementations": {"scpf": record("old", "q1-q6-full", "main")}},
+                    "simple-box": {"implementations": {"scpf": record("old", "full-native", "main")}},
+                    "components": {"implementations": {"scpf": record("old", "full-native", "main")}},
                 },
             }
             overlay_manifest = {
@@ -224,7 +224,7 @@ class GeneratedOutputTests(unittest.TestCase):
                 "source_commit": "new",
                 "pull_request": 42,
                 "cases": {
-                    "simple-box": {"implementations": {"scpf": record("new", "affected-q1-q6", "pr/42")}},
+                    "simple-box": {"implementations": {"scpf": record("new", "native", "pr/42")}},
                 },
             }
             (main / "build.json").write_text(json.dumps(main_manifest), encoding="utf-8")
@@ -235,7 +235,7 @@ class GeneratedOutputTests(unittest.TestCase):
                     main,
                     overlay,
                     dest,
-                    required_level="affected-q1-q6",
+                    required_level="native",
                     source_commit="merge",
                     repo_root=root,
                 )
@@ -289,19 +289,19 @@ class GeneratedOutputTests(unittest.TestCase):
                 "verification": {"level": "per-case", "status": "pass"},
                 "generated_at": "2026-01-01T00:00:00Z",
                 "cases": {
-                    "simple-box": {"implementations": {"scpf": record("old", "q1-q6-full", "main")}},
-                    "components": {"implementations": {"scpf": record("old", "q1-q6-full", "main")}},
+                    "simple-box": {"implementations": {"scpf": record("old", "full-native", "main")}},
+                    "components": {"implementations": {"scpf": record("old", "full-native", "main")}},
                 },
             }
             candidate_manifest = {
                 **main_manifest,
                 "source_commit": "new-main",
                 "workflow_run_id": "2",
-                "verification": {"level": "affected-q1-q6", "status": "pass"},
+                "verification": {"level": "native", "status": "pass"},
                 "cases": {
                     "simple-box": {
                         "implementations": {
-                            "scpf": record("new-main", "affected-q1-q6", "main")
+                            "scpf": record("new-main", "native", "main")
                         }
                     }
                 },
@@ -320,7 +320,7 @@ class GeneratedOutputTests(unittest.TestCase):
                     main,
                     candidate,
                     dest,
-                    required_level="affected-q1-q6",
+                    required_level="native",
                     source_commit="new-main",
                     source_ref="main",
                     workflow_run_id="2",
@@ -376,7 +376,7 @@ class GeneratedOutputTests(unittest.TestCase):
                         main,
                         candidate,
                         dest,
-                        required_level="affected-q1-q6",
+                        required_level="native",
                         source_commit="different",
                         repo_root=root,
                     )
@@ -403,7 +403,7 @@ class GeneratedOutputTests(unittest.TestCase):
                 "pull_request": 7,
                 "workflow_run_id": "1",
                 "toolchain": {},
-                "verification": {"level": "q1-q6-full", "status": "pass"},
+                "verification": {"level": "full-native", "status": "pass"},
                 "generated_at": "2026-01-01T00:00:00Z",
                 "cases": {},
             }
@@ -414,7 +414,7 @@ class GeneratedOutputTests(unittest.TestCase):
                             "source_commit": "head",
                             "build_scope": "pr/7",
                             "input_hash": "sha256:" + "3" * 64,
-                            "verification_level": "q1-q6-full",
+                            "verification_level": "full-native",
                             "status": "pass",
                             "generated_at": "2026-01-01T00:00:00Z",
                         }
@@ -429,7 +429,7 @@ class GeneratedOutputTests(unittest.TestCase):
                     legacy,
                     overlay,
                     dest,
-                    required_level="q1-q6-full",
+                    required_level="full-native",
                     source_commit="merge",
                     repo_root=root,
                 )
@@ -443,8 +443,8 @@ class GeneratedOutputTests(unittest.TestCase):
 
     def test_promotion_rejects_insufficient_level(self):
         self.assertLess(
-            self.module.LEVEL_RANK["affected-q1-q2"],
-            self.module.LEVEL_RANK["affected-q1-q6"],
+            self.module.LEVEL_RANK["integration"],
+            self.module.LEVEL_RANK["native"],
         )
 
     def test_stable_pages_preserves_previews(self):

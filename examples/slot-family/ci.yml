@@ -1,15 +1,25 @@
-# One Forge example is one CI item. The integration step writes cheap case
-# evidence through command compilation; the native step resumes at replay.
+# One Forge example is one CI item. Integration proves the generated command
+# contract and compilation; native resumes the same item from replay onward.
 id: slot-family
 kind: example
 watch:
-  - examples/slot-family/**
+  - examples/slot-family/scpf/**
+  - examples/slot-family/tests/**
   - scpf/scpf/**
   - qualification/case_runner.py
+  - qualification/case_selection.py
   - qualification/cases.py
+  - qualification/camera.py
+  - qualification/goal_overlay.py
   - qualification/native_cases.py
   - qualification/native_validation.py
+  - qualification/run_post_build_inspections.py
   - qualification/visual_validation.py
+  - qualification/commands/**
+  - qualification/finalize_item_result.py
+  - qualification/collect_item_results.py
+  - qualification/results.py
+  - qualification/project_metadata.py
   - scripts/example_ci.py
 strategy:
   reuse: true
@@ -18,13 +28,9 @@ steps:
     run: [python, ../../scripts/example_ci.py, integration]
     outputs:
       - case/slot-family.json
-      - case/stages/slot-family/01-q1.json
-      - case/stages/slot-family/02-q2.json
-      - case/stages/slot-family/03-compile.json
-      - case/qualification/case-evidence/q1/slot-family.txt
-      - case/qualification/case-evidence/q2/slot-family.txt
+      - case/stages/slot-family/01-compile.json
   - id: native
     run: [python, ../../scripts/example_ci.py, native]
     outputs:
       - case/native/slot-family
-      - case/stages/slot-family/13-gate.json
+      - case/stages/slot-family/11-gate.json

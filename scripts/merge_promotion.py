@@ -19,9 +19,9 @@ from scripts.generated_output import load_manifest, promote_overlay
 
 REQUIRED_LEVEL = {
     "regenerate-derived": "derived",
-    "affected-q1-q2": "affected-q1-q2",
-    "affected-q1-q6": "affected-q1-q6",
-    "full-q1-q6": "q1-q6-full",
+    "affected-integration": "integration",
+    "affected-native": "native",
+    "full-native": "full-native",
 }
 
 

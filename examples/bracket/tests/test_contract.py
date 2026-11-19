@@ -1,4 +1,4 @@
-"""Q2 command contract for bracket."""
+"""integration command contract for bracket."""
 
 from pathlib import Path
 import unittest

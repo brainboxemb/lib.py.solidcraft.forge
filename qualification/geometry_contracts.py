@@ -1,7 +1,7 @@
 """Shared machine-readable geometry and proof contracts for qualification.
 
-This file is the source of truth for baseline geometry. Native Q4 checks,
-independent reference checks and Q6 goal rendering all consume the same
+This file is the source of truth for baseline geometry. Native geometry checks, independent reference checks and visual goal
+rendering all consume the same
 geometry contract. SolidCraft-only history, relationship and mutation
 expectations are kept in a separate section of the proof contract.
 """
@@ -160,7 +160,7 @@ EXPECTED_BOUNDS = {
     ],
 }
 
-# Visual overlays may use a more detailed decomposition than the Q4 outer
+# Visual overlays may use a more detailed decomposition than the native outer
 # bounds. In particular an L-profile can be mirrored/rotated incorrectly while
 # retaining the same overall bounding box, so draw its two arms separately.
 EXPECTED_VISUAL_BOXES = dict(EXPECTED_BOUNDS)
@@ -562,7 +562,7 @@ _BOUNDS_ASSESSMENTS = {
     },
     "repeated-parent-attachments": {
         "sufficient": True,
-        "reason": "Four rectangular body bounds expose both parent heights and both child positions. Q5 mutation separately proves that both disconnected native joint graphs follow the shared parent-height change.",
+        "reason": "Four rectangular body bounds expose both parent heights and both child positions. saved-design mutation separately proves that both disconnected native joint graphs follow the shared parent-height change.",
     },
     "assembly-decorator": {
         "sufficient": True,
@@ -578,7 +578,7 @@ _BOUNDS_ASSESSMENTS = {
     },
     "parametric-attach": {
         "sufficient": True,
-        "reason": "The two rectangular body bounds describe the baseline gap geometry. Saved joint recompute is proved separately by Q5.",
+        "reason": "The two rectangular body bounds describe the baseline gap geometry. Saved joint recompute is proved separately by saved-design.",
     },
     "parametric-offset": {
         "sufficient": True,
@@ -901,8 +901,8 @@ def proof_contract(slug: str) -> dict:
         "solidcraft_only": {
             "native_expectation": case["native_expectation"],
             "generated_relationship": case["lowering"],
-            "q5_required": bool(case.get("q5_required")),
-            "q5_reason": case["mutation"],
-            "mutation": case["mutation"] if case.get("q5_required") else None,
+            "saved_design_required": bool(case.get("saved_design_required")),
+            "saved_design_reason": case["mutation"],
+            "mutation": case["mutation"] if case.get("saved_design_required") else None,
         },
     }

@@ -50,7 +50,7 @@ class ItemGateTests(unittest.TestCase):
                 "assemble_build",
             ) as assemble:
                 result = item_gate.execute(
-                    gate="full-q1-q6",
+                    gate="full-native",
                     cases_value="",
                     out=root / "gate",
                     build_out=root / "build-out",
@@ -64,26 +64,26 @@ class ItemGateTests(unittest.TestCase):
                     workflow_run_id="42",
                 )
 
-        self.assertEqual(result, ("simple-box",))
-        collect.assert_called_once_with(
-            build_root=build_root,
-            out=root / "gate",
-            cases=("simple-box",),
-            source_sha="a" * 40,
-        )
-        self.assertEqual(
-            (root / "gate/references/evidence.txt").read_text(
-                encoding="utf-8"
-            ),
-            "ok\n",
-        )
-        self.assertEqual(
-            (root / "gate/diagrams/evidence.txt").read_text(
-                encoding="utf-8"
-            ),
-            "ok\n",
-        )
-        assemble.assert_called_once()
+            self.assertEqual(result, ("simple-box",))
+            collect.assert_called_once_with(
+                build_root=build_root,
+                out=root / "gate",
+                cases=("simple-box",),
+                source_sha="a" * 40,
+            )
+            self.assertEqual(
+                (root / "gate/references/evidence.txt").read_text(
+                    encoding="utf-8"
+                ),
+                "ok\n",
+            )
+            self.assertEqual(
+                (root / "gate/diagrams/evidence.txt").read_text(
+                    encoding="utf-8"
+                ),
+                "ok\n",
+            )
+            assemble.assert_called_once()
 
     def test_affected_native_gate_without_reference_policy_needs_no_evidence_item(self):
         with TemporaryDirectory() as temp:
@@ -103,7 +103,7 @@ class ItemGateTests(unittest.TestCase):
                 "assemble_build",
             ):
                 item_gate.execute(
-                    gate="affected-q1-q6",
+                    gate="affected-native",
                     cases_value="simple-box",
                     out=root / "gate",
                     build_out=root / "build-out",
@@ -137,7 +137,7 @@ class ItemGateTests(unittest.TestCase):
                 "assemble_build",
             ):
                 item_gate.execute(
-                    gate="affected-q1-q6",
+                    gate="affected-native",
                     cases_value="simple-box",
                     out=root / "gate",
                     build_out=root / "build-out",
@@ -163,7 +163,7 @@ class ItemGateTests(unittest.TestCase):
             root = Path(temp)
             with self.assertRaisesRegex(ValueError, "does not support"):
                 item_gate.execute(
-                    gate="affected-q1-q2",
+                    gate="affected-integration",
                     cases_value="simple-box",
                     out=root / "gate",
                     build_out=root / "build-out",

@@ -25,7 +25,7 @@ class ImpactTests(unittest.TestCase):
         self.assertEqual(classify_path("mystery/input.bin"), "unknown")
         self.assertEqual(
             final_gate(["mystery/input.bin"], ()),
-            "full-q1-q6",
+            "full-native",
         )
 
     def test_foundational_compiler_change_selects_all_cases(self):
@@ -33,7 +33,7 @@ class ImpactTests(unittest.TestCase):
         self.assertGreater(len(cases), 10)
         self.assertEqual(
             final_gate(["scpf/scpf/compiler.py"], cases),
-            "full-q1-q6",
+            "full-native",
         )
 
     def test_direct_scpf_case_change_selects_native_gate_for_one_case(self):
@@ -41,7 +41,7 @@ class ImpactTests(unittest.TestCase):
         self.assertEqual(affected_cases(paths), ("simple-box",))
         self.assertEqual(
             final_gate(paths, ("simple-box",)),
-            "affected-q1-q6",
+            "affected-native",
         )
 
     def test_reference_case_change_stays_case_scoped(self):
@@ -49,11 +49,11 @@ class ImpactTests(unittest.TestCase):
         self.assertEqual(affected_cases(paths), ("simple-box",))
         self.assertEqual(
             final_gate(paths, ("simple-box",)),
-            "affected-q1-q2",
+            "affected-integration",
         )
 
-    def test_q1_evidence_selects_its_cases(self):
-        cases = affected_cases(["scpf/tests/test_native_slots.py"])
+    def test_example_integration_change_selects_its_case(self):
+        cases = affected_cases(["examples/slot-family/tests/test_contract.py"])
         self.assertIn("slot-family", cases)
 
     def test_case_dependencies_include_foundational_modules(self):

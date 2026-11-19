@@ -1,15 +1,25 @@
-# One Forge example is one CI item. The integration step writes cheap case
-# evidence through command compilation; the native step resumes at replay.
+# One Forge example is one CI item. Integration proves the generated command
+# contract and compilation; native resumes the same item from replay onward.
 id: selective-profile-extrude
 kind: example
 watch:
-  - examples/selective-profile-extrude/**
+  - examples/selective-profile-extrude/scpf/**
+  - examples/selective-profile-extrude/tests/**
   - scpf/scpf/**
   - qualification/case_runner.py
+  - qualification/case_selection.py
   - qualification/cases.py
+  - qualification/camera.py
+  - qualification/goal_overlay.py
   - qualification/native_cases.py
   - qualification/native_validation.py
+  - qualification/run_post_build_inspections.py
   - qualification/visual_validation.py
+  - qualification/commands/**
+  - qualification/finalize_item_result.py
+  - qualification/collect_item_results.py
+  - qualification/results.py
+  - qualification/project_metadata.py
   - scripts/example_ci.py
 strategy:
   reuse: true
@@ -18,13 +28,9 @@ steps:
     run: [python, ../../scripts/example_ci.py, integration]
     outputs:
       - case/selective-profile-extrude.json
-      - case/stages/selective-profile-extrude/01-q1.json
-      - case/stages/selective-profile-extrude/02-q2.json
-      - case/stages/selective-profile-extrude/03-compile.json
-      - case/qualification/case-evidence/q1/selective-profile-extrude.txt
-      - case/qualification/case-evidence/q2/selective-profile-extrude.txt
+      - case/stages/selective-profile-extrude/01-compile.json
   - id: native
     run: [python, ../../scripts/example_ci.py, native]
     outputs:
       - case/native/selective-profile-extrude
-      - case/stages/selective-profile-extrude/13-gate.json
+      - case/stages/selective-profile-extrude/11-gate.json

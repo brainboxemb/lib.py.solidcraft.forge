@@ -153,6 +153,13 @@ jobs:
           cache-from: type=gha,scope=qualification-image
           cache-to: type=gha,mode=max,scope=qualification-image
 
+      - name: Publish newly built qualification image
+        if: needs.plan.outputs.needs_image == 'true' && steps.image_cache.outputs.exists != 'true'
+        run: |
+          docker tag \
+            "qualification-local:${{ steps.image.outputs.image_id }}" \
+            "${{ steps.image.outputs.reference }}"
+          docker push "${{ steps.image.outputs.reference }}"
       - name: Run Forge pipeline
         id: pipeline
         run: |

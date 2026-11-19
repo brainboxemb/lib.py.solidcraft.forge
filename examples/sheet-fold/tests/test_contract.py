@@ -1,4 +1,4 @@
-"""Q2 command contract for the native sheet-fold qualification."""
+"""integration command contract for the native sheet-fold qualification."""
 
 import unittest
 from pathlib import Path

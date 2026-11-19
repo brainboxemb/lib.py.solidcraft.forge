@@ -43,13 +43,13 @@ The release PR must:
 7. pass the PR gate selected by the repository risk classifier.
 
 Changing `scpf/pyproject.toml` is a toolchain/release input. After merge, the
-single **Forge** workflow therefore requires full Q1-Q6 on the exact new
+single **Forge** workflow therefore requires full-native on the exact new
 `main` commit before its release job is eligible.
 
 ## Publishing after merge
 
 After merge, the same **Forge** workflow runs on the exact new `main` commit.
-Because the package version changed, it selects full Q1-Q6, publishes the
+Because the package version changed, it selects full-native, publishes the
 resulting verified `build/main` and stable Pages, and only then allows the
 release job in that same workflow to continue.
 
