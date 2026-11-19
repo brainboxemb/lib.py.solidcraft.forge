@@ -1,5 +1,6 @@
-# Migration step 1: only the Forge Python tool is connected to CAD CI.
-# Later PRs add examples and native/model verification items one group at a time.
+# Migration step 2: Forge tool plus one host-side verified example.
+# Later PRs add the remaining examples, then native/model verification.
 schema: 1
 items:
   - scpf
+  - examples/simple-box
