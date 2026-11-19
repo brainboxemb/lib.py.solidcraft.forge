@@ -1,0 +1,78 @@
+{
+  "case": "rounded-rectangle-sketch",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "RoundedRectangleSketch",
+        "min": [
+          -40,
+          -30,
+          0
+        ],
+        "max": [
+          40,
+          30,
+          13
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "Base plate",
+        "min": [
+          -40,
+          -30,
+          0
+        ],
+        "max": [
+          40,
+          30,
+          5
+        ]
+      },
+      {
+        "label": "Rounded pad",
+        "min": [
+          -20,
+          -15,
+          5
+        ],
+        "max": [
+          20,
+          15,
+          13
+        ]
+      }
+    ],
+    "required_views": [
+      "top",
+      "front",
+      "iso"
+    ],
+    "visual_features": [],
+    "bounds_sufficient": false,
+    "bounds_reason": "A sharp rectangular pad can share the same envelope. Rounded-pad volume and a corner-distance probe are required.",
+    "volume_mm3": 33428.31853071796,
+    "volume_tolerance_mm3": 60.0,
+    "watertight": true,
+    "surface_distance_probes": [
+      {
+        "label": "rounded pad corner",
+        "point": [
+          20.0,
+          15.0,
+          9.0
+        ],
+        "distance_mm": 2.0710678118654755,
+        "tolerance_mm": 0.3
+      }
+    ]
+  },
+  "solidcraft_only": {
+    "native_expectation": "The result is one joined body: an 80 x 60 x 5 mm base plate with a centered 40 x 30 x 8 mm rounded pad on top. The Rounded pad sketch has one closed profile made from four straight edges and four corner arcs. SolidCraft 0.42 also adds one construction diagonal between opposite arc centres; that construction line is not part of the profile.",
+    "generated_relationship": "The named explicit Sketch emits one sketch.rectangle.rounded with true arc corners, then a native solid.extrude(operation='join').",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation in this fixture; it isolates explicit rounded-rectangle sketch geometry and native join extrusion.",
+    "mutation": null
+  }
+}

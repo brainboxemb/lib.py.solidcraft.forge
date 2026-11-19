@@ -1,0 +1,792 @@
+{
+  "case": "sketch-pattern-mirror",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "SketchPatternMirror",
+        "min": [
+          -120,
+          -80,
+          0
+        ],
+        "max": [
+          120,
+          80,
+          5
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "SketchPatternMirror",
+        "min": [
+          -120,
+          -80,
+          0
+        ],
+        "max": [
+          120,
+          80,
+          5
+        ]
+      }
+    ],
+    "required_views": [
+      "top",
+      "front",
+      "iso"
+    ],
+    "visual_features": [
+      {
+        "type": "through_hole",
+        "label": "hole 1,1",
+        "center": [
+          -60.0,
+          -45.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 2,1",
+        "center": [
+          -35.0,
+          -45.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 3,1",
+        "center": [
+          -10.0,
+          -45.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 4,1",
+        "center": [
+          15.0,
+          -45.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 1,2",
+        "center": [
+          -60.0,
+          45.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 2,2",
+        "center": [
+          -35.0,
+          45.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 3,2",
+        "center": [
+          -10.0,
+          45.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 4,2",
+        "center": [
+          15.0,
+          45.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 1,1",
+        "centerline": [
+          [
+            -90.0,
+            -20.0
+          ],
+          [
+            -70.0,
+            -20.0
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 2,1",
+        "centerline": [
+          [
+            -40.0,
+            -20.0
+          ],
+          [
+            -20.0,
+            -20.0
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 3,1",
+        "centerline": [
+          [
+            20.0,
+            -20.0
+          ],
+          [
+            40.0,
+            -20.0
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 4,1",
+        "centerline": [
+          [
+            70.0,
+            -20.0
+          ],
+          [
+            90.0,
+            -20.0
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 1,2",
+        "centerline": [
+          [
+            -90.0,
+            20.0
+          ],
+          [
+            -70.0,
+            20.0
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 2,2",
+        "centerline": [
+          [
+            -40.0,
+            20.0
+          ],
+          [
+            -20.0,
+            20.0
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 3,2",
+        "centerline": [
+          [
+            20.0,
+            20.0
+          ],
+          [
+            40.0,
+            20.0
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 4,2",
+        "centerline": [
+          [
+            70.0,
+            20.0
+          ],
+          [
+            90.0,
+            20.0
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      }
+    ],
+    "bounds_sufficient": false,
+    "bounds_reason": "The Circle and Slot cuts do not change the plate envelope. Volume, 3D wall probes and saved-design mutation are required to prove the associative sketch pattern/mirror result.",
+    "volume_mm3": 181578.76140340505,
+    "volume_tolerance_mm3": 180.0,
+    "watertight": true,
+    "surface_distance_probes": [
+      {
+        "label": "hole 1,1 at z=0.5",
+        "point": [
+          -60.0,
+          -45.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 1,1 at z=2.5",
+        "point": [
+          -60.0,
+          -45.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 1,1 at z=4.5",
+        "point": [
+          -60.0,
+          -45.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 2,1 at z=0.5",
+        "point": [
+          -35.0,
+          -45.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 2,1 at z=2.5",
+        "point": [
+          -35.0,
+          -45.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 2,1 at z=4.5",
+        "point": [
+          -35.0,
+          -45.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 3,1 at z=0.5",
+        "point": [
+          -10.0,
+          -45.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 3,1 at z=2.5",
+        "point": [
+          -10.0,
+          -45.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 3,1 at z=4.5",
+        "point": [
+          -10.0,
+          -45.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 4,1 at z=0.5",
+        "point": [
+          15.0,
+          -45.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 4,1 at z=2.5",
+        "point": [
+          15.0,
+          -45.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 4,1 at z=4.5",
+        "point": [
+          15.0,
+          -45.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 1,2 at z=0.5",
+        "point": [
+          -60.0,
+          45.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 1,2 at z=2.5",
+        "point": [
+          -60.0,
+          45.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 1,2 at z=4.5",
+        "point": [
+          -60.0,
+          45.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 2,2 at z=0.5",
+        "point": [
+          -35.0,
+          45.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 2,2 at z=2.5",
+        "point": [
+          -35.0,
+          45.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 2,2 at z=4.5",
+        "point": [
+          -35.0,
+          45.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 3,2 at z=0.5",
+        "point": [
+          -10.0,
+          45.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 3,2 at z=2.5",
+        "point": [
+          -10.0,
+          45.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 3,2 at z=4.5",
+        "point": [
+          -10.0,
+          45.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 4,2 at z=0.5",
+        "point": [
+          15.0,
+          45.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 4,2 at z=2.5",
+        "point": [
+          15.0,
+          45.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 4,2 at z=4.5",
+        "point": [
+          15.0,
+          45.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 1,1 at z=0.5",
+        "point": [
+          -80.0,
+          -20.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 1,1 at z=2.5",
+        "point": [
+          -80.0,
+          -20.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 1,1 at z=4.5",
+        "point": [
+          -80.0,
+          -20.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,1 at z=0.5",
+        "point": [
+          -30.0,
+          -20.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,1 at z=2.5",
+        "point": [
+          -30.0,
+          -20.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,1 at z=4.5",
+        "point": [
+          -30.0,
+          -20.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,1 at z=0.5",
+        "point": [
+          30.0,
+          -20.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,1 at z=2.5",
+        "point": [
+          30.0,
+          -20.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,1 at z=4.5",
+        "point": [
+          30.0,
+          -20.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 4,1 at z=0.5",
+        "point": [
+          80.0,
+          -20.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 4,1 at z=2.5",
+        "point": [
+          80.0,
+          -20.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 4,1 at z=4.5",
+        "point": [
+          80.0,
+          -20.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 1,2 at z=0.5",
+        "point": [
+          -80.0,
+          20.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 1,2 at z=2.5",
+        "point": [
+          -80.0,
+          20.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 1,2 at z=4.5",
+        "point": [
+          -80.0,
+          20.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,2 at z=0.5",
+        "point": [
+          -30.0,
+          20.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,2 at z=2.5",
+        "point": [
+          -30.0,
+          20.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,2 at z=4.5",
+        "point": [
+          -30.0,
+          20.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,2 at z=0.5",
+        "point": [
+          30.0,
+          20.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,2 at z=2.5",
+        "point": [
+          30.0,
+          20.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,2 at z=4.5",
+        "point": [
+          30.0,
+          20.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 4,2 at z=0.5",
+        "point": [
+          80.0,
+          20.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 4,2 at z=2.5",
+        "point": [
+          80.0,
+          20.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 4,2 at z=4.5",
+        "point": [
+          80.0,
+          20.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      }
+    ]
+  },
+  "solidcraft_only": {
+    "native_expectation": "SolidCraft saves one Dog holes Sketch and one Clamp slots Sketch with associative pattern/mirror relationships. Baseline geometry contains 8 \u00d88 holes and 8 straight Slots. No expanded set of independent seed commands is emitted.",
+    "generated_relationship": "Forge binds the real native curves returned by the seed profile, feeds those ids into sketch.pattern.rectangular, binds the pattern curves, and feeds those into sketch.mirror. User Python never contains SolidCraft-generated ids.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change hole_diameter 8->10 mm, hole_pitch 25->30 mm and slot_pitch 50->30 mm in the saved .sc design. Without rerunning Python all existing pattern and mirror copies must follow the changed seed and spacing. Pattern counts remain native editable parameters, but SolidCraft 0.42 mirrors a fixed selected entity set and does not automatically adopt new entities added later by an upstream count change.",
+    "mutation": "Change hole_diameter 8->10 mm, hole_pitch 25->30 mm and slot_pitch 50->30 mm in the saved .sc design. Without rerunning Python all existing pattern and mirror copies must follow the changed seed and spacing. Pattern counts remain native editable parameters, but SolidCraft 0.42 mirrors a fixed selected entity set and does not automatically adopt new entities added later by an upstream count change."
+  }
+}

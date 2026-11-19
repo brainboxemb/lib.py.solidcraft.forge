@@ -1,0 +1,89 @@
+{
+  "case": "sheet-fold",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "SheetFold",
+        "min": [
+          -40.0,
+          -20.0,
+          0.0
+        ],
+        "max": [
+          21.64380551,
+          20.0,
+          21.64380551
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "SheetFold",
+        "min": [
+          -40.0,
+          -20.0,
+          0.0
+        ],
+        "max": [
+          21.64380551,
+          20.0,
+          21.64380551
+        ]
+      }
+    ],
+    "required_views": [
+      "front",
+      "top",
+      "iso"
+    ],
+    "visual_features": [
+      {
+        "type": "through_hole",
+        "label": "fixed-flat \u00d86 hole",
+        "center": [
+          -20.0,
+          0.0
+        ],
+        "diameter": 6.0,
+        "z": [
+          0.0,
+          2.0
+        ]
+      }
+    ],
+    "bounds_sufficient": false,
+    "bounds_reason": "The formed bounding box does not prove sheet thickness, the \u00d86 cutout or that the upright region came from a native bend. Volume and native sheet history/flat-pattern evidence are required.",
+    "volume_mm3": 6343.451332235384,
+    "volume_tolerance_mm3": 5.0,
+    "watertight": true,
+    "surface_distance_probes": [
+      {
+        "label": "fixed-flat hole at z=0.5",
+        "point": [
+          -20.0,
+          0.0,
+          0.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "fixed-flat hole at z=1.5",
+        "point": [
+          -20.0,
+          0.0,
+          1.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      }
+    ]
+  },
+  "solidcraft_only": {
+    "native_expectation": "SolidCraft 0.42 keeps one connected sheet-metal body with the \u00d86 hole on the fixed flat, one native Fold feature and a flat pattern that recovers the original rectangular blank and cutout.",
+    "generated_relationship": "Forge emits one sheet.manage_rules, one Blank sketch, one sheet.flange(type='base'), one native solid.hole and one native sheet.fold. No solid.extrude or fused-solid bend approximation is used.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation is required in this first sheet-metal qualification. unit, integration and native geometry checks prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.",
+    "mutation": null
+  }
+}

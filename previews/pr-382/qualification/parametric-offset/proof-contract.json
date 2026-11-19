@@ -1,0 +1,76 @@
+{
+  "case": "parametric-offset",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "Base",
+        "min": [
+          -20,
+          -15,
+          0
+        ],
+        "max": [
+          20,
+          15,
+          20
+        ]
+      },
+      {
+        "label": "Marker",
+        "min": [
+          10,
+          -25,
+          15
+        ],
+        "max": [
+          20,
+          -15,
+          25
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "Base",
+        "min": [
+          -20,
+          -15,
+          0
+        ],
+        "max": [
+          20,
+          15,
+          20
+        ]
+      },
+      {
+        "label": "Marker",
+        "min": [
+          10,
+          -25,
+          15
+        ],
+        "max": [
+          20,
+          -15,
+          25
+        ]
+      }
+    ],
+    "required_views": [
+      "iso",
+      "front",
+      "right"
+    ],
+    "visual_features": [],
+    "bounds_sufficient": true,
+    "bounds_reason": "The base and marker sizes and positions show the local offset. The saved SolidCraft model is then changed to confirm that the planar joint updates correctly."
+  },
+  "solidcraft_only": {
+    "native_expectation": "The marker moves within the selected corner anchor's local attachment plane.",
+    "generated_relationship": "The computed child seed pose retains the symbolic local offset, then the actual relationship is joint.create(type='planar', values=[u,v,angle]). The seed move is not an additional joint.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm.",
+    "mutation": "Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm."
+  }
+}

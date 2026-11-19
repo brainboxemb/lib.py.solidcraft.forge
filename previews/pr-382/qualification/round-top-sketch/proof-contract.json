@@ -1,0 +1,75 @@
+{
+  "case": "round-top-sketch",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "RoundTopSketch",
+        "min": [
+          -50,
+          -50,
+          0
+        ],
+        "max": [
+          50,
+          50,
+          26
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "RoundTopSketch",
+        "min": [
+          -50,
+          -50,
+          0
+        ],
+        "max": [
+          50,
+          50,
+          26
+        ]
+      }
+    ],
+    "required_views": [
+      "iso",
+      "front",
+      "right"
+    ],
+    "visual_features": [],
+    "bounds_sufficient": false,
+    "bounds_reason": "The outer bounds alone do not prove the two circular radii. Volume, radial surface probes and native Sketch history are required.",
+    "volume_mm3": 102868.30984914419,
+    "volume_tolerance_mm3": 800.0,
+    "watertight": true,
+    "surface_distance_probes": [
+      {
+        "label": "disc radial outside",
+        "point": [
+          55.0,
+          0.0,
+          5.0
+        ],
+        "distance_mm": 5.0,
+        "tolerance_mm": 0.35
+      },
+      {
+        "label": "hub radial inside step",
+        "point": [
+          30.0,
+          0.0,
+          18.0
+        ],
+        "distance_mm": 8.0,
+        "tolerance_mm": 0.35
+      }
+    ]
+  },
+  "solidcraft_only": {
+    "native_expectation": "One stepped cylindrical body spans Z=0..26 mm. Disc and Hub remain two solved native Sketch/Extrude feature pairs and the Hub is attached to the actual top face of the Disc.",
+    "generated_relationship": "Forge emits the circular base extrusion, model.faces with plane_normal=[0,0,1] and max=area, then a face-attached Hub Sketch and join extrusion. No rectangular base lookup is required.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation; this fixture isolates support-face lookup on a non-rectangular feature body.",
+    "mutation": null
+  }
+}

@@ -1,0 +1,314 @@
+{
+  "case": "circular-feature-pattern",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "CircularFeaturePattern",
+        "min": [
+          -50,
+          -50,
+          0
+        ],
+        "max": [
+          50,
+          50,
+          6
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "CircularFeaturePattern",
+        "min": [
+          -50,
+          -50,
+          0
+        ],
+        "max": [
+          50,
+          50,
+          6
+        ]
+      }
+    ],
+    "required_views": [
+      "top",
+      "front",
+      "iso"
+    ],
+    "visual_features": [
+      {
+        "type": "through_hole",
+        "label": "hole 1",
+        "center": [
+          30.0,
+          0.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 2",
+        "center": [
+          15.000000000000004,
+          25.980762113533157
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 3",
+        "center": [
+          -14.999999999999993,
+          25.98076211353316
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 4",
+        "center": [
+          -30.0,
+          3.67394039744206e-15
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 5",
+        "center": [
+          -15.000000000000014,
+          -25.980762113533153
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "hole 6",
+        "center": [
+          15.000000000000004,
+          -25.980762113533157
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          6.0
+        ]
+      }
+    ],
+    "bounds_sufficient": false,
+    "bounds_reason": "The six bolt holes do not change the plate envelope. Volume, cylindrical-wall probes and native pattern-history checks are required.",
+    "volume_mm3": 58190.44263153228,
+    "volume_tolerance_mm3": 80.0,
+    "watertight": true,
+    "surface_distance_probes": [
+      {
+        "label": "hole 1 at z=0.5",
+        "point": [
+          30.0,
+          0.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 1 at z=3",
+        "point": [
+          30.0,
+          0.0,
+          3.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 1 at z=5.5",
+        "point": [
+          30.0,
+          0.0,
+          5.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 2 at z=0.5",
+        "point": [
+          15.000000000000004,
+          25.980762113533157,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 2 at z=3",
+        "point": [
+          15.000000000000004,
+          25.980762113533157,
+          3.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 2 at z=5.5",
+        "point": [
+          15.000000000000004,
+          25.980762113533157,
+          5.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 3 at z=0.5",
+        "point": [
+          -14.999999999999993,
+          25.98076211353316,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 3 at z=3",
+        "point": [
+          -14.999999999999993,
+          25.98076211353316,
+          3.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 3 at z=5.5",
+        "point": [
+          -14.999999999999993,
+          25.98076211353316,
+          5.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 4 at z=0.5",
+        "point": [
+          -30.0,
+          3.67394039744206e-15,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 4 at z=3",
+        "point": [
+          -30.0,
+          3.67394039744206e-15,
+          3.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 4 at z=5.5",
+        "point": [
+          -30.0,
+          3.67394039744206e-15,
+          5.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 5 at z=0.5",
+        "point": [
+          -15.000000000000014,
+          -25.980762113533153,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 5 at z=3",
+        "point": [
+          -15.000000000000014,
+          -25.980762113533153,
+          3.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 5 at z=5.5",
+        "point": [
+          -15.000000000000014,
+          -25.980762113533153,
+          5.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 6 at z=0.5",
+        "point": [
+          15.000000000000004,
+          -25.980762113533157,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 6 at z=3",
+        "point": [
+          15.000000000000004,
+          -25.980762113533157,
+          3.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "hole 6 at z=5.5",
+        "point": [
+          15.000000000000004,
+          -25.980762113533157,
+          5.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      }
+    ]
+  },
+  "solidcraft_only": {
+    "native_expectation": "SolidCraft saves one plate with six through holes and one native CircularPatternFeature that references the original BoltHole cut.",
+    "generated_relationship": "Forge emits the source Sketch/cut once, then exactly one solid.pattern.circular with features=['BoltHole']; bolts is a dimensionless native count parameter and pcd remains a millimetre parameter used by the source profile position.",
+    "saved_design_required": true,
+    "saved_design_reason": "Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature.",
+    "mutation": "Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature."
+  }
+}

@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Qualification · Native sketch Slot family · SCPF Python library</title>
+<link rel="stylesheet" href="../../style.css"></head>
+<body><header class="top"><div class="wrap nav">
+<a class="brand" href="../../">SCPF <span>Python library</span></a>
+<div class="site-search" data-search-index="../../search-index.json">
+<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
+       placeholder="Search API…" aria-label="Search SCPF documentation"
+       aria-expanded="false" aria-controls="site-search-results">
+<span class="site-search-shortcut" aria-hidden="true">/</span>
+<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+</div>
+<nav aria-label="Main"><a href="../../">Examples</a><a href="../../guide/">API Guide</a><a href="../../reference/">API Reference</a><a href="../../qualification/">Qualification</a><a href="../../cheatsheet/">Cheatsheet</a>
+<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a></nav></div></header>
+<div class="development-banner" role="status"><div class="wrap">
+<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
+</div></div>
+<main class="wrap">
+<div class="crumb"><a href="../">← Qualification</a> / Native sketch Slot family</div>
+
+<section class="hero small">
+  <p class="eyebrow">Forge model example</p>
+  <div class="qualification-status-line"><span class="qualification-status pass">PASS</span></div>
+  <h1>Native sketch Slot family</h1>
+</section>
+
+<section class="panel qualification-example-overview">
+  <h2>What this example makes</h2>
+  <p>SolidCraft saves one plate, one Slot family sketch containing five closed profiles and one error-free cut extrusion. The native timeline must not contain sketch.rectangle.rounded as a substitute for Slot construction.</p>
+  <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Native sketch Slot family expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+  <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-iso.png" alt="Native sketch Slot family native SolidCraft preview"></a><figcaption>Native SolidCraft preview from the generated build output.</figcaption></figure>
+</section>
+
+<section class="panel">
+  <h2>Forge code</h2>
+  <p>This is the complete Forge source used for this example.</p>
+  <pre><code>&quot;&quot;&quot;Qualification fixture for all five native SolidCraft Slot creators.&quot;&quot;&quot;
+
+
+class SlotFamily:
+    width = 160.0
+    depth = 120.0
+    thickness = 5.0
+
+    SLOT_WIDTH = 8.0
+
+    def build(self):
+        body = Box(
+            self.width,
+            self.depth,
+            self.thickness,
+            anchor=Anchor.BOTTOM,
+        )
+
+        with Sketch(name=&quot;Slot family&quot;, on=body) as slots:
+            SlotCenterToCenter2D((-60, -35), (-40, -35), self.SLOT_WIDTH)
+            SlotOverall2D((-10, -35), (20, -35), self.SLOT_WIDTH)
+            SlotCenterPoint2D((55, -35), (65, -35), self.SLOT_WIDTH)
+            SlotArcThreePoint2D((-50, 25), (-35, 38), (-20, 25), self.SLOT_WIDTH)
+            SlotArcCenter2D((40, 25), (52, 25), self.SLOT_WIDTH, sweep=120)
+
+        return body - slots.extrude(Depth.THROUGH_ALL)
+
+
+SlotFamily()
+</code></pre>
+  <h3>API used</h3>
+  <p><code>SlotCenterToCenter2D(...); SlotOverall2D(...); SlotCenterPoint2D(...); SlotArcThreePoint2D(...); SlotArcCenter2D(...) inside one explicit Sketch</code></p>
+</section>
+
+<section class="panel">
+  <h2>Reference code</h2>
+  <p>The same model is written independently with the reference libraries below.
+  This makes it easier to compare modelling style and the resulting shape.</p>
+  
+  <div class="qualification-reference-list">
+    <section class="qualification-reference-row"><div class="qualification-reference-source"><h4>PythonSCAD</h4><pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
+
+import math
+from pythonscad import *
+
+CUT_HEIGHT = 9
+CUT_Z = -2
+SLOT_WIDTH = 8.0
+
+def arc_band_points(center, radius, start_deg, sweep_deg, width, steps=96):
+    cx, cy = center
+    half = width / 2
+    angles = [
+        math.radians(start_deg + sweep_deg * i / steps)
+        for i in range(steps + 1)
+    ]
+    outer = [
+        [cx + (radius + half) * math.cos(a), cy + (radius + half) * math.sin(a)]
+        for a in angles
+    ]
+    inner = [
+        [cx + (radius - half) * math.cos(a), cy + (radius - half) * math.sin(a)]
+        for a in reversed(angles)
+    ]
+    start = [
+        cx + radius * math.cos(angles[0]),
+        cy + radius * math.sin(angles[0]),
+    ]
+    end = [
+        cx + radius * math.cos(angles[-1]),
+        cy + radius * math.sin(angles[-1]),
+    ]
+    return outer + inner, start, end
+
+
+def straight_slot(center_x, center_y, center_separation, width=SLOT_WIDTH):
+    bar = cube([center_separation, width, CUT_HEIGHT], center=True).translate(
+        [center_x, center_y, 2.5]
+    )
+    left = cylinder(d=width, h=CUT_HEIGHT).translate(
+        [center_x - center_separation / 2, center_y, CUT_Z]
+    )
+    right = cylinder(d=width, h=CUT_HEIGHT).translate(
+        [center_x + center_separation / 2, center_y, CUT_Z]
+    )
+    return bar | left | right
+
+def arc_slot(center, radius, start_deg, sweep_deg, width=SLOT_WIDTH):
+    points, start, end = arc_band_points(
+        center, radius, start_deg, sweep_deg, width
+    )
+    band = polygon(points).linear_extrude(height=CUT_HEIGHT).translate(
+        [0, 0, CUT_Z]
+    )
+    start_cap = cylinder(d=width, h=CUT_HEIGHT).translate(
+        [start[0], start[1], CUT_Z]
+    )
+    end_cap = cylinder(d=width, h=CUT_HEIGHT).translate(
+        [end[0], end[1], CUT_Z]
+    )
+    return band | start_cap | end_cap
+
+plate = cube([160, 120, 5], center=True).up(2.5)
+
+# Center-to-center: end-circle centres are (-60,-35) and (-40,-35).
+cutters = straight_slot(-50, -35, 20)
+
+# Overall endpoints are (-10,-35) and (20,-35), so the end-circle centres
+# are 4 mm inward from those endpoints: -6 and 16.
+cutters = cutters | straight_slot(5, -35, 22)
+
+# Center-point: slot centre is (55,-35), one end-circle centre is (65,-35).
+cutters = cutters | straight_slot(55, -35, 20)
+
+# Three-point arc through (-50,25), (-35,38), (-20,25).
+three_center = (-35.0, 22.846153846153847)
+three_radius = 15.153846153846153
+cutters = cutters | arc_slot(
+    three_center,
+    three_radius,
+    171.82876644005026,
+    -163.65753288010052,
+)
+
+# Center arc: centre (40,25), start (52,25), radius 12, sweep +120 deg.
+cutters = cutters | arc_slot((40, 25), 12, 0, 120)
+
+model = plate - cutters
+</code></pre><p><a href="reference-pythonscad.py">Open PythonSCAD source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pythonscad/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pythonscad/model-iso.png" alt="Native sketch Slot family PythonSCAD reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pythonscad/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pythonscad/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-80.0, -60.0, 0.0], &#x27;max&#x27;: [80.0, 60.0, 5.0]}</code></td><td><code>{&#x27;min&#x27;: [-80.0, -60.0, 0.0], &#x27;max&#x27;: [80.0, 60.0, 5.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>89526.65799554957 mm³</code></td><td><code>89575.4719487445 mm³</code></td><td>difference 48.81395319492731 mm³; allowed 55.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>15 surface measurements</code></td><td><code>15/15 within tolerance</code></td><td>largest difference 0.000442635 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>pyBOSL2</h4><pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
+
+import math
+from pybosl2 import Path2D, cuboid, cyl
+
+CUT_HEIGHT = 9
+CUT_Z = -2
+SLOT_WIDTH = 8.0
+
+def arc_band_points(center, radius, start_deg, sweep_deg, width, steps=96):
+    cx, cy = center
+    half = width / 2
+    angles = [
+        math.radians(start_deg + sweep_deg * i / steps)
+        for i in range(steps + 1)
+    ]
+    outer = [
+        [cx + (radius + half) * math.cos(a), cy + (radius + half) * math.sin(a)]
+        for a in angles
+    ]
+    inner = [
+        [cx + (radius - half) * math.cos(a), cy + (radius - half) * math.sin(a)]
+        for a in reversed(angles)
+    ]
+    start = [
+        cx + radius * math.cos(angles[0]),
+        cy + radius * math.sin(angles[0]),
+    ]
+    end = [
+        cx + radius * math.cos(angles[-1]),
+        cy + radius * math.sin(angles[-1]),
+    ]
+    return outer + inner, start, end
+
+
+def straight_slot(center_x, center_y, center_separation, width=SLOT_WIDTH):
+    bar = cuboid([center_separation, width, CUT_HEIGHT]).translate(
+        [center_x, center_y, 2.5]
+    )
+    left = cyl(diameter=width, height=CUT_HEIGHT).translate(
+        [center_x - center_separation / 2, center_y, 2.5]
+    )
+    right = cyl(diameter=width, height=CUT_HEIGHT).translate(
+        [center_x + center_separation / 2, center_y, 2.5]
+    )
+    return bar | left | right
+
+def polygon_solid(points):
+    min_x = min(p[0] for p in points)
+    max_x = max(p[0] for p in points)
+    min_y = min(p[1] for p in points)
+    max_y = max(p[1] for p in points)
+    box_center = ((min_x + max_x) / 2, (min_y + max_y) / 2)
+    local = [[p[0] - box_center[0], p[1] - box_center[1]] for p in points]
+    return (
+        Path2D(local)
+        .polygon()
+        .linear_extrude(height=CUT_HEIGHT)
+        .translate([box_center[0], box_center[1], CUT_Z])
+    )
+
+def arc_slot(center, radius, start_deg, sweep_deg, width=SLOT_WIDTH):
+    points, start, end = arc_band_points(
+        center, radius, start_deg, sweep_deg, width
+    )
+    band = polygon_solid(points)
+    start_cap = cyl(diameter=width, height=CUT_HEIGHT).translate(
+        [start[0], start[1], 2.5]
+    )
+    end_cap = cyl(diameter=width, height=CUT_HEIGHT).translate(
+        [end[0], end[1], 2.5]
+    )
+    return band | start_cap | end_cap
+
+plate = cuboid([160, 120, 5]).up(2.5)
+cutters = straight_slot(-50, -35, 20)
+cutters = cutters | straight_slot(5, -35, 22)
+cutters = cutters | straight_slot(55, -35, 20)
+
+three_center = (-35.0, 22.846153846153847)
+three_radius = 15.153846153846153
+cutters = cutters | arc_slot(
+    three_center,
+    three_radius,
+    171.82876644005026,
+    -163.65753288010052,
+)
+cutters = cutters | arc_slot((40, 25), 12, 0, 120)
+
+model = plate - cutters
+</code></pre><p><a href="reference-pybosl2.py">Open pyBOSL2 source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pybosl2/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pybosl2/model-iso.png" alt="Native sketch Slot family pyBOSL2 reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pybosl2/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pybosl2/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-80.0, -60.0, 0.0], &#x27;max&#x27;: [80.0, 60.0, 5.0]}</code></td><td><code>{&#x27;min&#x27;: [-80.0, -60.0, 0.0], &#x27;max&#x27;: [80.0, 60.0, 5.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>89526.65799554957 mm³</code></td><td><code>89575.47184727287 mm³</code></td><td>difference 48.81385172330192 mm³; allowed 55.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>15 surface measurements</code></td><td><code>15/15 within tolerance</code></td><td>largest difference 0.000442482 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>CadQuery</h4><pre><code>&quot;&quot;&quot;CadQuery geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
+
+import math
+import cadquery as cq
+
+CUT_HEIGHT = 9
+CUT_Z = -2
+SLOT_WIDTH = 8.0
+
+def arc_band_points(center, radius, start_deg, sweep_deg, width, steps=96):
+    cx, cy = center
+    half = width / 2
+    angles = [
+        math.radians(start_deg + sweep_deg * i / steps)
+        for i in range(steps + 1)
+    ]
+    outer = [
+        [cx + (radius + half) * math.cos(a), cy + (radius + half) * math.sin(a)]
+        for a in angles
+    ]
+    inner = [
+        [cx + (radius - half) * math.cos(a), cy + (radius - half) * math.sin(a)]
+        for a in reversed(angles)
+    ]
+    start = [
+        cx + radius * math.cos(angles[0]),
+        cy + radius * math.sin(angles[0]),
+    ]
+    end = [
+        cx + radius * math.cos(angles[-1]),
+        cy + radius * math.sin(angles[-1]),
+    ]
+    return outer + inner, start, end
+
+
+def straight_slot(center_x, center_y, overall_length, width=SLOT_WIDTH):
+    return (
+        cq.Workplane(&quot;XY&quot;)
+        .center(center_x, center_y)
+        .slot2D(overall_length, width)
+        .extrude(CUT_HEIGHT)
+        .translate((0, 0, CUT_Z))
+    )
+
+def arc_slot(center, radius, start_deg, sweep_deg, width=SLOT_WIDTH):
+    points, start, end = arc_band_points(
+        center, radius, start_deg, sweep_deg, width
+    )
+    band = (
+        cq.Workplane(&quot;XY&quot;)
+        .polyline(points)
+        .close()
+        .extrude(CUT_HEIGHT)
+        .translate((0, 0, CUT_Z))
+    )
+    start_cap = (
+        cq.Workplane(&quot;XY&quot;)
+        .center(start[0], start[1])
+        .circle(width / 2)
+        .extrude(CUT_HEIGHT)
+        .translate((0, 0, CUT_Z))
+    )
+    end_cap = (
+        cq.Workplane(&quot;XY&quot;)
+        .center(end[0], end[1])
+        .circle(width / 2)
+        .extrude(CUT_HEIGHT)
+        .translate((0, 0, CUT_Z))
+    )
+    return band.union(start_cap).union(end_cap)
+
+plate = cq.Workplane(&quot;XY&quot;).box(160, 120, 5, centered=(True, True, False))
+
+# overall lengths: 28, 30 and 28 mm respectively.
+cutters = straight_slot(-50, -35, 28)
+cutters = cutters.union(straight_slot(5, -35, 30))
+cutters = cutters.union(straight_slot(55, -35, 28))
+
+three_center = (-35.0, 22.846153846153847)
+three_radius = 15.153846153846153
+cutters = cutters.union(
+    arc_slot(
+        three_center,
+        three_radius,
+        171.82876644005026,
+        -163.65753288010052,
+    )
+)
+cutters = cutters.union(arc_slot((40, 25), 12, 0, 120))
+
+result = plate.cut(cutters)
+model = cq.Assembly()
+model.add(result, name=&quot;slot_family&quot;)
+</code></pre><p><a href="reference-cadquery.py">Open CadQuery source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/cadquery/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/cadquery/model-iso.png" alt="Native sketch Slot family CadQuery reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/cadquery/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/cadquery/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-80.0, -60.0, 0.0], &#x27;max&#x27;: [80.0, 60.0, 5.0]}</code></td><td><code>{&#x27;min&#x27;: [-80.0, -60.0, 0.0], &#x27;max&#x27;: [80.0, 60.0, 5.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>89526.65799554957 mm³</code></td><td><code>89527.51191460073 mm³</code></td><td>difference 0.8539190511655761 mm³; allowed 55.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>15 surface measurements</code></td><td><code>15/15 within tolerance</code></td><td>largest difference 0.000442482 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>build123d</h4><pre><code>&quot;&quot;&quot;build123d geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
+
+from build123d import (
+    Align,
+    Axis,
+    Box,
+    BuildLine,
+    BuildPart,
+    BuildSketch,
+    CenterArc,
+    Locations,
+    Mode,
+    SlotCenterPoint,
+    SlotCenterToCenter,
+    SlotArc,
+    SlotOverall,
+    ThreePointArc,
+    extrude,
+)
+
+bottom = (Align.CENTER, Align.CENTER, Align.MIN)
+
+with BuildPart() as model:
+    Box(160, 120, 5, align=bottom)
+
+    with BuildSketch(model.faces().sort_by(Axis.Z)[-1]):
+        with Locations((-50, -35)):
+            SlotCenterToCenter(20, 8)
+        with Locations((5, -35)):
+            SlotOverall(30, 8)
+        SlotCenterPoint((55, -35), (65, -35), 8)
+
+        with BuildLine(mode=Mode.PRIVATE) as three_point:
+            ThreePointArc((-50, 25), (-35, 38), (-20, 25))
+        SlotArc(three_point.edges()[0], 8)
+
+        with BuildLine(mode=Mode.PRIVATE) as center_arc:
+            CenterArc((40, 25), 12, 0, 120)
+        SlotArc(center_arc.edges()[0], 8)
+
+    extrude(amount=-5, mode=Mode.SUBTRACT)
+</code></pre><p><a href="reference-build123d.py">Open build123d source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/build123d/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/build123d/model-iso.png" alt="Native sketch Slot family build123d reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/build123d/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/build123d/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-80.0, -60.0, 0.0], &#x27;max&#x27;: [80.0, 60.0, 5.0]}</code></td><td><code>{&#x27;min&#x27;: [-80.0, -60.0, 0.0], &#x27;max&#x27;: [80.0, 60.0, 5.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>89526.65799554957 mm³</code></td><td><code>89528.29516987003 mm³</code></td><td>difference 1.6371743204654194 mm³; allowed 55.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>15 surface measurements</code></td><td><code>15/15 within tolerance</code></td><td>largest difference 0.00124277 mm</td></tr></tbody></table></div></details></div></section>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>How Forge builds it in SolidCraft</h2>
+  <p>Each public constructor emits exactly its matching sketch.slot.* command; the sketch is finished once and one native cut extrusion removes all five profiles.</p>
+  <details>
+    <summary>Show generated SolidCraft commands</summary>
+    <pre><code>parameters.add
+parameters.add
+parameters.add
+solid.box
+model.faces
+sketch.create
+sketch.slot.center_to_center
+sketch.slot.overall
+sketch.slot.center_point
+sketch.slot.arc_three_point
+sketch.slot.arc_center
+sketch.finish
+solid.extrude</code></pre>
+  </details>
+</section>
+
+<section class="panel"><h2>SolidCraft result</h2><p>Built and measured with <strong>SolidCraft 0.42.0</strong>. Open the measurement details to inspect body sizes and editable parameters.</p><details class="qualification-detail-block"><summary><strong>Original model</strong> · 1 bodies</summary><h4>Editable parameters</h4><table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td><code>width</code></td><td>160.0</td></tr><tr><td><code>depth</code></td><td>120.0</td></tr><tr><td><code>thickness</code></td><td>5.0</td></tr></tbody></table><h4>Body size</h4><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>SlotFamily</td><td><code>[-80, -60, -8.88178e-16]</code></td><td><code>[80, 60, 5]</code></td></tr></tbody></table></details><details class="qualification-detail-block qualification-semantic-checks"><summary><strong>Semantic validation</strong> · PASS · 6/6 checks passed</summary><div class="qualification-table-scroll"><table class="qualification-checks"><thead><tr><th>Status</th><th>Level</th><th>Check</th><th>Expected</th><th>Actual</th></tr></thead><tbody><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>declared target geometry</td><td><code>[{&quot;label&quot;: &quot;SlotFamily&quot;, &quot;min&quot;: [-80, -60, 0], &quot;max&quot;: [80, 60, 5]}]</code></td><td><code>[{&quot;min&quot;: [-80.0, -60.0, -8.88178419700126e-16], &quot;max&quot;: [80.0, 60.0, 5.000000000000003]}]</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>single cut plate body</td><td><code>1</code></td><td><code>1</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>plate outer bounds remain unchanged by five slot cuts</td><td><code>{&quot;min&quot;: [-80, -60, 0], &quot;max&quot;: [80, 60, 5]}</code></td><td><code>{&quot;max&quot;: [80.0, 60.0, 5.000000000000003], &quot;min&quot;: [-80.0, -60.0, -8.88178419700126e-16]}</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>five slot cuts remove the qualified amount of material</td><td><code>{&quot;volume_mm3&quot;: 89526.65799554957, &quot;faces&quot;: 26, &quot;face_types&quot;: {&quot;cylinder&quot;: 14, &quot;plane&quot;: 12}}</code></td><td><code>{&quot;volume_mm3&quot;: 89526.6579965052, &quot;faces&quot;: 26, &quot;face_types&quot;: {&quot;cylinder&quot;: 14, &quot;plane&quot;: 12}}</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>native sketch contains five closed slot profiles</td><td><code>{&quot;name&quot;: &quot;Slot family&quot;, &quot;profiles&quot;: 5, &quot;curves&quot;: 29, &quot;status&quot;: &quot;solved&quot;}</code></td><td><code>{&quot;curves&quot;: 29, &quot;dof&quot;: 27, &quot;id&quot;: 2, &quot;name&quot;: &quot;Slot family&quot;, &quot;profiles&quot;: 5, &quot;status&quot;: &quot;solved&quot;, &quot;visible&quot;: false}</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>slot family remains one native sketch plus one cut feature</td><td><code>[[&quot;BoxFeature&quot;, &quot;Box1&quot;], [&quot;Sketch&quot;, &quot;Slot family&quot;], [&quot;ExtrudeFeature&quot;, &quot;Slot family&quot;]]</code></td><td><code>[[&quot;BoxFeature&quot;, &quot;Box1&quot;], [&quot;Sketch&quot;, &quot;Slot family&quot;], [&quot;ExtrudeFeature&quot;, &quot;Slot family&quot;]]</code></td></tr></tbody></table></div></details></section>
+
+<section class="panel qualification-visual-check"><h2>Visual result</h2><p>Actual is the SolidCraft render. Goal shows the expected shape. Overlay places both on top of each other so differences are easy to see.</p><p class="meta"><strong>Views checked:</strong> Top, Front, Iso</p><p class="meta"><strong>Image checks:</strong> expected shape PASS; saved render PASS.</p><section class="qualification-view" data-view="top"><h3>Top</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-top.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-top.png" alt="Native sketch Slot family top Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft top view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/goal-top.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/goal-top.png" alt="Native sketch Slot family top Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same top view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/overlay-top.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/overlay-top.png" alt="Native sketch Slot family top Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual top view</figcaption></figure></div></section><section class="qualification-view" data-view="front"><h3>Front</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-front.png" alt="Native sketch Slot family front Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft front view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/goal-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/goal-front.png" alt="Native sketch Slot family front Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same front view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/overlay-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/overlay-front.png" alt="Native sketch Slot family front Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual front view</figcaption></figure></div></section><section class="qualification-view" data-view="iso"><h3>Iso</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-iso.png" alt="Native sketch Slot family iso Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft iso view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/goal-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/goal-iso.png" alt="Native sketch Slot family iso Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same iso view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/overlay-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/overlay-iso.png" alt="Native sketch Slot family iso Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual iso view</figcaption></figure></div></section><details class="qualification-extra-views"><summary>Show extra saved-render views</summary><section class="qualification-view" data-view="right"><h3>Right</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="model-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="model-right.png" alt="Native sketch Slot family right Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft right view</figcaption></figure><figure class="qualification-visual-item"><a href="goal-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="goal-right.png" alt="Native sketch Slot family right Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same right view</figcaption></figure><figure class="qualification-visual-item"><a href="overlay-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="overlay-right.png" alt="Native sketch Slot family right Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual right view</figcaption></figure></div></section></details></section>
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration · Native model · Geometry · Saved design N/R · Visual</span></div>
+    <div class="qualification-case-test-evidence"><h3>Integration tests</h3><p><strong>PASS</strong> — these example-owned tests prove the generated SolidCraft command contract before native execution.</p><ul><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/fd9029752c921a3d85ced6ceb6e7ed44c5edf06f/examples/slot-family/tests/test_contract.py"><code>examples/slot-family/tests/test_contract.py</code></a></li></ul></div>
+
+    <h3>Geometry checks</h3>
+    <p>These are the sizes and measurement points used by the automated checks.</p>
+    <div class="qualification-proof-contract"><div class="qualification-table-scroll"><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>SlotFamily</td><td><code>[-80, -60, 0]</code></td><td><code>[80, 60, 5]</code></td></tr></tbody></table></div><ul class="qualification-proof-summary"><li><strong>Is the size check enough for this model?</strong> No — The five slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.</li><li><strong>Views checked:</strong> top, front, iso</li><li><strong>Internal features checked:</strong> 5</li><li><strong>Expected volume:</strong> 89526.65799554957 mm³ (±55.0 mm³)</li><li><strong>Closed solid expected:</strong> True</li><li><strong>Surface points checked:</strong> 15</li></ul><details class="qualification-detail-block qualification-proof-details"><summary>Show all geometry check points</summary><h4>Internal features</h4><ul><li><strong>center-to-center slot</strong>: width 8.0 mm, 2 centre-line points, Z <code>[0.0, 5.0]</code></li><li><strong>overall slot</strong>: width 8.0 mm, 2 centre-line points, Z <code>[0.0, 5.0]</code></li><li><strong>center-point slot</strong>: width 8.0 mm, 2 centre-line points, Z <code>[0.0, 5.0]</code></li><li><strong>three-point arc slot</strong>: width 8.0 mm, 21 centre-line points, Z <code>[0.0, 5.0]</code></li><li><strong>center arc slot</strong>: width 8.0 mm, 21 centre-line points, Z <code>[0.0, 5.0]</code></li></ul><h4>Surface measurement points</h4><ul><li>center-to-center slot at z=0.5: point <code>[-50.0, -35.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>center-to-center slot at z=2.5: point <code>[-50.0, -35.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>center-to-center slot at z=4.5: point <code>[-50.0, -35.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>overall slot at z=0.5: point <code>[5.0, -35.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>overall slot at z=2.5: point <code>[5.0, -35.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>overall slot at z=4.5: point <code>[5.0, -35.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>center-point slot at z=0.5: point <code>[55.0, -35.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>center-point slot at z=2.5: point <code>[55.0, -35.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>center-point slot at z=4.5: point <code>[55.0, -35.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>three-point arc slot at z=0.5: point <code>[-35.0, 38.0, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>three-point arc slot at z=2.5: point <code>[-35.0, 38.0, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>three-point arc slot at z=4.5: point <code>[-35.0, 38.0, 4.5]</code> → 4.0 mm (±0.3 mm)</li><li>center arc slot at z=0.5: point <code>[46.0, 35.392304845413264, 0.5]</code> → 4.0 mm (±0.3 mm)</li><li>center arc slot at z=2.5: point <code>[46.0, 35.392304845413264, 2.5]</code> → 4.0 mm (±0.3 mm)</li><li>center arc slot at z=4.5: point <code>[46.0, 35.392304845413264, 4.5]</code> → 4.0 mm (±0.3 mm)</li></ul></details><p class="meta"><a href="proof-contract.json">Open geometry check data →</a></p></div>
+
+    <h3>Saved-design test</h3><p><strong>No saved-model change is required. No saved-design mutation is required; this case isolates the five native sketch construction methods and their saved feature history.</p>
+
+    <h3>Raw test files</h3>
+    <ul><li><a href="model.py">Forge fixture source</a></li><li><a href="reference-pythonscad.py">PythonSCAD reference source</a></li><li><a href="reference-pybosl2.py">pyBOSL2 reference source</a></li><li><a href="reference-cadquery.py">CadQuery reference source</a></li><li><a href="reference-build123d.py">build123d reference source</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/solidcraft.json">Generated command JSON in build output</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/results.json">results.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/measurements.json">measurements.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/joint-inspect.json">joint-inspect.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model.sc">model.sc</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model.step">model.step</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/qualification-result.json">qualification-result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/validation.json">validation.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/visual-validation.json">visual-validation.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/camera-front.json">camera-front.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/camera-iso.json">camera-iso.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/camera-right.json">camera-right.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/camera-top.json">camera-top.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model.png">Native snapshot: model.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-top.png">Native snapshot: model-top.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/goal-top.png">Native snapshot: goal-top.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/overlay-top.png">Native snapshot: overlay-top.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-front.png">Native snapshot: model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/goal-front.png">Native snapshot: goal-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/overlay-front.png">Native snapshot: overlay-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/visual-diff-front.png">Native snapshot: visual-diff-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-right.png">Native snapshot: model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/goal-right.png">Native snapshot: goal-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/overlay-right.png">Native snapshot: overlay-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/visual-diff-right.png">Native snapshot: visual-diff-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/model-iso.png">Native snapshot: model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/goal-iso.png">Native snapshot: goal-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/overlay-iso.png">Native snapshot: overlay-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/scpf/visual-diff-iso.png">Native snapshot: visual-diff-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pythonscad/result.json">Reference evidence: reference-pythonscad/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pythonscad/model.stl">Reference evidence: reference-pythonscad/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pythonscad/model-front.png">Reference evidence: reference-pythonscad/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pythonscad/model-right.png">Reference evidence: reference-pythonscad/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pythonscad/model-iso.png">Reference evidence: reference-pythonscad/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pybosl2/result.json">Reference evidence: reference-pybosl2/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pybosl2/model.stl">Reference evidence: reference-pybosl2/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pybosl2/model-front.png">Reference evidence: reference-pybosl2/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pybosl2/model-right.png">Reference evidence: reference-pybosl2/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/pybosl2/model-iso.png">Reference evidence: reference-pybosl2/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/cadquery/result.json">Reference evidence: reference-cadquery/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/cadquery/model.stl">Reference evidence: reference-cadquery/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/cadquery/model-front.png">Reference evidence: reference-cadquery/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/cadquery/model-right.png">Reference evidence: reference-cadquery/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/cadquery/model-iso.png">Reference evidence: reference-cadquery/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/build123d/result.json">Reference evidence: reference-build123d/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/build123d/model.stl">Reference evidence: reference-build123d/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/build123d/model-front.png">Reference evidence: reference-build123d/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/build123d/model-right.png">Reference evidence: reference-build123d/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/eacb3c5c8df64b6ab2efb2124b3ce215ba83ebb7/pr/382/examples/slot-family/build123d/model-iso.png">Reference evidence: reference-build123d/model-iso.png</a></li></ul>
+
+    <h3>Reference documentation</h3>
+    <ul><li><strong><a href="https://docs.solidcraft.io/guide/assemblies.html">SolidCraft</a>:</strong> Native integration through geometry checks additionally prove the five sketch.slot.* command identities. The four comparison libraries independently prove the resulting five cut shapes.</li></ul>
+  </div>
+</details>
+</main>
+
+<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+<a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a></div></footer>
+<script>(() => {
+  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
+  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
+
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    document.execCommand('copy');
+    helper.remove();
+  }
+
+  document.querySelectorAll('pre > code').forEach((code) => {
+    const pre = code.parentElement;
+    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-copy';
+    button.title = 'Copy code';
+    button.setAttribute('aria-label', 'Copy code');
+    button.innerHTML = copyIcon;
+    wrapper.appendChild(button);
+
+    button.addEventListener('click', async () => {
+      try {
+        await copyText(code.textContent);
+        button.innerHTML = doneIcon;
+        button.classList.add('copied');
+        button.title = 'Copied';
+        button.setAttribute('aria-label', 'Copied');
+        window.setTimeout(() => {
+          button.innerHTML = copyIcon;
+          button.classList.remove('copied');
+          button.title = 'Copy code';
+          button.setAttribute('aria-label', 'Copy code');
+        }, 1400);
+      } catch (_error) {
+        button.title = 'Copy failed';
+        button.setAttribute('aria-label', 'Copy failed');
+      }
+    });
+  });
+})();
+</script>
+<script>
+(() => {
+  const root = document.querySelector('.site-search');
+  if (!root) return;
+
+  const input = root.querySelector('.site-search-input');
+  const results = root.querySelector('.site-search-results');
+  const indexUrl = root.dataset.searchIndex;
+  let indexPromise = null;
+  let visible = [];
+
+  const normal = (value) => String(value || '')
+    .toLowerCase()
+    .replace(/[_.:/-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const raw = (value) => String(value || '').toLowerCase().trim();
+
+  function loadIndex() {
+    if (!indexPromise) {
+      indexPromise = fetch(indexUrl)
+        .then((response) => {
+          if (!response.ok) throw new Error('Search index unavailable');
+          return response.json();
+        })
+        .then((data) => data.entries || []);
+    }
+    return indexPromise;
+  }
+
+  function score(entry, query) {
+    const qRaw = raw(query);
+    const q = normal(query);
+    if (!q) return -1;
+
+    const titleRaw = raw(entry.title);
+    const title = normal(entry.title);
+    const aliases = entry.aliases || [];
+    const aliasRaw = aliases.map(raw);
+    const aliasText = normal(aliases.join(' '));
+    const haystack = normal([
+      entry.title,
+      entry.summary,
+      entry.keywords,
+      aliases.join(' '),
+    ].join(' '));
+
+    if (titleRaw === qRaw) return 1000;
+    if (aliasRaw.includes(qRaw)) return 920;
+    if (title.startsWith(q)) return 820;
+    if (aliasText.startsWith(q)) return 760;
+    if (title.includes(q)) return 680;
+    if (aliasText.includes(q)) return 620;
+    if (haystack.includes(q)) return 500;
+
+    const words = q.split(' ').filter(Boolean);
+    if (words.length && words.every((word) => haystack.includes(word))) {
+      return 380 + words.length * 10;
+    }
+    return -1;
+  }
+
+  function closeResults() {
+    results.hidden = true;
+    results.replaceChildren();
+    input.setAttribute('aria-expanded', 'false');
+    visible = [];
+  }
+
+  function render(entries, query) {
+    const ranked = entries
+      .map((entry, order) => ({entry, order, score: score(entry, query)}))
+      .filter((row) => row.score >= 0)
+      .sort((a, b) => b.score - a.score || a.order - b.order)
+      .slice(0, 10);
+
+    results.replaceChildren();
+    visible = ranked.map((row) => row.entry);
+    if (!ranked.length) {
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'No documentation found.';
+      results.appendChild(empty);
+    } else {
+      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
+      ranked.forEach(({entry}) => {
+        const link = document.createElement('a');
+        link.className = 'site-search-result';
+        link.href = new URL(entry.url, indexBase).href;
+
+        const heading = document.createElement('span');
+        heading.className = 'site-search-result-title';
+        heading.textContent = entry.title;
+
+        const kind = document.createElement('span');
+        kind.className = 'site-search-result-kind';
+        kind.textContent = entry.kind;
+
+        const summary = document.createElement('span');
+        summary.className = 'site-search-result-summary';
+        summary.textContent = entry.summary;
+
+        link.append(heading, kind, summary);
+        results.appendChild(link);
+      });
+    }
+    results.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+  }
+
+  async function search() {
+    const query = input.value.trim();
+    if (!query) {
+      closeResults();
+      return;
+    }
+    try {
+      render(await loadIndex(), query);
+    } catch (_error) {
+      results.replaceChildren();
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'Search is unavailable.';
+      results.appendChild(empty);
+      results.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  input.addEventListener('input', search);
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) search();
+  });
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeResults();
+      input.blur();
+    } else if (event.key === 'Enter' && visible.length) {
+      event.preventDefault();
+      results.querySelector('.site-search-result')?.click();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!root.contains(event.target)) closeResults();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const typing = target instanceof HTMLInputElement
+      || target instanceof HTMLTextAreaElement
+      || target instanceof HTMLSelectElement
+      || target?.isContentEditable;
+    const shortcut = (event.ctrlKey || event.metaKey)
+      && event.key.toLowerCase() === 'k';
+    const slash = event.key === '/' && !typing && !event.ctrlKey
+      && !event.metaKey && !event.altKey;
+    if (shortcut || slash) {
+      event.preventDefault();
+      input.focus();
+      input.select();
+    }
+  });
+})();
+</script>
+</body></html>

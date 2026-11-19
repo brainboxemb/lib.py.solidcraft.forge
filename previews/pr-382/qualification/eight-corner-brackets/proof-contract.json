@@ -1,0 +1,362 @@
+{
+  "case": "eight-corner-brackets",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "FrameBlock",
+        "min": [
+          -60,
+          -40,
+          0
+        ],
+        "max": [
+          60,
+          40,
+          60
+        ]
+      },
+      {
+        "label": "front-left bottom",
+        "min": [
+          -64,
+          -44,
+          0
+        ],
+        "max": [
+          -32,
+          -12,
+          16
+        ]
+      },
+      {
+        "label": "front-left top",
+        "min": [
+          -64,
+          -44,
+          44
+        ],
+        "max": [
+          -32,
+          -12,
+          60
+        ]
+      },
+      {
+        "label": "front-right bottom",
+        "min": [
+          32,
+          -44,
+          0
+        ],
+        "max": [
+          64,
+          -12,
+          16
+        ]
+      },
+      {
+        "label": "front-right top",
+        "min": [
+          32,
+          -44,
+          44
+        ],
+        "max": [
+          64,
+          -12,
+          60
+        ]
+      },
+      {
+        "label": "rear-right bottom",
+        "min": [
+          32,
+          12,
+          0
+        ],
+        "max": [
+          64,
+          44,
+          16
+        ]
+      },
+      {
+        "label": "rear-right top",
+        "min": [
+          32,
+          12,
+          44
+        ],
+        "max": [
+          64,
+          44,
+          60
+        ]
+      },
+      {
+        "label": "rear-left bottom",
+        "min": [
+          -64,
+          12,
+          0
+        ],
+        "max": [
+          -32,
+          44,
+          16
+        ]
+      },
+      {
+        "label": "rear-left top",
+        "min": [
+          -64,
+          12,
+          44
+        ],
+        "max": [
+          -32,
+          44,
+          60
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "FrameBlock",
+        "min": [
+          -60,
+          -40,
+          0
+        ],
+        "max": [
+          60,
+          40,
+          60
+        ]
+      },
+      {
+        "label": "FL bottom front arm",
+        "min": [
+          -60,
+          -44,
+          0
+        ],
+        "max": [
+          -32,
+          -40,
+          16
+        ]
+      },
+      {
+        "label": "FL bottom left arm",
+        "min": [
+          -64,
+          -40,
+          0
+        ],
+        "max": [
+          -60,
+          -12,
+          16
+        ]
+      },
+      {
+        "label": "FR bottom front arm",
+        "min": [
+          32,
+          -44,
+          0
+        ],
+        "max": [
+          60,
+          -40,
+          16
+        ]
+      },
+      {
+        "label": "FR bottom right arm",
+        "min": [
+          60,
+          -40,
+          0
+        ],
+        "max": [
+          64,
+          -12,
+          16
+        ]
+      },
+      {
+        "label": "RR bottom rear arm",
+        "min": [
+          32,
+          40,
+          0
+        ],
+        "max": [
+          60,
+          44,
+          16
+        ]
+      },
+      {
+        "label": "RR bottom right arm",
+        "min": [
+          60,
+          12,
+          0
+        ],
+        "max": [
+          64,
+          40,
+          16
+        ]
+      },
+      {
+        "label": "RL bottom rear arm",
+        "min": [
+          -60,
+          40,
+          0
+        ],
+        "max": [
+          -32,
+          44,
+          16
+        ]
+      },
+      {
+        "label": "RL bottom left arm",
+        "min": [
+          -64,
+          12,
+          0
+        ],
+        "max": [
+          -60,
+          40,
+          16
+        ]
+      },
+      {
+        "label": "FL top front arm",
+        "min": [
+          -60,
+          -44,
+          44
+        ],
+        "max": [
+          -32,
+          -40,
+          60
+        ]
+      },
+      {
+        "label": "FL top left arm",
+        "min": [
+          -64,
+          -40,
+          44
+        ],
+        "max": [
+          -60,
+          -12,
+          60
+        ]
+      },
+      {
+        "label": "FR top front arm",
+        "min": [
+          32,
+          -44,
+          44
+        ],
+        "max": [
+          60,
+          -40,
+          60
+        ]
+      },
+      {
+        "label": "FR top right arm",
+        "min": [
+          60,
+          -40,
+          44
+        ],
+        "max": [
+          64,
+          -12,
+          60
+        ]
+      },
+      {
+        "label": "RR top rear arm",
+        "min": [
+          32,
+          40,
+          44
+        ],
+        "max": [
+          60,
+          44,
+          60
+        ]
+      },
+      {
+        "label": "RR top right arm",
+        "min": [
+          60,
+          12,
+          44
+        ],
+        "max": [
+          64,
+          40,
+          60
+        ]
+      },
+      {
+        "label": "RL top rear arm",
+        "min": [
+          -60,
+          40,
+          44
+        ],
+        "max": [
+          -32,
+          44,
+          60
+        ]
+      },
+      {
+        "label": "RL top left arm",
+        "min": [
+          -64,
+          12,
+          44
+        ],
+        "max": [
+          -60,
+          40,
+          60
+        ]
+      }
+    ],
+    "required_views": [
+      "iso",
+      "front",
+      "right"
+    ],
+    "visual_features": [],
+    "bounds_sufficient": true,
+    "bounds_reason": "This case adds eight placements of the qualified corner-bracket geometry. Per-occurrence bounds and the visual decomposition describe the added placement geometry; native relationships are checked separately."
+  },
+  "solidcraft_only": {
+    "native_expectation": "Each rounded vertical side corner carries exactly two outside angle profiles. On the 60 mm frame they occupy Z=0..16 and Z=44..60.",
+    "generated_relationship": "Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow the calculated X/Y positions and each upper member moves to Z=74..90.",
+    "mutation": "Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow the calculated X/Y positions and each upper member moves to Z=74..90."
+  }
+}
