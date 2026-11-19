@@ -72,3 +72,34 @@ After the previous sections are complete:
 
 When this audit passes, remove this section. If no other work is planned,
 `docs/plan.md` may then contain only the next repository work or be removed.
+
+## Open issue assessment — 2026-11-19
+
+This snapshot determines priority; an open issue is not automatically current work.
+
+| Issue | Status | Assessment |
+| --- | --- | --- |
+| #416 Make docs/plan.md the repository work source of truth | now | Repository-process housekeeping. Close after the plan/AGENTS rule is merged. |
+| #391 Extract reusable CAD verification library from Forge | now / dependency | Required to complete #378 without rebuilding reusable verification logic inside Forge. The library itself must be completed independently first. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | now / blocked | Main Forge completion task. Continue as soon as the required `lib.py.cad.verfication` capabilities are released. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Starts after #378 verification output is complete and accepted. |
+| #357 Fix Sketch.add() default handling for native Slot profiles | later | Forge API defect, not part of the immediate CI/verfication completion chain. |
+| #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Useful CLI quality work, but not a blocker for finishing verification migration. |
+| #355 Support current SolidCraft parametric Slot API in Forge | later | Product/API work after the current verification/CI migration. |
+| #354 Support standalone sketch extrusions as boolean operands | later | Product/API work after the current verification/CI migration. |
+| #349 Coverage: expose the remaining SolidCraft SOLID › CREATE features in Forge | later | Coverage backlog, not current migration work. |
+| #347 Patterns should accept any applied Shape feature, not only Sketch.extrude | later | Forge feature backlog; return after migration completion. |
+| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to the superseded qualification architecture. Reassess after #378/#366 and close or rewrite only if a real current need remains. |
+| #335 Use build123d Sheet Metal for the sheet-fold qualification reference | later | Reference-quality improvement, not required for the current minimum migration path. |
+| #325 Research: determine root cause of HUB75 AnchorFrame regression | later | Model/API investigation independent of the immediate CI/verfication completion chain. |
+| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete / reassess | The old qualification/runtime design has changed substantially. Reassess measured performance only after the final CAD-CI graph is active. |
+| #175 Change 0005: qualify HUB75-like AnchorFrame orientation against known-good Placement poses | later | Domain verification backlog after the generic verification path is restored. |
+| #82 Reconsider automatic hiding of the SolidCraft Joints folder | later | Product behavior issue, independent of migration. |
+| #81 Support inline AnchorFrame references for rotated occurrences | later | Forge API backlog, independent of migration. |
+| #9 SCPF: first-class Sketch objects, constraints and face workplanes | later | Major Forge feature backlog. |
+| #8 Add generic hollow primitives: Tube, RectTube and OvalTube | later | Forge feature backlog. |
+| #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
+
+Immediate execution chain:
+`lib.py.cad.verfication -> Forge #378 -> Forge #366 -> final migration audit`.
+
