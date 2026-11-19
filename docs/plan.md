@@ -8,7 +8,7 @@ issues preserve the history.
 
 ## Current work: finish the CAD-CI migration
 
-### 1. Migrate the remaining historical qualification models
+### 1. Migrate the remaining historical qualification models — #407
 
 Continue in the historical qualification registry order until every required
 model has a `model_verify` path.
