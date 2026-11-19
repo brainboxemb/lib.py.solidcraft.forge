@@ -57,12 +57,11 @@ def reference_implementations_for(case: dict) -> tuple[str, ...]:
 
 
 QUALIFICATION_LEVELS = [
-    ("Q1", "Python API", "Public API validation, symbolic values and compiler invariants."),
-    ("Q2", "Command contract", "Generated SolidCraft command JSON is complete and inspectable."),
-    ("Q3", "Native build", f"SolidCraft {TESTED_SOLIDCRAFT_VERSION} accepts the command plan and saves an editable design."),
-    ("Q4", "Native measurement", "Timeline and actual body measurements match the expected result."),
-    ("Q5", "Parametric mutation", "A saved design re-solves correctly after parameters.change."),
-    ("Q6", "Visual regression", "Fixed-camera native renders are checked from multiple views and published with reference/diff evidence."),
+    ("Integration", "Generated command contract", "Example tests pass and Forge compiles a complete SolidCraft command document."),
+    ("Native model", "SolidCraft execution", f"SolidCraft {TESTED_SOLIDCRAFT_VERSION} replays the command document and saves an editable design."),
+    ("Geometry", "Native geometry", "Timeline and measured body geometry match the declared proof contract."),
+    ("Saved design", "Associativity", "Cases that claim associativity still pass after editing the saved SolidCraft design."),
+    ("Visual", "Visual regression", "Fixed-camera native renders match the expected shape from the required views."),
 ]
 
 

@@ -610,7 +610,7 @@ def check(
         assert f"/qualification/diagrams/{diagram}.svg" in joint_anatomy_page
         assert f"/qualification/diagrams/{diagram}.dxf" in joint_anatomy_page
         assert f'href="{diagram}.cadcraft.json"' in joint_anatomy_page
-    assert "Q1" in qualification_index and "Q6" in qualification_index
+    assert "Integration" in qualification_index and "Visual" in qualification_index
     assert 'class="reference-grid qualification-grid"' in qualification_index
     assert qualification_manifest["library_commit"] == sha
     assert qualification_manifest["qualification_commit"] == evidence_sha
@@ -642,7 +642,7 @@ def check(
             "SolidCraft result",
             "Reference code",
             "Technical test details",
-            "Q1 and Q2 tests",
+            "Integration tests",
             "Geometry checks",
             "Saved-design test",
             "Raw test files",
@@ -654,10 +654,10 @@ def check(
         ):
             assert heading in page_text, (slug, heading)
         for old_heading in (
-            "Case-specific Q1/Q2 evidence",
+            "Case-specific numbered evidence",
             "Shared geometry contract",
             "SolidCraft-only checks",
-            "Q5 applicability",
+            "Legacy saved-design applicability",
             "Pass criteria",
             "Implementation under test",
             "Generated SolidCraft relationship",
@@ -673,7 +673,7 @@ def check(
         assert case["mutation"] in html.unescape(page_text), slug
         saved_label = (
             "Checked in the saved model."
-            if case.get("q5_required")
+            if case.get("saved_design_required")
             else "No saved-model change is required."
         )
         assert saved_label in page_text, slug
@@ -861,11 +861,11 @@ def check(
             assert "<h2>Visual result</h2>" in page_text, slug
             assert "<h2>Reference code</h2>" in page_text, slug
             assert "<strong>Technical test details</strong>" in page_text, slug
-            assert "<h3>Q1 and Q2 tests</h3>" in page_text, slug
+            assert "<h3>Integration tests</h3>" in page_text, slug
             assert "<h3>Geometry checks</h3>" in page_text, slug
             assert "<h3>Saved-design test</h3>" in page_text, slug
-            assert "q1-case-evidence.txt" in page_text, slug
-            assert "q2-case-evidence.txt" in page_text, slug
+            assert "qualification-result.json" in page_text, slug
+            assert "validation.json" in page_text, slug
             for level in ("q1", "q2"):
                 level_result = manifest_case["levels"][level]
                 assert level_result["status"] == "pass", (slug, level)
@@ -879,7 +879,7 @@ def check(
                 "1. Test setup",
                 "Test goal",
                 "Pass criteria",
-                "Case-specific Q1/Q2 evidence",
+                "Case-specific numbered evidence",
                 "Shared geometry contract",
                 "SolidCraft-only checks",
                 "Implementation under test",

@@ -17,16 +17,11 @@ class FinalizeItemResultTests(unittest.TestCase):
             target = out / "native/simple-box/qualification-result.json"
             with patch.object(
                 finalize_item_result,
-                "write_validation_summaries",
-            ) as summaries, patch.object(
-                finalize_item_result,
                 "collect_results",
                 return_value={
                     "cases": {"simple-box": {"status": "pass"}}
                 },
             ) as collect:
-                # results.collect owns this file in the real path; create it in
-                # the mock so the finalizer's safety check remains exercised.
                 target.parent.mkdir(parents=True)
                 target.write_text("{}\n", encoding="utf-8")
                 result = finalize_item_result.finalize(
@@ -35,7 +30,6 @@ class FinalizeItemResultTests(unittest.TestCase):
                     "a" * 40,
                 )
 
-        summaries.assert_called_once_with(out, ("simple-box",))
         collect.assert_called_once()
         self.assertEqual(result["status"], "pass")
 
@@ -43,9 +37,6 @@ class FinalizeItemResultTests(unittest.TestCase):
         with TemporaryDirectory() as temp:
             out = Path(temp)
             with patch.object(
-                finalize_item_result,
-                "write_validation_summaries",
-            ), patch.object(
                 finalize_item_result,
                 "collect_results",
                 return_value={

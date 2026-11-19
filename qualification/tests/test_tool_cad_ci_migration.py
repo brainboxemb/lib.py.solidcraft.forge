@@ -59,18 +59,14 @@ class ToolCadCiMigrationTests(unittest.TestCase):
             case["steps"][0]["outputs"],
             [
                 "case/simple-box.json",
-                "case/stages/simple-box/01-q1.json",
-                "case/stages/simple-box/02-q2.json",
-                "case/stages/simple-box/03-compile.json",
-                "case/qualification/case-evidence/q1/simple-box.txt",
-                "case/qualification/case-evidence/q2/simple-box.txt",
+                "case/stages/simple-box/01-compile.json",
             ],
         )
         self.assertEqual(
             case["steps"][1]["outputs"],
             [
                 "case/native/simple-box",
-                "case/stages/simple-box/13-gate.json",
+                "case/stages/simple-box/11-gate.json",
             ],
         )
 
@@ -107,7 +103,7 @@ class ToolCadCiMigrationTests(unittest.TestCase):
                     ],
                 )
                 self.assertIn(
-                    f"case/stages/{slug}/13-gate.json",
+                    f"case/stages/{slug}/11-gate.json",
                     config["steps"][1]["outputs"],
                 )
 
@@ -120,7 +116,7 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertIn("CAD_CI_ITEM", script)
         self.assertIn("CAD_CI_OUTPUT", script)
         self.assertIn("qualification/case_runner.py", script)
-        self.assertIn('"--until"', script)
+        self.assertIn('"--stage"', script)
         self.assertIn('"compile"', script)
         self.assertIn('"--from"', script)
         self.assertIn('"replay"', script)

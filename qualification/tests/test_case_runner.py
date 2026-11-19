@@ -1,4 +1,4 @@
-"""Contract tests for independently rerunnable qualification stages."""
+"""Contract tests for independently rerunnable native case stages."""
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -7,7 +7,6 @@ import unittest
 from unittest.mock import patch
 
 from qualification.case_runner import (
-    CaseContext,
     MissingStageInput,
     STAGES,
     plan_stages,
@@ -16,12 +15,10 @@ from qualification.case_runner import (
 
 
 class CaseRunnerTests(unittest.TestCase):
-    def test_stage_order_is_explicit(self):
+    def test_stage_order_is_explicit_and_semantic(self):
         self.assertEqual(
             STAGES,
             (
-                "q1",
-                "q2",
                 "compile",
                 "replay",
                 "evaluate",
@@ -37,10 +34,7 @@ class CaseRunnerTests(unittest.TestCase):
         )
 
     def test_exact_stage_does_not_expand_prerequisites(self):
-        self.assertEqual(
-            plan_stages(stage="mutate"),
-            ("mutate",),
-        )
+        self.assertEqual(plan_stages(stage="mutate"), ("mutate",))
 
     def test_from_runs_only_tail(self):
         self.assertEqual(
@@ -68,17 +62,13 @@ class CaseRunnerTests(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             out = Path(tmp)
             with self.assertRaises(MissingStageInput):
-                run_case(
-                    "simple-box",
-                    out,
-                    stages=("evaluate",),
-                )
+                run_case("simple-box", out, stages=("evaluate",))
             state = json.loads(
                 (
                     out
                     / "stages"
                     / "simple-box"
-                    / "05-evaluate.json"
+                    / "03-evaluate.json"
                 ).read_text(encoding="utf-8")
             )
             self.assertEqual(state["status"], "fail")
