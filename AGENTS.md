@@ -1,14 +1,15 @@
 # CURRENT CAD CI MIGRATION STATE
 
-Migration step 3 connects every Forge example to the proven host-side
-`tool_verify` contract.
+Migration step 3 connects the 32 previously CI-enabled Forge examples to the
+proven host-side `tool_verify` contract. Example folders that did not own a
+`ci.yml` before the clean cut-over remain outside CI in this migration step.
 
 Active CAD-CI infrastructure:
 
-- `.github/workflows/scpf.yml` — thin caller of released `tool.cad.ci`;
-- `cad-ci.yml` — discovers `forge-tool` and `examples/*`;
+- `.github/workflows/scpf.yml` — thin caller of released `tool.cad.ci` 0.7.1;
+- `cad-ci.yml` — discovers `forge-tool` and example folders that own `ci.yml`;
 - `scpf/ci.yml` + `scripts/tool_ci.py` — `tool_build` and `tool_test`;
-- each `examples/*/ci.yml` + shared `scripts/tool_verify.py` — optional
+- the 32 migrated `examples/*/ci.yml` files + shared `scripts/tool_verify.py` —
   example contract tests plus replayable `solidcraft.json` compilation.
 
 Native/model verification, reference/diagram generation and publication are

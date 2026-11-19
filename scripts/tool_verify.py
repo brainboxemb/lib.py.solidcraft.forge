@@ -68,10 +68,6 @@ def run_contract_tests(slug: str, package: Path) -> None:
     """Run the example-owned host-side contract tests against the built package."""
 
     tests = ROOT / "examples" / slug / "tests"
-    if not tests.is_dir() or not any(tests.rglob("test_*.py")):
-        print(f"No example contract tests: {slug}")
-        return
-
     subprocess.run(
         [
             sys.executable,
