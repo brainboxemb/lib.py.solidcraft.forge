@@ -187,11 +187,21 @@ def main() -> int:
     parser.add_argument("--source-sha", required=True)
     args = parser.parse_args()
 
-    slugs = tuple(
-        value
-        for value in args.cases.replace(",", " ").split()
-        if value
-    )
+    if args.cases.strip().lower() == "all":
+        slugs = tuple(
+            path.parents[1].name
+            for path in sorted(
+                (ROOT / "examples").glob(
+                    "*/verification/reference_geometry.json"
+                )
+            )
+        )
+    else:
+        slugs = tuple(
+            value
+            for value in args.cases.replace(",", " ").split()
+            if value
+        )
     if not slugs:
         raise RuntimeError("at least one model must be selected")
 

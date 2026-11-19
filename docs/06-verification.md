@@ -70,7 +70,10 @@ A Forge unit check compares the explicit CI expectation with the current runtime
 build definition so a runtime configuration change cannot silently leave
 `cad-ci.yml` behind.
 
-All 32 historical model cases now have native `model_verify` coverage. Issue #378 tracks the remaining reference, visual, diagram and summary verification layers.
+All 32 historical model cases have native `model_verify` coverage. They
+also own local `reference_geometry.json` contracts and run all four independent
+reference implementations through released `lib.py.cad.verfication`.
+Issue #378 now tracks the remaining visual, diagram and summary layers.
 
 ## Historical integration tests
 
@@ -85,7 +88,8 @@ every historical model a Forge `tool_verify` release example.
 | `tool_build` | the distributable Forge package can be built |
 | `tool_test` | reusable Forge Python/API/compiler rules pass against that package |
 | `tool_verify` | the built Forge package passes the fixed release example set |
-| `model_verify` | one migrated model produces the expected native SolidCraft result |
+| `model_verify` | one model produces the expected native SolidCraft result |
+| `verify_references` | every model's four independent reference implementations match its local geometry contract |
 
 The removed repository-wide qualification runner and numbered qualification
 levels are historical terminology, not current step names.
