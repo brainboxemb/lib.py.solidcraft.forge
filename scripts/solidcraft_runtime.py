@@ -13,6 +13,7 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -80,9 +81,7 @@ def metadata(repository: str) -> dict[str, str]:
         "reference": reference,
         "python_image": str(config["python_image"]),
         "solidcraft_version": solidcraft_version(),
-        "cad_verification_commit": str(
-            config["cad_verification_commit"]
-        ),
+        "cad_verification_commit": str(config["cad_verification_commit"]),
         "environment_json": json.dumps(
             {"FORGE_RUNTIME_IMAGE": reference},
             separators=(",", ":"),
@@ -117,6 +116,19 @@ def image_exists(reference: str) -> bool:
     )
 
 
+def require_image(reference: str) -> None:
+    """Fail clearly when the immutable runtime image has not been published."""
+
+    if image_exists(reference):
+        print(f"present: {reference}")
+        return
+
+    raise RuntimeError(
+        "required SolidCraft runtime image is missing: "
+        f"{reference}. Run the 'SolidCraft runtime' workflow first."
+    )
+
+
 def write_github_output(path: Path, values: dict[str, str]) -> None:
     """Append simple scalar outputs to a GitHub Actions output file."""
 
@@ -126,7 +138,7 @@ def write_github_output(path: Path, values: dict[str, str]) -> None:
 
 
 def main() -> int:
-    """Expose runtime metadata or explicit registry presence."""
+    """Expose runtime metadata, status, or a strict presence check."""
 
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -139,22 +151,33 @@ def main() -> int:
     status_parser.add_argument("--reference", required=True)
     status_parser.add_argument("--github-output", type=Path)
 
+    require_parser = commands.add_parser("require")
+    require_parser.add_argument("--reference", required=True)
+
     args = parser.parse_args()
 
-    if args.command == "metadata":
-        values = metadata(args.repository)
-        for key, value in values.items():
-            print(f"{key}={value}")
-        if args.github_output:
-            write_github_output(args.github_output, values)
-        return 0
+    try:
+        if args.command == "metadata":
+            values = metadata(args.repository)
+            for key, value in values.items():
+                print(f"{key}={value}")
+            if args.github_output:
+                write_github_output(args.github_output, values)
+            return 0
 
-    exists = image_exists(args.reference)
-    value = "true" if exists else "false"
-    print("present" if exists else "absent")
-    if args.github_output:
-        write_github_output(args.github_output, {"exists": value})
-    return 0
+        if args.command == "require":
+            require_image(args.reference)
+            return 0
+
+        exists = image_exists(args.reference)
+        value = "true" if exists else "false"
+        print("present" if exists else "absent")
+        if args.github_output:
+            write_github_output(args.github_output, {"exists": value})
+        return 0
+    except (ImageLookupError, OSError, RuntimeError, ValueError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

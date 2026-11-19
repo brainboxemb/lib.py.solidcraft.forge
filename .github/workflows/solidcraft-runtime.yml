@@ -1,0 +1,71 @@
+name: SolidCraft runtime
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - docker/solidcraft_runtime/**
+      - scripts/solidcraft_runtime.py
+      - scpf/scpf/version.py
+      - .github/workflows/solidcraft-runtime.yml
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Forge source
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve immutable SolidCraft runtime
+        id: metadata
+        run: |
+          python scripts/solidcraft_runtime.py metadata \
+            --repository "$GITHUB_REPOSITORY" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check immutable SolidCraft runtime
+        id: runtime_status
+        run: |
+          python scripts/solidcraft_runtime.py status \
+            --reference "${{ steps.metadata.outputs.reference }}" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Set up Docker buildx
+        if: steps.runtime_status.outputs.exists == 'false'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and publish missing SolidCraft runtime
+        if: steps.runtime_status.outputs.exists == 'false'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/solidcraft_runtime
+          file: docker/solidcraft_runtime/Dockerfile
+          push: true
+          tags: ${{ steps.metadata.outputs.reference }}
+          build-args: |
+            PYTHON_IMAGE=${{ steps.metadata.outputs.python_image }}
+            SOLIDCRAFT_VERSION=${{ steps.metadata.outputs.solidcraft_version }}
+            CAD_VERIFICATION_COMMIT=${{ steps.metadata.outputs.cad_verification_commit }}
+          cache-from: type=gha,scope=solidcraft-runtime
+          cache-to: type=gha,mode=max,scope=solidcraft-runtime
+
+      - name: Require published runtime image
+        run: |
+          python scripts/solidcraft_runtime.py require \
+            --reference "${{ steps.metadata.outputs.reference }}"

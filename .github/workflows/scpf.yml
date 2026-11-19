@@ -14,13 +14,13 @@ jobs:
       contents: read
     uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-plan.yml@e09e86b42ee42c3171b30d031dbb84b939635ad4
 
-  solidcraft_runtime:
+  runtime_check:
     needs: plan
-    if: ${{ contains(needs.plan.outputs.plan_json, '"id":"simple-box"') }}
+    if: ${{ contains(needs.plan.outputs.plan_json, '"kind":"model"') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
+      packages: read
     outputs:
       environment_json: ${{ steps.metadata.outputs.environment_json }}
     steps:
@@ -48,41 +48,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check immutable SolidCraft runtime
-        id: runtime_status
+      - name: Require SolidCraft runtime image
         run: |
-          python scripts/solidcraft_runtime.py status \
-            --reference "${{ steps.metadata.outputs.reference }}" \
-            --github-output "$GITHUB_OUTPUT"
-
-      - name: Set up Docker buildx
-        if: steps.runtime_status.outputs.exists == 'false'
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build missing SolidCraft runtime
-        if: steps.runtime_status.outputs.exists == 'false'
-        uses: docker/build-push-action@v6
-        with:
-          context: docker/solidcraft_runtime
-          file: docker/solidcraft_runtime/Dockerfile
-          push: true
-          tags: ${{ steps.metadata.outputs.reference }}
-          build-args: |
-            PYTHON_IMAGE=${{ steps.metadata.outputs.python_image }}
-            SOLIDCRAFT_VERSION=${{ steps.metadata.outputs.solidcraft_version }}
-            CAD_VERIFICATION_COMMIT=${{ steps.metadata.outputs.cad_verification_commit }}
-          cache-from: type=gha,scope=solidcraft-runtime
-          cache-to: type=gha,mode=max,scope=solidcraft-runtime
+          python scripts/solidcraft_runtime.py require \
+            --reference "${{ steps.metadata.outputs.reference }}"
 
   cad_ci:
     needs:
       - plan
-      - solidcraft_runtime
+      - runtime_check
     if: >-
       ${{ always() &&
           needs.plan.result == 'success' &&
-          (needs.solidcraft_runtime.result == 'success' ||
-           needs.solidcraft_runtime.result == 'skipped') }}
+          (needs.runtime_check.result == 'success' ||
+           needs.runtime_check.result == 'skipped') }}
     permissions:
       contents: read
       packages: read
@@ -90,4 +69,4 @@ jobs:
     with:
       source_sha: ${{ needs.plan.outputs.source_sha }}
       base_sha: ${{ needs.plan.outputs.base_sha }}
-      environment_json: ${{ needs.solidcraft_runtime.result == 'success' && needs.solidcraft_runtime.outputs.environment_json || '{}' }}
+      environment_json: ${{ needs.runtime_check.result == 'success' && needs.runtime_check.outputs.environment_json || '{}' }}

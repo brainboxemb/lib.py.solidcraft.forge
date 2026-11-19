@@ -16,6 +16,7 @@ Product CAD models are maintained in `2026-011-02.cad.solidcraft`.
 The active CI structure is defined by:
 
 - `.github/workflows/scpf.yml`
+- `.github/workflows/solidcraft-runtime.yml`
 - `cad-ci.yml`
 - `scpf/ci.yml`
 - migrated `examples/<model>/ci.yml` files
@@ -75,6 +76,10 @@ Example-owned command-contract tests remain under `examples/<example>/tests/`
 where they are used by Forge release verification or other focused tests.
 
 ## SolidCraft runtime
+
+The active native runtime is built and published only by the separate
+`.github/workflows/solidcraft-runtime.yml` workflow. The normal Forge workflow
+only verifies that the immutable image required by selected model items exists.
 
 The active native runtime is:
 
