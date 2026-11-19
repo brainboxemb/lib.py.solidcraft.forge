@@ -22,7 +22,19 @@ Make the active CI structure match the intended responsibilities:
 
 When #401 is merged, remove this section from the plan.
 
-### 2. Migrate the next 10 historical qualification models — #395
+### 2. Separate SolidCraft runtime image lifecycle from Forge CI — #404
+
+Move Docker runtime build/publication out of the normal Forge workflow.
+
+- add a dedicated SolidCraft runtime workflow;
+- keep `workflow_dispatch` so the runtime build can be triggered explicitly;
+- also trigger on changes to runtime inputs on `main`;
+- normal Forge CI only resolves and checks the immutable runtime image;
+- normal Forge CI never builds or publishes Docker images.
+
+When #404 is merged, remove this section from the plan.
+
+### 3. Migrate the next 10 historical qualification models — #395
 
 Add `model_verify` for:
 
@@ -43,7 +55,7 @@ model expectations, mutations and inspections.
 
 When #395 is merged, remove this section from the plan.
 
-### 3. Migrate the remaining historical qualification models
+### 4. Migrate the remaining historical qualification models
 
 Continue in the historical qualification registry order until every required
 model has a `model_verify` path.
@@ -52,7 +64,7 @@ Use one reviewable migration PR per agreed batch.
 
 Remove this section when the model catalog migration is complete.
 
-### 4. Finish durable build output and Pages publication — #366
+### 5. Finish durable build output and Pages publication — #366
 
 Move the remaining build-output and GitHub Pages publication work onto the
 released generic CAD-CI infrastructure.
@@ -62,7 +74,7 @@ Forge or model verification merely to build the site.
 
 Remove this section when #366 is merged.
 
-### 5. Final migration audit
+### 6. Final migration audit
 
 After the previous sections are complete:
 
