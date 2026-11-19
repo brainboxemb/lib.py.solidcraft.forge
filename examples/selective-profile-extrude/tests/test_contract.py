@@ -1,18 +1,19 @@
-"""integration contract for selective Sketch profile extrusion."""
+"""Integration contract for selective Sketch profile extrusion."""
 
 import json
 import unittest
 from pathlib import Path
 
 from scpf.runner import run_script
-from qualification.native_cases import mutation_spec
 
 
 ROOT = Path(__file__).resolve().parents[3]
-MODEL = ROOT / "examples/selective-profile-extrude/scpf/model.py"
+EXAMPLE = ROOT / "examples/selective-profile-extrude"
+MODEL = EXAMPLE / "scpf/model.py"
+MUTATION = EXAMPLE / "verification/change_pattern.json"
 
 
-class SelectiveProfileExtrudeQualificationTests(unittest.TestCase):
+class SelectiveProfileExtrudeContractTests(unittest.TestCase):
     def setUp(self):
         self.document = run_script(MODEL)
         self.commands = self.document["commands"]
@@ -48,11 +49,7 @@ class SelectiveProfileExtrudeQualificationTests(unittest.TestCase):
         self.assertEqual(extrude["direction"], "negative")
 
     def test_saved_design_mutation_changes_seed_and_pattern_spacing(self):
-        spec = mutation_spec("selective-profile-extrude")
-        self.assertIsNotNone(spec)
-        document = json.loads(
-            (ROOT / spec["command"]).read_text(encoding="utf-8")
-        )
+        document = json.loads(MUTATION.read_text(encoding="utf-8"))
         changes = {
             row["params"]["name"]: row["params"]["expression"]
             for row in document["commands"]

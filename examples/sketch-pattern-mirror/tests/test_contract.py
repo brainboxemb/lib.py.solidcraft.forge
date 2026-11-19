@@ -1,18 +1,19 @@
-"""integration contract for generic associative sketch pattern/mirror handles."""
+"""Integration contract for associative sketch pattern/mirror handles."""
 
 import json
 import unittest
 from pathlib import Path
 
 from scpf.runner import run_script
-from qualification.native_cases import mutation_spec
 
 
 ROOT = Path(__file__).resolve().parents[3]
-MODEL = ROOT / "examples/sketch-pattern-mirror/scpf/model.py"
+EXAMPLE = ROOT / "examples/sketch-pattern-mirror"
+MODEL = EXAMPLE / "scpf/model.py"
+MUTATION = EXAMPLE / "verification/change_patterns.json"
 
 
-class SketchPatternMirrorQualificationTests(unittest.TestCase):
+class SketchPatternMirrorContractTests(unittest.TestCase):
     def setUp(self):
         self.document = run_script(MODEL)
         self.commands = self.document["commands"]
@@ -94,11 +95,7 @@ class SketchPatternMirrorQualificationTests(unittest.TestCase):
         self.assertEqual(units["slot_pitch"], "mm")
 
     def test_saved_design_mutation_changes_seed_and_pattern_parameters(self):
-        spec = mutation_spec("sketch-pattern-mirror")
-        self.assertIsNotNone(spec)
-        document = json.loads(
-            (ROOT / spec["command"]).read_text(encoding="utf-8")
-        )
+        document = json.loads(MUTATION.read_text(encoding="utf-8"))
         changes = {
             row["params"]["name"]: row["params"]["expression"]
             for row in document["commands"]

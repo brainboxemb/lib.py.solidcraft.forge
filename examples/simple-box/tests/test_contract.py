@@ -1,28 +1,21 @@
-"""Qualification contract for native parameterized Box lowering."""
+"""Integration contract for native parameterized Box lowering."""
 
-from pathlib import Path
 import json
 import unittest
+from pathlib import Path
 
 from scpf.runner import run_script
-from qualification.cases import QUALIFICATION_CASES
-from qualification.native_cases import mutation_spec
 
 
 ROOT = Path(__file__).resolve().parents[3]
+EXAMPLE = ROOT / "examples/simple-box"
+MODEL = EXAMPLE / "scpf/model.py"
+MUTATION = EXAMPLE / "verification/change_length.json"
 
 
 class SimpleBoxCommandTests(unittest.TestCase):
-    def test_editable_box_requires_q5_saved_design_mutation(self):
-        case = next(
-            case for case in QUALIFICATION_CASES
-            if case["slug"] == "simple-box"
-        )
-        self.assertTrue(case["saved_design_required"])
-        spec = mutation_spec("simple-box")
-        document = json.loads(
-            (ROOT / spec["command"]).read_text(encoding="utf-8")
-        )
+    def test_saved_design_mutation_changes_length_parameter(self):
+        document = json.loads(MUTATION.read_text(encoding="utf-8"))
         self.assertEqual(
             document["commands"],
             [{
@@ -35,9 +28,7 @@ class SimpleBoxCommandTests(unittest.TestCase):
         )
 
     def test_box_lowers_directly_to_native_solid_box(self):
-        commands = run_script(
-            ROOT / "examples/simple-box/scpf/model.py"
-        )["commands"]
+        commands = run_script(MODEL)["commands"]
 
         feature_commands = [
             row for row in commands

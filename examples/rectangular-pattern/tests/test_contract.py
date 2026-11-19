@@ -1,18 +1,19 @@
-"""integration contract for native rectangular feature patterns."""
+"""Integration contract for native rectangular feature patterns."""
+
 import json
 import unittest
 from pathlib import Path
 
 from scpf.runner import run_script
-from qualification.cases import QUALIFICATION_CASES
-from qualification.native_cases import mutation_spec
 
 
 ROOT = Path(__file__).resolve().parents[3]
-MODEL = ROOT / "examples/rectangular-pattern/scpf/model.py"
+EXAMPLE = ROOT / "examples/rectangular-pattern"
+MODEL = EXAMPLE / "scpf/model.py"
+MUTATION = EXAMPLE / "verification/change_columns_pitch.json"
 
 
-class RectangularPatternQualificationTests(unittest.TestCase):
+class RectangularPatternContractTests(unittest.TestCase):
     def test_emits_one_native_feature_pattern(self):
         commands = run_script(MODEL)["commands"]
         patterns = [
@@ -28,9 +29,6 @@ class RectangularPatternQualificationTests(unittest.TestCase):
         self.assertEqual(params["spacing2"], "row_pitch")
 
     def test_one_direction_form_omits_second_direction_fields(self):
-        commands = run_script(MODEL)["commands"]
-        # Reuse the compiled source feature but construct a focused one-row
-        # command contract through the public API in the unit-level test.
         from scpf.core import Anchor, Axis, Box, SlotCenterToCenter2D
         from scpf.explicit_sketch import Sketch
         from scpf.compiler import compile_model
@@ -69,20 +67,8 @@ class RectangularPatternQualificationTests(unittest.TestCase):
         self.assertEqual(params["pitch"], "mm")
         self.assertEqual(params["row_pitch"], "mm")
 
-    def test_saved_design_is_required_for_native_pattern_parameters(self):
-        case = next(
-            case for case in QUALIFICATION_CASES
-            if case["slug"] == "rectangular-pattern"
-        )
-        self.assertTrue(case["saved_design_required"])
-        self.assertIn("columns", case["mutation"])
-        self.assertIn("pitch", case["mutation"])
-
     def test_saved_design_mutation_changes_count_and_spacing(self):
-        spec = mutation_spec("rectangular-pattern")
-        self.assertIsNotNone(spec)
-        command_path = ROOT / spec["command"]
-        document = json.loads(command_path.read_text(encoding="utf-8"))
+        document = json.loads(MUTATION.read_text(encoding="utf-8"))
         changes = {
             row["params"]["name"]: row["params"]["expression"]
             for row in document["commands"]
