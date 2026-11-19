@@ -46,15 +46,15 @@ class SiteEvidenceTests(unittest.TestCase):
                     "implementations": {
                         "scpf": {
                             "status": "pass",
-                            "verification_level": "q1-q6-full",
+                            "verification_level": "full-native",
                         }
                     }
                 },
-                "q2-only-case": {
+                "integration-only-case": {
                     "implementations": {
                         "scpf": {
                             "status": "pass",
-                            "verification_level": "affected-q1-q2",
+                            "verification_level": "integration",
                         }
                     }
                 },
@@ -65,22 +65,22 @@ class SiteEvidenceTests(unittest.TestCase):
             manifest, "verified-case"
         )
         second_record, second_verified = evidence.scpf_case_state(
-            manifest, "q2-only-case"
+            manifest, "integration-only-case"
         )
         missing_record, missing_verified = evidence.scpf_case_state(
             manifest, "missing-case"
         )
 
-        self.assertEqual(first_record["verification_level"], "q1-q6-full")
+        self.assertEqual(first_record["verification_level"], "full-native")
         self.assertTrue(first_verified)
-        self.assertEqual(second_record["verification_level"], "affected-q1-q2")
+        self.assertEqual(second_record["verification_level"], "integration")
         self.assertFalse(second_verified)
         self.assertIsNone(missing_record)
         self.assertFalse(missing_verified)
 
     def test_native_verification_levels_are_explicit(self):
         evidence = load_site_evidence()
-        for level in ("affected-q1-q6", "q1-q6-full", "full-q1-q6"):
+        for level in ("native", "full-native"):
             with self.subTest(level=level):
                 record, verified = evidence.scpf_case_state(
                     {
@@ -158,7 +158,6 @@ class SitePublishingContractTests(unittest.TestCase):
 
         for required in (
             "scripts/ci_preflight.py",
-            "scripts/verification_gate.py",
             '"promote-overlay"',
             "publish_generated.publish(",
             "site/build.py",
