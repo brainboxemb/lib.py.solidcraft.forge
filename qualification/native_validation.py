@@ -1215,7 +1215,7 @@ def validate_sketch_pattern_mirror(root: Path) -> Validation:
         timeline,
     )
 
-    # Q5 mutates only the already-saved SolidCraft design. Python is not rerun.
+    # The saved-design check mutates only the existing SolidCraft design. Python is not rerun.
     m = load(root / "measurements-patterns-mutated.json")
     _check_declared_bounds(
         v,
