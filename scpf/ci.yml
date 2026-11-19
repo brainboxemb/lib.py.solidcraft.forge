@@ -1,4 +1,4 @@
-# Build and unit-test the Forge Python tool itself.
+# Build, test, and release-verify the Forge Python tool.
 id: forge-tool
 kind: tool
 watch:
@@ -7,6 +7,17 @@ watch:
   - scpf/tests/**
   - scpf/pyproject.toml
   - scripts/tool_ci.py
+  - scripts/tool_verify.py
+  - scripts/forge_example.py
+  - examples/simple-box/scpf/**
+  - examples/simple-box/tests/**
+  - examples/anchored-holes/scpf/**
+  - examples/anchored-holes/tests/**
+  - examples/components/scpf/**
+  - examples/components/tests/**
+  - examples/corner-anchor/scpf/**
+  - examples/corner-anchor/tests/**
+  - examples/custom-anchor/scpf/**
 strategy:
   reuse: true
 steps:
@@ -17,6 +28,7 @@ steps:
       - scripts/tool_ci.py
     run: [python, ../scripts/tool_ci.py, tool_build]
     outputs: [dist]
+
   - id: tool_test
     inputs:
       - scpf/scpf/**
@@ -24,3 +36,19 @@ steps:
       - scpf/pyproject.toml
       - scripts/tool_ci.py
     run: [python, ../scripts/tool_ci.py, tool_test]
+
+  - id: tool_verify
+    inputs:
+      - scripts/tool_verify.py
+      - scripts/forge_example.py
+      - examples/simple-box/scpf/**
+      - examples/simple-box/tests/**
+      - examples/anchored-holes/scpf/**
+      - examples/anchored-holes/tests/**
+      - examples/components/scpf/**
+      - examples/components/tests/**
+      - examples/corner-anchor/scpf/**
+      - examples/corner-anchor/tests/**
+      - examples/custom-anchor/scpf/**
+    run: [python, ../scripts/tool_verify.py]
+    outputs: [tool_verify]

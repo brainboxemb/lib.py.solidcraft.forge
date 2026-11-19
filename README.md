@@ -22,10 +22,8 @@ This repository contains:
 
 - the reusable Forge Python API under `scpf/scpf/`;
 - command lowering and runners;
-- Forge unit tests;
-- small API and behaviour examples under `examples/`;
-- example-local command verification;
-- example-local native model verification where migrated;
+- Forge unit tests and release-verification examples;
+- historical model-verification fixtures under `examples/`;
 - the immutable SolidCraft runtime used by `model_verify`.
 
 Product CAD models live in the separate
@@ -60,23 +58,27 @@ The detailed API-oriented developer documentation is in `scpf/README.md`.
 GitHub exposes one workflow: `.github/workflows/scpf.yml` (**Forge**).
 
 Planning and execution are delegated to the pinned reusable workflows from
-`brainboxemb/tool.cad.ci`. Repository-specific work is declared in:
+`brainboxemb/tool.cad.ci`. Repository-specific work is declared in
+`cad-ci.yml`, `scpf/ci.yml` and migrated model `ci.yml` files.
+
+The Forge release chain is:
 
 ```text
-cad-ci.yml
-scpf/ci.yml
-examples/<example>/ci.yml
+tool_build -> tool_test -> tool_verify
 ```
 
-Current step names:
+- `tool_build` builds the Forge package;
+- `tool_test` runs Forge unit tests;
+- `tool_verify` release-verifies that built package with the fixed
+  representative example set.
 
-- `tool_build` — build the Forge package;
-- `tool_test` — run Forge unit tests;
-- `tool_verify` — execute an example and verify its generated command contract;
-- `model_verify` — replay that command document in SolidCraft and verify the real model.
+Per-model SolidCraft checking is separate:
 
-At the current migration point, `simple-box` has the complete
-`tool_verify -> model_verify` path. Issue #395 tracks the next ten examples.
+- `model_verify` compiles one migrated model with the exact built Forge
+  package and verifies the resulting native model in SolidCraft.
+
+At the current migration point, `simple-box` is the first migrated model.
+Issue #395 tracks the next ten historical qualification models.
 
 ## Native SolidCraft runtime
 
@@ -90,11 +92,11 @@ docker/
 ```
 
 `scripts/solidcraft_runtime.py` resolves the immutable image reference.
-`scripts/model_verify.py` runs the example-local
+`scripts/model_verify.py` compiles the selected model and runs its
 `verification/verify_model.py` inside that image.
 
 Model-specific dimensions, mutations and expectations stay under
-`examples/<example>/verification/`.
+`examples/<model>/verification/`.
 
 The former repository-wide qualification package and qualification Docker image
 are no longer part of the active architecture.
@@ -138,6 +140,7 @@ development status.
 
 ## Documentation map
 
+- `docs/plan.md` — current unfinished repository work only.
 - `docs/05-cad-api-design.md` — cross-object Forge API rules.
 - `docs/06-verification.md` — current verification layers.
 - `docs/09-documentation-architecture.md` — documentation sources of truth.
