@@ -10,7 +10,7 @@ Current operational documentation is primarily:
 - `docs/10-release-process.md`
 - `docs/11-generated-output.md`
 - `docs/design/test-architecture.md`
-- `docs/design/ci-migration-plan.md` — current Forge CI migration source of truth
+- `docs/plan.md` — current repository plan
 
 Audit, remediation, requalification and closeout files under this directory
 record earlier development states. They may use terminology or workflow
