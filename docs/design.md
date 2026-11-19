@@ -55,6 +55,6 @@ one from the other.
 ## Verification
 
 Model/reference commands consume `FORGE_RUNTIME_IMAGE` from their environment.
-They pull and run that exact immutable image. Generic comparison/reporting code
-stays in released `lib.py.cad.verfication`; Forge keeps only its own policy,
-adapters and expected data.
+They pull and run that exact immutable image. Verification behavior stays in released `lib.py.cad.verfication`, including
+CAD-tool-specific adapters. Forge keeps Forge compilation and model-specific
+expected data.
