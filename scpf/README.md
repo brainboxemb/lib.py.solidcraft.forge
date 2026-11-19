@@ -34,7 +34,7 @@ tracks the separation of CAD assets from reusable API implementation.
 
 ## Full library documentation
 
-The [published API Guide](https://brainboxemb.github.io/lib.py.solidcraft/guide/)
+The [published API Guide](https://brainboxemb.github.io/lib.py.solidcraft.forge/guide/)
 explains topics step by step: first model, geometry, transformations, features,
 assemblies and verification. This README retains developer-oriented reference
 notes; the cheatsheet is only a quick syntax lookup.
@@ -45,9 +45,9 @@ is not yet a supported shorthand; use `rotate(axis=(0, 0, 1), degrees=180)`.
 
 ## Supported SolidCraft version
 
-The exact qualified SolidCraft release is defined once by
-`scpf.version.TESTED_SOLIDCRAFT_VERSION`. CI, runtime compatibility checks and
-the generated qualification pages all read that same value.
+The tested SolidCraft release is defined once by
+`scpf.version.TESTED_SOLIDCRAFT_VERSION`. Runtime compatibility checks and the
+immutable `solidcraft_runtime` read that same value.
 The library's `scpf.version.check_cli_version()` reads
 `solidcraft-cli --version`, **rejects older versions**, and emits a warning
 for newer or unverified versions. It is run automatically by the live SCPF
@@ -384,10 +384,10 @@ publishes model source, generated command plans, and native SolidCraft renders
 with source-matched verification. The CAD project, not the Python library,
 owns `scripts/ci/build-results.py`, `site/` and its publication workflows.
 
-The [library website](https://brainboxemb.github.io/lib.py.solidcraft/)
+The [library website](https://brainboxemb.github.io/lib.py.solidcraft.forge/)
 publishes a cheatsheet and a small set of source-matched command examples
 (SimpleBox, AnchoredHoles, TwoBlocks). The full model gallery, render evidence
-and native qualification remain in the CAD project. Old experiment pages
+and native CAD verification remain in the CAD project. Old experiment pages
 are retained in Git history, not copied to the active library site.
 
 ## Code organization

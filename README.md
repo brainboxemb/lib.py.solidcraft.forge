@@ -1,108 +1,163 @@
 # SCPF — SolidCraft Python Forge
 
-**Repository:** `brainboxemb/lib.py.solidcraft.forge` (previously `lib.py.solidcraft`).
-**Python package and command:** still `scpf`; no code-level rename required.
-**Companion native-command library:** [SCPC](https://github.com/brainboxemb/lib.py.solidcraft.cmd), with package/command `scpc`.
+`lib.py.solidcraft.forge` is the Python authoring library for the SolidCraft CAD engine.
+The Python package and command are both named `scpf`.
 
-`lib.py.solidcraft.forge` owns the **reusable Python API, native command compiler, runner and unit tests** for the [SolidCraft](https://github.com/tangency-labs/solidcraft) CAD engine.
+Forge models are ordinary Python classes with a `build()` method. Forge lowers their
+modelling intent to native SolidCraft command JSON; SolidCraft creates the editable
+CAD geometry and feature history.
 
-SCPF models are plain Python classes with a `build()` method. The package
-compiles these to **native SolidCraft command JSON**. The SolidCraft engine,
-not SCPF, creates and saves the actual editable CAD geometry and feature history.
+## Current versions
 
-## Release
+- SCPF package: **0.11.0**
+- Tested SolidCraft runtime: **0.42.0**
 
-Current library release: **0.1.1**, qualified against **SolidCraft 0.42.0**.
+The package version is defined in `scpf/pyproject.toml`.
+The tested SolidCraft version is defined in
+`scpf/scpf/version.py::TESTED_SOLIDCRAFT_VERSION`.
 
-Release notes are maintained in [CHANGELOG.md](CHANGELOG.md). The Python package
-version is defined only in `scpf/pyproject.toml`; SolidCraft compatibility is
-defined separately by `scpf.version.TESTED_SOLIDCRAFT_VERSION`. See
-[docs/10-release-process.md](docs/10-release-process.md) for the guarded
-release procedure and downstream pinning rules.
+## Repository responsibilities
 
-## Install and test this library
+This repository contains:
 
-From this repository root, in the active Python/Conda environment:
+- the reusable Forge Python API under `scpf/scpf/`;
+- command lowering and runners;
+- Forge unit tests;
+- small API and behaviour examples under `examples/`;
+- example-local command verification;
+- example-local native model verification where migrated;
+- the immutable SolidCraft runtime used by `model_verify`.
+
+Product CAD models live in the separate
+[2026-011-02.cad.solidcraft](https://github.com/brainboxemb/2026-011-02.cad.solidcraft)
+repository.
+
+## Install and test
+
+From the repository root:
 
 ```powershell
 python -m pip install -e ./scpf
 python -m unittest discover -s scpf/tests -v
 ```
 
-There is no mandatory `main()` or `show()`. The tiny
-[examples and SCPF cheatsheet](https://brainboxemb.github.io/lib.py.solidcraft.forge/)
-are generated from source, command-compiled, **rendered by native SolidCraft**
-and regression-checked in CI.
-The library website also provides a [full, multi-chapter API Guide](https://brainboxemb.github.io/lib.py.solidcraft.forge/guide/) covering geometry, transforms, native features, reusable components and verification.
-[Why SCPF delegates geometry to SolidCraft](scpf/docs/architecture.md) explains the code structure, native component placement and verification.
+Check one model without starting SolidCraft:
 
-SolidCraft compatibility is defined once by
-`scpf.version.TESTED_SOLIDCRAFT_VERSION`. The qualification site publishes
-that exact tested version together with source-matched native results; older
-versions are refused by the native-version guard and newer unqualified versions
-generate a warning. See the [SCPF API guide](scpf/README.md) for parameters,
-placement, sketches, features, reusable components, and GUI/CLI execution.
-
-## Reusable component parameters
-
-Component parameters are implicit. Public lower-case numeric fields become
-editable native parameters when the component owns that value:
-
-```python
-@component
-class Bracket:
-    width = 24.0
-    inside_corner_radius = 4.0
+```powershell
+python -m scpf check examples/simple-box/scpf/model.py
 ```
 
-When a parent `Parameter` or expression is passed into a child input, Forge
-reuses that existing symbolic dependency instead of creating a duplicate
-component parameter:
+Compile it to native SolidCraft command JSON:
 
-```python
-bracket = Bracket(
-    width=self.bracket_width,
-    inside_corner_radius=self.corner_radius,
-)
+```powershell
+python -m scpf examples/simple-box/scpf/model.py --out output/simple-box.json
 ```
 
-Root-model public `lower_case` values are editable model parameters.
-Reusable child-component defaults stay fixed unless explicitly published with
-`component(..., include=...)`. Passing a parent Parameter or Expression into
-a child input always preserves and reuses that parent dependency.
+The detailed API-oriented developer documentation is in `scpf/README.md`.
 
-## CAD projects live in another repository
+## Current CI architecture
 
-**[2026-011-02.cad.solidcraft](https://github.com/brainboxemb/2026-011-02.cad.solidcraft)** contains the actual models and native output:
+GitHub exposes one workflow: `.github/workflows/scpf.yml` (**Forge**).
 
-- [Corner Bracket](https://github.com/brainboxemb/2026-011-02.cad.solidcraft/tree/main/models/corner-bracket)
-- [HUB75 panel and component occurrences](https://github.com/brainboxemb/2026-011-02.cad.solidcraft/tree/main/models/hub75-panel)
-- [Raspberry Pi enclosure](https://github.com/brainboxemb/2026-011-02.cad.solidcraft/tree/main/models/plastic-enclosure-pi)
-- [Other CAD models](https://github.com/brainboxemb/2026-011-02.cad.solidcraft/tree/main/models)
+Planning and execution are delegated to the pinned reusable workflows from
+`brainboxemb/tool.cad.ci`. Repository-specific work is declared in:
 
-The CAD project uses [vcs2l](https://github.com/ros-infrastructure/vcs2l)
-and an exact Git commit in `dependencies.repos` to import the library under
-`ext/scpf`. Its `bootstrap.ps1` installs `ext/scpf/scpf` editable.
-No Git submodules or manual `PYTHONPATH` setup are required.
+```text
+cad-ci.yml
+scpf/ci.yml
+examples/<example>/ci.yml
+```
 
-Native renders and the CAD model catalog are published on the
-[CAD results website](https://brainboxemb.github.io/2026-011-02.cad.solidcraft/).
+Current step names:
 
-## Migration status
+- `tool_build` — build the Forge package;
+- `tool_test` — run Forge unit tests;
+- `tool_verify` — execute an example and verify its generated command contract;
+- `model_verify` — replay that command document in SolidCraft and verify the real model.
 
-This repository was renamed from `exp.2026-011.solidcraft` on 2026-11-11,
-preserving its issues, pull requests and history. The CAD repository is
-separate and has passed its first Python, native SolidCraft and Pages build
-checks. Only the small, independent API fixtures remain under `examples/` on
-`main`. Historical CAD models and the old results website remain in Git history
-in Git history. The **CAD project** is the current owner, while the
-library's `gh-pages` branch now publishes only three tiny API examples and
-the cheatsheet (no duplicate native CAD gallery).
+At the current migration point, `simple-box` has the complete
+`tool_verify -> model_verify` path. Issue #395 tracks the next ten examples.
 
-The migration is tracked in [issue #25](https://github.com/brainboxemb/lib.py.solidcraft.forge/issues/25).
+## Native SolidCraft runtime
+
+Native model verification uses one runtime definition:
+
+```text
+docker/
+  solidcraft_runtime/
+    Dockerfile
+    runtime.json
+```
+
+`scripts/solidcraft_runtime.py` resolves the immutable image reference.
+`scripts/model_verify.py` runs the example-local
+`verification/verify_model.py` inside that image.
+
+Model-specific dimensions, mutations and expectations stay under
+`examples/<example>/verification/`.
+
+The former repository-wide qualification package and qualification Docker image
+are no longer part of the active architecture.
+
+## Example metadata
+
+Presentation metadata may be stored in `model.yml` with these generic fields:
+
+```text
+section
+title
+tagline
+description
+parameters
+stages
+```
+
+Technical assertions and mutation logic are executable verification code rather
+than presentation metadata.
+
+## Release status
+
+Release notes are maintained in `CHANGELOG.md`.
+
+The former automatic release-validation/publication path was removed during the
+CAD-CI cut-over because it no longer matched the active workflow. The current
+Forge workflow does not automatically create a Git tag or GitHub Release.
+
+Build, Pages and release publication migration is tracked in issue #366.
+`docs/10-release-process.md` describes the current state.
+
+## Build and Pages status
+
+The existing `build` and `gh-pages` branches contain generated output from
+the earlier publication architecture. The current CAD-CI workflow has not yet
+completed its publication cut-over.
+
+Issue #366 tracks migration to the generic `tool.cad.ci` publisher.
+Until then, current source plus current CAD-CI results are authoritative for
+development status.
+
+## Documentation map
+
+- `docs/05-cad-api-design.md` — cross-object Forge API rules.
+- `docs/06-verification.md` — current verification layers.
+- `docs/09-documentation-architecture.md` — documentation sources of truth.
+- `docs/10-release-process.md` — current release state.
+- `docs/11-generated-output.md` — generated-output migration boundary.
+- `docs/design/test-architecture.md` — current test ownership.
+- `docs/agent/forge-api.json` — generated machine-readable Forge API index.
+- `docs/agent/reference-libraries.md` — notes for external comparison libraries.
+
+`docs/changes/` and older design/audit records are historical records and may
+use terminology from earlier architectures.
+
+## Companion repositories
+
+- [lib.py.solidcraft.cmd](https://github.com/brainboxemb/lib.py.solidcraft.cmd)
+- [2026-011-02.cad.solidcraft](https://github.com/brainboxemb/2026-011-02.cad.solidcraft)
+- [tool.cad.ci](https://github.com/brainboxemb/tool.cad.ci)
 
 ## License
 
-The package exposes SolidCraft's native command interface; SolidCraft itself is
-an independent open-source CAD application. See the respective repositories for
-their current license information.
+Forge exposes SolidCraft's native command interface. SolidCraft itself is an
+independent open-source project; consult the respective repositories for their
+license information.

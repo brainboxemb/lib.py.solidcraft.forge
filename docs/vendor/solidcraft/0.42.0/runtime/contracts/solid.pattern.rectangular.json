@@ -1,7 +1,0 @@
-{
-  "id": "solid.pattern.rectangular",
-  "input": null,
-  "label": "Rectangular Pattern",
-  "output": null,
-  "params": "features: [names] | bodies: [names] | components: [names]; dir1: [x,y,z]; count1; spacing1; dir2?, count2?, spacing2?; alignment?, alignment2?: left|center|right (default right; counts include the original); reversed?, reversed2?: bool (Flip)"
-}
