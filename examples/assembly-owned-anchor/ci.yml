@@ -1,5 +1,5 @@
-# One Forge example is one CI item. Integration writes cheap case evidence
-# through command compilation; native resumes the same staged output at replay.
+# One Forge example is one CI item. Integration proves the generated command
+# contract and compilation; native resumes the same item from replay onward.
 id: assembly-owned-anchor
 kind: example
 watch:
@@ -7,14 +7,12 @@ watch:
   - examples/assembly-owned-anchor/tests/**
   - scpf/scpf/**
   - qualification/case_runner.py
-  - qualification/case_evidence.py
   - qualification/case_selection.py
   - qualification/cases.py
   - qualification/camera.py
   - qualification/goal_overlay.py
   - qualification/native_cases.py
   - qualification/native_validation.py
-  - qualification/run_case_evidence.py
   - qualification/run_post_build_inspections.py
   - qualification/visual_validation.py
   - qualification/commands/**
@@ -30,13 +28,9 @@ steps:
     run: [python, ../../scripts/example_ci.py, integration]
     outputs:
       - case/assembly-owned-anchor.json
-      - case/stages/assembly-owned-anchor/01-q1.json
-      - case/stages/assembly-owned-anchor/02-q2.json
-      - case/stages/assembly-owned-anchor/03-compile.json
-      - case/qualification/case-evidence/q1/assembly-owned-anchor.txt
-      - case/qualification/case-evidence/q2/assembly-owned-anchor.txt
+      - case/stages/assembly-owned-anchor/01-compile.json
   - id: native
     run: [python, ../../scripts/example_ci.py, native]
     outputs:
       - case/native/assembly-owned-anchor
-      - case/stages/assembly-owned-anchor/13-gate.json
+      - case/stages/assembly-owned-anchor/11-gate.json

@@ -1,5 +1,5 @@
-# One Forge example is one CI item. Integration writes cheap case evidence
-# through command compilation; native resumes the same staged output at replay.
+# One Forge example is one CI item. Integration proves the generated command
+# contract and compilation; native resumes the same item from replay onward.
 id: eight-corner-brackets
 kind: example
 watch:
@@ -7,14 +7,12 @@ watch:
   - examples/eight-corner-brackets/tests/**
   - scpf/scpf/**
   - qualification/case_runner.py
-  - qualification/case_evidence.py
   - qualification/case_selection.py
   - qualification/cases.py
   - qualification/camera.py
   - qualification/goal_overlay.py
   - qualification/native_cases.py
   - qualification/native_validation.py
-  - qualification/run_case_evidence.py
   - qualification/run_post_build_inspections.py
   - qualification/visual_validation.py
   - qualification/commands/**
@@ -30,13 +28,9 @@ steps:
     run: [python, ../../scripts/example_ci.py, integration]
     outputs:
       - case/eight-corner-brackets.json
-      - case/stages/eight-corner-brackets/01-q1.json
-      - case/stages/eight-corner-brackets/02-q2.json
-      - case/stages/eight-corner-brackets/03-compile.json
-      - case/qualification/case-evidence/q1/eight-corner-brackets.txt
-      - case/qualification/case-evidence/q2/eight-corner-brackets.txt
+      - case/stages/eight-corner-brackets/01-compile.json
   - id: native
     run: [python, ../../scripts/example_ci.py, native]
     outputs:
       - case/native/eight-corner-brackets
-      - case/stages/eight-corner-brackets/13-gate.json
+      - case/stages/eight-corner-brackets/11-gate.json
