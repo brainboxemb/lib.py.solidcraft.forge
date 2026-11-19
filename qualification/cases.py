@@ -100,7 +100,7 @@ QUALIFICATION_CASES = [
         "forge_model": "A feature-based plate with one face-attached source hole cut and one native rectangular pattern that creates the second hole.",
         "lowering": "Forge emits one attached Hole sketch/cut and one native solid.pattern.rectangular history feature. No Forge-side repeat helper or expanded duplicate profiles are used.",
         "native_expectation": "One plate with two through holes at the requested Y spacing, one source cut and one native rectangular pattern feature.",
-        "mutation": "No saved-design mutation in this fixture; geometry and feature placement are measured at Q4.",
+        "mutation": "No saved-design mutation in this fixture; geometry and feature placement are measured at geometry.",
         "references": [
             ("OpenSCAD", "Comparable geometry normally uses difference() and repeated cylinders. This case instead qualifies one semantic TOP-face source cut plus native SolidCraft pattern history; native solid.hole itself is qualified separately by hole-family."),
         ],
@@ -114,7 +114,7 @@ QUALIFICATION_CASES = [
         "forge_model": "One 120 x 40 x 12 mm plate with four explicitly positioned Hole-family features. ThreadedHole keeps thread intent separate from the simple bore diameter.",
         "lowering": "Each Forge Hole-family object lowers one-to-one to one native solid.hole command. Counterbore and countersink use the native hole type fields; ThreadedHole uses native thread metadata/modeling fields. No sketch or helper subtraction solid is synthesized.",
         "native_expectation": "One plate contains four editable native Hole features: Ø6 simple, Ø6/Ø12 x 4 counterbore, Ø6/Ø12 90° countersink, and an M6 modeled threaded hole using an explicit Ø5 tap drill.",
-        "mutation": "No saved-design mutation is required in this first Hole-family qualification; Q1-Q4 prove API, native command identity and geometry while Q6 proves the visible forms.",
+        "mutation": "No saved-design mutation is required in this first Hole-family qualification; unit, integration and native geometry checks prove API, native command identity and geometry while visual proves the visible forms.",
         "references": [
             ("build123d", "build123d 0.12.0 provides native Hole, CounterBoreHole and CounterSinkHole operations. Its core library has no equivalent native tapped-hole metadata feature, so the fourth reference cut is the Ø5 M6 tap-drill envelope."),
             ("CadQuery", "CadQuery independently expresses simple, counterbore and countersink geometry; the threaded reference uses the Ø5 tap-drill envelope because native thread metadata is SolidCraft-specific."),
@@ -131,7 +131,7 @@ QUALIFICATION_CASES = [
         "forge_model": "One 80 x 40 mm rectangular flat blank with a shared 2 mm sheet rule, one Ø6 through hole in the fixed flat, and one 90 degree fold along the Y direction near the right side.",
         "lowering": "Forge emits one sheet.manage_rules, one Blank sketch, one sheet.flange(type='base'), one native solid.hole and one native sheet.fold. No solid.extrude or fused-solid bend approximation is used.",
         "native_expectation": "SolidCraft 0.42 keeps one connected sheet-metal body with the Ø6 hole on the fixed flat, one native Fold feature and a flat pattern that recovers the original rectangular blank and cutout.",
-        "mutation": "No Q5 mutation is required in this first sheet-metal qualification. Q1-Q4 prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.",
+        "mutation": "No saved-design mutation is required in this first sheet-metal qualification. unit, integration and native geometry checks prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.",
         "references": [
             ("build123d", "The pinned build123d 0.12.0 reference uses make_brake_formed for an independent final-geometry comparison. Its newer BuildSheet/bend API is design input only and is not silently substituted into the pinned reference runtime."),
             ("CadQuery", "Independent final geometry is built from flat and bent solid envelopes; CadQuery does not provide the same native sheet-history contract."),
@@ -430,7 +430,7 @@ QUALIFICATION_CASES = [
         "native_expectation": "One stepped cylindrical body spans Z=0..26 mm. Disc and Hub remain two solved native Sketch/Extrude feature pairs and the Hub is attached to the actual top face of the Disc.",
         "mutation": "No saved-design mutation; this fixture isolates support-face lookup on a non-rectangular feature body.",
         "references": [
-            ("SolidCraft", "Native Q4 proves the face-attached Hub Sketch builds on the circular Disc and stays solved."),
+            ("SolidCraft", "Native geometry proves the face-attached Hub Sketch builds on the circular Disc and stays solved."),
             ("PythonSCAD", "Independent CSG reference proves the stepped-cylinder geometry."),
             ("CadQuery", "Independent union reference proves the same two-radius stepped body."),
             ("build123d", "Independent builder reference proves the same baseline geometry."),
@@ -481,7 +481,7 @@ QUALIFICATION_CASES = [
         "native_expectation": "SolidCraft saves one Selected holes Sketch containing the associative four-circle pattern and one cut ExtrudeFeature that removes exactly three profiles while leaving the fourth region uncut.",
         "mutation": "Change hole_diameter 8->10 mm and hole_pitch 20->24 mm in the saved .sc design. Without rerunning Python the three selected cuts must follow their associated pattern profiles, including profiles whose centres move away from the original pick points; the unselected profile remains uncut.",
         "references": [
-            ("SolidCraft", "Native Q5 proves that saved point-based profile selections remain attached to the intended profile curves after pattern spacing and diameter changes."),
+            ("SolidCraft", "Native saved-design proves that saved point-based profile selections remain attached to the intended profile curves after pattern spacing and diameter changes."),
             ("PythonSCAD", "Independent final geometry confirms the baseline three-hole result without using Forge's profile-selection lowering."),
             ("CadQuery", "Independent final geometry confirms that only three of the four possible patterned positions are cut."),
             ("build123d", "Independent final geometry confirms the selected-hole plate."),
@@ -499,7 +499,7 @@ QUALIFICATION_CASES = [
         "native_expectation": "SolidCraft saves one plate with six through holes and one native CircularPatternFeature that references the original BoltHole cut.",
         "mutation": "Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature.",
         "references": [
-            ("SolidCraft", "Native Q2-Q5 prove one saved CircularPatternFeature and count mutation. The four comparison libraries independently prove the baseline six-hole geometry."),
+            ("SolidCraft", "Native integration through saved-design checks prove one saved CircularPatternFeature and count mutation. The four comparison libraries independently prove the baseline six-hole geometry."),
         ],
     },
     {
@@ -514,7 +514,7 @@ QUALIFICATION_CASES = [
         "native_expectation": "SolidCraft saves one plate with six slot cuts and one native rectangular pattern History feature that references the original Slot cut.",
         "mutation": "Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature.",
         "references": [
-            ("SolidCraft", "Native Q2-Q4 additionally prove one saved RectangularPatternFeature. The four comparison libraries independently prove the final 3 x 2 slot geometry."),
+            ("SolidCraft", "Native integration through geometry checks additionally prove one saved RectangularPatternFeature. The four comparison libraries independently prove the final 3 x 2 slot geometry."),
         ],
     },
     {
@@ -526,9 +526,9 @@ QUALIFICATION_CASES = [
         "forge_model": "One 160 x 120 x 5 mm plate with five separate closed Slot profiles in one named sketch, removed with one through-all cut.",
         "lowering": "Each public constructor emits exactly its matching sketch.slot.* command; the sketch is finished once and one native cut extrusion removes all five profiles.",
         "native_expectation": "SolidCraft saves one plate, one Slot family sketch containing five closed profiles and one error-free cut extrusion. The native timeline must not contain sketch.rectangle.rounded as a substitute for Slot construction.",
-        "mutation": "No Q5 mutation is required; this case isolates the five native sketch construction methods and their saved feature history.",
+        "mutation": "No saved-design mutation is required; this case isolates the five native sketch construction methods and their saved feature history.",
         "references": [
-            ("SolidCraft", "Native Q2-Q4 additionally prove the five sketch.slot.* command identities. The four comparison libraries independently prove the resulting five cut shapes."),
+            ("SolidCraft", "Native integration through geometry checks additionally prove the five sketch.slot.* command identities. The four comparison libraries independently prove the resulting five cut shapes."),
         ],
     },
     {
@@ -555,7 +555,7 @@ QUALIFICATION_CASES = [
         "forge_model": "A Shape CSG tree rooted in Sphere so Forge deliberately selects the direct CSG compiler instead of the feature-history Box compiler.",
         "lowering": "solid.sphere(new), solid.box(join), one X-axis solid.cylinder(cut), then solid.box(intersect).",
         "native_expectation": "SolidCraft accepts the complete CSG command path, produces one valid clipped body and evaluates the native timeline without errors.",
-        "mutation": "No saved-design mutation in this case; it isolates primitive CSG lowering. Parametric edits are covered by dedicated Q5 cases.",
+        "mutation": "No saved-design mutation in this case; it isolates primitive CSG lowering. Parametric edits are covered by dedicated saved-design cases.",
         "references": [
             ("OpenSCAD", "Closest to ordinary union()/difference()/intersection() with translate()/rotate() around primitives."),
             ("PythonSCAD", "Useful comparison for Python objects and operators while Forge still delegates all geometry to SolidCraft."),
@@ -589,7 +589,7 @@ def blocked_qualification_cases() -> tuple[dict, ...]:
 
 
 def supported_qualification_cases() -> tuple[dict, ...]:
-    """Cases expected to compile and pass the normal Q1-Q6 flow."""
+    """Cases expected to compile and pass the normal full qualification flow."""
     return tuple(
         case for case in QUALIFICATION_CASES
         if not case.get("blocked_reason")
