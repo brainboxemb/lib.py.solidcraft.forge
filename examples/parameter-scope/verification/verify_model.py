@@ -11,6 +11,8 @@ from typing import Any
 import yaml
 
 from cad_verification import (
+    BodyEnvelope,
+    match_body_envelopes,
     CheckOutcome,
     VerificationCheck,
     VerificationContext,
@@ -19,6 +21,7 @@ from cad_verification import (
     verify,
 )
 from scpf.headless import run_document
+from verification.solidcraft_measurements import measured_body_envelopes
 
 
 EXAMPLE = Path(__file__).resolve().parents[1]
@@ -53,48 +56,6 @@ def load_json(path: Path) -> Any:
     """Read JSON evidence produced by SolidCraft."""
 
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def close(actual: float, expected: float, tolerance: float = 1e-3) -> bool:
-    """Return whether two engineering values match within tolerance."""
-
-    return abs(float(actual) - float(expected)) <= tolerance
-
-
-def vector_close(actual, expected, tolerance: float = 1e-3) -> bool:
-    """Compare equally-sized numeric vectors."""
-
-    return (
-        len(actual) == len(expected)
-        and all(close(a, b, tolerance) for a, b in zip(actual, expected))
-    )
-
-
-def bounds_match(data: dict[str, Any], expected, tolerance: float = 1e-3) -> bool:
-    """Match body bounds without depending on SolidCraft body ordering."""
-
-    actual = [
-        (body["bbox"]["min"], body["bbox"]["max"])
-        for body in data.get("bodies", [])
-        if isinstance(body.get("bbox"), dict)
-    ]
-    if len(actual) != len(expected):
-        return False
-    remaining = list(actual)
-    for minimum, maximum in expected:
-        hit = next(
-            (
-                index
-                for index, (lo, hi) in enumerate(remaining)
-                if vector_close(lo, minimum, tolerance)
-                and vector_close(hi, maximum, tolerance)
-            ),
-            None,
-        )
-        if hit is None:
-            return False
-        remaining.pop(hit)
-    return not remaining
 
 
 def parameters(data: dict[str, Any]) -> dict[str, float]:
@@ -242,11 +203,17 @@ def geometry_check(ctx: VerificationContext) -> CheckOutcome:
         ([300, -10, 0], [380, 10, 10]),
         ([440, -10, 0], [480, 10, 10]),
     ]
-    require_true(
-        "baseline bounds",
-        bounds_match(data, expected_bounds),
-        expected=expected_bounds,
-        actual=[body.get("bbox") for body in data.get("bodies", [])],
+    match_body_envelopes(
+        tuple(
+            BodyEnvelope(
+                tuple(minimum),
+                tuple(maximum),
+                f"baseline bounds {index + 1}",
+            )
+            for index, (minimum, maximum) in enumerate(expected_bounds)
+        ),
+        measured_body_envelopes(data),
+        1e-3,
     )
     widths = sorted(
         round(body["bbox"]["max"][0] - body["bbox"]["min"][0], 6)
@@ -286,11 +253,17 @@ def saved_design_check(ctx: VerificationContext) -> CheckOutcome:
         ([290, -10, 0], [390, 10, 10]),
         ([435, -10, 0], [485, 10, 10]),
     ]
-    require_true(
-        "mutated bounds",
-        bounds_match(data, expected_bounds),
-        expected=expected_bounds,
-        actual=[body.get("bbox") for body in data.get("bodies", [])],
+    match_body_envelopes(
+        tuple(
+            BodyEnvelope(
+                tuple(minimum),
+                tuple(maximum),
+                f"mutated bounds {index + 1}",
+            )
+            for index, (minimum, maximum) in enumerate(expected_bounds)
+        ),
+        measured_body_envelopes(data),
+        1e-3,
     )
     require_equal("shared_width mutation", parameters(data).get("shared_width"), 100.0)
     widths = sorted(

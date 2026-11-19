@@ -55,48 +55,6 @@ def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def close(actual: float, expected: float, tolerance: float = 1e-3) -> bool:
-    """Return whether two engineering values match within tolerance."""
-
-    return abs(float(actual) - float(expected)) <= tolerance
-
-
-def vector_close(actual, expected, tolerance: float = 1e-3) -> bool:
-    """Compare equally-sized numeric vectors."""
-
-    return (
-        len(actual) == len(expected)
-        and all(close(a, b, tolerance) for a, b in zip(actual, expected))
-    )
-
-
-def bounds_match(data: dict[str, Any], expected, tolerance: float = 1e-3) -> bool:
-    """Match body bounds without depending on SolidCraft body ordering."""
-
-    actual = [
-        (body["bbox"]["min"], body["bbox"]["max"])
-        for body in data.get("bodies", [])
-        if isinstance(body.get("bbox"), dict)
-    ]
-    if len(actual) != len(expected):
-        return False
-    remaining = list(actual)
-    for minimum, maximum in expected:
-        hit = next(
-            (
-                index
-                for index, (lo, hi) in enumerate(remaining)
-                if vector_close(lo, minimum, tolerance)
-                and vector_close(hi, maximum, tolerance)
-            ),
-            None,
-        )
-        if hit is None:
-            return False
-        remaining.pop(hit)
-    return not remaining
-
-
 def parameters(data: dict[str, Any]) -> dict[str, float]:
     """Return native parameter values keyed by parameter name."""
 

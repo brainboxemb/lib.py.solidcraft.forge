@@ -11,6 +11,7 @@ from typing import Any
 import yaml
 
 from cad_verification import (
+    compare_bounds,
     CheckOutcome,
     VerificationCheck,
     VerificationContext,
@@ -53,48 +54,6 @@ def load_json(path: Path) -> Any:
     """Read JSON evidence produced by SolidCraft."""
 
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def close(actual: float, expected: float, tolerance: float = 1e-3) -> bool:
-    """Return whether two engineering values match within tolerance."""
-
-    return abs(float(actual) - float(expected)) <= tolerance
-
-
-def vector_close(actual, expected, tolerance: float = 1e-3) -> bool:
-    """Compare equally-sized numeric vectors."""
-
-    return (
-        len(actual) == len(expected)
-        and all(close(a, b, tolerance) for a, b in zip(actual, expected))
-    )
-
-
-def bounds_match(data: dict[str, Any], expected, tolerance: float = 1e-3) -> bool:
-    """Match body bounds without depending on SolidCraft body ordering."""
-
-    actual = [
-        (body["bbox"]["min"], body["bbox"]["max"])
-        for body in data.get("bodies", [])
-        if isinstance(body.get("bbox"), dict)
-    ]
-    if len(actual) != len(expected):
-        return False
-    remaining = list(actual)
-    for minimum, maximum in expected:
-        hit = next(
-            (
-                index
-                for index, (lo, hi) in enumerate(remaining)
-                if vector_close(lo, minimum, tolerance)
-                and vector_close(hi, maximum, tolerance)
-            ),
-            None,
-        )
-        if hit is None:
-            return False
-        remaining.pop(hit)
-    return not remaining
 
 
 def parameters(data: dict[str, Any]) -> dict[str, float]:
@@ -239,20 +198,18 @@ def geometry_check(ctx: VerificationContext) -> CheckOutcome:
         ([-20, -15, 0], [20, 15, 10]),
         ([20, -15, 0], [60, 15, 10]),
     ]
-    require_true(
-        "touching Block bounds",
-        len(actual) == 2
-        and all(
-            vector_close(body["bbox"]["min"], minimum)
-            and vector_close(body["bbox"]["max"], maximum)
-            for body, (minimum, maximum) in zip(actual, expected)
-        ),
-        expected=expected,
-        actual=[
-            (body["bbox"]["min"], body["bbox"]["max"])
-            for body in actual
-        ],
-    )
+    for index, (body, (minimum, maximum)) in enumerate(
+        zip(actual, expected),
+        start=1,
+    ):
+        compare_bounds(
+            minimum,
+            maximum,
+            body["bbox"]["min"],
+            body["bbox"]["max"],
+            1e-3,
+            label=f"touching Block bounds {index}",
+        )
 
     return CheckOutcome.passed(
         evidence={
