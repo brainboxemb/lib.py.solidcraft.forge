@@ -98,6 +98,9 @@ jobs:
       - name: Bootstrap pinned tool.cad.ci
         run: python scripts/bootstrap_cad_ci.py
 
+      - name: Install pinned tool.cad.ci stack
+        run: python -m pip install -e ext/cad-ci
+
       - name: Resolve immutable qualification image
         if: needs.plan.outputs.needs_image == 'true'
         id: image
