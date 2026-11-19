@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Write the structured qualification result for one completed example case.
+"""Finalize one self-contained Forge example item.
 
-The staged case runner has already produced all native evidence. This module
-only normalizes that evidence into the existing schema-v4 result inside the
-same generic item output; it never executes SolidCraft.
+The finalizer reads the command, stage and native evidence already produced by
+that item and writes one semantic qualification-result.json. It never reruns
+SolidCraft.
 """
 
 from __future__ import annotations
@@ -18,7 +18,6 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from qualification.collect_item_results import write_validation_summaries
 from qualification.project_metadata import scpf_version
 from qualification.results import collect as collect_results
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
@@ -36,18 +35,14 @@ def now() -> str:
 
 
 def finalize(out: Path, slug: str, source_sha: str) -> dict:
-    """Create and validate one structured result from existing staged output."""
+    """Create and validate one structured result from existing item output."""
 
-    write_validation_summaries(out, (slug,))
     result = collect_results(
-        out / "qualification",
-        out / "native",
+        out,
         source_sha,
         scpf_version(),
         TESTED_SOLIDCRAFT_VERSION,
         now(),
-        output_root=out,
-        stages_root=out / "stages",
         cases=(slug,),
     )
     case = result.get("cases", {}).get(slug)

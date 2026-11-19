@@ -2329,7 +2329,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
             native_expectation=escape(case["native_expectation"]),
             mutation_criterion=(
                 '<h3>Saved-design test</h3><p><strong>'
-                + ("Checked in the saved model. " if case.get("q5_required") else "No saved-model change is required. ")
+                + ("Checked in the saved model. " if case.get("saved_design_required") else "No saved-model change is required. ")
                 + escape(case["mutation"]) + '</p>'
             ),
             mutation=escape(case["mutation"]),

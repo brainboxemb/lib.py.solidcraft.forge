@@ -79,7 +79,7 @@ QUALIFICATION_GROUPS = [
 QUALIFICATION_CASES = [
     {
         "slug": "simple-box",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "fundamentals",
         "title": "Parameterized Box",
         "intent": "Establish the smallest model/parameter contract: three public Python fields create one editable native box.",
@@ -158,7 +158,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "parameter-scope",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "parameters",
         "title": "Explicit component parameters and shared dependencies",
         "intent": "Verify that reusable component defaults stay fixed unless explicitly included, while selected defaults become native parameters and parent Parameters/Expressions are reused rather than duplicated in the child.",
@@ -174,7 +174,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "parent-derived-child-size",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "parameters",
         "title": "Child dimensions derived from parent parameters",
         "intent": "Isolate one dependency contract: a reusable child receives width and depth expressions derived from parent parameters, and those child dimensions remain editable/associative in the saved SolidCraft design.",
@@ -204,7 +204,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "repeated-parent-attachments",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "associativity",
         "title": "Attachments on repeated parent occurrences",
         "intent": "Verify two disconnected rigid-joint graphs when two occurrences of one shared parent definition each own one attached child.",
@@ -265,7 +265,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "parametric-attach",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "associativity",
         "title": "Editable distance between attached components",
         "intent": "Verify that distance along the attachment normal remains a native editable joint parameter.",
@@ -280,7 +280,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "parametric-offset",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "associativity",
         "title": "Editable local offset at an attachment",
         "intent": "Verify the existing local (u,v) attachment-plane offset and make its coordinate semantics explicit.",
@@ -296,7 +296,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "parametric-anchor",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "anchors",
         "title": "Face anchor follows parent geometry",
         "intent": "Verify that a standard face anchor remains tied to changing parent topology.",
@@ -311,7 +311,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "corner-anchor",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "anchors",
         "title": "Topology-backed corner anchor",
         "intent": "Verify a corner reference that follows both parent width and height changes.",
@@ -326,7 +326,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "anchor-topology-mutation",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "anchors",
         "title": "Explicit topology pick follows parent resize",
         "intent": "Verify the AnchorTopology contract directly: Forge supplies fixed baseline edge/face/corner pick coordinates once, then native SolidCraft must retain that selected topology when the parent dimensions change.",
@@ -342,7 +342,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "assembly-owned-anchor",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "anchors",
         "title": "Assembly-owned named anchor",
         "intent": "Verify that an assembly can publish a semantic attachment name without putting that application-specific datum on the reusable component, and that a consumer of the name still lowers to an associative native relationship.",
@@ -358,7 +358,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "four-corner-l",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "components",
         "title": "Four centred vertical L-profiles",
         "intent": "Place one short vertical angle profile around each of the four rounded side corners of a rectangular frame. The assembly calculates each occurrence pose directly from frame dimensions.",
@@ -374,7 +374,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "eight-corner-brackets",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "components",
         "title": "Eight vertical L-profiles: two per side corner",
         "intent": "Place two short vertical angle profiles on each rounded side corner, one at the bottom and one at the top. The assembly calculates all eight poses directly from frame dimensions.",
@@ -390,7 +390,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "eight-flightcase-corners",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "components",
         "title": "Eight flightcase corner protectors",
         "intent": "Reuse one neutral three-plate corner protector on all eight case corners. The assembly calculates each XYZ position and 3D orientation directly from case dimensions.",
@@ -406,7 +406,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "xz-anchor",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "anchors",
         "title": "Anchors on XZ-profile extrusion",
         "intent": "Verify standard corner anchors on geometry authored as an XZ polygon and extruded in Y.",
@@ -454,7 +454,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "sketch-pattern-mirror",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "associativity",
         "title": "Associative sketch pattern and mirror",
         "intent": "Verify that one Circle seed and one Slot seed drive repeated sketch geometry through native SolidCraft rectangular patterns and mirrors instead of Python-expanded copies.",
@@ -472,7 +472,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "selective-profile-extrude",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "associativity",
         "title": "Selective Sketch profile extrusion",
         "intent": "Verify that one associative Sketch pattern can keep all generated profiles while one native extrusion selects only the intended closed regions by sketch-local points.",
@@ -490,7 +490,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "circular-feature-pattern",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "features",
         "title": "Native circular feature pattern",
         "intent": "Qualify one real SolidCraft circular History pattern over an existing cut feature, rather than Forge-expanded repeated holes.",
@@ -505,7 +505,7 @@ QUALIFICATION_CASES = [
     },
     {
         "slug": "rectangular-pattern",
-        "q5_required": True,
+        "saved_design_required": True,
         "group": "features",
         "title": "Native rectangular feature pattern",
         "intent": "Qualify a real SolidCraft rectangular History pattern over one existing cut feature, rather than Forge-expanded repeated geometry.",

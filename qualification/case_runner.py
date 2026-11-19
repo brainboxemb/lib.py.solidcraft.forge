@@ -24,7 +24,6 @@ if str(SCPF_ROOT) not in sys.path:
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from qualification.case_evidence import evidence_for
 from qualification.case_selection import CASE_BY_SLUG
 from qualification.cases import case_source_path, supported_case_slugs
 from qualification.camera import camera as camera_for
@@ -35,7 +34,6 @@ from qualification.native_cases import (
     validate_runtime_metadata,
 )
 from qualification.native_validation import VALIDATORS
-from qualification.run_case_evidence import run as run_case_evidence
 from qualification.run_post_build_inspections import run_post_build_inspections
 from qualification.visual_validation import (
     load_baselines,
@@ -46,8 +44,6 @@ from scpf.headless import run_document
 
 
 STAGES = (
-    "q1",
-    "q2",
     "compile",
     "replay",
     "evaluate",
@@ -214,28 +210,6 @@ def plan_stages(
     if first > last:
         raise ValueError("--from stage occurs after --until stage")
     return STAGES[first : last + 1]
-
-
-def _q_stage(ctx: CaseContext, level: str) -> StageOutcome:
-    stage_dir = ctx.stages / level / "evidence"
-    stage_dir.mkdir(parents=True, exist_ok=True)
-    for target in evidence_for(ctx.slug, level):
-        ctx.require(ROOT / target["file"])
-    result = run_case_evidence(level, stage_dir, ctx.slug)
-    if result != 0:
-        raise RuntimeError(f"{ctx.slug}: {level.upper()} evidence failed")
-    source = stage_dir / "case-evidence" / level / f"{ctx.slug}.txt"
-    ctx.require(source)
-    target = (
-        ctx.qualification
-        / "case-evidence"
-        / level
-        / f"{ctx.slug}.txt"
-    )
-    target.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(source, target)
-    ctx.produces(target)
-    return StageOutcome()
 
 
 def _compile(ctx: CaseContext) -> StageOutcome:
@@ -458,10 +432,10 @@ def _validate_native(ctx: CaseContext) -> StageOutcome:
     ctx.produces(target)
 
     failures = []
-    if result["q4"] != "pass":
-        failures.append(f"Q4={result['q4']}")
-    if CASE_BY_SLUG[ctx.slug].get("q5_required") and result["q5"] != "pass":
-        failures.append(f"Q5={result['q5']}")
+    if result["geometry"] != "pass":
+        failures.append(f"geometry={result['q4']}")
+    if CASE_BY_SLUG[ctx.slug].get("saved_design_required") and result["saved_design"] != "pass":
+        failures.append(f"saved_design={result['q5']}")
     if failures:
         raise RuntimeError(
             f"{ctx.slug}: native validation failed: " + ", ".join(failures)
@@ -501,12 +475,12 @@ def _gate(ctx: CaseContext) -> StageOutcome:
     native = json.loads(native_path.read_text(encoding="utf-8"))
     visual = json.loads(visual_path.read_text(encoding="utf-8"))
     failures = []
-    if native["q4"] != "pass":
-        failures.append(f"Q4={native['q4']}")
-    if CASE_BY_SLUG[ctx.slug].get("q5_required") and native["q5"] != "pass":
-        failures.append(f"Q5={native['q5']}")
+    if native["geometry"] != "pass":
+        failures.append(f"geometry={native['q4']}")
+    if CASE_BY_SLUG[ctx.slug].get("saved_design_required") and native["saved_design"] != "pass":
+        failures.append(f"saved_design={native['q5']}")
     if visual["status"] != "pass":
-        failures.append(f"Q6={visual['status']}")
+        failures.append(f"visual={visual['status']}")
     if failures:
         raise RuntimeError(
             f"{ctx.slug}: gate failed: " + ", ".join(failures)
@@ -519,8 +493,8 @@ def _gate(ctx: CaseContext) -> StageOutcome:
                 "schema": 1,
                 "case": ctx.slug,
                 "status": "pass",
-                "q4": native["q4"],
-                "q5": native["q5"],
+                "q4": native["geometry"],
+                "q5": native["saved_design"],
                 "q6": visual["status"],
             },
             indent=2,
@@ -533,8 +507,6 @@ def _gate(ctx: CaseContext) -> StageOutcome:
 
 
 STAGE_RUNNERS: dict[str, Callable[[CaseContext], StageOutcome]] = {
-    "q1": lambda ctx: _q_stage(ctx, "q1"),
-    "q2": lambda ctx: _q_stage(ctx, "q2"),
     "compile": _compile,
     "replay": _replay,
     "evaluate": _evaluate,
