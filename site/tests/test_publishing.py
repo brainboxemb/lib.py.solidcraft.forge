@@ -184,6 +184,7 @@ class SitePublishingContractTests(unittest.TestCase):
         pipeline = (ROOT / "scripts/forge_pipeline.py").read_text()
         self.assertIn("docker pull", workflow)
         self.assertIn("docker/build-push-action@v6", workflow)
+        self.assertIn('docker push "${{ steps.image.outputs.reference }}"', workflow)
         self.assertIn("steps.image_cache.outputs.exists != 'true'", workflow)
         self.assertIn('"qualification/case_runner.py"', pipeline)
         self.assertIn('"simple-box"', pipeline)
