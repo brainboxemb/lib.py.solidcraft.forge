@@ -7,8 +7,11 @@ documented in the subject-specific Forge documentation.
 
 - `tool.cad.ci` is the only generic CAD-CI planner/executor.
 - Forge workflows remain thin orchestration.
-- Forge owns Forge/SolidCraft-specific commands, expectations and fixtures.
-- Generic verification mechanics come from released `lib.py.cad.verfication`.
+- Forge owns Forge compilation, model definitions and model-specific
+  expectation data.
+- Shared verification behavior comes from released
+  `lib.py.cad.verfication`, including CAD-tool-specific adapters such as the
+  SolidCraft adapter.
 
 ## Runtime build and CI expectation
 
