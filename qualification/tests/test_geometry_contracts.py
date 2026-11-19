@@ -93,12 +93,12 @@ class GeometryContractTests(unittest.TestCase):
                 native = proof["solidcraft_only"]
                 self.assertEqual(native["native_expectation"], case["native_expectation"])
                 self.assertEqual(native["generated_relationship"], case["lowering"])
-                self.assertEqual(native["q5_required"], bool(case.get("q5_required")))
-                self.assertEqual(native["q5_reason"], case["mutation"])
-                self.assertTrue(native["q5_reason"].strip())
+                self.assertEqual(native["saved_design_required"], bool(case.get("saved_design_required")))
+                self.assertEqual(native["saved_design_reason"], case["mutation"])
+                self.assertTrue(native["saved_design_reason"].strip())
                 self.assertEqual(
                     native["mutation"],
-                    case["mutation"] if case.get("q5_required") else None,
+                    case["mutation"] if case.get("saved_design_required") else None,
                 )
 
     def test_every_case_explains_q5_applicability(self):

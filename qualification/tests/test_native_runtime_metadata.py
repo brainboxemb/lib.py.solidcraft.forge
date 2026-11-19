@@ -1,4 +1,4 @@
-"""Selected native qualification metadata must cover every Q5 case."""
+"""Selected native qualification metadata must cover every saved-design case."""
 
 from pathlib import Path
 import re
@@ -11,7 +11,7 @@ from qualification.cases import QUALIFICATION_CASES, QUALIFICATION_LEVELS
 from qualification.native_cases import (
     MUTATIONS,
     POST_BUILD_INSPECTIONS,
-    q5_required_cases,
+    saved_design_cases,
     validate_runtime_metadata,
 )
 from qualification.native_validation import VALIDATORS
@@ -27,7 +27,7 @@ class NativeRuntimeMetadataTests(unittest.TestCase):
         self.assertEqual(set(VALIDATORS), set(CASE_SLUGS))
 
     def test_every_q5_case_has_one_reusable_mutation(self):
-        self.assertEqual(set(MUTATIONS), set(q5_required_cases()))
+        self.assertEqual(set(MUTATIONS), set(saved_design_cases()))
         validate_runtime_metadata()
         for slug, spec in MUTATIONS.items():
             with self.subTest(case=slug):
