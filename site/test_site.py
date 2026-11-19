@@ -23,6 +23,7 @@ from api_coverage import (
     CAPABILITY_COVERAGE,
     validate_coverage_cases,
     validate_coverage_results,
+    coverage_rank,
 )
 from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 import scpf
@@ -554,8 +555,8 @@ def check(
         assert title in coverage_page, title
     for group, capability, target, current, cases, note in CAPABILITY_COVERAGE:
         assert capability in coverage_page, capability
-        assert target.startswith("Q")
-        assert current == "GAP" or current.startswith("Q")
+        assert coverage_rank(target) is not None
+        assert current == "GAP" or coverage_rank(current) is not None
     assert "Functional qualification:</strong>" in coverage_page
     assert "Qualification by area" in coverage_page
     assert "At target" in coverage_page
