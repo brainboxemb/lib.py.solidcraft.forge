@@ -1,4 +1,4 @@
-"""Q2 command contract for components."""
+"""integration command contract for components."""
 
 from pathlib import Path
 import unittest

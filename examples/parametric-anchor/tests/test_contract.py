@@ -1,4 +1,4 @@
-"""Q2 command contract for parametric-anchor."""
+"""integration command contract for parametric-anchor."""
 
 from pathlib import Path
 import unittest
