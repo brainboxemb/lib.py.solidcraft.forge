@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Qualification · Editable local offset at an attachment · SCPF Python library</title>
+<link rel="stylesheet" href="../../style.css"></head>
+<body><header class="top"><div class="wrap nav">
+<a class="brand" href="../../">SCPF <span>Python library</span></a>
+<div class="site-search" data-search-index="../../search-index.json">
+<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
+       placeholder="Search API…" aria-label="Search SCPF documentation"
+       aria-expanded="false" aria-controls="site-search-results">
+<span class="site-search-shortcut" aria-hidden="true">/</span>
+<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+</div>
+<nav aria-label="Main"><a href="../../">Examples</a><a href="../../guide/">API Guide</a><a href="../../reference/">API Reference</a><a href="../../qualification/">Qualification</a><a href="../../cheatsheet/">Cheatsheet</a>
+<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a></nav></div></header>
+<div class="development-banner" role="status"><div class="wrap">
+<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
+</div></div>
+<main class="wrap">
+<div class="crumb"><a href="../">← Qualification</a> / Editable local offset at an attachment</div>
+
+<section class="hero small">
+  <p class="eyebrow">Forge model example</p>
+  <div class="qualification-status-line"><span class="qualification-status pass">PASS</span></div>
+  <h1>Editable local offset at an attachment</h1>
+</section>
+
+<section class="panel qualification-example-overview">
+  <h2>What this example makes</h2>
+  <p>The marker moves within the selected corner anchor&#x27;s local attachment plane.</p>
+  <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Editable local offset at an attachment expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+  <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-iso.png" alt="Editable local offset at an attachment native SolidCraft preview"></a><figcaption>Native SolidCraft preview from the generated build output.</figcaption></figure>
+</section>
+
+<section class="panel">
+  <h2>Forge code</h2>
+  <p>This is the complete Forge source used for this example.</p>
+  <pre><code>class Base:
+    def build(self):
+        return Box(40, 30, 20, anchor=Anchor.BOTTOM)
+
+
+class Marker:
+    def build(self):
+        return Box(10, 10, 10, anchor=Anchor.BOTTOM)
+
+
+class ParametricOffset:
+    shift = 5.0
+
+    def build(self):
+        base = Base()
+        marker = Marker().attach(
+            base,
+            parent=Anchor.FRONT_TOP_RIGHT,
+            child=Anchor.BACK_TOP_RIGHT,
+            offset=(0, -self.shift),
+        )
+        return base + marker
+
+
+ParametricOffset()
+</code></pre>
+  <h3>API used</h3>
+  <p><code>attach(..., offset=(u, v))</code></p>
+</section>
+
+<section class="panel">
+  <h2>Reference code</h2>
+  <p>The same model is written independently with the reference libraries below.
+  This makes it easier to compare modelling style and the resulting shape.</p>
+  
+  <div class="qualification-reference-list">
+    <section class="qualification-reference-row"><div class="qualification-reference-source"><h4>PythonSCAD</h4><pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for a corner marker with local planar shift.
+
+Forge additionally qualifies that the saved SolidCraft joint follows a changed
+shift parameter without rerunning Python.
+&quot;&quot;&quot;
+
+from pythonscad import *
+
+shift = 5.0
+base = cube([40, 30, 20], center=True).up(10)
+marker = cube([10, 10, 10], center=True).translate([15, -20, 20])
+model = base | marker
+</code></pre><p><a href="reference-pythonscad.py">Open PythonSCAD source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pythonscad/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pythonscad/model-iso.png" alt="Editable local offset at an attachment PythonSCAD reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pythonscad/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pythonscad/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 1/1 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-20.0, -25.0, 0.0], &#x27;max&#x27;: [20.0, 15.0, 25.0]}</code></td><td><code>{&#x27;min&#x27;: [-20.0, -25.0, 0.0], &#x27;max&#x27;: [20.0, 15.0, 25.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>pyBOSL2</h4><pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for the parametric-offset case.
+
+This keeps the visible placement explicit. Forge&#x27;s qualification additionally
+checks a persisted local joint-frame offset after native parameter mutation.
+&quot;&quot;&quot;
+
+from pybosl2 import cuboid
+
+shift = 5.0
+base = cuboid([40, 30, 20]).up(10)
+marker = cuboid([10, 10, 10]).translate([15, -20, 20])
+model = base | marker
+</code></pre><p><a href="reference-pybosl2.py">Open pyBOSL2 source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pybosl2/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pybosl2/model-iso.png" alt="Editable local offset at an attachment pyBOSL2 reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pybosl2/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pybosl2/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 1/1 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-20.0, -25.0, 0.0], &#x27;max&#x27;: [20.0, 15.0, 25.0]}</code></td><td><code>{&#x27;min&#x27;: [-20.0, -25.0, 0.0], &#x27;max&#x27;: [20.0, 15.0, 25.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>CadQuery</h4><pre><code>&quot;&quot;&quot;CadQuery geometry reference for a corner marker with a planar shift.
+
+The final Location compares the visible local-offset result. Forge separately
+qualifies persisted local joint-frame mutation in SolidCraft.
+&quot;&quot;&quot;
+
+import cadquery as cq
+
+
+shift = 5.0
+base = cq.Solid.makeBox(40, 30, 20, cq.Vector(-20, -15, 0))
+marker = cq.Solid.makeBox(10, 10, 10, cq.Vector(-5, -5, -5))
+
+model = cq.Assembly()
+model.add(base, name=&quot;base&quot;)
+model.add(marker, name=&quot;marker&quot;, loc=cq.Location((15, -20, 20)))
+</code></pre><p><a href="reference-cadquery.py">Open CadQuery source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/cadquery/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/cadquery/model-iso.png" alt="Editable local offset at an attachment CadQuery reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/cadquery/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/cadquery/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 1/1 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-20.0, -25.0, 0.0], &#x27;max&#x27;: [20.0, 15.0, 25.0]}</code></td><td><code>{&#x27;min&#x27;: [-20.0, -25.0, 0.0], &#x27;max&#x27;: [20.0, 15.0, 25.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>build123d</h4><pre><code>&quot;&quot;&quot;build123d reference: a marker shifted relative to a top/front corner.&quot;&quot;&quot;
+from build123d import Align, Box, BuildPart, Locations
+
+shift = 5.0
+bottom = (Align.CENTER, Align.CENTER, Align.MIN)
+
+with BuildPart() as model:
+    Box(40, 30, 20, align=bottom)
+    with Locations((15, -15 - shift, 20)):
+        Box(10, 10, 10)
+</code></pre><p><a href="reference-build123d.py">Open build123d source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/build123d/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/build123d/model-iso.png" alt="Editable local offset at an attachment build123d reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/build123d/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/build123d/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 1/1 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [-20.0, -25.0, 0.0], &#x27;max&#x27;: [20.0, 15.0, 25.0]}</code></td><td><code>{&#x27;min&#x27;: [-20.0, -25.0, 0.0], &#x27;max&#x27;: [20.0, 15.0, 25.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr></tbody></table></div></details></div></section>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>How Forge builds it in SolidCraft</h2>
+  <p>The computed child seed pose retains the symbolic local offset, then the actual relationship is joint.create(type=&#x27;planar&#x27;, values=[u,v,angle]). The seed move is not an additional joint.</p>
+  <details>
+    <summary>Show generated SolidCraft commands</summary>
+    <pre><code>[
+  {
+    &quot;command&quot;: &quot;joint.create&quot;,
+    &quot;params&quot;: {
+      &quot;type&quot;: &quot;planar&quot;,
+      &quot;name&quot;: &quot;Attach Marker to Base&quot;,
+      &quot;a&quot;: {
+        &quot;edge&quot;: [
+          20.0,
+          -15.0,
+          10.0
+        ],
+        &quot;on&quot;: [
+          0.0,
+          -15.0,
+          10.0
+        ],
+        &quot;corner&quot;: [
+          20.0,
+          -15.0,
+          20.0
+        ],
+        &quot;occurrence&quot;: &quot;$base&quot;
+      },
+      &quot;b&quot;: {
+        &quot;point&quot;: [
+          20.0,
+          -15.0,
+          20.0
+        ],
+        &quot;z&quot;: [
+          0.0,
+          1.0,
+          0.0
+        ],
+        &quot;x&quot;: [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        &quot;occurrence&quot;: &quot;$marker&quot;
+      },
+      &quot;values&quot;: [
+        0,
+        &quot;-(shift)&quot;,
+        0.0
+      ]
+    }
+  }
+]</code></pre>
+  </details>
+</section>
+
+<section class="panel"><h2>SolidCraft result</h2><p>Built and measured with <strong>SolidCraft 0.42.0</strong>. Open the measurement details to inspect body sizes and editable parameters.</p><details class="qualification-detail-block"><summary><strong>shift 10</strong> · 2 bodies</summary><h4>Editable parameters</h4><table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td><code>shift</code></td><td>10.0</td></tr></tbody></table><h4>Body size</h4><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>Base</td><td><code>[-20, -15, 0]</code></td><td><code>[20, 15, 20]</code></td></tr><tr><td>Marker</td><td><code>[10, -25, 20]</code></td><td><code>[20, -15, 30]</code></td></tr></tbody></table></details><details class="qualification-detail-block"><summary><strong>Original model</strong> · 2 bodies</summary><h4>Editable parameters</h4><table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td><code>shift</code></td><td>5.0</td></tr></tbody></table><h4>Body size</h4><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>Base</td><td><code>[-20, -15, 0]</code></td><td><code>[20, 15, 20]</code></td></tr><tr><td>Marker</td><td><code>[10, -25, 15]</code></td><td><code>[20, -15, 25]</code></td></tr></tbody></table></details><details class="qualification-detail-block qualification-semantic-checks"><summary><strong>Semantic validation</strong> · PASS · 4/4 checks passed</summary><div class="qualification-table-scroll"><table class="qualification-checks"><thead><tr><th>Status</th><th>Level</th><th>Check</th><th>Expected</th><th>Actual</th></tr></thead><tbody><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>declared target geometry</td><td><code>[{&quot;label&quot;: &quot;Base&quot;, &quot;min&quot;: [-20, -15, 0], &quot;max&quot;: [20, 15, 20]}, {&quot;label&quot;: &quot;Marker&quot;, &quot;min&quot;: [10, -25, 15], &quot;max&quot;: [20, -15, 25]}]</code></td><td><code>[{&quot;min&quot;: [-20.0, -15.0, 0.0], &quot;max&quot;: [20.0, 15.0, 20.0]}, {&quot;min&quot;: [10.0, -25.0, 15.0], &quot;max&quot;: [20.0, -15.0, 25.0]}]</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>top-right anchor + 5 mm local offset</td><td><code>{&quot;min&quot;: [10, -25, 15], &quot;max&quot;: [20, -15, 25]}</code></td><td><code>{&quot;max&quot;: [20.0, -15.0, 25.0], &quot;min&quot;: [10.0, -25.0, 15.0]}</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>SAVED_DESIGN</td><td>declared mutation target geometry</td><td><code>[{&quot;label&quot;: &quot;Base&quot;, &quot;min&quot;: [-20, -15, 0], &quot;max&quot;: [20, 15, 20]}, {&quot;label&quot;: &quot;Marker&quot;, &quot;min&quot;: [10, -25, 20], &quot;max&quot;: [20, -15, 30]}]</code></td><td><code>[{&quot;min&quot;: [-20.0, -15.0, 0.0], &quot;max&quot;: [20.0, 15.0, 20.0]}, {&quot;min&quot;: [10.0, -25.0, 20.0], &quot;max&quot;: [20.0, -15.0, 30.0]}]</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>SAVED_DESIGN</td><td>10 mm local offset mutation</td><td><code>{&quot;min&quot;: [10, -25, 20], &quot;max&quot;: [20, -15, 30]}</code></td><td><code>{&quot;max&quot;: [20.0, -15.0, 30.0], &quot;min&quot;: [10.0, -25.0, 20.0]}</code></td></tr></tbody></table></div></details></section>
+
+<section class="panel qualification-visual-check"><h2>Visual result</h2><p>Actual is the SolidCraft render. Goal shows the expected shape. Overlay places both on top of each other so differences are easy to see.</p><p class="meta"><strong>Views checked:</strong> Iso, Front, Right</p><p class="meta"><strong>Image checks:</strong> expected shape PASS; saved render PASS.</p><section class="qualification-view" data-view="iso"><h3>Iso</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-iso.png" alt="Editable local offset at an attachment iso Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft iso view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/goal-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/goal-iso.png" alt="Editable local offset at an attachment iso Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same iso view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/overlay-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/overlay-iso.png" alt="Editable local offset at an attachment iso Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual iso view</figcaption></figure></div></section><section class="qualification-view" data-view="front"><h3>Front</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-front.png" alt="Editable local offset at an attachment front Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft front view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/goal-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/goal-front.png" alt="Editable local offset at an attachment front Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same front view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/overlay-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/overlay-front.png" alt="Editable local offset at an attachment front Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual front view</figcaption></figure></div></section><section class="qualification-view" data-view="right"><h3>Right</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-right.png" alt="Editable local offset at an attachment right Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft right view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/goal-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/goal-right.png" alt="Editable local offset at an attachment right Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same right view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/overlay-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/overlay-right.png" alt="Editable local offset at an attachment right Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual right view</figcaption></figure></div></section></section>
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration · Native model · Geometry · Saved design · Visual</span></div>
+    <div class="qualification-case-test-evidence"><h3>Integration tests</h3><p><strong>PASS</strong> — these example-owned tests prove the generated SolidCraft command contract before native execution.</p><ul><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/9c33dbd6a05a7f2db435dea4862571632ff57459/examples/parametric-offset/tests/test_contract.py"><code>examples/parametric-offset/tests/test_contract.py</code></a></li></ul></div>
+
+    <h3>Geometry checks</h3>
+    <p>These are the sizes and measurement points used by the automated checks.</p>
+    <div class="qualification-proof-contract"><div class="qualification-table-scroll"><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>Base</td><td><code>[-20, -15, 0]</code></td><td><code>[20, 15, 20]</code></td></tr><tr><td>Marker</td><td><code>[10, -25, 15]</code></td><td><code>[20, -15, 25]</code></td></tr></tbody></table></div><ul class="qualification-proof-summary"><li><strong>Is the size check enough for this model?</strong> Yes — The base and marker sizes and positions show the local offset. The saved SolidCraft model is then changed to confirm that the planar joint updates correctly.</li><li><strong>Views checked:</strong> iso, front, right</li></ul><p class="meta"><a href="proof-contract.json">Open geometry check data →</a></p></div>
+
+    <h3>Saved-design test</h3><p><strong>Checked in the saved model. Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm.</p>
+
+    <h3>Raw test files</h3>
+    <ul><li><a href="model.py">Forge fixture source</a></li><li><a href="reference-pythonscad.py">PythonSCAD reference source</a></li><li><a href="reference-pybosl2.py">pyBOSL2 reference source</a></li><li><a href="reference-cadquery.py">CadQuery reference source</a></li><li><a href="reference-build123d.py">build123d reference source</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/solidcraft.json">Generated command JSON in build output</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/results.json">results.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/measurements-shift-10.json">measurements-shift-10.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/measurements.json">measurements.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/joint-inspect.json">joint-inspect.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-shift-10.sc">model-shift-10.sc</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model.sc">model.sc</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model.step">model.step</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/qualification-result.json">qualification-result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/validation.json">validation.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/visual-validation.json">visual-validation.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/camera-front.json">camera-front.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/camera-iso.json">camera-iso.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/camera-right.json">camera-right.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model.png">Native snapshot: model.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-front.png">Native snapshot: model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/goal-front.png">Native snapshot: goal-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/overlay-front.png">Native snapshot: overlay-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/visual-diff-front.png">Native snapshot: visual-diff-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-right.png">Native snapshot: model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/goal-right.png">Native snapshot: goal-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/overlay-right.png">Native snapshot: overlay-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/visual-diff-right.png">Native snapshot: visual-diff-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/model-iso.png">Native snapshot: model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/goal-iso.png">Native snapshot: goal-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/overlay-iso.png">Native snapshot: overlay-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/scpf/visual-diff-iso.png">Native snapshot: visual-diff-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pythonscad/result.json">Reference evidence: reference-pythonscad/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pythonscad/model.stl">Reference evidence: reference-pythonscad/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pythonscad/model-front.png">Reference evidence: reference-pythonscad/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pythonscad/model-right.png">Reference evidence: reference-pythonscad/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pythonscad/model-iso.png">Reference evidence: reference-pythonscad/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pybosl2/result.json">Reference evidence: reference-pybosl2/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pybosl2/model.stl">Reference evidence: reference-pybosl2/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pybosl2/model-front.png">Reference evidence: reference-pybosl2/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pybosl2/model-right.png">Reference evidence: reference-pybosl2/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/pybosl2/model-iso.png">Reference evidence: reference-pybosl2/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/cadquery/result.json">Reference evidence: reference-cadquery/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/cadquery/model.stl">Reference evidence: reference-cadquery/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/cadquery/model-front.png">Reference evidence: reference-cadquery/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/cadquery/model-right.png">Reference evidence: reference-cadquery/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/cadquery/model-iso.png">Reference evidence: reference-cadquery/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/build123d/result.json">Reference evidence: reference-build123d/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/build123d/model.stl">Reference evidence: reference-build123d/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/build123d/model-front.png">Reference evidence: reference-build123d/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/build123d/model-right.png">Reference evidence: reference-build123d/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/175a43506ded43b60ac62035938350c25dc1f596/pr/376/examples/parametric-offset/build123d/model-iso.png">Reference evidence: reference-build123d/model-iso.png</a></li></ul>
+
+    <h3>Reference documentation</h3>
+    <ul><li><strong><a href="https://github.com/BelfrySCAD/BOSL2/wiki/Tutorial-Attachment-Overview">BOSL2</a>:</strong> Important reference: attach() operates in the local coordinate system at the parent anchor, not blindly in world coordinates.</li><li><strong><a href="https://openscad.org/documentation.html">OpenSCAD</a>:</strong> A raw translate([x,y,z]) is world/object transform syntax and therefore is not equivalent to this local joint offset.</li></ul>
+  </div>
+</details>
+</main>
+
+<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+<a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a></div></footer>
+<script>(() => {
+  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
+  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
+
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    document.execCommand('copy');
+    helper.remove();
+  }
+
+  document.querySelectorAll('pre > code').forEach((code) => {
+    const pre = code.parentElement;
+    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-copy';
+    button.title = 'Copy code';
+    button.setAttribute('aria-label', 'Copy code');
+    button.innerHTML = copyIcon;
+    wrapper.appendChild(button);
+
+    button.addEventListener('click', async () => {
+      try {
+        await copyText(code.textContent);
+        button.innerHTML = doneIcon;
+        button.classList.add('copied');
+        button.title = 'Copied';
+        button.setAttribute('aria-label', 'Copied');
+        window.setTimeout(() => {
+          button.innerHTML = copyIcon;
+          button.classList.remove('copied');
+          button.title = 'Copy code';
+          button.setAttribute('aria-label', 'Copy code');
+        }, 1400);
+      } catch (_error) {
+        button.title = 'Copy failed';
+        button.setAttribute('aria-label', 'Copy failed');
+      }
+    });
+  });
+})();
+</script>
+<script>
+(() => {
+  const root = document.querySelector('.site-search');
+  if (!root) return;
+
+  const input = root.querySelector('.site-search-input');
+  const results = root.querySelector('.site-search-results');
+  const indexUrl = root.dataset.searchIndex;
+  let indexPromise = null;
+  let visible = [];
+
+  const normal = (value) => String(value || '')
+    .toLowerCase()
+    .replace(/[_.:/-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const raw = (value) => String(value || '').toLowerCase().trim();
+
+  function loadIndex() {
+    if (!indexPromise) {
+      indexPromise = fetch(indexUrl)
+        .then((response) => {
+          if (!response.ok) throw new Error('Search index unavailable');
+          return response.json();
+        })
+        .then((data) => data.entries || []);
+    }
+    return indexPromise;
+  }
+
+  function score(entry, query) {
+    const qRaw = raw(query);
+    const q = normal(query);
+    if (!q) return -1;
+
+    const titleRaw = raw(entry.title);
+    const title = normal(entry.title);
+    const aliases = entry.aliases || [];
+    const aliasRaw = aliases.map(raw);
+    const aliasText = normal(aliases.join(' '));
+    const haystack = normal([
+      entry.title,
+      entry.summary,
+      entry.keywords,
+      aliases.join(' '),
+    ].join(' '));
+
+    if (titleRaw === qRaw) return 1000;
+    if (aliasRaw.includes(qRaw)) return 920;
+    if (title.startsWith(q)) return 820;
+    if (aliasText.startsWith(q)) return 760;
+    if (title.includes(q)) return 680;
+    if (aliasText.includes(q)) return 620;
+    if (haystack.includes(q)) return 500;
+
+    const words = q.split(' ').filter(Boolean);
+    if (words.length && words.every((word) => haystack.includes(word))) {
+      return 380 + words.length * 10;
+    }
+    return -1;
+  }
+
+  function closeResults() {
+    results.hidden = true;
+    results.replaceChildren();
+    input.setAttribute('aria-expanded', 'false');
+    visible = [];
+  }
+
+  function render(entries, query) {
+    const ranked = entries
+      .map((entry, order) => ({entry, order, score: score(entry, query)}))
+      .filter((row) => row.score >= 0)
+      .sort((a, b) => b.score - a.score || a.order - b.order)
+      .slice(0, 10);
+
+    results.replaceChildren();
+    visible = ranked.map((row) => row.entry);
+    if (!ranked.length) {
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'No documentation found.';
+      results.appendChild(empty);
+    } else {
+      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
+      ranked.forEach(({entry}) => {
+        const link = document.createElement('a');
+        link.className = 'site-search-result';
+        link.href = new URL(entry.url, indexBase).href;
+
+        const heading = document.createElement('span');
+        heading.className = 'site-search-result-title';
+        heading.textContent = entry.title;
+
+        const kind = document.createElement('span');
+        kind.className = 'site-search-result-kind';
+        kind.textContent = entry.kind;
+
+        const summary = document.createElement('span');
+        summary.className = 'site-search-result-summary';
+        summary.textContent = entry.summary;
+
+        link.append(heading, kind, summary);
+        results.appendChild(link);
+      });
+    }
+    results.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+  }
+
+  async function search() {
+    const query = input.value.trim();
+    if (!query) {
+      closeResults();
+      return;
+    }
+    try {
+      render(await loadIndex(), query);
+    } catch (_error) {
+      results.replaceChildren();
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'Search is unavailable.';
+      results.appendChild(empty);
+      results.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  input.addEventListener('input', search);
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) search();
+  });
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeResults();
+      input.blur();
+    } else if (event.key === 'Enter' && visible.length) {
+      event.preventDefault();
+      results.querySelector('.site-search-result')?.click();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!root.contains(event.target)) closeResults();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const typing = target instanceof HTMLInputElement
+      || target instanceof HTMLTextAreaElement
+      || target instanceof HTMLSelectElement
+      || target?.isContentEditable;
+    const shortcut = (event.ctrlKey || event.metaKey)
+      && event.key.toLowerCase() === 'k';
+    const slash = event.key === '/' && !typing && !event.ctrlKey
+      && !event.metaKey && !event.altKey;
+    if (shortcut || slash) {
+      event.preventDefault();
+      input.focus();
+      input.select();
+    }
+  });
+})();
+</script>
+</body></html>

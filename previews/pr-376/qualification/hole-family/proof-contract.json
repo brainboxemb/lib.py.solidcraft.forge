@@ -1,0 +1,172 @@
+{
+  "case": "hole-family",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "HoleFamily",
+        "min": [
+          -60,
+          -20,
+          0
+        ],
+        "max": [
+          60,
+          20,
+          12
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "HoleFamily",
+        "min": [
+          -60,
+          -20,
+          0
+        ],
+        "max": [
+          60,
+          20,
+          12
+        ]
+      }
+    ],
+    "required_views": [
+      "top",
+      "front",
+      "iso"
+    ],
+    "visual_features": [
+      {
+        "type": "through_hole",
+        "label": "simple \u00d86",
+        "center": [
+          -45.0,
+          0.0
+        ],
+        "diameter": 6.0,
+        "z": [
+          0.0,
+          12.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "counterbore main \u00d86",
+        "center": [
+          -15.0,
+          0.0
+        ],
+        "diameter": 6.0,
+        "z": [
+          0.0,
+          12.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "counterbore recess \u00d812 x 4",
+        "center": [
+          -15.0,
+          0.0
+        ],
+        "diameter": 12.0,
+        "z": [
+          8.0,
+          12.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "countersink main \u00d86",
+        "center": [
+          15.0,
+          0.0
+        ],
+        "diameter": 6.0,
+        "z": [
+          0.0,
+          12.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "countersink entry \u00d812",
+        "center": [
+          15.0,
+          0.0
+        ],
+        "diameter": 12.0,
+        "z": [
+          12.0,
+          12.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "M6 tap drill \u00d85",
+        "center": [
+          45.0,
+          0.0
+        ],
+        "diameter": 5.0,
+        "z": [
+          0.0,
+          12.0
+        ]
+      }
+    ],
+    "bounds_sufficient": false,
+    "bounds_reason": "All four Hole-family features leave the outer plate envelope unchanged. 3D probes are required for the simple bore, counterbore recess, countersink cone and threaded tap-drill envelope; native history separately proves thread metadata and modeled-thread intent.",
+    "watertight": true,
+    "surface_distance_probes": [
+      {
+        "label": "simple bore center",
+        "point": [
+          -45.0,
+          0.0,
+          6.0
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "counterbore recess wall",
+        "point": [
+          -10.5,
+          0.0,
+          10.0
+        ],
+        "distance_mm": 1.5,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "countersink 90 degree cone",
+        "point": [
+          18.5,
+          0.0,
+          10.5
+        ],
+        "distance_mm": 0.70710678,
+        "tolerance_mm": 0.35
+      },
+      {
+        "label": "M6 tap-drill core",
+        "point": [
+          45.0,
+          0.0,
+          6.0
+        ],
+        "distance_mm": 2.5,
+        "tolerance_mm": 0.35
+      }
+    ]
+  },
+  "solidcraft_only": {
+    "native_expectation": "One plate contains four editable native Hole features: \u00d86 simple, \u00d86/\u00d812 x 4 counterbore, \u00d86/\u00d812 90\u00b0 countersink, and an M6 modeled threaded hole using an explicit \u00d85 tap drill.",
+    "generated_relationship": "Each Forge Hole-family object lowers one-to-one to one native solid.hole command. Counterbore and countersink use the native hole type fields; ThreadedHole uses native thread metadata/modeling fields. No sketch or helper subtraction solid is synthesized.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation is required in this first Hole-family qualification; unit, integration and native geometry checks prove API, native command identity and geometry while visual proves the visible forms.",
+    "mutation": null
+  }
+}

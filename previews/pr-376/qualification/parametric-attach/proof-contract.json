@@ -1,0 +1,76 @@
+{
+  "case": "parametric-attach",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "Base",
+        "min": [
+          -20,
+          -15,
+          0
+        ],
+        "max": [
+          20,
+          15,
+          10
+        ]
+      },
+      {
+        "label": "Block",
+        "min": [
+          30,
+          -10,
+          0
+        ],
+        "max": [
+          50,
+          10,
+          10
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "Base",
+        "min": [
+          -20,
+          -15,
+          0
+        ],
+        "max": [
+          20,
+          15,
+          10
+        ]
+      },
+      {
+        "label": "Block",
+        "min": [
+          30,
+          -10,
+          0
+        ],
+        "max": [
+          50,
+          10,
+          10
+        ]
+      }
+    ],
+    "required_views": [
+      "iso",
+      "front",
+      "right"
+    ],
+    "visual_features": [],
+    "bounds_sufficient": true,
+    "bounds_reason": "The two rectangular body bounds describe the baseline gap geometry. Saved joint recompute is proved separately by saved-design."
+  },
+  "solidcraft_only": {
+    "native_expectation": "The child sits 10 mm away from the parent's RIGHT face along the joint normal.",
+    "generated_relationship": "The child receives a symbolic seed pose so a floating graph starts at the authored mating position; joint.create(type='rigid', offset='gap') remains the relationship and the gap remains a native expression in both places rather than a flattened number.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change gap from 10 to 30 mm in the saved .sc design; the child must move another 20 mm without rerunning Python.",
+    "mutation": "Change gap from 10 to 30 mm in the saved .sc design; the child must move another 20 mm without rerunning Python."
+  }
+}

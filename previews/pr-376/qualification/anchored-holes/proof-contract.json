@@ -1,0 +1,142 @@
+{
+  "case": "anchored-holes",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "AnchoredHoles",
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          100,
+          60,
+          10
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "AnchoredHoles",
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          100,
+          60,
+          10
+        ]
+      }
+    ],
+    "required_views": [
+      "top",
+      "right",
+      "iso"
+    ],
+    "visual_features": [
+      {
+        "type": "through_hole",
+        "label": "front hole \u00d88 through",
+        "center": [
+          50.0,
+          10.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          10.0
+        ]
+      },
+      {
+        "type": "through_hole",
+        "label": "rear hole \u00d88 through",
+        "center": [
+          50.0,
+          50.0
+        ],
+        "diameter": 8.0,
+        "z": [
+          0.0,
+          10.0
+        ]
+      }
+    ],
+    "bounds_sufficient": false,
+    "bounds_reason": "The holes do not change the outer plate bounds. Volume and 3D hole-wall probes are required.",
+    "volume_mm3": 58994.69035085127,
+    "volume_tolerance_mm3": 55.0,
+    "watertight": true,
+    "surface_distance_probes": [
+      {
+        "label": "front hole at z=1",
+        "point": [
+          50.0,
+          10.0,
+          1.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "front hole at z=5",
+        "point": [
+          50.0,
+          10.0,
+          5.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "front hole at z=9",
+        "point": [
+          50.0,
+          10.0,
+          9.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "rear hole at z=1",
+        "point": [
+          50.0,
+          50.0,
+          1.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "rear hole at z=5",
+        "point": [
+          50.0,
+          50.0,
+          5.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "rear hole at z=9",
+        "point": [
+          50.0,
+          50.0,
+          9.0
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      }
+    ]
+  },
+  "solidcraft_only": {
+    "native_expectation": "One plate with two through holes at the requested Y spacing, one source cut and one native rectangular pattern feature.",
+    "generated_relationship": "Forge emits one attached Hole sketch/cut and one native solid.pattern.rectangular history feature. No Forge-side repeat helper or expanded duplicate profiles are used.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation in this fixture; geometry and feature placement are measured at geometry.",
+    "mutation": null
+  }
+}

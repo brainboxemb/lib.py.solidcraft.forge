@@ -1,0 +1,350 @@
+{
+  "case": "rectangular-pattern",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "RectangularPattern",
+        "min": [
+          -60,
+          -40,
+          0
+        ],
+        "max": [
+          60,
+          40,
+          4
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "RectangularPattern",
+        "min": [
+          -60,
+          -40,
+          0
+        ],
+        "max": [
+          60,
+          40,
+          4
+        ]
+      }
+    ],
+    "required_views": [
+      "top",
+      "right",
+      "iso"
+    ],
+    "visual_features": [
+      {
+        "type": "through_slot",
+        "label": "slot 1,1",
+        "centerline": [
+          [
+            -5.0,
+            0.0
+          ],
+          [
+            5.0,
+            0.0
+          ]
+        ],
+        "width": 6.0,
+        "z": [
+          0.0,
+          4.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 2,1",
+        "centerline": [
+          [
+            19.0,
+            0.0
+          ],
+          [
+            29.0,
+            0.0
+          ]
+        ],
+        "width": 6.0,
+        "z": [
+          0.0,
+          4.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 3,1",
+        "centerline": [
+          [
+            43.0,
+            0.0
+          ],
+          [
+            53.0,
+            0.0
+          ]
+        ],
+        "width": 6.0,
+        "z": [
+          0.0,
+          4.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 1,2",
+        "centerline": [
+          [
+            -5.0,
+            28.0
+          ],
+          [
+            5.0,
+            28.0
+          ]
+        ],
+        "width": 6.0,
+        "z": [
+          0.0,
+          4.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 2,2",
+        "centerline": [
+          [
+            19.0,
+            28.0
+          ],
+          [
+            29.0,
+            28.0
+          ]
+        ],
+        "width": 6.0,
+        "z": [
+          0.0,
+          4.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "slot 3,2",
+        "centerline": [
+          [
+            43.0,
+            28.0
+          ],
+          [
+            53.0,
+            28.0
+          ]
+        ],
+        "width": 6.0,
+        "z": [
+          0.0,
+          4.0
+        ]
+      }
+    ],
+    "bounds_sufficient": false,
+    "bounds_reason": "The six slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.",
+    "volume_mm3": 36281.415986824606,
+    "volume_tolerance_mm3": 50.0,
+    "watertight": true,
+    "surface_distance_probes": [
+      {
+        "label": "slot 1,1 at z=0.5",
+        "point": [
+          0.0,
+          0.0,
+          0.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 1,1 at z=2",
+        "point": [
+          0.0,
+          0.0,
+          2.0
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 1,1 at z=3.5",
+        "point": [
+          0.0,
+          0.0,
+          3.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,1 at z=0.5",
+        "point": [
+          24.0,
+          0.0,
+          0.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,1 at z=2",
+        "point": [
+          24.0,
+          0.0,
+          2.0
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,1 at z=3.5",
+        "point": [
+          24.0,
+          0.0,
+          3.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,1 at z=0.5",
+        "point": [
+          48.0,
+          0.0,
+          0.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,1 at z=2",
+        "point": [
+          48.0,
+          0.0,
+          2.0
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,1 at z=3.5",
+        "point": [
+          48.0,
+          0.0,
+          3.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 1,2 at z=0.5",
+        "point": [
+          0.0,
+          28.0,
+          0.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 1,2 at z=2",
+        "point": [
+          0.0,
+          28.0,
+          2.0
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 1,2 at z=3.5",
+        "point": [
+          0.0,
+          28.0,
+          3.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,2 at z=0.5",
+        "point": [
+          24.0,
+          28.0,
+          0.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,2 at z=2",
+        "point": [
+          24.0,
+          28.0,
+          2.0
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 2,2 at z=3.5",
+        "point": [
+          24.0,
+          28.0,
+          3.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,2 at z=0.5",
+        "point": [
+          48.0,
+          28.0,
+          0.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,2 at z=2",
+        "point": [
+          48.0,
+          28.0,
+          2.0
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "slot 3,2 at z=3.5",
+        "point": [
+          48.0,
+          28.0,
+          3.5
+        ],
+        "distance_mm": 3.0,
+        "tolerance_mm": 0.3
+      }
+    ]
+  },
+  "solidcraft_only": {
+    "native_expectation": "SolidCraft saves one plate with six slot cuts and one native rectangular pattern History feature that references the original Slot cut.",
+    "generated_relationship": "Forge emits the source Sketch/cut once, then exactly one solid.pattern.rectangular with features=['Slot']; columns/rows are dimensionless native parameters and pitches remain millimetre parameters.",
+    "saved_design_required": true,
+    "saved_design_reason": "Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature.",
+    "mutation": "Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature."
+  }
+}

@@ -1,0 +1,453 @@
+{
+  "case": "slot-family",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "SlotFamily",
+        "min": [
+          -80,
+          -60,
+          0
+        ],
+        "max": [
+          80,
+          60,
+          5
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "SlotFamily",
+        "min": [
+          -80,
+          -60,
+          0
+        ],
+        "max": [
+          80,
+          60,
+          5
+        ]
+      }
+    ],
+    "required_views": [
+      "top",
+      "front",
+      "iso"
+    ],
+    "visual_features": [
+      {
+        "type": "through_slot",
+        "label": "center-to-center slot",
+        "centerline": [
+          [
+            -60.0,
+            -35.0
+          ],
+          [
+            -40.0,
+            -35.0
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "overall slot",
+        "centerline": [
+          [
+            -6.0,
+            -35.0
+          ],
+          [
+            16.0,
+            -35.0
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "center-point slot",
+        "centerline": [
+          [
+            45.0,
+            -35.0
+          ],
+          [
+            65.0,
+            -35.0
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "three-point arc slot",
+        "centerline": [
+          [
+            -50.0,
+            25.0
+          ],
+          [
+            -49.54071853816295,
+            27.113068146718376
+          ],
+          [
+            -48.785353516680956,
+            29.139251785529158
+          ],
+          [
+            -47.749285961175595,
+            31.037293005917206
+          ],
+          [
+            -46.45361266745248,
+            32.76854318130946
+          ],
+          [
+            -44.9247166206396,
+            34.297749946891855
+          ],
+          [
+            -43.19372977495774,
+            35.59377502147157
+          ],
+          [
+            -41.29589913320273,
+            36.63022825682702
+          ],
+          [
+            -39.269869034066595,
+            37.38600500379494
+          ],
+          [
+            -37.15689426163208,
+            37.84571585304513
+          ],
+          [
+            -34.99999999999999,
+            38.0
+          ],
+          [
+            -32.84310573836791,
+            37.84571585304513
+          ],
+          [
+            -30.730130965933398,
+            37.386005003794935
+          ],
+          [
+            -28.704100866797262,
+            36.63022825682702
+          ],
+          [
+            -26.806270225042255,
+            35.593775021471565
+          ],
+          [
+            -25.075283379360393,
+            34.29774994689185
+          ],
+          [
+            -23.54638733254751,
+            32.768543181309454
+          ],
+          [
+            -22.250714038824402,
+            31.037293005917196
+          ],
+          [
+            -21.214646483319044,
+            29.139251785529154
+          ],
+          [
+            -20.459281461837044,
+            27.113068146718366
+          ],
+          [
+            -20.0,
+            24.999999999999993
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      },
+      {
+        "type": "through_slot",
+        "label": "center arc slot",
+        "centerline": [
+          [
+            52.0,
+            25.0
+          ],
+          [
+            51.93426274441928,
+            26.25434155921184
+          ],
+          [
+            51.73777120880567,
+            27.494940289813112
+          ],
+          [
+            51.412678195541844,
+            28.70820393249937
+          ],
+          [
+            50.96254549171121,
+            29.880839716909602
+          ],
+          [
+            50.392304845413264,
+            31.0
+          ],
+          [
+            49.70820393249937,
+            32.05342302750968
+          ],
+          [
+            48.91773790572873,
+            33.029567276306295
+          ],
+          [
+            48.029567276306295,
+            33.91773790572873
+          ],
+          [
+            47.05342302750968,
+            34.70820393249937
+          ],
+          [
+            46.0,
+            35.392304845413264
+          ],
+          [
+            44.880839716909605,
+            35.96254549171121
+          ],
+          [
+            43.70820393249937,
+            36.412678195541844
+          ],
+          [
+            42.494940289813115,
+            36.73777120880567
+          ],
+          [
+            41.254341559211845,
+            36.93426274441928
+          ],
+          [
+            40.0,
+            37.0
+          ],
+          [
+            38.74565844078816,
+            36.93426274441928
+          ],
+          [
+            37.50505971018689,
+            36.73777120880567
+          ],
+          [
+            36.291796067500634,
+            36.412678195541844
+          ],
+          [
+            35.1191602830904,
+            35.96254549171121
+          ],
+          [
+            34.0,
+            35.392304845413264
+          ]
+        ],
+        "width": 8.0,
+        "z": [
+          0.0,
+          5.0
+        ]
+      }
+    ],
+    "bounds_sufficient": false,
+    "bounds_reason": "The five slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.",
+    "volume_mm3": 89526.65799554957,
+    "volume_tolerance_mm3": 55.0,
+    "watertight": true,
+    "surface_distance_probes": [
+      {
+        "label": "center-to-center slot at z=0.5",
+        "point": [
+          -50.0,
+          -35.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "center-to-center slot at z=2.5",
+        "point": [
+          -50.0,
+          -35.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "center-to-center slot at z=4.5",
+        "point": [
+          -50.0,
+          -35.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "overall slot at z=0.5",
+        "point": [
+          5.0,
+          -35.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "overall slot at z=2.5",
+        "point": [
+          5.0,
+          -35.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "overall slot at z=4.5",
+        "point": [
+          5.0,
+          -35.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "center-point slot at z=0.5",
+        "point": [
+          55.0,
+          -35.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "center-point slot at z=2.5",
+        "point": [
+          55.0,
+          -35.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "center-point slot at z=4.5",
+        "point": [
+          55.0,
+          -35.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "three-point arc slot at z=0.5",
+        "point": [
+          -35.0,
+          38.0,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "three-point arc slot at z=2.5",
+        "point": [
+          -35.0,
+          38.0,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "three-point arc slot at z=4.5",
+        "point": [
+          -35.0,
+          38.0,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "center arc slot at z=0.5",
+        "point": [
+          46.0,
+          35.392304845413264,
+          0.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "center arc slot at z=2.5",
+        "point": [
+          46.0,
+          35.392304845413264,
+          2.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      },
+      {
+        "label": "center arc slot at z=4.5",
+        "point": [
+          46.0,
+          35.392304845413264,
+          4.5
+        ],
+        "distance_mm": 4.0,
+        "tolerance_mm": 0.3
+      }
+    ]
+  },
+  "solidcraft_only": {
+    "native_expectation": "SolidCraft saves one plate, one Slot family sketch containing five closed profiles and one error-free cut extrusion. The native timeline must not contain sketch.rectangle.rounded as a substitute for Slot construction.",
+    "generated_relationship": "Each public constructor emits exactly its matching sketch.slot.* command; the sketch is finished once and one native cut extrusion removes all five profiles.",
+    "saved_design_required": false,
+    "saved_design_reason": "No saved-design mutation is required; this case isolates the five native sketch construction methods and their saved feature history.",
+    "mutation": null
+  }
+}

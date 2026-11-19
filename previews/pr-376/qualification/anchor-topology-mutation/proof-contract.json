@@ -1,0 +1,76 @@
+{
+  "case": "anchor-topology-mutation",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "Board",
+        "min": [
+          -20,
+          -10,
+          0
+        ],
+        "max": [
+          20,
+          10,
+          20
+        ]
+      },
+      {
+        "label": "Marker",
+        "min": [
+          -25,
+          -20,
+          15
+        ],
+        "max": [
+          -15,
+          -10,
+          25
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "Board",
+        "min": [
+          -20,
+          -10,
+          0
+        ],
+        "max": [
+          20,
+          10,
+          20
+        ]
+      },
+      {
+        "label": "Marker",
+        "min": [
+          -25,
+          -20,
+          15
+        ],
+        "max": [
+          -15,
+          -10,
+          25
+        ]
+      }
+    ],
+    "required_views": [
+      "iso",
+      "front",
+      "right"
+    ],
+    "visual_features": [],
+    "bounds_sufficient": true,
+    "bounds_reason": "The board and marker positions describe the visible result. After resizing the saved model, the marker must still follow the same selected edge and corner."
+  },
+  "solidcraft_only": {
+    "native_expectation": "On the 40x20x20 board the marker is centered on the front-top-left corner selected by the explicit topology pick.",
+    "generated_relationship": "AnchorTopology is inlined into joint.create as edge/on/corner plus optional z/x. No persistent joint.origin and no Forge-side recomputation of the pick coordinates occurs after the saved design is mutated.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the unchanged native relationship must move the marker to the new front-top-left corner without rerunning Python.",
+    "mutation": "Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the unchanged native relationship must move the marker to the new front-top-left corner without rerunning Python."
+  }
+}

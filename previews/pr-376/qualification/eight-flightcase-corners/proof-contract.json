@@ -1,0 +1,466 @@
+{
+  "case": "eight-flightcase-corners",
+  "geometry": {
+    "bounds": [
+      {
+        "label": "CaseBlock",
+        "min": [
+          -60,
+          -40,
+          0
+        ],
+        "max": [
+          60,
+          40,
+          60
+        ]
+      },
+      {
+        "label": "front bottom-left",
+        "min": [
+          -64,
+          -44,
+          -4
+        ],
+        "max": [
+          -40,
+          -20,
+          20
+        ]
+      },
+      {
+        "label": "front bottom-right",
+        "min": [
+          40,
+          -44,
+          -4
+        ],
+        "max": [
+          64,
+          -20,
+          20
+        ]
+      },
+      {
+        "label": "rear bottom-right",
+        "min": [
+          40,
+          20,
+          -4
+        ],
+        "max": [
+          64,
+          44,
+          20
+        ]
+      },
+      {
+        "label": "rear bottom-left",
+        "min": [
+          -64,
+          20,
+          -4
+        ],
+        "max": [
+          -40,
+          44,
+          20
+        ]
+      },
+      {
+        "label": "front top-left",
+        "min": [
+          -64,
+          -44,
+          40
+        ],
+        "max": [
+          -40,
+          -20,
+          64
+        ]
+      },
+      {
+        "label": "front top-right",
+        "min": [
+          40,
+          -44,
+          40
+        ],
+        "max": [
+          64,
+          -20,
+          64
+        ]
+      },
+      {
+        "label": "rear top-right",
+        "min": [
+          40,
+          20,
+          40
+        ],
+        "max": [
+          64,
+          44,
+          64
+        ]
+      },
+      {
+        "label": "rear top-left",
+        "min": [
+          -64,
+          20,
+          40
+        ],
+        "max": [
+          -40,
+          44,
+          64
+        ]
+      }
+    ],
+    "visual_boxes": [
+      {
+        "label": "CaseBlock",
+        "min": [
+          -60,
+          -40,
+          0
+        ],
+        "max": [
+          60,
+          40,
+          60
+        ]
+      },
+      {
+        "label": "FBL bottom plate",
+        "min": [
+          -60,
+          -40,
+          -4
+        ],
+        "max": [
+          -40,
+          -20,
+          0
+        ]
+      },
+      {
+        "label": "FBL front plate",
+        "min": [
+          -60,
+          -44,
+          0
+        ],
+        "max": [
+          -40,
+          -40,
+          20
+        ]
+      },
+      {
+        "label": "FBL left plate",
+        "min": [
+          -64,
+          -40,
+          0
+        ],
+        "max": [
+          -60,
+          -20,
+          20
+        ]
+      },
+      {
+        "label": "FBR bottom plate",
+        "min": [
+          40,
+          -40,
+          -4
+        ],
+        "max": [
+          60,
+          -20,
+          0
+        ]
+      },
+      {
+        "label": "FBR front plate",
+        "min": [
+          40,
+          -44,
+          0
+        ],
+        "max": [
+          60,
+          -40,
+          20
+        ]
+      },
+      {
+        "label": "FBR right plate",
+        "min": [
+          60,
+          -40,
+          0
+        ],
+        "max": [
+          64,
+          -20,
+          20
+        ]
+      },
+      {
+        "label": "RBR bottom plate",
+        "min": [
+          40,
+          20,
+          -4
+        ],
+        "max": [
+          60,
+          40,
+          0
+        ]
+      },
+      {
+        "label": "RBR rear plate",
+        "min": [
+          40,
+          40,
+          0
+        ],
+        "max": [
+          60,
+          44,
+          20
+        ]
+      },
+      {
+        "label": "RBR right plate",
+        "min": [
+          60,
+          20,
+          0
+        ],
+        "max": [
+          64,
+          40,
+          20
+        ]
+      },
+      {
+        "label": "RBL bottom plate",
+        "min": [
+          -60,
+          20,
+          -4
+        ],
+        "max": [
+          -40,
+          40,
+          0
+        ]
+      },
+      {
+        "label": "RBL rear plate",
+        "min": [
+          -60,
+          40,
+          0
+        ],
+        "max": [
+          -40,
+          44,
+          20
+        ]
+      },
+      {
+        "label": "RBL left plate",
+        "min": [
+          -64,
+          20,
+          0
+        ],
+        "max": [
+          -60,
+          40,
+          20
+        ]
+      },
+      {
+        "label": "FTL top plate",
+        "min": [
+          -60,
+          -40,
+          60
+        ],
+        "max": [
+          -40,
+          -20,
+          64
+        ]
+      },
+      {
+        "label": "FTL front plate",
+        "min": [
+          -60,
+          -44,
+          40
+        ],
+        "max": [
+          -40,
+          -40,
+          60
+        ]
+      },
+      {
+        "label": "FTL left plate",
+        "min": [
+          -64,
+          -40,
+          40
+        ],
+        "max": [
+          -60,
+          -20,
+          60
+        ]
+      },
+      {
+        "label": "FTR top plate",
+        "min": [
+          40,
+          -40,
+          60
+        ],
+        "max": [
+          60,
+          -20,
+          64
+        ]
+      },
+      {
+        "label": "FTR front plate",
+        "min": [
+          40,
+          -44,
+          40
+        ],
+        "max": [
+          60,
+          -40,
+          60
+        ]
+      },
+      {
+        "label": "FTR right plate",
+        "min": [
+          60,
+          -40,
+          40
+        ],
+        "max": [
+          64,
+          -20,
+          60
+        ]
+      },
+      {
+        "label": "RTR top plate",
+        "min": [
+          40,
+          20,
+          60
+        ],
+        "max": [
+          60,
+          40,
+          64
+        ]
+      },
+      {
+        "label": "RTR rear plate",
+        "min": [
+          40,
+          40,
+          40
+        ],
+        "max": [
+          60,
+          44,
+          60
+        ]
+      },
+      {
+        "label": "RTR right plate",
+        "min": [
+          60,
+          20,
+          40
+        ],
+        "max": [
+          64,
+          40,
+          60
+        ]
+      },
+      {
+        "label": "RTL top plate",
+        "min": [
+          -60,
+          20,
+          60
+        ],
+        "max": [
+          -40,
+          40,
+          64
+        ]
+      },
+      {
+        "label": "RTL rear plate",
+        "min": [
+          -60,
+          40,
+          40
+        ],
+        "max": [
+          -40,
+          44,
+          60
+        ]
+      },
+      {
+        "label": "RTL left plate",
+        "min": [
+          -64,
+          20,
+          40
+        ],
+        "max": [
+          -60,
+          40,
+          60
+        ]
+      }
+    ],
+    "required_views": [
+      "iso",
+      "front",
+      "right"
+    ],
+    "visual_features": [],
+    "bounds_sufficient": true,
+    "bounds_reason": "This case qualifies eight corner placements around the case. Per-occurrence bounds and the visual decomposition describe this case's placement geometry; native relationships are checked separately."
+  },
+  "solidcraft_only": {
+    "native_expectation": "Each of the eight case corners is wrapped by three connected plates: one horizontal and two vertical. The protector outer envelope is a fixed 24x24x24 mm at every corner.",
+    "generated_relationship": "Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id.",
+    "saved_design_required": true,
+    "saved_design_reason": "Change case_width/depth/height from 120x80x60 to 160x120x90 mm; all protectors follow the calculated corner positions without rerunning Python, while every protector remains exactly 24x24x24 mm.",
+    "mutation": "Change case_width/depth/height from 120x80x60 to 160x120x90 mm; all protectors follow the calculated corner positions without rerunning Python, while every protector remains exactly 24x24x24 mm."
+  }
+}
