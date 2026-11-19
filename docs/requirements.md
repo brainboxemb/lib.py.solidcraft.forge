@@ -7,8 +7,11 @@ documented in the subject-specific Forge documentation.
 
 - `tool.cad.ci` is the only generic CAD-CI planner/executor.
 - Forge workflows remain thin orchestration.
-- Forge owns Forge/SolidCraft-specific commands, expectations and fixtures.
-- Generic verification mechanics come from released `lib.py.cad.verfication`.
+- Forge owns Forge compilation, model definitions and model-specific
+  expectation data.
+- Shared verification behavior comes from released
+  `lib.py.cad.verfication`, including CAD-tool-specific adapters such as the
+  SolidCraft adapter.
 
 ## Runtime build and CI expectation
 
@@ -51,17 +54,21 @@ contract rather than silently maintaining unrelated version literals.
 
 ## Verification ownership boundary
 
-Forge verification code owns only consumer/domain behavior:
+Forge verification data owns only model-specific behavior:
 
-- SolidCraft command invocation and measurement-schema parsing;
-- model-specific parameter/history/feature expectations;
-- model-specific mutations;
-- reference source selection and CAD-engine adapters;
-- SolidCraft camera conversion and rendering;
-- model-local baselines, required views and expected geometry.
+- expected parameter/history/feature values;
+- mutation command data and expected mutation results;
+- model-specific reference source files/data;
+- model-specific cameras, views and baselines;
+- expected geometry and tolerances.
 
-Generic verification mechanics must come from a released
-`lib.py.cad.verfication` API.
+Shared checker knowledge must come from a released
+`lib.py.cad.verfication` API. This includes CAD-tool-specific adapters that
+know how to invoke and interpret SolidCraft, OpenSCAD, FreeCAD or another CAD
+tool when that behavior is reusable.
+
+Forge must not parse SolidCraft measurement/result schemas or maintain shared
+SolidCraft eval/mutate/inspect verification helpers.
 
 In particular Forge must not reimplement:
 
