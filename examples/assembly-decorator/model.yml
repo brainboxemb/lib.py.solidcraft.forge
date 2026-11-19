@@ -1,0 +1,10 @@
+section: components
+title: Imported @assembly subassembly
+tagline: An imported assembly returns reusable native component occurrences
+description: >
+  An imported PostPair assembly creates two occurrences of one Post definition without adding an extra geometry layer.
+parameters: Two 10 × 10 × 20 mm posts centered at X=-15 mm and X=15 mm
+stages:
+  - Import the reusable PostPair assembly
+  - Create one native Post component definition
+  - Place the second Post as a translated occurrence copy

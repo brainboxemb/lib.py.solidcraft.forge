@@ -1,0 +1,10 @@
+section: components
+title: Named native group hierarchy
+tagline: A grouped pair of Panels remains a real nested SolidCraft component
+description: >
+  Two shared Panel occurrences are grouped under PanelGroup while a separate Frame remains a direct root component.
+parameters: Two 10 × 2 × 20 mm Panels; one 35 × 10 × 40 mm Frame
+stages:
+  - Create two occurrences of one Panel definition
+  - Group both Panel occurrences below PanelGroup
+  - Keep Frame as a separate root-level component

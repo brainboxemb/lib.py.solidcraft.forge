@@ -1,0 +1,30 @@
+# SolidCraft model verification for group-hierarchy.
+id: group-hierarchy
+kind: model
+needs:
+  - forge-tool
+watch:
+  - examples/group-hierarchy/scpf/**
+  - examples/group-hierarchy/model.yml
+  - examples/group-hierarchy/verification/**
+  - scripts/forge_example.py
+  - scripts/model_verify.py
+  - scripts/solidcraft_runtime.py
+  - docker/solidcraft_runtime/**
+strategy:
+  reuse: true
+steps:
+  - id: model_verify
+    inputs:
+      - examples/group-hierarchy/scpf/**
+      - examples/group-hierarchy/model.yml
+      - examples/group-hierarchy/verification/**
+      - scripts/forge_example.py
+      - scripts/model_verify.py
+      - scripts/solidcraft_runtime.py
+      - docker/solidcraft_runtime/**
+      - scpf/scpf/version.py
+    run: [python, ../../scripts/model_verify.py]
+    outputs:
+      - solidcraft.json
+      - model_verify

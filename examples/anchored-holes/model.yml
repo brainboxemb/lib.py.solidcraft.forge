@@ -1,0 +1,10 @@
+section: features
+title: Face-relative hole with native pattern
+tagline: One attached source cut repeated by native rectangular history
+description: >
+  A rectangular plate with one TOP-face hole source that is cut once and repeated as an editable native rectangular pattern.
+parameters: 100 × 60 × 10 mm plate; two Ø8 through holes at 40 mm spacing
+stages:
+  - Create the rectangular base sketch and extrude the plate
+  - Attach one Hole sketch to the TOP face and cut through the plate
+  - Repeat the source cut with one native rectangular feature pattern

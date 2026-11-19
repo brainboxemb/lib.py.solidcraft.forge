@@ -1,0 +1,10 @@
+section: components
+title: Reuse one component definition in two placements
+tagline: Two touching occurrences share one reusable Block definition
+description: >
+  One Block component definition is instantiated twice with a simple translated copy and no attachment relationship.
+parameters: Block 40 × 30 × 10 mm; second occurrence translated 40 mm in X
+stages:
+  - Create one reusable Block component
+  - Copy the same definition with a 40 mm X placement
+  - Return both occurrences as one assembly

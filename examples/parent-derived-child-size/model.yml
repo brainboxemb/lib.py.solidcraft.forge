@@ -1,0 +1,10 @@
+section: parameters
+title: Child dimensions derived from parent parameters
+tagline: A reusable child keeps half-size expressions from its parent
+description: >
+  A parent block and child component preserve width and depth expressions so saved-design edits to the parent rebuild both bodies.
+parameters: Parent 120 × 80 × 10 mm; child 60 × 40 × 6 mm derived from half width/depth
+stages:
+  - Publish parent base_width and base_depth parameters
+  - Create the parent body from those parameters
+  - Create the child from half-width and half-depth expressions
