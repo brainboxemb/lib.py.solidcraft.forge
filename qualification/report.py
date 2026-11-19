@@ -1,69 +1,51 @@
 #!/usr/bin/env python3
-"""Render the qualification Markdown report from structured result JSON."""
+"""Render a compact Markdown report from semantic qualification results."""
 
 from __future__ import annotations
 
 import argparse
 import json
 from pathlib import Path
-from string import Template
 
 
-ROOT = Path(__file__).resolve().parents[1]
-TEMPLATE = ROOT / "qualification" / "templates" / "report.md"
+def _status(check: dict) -> str:
+    return str(check.get("status", "missing")).upper()
 
 
-def _status(level: dict) -> str:
-    status = level.get("status", "missing")
-    return {
-        "pass": "PASS",
-        "not-required": "N/R",
-        "missing": "MISSING",
-    }.get(status, status.upper())
+def render(data: dict) -> str:
+    """Return one human-readable report without historical numbered levels."""
 
-
-def render(results: dict) -> str:
-    rows = []
-    image_sections = []
-    for slug, case in results["cases"].items():
-        levels = case["levels"]
-        rows.append(
+    lines = [
+        "# Forge qualification report",
+        "",
+        "| Case | Integration | Native model | Geometry | Saved design | Visual | Overall |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for slug, case in data.get("cases", {}).items():
+        checks = case.get("checks", {})
+        lines.append(
             "| "
             + " | ".join(
-                [
-                    f"`{slug}`",
-                    case["status"].upper(),
-                    _status(levels["q1"]),
-                    _status(levels["q2"]),
-                    _status(levels["q3"]),
-                    _status(levels["q4"]),
-                    _status(levels["q5"]),
-                    _status(levels["q6"]),
-                ]
+                (
+                    slug,
+                    _status(checks.get("integration", {})),
+                    _status(checks.get("native_model", {})),
+                    _status(checks.get("geometry", {})),
+                    _status(checks.get("saved_design", {})),
+                    _status(checks.get("visual", {})),
+                    str(case.get("status", "missing")).upper(),
+                )
             )
             + " |"
         )
 
-        images = levels["q6"].get("images", [])
+    lines.extend(("", "## Visual evidence", ""))
+    for slug, case in data.get("cases", {}).items():
+        images = case.get("checks", {}).get("visual", {}).get("images", [])
         if images:
-            image_sections.append(f"### {case['title']} (`{slug}`)")
-            image_sections.append("")
-            image_sections.extend(
-                f"- `../native/{slug}/{name}`"
-                for name in images
-            )
-            image_sections.append("")
-
-    template = Template(TEMPLATE.read_text(encoding="utf-8"))
-    return template.substitute(
-        source_commit=results["source_commit"],
-        forge_version=results["forge_version"],
-        solidcraft_version=results["solidcraft_version"],
-        qualified_at=results["qualified_at"],
-        schema_version=results["schema_version"],
-        case_rows="\n".join(rows),
-        image_sections="\n".join(image_sections).rstrip() or "No native images were produced.",
-    )
+            lines.append(f"- **{slug}:** " + ", ".join(images))
+    lines.append("")
+    return "\n".join(lines)
 
 
 def main() -> int:
@@ -71,11 +53,9 @@ def main() -> int:
     parser.add_argument("--results", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
-
-    results = json.loads(args.results.read_text(encoding="utf-8"))
+    data = json.loads(args.results.read_text(encoding="utf-8"))
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(render(results), encoding="utf-8")
-    print(f"Wrote qualification report: {args.out}")
+    args.out.write_text(render(data), encoding="utf-8")
     return 0
 
 

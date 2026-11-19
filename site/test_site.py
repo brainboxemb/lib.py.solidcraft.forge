@@ -28,7 +28,6 @@ from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 import scpf
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from qualification.geometry_contracts import proof_contract
-from qualification.case_evidence import evidence_for
 
 
 def check(
@@ -666,10 +665,9 @@ def check(
         assert '<details class="panel qualification-technical-details">' in page_text, slug
         assert '<details class="panel qualification-technical-details" open>' not in page_text, slug
         assert case["title"] in page_text
-        for level in ("q1", "q2"):
-            for target in evidence_for(slug, level):
-                assert target["file"] in page_text, (slug, level, target)
-                assert target["test"] in page_text, (slug, level, target)
+        tests_dir = ROOT / "examples" / slug / "tests"
+        for target in sorted(tests_dir.glob("test_*.py")):
+            assert target.relative_to(ROOT).as_posix() in page_text, (slug, target)
         assert case["mutation"] in html.unescape(page_text), slug
         saved_label = (
             "Checked in the saved model."
@@ -866,14 +864,10 @@ def check(
             assert "<h3>Saved-design test</h3>" in page_text, slug
             assert "qualification-result.json" in page_text, slug
             assert "validation.json" in page_text, slug
-            for level in ("q1", "q2"):
-                level_result = manifest_case["levels"][level]
-                assert level_result["status"] == "pass", (slug, level)
-                assert level_result["tests"], (slug, level)
-                assert level_result["evidence"], (slug, level)
-                for target in level_result["tests"]:
-                    assert target["file"] in page_text, (slug, level, target)
-                    assert target["test"] in page_text, (slug, level, target)
+            checks = manifest_case["checks"]
+            assert checks["integration"]["status"] == "pass", slug
+            assert checks["native_model"]["status"] == "pass", slug
+            assert checks["geometry"]["status"] == "pass", slug
 
             for removed_heading in (
                 "1. Test setup",
@@ -900,14 +894,14 @@ def check(
             assert f"/examples/{slug}/scpf/goal-iso.png" in page_text, slug
             assert f"/examples/{slug}/scpf/overlay-iso.png" in page_text, slug
             assert f"/examples/{slug}/scpf/model-iso.png" in qualification_index, slug
-            q6 = manifest_case["levels"]["q6"]
+            visual = manifest_case["checks"]["visual"]
             visual_result_path = site / "qualification" / slug / "visual-validation.json"
             assert not visual_result_path.exists(), slug
             if manifest_case["qualification_status"] == "pass":
-                assert q6["status"] == "pass", slug
-                assert q6["regression_status"] == "pass", slug
-                assert q6["expected_shape_status"] == "pass", slug
-                assert q6["required_views"] == geometry["required_views"], slug
+                assert visual["status"] == "pass", slug
+                assert visual["regression_status"] == "pass", slug
+                assert visual["expected_shape_status"] == "pass", slug
+                assert visual["required_views"] == geometry["required_views"], slug
                 assert "<strong>Image checks:</strong>" in page_text, slug
                 assert "expected shape PASS" in page_text, slug
                 assert "saved render PASS" in page_text, slug

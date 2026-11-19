@@ -158,7 +158,7 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertNotIn("cad-ci plan", workflow)
 
     def test_new_docs_name_the_three_real_test_layers(self):
-        """Repository guidance must not present Q1/Q2 as architecture."""
+        """Repository guidance names the three real test layers."""
 
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         for phrase in (
