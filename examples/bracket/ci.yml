@@ -3,6 +3,7 @@ id: bracket
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/bracket/scpf/**
   - examples/bracket/model.yml

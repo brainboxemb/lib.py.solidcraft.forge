@@ -3,6 +3,7 @@ id: round-top-sketch
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/round-top-sketch/scpf/**
   - examples/round-top-sketch/model.yml

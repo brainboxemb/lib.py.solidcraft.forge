@@ -3,6 +3,7 @@ id: parametric-offset
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/parametric-offset/scpf/**
   - examples/parametric-offset/model.yml

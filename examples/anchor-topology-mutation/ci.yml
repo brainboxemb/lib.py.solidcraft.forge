@@ -3,6 +3,7 @@ id: anchor-topology-mutation
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/anchor-topology-mutation/scpf/**
   - examples/anchor-topology-mutation/model.yml

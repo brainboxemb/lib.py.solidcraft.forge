@@ -60,38 +60,36 @@ CAD-tool-specific adapters. Forge keeps Forge compilation and model-specific
 expected data.
 
 
-## Runtime package composition
 
-The immutable runtime is deliberately a reusable execution environment, not
-only a CAD-engine binary image.
+## Runtime versus application packages
 
-It may contain exact released application libraries and stable dependencies
-that are required by nearly every verification run. In particular:
+The runtime image and application packages have separate lifecycles.
 
 ```text
-SolidCraft runtime image
+immutable CAD runtime image
   SolidCraft
-  reference CAD tooling
-  released lib.py.cad.verfication
+  CADCraft
+  PythonSCAD / pyBOSL2 / CadQuery / build123d
   stable shared Python dependencies
+
+verification invocation
+  exact built Forge wheel
+  exact released cad-verification wheel
+  model-specific definition/data
 ```
 
-`lib.py.cad.verfication` is still developed and released independently. The
-runtime consumes that release as a build input through
-`docker/solidcraft_runtime/runtime.json`.
+The verification package is not a Docker build input. Its version/commit is
+therefore absent from `docker/solidcraft_runtime/runtime.json` and from the
+runtime image hash.
 
-This gives two useful properties at the same time:
+Stable dependencies remain preinstalled when that improves repeated execution.
+For the current verification package this includes Pillow, trimesh and scipy.
+They are runtime inputs in their own right rather than being installed
+transitively by embedding the verification package.
 
-1. ownership remains clean: reusable CAD verification behavior is implemented
-   and tested in the verification-library repository;
-2. execution remains efficient: model checks reuse one prebuilt image instead
-   of installing the verification package and its common dependencies on every
-   invocation.
+CAD-CI builds the exact released verification wheel once and exposes it as a
+reusable dependency to every model/reference verification item. Consumer
+launchers mount that wheel into the container beside the exact Forge wheel.
 
-The runtime image hash therefore changes when the pinned verification-library
-release changes. That is intentional and makes the exact verification code part
-of the reproducible execution environment.
-
-The exact built Forge wheel remains separate because Forge itself is the code
-being qualified. The runtime must not substitute a preinstalled Forge package
-for that built wheel.
+The runtime itself contains no Forge/SCPF package and no
+`lib.py.cad.verfication` package.

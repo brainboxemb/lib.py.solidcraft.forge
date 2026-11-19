@@ -52,26 +52,33 @@ that its declared `SOLIDCRAFT_VERSION` agrees with the package/runtime build
 contract rather than silently maintaining unrelated version literals.
 
 
-## Shared runtime efficiency
 
-Library ownership and runtime packaging are separate concerns.
+## Runtime package boundary
 
-`lib.py.cad.verfication` remains an independently designed, tested and
-released Python library. The immutable SolidCraft runtime may and should
-preinstall an exact released version when that library is used by essentially
-every model verification.
+Library ownership and deployment efficiency are separate concerns.
 
-Therefore:
+The immutable SolidCraft runtime is a reusable CAD execution environment. It
+may preinstall:
 
-- `runtime.json` pins the verification-library release version and exact
-  commit that is installed in the image;
-- changing that pin intentionally changes the immutable runtime image ID;
-- model verification must use the library already present in that image rather
-  than reinstalling the same package for every model;
-- preinstallation does not transfer verification-code ownership to Forge;
-- Forge must not copy or modify verification-library implementation inside this
-  repository.
+- SolidCraft and CAD/reference command-line tools;
+- stable Python libraries required by those tools;
+- stable, frequently reused Python dependencies needed by verification.
 
-The same principle applies to other stable libraries used by nearly every
-runtime invocation: preinstalling them is an efficiency choice, while their
-code ownership remains with their own package/repository.
+The runtime must not embed the released Forge/SCPF package or
+`lib.py.cad.verfication` itself.
+
+Those application libraries are supplied separately at verification run time.
+A release of either application library must not change the runtime image ID or
+require a runtime image rebuild.
+
+Stable dependencies may deliberately remain in the image for efficiency. For
+the current verification package this includes compatible Pillow, trimesh and
+scipy versions.
+
+The runtime dependency list is explicit. A dependency does not remain in the
+image merely because it used to arrive transitively through an application
+library.
+
+The exact verification package is built once as a reusable CAD-CI dependency
+and shared by model/reference verification items; it is not reinstalled for
+every model.

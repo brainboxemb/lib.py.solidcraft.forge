@@ -3,6 +3,7 @@ id: xz-anchor
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/xz-anchor/scpf/**
   - examples/xz-anchor/model.yml

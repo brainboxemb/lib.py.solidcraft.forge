@@ -3,6 +3,7 @@ id: anchored-holes
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/anchored-holes/scpf/**
   - examples/anchored-holes/model.yml

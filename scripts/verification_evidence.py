@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 import subprocess
 
+from forge_example import dependency_wheel
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -47,6 +49,13 @@ def verify_references(cases: str) -> None:
 
     out = output_dir()
     image = runtime_image()
+    verification_wheel = dependency_wheel(
+        "verification-library",
+        "brainboxemb_cad_verification_lib-*.whl",
+    )
+    container_verification = (
+        f"/verification-package/{verification_wheel.name}"
+    )
     subprocess.run(["docker", "pull", image], check=True)
     subprocess.run(
         [
@@ -57,10 +66,18 @@ def verify_references(cases: str) -> None:
             f"{ROOT}:/workspace:ro",
             "-v",
             f"{out}:/output",
+            "-v",
+            (
+                f"{verification_wheel.parent}:"
+                "/verification-package:ro"
+            ),
             "-w",
             "/workspace",
             "-e",
-            "PYTHONPATH=/workspace/scpf:/workspace",
+            (
+                "PYTHONPATH="
+                f"{container_verification}:/workspace/scpf:/workspace"
+            ),
             image,
             "python",
             "/workspace/verification/reference_validation.py",

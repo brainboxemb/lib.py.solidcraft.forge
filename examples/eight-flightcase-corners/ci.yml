@@ -3,6 +3,7 @@ id: eight-flightcase-corners
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/eight-flightcase-corners/scpf/**
   - examples/eight-flightcase-corners/model.yml

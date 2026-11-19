@@ -1,0 +1,16 @@
+# Build the released CAD verification library once for all verification items.
+id: verification-library
+kind: tool
+watch:
+  - verification/library/requirements.txt
+  - scripts/verification_library.py
+strategy:
+  reuse: true
+steps:
+  - id: build
+    inputs:
+      - verification/library/requirements.txt
+      - scripts/verification_library.py
+    run: [python, ../../scripts/verification_library.py, build]
+    outputs:
+      - dist

@@ -46,6 +46,10 @@ def main() -> int:
     slug = item_slug()
     output = output_root()
     wheel = dependency_wheel()
+    verification_wheel = dependency_wheel(
+        "verification-library",
+        "brainboxemb_cad_verification_lib-*.whl",
+    )
     image = runtime_image()
 
     # Model verification owns its command input. It does not depend on the
@@ -60,6 +64,9 @@ def main() -> int:
     subprocess.run(["docker", "pull", image], check=True)
 
     container_wheel = f"/forge-package/{wheel.name}"
+    container_verification = (
+        f"/verification-package/{verification_wheel.name}"
+    )
     subprocess.run(
         [
             "docker",
@@ -67,7 +74,10 @@ def main() -> int:
             "--rm",
             "--pull=never",
             "-e",
-            f"PYTHONPATH={container_wheel}",
+            (
+                "PYTHONPATH="
+                f"{container_wheel}:{container_verification}"
+            ),
             "-e",
             "SOLIDCRAFT_GPU=cpu",
             "-v",
@@ -76,6 +86,11 @@ def main() -> int:
             f"{output}:/output",
             "-v",
             f"{wheel.parent}:/forge-package:ro",
+            "-v",
+            (
+                f"{verification_wheel.parent}:"
+                "/verification-package:ro"
+            ),
             "-w",
             "/workspace",
             image,

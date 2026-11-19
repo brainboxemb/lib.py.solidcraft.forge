@@ -3,6 +3,7 @@ id: assembly-decorator
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/assembly-decorator/scpf/**
   - examples/assembly-decorator/model.yml

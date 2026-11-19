@@ -3,6 +3,7 @@ id: corner-anchor
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/corner-anchor/scpf/**
   - examples/corner-anchor/model.yml
