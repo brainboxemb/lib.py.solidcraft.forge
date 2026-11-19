@@ -43,8 +43,9 @@ example set. It is not a stage that every model item must run.
 Migrated model items use `model_verify`. That step compiles the model with the
 exact built Forge wheel and verifies the resulting model in SolidCraft.
 
-At the current migration point, `simple-box` is the first model-verification
-item. Issue #395 tracks the next ten historical qualification models.
+All historical model items have native `model_verify` coverage. Simple-box
+also proves the released independent-reference path; issue #378 tracks expansion
+of reference, visual, diagram and summary verification.
 
 ## Model ownership
 
@@ -78,10 +79,9 @@ where they are used by Forge release verification or other focused tests.
 ## SolidCraft runtime
 
 The active native runtime is built and published only by the separate
-`.github/workflows/solidcraft-runtime.yml` workflow. The normal Forge workflow
-only verifies that the immutable image required by selected model items exists.
+`.github/workflows/solidcraft-runtime.yml` workflow.
 
-The active native runtime is:
+The runtime build definition is:
 
 ```text
 docker/
@@ -90,8 +90,13 @@ docker/
     runtime.json
 ```
 
-The tested SolidCraft version comes from
-`scpf/scpf/version.py::TESTED_SOLIDCRAFT_VERSION`.
+Normal Forge CI does not derive its runtime from those files. Root
+`cad-ci.yml` declares `FORGE_RUNTIME_IMAGE` and `SOLIDCRAFT_VERSION`; the
+released CAD-CI library injects them into consumer commands.
+
+`scpf/scpf/version.py::TESTED_SOLIDCRAFT_VERSION` remains the package-level
+compatibility guard. Forge tests require the explicit CI version and runtime
+reference to remain compatible with the current runtime build definition.
 
 The old generated SolidCraft command snapshot and old qualification runtime are
 historical and are not part of the current runtime path.

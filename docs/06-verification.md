@@ -53,11 +53,22 @@ docker/solidcraft_runtime/Dockerfile
 docker/solidcraft_runtime/runtime.json
 ```
 
-The runtime includes SolidCraft plus the versioned reference/visual/diagram toolchain used by #378. Runtime lifecycle remains separate from normal Forge CI:
+The runtime includes SolidCraft plus the versioned reference/visual/diagram
+toolchain used by #378. Runtime lifecycle remains separate from normal Forge CI:
 
-- `.github/workflows/solidcraft-runtime.yml` checks/builds/publishes the immutable image and supports `workflow_dispatch`;
-- `.github/workflows/scpf.yml` only resolves the required reference and checks that it already exists when the CAD-CI plan contains a model item;
-- a missing image fails Forge CI instead of being built implicitly.
+- `.github/workflows/solidcraft-runtime.yml` checks/builds/publishes immutable
+  images and supports `workflow_dispatch`;
+- root `cad-ci.yml` declares the exact `FORGE_RUNTIME_IMAGE` and
+  `SOLIDCRAFT_VERSION` expected by normal CI;
+- `.github/workflows/scpf.yml` delegates directly to released
+  `tool.cad.ci/reusable-ci.yml`;
+- model/reference commands consume the injected image reference and fail if the
+  immutable image cannot be pulled;
+- normal Forge CI never builds a missing runtime image implicitly.
+
+A Forge unit check compares the explicit CI expectation with the current runtime
+build definition so a runtime configuration change cannot silently leave
+`cad-ci.yml` behind.
 
 All 32 historical model cases now have native `model_verify` coverage. Issue #378 tracks the remaining reference, visual, diagram and summary verification layers.
 

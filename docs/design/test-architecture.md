@@ -68,8 +68,16 @@ history.
 
 ## CAD-CI ownership
 
-`tool.cad.ci` provides the generic item planner/executor.
+`tool.cad.ci` provides the generic item planner/executor and injects root
+`cad-ci.yml` repository variables into each consumer command.
 
 Forge owns its tool-release checks, model verification code and immutable
-SolidCraft runtime. The old central qualification runner is not part of the
-active architecture.
+SolidCraft runtime. The runtime build workflow creates immutable images; normal
+Forge CI explicitly selects one of those images through
+`cad-ci.yml:variables.FORGE_RUNTIME_IMAGE`.
+
+The normal GitHub workflow does not resolve runtime metadata itself. A Forge
+unit check keeps the explicit CI runtime/version expectation aligned with the
+current runtime build definition.
+
+The old central qualification runner is not part of the active architecture.
