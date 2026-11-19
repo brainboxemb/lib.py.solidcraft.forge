@@ -1,19 +1,19 @@
-"""integration contract for native circular feature patterns."""
+"""Integration contract for native circular feature patterns."""
 
 import json
 import unittest
 from pathlib import Path
 
 from scpf.runner import run_script
-from qualification.cases import QUALIFICATION_CASES
-from qualification.native_cases import mutation_spec
 
 
 ROOT = Path(__file__).resolve().parents[3]
-MODEL = ROOT / "examples/circular-feature-pattern/scpf/model.py"
+EXAMPLE = ROOT / "examples/circular-feature-pattern"
+MODEL = EXAMPLE / "scpf/model.py"
+MUTATION = EXAMPLE / "verification/change_count.json"
 
 
-class CircularFeaturePatternQualificationTests(unittest.TestCase):
+class CircularFeaturePatternContractTests(unittest.TestCase):
     def setUp(self):
         self.commands = run_script(MODEL)["commands"]
 
@@ -55,18 +55,8 @@ class CircularFeaturePatternQualificationTests(unittest.TestCase):
             1,
         )
 
-    def test_saved_design_mutates_pattern_count_in_saved_design(self):
-        case = next(
-            case for case in QUALIFICATION_CASES
-            if case["slug"] == "circular-feature-pattern"
-        )
-        self.assertTrue(case["saved_design_required"])
-
-        spec = mutation_spec("circular-feature-pattern")
-        self.assertIsNotNone(spec)
-        document = json.loads(
-            (ROOT / spec["command"]).read_text(encoding="utf-8")
-        )
+    def test_saved_design_mutation_changes_pattern_count(self):
+        document = json.loads(MUTATION.read_text(encoding="utf-8"))
         changes = {
             row["params"]["name"]: row["params"]["expression"]
             for row in document["commands"]

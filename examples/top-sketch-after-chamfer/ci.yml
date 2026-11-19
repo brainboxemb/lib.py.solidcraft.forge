@@ -5,8 +5,6 @@ needs:
   - forge-tool
 watch:
   - examples/top-sketch-after-chamfer/**
-  - qualification/**/*.py
-  - qualification/commands/**
   - scripts/tool_verify.py
 strategy:
   reuse: true
@@ -14,8 +12,6 @@ steps:
   - id: tool_verify
     inputs:
       - examples/top-sketch-after-chamfer/**
-      - qualification/**/*.py
-      - qualification/commands/**
       - scripts/tool_verify.py
     run: [python, ../../scripts/tool_verify.py]
     outputs:
