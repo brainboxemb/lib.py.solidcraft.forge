@@ -1726,7 +1726,7 @@ def validate_rectangular_pattern(root: Path) -> Validation:
         timeline,
     )
 
-    # Q5: mutate the existing saved design, never rerun the Python model.
+    # Saved-design check: mutate the existing saved design, never rerun the Python model.
     # Decreasing columns to 2 lets pitch grow to 30 mm while all four slots
     # remain fully inside the 120 x 80 mm plate.
     m = load(root / "measurements-columns-2-pitch-30.json")
@@ -2031,7 +2031,7 @@ def main() -> int:
     supported = set(supported_case_slugs())
     selected = tuple(case for case in requested if case in supported)
     args.qualification_dir.mkdir(parents=True, exist_ok=True)
-    rows = ["case\tq4\tq5\n"]
+    rows = ["case\tgeometry\tsaved_design\n"]
     summary = {}
 
     for case in selected:

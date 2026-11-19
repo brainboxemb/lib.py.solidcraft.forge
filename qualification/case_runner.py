@@ -433,9 +433,9 @@ def _validate_native(ctx: CaseContext) -> StageOutcome:
 
     failures = []
     if result["geometry"] != "pass":
-        failures.append(f"geometry={result['q4']}")
+        failures.append(f"geometry={result['geometry']}")
     if CASE_BY_SLUG[ctx.slug].get("saved_design_required") and result["saved_design"] != "pass":
-        failures.append(f"saved_design={result['q5']}")
+        failures.append(f"saved_design={result['saved_design']}")
     if failures:
         raise RuntimeError(
             f"{ctx.slug}: native validation failed: " + ", ".join(failures)
@@ -476,9 +476,9 @@ def _gate(ctx: CaseContext) -> StageOutcome:
     visual = json.loads(visual_path.read_text(encoding="utf-8"))
     failures = []
     if native["geometry"] != "pass":
-        failures.append(f"geometry={native['q4']}")
+        failures.append(f"geometry={native['geometry']}")
     if CASE_BY_SLUG[ctx.slug].get("saved_design_required") and native["saved_design"] != "pass":
-        failures.append(f"saved_design={native['q5']}")
+        failures.append(f"saved_design={native['saved_design']}")
     if visual["status"] != "pass":
         failures.append(f"visual={visual['status']}")
     if failures:
@@ -493,9 +493,9 @@ def _gate(ctx: CaseContext) -> StageOutcome:
                 "schema": 1,
                 "case": ctx.slug,
                 "status": "pass",
-                "q4": native["geometry"],
-                "q5": native["saved_design"],
-                "q6": visual["status"],
+                "geometry": native["geometry"],
+                "saved_design": native["saved_design"],
+                "visual": visual["status"],
             },
             indent=2,
         )
