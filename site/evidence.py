@@ -1,7 +1,7 @@
 """Resolve per-case generated build evidence for the public site."""
 
 NATIVE_VERIFICATION_LEVELS = frozenset(
-    {"affected-q1-q6", "q1-q6-full", "full-q1-q6"}
+    {"native", "full-native", "full-native"}
 )
 
 

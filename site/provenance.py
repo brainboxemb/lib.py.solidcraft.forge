@@ -85,7 +85,7 @@ def create_reused_provenance(
         forge_version=forge_version,
         solidcraft_version=solidcraft_version,
         workflow_run_id=workflow_run_id,
-        qualification_level="q1-q6-reused",
+        qualification_level="reused-native",
         qualification_status="pass",
         build_commit=build_commit,
         evidence_commit=evidence_commit,

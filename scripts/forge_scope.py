@@ -22,9 +22,9 @@ FORGE_TRIGGER = ".github/workflows/forge.trigger"
 REQUIRED_LEVEL = {
     "preflight": "",
     "regenerate-derived": "derived",
-    "affected-q1-q2": "affected-q1-q2",
-    "affected-q1-q6": "affected-q1-q6",
-    "full-q1-q6": "q1-q6-full",
+    "affected-integration": "integration",
+    "affected-native": "native",
+    "full-native": "full-native",
 }
 
 # Workflow/orchestration-only changes prove the complete machinery with one
@@ -152,8 +152,8 @@ def make_plan(
         return {
             "operation": "main",
             "risk": "foundational",
-            "gate": "full-q1-q6",
-            "required_level": "q1-q6-full",
+            "gate": "full-native",
+            "required_level": "full-native",
             "cases": "",
             "reference_smoke": True,
             "pipeline_smoke": False,
@@ -177,7 +177,7 @@ def make_plan(
     pipeline_smoke = pipeline_only(selected_paths)
 
     if event_name == "push" and FORGE_TRIGGER in selected_paths:
-        gate = "full-q1-q6"
+        gate = "full-native"
         cases = ()
         risk = "foundational"
         reference_smoke = True
@@ -194,14 +194,14 @@ def make_plan(
         reference_smoke = bool(reference_smoke_reasons(selected_paths))
 
     # Stable build/main is a native-qualified baseline. A main promotion may
-    # not replace a previously Q1-Q6 case with only Q1-Q2 evidence.
-    if event_name == "push" and gate == "affected-q1-q2":
-        gate = "affected-q1-q6"
+    # not replace a previously native case with only integration evidence.
+    if event_name == "push" and gate == "affected-integration":
+        gate = "affected-native"
 
     operation = "pr" if event_name == "pull_request" else "main"
     site_only = operation == "main" and gate == "preflight"
     needs_image = (
-        gate in {"affected-q1-q6", "full-q1-q6"}
+        gate in {"affected-native", "full-native"}
         or reference_smoke
         or pipeline_smoke
         or contracts
