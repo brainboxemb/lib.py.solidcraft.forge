@@ -562,7 +562,7 @@ def check(
     assert "At target" in coverage_page
     assert "Below target" in coverage_page
     assert "Basic vertical-edge fillet is command-, native- and visual-qualified" in coverage_page
-    assert "no dedicated native qualification case currently proves native through visual coverage" in coverage_page
+    assert "no dedicated qualification case currently proves both native and visual behaviour" in coverage_page
     assert "<code>Edges</code>" in coverage_page
     for status_class in (
         "coverage-status supported",
