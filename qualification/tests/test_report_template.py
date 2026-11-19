@@ -1,4 +1,5 @@
-"""Regression tests for structured qualification report rendering."""
+"""Regression tests for semantic qualification report rendering."""
+
 from pathlib import Path
 import sys
 import unittest
@@ -18,22 +19,24 @@ class QualificationReportTemplateTests(unittest.TestCase):
         self.assertIn("$image_sections", template)
 
         result = {
-            "schema_version": 2,
+            "schema_version": 5,
             "source_commit": "abc123",
-            "forge_version": "0.3.4",
+            "forge_version": "0.11.0",
             "solidcraft_version": TESTED_SOLIDCRAFT_VERSION,
-            "qualified_at": "2026-11-16T09:30:00Z",
+            "qualified_at": "2026-11-19T00:00:00Z",
             "cases": {
                 "demo": {
                     "title": "Demo case",
                     "status": "pass",
-                    "levels": {
-                        "q1": {"status": "pass"},
-                        "q2": {"status": "pass"},
-                        "q3": {"status": "pass"},
-                        "q4": {"status": "pass"},
-                        "q5": {"status": "not-required"},
-                        "q6": {"status": "pass", "images": ["model.png"]},
+                    "checks": {
+                        "integration": {"status": "pass"},
+                        "native_model": {"status": "pass"},
+                        "geometry": {"status": "pass"},
+                        "saved_design": {"status": "not-required"},
+                        "visual": {
+                            "status": "pass",
+                            "images": ["model.png"],
+                        },
                     },
                 }
             },
@@ -43,12 +46,16 @@ class QualificationReportTemplateTests(unittest.TestCase):
 
         self.assertIn("# SCPF Forge qualification", report)
         self.assertIn("abc123", report)
-        self.assertIn("0.3.4", report)
+        self.assertIn("0.11.0", report)
         self.assertIn(TESTED_SOLIDCRAFT_VERSION, report)
-        self.assertIn("2026-11-16T09:30:00Z", report)
-        self.assertIn("| `demo` | PASS | PASS | PASS | PASS | PASS | N/R | PASS |", report)
+        self.assertIn("2026-11-19T00:00:00Z", report)
+        self.assertIn(
+            "| demo | PASS | PASS | PASS | PASS | NOT-REQUIRED | PASS |",
+            report,
+        )
         self.assertIn("../native/demo/model.png", report)
-        self.assertIn("qualification/templates/report.md", report)
+        for legacy in (" Q1 ", " Q2 ", " Q3 ", " Q4 ", " Q5 ", " Q6 "):
+            self.assertNotIn(legacy, report)
 
 
 if __name__ == "__main__":
