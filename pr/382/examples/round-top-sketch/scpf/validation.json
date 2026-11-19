@@ -1,0 +1,121 @@
+{
+  "case": "round-top-sketch",
+  "geometry": "pass",
+  "saved_design": "not-required",
+  "checks": [
+    {
+      "name": "declared target geometry",
+      "level": "geometry",
+      "status": "pass",
+      "expected": [
+        {
+          "label": "RoundTopSketch",
+          "min": [
+            -50,
+            -50,
+            0
+          ],
+          "max": [
+            50,
+            50,
+            26
+          ]
+        }
+      ],
+      "actual": [
+        {
+          "min": [
+            -50.0,
+            -50.0,
+            0.0
+          ],
+          "max": [
+            50.0,
+            50.0,
+            26.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "one joined stepped body",
+      "level": "geometry",
+      "status": "pass",
+      "expected": 1,
+      "actual": 1
+    },
+    {
+      "name": "shared geometry volume",
+      "level": "geometry",
+      "status": "pass",
+      "expected": {
+        "volume_mm3": 102868.30984914419,
+        "tolerance_mm3": 0.5
+      },
+      "actual": {
+        "volume_mm3": 102868.30984842242
+      }
+    },
+    {
+      "name": "disc and hub cylindrical walls remain",
+      "level": "geometry",
+      "status": "pass",
+      "expected": 2,
+      "actual": 2
+    },
+    {
+      "name": "Disc and Hub Sketches stay solved",
+      "level": "geometry",
+      "status": "pass",
+      "expected": {
+        "Disc": "solved",
+        "Hub": "solved"
+      },
+      "actual": {
+        "Disc": "solved",
+        "Hub": "solved"
+      }
+    },
+    {
+      "name": "circular base keeps native Sketch/Extrude history",
+      "level": "geometry",
+      "status": "pass",
+      "expected": [
+        [
+          "Sketch",
+          "Disc"
+        ],
+        [
+          "ExtrudeFeature",
+          "Extrude1"
+        ],
+        [
+          "Sketch",
+          "Hub"
+        ],
+        [
+          "ExtrudeFeature",
+          "Hub"
+        ]
+      ],
+      "actual": [
+        [
+          "Sketch",
+          "Disc"
+        ],
+        [
+          "ExtrudeFeature",
+          "Extrude1"
+        ],
+        [
+          "Sketch",
+          "Hub"
+        ],
+        [
+          "ExtrudeFeature",
+          "Hub"
+        ]
+      ]
+    }
+  ]
+}

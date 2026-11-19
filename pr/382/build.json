@@ -1,0 +1,1428 @@
+{
+  "base_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
+  "cases": {
+    "anchor-topology-mutation": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:dbaabd85cd931768610cf9020498bec5ea4749c0876c577532438459e2f67515",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:5eec430a7ca1e321abaa9eb77fd071db047120e8a9481203dfaa376ef092c525",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:24d53b6e93b23cb615acc8c1ca287e471d9a3e4532561dbcdbf1b74ba34a3d65",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:3bd9b330b99112faabf229e47de423e651c07d0bb6e28034df2e10f09834a971",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:7128aaa87842ef19fb5578d1d3de0edd6825448aceaa3fa543b352a669512236",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "anchored-holes": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:7bfd7e35da5f9389b43980b2643cf54db3c60bea93e3bb040b7859a7b845e2a4",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:8229ddf4a238f92bed42a61a13312809cf5b8935b84965b4776afb3733dcff71",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:67952b77b6b3004d27acafc84984a673b66d68220693ac30469593b89f24581b",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:8bf9a0b884914e3a24a6767e5c1b5957768c3f0585a2d110deed7618d5f642be",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:469e846592770516fcbc2470afce0107aa19b01f8550d17bdc2c8565ec0791c0",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "assembly-decorator": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:8193eac3a74c6b2ec26f8d11cee82d77411a69f7c6ed4abf94a277eb1715e195",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:d6e8051230b47d87c882b46869e91bf406534f8190fd66c0bf4cecbc9a7377d8",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:9a5ce506c02a68a6893b940d54c60ebb2b5d169202cefd80cfbd86c4d565f11e",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:7e3e47e3b4d9efe168385a6660d2f52c5a1ef714281137a9bc0ec99bf0a23dc8",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:ac8313134d0bad617088d64111b4e8c281a9c35deac95357e07778cabcb1c8bb",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "assembly-owned-anchor": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:d0d6e7e9247b63e5601d3fc823f0b002615b9c1ab00dd1dd7ec031dadef9379a",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:1318d4b170063c399b390cd63a9448b2bacc48141b4f3b1ec8e6b4407c09c9fd",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:c6bf23a655d97fca8751324b540291cf4507d9dedc555a00e13c6d0b1c0e9662",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:1b821d69431726b7f3c7a7b46f59acf84e67938e413df521deb451d47808bcbd",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:05f64a5a26327d1e54770b513134375b68cfa2d0788f0e523ca9f498aa02eda4",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "attach-angle": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:454e98ee4a8642f62d53d3d1ef8e6d4508ceccf00bcb62b46fcdf5e66d1b8c92",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:e313ca40033569245f2cee4f443cc5a222d3f52e664051374ae4f566778efa63",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:e8bb5e5d5ccbb01099806e6321538e711d30507eef6743063d18f1a3cf2185a9",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:72975e556892011b2c17a9df0d1eb7f8386a4884ef776a95080691ef4ff3415e",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:9c99e6841148610dd17a45d3dd80ea522343b2e67a46faca1785b30f96ce3ea0",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "bracket": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:d5f460b87536d7787dd028a19af84c6d38e96639babd424a9daef689089a628c",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:6dec70a34f08e61d78b9e7d29baa138c41a92a592b76fa97b38675dc59e6af34",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:249fdcc52f2f7fe73b225bc288df347b0251b5fc37c684875c04baf86ce1d90b",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:b6f6e44c5b180bf1ad4af6dbfdc47212ebaa8f2ff8d98209d089cb47a6d0416c",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:de8558a9795f6f1753b64bfbf5cc91631bf20f959e43a75a87adb852be5b2b1a",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "circle-negative-extrude": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:5facfe083b3ac7ae4e6ecadcd972e09ef97e3d1a67f38b9cbe3f038c2daeec50",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:cfc645ac7cb3e71b0f8779455006ba280566ed0323301de3ff5dd1adefc03d97",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:0cc003c62d42a3b2de40d63f6c7618b0cea336c58e7b8aaabd618d50a4f0b66e",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:abd26ae8d992477c7da30a8cef271f8adfeada491aaa4de463f33e6f996cb37d",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:57b9e9843dd6ab4f429f0bc1164a87a6cf8f5fe8de0ef7aa320c2e0960aad4e5",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "circular-feature-pattern": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:0fd2112c35a3bdb8466bfcd00aca699ec5e2f021009e31f841edcdfeb1b2267e",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:4153d64821e9619e3449c9640eb388f46d379e835d00795eca37cde3701d9cb9",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:cbda47bddd658aec82c8f2c9697db236a360e137f5df20c4b09844a583cb879f",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:a4d96fdffaba398477281acddf557da6ec11f88646be97bbc405fd7168f45232",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:782a8d140c1d3d12789a21b6a145aea1ddc13b51eba5fe962da31ed8d828d5c2",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "components": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:861491b60eed42de7f3e06ed057905410f06461c330b910af9313f6bd04ca2ec",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:a98035a2ec84187e7b08db037a06c4779c8e51f40d035cb4ffff1cd588a1f858",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:6c09935f8273e607910f4da9eb4ebe070b62a34f39a7781b4d4d3a51c12d8ab1",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:39dea6e58d0decbef628f21b435ae36104f94d1ceb78b58d833ccb751abbc448",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:374039473f55b1d3d950c5299b3806a9657c0d49ddf24ae749d47e635f0457b0",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "corner-anchor": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:7764abe82de84118a83e8f168be4ae95bb10f7cec24f163fec37d44117a5f601",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:1afcd5e30a5793b9a3f3655b82237c3eb9eeccd15ce06144f99c47b6d6af7406",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:ae2e8de5af0faa41baa1056007ae2386d2ee6dcba1756a67ebfc0edba38a561b",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:63cf11dac0f2b7e4a7ebf528e9f1c558c2359cd7bec04459081deeef967d91bf",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:63ced1ed6009c13f4b833e6238e73ca904c5548f478656008ba7dfe593ce2ed5",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "eight-corner-brackets": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:06ffd12c1b2336bf5568a2ad9e2147f413280a1783d6b7efa0fba6888c043e95",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:856edcb0c684513633d246b23f469bd589392a49697b7418db2e550a0a4333f3",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:53e2bef7595cc561e35ef0497e4ccafd54f69e3feb67bc3e6d4f5c1584d7d0d0",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:3c2d327ac208f8366cc03b45fc1c40732378d0222b3f3d7627dfec0bb252abd2",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:4078c0f99f3f83b76654872eb131cc0af315164f24c911d41c2c8697eff7568f",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "eight-flightcase-corners": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:d70f5d8b7904b92e64a15246411d55bcc28d4c3560e482a57fe93449a1548898",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:2659c49d8b7efa78cb1bc4d893a61a6ad0b2882e0384cb83490d801fa38e0a0c",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:5fdfb1432cc418b83a1679a75985a799478621b81ac1800053173889fcbc9f9a",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:9bb41db8734916f9313d8a401d1a775a719de808eaaddb5d836fa0c10f177a46",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:ebf585bb6c7eff6827fdd3dd572ae90d06ff174657ddb705c430d88fcd56e23f",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "four-corner-l": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:a9b826349b6e7c880676bb86eb9f9870b0e031435f9ec19c9e45d5cea6539ee5",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:8be19558ced0fe6eb8f5ccb074f03480b34c504e106c764bdc6d4b75dbc278ff",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:c908cff0e943dc1a83edf72619402cd8312e3695dd81dfd29e05774a814fd7df",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:906b9687d9bf39bb0f85b809b987ea9ab88755c1fb818b6bc0c5af55e8285c42",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:2cc766508d71389048f4fc14068205cd345daa267bb607c857e1d861d5e44457",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "group-hierarchy": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:eed9419582e462295325b84d977690e0732b869b3fbb8e4f347c0491219666c1",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:fdaf47a56a4d4c0fa43e066d2d01c240589e97e69c91e5e139ffd97e155ead3f",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:53a953bfea279e994c5563dc92d6ff82c4f7aaaa410b5ce26d79b2700b37354a",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:a3f99baf85a7cd0431fd129ce86ccd6ceb50e05aa0d7a3ffc97415d49af65047",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:591f5eb08a6e60370ba2dc0bc20e642d13a1613460bf857e4ce852439e4fae3f",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "hole-family": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:1c1ebe9cb33f4fa9d9920cb7d9ab34e239b4f6b7769c1fe181593c3eb568fddd",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:fc78f001169a9be9d34a4a0a494bc0a27f162fb06c0fa8a05b8968c3ede43535",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:acf1bb5867aeeaa39153ff8eb76fd9859b343122e2f09cb093ff19e84a437af3",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:31b5c5dfc9dbdc6f67207bf2a503166651bfe01629d51b247d12bbbf14893c76",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:b55ca854a5ef9ff203aa2b9725b96afcacb07e54eae3286e907a588adeb6a760",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "parameter-scope": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:bc6ab5992f22dab51d4933ffc0fbef821fd5a4c251cd9185a4f53794d4cf61f3",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:68e28a2b049cafa5141ba8c094d0693c3ef2a6448db91bb0168c86a206c00bd1",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:45e0eb2ce90d28203d6bb1ddee8b27f08a7b18a700a5f304bcfd8128a3c5fc70",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:f157c75ba681f4fcd1836b8277bf8e1cf4a62f1160ddca13587452daac71ffd5",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:4157fd5e6b1ed2fbcc60ff32d92833a141de3dc9e849775a4a5970acc1f58ebc",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "parametric-anchor": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:9c31c08b40c4bf3eb75031e96ffe8a4ea4409572555c7938fbf8dfa982311888",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:d7b3a5bc912251b05722b1aebc49970f0d2c25b19cf62de60f967f6d155e5ee8",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:db2b0b9f20b75dd336a55967a3a7586bd4b49c41f3f7de012602bcfd6ef78639",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:9e2447d8e3f1de27cfbc360700dbe01c1fd7938a72fb7bdb4de8be164b4efb61",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:0222530c8ae893b192b40a498752c82f53802d4c0cad03a9042a846156c254e5",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "parametric-attach": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:12a3409702e7b117c9e91163da1b085e75c29ae3cd333b7791b10f74e2d6b272",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:f20d05ae78916674821029601492aefb93b174910446361716d55dde5f404223",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:cd5314847b49694009f9d1ba29d4ed124a3a52b591aa92afd0702901789c657b",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:1cbb911f4b74a02d2e0f27a6308c89478b49b196b3974532cb380ca7ef153cce",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:f1f4828d5b9a397e8cfca11e258247734e865db674106c504c369716a3942c55",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "parametric-offset": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:47e86d96c3b818d3b383b326d9fd550d62bebc9d05a13a05ae83dba3a1d63c84",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:23289d0f0a5ec0cdd974262453a9d8f56f32ce70dea9c3e01c7651b6fca201c1",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:58acd2f368ac88583dc052b59482b7ad0d297d8b7e9986b3128596ed8c370d00",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:49b33b5d6641073c78555e013d1522802e33b5dc2d4c74a9874b475f4ebf5ff7",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:4dc6ef4069d9514db9bd07b23c930823f23544d93ea33a809b8c0ec017ff623f",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "parent-derived-child-size": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:1745f0b25ee645ca0ba09f3ed54c39cb4f4df1492aced112b5b2eb86e8722300",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:d1c04a4183e8ab8c0fc82010902a1479fa574c04472499330c9514a9c6eaca90",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:78be2728fcdc22787397edddafdf624129622c96bae6778caf5f27bee4fb78f9",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:ea2c402e57f9f4e781c741d05d75a70b1a5b01d24bb29addaf6b06cf0da6ee23",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:1931d7b3072d07b69bb777f87a02cbee65ce0cd13b06361af29db5399137a4cc",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "primitive-csg": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:031ad0edc5b5fbc26e466acf9d3baed6cf6630776663ce44336e4ffcb36058b2",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:c3d9fcb612782daf030431a6fc7b13585a1ae13ecf2792f02b7aae37590affb2",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:9d2d028d6f645fb26d0bc0b5e46aaf096b25cd8ed2e7b17db525be202d99c03c",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:4b188848775edfb5fa79a3c2afaf598e9b3d708383412992c1828ee24c1a4365",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:b03d396828dbe16f464e38048299a2981f33f997bde5628666ed8f852dd0fd6b",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "rectangular-pattern": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:348074ae7c9a2b6184841d3a616f2740f65b74c822dbe0f4384a21b3b12ededf",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:0a8083b37d5ad9c4918ec097ed12ed0438102251b74450d0d8cbbf5461577b44",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:a4bca4d43cb07d839e3b73e3d35f95efad3fac7517fc7d904b5836b7a8dc0ca8",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:daa0d7e0495808125be395ac60b50da77229107028f28ccd915bd9ccf55578cc",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:49d7a7fa77b4c80a6c3612ec4268dae1be13bb0f55e749b82bdc02142bebaa97",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "repeated-parent-attachments": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:b2fc22dce5764faa076bade957363520ffb88e876ff8416f8631470b13d5c348",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:6051e2506aed0c189e3d4f085aa88ec540c157f07180791b0493ddc8fbfb3303",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:76a4de22c498663ef1110755c2c6be1b31be112ee1ba2f805a4a2520c9efee9a",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:85c130f77a364b61162d6601cc0ba33c8b925d15cbde3e3c6541199085962ebc",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:7617bfca210ca1a8be7aa56063331d4cca67d5dad53d122f405cb821265d604c",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "round-top-sketch": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:6d7093d107169067d6205d63b4a522518b122e3a6585c01bac54689c6f7dbf9c",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:4489f037aba610f733b7c321a6757098e7c106188938ce9060d4d68b550f766b",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:e3cf093a67e0ab6958d1c698bea7a63831e750b28e30d661db02828d600547d9",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:0fd8c8968058ba4c452218f025818e2a8cc147fd65ab828454ed73dd950bdafb",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:6ccf254b0a6ebe7f48165fc40dcf74951583c4b2ad784437e67134e530f55fdd",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "rounded-rectangle-sketch": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:99ee03514b6f8d184481f0077864808441f837dbae2f3dda3dbb36cba7ec24df",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:5ac47b6381164e44f734647622bf71870313929e48dfc338fe392ae7bcb1a9cd",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:c6db34de2815873522e2200971ad6c96e456efc6f88237c522868a1e93a028e5",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:8c11cfe87839127443a46a759b213be3a35d44e643b8f3ebafee14369ddf56d1",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:c57d4f9d618247e0f54d110e7346bd9c33504175c1c0abe8163f05a829beb823",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "selective-profile-extrude": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:6e5dc4b988b28a40995dbee9f3690c2e99a56eb027cda110e37cf425c5e23006",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:381cfa61fc41f33061065923486fc082dccfe36a53d95252680f15576f956c55",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:a8540ec3cf3e0bacabf4e04dc926d270ad179e0537049dbfbb73e009cee8775a",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:441c94bf675d15dec7eaed9e694a67562b575730cf40caa440aa54bb3b598541",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:c8c6ffca4f6ee069347794648e17478ea0a712284e5741923a6ac864fa7270ea",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "sheet-fold": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:986b08a956adfcd71864650d970b4903b62286ec936e118b95c0fad364f2d43e",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:9a4696e6d0f86ae75b66b3499bd6dc65e0de6d110d6cdb8dbfb576105416c50d",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:a61aedc1f5234bb9051ba83628d2b68203d3b9f7429862e617e96babe79a2aec",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:f84ce3d82331a16e8a6a4a5fade16f03c5c68aefbe532e51aca53332fcb5b6a6",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:a62b8833c11e4e8b41a9d8b3503862f9e6f072926c20794cf332f36eb06049cd",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "simple-box": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:91db318caccc56d6b4d532726b1bb8b3e6078a676885aead0a4b64802f2a9282",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:ac3c4f63211796680cf2655cfe3119df5b1f89948c5790f62f19704300063366",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:d2b5fe6c2931dd1c32a3d455c787c030fb15a1fa1cedc9893d3ddcc9256f5228",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:48298e030e64f618c25728e11a40aeb699f7e864dff477e044809f64ed4dbd62",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:7593100694f34147fab6d83fff6366476414fe823746c66bb22d12581395cf3a",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "sketch-pattern-mirror": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:8ba6f089ed4a9f3d4cdcace548829f2209719f462de458ebda5f25b78007f594",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:75d31b95bd754e810fc4581fef280bdd6e1e2a0b3c926c6712cb6d8fb95de957",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:d22abc1c1620d1da2ec9fe1cddcd16d04e11229769ec74c940d1f00819d5a52b",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:91e5009d6796777153e0cf46bf24df9e516156672385ae54c234147e9a522dee",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:3383268c8c0e5b7fb04c2844241f175aaa64f3cabb79cedbc4ad4e7c05ee4d8c",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "slot-family": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:f23d8f9950f021c0e9dbdee6ce09209202dbd5f938fe6ddefe93615144900d1b",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:76388bc189d0c11d5b91837b33aecdb28c2d335545b71c48360700bd2b140828",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:7e818bc7d6a3bf55d4f75ab610fc4f5c50e95a92540eb5fb38e40349df084f6c",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:13a780353c661f52c5eb317b37e6b730c850911730b1d30905c083b46ac5f9d9",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:8ca9d6f748df638f2feaba904f1a4b7c6d4248340479e72621cf7ea760c63116",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "top-sketch-after-chamfer": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:97ba2c193e443f8d0bb672e18e73df2b1becad8a81b4a575e85ed07b7f335aae",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:880cfadc62da9003c2337b502849230063e35706c0ca7a7a1437e02120ca2456",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:ed59e1c8331a4d54fd6f6e350d8347f1fc9dcce93338bf64fae70a543370b6d0",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:378e8d942347f9f86966cb42870240c8cdcbb3654cf917443d7cd20356501e66",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:7043d319a8b73c034196657ee54162c0c0feec4c9fd946c035265e08a93e97b4",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    },
+    "xz-anchor": {
+      "implementations": {
+        "build123d": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:aff6a4eae2790713eeaaace9742a5e023c081b2329ee51272348dae39713ee9c",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "cadquery": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:514124383a9d15408eea48eda8ae3fe72fb4611a85b9fc78658addbeece5c7dd",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pybosl2": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:157dd874b1d09ca1b4d3a9a25c7b7c95d421ec5c2f76089dd690a02d3b253385",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "pythonscad": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:6d6255fd27d58eb9e213761b8dbbd0422cebf16c642cbc8e8ced56a6f6d84e55",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "reference"
+        },
+        "scpf": {
+          "build_scope": "pr/382",
+          "generated_at": "2026-11-19T11:02:11Z",
+          "input_hash": "sha256:53b2abc148fcbbaf6854dfc08957bc4f26f3c00f305ae4f4b47c0b90c1cb5e80",
+          "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+          "status": "pass",
+          "verification_level": "full-native"
+        }
+      }
+    }
+  },
+  "generated_at": "2026-11-19T11:02:11Z",
+  "pull_request": 382,
+  "schema_version": 2,
+  "scope": "pr",
+  "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+  "source_ref": "issue/381-image-existence",
+  "toolchain": {
+    "forge_version": "0.11.0",
+    "solidcraft_version": "0.42.0"
+  },
+  "verification": {
+    "level": "full-native",
+    "status": "pass"
+  },
+  "workflow_run_id": "44510446196"
+}

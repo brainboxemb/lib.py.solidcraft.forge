@@ -1,0 +1,183 @@
+{
+  "case": "parametric-offset",
+  "geometry": "pass",
+  "saved_design": "pass",
+  "checks": [
+    {
+      "name": "declared target geometry",
+      "level": "geometry",
+      "status": "pass",
+      "expected": [
+        {
+          "label": "Base",
+          "min": [
+            -20,
+            -15,
+            0
+          ],
+          "max": [
+            20,
+            15,
+            20
+          ]
+        },
+        {
+          "label": "Marker",
+          "min": [
+            10,
+            -25,
+            15
+          ],
+          "max": [
+            20,
+            -15,
+            25
+          ]
+        }
+      ],
+      "actual": [
+        {
+          "min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "max": [
+            20.0,
+            15.0,
+            20.0
+          ]
+        },
+        {
+          "min": [
+            10.0,
+            -25.0,
+            15.0
+          ],
+          "max": [
+            20.0,
+            -15.0,
+            25.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "top-right anchor + 5 mm local offset",
+      "level": "geometry",
+      "status": "pass",
+      "expected": {
+        "min": [
+          10,
+          -25,
+          15
+        ],
+        "max": [
+          20,
+          -15,
+          25
+        ]
+      },
+      "actual": {
+        "max": [
+          20.0,
+          -15.0,
+          25.0
+        ],
+        "min": [
+          10.0,
+          -25.0,
+          15.0
+        ]
+      }
+    },
+    {
+      "name": "declared mutation target geometry",
+      "level": "saved_design",
+      "status": "pass",
+      "expected": [
+        {
+          "label": "Base",
+          "min": [
+            -20,
+            -15,
+            0
+          ],
+          "max": [
+            20,
+            15,
+            20
+          ]
+        },
+        {
+          "label": "Marker",
+          "min": [
+            10,
+            -25,
+            20
+          ],
+          "max": [
+            20,
+            -15,
+            30
+          ]
+        }
+      ],
+      "actual": [
+        {
+          "min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "max": [
+            20.0,
+            15.0,
+            20.0
+          ]
+        },
+        {
+          "min": [
+            10.0,
+            -25.0,
+            20.0
+          ],
+          "max": [
+            20.0,
+            -15.0,
+            30.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "10 mm local offset mutation",
+      "level": "saved_design",
+      "status": "pass",
+      "expected": {
+        "min": [
+          10,
+          -25,
+          20
+        ],
+        "max": [
+          20,
+          -15,
+          30
+        ]
+      },
+      "actual": {
+        "max": [
+          20.0,
+          -15.0,
+          30.0
+        ],
+        "min": [
+          10.0,
+          -25.0,
+          20.0
+        ]
+      }
+    }
+  ]
+}

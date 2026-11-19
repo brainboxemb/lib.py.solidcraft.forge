@@ -1,0 +1,108 @@
+{
+  "schema_version": 5,
+  "case": "assembly-decorator",
+  "title": "Imported @assembly subassembly",
+  "source_commit": "fd9029752c921a3d85ced6ceb6e7ed44c5edf06f",
+  "forge_version": "0.11.0",
+  "solidcraft_version": "0.42.0",
+  "qualified_at": "2026-11-19T11:02:10Z",
+  "status": "pass",
+  "blocked_reason": null,
+  "checks": {
+    "integration": {
+      "status": "pass",
+      "commands": 4
+    },
+    "native_model": {
+      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
+      "evidence": [
+        "model.sc",
+        "model.step",
+        "results.json"
+      ]
+    },
+    "geometry": {
+      "status": "pass",
+      "evidence": [
+        "joint-inspect.json",
+        "measurements.json",
+        "validation.json"
+      ]
+    },
+    "saved_design": {
+      "status": "not-required",
+      "required": false,
+      "reason": "No saved-design mutation in this fixture; it isolates imported @assembly construction and native lowering.",
+      "mutation": null,
+      "evidence": []
+    },
+    "visual": {
+      "status": "pass",
+      "regression_status": "pass",
+      "expected_shape_status": "pass",
+      "required_views": [
+        "iso",
+        "front",
+        "right"
+      ],
+      "images": [
+        "model.png",
+        "goal-front.png",
+        "goal-iso.png",
+        "goal-right.png",
+        "model-front.png",
+        "model-iso.png",
+        "model-right.png",
+        "overlay-front.png",
+        "overlay-iso.png",
+        "overlay-right.png",
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png"
+      ],
+      "evidence": [
+        "visual-diff-front.png",
+        "visual-diff-iso.png",
+        "visual-diff-right.png",
+        "visual-validation.json"
+      ]
+    }
+  },
+  "evidence": {
+    "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
+      "joint-inspect.json",
+      "measurements.json",
+      "model.sc",
+      "model.step",
+      "results.json",
+      "validation.json",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png",
+      "visual-validation.json"
+    ],
+    "images": [
+      "model.png",
+      "goal-front.png",
+      "goal-iso.png",
+      "goal-right.png",
+      "model-front.png",
+      "model-iso.png",
+      "model-right.png",
+      "overlay-front.png",
+      "overlay-iso.png",
+      "overlay-right.png",
+      "visual-diff-front.png",
+      "visual-diff-iso.png",
+      "visual-diff-right.png"
+    ]
+  }
+}
