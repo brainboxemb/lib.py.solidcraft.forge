@@ -13,6 +13,38 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def forge_wheel() -> Path:
+    """Return the Forge wheel exposed by the forge-tool dependency."""
+
+    raw = os.environ.get("CAD_CI_DEPENDENCIES_JSON", "").strip()
+    if not raw:
+        raise RuntimeError("CAD_CI_DEPENDENCIES_JSON is required")
+    dependencies = json.loads(raw)
+    forge = dependencies.get("forge-tool")
+    if not isinstance(forge, dict):
+        raise RuntimeError("forge-tool dependency context is required")
+    output_root = forge.get("output_root")
+    if not isinstance(output_root, str) or not output_root:
+        raise RuntimeError("forge-tool dependency output_root is required")
+    wheels = tuple((Path(output_root) / "dist").glob("scpf-*.whl"))
+    if len(wheels) != 1:
+        raise RuntimeError(
+            f"expected exactly one Forge wheel dependency, found {len(wheels)}"
+        )
+    return wheels[0].resolve()
+
+
+def python_environment(wheel: Path) -> dict[str, str]:
+    """Return an environment that imports Forge from the built wheel."""
+
+    env = dict(os.environ)
+    existing = env.get("PYTHONPATH", "")
+    parts = [str(wheel), str(ROOT)]
+    if existing:
+        parts.append(existing)
+    env["PYTHONPATH"] = os.pathsep.join(parts)
+    return env
+
 def item_slug() -> str:
     """Return the example slug selected by the generic CAD-CI item."""
 
@@ -31,8 +63,8 @@ def output_root() -> Path:
     return Path(value).resolve()
 
 
-def run_contract_tests(slug: str) -> None:
-    """Run the example-owned host-side contract tests."""
+def run_contract_tests(slug: str, wheel: Path) -> None:
+    """Run the example-owned host-side contract tests against the built wheel."""
 
     tests = ROOT / "examples" / slug / "tests"
     subprocess.run(
@@ -48,13 +80,15 @@ def run_contract_tests(slug: str) -> None:
             "-v",
         ],
         cwd=ROOT,
+        env=python_environment(wheel),
         check=True,
     )
 
 
-def compile_commands(slug: str) -> dict:
+def compile_commands(slug: str, wheel: Path) -> dict:
     """Compile the example model to its replayable SolidCraft document."""
 
+    sys.path.insert(0, str(wheel))
     from scpf.runner import run_script
 
     model = ROOT / "examples" / slug / "scpf" / "model.py"
@@ -71,8 +105,9 @@ def main() -> int:
     """Verify one example and write its replayable command document."""
 
     slug = item_slug()
-    run_contract_tests(slug)
-    document = compile_commands(slug)
+    wheel = forge_wheel()
+    run_contract_tests(slug, wheel)
+    document = compile_commands(slug, wheel)
 
     destination = output_root() / "solidcraft.json"
     destination.parent.mkdir(parents=True, exist_ok=True)
