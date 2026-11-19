@@ -55,7 +55,10 @@ The detailed API-oriented developer documentation is in `scpf/README.md`.
 
 ## Current CI architecture
 
-GitHub exposes one workflow: `.github/workflows/scpf.yml` (**Forge**).
+GitHub uses two separate workflows:
+
+- `.github/workflows/scpf.yml` (**Forge**) for Forge/model CI;
+- `.github/workflows/solidcraft-runtime.yml` (**SolidCraft runtime**) for the immutable Docker runtime.
 
 Planning and execution are delegated to the pinned reusable workflows from
 `brainboxemb/tool.cad.ci`. Repository-specific work is declared in
@@ -91,7 +94,11 @@ docker/
     runtime.json
 ```
 
-`scripts/solidcraft_runtime.py` resolves the immutable image reference.
+`scripts/solidcraft_runtime.py` resolves and checks the immutable image reference.
+The normal Forge workflow only requires that image to exist; it never builds or
+publishes it. The separate SolidCraft runtime workflow owns image build/publish
+and can be started explicitly with `workflow_dispatch`.
+
 `scripts/model_verify.py` compiles the selected model and runs its
 `verification/verify_model.py` inside that image.
 
