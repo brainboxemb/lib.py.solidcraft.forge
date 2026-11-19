@@ -10,11 +10,11 @@ from qualification.cases import supported_case_slugs
 
 
 ROOT = Path(__file__).resolve().parents[2]
-TOOL_COMMIT = "556e8d43dde9218b28a8d991ab9f2021232e76ab"
+TOOL_COMMIT = "f43e13d7e1547e4caef9827848bace4744d30e17"
 
 
 class ToolCadCiMigrationTests(unittest.TestCase):
-    def test_external_tool_is_pinned_to_released_v022_commit(self):
+    def test_external_tool_is_pinned_to_released_v040_commit(self):
         """Forge must never execute moving tool.cad.ci main in CI."""
 
         url, sha = bootstrap_cad_ci.dependency(ROOT)
@@ -24,8 +24,8 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         )
         self.assertEqual(sha, TOOL_COMMIT)
 
-    def test_root_config_discovers_owned_test_and_case_folders(self):
-        """Forge keeps integration and native case ownership beside examples."""
+    def test_root_config_discovers_forge_tool_and_existing_case_folders(self):
+        """Step 1 migrates only the Forge tool item; examples stay unchanged."""
 
         config = yaml.safe_load(
             (ROOT / "cad-ci.yml").read_text(encoding="utf-8")
@@ -33,15 +33,15 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         self.assertEqual(
             config["items"],
             [
-                "scpf/tests",
+                "scpf",
                 "examples/*",
                 "qualification/reference_suite",
                 "qualification/diagrams",
             ],
         )
 
-        library = yaml.safe_load(
-            (ROOT / "scpf/tests/ci.yml").read_text(encoding="utf-8")
+        tool = yaml.safe_load(
+            (ROOT / "scpf/ci.yml").read_text(encoding="utf-8")
         )
         case = yaml.safe_load(
             (ROOT / "examples/simple-box/ci.yml").read_text(
@@ -49,7 +49,13 @@ class ToolCadCiMigrationTests(unittest.TestCase):
             )
         )
 
-        self.assertEqual(library["kind"], "library-test")
+        self.assertEqual(tool["id"], "forge-tool")
+        self.assertEqual(tool["kind"], "tool")
+        self.assertEqual(
+            [step["id"] for step in tool["steps"]],
+            ["tool_build", "tool_test"],
+        )
+        self.assertEqual(tool["steps"][0]["outputs"], ["dist"])
         self.assertEqual(case["kind"], "example")
         self.assertEqual(
             [step["id"] for step in case["steps"]],
@@ -155,6 +161,10 @@ class ToolCadCiMigrationTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertIn(
             "python scripts/bootstrap_cad_ci.py",
+            workflow,
+        )
+        self.assertIn(
+            "python -m pip install -e ext/cad-ci",
             workflow,
         )
         self.assertNotIn("cad-ci run", workflow)
