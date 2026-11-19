@@ -50,6 +50,8 @@ def main() -> int:
 
     # Model verification owns its command input. It does not depend on the
     # separate Forge release-verification step to produce solidcraft.json.
+    # Keep the built Forge wheel first on PYTHONPATH; /workspace follows only
+    # for Forge-owned verification adapters and model-local verification code.
     document = compile_commands(slug, wheel)
     write_commands(document, output / "solidcraft.json")
 
@@ -67,7 +69,7 @@ def main() -> int:
             "--rm",
             "--pull=never",
             "-e",
-            f"PYTHONPATH={container_wheel}",
+            f"PYTHONPATH={container_wheel}:/workspace",
             "-e",
             "SOLIDCRAFT_GPU=cpu",
             "-v",

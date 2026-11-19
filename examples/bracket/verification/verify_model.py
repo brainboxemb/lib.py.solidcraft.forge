@@ -12,14 +12,19 @@ from typing import Any
 import yaml
 
 from cad_verification import (
+    BodyEnvelope,
     CheckOutcome,
     VerificationCheck,
     VerificationContext,
     VerificationFailure,
+    compare_bounds,
+    compare_scalar,
+    match_body_envelopes,
     run_command,
     verify,
 )
 from scpf.headless import run_document
+from verification.solidcraft_measurements import measured_body_envelopes
 
 
 EXAMPLE = Path(__file__).resolve().parents[1]
@@ -54,71 +59,6 @@ def load_json(path: Path) -> Any:
     """Read JSON evidence produced by SolidCraft."""
 
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def close(actual: float, expected: float, tolerance: float = 1e-3) -> bool:
-    """Return whether two engineering values match within tolerance."""
-
-    return abs(float(actual) - float(expected)) <= tolerance
-
-
-def vector_close(actual, expected, tolerance: float = 1e-3) -> bool:
-    """Compare equally-sized numeric vectors."""
-
-    return (
-        len(actual) == len(expected)
-        and all(close(a, b, tolerance) for a, b in zip(actual, expected))
-    )
-
-
-def bbox_close(body: dict[str, Any], minimum, maximum, tolerance: float = 1e-3) -> bool:
-    """Compare one body's axis-aligned bounds."""
-
-    return (
-        vector_close(body["bbox"]["min"], minimum, tolerance)
-        and vector_close(body["bbox"]["max"], maximum, tolerance)
-    )
-
-
-def bounds_match(data: dict[str, Any], expected, tolerance: float = 1e-3) -> bool:
-    """Match body bounds without depending on native body ordering."""
-
-    actual = [
-        (body["bbox"]["min"], body["bbox"]["max"])
-        for body in data.get("bodies", [])
-        if isinstance(body.get("bbox"), dict)
-    ]
-    if len(actual) != len(expected):
-        return False
-    remaining = list(actual)
-    for minimum, maximum in expected:
-        hit = next(
-            (
-                index
-                for index, (lo, hi) in enumerate(remaining)
-                if vector_close(lo, minimum, tolerance)
-                and vector_close(hi, maximum, tolerance)
-            ),
-            None,
-        )
-        if hit is None:
-            return False
-        remaining.pop(hit)
-    return not remaining
-
-
-def require_bounds(label: str, data: dict[str, Any], expected, tolerance: float = 1e-3) -> None:
-    """Require the declared model bounds."""
-
-    require_true(
-        label,
-        bounds_match(data, expected, tolerance),
-        expected=expected,
-        actual=[
-            (body["bbox"]["min"], body["bbox"]["max"])
-            for body in data.get("bodies", [])
-        ],
-    )
 
 
 def parameters(data: dict[str, Any]) -> dict[str, float]:
@@ -243,21 +183,30 @@ def geometry_check(ctx: VerificationContext) -> CheckOutcome:
     measurements = native / "measurements.json"
     data = evaluate(native / "model.sc", measurements)
     expected_bounds = [[[0,-12,-40],[40,12,0]]]
-    require_bounds("baseline bounds", data, expected_bounds, 1e-3)
+    match_body_envelopes(
+        tuple(
+            BodyEnvelope(tuple(minimum), tuple(maximum))
+            for minimum, maximum in expected_bounds
+        ),
+        measured_body_envelopes(data),
+        1e-3,
+    )
 
     require_equal("body count", data.get("body_count"), 1)
     body = data["bodies"][0]
-    require_true(
-        "L-profile bounds",
-        bbox_close(body, [0, -12, -40], [40, 12, 0]),
-        expected={"min": [0, -12, -40], "max": [40, 12, 0]},
-        actual=body["bbox"],
+    compare_bounds(
+        [0, -12, -40],
+        [40, 12, 0],
+        body["bbox"]["min"],
+        body["bbox"]["max"],
+        1e-3,
+        label="L-profile bounds",
     )
-    require_true(
-        "L-profile volume",
-        close(body["volume_mm3"], 19584.0, 1.0),
-        expected={"volume_mm3": 19584.0, "tolerance_mm3": 1.0},
-        actual={"volume_mm3": body["volume_mm3"]},
+    compare_scalar(
+        19584.0,
+        body["volume_mm3"],
+        1.0,
+        label="L-profile volume",
     )
 
     return CheckOutcome.passed(
