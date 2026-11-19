@@ -75,3 +75,23 @@ Therefore:
 The same principle applies to other stable libraries used by nearly every
 runtime invocation: preinstalling them is an efficiency choice, while their
 code ownership remains with their own package/repository.
+
+
+## Manual runtime publication
+
+SolidCraft runtime images are built and published only by an explicit manual
+workflow invocation.
+
+- the runtime workflow uses `workflow_dispatch`;
+- it must not run on `push`, `pull_request` or path changes;
+- changing `runtime.json`, the Dockerfile or runtime helper scripts only
+  changes the source definition; it does not publish an image;
+- normal Forge CI consumes the explicit immutable image configured in
+  `cad-ci.yml` and must not build a missing image automatically.
+
+The operator sequence is:
+
+1. change and review the runtime definition;
+2. manually run the SolidCraft runtime workflow;
+3. verify the published immutable image;
+4. explicitly update the CI runtime reference.

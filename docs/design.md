@@ -95,3 +95,26 @@ of the reproducible execution environment.
 The exact built Forge wheel remains separate because Forge itself is the code
 being qualified. The runtime must not substitute a preinstalled Forge package
 for that built wheel.
+
+
+## Manual runtime lifecycle
+
+Runtime definition changes and runtime publication are deliberately separate.
+
+```text
+runtime definition change
+  -> normal source review/CI
+  -> no image build
+
+explicit workflow_dispatch
+  -> resolve exact runtime image ID
+  -> if image exists: verify/reuse
+  -> if absent: build and publish
+  -> require published image
+
+separate source change
+  -> update cad-ci.yml to selected immutable image
+```
+
+There is no automatic `push` or `pull_request` trigger on the runtime
+publication workflow.
