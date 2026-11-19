@@ -1,9 +1,5 @@
-# CI items live beside the Forge code or generated evidence that owns behaviour.
-# The generic tool discovers folders only; names such as example/reference have
-# no built-in meaning.
+# Migration step 1: only the Forge Python tool is connected to CAD CI.
+# Later PRs add examples and native/model verification items one group at a time.
 schema: 1
 items:
-  - scpf/tests
-  - examples/*
-  - qualification/reference_suite
-  - qualification/diagrams
+  - scpf

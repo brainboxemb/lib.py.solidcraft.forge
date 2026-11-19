@@ -1,3 +1,22 @@
+# CURRENT CAD CI MIGRATION STATE
+
+Only the following files are active CAD-CI infrastructure in migration step 1:
+
+- `.github/workflows/scpf.yml` — thin caller of released `tool.cad.ci`;
+- `cad-ci.yml` — discovers only the Forge Python tool;
+- `scpf/ci.yml` — defines `tool_build` and `tool_test`;
+- `scripts/tool_ci.py` — Forge-specific build/test commands.
+
+Legacy Forge CI scheduling, example CI files, native/qualification CI items and
+generated-output publication orchestration have been removed. Do not recreate
+them beside the new stack. Add each next CI surface in its own migration PR:
+one example first, then the remaining examples, then native/model groups, then
+publication.
+
+This migration-state section overrides older CI/publication descriptions later
+in this file until those sections are rewritten by the corresponding migration
+step.
+
 # CRITICAL FORGE PRODUCT CONSTRAINTS — READ BEFORE CODING
 
 **FORGE IS REPLAY-FIRST. THE NORMAL FORGE OUTPUT IS A STATIC, REPLAYABLE
