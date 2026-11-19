@@ -1,11 +1,11 @@
 {
   "case": "primitive-csg",
-  "q4": "pass",
-  "q5": "not-required",
+  "geometry": "pass",
+  "saved_design": "not-required",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,28 +39,28 @@
     },
     {
       "name": "single resulting CSG body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "sphere survives CSG",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "cylindrical bore survives CSG",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "clipped bounds",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [

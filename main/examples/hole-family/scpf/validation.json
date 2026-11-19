@@ -1,11 +1,11 @@
 {
   "case": "hole-family",
-  "q4": "pass",
-  "q5": "not-required",
+  "geometry": "pass",
+  "saved_design": "not-required",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "one Hole-family plate body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "Hole-family outer bounds stay unchanged",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -75,7 +75,7 @@
     },
     {
       "name": "native history contains four Hole features",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 4,
       "actual": [
@@ -99,7 +99,7 @@
     },
     {
       "name": "native Hole family needs no helper sketches",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 0,
       "actual": 0

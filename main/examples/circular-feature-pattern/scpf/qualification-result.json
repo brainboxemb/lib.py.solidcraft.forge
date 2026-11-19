@@ -1,56 +1,32 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "case": "circular-feature-pattern",
   "title": "Native circular feature pattern",
-  "source_commit": "68b3a58dabcaf9e08d7fcf3e5b00af316a424d1d",
+  "source_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
   "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T23:14:52Z",
+  "qualified_at": "2026-11-19T07:53:58Z",
   "status": "pass",
   "blocked_reason": null,
-  "levels": {
-    "q1": {
+  "checks": {
+    "integration": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "scpf/tests/test_geometry_features.py",
-          "test": "test_circular_pattern_emits_one_native_feature_pattern"
-        },
-        {
-          "file": "scpf/tests/test_geometry_features.py",
-          "test": "test_circular_pattern_validates_shared_feature_and_axis_options"
-        }
-      ],
-      "evidence": [
-        "q1-case-evidence.txt"
-      ]
+      "commands": 9
     },
-    "q2": {
+    "native_model": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "examples/circular-feature-pattern/tests/test_contract.py",
-          "test": "test_emits_one_native_circular_feature_pattern"
-        },
-        {
-          "file": "examples/circular-feature-pattern/tests/test_contract.py",
-          "test": "test_count_parameter_is_dimensionless_and_pcd_is_length"
-        }
-      ],
-      "commands": 9,
-      "evidence": [
-        "q2-case-evidence.txt"
-      ]
-    },
-    "q3": {
-      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
       "evidence": [
         "model.sc",
         "model.step",
         "results.json"
       ]
     },
-    "q4": {
+    "geometry": {
       "status": "pass",
       "evidence": [
         "joint-inspect.json",
@@ -59,7 +35,7 @@
         "validation.json"
       ]
     },
-    "q5": {
+    "saved_design": {
       "status": "pass",
       "required": true,
       "reason": "Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature.",
@@ -69,7 +45,7 @@
         "model-bolts-4.sc"
       ]
     },
-    "q6": {
+    "visual": {
       "status": "pass",
       "regression_status": "pass",
       "expected_shape_status": "pass",
@@ -106,14 +82,16 @@
   },
   "evidence": {
     "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
+      "camera-top.json",
       "joint-inspect.json",
       "measurements-bolts-4.json",
       "measurements.json",
       "model-bolts-4.sc",
       "model.sc",
       "model.step",
-      "q1-case-evidence.txt",
-      "q2-case-evidence.txt",
       "results.json",
       "validation.json",
       "visual-diff-front.png",

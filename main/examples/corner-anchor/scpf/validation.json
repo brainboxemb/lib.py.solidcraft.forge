@@ -1,11 +1,11 @@
 {
   "case": "corner-anchor",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -64,7 +64,7 @@
     },
     {
       "name": "BACK_TOP_RIGHT meets parent FRONT_TOP_RIGHT",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -93,7 +93,7 @@
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -152,7 +152,7 @@
     },
     {
       "name": "corner follows 80x40 mutation",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "min": [

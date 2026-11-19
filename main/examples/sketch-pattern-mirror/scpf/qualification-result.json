@@ -1,64 +1,32 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "case": "sketch-pattern-mirror",
   "title": "Associative sketch pattern and mirror",
-  "source_commit": "68b3a58dabcaf9e08d7fcf3e5b00af316a424d1d",
+  "source_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
   "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T23:14:52Z",
+  "qualified_at": "2026-11-19T07:53:58Z",
   "status": "pass",
   "blocked_reason": null,
-  "levels": {
-    "q1": {
+  "checks": {
+    "integration": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "scpf/tests/test_sketch_patterns.py",
-          "test": "test_circle_rectangular_pattern_uses_bound_native_curves"
-        },
-        {
-          "file": "scpf/tests/test_sketch_patterns.py",
-          "test": "test_slot_pattern_and_mirrors_reuse_operation_results"
-        },
-        {
-          "file": "scpf/tests/test_sketch_patterns.py",
-          "test": "test_pattern_count_and_spacing_remain_native_parameters"
-        }
-      ],
-      "evidence": [
-        "q1-case-evidence.txt"
-      ]
+      "commands": 22
     },
-    "q2": {
+    "native_model": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "examples/sketch-pattern-mirror/tests/test_contract.py",
-          "test": "test_circle_seed_stays_one_native_profile_with_pattern_and_mirror"
-        },
-        {
-          "file": "examples/sketch-pattern-mirror/tests/test_contract.py",
-          "test": "test_slot_seed_stays_one_native_profile_with_pattern_and_mirrors"
-        },
-        {
-          "file": "examples/sketch-pattern-mirror/tests/test_contract.py",
-          "test": "test_pattern_parameters_have_correct_native_units"
-        }
-      ],
-      "commands": 22,
-      "evidence": [
-        "q2-case-evidence.txt"
-      ]
-    },
-    "q3": {
-      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
       "evidence": [
         "model.sc",
         "model.step",
         "results.json"
       ]
     },
-    "q4": {
+    "geometry": {
       "status": "pass",
       "evidence": [
         "joint-inspect.json",
@@ -67,7 +35,7 @@
         "validation.json"
       ]
     },
-    "q5": {
+    "saved_design": {
       "status": "pass",
       "required": true,
       "reason": "Change hole_diameter 8->10 mm, hole_pitch 25->30 mm and slot_pitch 50->30 mm in the saved .sc design. Without rerunning Python all existing pattern and mirror copies must follow the changed seed and spacing. Pattern counts remain native editable parameters, but SolidCraft 0.42 mirrors a fixed selected entity set and does not automatically adopt new entities added later by an upstream count change.",
@@ -77,7 +45,7 @@
         "model-patterns-mutated.sc"
       ]
     },
-    "q6": {
+    "visual": {
       "status": "pass",
       "regression_status": "pass",
       "expected_shape_status": "pass",
@@ -114,14 +82,16 @@
   },
   "evidence": {
     "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
+      "camera-top.json",
       "joint-inspect.json",
       "measurements-patterns-mutated.json",
       "measurements.json",
       "model-patterns-mutated.sc",
       "model.sc",
       "model.step",
-      "q1-case-evidence.txt",
-      "q2-case-evidence.txt",
       "results.json",
       "validation.json",
       "visual-diff-front.png",

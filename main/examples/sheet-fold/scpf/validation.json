@@ -1,11 +1,11 @@
 {
   "case": "sheet-fold",
-  "q4": "pass",
-  "q5": "not-required",
+  "geometry": "pass",
+  "saved_design": "not-required",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "one connected sheet body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "body remains native sheet metal",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "sheet_metal": true,
@@ -59,7 +59,7 @@
     },
     {
       "name": "shared geometry volume",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "volume_mm3": 6343.451332235384,
@@ -71,7 +71,7 @@
     },
     {
       "name": "native history keeps blank, base flange, hole and fold",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [
@@ -112,7 +112,7 @@
     },
     {
       "name": "flat blank remains one solved native profile",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "name": "Blank",
@@ -132,14 +132,14 @@
     },
     {
       "name": "flat-pattern inspection returns one sheet result",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "flat pattern recovers 80 x 40 x 2 blank",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         80.0,
@@ -154,7 +154,7 @@
     },
     {
       "name": "flat pattern preserves the \u00d86 cutout",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "center": [
@@ -173,7 +173,7 @@
     },
     {
       "name": "flat pattern reports the qualified 90 degree R2 bend",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "angle_deg": 90.0,
@@ -200,7 +200,7 @@
     },
     {
       "name": "flat pattern keeps the shared sheet rule",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "rule": "SheetFold Rule",

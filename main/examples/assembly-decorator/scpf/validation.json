@@ -1,11 +1,11 @@
 {
   "case": "assembly-decorator",
-  "q4": "pass",
-  "q5": "not-required",
+  "geometry": "pass",
+  "saved_design": "not-required",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -64,14 +64,14 @@
     },
     {
       "name": "two native post bodies",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 2,
       "actual": 2
     },
     {
       "name": "imported assembly placement",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [

@@ -1,11 +1,11 @@
 {
   "case": "top-sketch-after-chamfer",
-  "q4": "pass",
-  "q5": "not-required",
+  "geometry": "pass",
+  "saved_design": "not-required",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,21 +39,21 @@
     },
     {
       "name": "one chamfered plate body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "one cylindrical through-hole wall",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "shared geometry volume",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "volume_mm3": 67589.02664470767,
@@ -65,7 +65,7 @@
     },
     {
       "name": "post-chamfer TOP Sketch stays solved",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "Top hole": "solved"
@@ -76,7 +76,7 @@
     },
     {
       "name": "native history keeps chamfer before attached Sketch",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         "BoxFeature",

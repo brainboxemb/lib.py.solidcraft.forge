@@ -1,56 +1,32 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "case": "hole-family",
   "title": "Native Hole family",
-  "source_commit": "68b3a58dabcaf9e08d7fcf3e5b00af316a424d1d",
+  "source_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
   "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T23:14:52Z",
+  "qualified_at": "2026-11-19T07:53:58Z",
   "status": "pass",
   "blocked_reason": null,
-  "levels": {
-    "q1": {
+  "checks": {
+    "integration": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "scpf/tests/test_hole_family.py",
-          "test": "test_all_hole_variants_lower_one_to_one_to_native_hole"
-        },
-        {
-          "file": "scpf/tests/test_hole_family.py",
-          "test": "test_hole_family_validates_feature_specific_dimensions"
-        },
-        {
-          "file": "scpf/tests/test_hole_family.py",
-          "test": "test_threaded_hole_keeps_cosmetic_and_modeled_intent_distinct"
-        }
-      ],
-      "evidence": [
-        "q1-case-evidence.txt"
-      ]
+      "commands": 8
     },
-    "q2": {
+    "native_model": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "examples/hole-family/tests/test_contract.py",
-          "test": "test_hole_family_uses_four_native_hole_features"
-        }
-      ],
-      "commands": 8,
-      "evidence": [
-        "q2-case-evidence.txt"
-      ]
-    },
-    "q3": {
-      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
       "evidence": [
         "model.sc",
         "model.step",
         "results.json"
       ]
     },
-    "q4": {
+    "geometry": {
       "status": "pass",
       "evidence": [
         "joint-inspect.json",
@@ -58,14 +34,14 @@
         "validation.json"
       ]
     },
-    "q5": {
+    "saved_design": {
       "status": "not-required",
       "required": false,
-      "reason": "No saved-design mutation is required in this first Hole-family qualification; Q1-Q4 prove API, native command identity and geometry while Q6 proves the visible forms.",
+      "reason": "No saved-design mutation is required in this first Hole-family qualification; unit, integration and native geometry checks prove API, native command identity and geometry while visual proves the visible forms.",
       "mutation": null,
       "evidence": []
     },
-    "q6": {
+    "visual": {
       "status": "pass",
       "regression_status": "pass",
       "expected_shape_status": "pass",
@@ -102,12 +78,14 @@
   },
   "evidence": {
     "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
+      "camera-top.json",
       "joint-inspect.json",
       "measurements.json",
       "model.sc",
       "model.step",
-      "q1-case-evidence.txt",
-      "q2-case-evidence.txt",
       "results.json",
       "validation.json",
       "visual-diff-front.png",

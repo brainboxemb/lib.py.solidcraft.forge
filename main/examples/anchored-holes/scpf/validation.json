@@ -1,11 +1,11 @@
 {
   "case": "anchored-holes",
-  "q4": "pass",
-  "q5": "not-required",
+  "geometry": "pass",
+  "saved_design": "not-required",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "one plate body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "plate outer bounds",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -75,14 +75,14 @@
     },
     {
       "name": "two cylindrical hole walls",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 2,
       "actual": 2
     },
     {
       "name": "shared geometry volume",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "volume_mm3": 58994.69035085127,
@@ -94,7 +94,7 @@
     },
     {
       "name": "one source hole cut is repeated by native rectangular history",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "types": [
@@ -130,7 +130,7 @@
     },
     {
       "name": "anchored-hole native history has no feature warnings",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": null,
       "actual": []

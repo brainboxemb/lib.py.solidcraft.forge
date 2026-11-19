@@ -67,5 +67,5 @@
     }
   },
   "bounds_sufficient": true,
-  "bounds_reason": "Four rectangular body bounds expose both parent heights and both child positions. Q5 mutation separately proves that both disconnected native joint graphs follow the shared parent-height change."
+  "bounds_reason": "Four rectangular body bounds expose both parent heights and both child positions. saved-design mutation separately proves that both disconnected native joint graphs follow the shared parent-height change."
 }

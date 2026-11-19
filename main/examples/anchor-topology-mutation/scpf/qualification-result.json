@@ -1,48 +1,32 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "case": "anchor-topology-mutation",
   "title": "Explicit topology pick follows parent resize",
-  "source_commit": "68b3a58dabcaf9e08d7fcf3e5b00af316a424d1d",
+  "source_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
   "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T23:14:52Z",
+  "qualified_at": "2026-11-19T07:53:58Z",
   "status": "pass",
   "blocked_reason": null,
-  "levels": {
-    "q1": {
+  "checks": {
+    "integration": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "scpf/tests/test_assembly_attachments.py",
-          "test": "test_named_topology_anchor_is_inlined_as_edge_reference"
-        }
-      ],
-      "evidence": [
-        "q1-case-evidence.txt"
-      ]
+      "commands": 11
     },
-    "q2": {
+    "native_model": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "examples/anchor-topology-mutation/tests/test_contract.py",
-          "test": "test_fixed_topology_pick_is_inlined"
-        }
-      ],
-      "commands": 11,
-      "evidence": [
-        "q2-case-evidence.txt"
-      ]
-    },
-    "q3": {
-      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
       "evidence": [
         "model.sc",
         "model.step",
         "results.json"
       ]
     },
-    "q4": {
+    "geometry": {
       "status": "pass",
       "evidence": [
         "joint-inspect.json",
@@ -51,7 +35,7 @@
         "validation.json"
       ]
     },
-    "q5": {
+    "saved_design": {
       "status": "pass",
       "required": true,
       "reason": "Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the unchanged native relationship must move the marker to the new front-top-left corner without rerunning Python.",
@@ -61,7 +45,7 @@
         "model-size-80x40.sc"
       ]
     },
-    "q6": {
+    "visual": {
       "status": "pass",
       "regression_status": "pass",
       "expected_shape_status": "pass",
@@ -95,14 +79,15 @@
   },
   "evidence": {
     "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
       "joint-inspect.json",
       "measurements-size-80x40.json",
       "measurements.json",
       "model-size-80x40.sc",
       "model.sc",
       "model.step",
-      "q1-case-evidence.txt",
-      "q2-case-evidence.txt",
       "results.json",
       "validation.json",
       "visual-diff-front.png",

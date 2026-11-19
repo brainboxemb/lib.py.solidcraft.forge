@@ -1,48 +1,32 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "case": "eight-corner-brackets",
   "title": "Eight vertical L-profiles: two per side corner",
-  "source_commit": "68b3a58dabcaf9e08d7fcf3e5b00af316a424d1d",
+  "source_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
   "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T23:14:52Z",
+  "qualified_at": "2026-11-19T07:53:58Z",
   "status": "pass",
   "blocked_reason": null,
-  "levels": {
-    "q1": {
+  "checks": {
+    "integration": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "scpf/tests/test_assembly_placement.py",
-          "test": "test_symbolic_ordinary_copy_placement_keeps_parameter"
-        }
-      ],
-      "evidence": [
-        "q1-case-evidence.txt"
-      ]
+      "commands": 28
     },
-    "q2": {
+    "native_model": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "examples/eight-corner-brackets/tests/test_contract.py",
-          "test": "test_parametric_profile_placement_uses_replay_variables"
-        }
-      ],
-      "commands": 28,
-      "evidence": [
-        "q2-case-evidence.txt"
-      ]
-    },
-    "q3": {
-      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
       "evidence": [
         "model.sc",
         "model.step",
         "results.json"
       ]
     },
-    "q4": {
+    "geometry": {
       "status": "pass",
       "evidence": [
         "joint-inspect.json",
@@ -51,7 +35,7 @@
         "validation.json"
       ]
     },
-    "q5": {
+    "saved_design": {
       "status": "pass",
       "required": true,
       "reason": "Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow the calculated X/Y positions and each upper member moves to Z=74..90.",
@@ -61,7 +45,7 @@
         "model-size-160x120x90.sc"
       ]
     },
-    "q6": {
+    "visual": {
       "status": "pass",
       "regression_status": "pass",
       "expected_shape_status": "pass",
@@ -95,14 +79,15 @@
   },
   "evidence": {
     "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
       "joint-inspect.json",
       "measurements-size-160x120x90.json",
       "measurements.json",
       "model-size-160x120x90.sc",
       "model.sc",
       "model.step",
-      "q1-case-evidence.txt",
-      "q2-case-evidence.txt",
       "results.json",
       "validation.json",
       "visual-diff-front.png",

@@ -1,11 +1,11 @@
 {
   "case": "bracket",
-  "q4": "pass",
-  "q5": "not-required",
+  "geometry": "pass",
+  "saved_design": "not-required",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "single L body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "L-profile bounds",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -75,7 +75,7 @@
     },
     {
       "name": "shared geometry volume",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "volume_mm3": 19584.0,

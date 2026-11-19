@@ -1,11 +1,11 @@
 {
   "case": "sketch-pattern-mirror",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "single patterned plate body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "baseline seed/pattern parameters",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "hole_columns": 4.0,
@@ -65,14 +65,14 @@
     },
     {
       "name": "baseline associative cuts remove expected material",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 181578.76140340505,
       "actual": 181578.7614030834
     },
     {
       "name": "one Dog holes and one Clamp slots sketch",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         "Dog holes",
@@ -85,7 +85,7 @@
     },
     {
       "name": "both associative sketches solve",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "Dog holes": "solved",
@@ -98,7 +98,7 @@
     },
     {
       "name": "pattern/mirror geometry stays inside two Sketch features",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [
@@ -147,7 +147,7 @@
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -181,7 +181,7 @@
     },
     {
       "name": "saved pattern parameters changed",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "hole_columns": 4.0,
@@ -200,14 +200,14 @@
     },
     {
       "name": "saved design keeps 8 holes and 8 slots after associative edits",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": 180447.78804811274,
       "actual": 180447.78805063973
     },
     {
       "name": "saved spacing edits move the repeated sketch geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "different_from_baseline_x_by_more_than_mm": 0.01,
@@ -217,7 +217,7 @@
     },
     {
       "name": "mutation keeps the same two solved Sketch features",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "Dog holes": "solved",
@@ -230,7 +230,7 @@
     },
     {
       "name": "mutation preserves the two-sketch history",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         [

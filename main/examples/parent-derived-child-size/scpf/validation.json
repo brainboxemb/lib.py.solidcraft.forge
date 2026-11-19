@@ -1,11 +1,11 @@
 {
   "case": "parent-derived-child-size",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -64,14 +64,14 @@
     },
     {
       "name": "two bodies",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 2,
       "actual": 2
     },
     {
       "name": "baseline parent parameters",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "base_width": 120.0,
@@ -84,7 +84,7 @@
     },
     {
       "name": "child is half parent width/depth",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [
@@ -113,7 +113,7 @@
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -172,7 +172,7 @@
     },
     {
       "name": "parent parameters changed",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "base_width": 160.0,
@@ -185,7 +185,7 @@
     },
     {
       "name": "child rebuilds from parent expressions",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         [

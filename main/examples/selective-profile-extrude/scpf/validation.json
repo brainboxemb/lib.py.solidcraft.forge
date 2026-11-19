@@ -1,11 +1,11 @@
 {
   "case": "selective-profile-extrude",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "single selectively cut plate body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "baseline seed and pattern parameters",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "hole_diameter": 8.0,
@@ -59,7 +59,7 @@
     },
     {
       "name": "baseline cuts exactly three selected profiles",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "volume_mm3": 35246.01776313845,
@@ -72,14 +72,14 @@
     },
     {
       "name": "baseline omits the +10 mm pattern profile",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 0.07130661227494207,
       "actual": 0.07130661232547605
     },
     {
       "name": "selected-hole Sketch stays solved",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "Selected holes": "solved"
@@ -90,7 +90,7 @@
     },
     {
       "name": "one Sketch and one selective extrusion remain in history",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [
@@ -123,7 +123,7 @@
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -157,7 +157,7 @@
     },
     {
       "name": "saved seed and pattern parameters changed",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "hole_diameter": 10.0,
@@ -170,7 +170,7 @@
     },
     {
       "name": "saved profile selections still cut exactly three circles",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "volume_mm3": 34821.90275490383,
@@ -183,14 +183,14 @@
     },
     {
       "name": "saved selection follows moved profiles and leaves +18 mm uncut",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": -0.0676641511170877,
       "actual": -0.06766415111200456
     },
     {
       "name": "mutation keeps one solved associative Sketch",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "Selected holes": "solved"
@@ -201,7 +201,7 @@
     },
     {
       "name": "mutation preserves one Sketch and one extrusion",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         [

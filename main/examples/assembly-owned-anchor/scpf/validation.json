@@ -1,11 +1,11 @@
 {
   "case": "assembly-owned-anchor",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -89,14 +89,14 @@
     },
     {
       "name": "three bodies",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 3,
       "actual": 3
     },
     {
       "name": "named anchor reaches baseline corner",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -125,7 +125,7 @@
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -209,7 +209,7 @@
     },
     {
       "name": "base dimensions changed",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "base_width": 80.0,
@@ -222,7 +222,7 @@
     },
     {
       "name": "named anchor keeps native corner associativity",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "min": [

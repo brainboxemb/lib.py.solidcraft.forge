@@ -1,48 +1,32 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "case": "group-hierarchy",
   "title": "Named native subassembly group",
-  "source_commit": "68b3a58dabcaf9e08d7fcf3e5b00af316a424d1d",
+  "source_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
   "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T23:14:52Z",
+  "qualified_at": "2026-11-19T07:53:58Z",
   "status": "pass",
   "blocked_reason": null,
-  "levels": {
-    "q1": {
+  "checks": {
+    "integration": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "scpf/tests/test_assembly_placement.py",
-          "test": "test_named_group_creates_real_nested_native_component"
-        }
-      ],
-      "evidence": [
-        "q1-case-evidence.txt"
-      ]
+      "commands": 8
     },
-    "q2": {
+    "native_model": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "examples/group-hierarchy/tests/test_contract.py",
-          "test": "test_group_lowers_to_real_nested_component"
-        }
-      ],
-      "commands": 8,
-      "evidence": [
-        "q2-case-evidence.txt"
-      ]
-    },
-    "q3": {
-      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
       "evidence": [
         "model.sc",
         "model.step",
         "results.json"
       ]
     },
-    "q4": {
+    "geometry": {
       "status": "pass",
       "evidence": [
         "joint-inspect.json",
@@ -51,14 +35,14 @@
         "validation.json"
       ]
     },
-    "q5": {
+    "saved_design": {
       "status": "not-required",
       "required": false,
       "reason": "No saved-design mutation in this fixture; it isolates persisted native grouping and hierarchy.",
       "mutation": null,
       "evidence": []
     },
-    "q6": {
+    "visual": {
       "status": "pass",
       "regression_status": "pass",
       "expected_shape_status": "pass",
@@ -92,12 +76,13 @@
   },
   "evidence": {
     "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
       "joint-inspect.json",
       "measurements.json",
       "model.sc",
       "model.step",
-      "q1-case-evidence.txt",
-      "q2-case-evidence.txt",
       "results-bom.json",
       "results.json",
       "validation.json",

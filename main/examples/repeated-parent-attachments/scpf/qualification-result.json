@@ -1,48 +1,32 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "case": "repeated-parent-attachments",
   "title": "Attachments on repeated parent occurrences",
-  "source_commit": "68b3a58dabcaf9e08d7fcf3e5b00af316a424d1d",
+  "source_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
   "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T23:14:52Z",
+  "qualified_at": "2026-11-19T07:53:58Z",
   "status": "pass",
   "blocked_reason": null,
-  "levels": {
-    "q1": {
+  "checks": {
+    "integration": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "scpf/tests/test_assembly_attachments.py",
-          "test": "test_repeated_parent_attachments_keep_distinct_targets"
-        }
-      ],
-      "evidence": [
-        "q1-case-evidence.txt"
-      ]
+      "commands": 14
     },
-    "q2": {
+    "native_model": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "examples/repeated-parent-attachments/tests/test_contract.py",
-          "test": "test_two_authored_rigid_joints_use_bound_occurrences"
-        }
-      ],
-      "commands": 14,
-      "evidence": [
-        "q2-case-evidence.txt"
-      ]
-    },
-    "q3": {
-      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
       "evidence": [
         "model.sc",
         "model.step",
         "results.json"
       ]
     },
-    "q4": {
+    "geometry": {
       "status": "pass",
       "evidence": [
         "joint-inspect.json",
@@ -51,7 +35,7 @@
         "validation.json"
       ]
     },
-    "q5": {
+    "saved_design": {
       "status": "pass",
       "required": true,
       "reason": "Change parent_height from 40 to 60 mm in the saved .sc design; both Parent occurrences become 60 mm tall and both Marker occurrences move from Z=40..50 to Z=60..70 without rerunning Python.",
@@ -61,7 +45,7 @@
         "model-height-60.sc"
       ]
     },
-    "q6": {
+    "visual": {
       "status": "pass",
       "regression_status": "pass",
       "expected_shape_status": "pass",
@@ -95,14 +79,15 @@
   },
   "evidence": {
     "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
       "joint-inspect.json",
       "measurements-height-60.json",
       "measurements.json",
       "model-height-60.sc",
       "model.sc",
       "model.step",
-      "q1-case-evidence.txt",
-      "q2-case-evidence.txt",
       "results.json",
       "validation.json",
       "visual-diff-front.png",

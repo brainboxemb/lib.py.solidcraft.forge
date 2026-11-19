@@ -1,52 +1,32 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "case": "slot-family",
   "title": "Native sketch Slot family",
-  "source_commit": "68b3a58dabcaf9e08d7fcf3e5b00af316a424d1d",
+  "source_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
   "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T23:14:52Z",
+  "qualified_at": "2026-11-19T07:53:58Z",
   "status": "pass",
   "blocked_reason": null,
-  "levels": {
-    "q1": {
+  "checks": {
+    "integration": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "scpf/tests/test_native_slots.py",
-          "test": "test_all_five_slot_variants_lower_one_to_one"
-        },
-        {
-          "file": "scpf/tests/test_native_slots.py",
-          "test": "test_arc_center_requires_one_end_definition"
-        }
-      ],
-      "evidence": [
-        "q1-case-evidence.txt"
-      ]
+      "commands": 13
     },
-    "q2": {
+    "native_model": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "examples/slot-family/tests/test_contract.py",
-          "test": "test_slot_family_command_contract"
-        }
-      ],
-      "commands": 13,
-      "evidence": [
-        "q2-case-evidence.txt"
-      ]
-    },
-    "q3": {
-      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
       "evidence": [
         "model.sc",
         "model.step",
         "results.json"
       ]
     },
-    "q4": {
+    "geometry": {
       "status": "pass",
       "evidence": [
         "joint-inspect.json",
@@ -54,14 +34,14 @@
         "validation.json"
       ]
     },
-    "q5": {
+    "saved_design": {
       "status": "not-required",
       "required": false,
-      "reason": "No Q5 mutation is required; this case isolates the five native sketch construction methods and their saved feature history.",
+      "reason": "No saved-design mutation is required; this case isolates the five native sketch construction methods and their saved feature history.",
       "mutation": null,
       "evidence": []
     },
-    "q6": {
+    "visual": {
       "status": "pass",
       "regression_status": "pass",
       "expected_shape_status": "pass",
@@ -98,12 +78,14 @@
   },
   "evidence": {
     "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
+      "camera-top.json",
       "joint-inspect.json",
       "measurements.json",
       "model.sc",
       "model.step",
-      "q1-case-evidence.txt",
-      "q2-case-evidence.txt",
       "results.json",
       "validation.json",
       "visual-diff-front.png",

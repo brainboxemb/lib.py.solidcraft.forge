@@ -1,11 +1,11 @@
 {
   "case": "eight-flightcase-corners",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -239,14 +239,14 @@
     },
     {
       "name": "nine bodies: case plus eight flightcase corners",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 9,
       "actual": 9
     },
     {
       "name": "eight fixed 24x24x24 protector envelopes",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [
@@ -335,7 +335,7 @@
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -569,14 +569,14 @@
     },
     {
       "name": "nine bodies after saved-design mutation",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": 9,
       "actual": 9
     },
     {
       "name": "case dimensions changed",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "case_width": 160.0,
@@ -591,7 +591,7 @@
     },
     {
       "name": "protector envelopes remain fixed after parent resize",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         [

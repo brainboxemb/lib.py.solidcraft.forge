@@ -1,11 +1,11 @@
 {
   "case": "simple-box",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "one body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "40x30x10 bounds",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -75,7 +75,7 @@
     },
     {
       "name": "parameters",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "length": 40.0,
@@ -90,7 +90,7 @@
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -124,7 +124,7 @@
     },
     {
       "name": "length parameter changed in saved design",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "length": 50.0,
@@ -139,7 +139,7 @@
     },
     {
       "name": "native Box rebuilds after length mutation",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "min": [

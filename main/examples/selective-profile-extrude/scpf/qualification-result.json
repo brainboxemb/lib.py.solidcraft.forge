@@ -1,52 +1,32 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "case": "selective-profile-extrude",
   "title": "Selective Sketch profile extrusion",
-  "source_commit": "68b3a58dabcaf9e08d7fcf3e5b00af316a424d1d",
+  "source_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
   "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T23:14:52Z",
+  "qualified_at": "2026-11-19T07:53:58Z",
   "status": "pass",
   "blocked_reason": null,
-  "levels": {
-    "q1": {
+  "checks": {
+    "integration": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "scpf/tests/test_sketch_patterns.py",
-          "test": "test_pattern_can_feed_one_selective_profile_extrusion"
-        }
-      ],
-      "evidence": [
-        "q1-case-evidence.txt"
-      ]
+      "commands": 9
     },
-    "q2": {
+    "native_model": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "examples/selective-profile-extrude/tests/test_contract.py",
-          "test": "test_one_pattern_and_one_selective_native_extrusion"
-        },
-        {
-          "file": "examples/selective-profile-extrude/tests/test_contract.py",
-          "test": "test_saved_design_mutation_changes_seed_and_pattern_spacing"
-        }
-      ],
-      "commands": 9,
-      "evidence": [
-        "q2-case-evidence.txt"
-      ]
-    },
-    "q3": {
-      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
       "evidence": [
         "model.sc",
         "model.step",
         "results.json"
       ]
     },
-    "q4": {
+    "geometry": {
       "status": "pass",
       "evidence": [
         "joint-inspect.json",
@@ -55,7 +35,7 @@
         "validation.json"
       ]
     },
-    "q5": {
+    "saved_design": {
       "status": "pass",
       "required": true,
       "reason": "Change hole_diameter 8->10 mm and hole_pitch 20->24 mm in the saved .sc design. Without rerunning Python the three selected cuts must follow their associated pattern profiles, including profiles whose centres move away from the original pick points; the unselected profile remains uncut.",
@@ -65,7 +45,7 @@
         "model-pattern-mutated.sc"
       ]
     },
-    "q6": {
+    "visual": {
       "status": "pass",
       "regression_status": "pass",
       "expected_shape_status": "pass",
@@ -102,14 +82,16 @@
   },
   "evidence": {
     "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
+      "camera-top.json",
       "joint-inspect.json",
       "measurements-pattern-mutated.json",
       "measurements.json",
       "model-pattern-mutated.sc",
       "model.sc",
       "model.step",
-      "q1-case-evidence.txt",
-      "q2-case-evidence.txt",
       "results.json",
       "validation.json",
       "visual-diff-front.png",

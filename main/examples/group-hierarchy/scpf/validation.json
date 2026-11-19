@@ -1,11 +1,11 @@
 {
   "case": "group-hierarchy",
-  "q4": "pass",
-  "q5": "not-required",
+  "geometry": "pass",
+  "saved_design": "not-required",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -89,21 +89,21 @@
     },
     {
       "name": "three native bodies",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 3,
       "actual": 3
     },
     {
       "name": "BOM and component inspections",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 3,
       "actual": 3
     },
     {
       "name": "top BOM preserves named subassembly",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "Frame": 1,
@@ -118,7 +118,7 @@
     },
     {
       "name": "flat BOM expands grouped panel occurrences",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "Frame": 1,
@@ -133,7 +133,7 @@
     },
     {
       "name": "browser group is not grounded",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "count": 1,
@@ -146,7 +146,7 @@
     },
     {
       "name": "physical first panel remains grounded",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "count": 2,

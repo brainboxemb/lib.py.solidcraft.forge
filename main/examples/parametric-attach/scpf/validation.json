@@ -1,11 +1,11 @@
 {
   "case": "parametric-attach",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -64,14 +64,14 @@
     },
     {
       "name": "base bounds",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": null,
       "actual": null
     },
     {
       "name": "10 mm gap",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -100,7 +100,7 @@
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -159,7 +159,7 @@
     },
     {
       "name": "30 mm gap mutation",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "min": [

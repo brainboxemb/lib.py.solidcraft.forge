@@ -1,11 +1,11 @@
 {
   "case": "parametric-anchor",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -64,14 +64,14 @@
     },
     {
       "name": "RIGHT-to-LEFT baseline",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": null,
       "actual": null
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -130,7 +130,7 @@
     },
     {
       "name": "RIGHT anchor follows width mutation",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "min": [

@@ -1,11 +1,11 @@
 {
   "case": "rectangular-pattern",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "single patterned plate body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "pattern keeps the plate outer bounds",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -75,7 +75,7 @@
     },
     {
       "name": "3 x 2 rectangular Slot pattern has qualified native geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "volume_mm3": 36281.415986824606,
@@ -96,7 +96,7 @@
     },
     {
       "name": "source Slot remains one solved native sketch profile",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "name": "Slot",
@@ -116,7 +116,7 @@
     },
     {
       "name": "source cut stays single and pattern is one native History feature",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [
@@ -157,7 +157,7 @@
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -191,7 +191,7 @@
     },
     {
       "name": "pattern parameters changed in saved design",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "columns": 2.0,
@@ -208,14 +208,14 @@
     },
     {
       "name": "mutated pattern remains one body",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "2 x 2 pattern rebuilds four Slot cuts",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "volume_mm3": 36987.61065788307,
@@ -236,7 +236,7 @@
     },
     {
       "name": "30 mm pitch moves the rebuilt Slot layout",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         -0.5727820682366427,
@@ -251,7 +251,7 @@
     },
     {
       "name": "mutation keeps one solved source Slot profile",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "name": "Slot",
@@ -271,7 +271,7 @@
     },
     {
       "name": "mutation keeps one source cut and one native pattern feature",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         [

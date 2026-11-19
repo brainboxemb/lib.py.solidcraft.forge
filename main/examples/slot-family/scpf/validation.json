@@ -1,11 +1,11 @@
 {
   "case": "slot-family",
-  "q4": "pass",
-  "q5": "not-required",
+  "geometry": "pass",
+  "saved_design": "not-required",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "single cut plate body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "plate outer bounds remain unchanged by five slot cuts",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -75,7 +75,7 @@
     },
     {
       "name": "five slot cuts remove the qualified amount of material",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "volume_mm3": 89526.65799554957,
@@ -96,7 +96,7 @@
     },
     {
       "name": "native sketch contains five closed slot profiles",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "name": "Slot family",
@@ -116,7 +116,7 @@
     },
     {
       "name": "slot family remains one native sketch plus one cut feature",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [

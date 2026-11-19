@@ -1,11 +1,11 @@
 {
   "case": "circular-feature-pattern",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "single circular-patterned plate body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "baseline pattern parameters",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "bolts": 6.0,
@@ -59,7 +59,7 @@
     },
     {
       "name": "six \u00d88 through holes have qualified native geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "volume_mm3": 58190.44263153228,
@@ -72,7 +72,7 @@
     },
     {
       "name": "source BoltHole stays one solved circle profile",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "name": "BoltHole",
@@ -92,7 +92,7 @@
     },
     {
       "name": "source cut stays single and pattern is one native History feature",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [
@@ -133,7 +133,7 @@
     },
     {
       "name": "saved bolt count changed",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "bolts": 4.0,
@@ -146,14 +146,14 @@
     },
     {
       "name": "mutated pattern remains one body",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "saved pattern rebuilds to four holes",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "volume_mm3": 58793.628421021516,
@@ -166,7 +166,7 @@
     },
     {
       "name": "mutation keeps one source cut and one circular pattern feature",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         [

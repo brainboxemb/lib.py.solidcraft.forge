@@ -1,60 +1,32 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "case": "sheet-fold",
   "title": "Flat sheet, through hole and 90\u00b0 fold",
-  "source_commit": "68b3a58dabcaf9e08d7fcf3e5b00af316a424d1d",
+  "source_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
   "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T23:14:52Z",
+  "qualified_at": "2026-11-19T07:53:58Z",
   "status": "pass",
   "blocked_reason": null,
-  "levels": {
-    "q1": {
+  "checks": {
+    "integration": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "scpf/tests/test_sheet_metal.py",
-          "test": "test_blank_hole_and_fold_lower_to_native_sheet_history"
-        },
-        {
-          "file": "scpf/tests/test_sheet_metal.py",
-          "test": "test_sheet_rule_and_fold_parameter_units_are_correct"
-        },
-        {
-          "file": "scpf/tests/test_sheet_metal.py",
-          "test": "test_sheet_metal_and_fold_validate_authoring_contract"
-        }
-      ],
-      "evidence": [
-        "q1-case-evidence.txt"
-      ]
+      "commands": 14
     },
-    "q2": {
+    "native_model": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "examples/sheet-fold/tests/test_contract.py",
-          "test": "test_sheet_fold_uses_native_sheet_history"
-        },
-        {
-          "file": "examples/sheet-fold/tests/test_contract.py",
-          "test": "test_sheet_rule_and_fold_parameters_have_native_units"
-        }
-      ],
-      "commands": 14,
-      "evidence": [
-        "q2-case-evidence.txt"
-      ]
-    },
-    "q3": {
-      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
       "evidence": [
         "model.sc",
         "model.step",
         "results.json"
       ]
     },
-    "q4": {
+    "geometry": {
       "status": "pass",
       "evidence": [
         "joint-inspect.json",
@@ -62,14 +34,14 @@
         "validation.json"
       ]
     },
-    "q5": {
+    "saved_design": {
       "status": "not-required",
       "required": false,
-      "reason": "No Q5 mutation is required in this first sheet-metal qualification. Q1-Q4 prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.",
+      "reason": "No saved-design mutation is required in this first sheet-metal qualification. unit, integration and native geometry checks prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.",
       "mutation": null,
       "evidence": []
     },
-    "q6": {
+    "visual": {
       "status": "pass",
       "regression_status": "pass",
       "expected_shape_status": "pass",
@@ -106,12 +78,14 @@
   },
   "evidence": {
     "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
+      "camera-top.json",
       "joint-inspect.json",
       "measurements.json",
       "model.sc",
       "model.step",
-      "q1-case-evidence.txt",
-      "q2-case-evidence.txt",
       "results-flat-pattern.json",
       "results.json",
       "validation.json",

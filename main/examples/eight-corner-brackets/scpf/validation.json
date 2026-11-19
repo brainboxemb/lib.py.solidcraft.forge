@@ -1,11 +1,11 @@
 {
   "case": "eight-corner-brackets",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -239,14 +239,14 @@
     },
     {
       "name": "nine bodies: frame plus eight brackets",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 9,
       "actual": 9
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -480,7 +480,7 @@
     },
     {
       "name": "nine bodies after saved-design mutation",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": 9,
       "actual": 9

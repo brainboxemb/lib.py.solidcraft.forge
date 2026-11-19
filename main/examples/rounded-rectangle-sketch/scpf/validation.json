@@ -1,11 +1,11 @@
 {
   "case": "rounded-rectangle-sketch",
-  "q4": "pass",
-  "q5": "not-required",
+  "geometry": "pass",
+  "saved_design": "not-required",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "single joined rounded-pad body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "rounded sketch pad bounds",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -75,7 +75,7 @@
     },
     {
       "name": "shared geometry volume",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "volume_mm3": 33428.31853071796,
@@ -87,14 +87,14 @@
     },
     {
       "name": "four true rounded corner faces",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 4,
       "actual": 4
     },
     {
       "name": "rounded pad remains one solved profile with construction diagonal",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "curves": 9,
@@ -114,7 +114,7 @@
     },
     {
       "name": "explicit rounded sketch remains distinct native history",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [

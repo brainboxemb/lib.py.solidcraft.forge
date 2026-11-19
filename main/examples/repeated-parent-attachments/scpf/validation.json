@@ -1,11 +1,11 @@
 {
   "case": "repeated-parent-attachments",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -114,21 +114,21 @@
     },
     {
       "name": "four bodies",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 4,
       "actual": 4
     },
     {
       "name": "shared parent height parameter",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 40.0,
       "actual": 40.0
     },
     {
       "name": "both baseline markers sit on parent top faces",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [
@@ -157,7 +157,7 @@
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -266,14 +266,14 @@
     },
     {
       "name": "parent height changed in saved design",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": 60.0,
       "actual": 60.0
     },
     {
       "name": "both disconnected joint graphs follow height mutation",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         [

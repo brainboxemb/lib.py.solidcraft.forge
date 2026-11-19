@@ -1,11 +1,11 @@
 {
   "case": "anchor-topology-mutation",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -64,14 +64,14 @@
     },
     {
       "name": "two bodies",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 2,
       "actual": 2
     },
     {
       "name": "marker touches baseline topology corner outside front face",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -100,7 +100,7 @@
     },
     {
       "name": "declared mutation target geometry",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": [
         {
@@ -159,7 +159,7 @@
     },
     {
       "name": "parent dimensions changed",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "base_width": 80.0,
@@ -172,7 +172,7 @@
     },
     {
       "name": "fixed topology pick follows resized corner",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "min": [

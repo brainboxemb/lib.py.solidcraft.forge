@@ -1,11 +1,11 @@
 {
   "case": "xz-anchor",
-  "q4": "pass",
-  "q5": "pass",
+  "geometry": "pass",
+  "saved_design": "pass",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -89,14 +89,14 @@
     },
     {
       "name": "two markers",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 2,
       "actual": 2
     },
     {
       "name": "right BACK_TOP corner alignment",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -139,7 +139,7 @@
     },
     {
       "name": "left BACK_TOP corner alignment",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "min": [
@@ -182,7 +182,7 @@
     },
     {
       "name": "right corner follows size mutation",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "min": [
@@ -225,7 +225,7 @@
     },
     {
       "name": "left corner follows size mutation",
-      "level": "q5",
+      "level": "saved_design",
       "status": "pass",
       "expected": {
         "min": [

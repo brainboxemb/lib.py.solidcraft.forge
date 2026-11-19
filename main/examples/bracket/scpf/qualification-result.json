@@ -1,52 +1,32 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "case": "bracket",
   "title": "Minimal L-profile",
-  "source_commit": "68b3a58dabcaf9e08d7fcf3e5b00af316a424d1d",
+  "source_commit": "b9a4af43ad7348baeaaa1f5ed77172e0714f6b36",
   "forge_version": "0.11.0",
   "solidcraft_version": "0.42.0",
-  "qualified_at": "2026-11-18T23:14:52Z",
+  "qualified_at": "2026-11-19T07:53:58Z",
   "status": "pass",
   "blocked_reason": null,
-  "levels": {
-    "q1": {
+  "checks": {
+    "integration": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "scpf/tests/test_sketch_profiles.py",
-          "test": "test_positioned_xz_polygon_keeps_parameterized_y_plane"
-        },
-        {
-          "file": "scpf/tests/test_sketch_extrusion.py",
-          "test": "test_sketch_extrude_signed_distance_and_sym"
-        }
-      ],
-      "evidence": [
-        "q1-case-evidence.txt"
-      ]
+      "commands": 7
     },
-    "q2": {
+    "native_model": {
       "status": "pass",
-      "tests": [
-        {
-          "file": "examples/bracket/tests/test_contract.py",
-          "test": "test_bracket_command_contract"
-        }
-      ],
-      "commands": 7,
-      "evidence": [
-        "q2-case-evidence.txt"
-      ]
-    },
-    "q3": {
-      "status": "pass",
+      "stages": {
+        "replay": "pass",
+        "evaluate": "pass",
+        "gate": "pass"
+      },
       "evidence": [
         "model.sc",
         "model.step",
         "results.json"
       ]
     },
-    "q4": {
+    "geometry": {
       "status": "pass",
       "evidence": [
         "joint-inspect.json",
@@ -54,14 +34,14 @@
         "validation.json"
       ]
     },
-    "q5": {
+    "saved_design": {
       "status": "not-required",
       "required": false,
       "reason": "Not yet an attachment mutation case. This component is intentionally the geometry baseline for upcoming multi-orientation anchor tests.",
       "mutation": null,
       "evidence": []
     },
-    "q6": {
+    "visual": {
       "status": "pass",
       "regression_status": "pass",
       "expected_shape_status": "pass",
@@ -95,12 +75,13 @@
   },
   "evidence": {
     "native_files": [
+      "camera-front.json",
+      "camera-iso.json",
+      "camera-right.json",
       "joint-inspect.json",
       "measurements.json",
       "model.sc",
       "model.step",
-      "q1-case-evidence.txt",
-      "q2-case-evidence.txt",
       "results.json",
       "validation.json",
       "visual-diff-front.png",

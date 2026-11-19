@@ -1,11 +1,11 @@
 {
   "case": "round-top-sketch",
-  "q4": "pass",
-  "q5": "not-required",
+  "geometry": "pass",
+  "saved_design": "not-required",
   "checks": [
     {
       "name": "declared target geometry",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         {
@@ -39,14 +39,14 @@
     },
     {
       "name": "one joined stepped body",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 1,
       "actual": 1
     },
     {
       "name": "shared geometry volume",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "volume_mm3": 102868.30984914419,
@@ -58,14 +58,14 @@
     },
     {
       "name": "disc and hub cylindrical walls remain",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": 2,
       "actual": 2
     },
     {
       "name": "Disc and Hub Sketches stay solved",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": {
         "Disc": "solved",
@@ -78,7 +78,7 @@
     },
     {
       "name": "circular base keeps native Sketch/Extrude history",
-      "level": "q4",
+      "level": "geometry",
       "status": "pass",
       "expected": [
         [
