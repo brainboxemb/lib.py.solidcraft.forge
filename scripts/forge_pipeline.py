@@ -121,7 +121,7 @@ def run_tool_cad_ci_layers(
 
     if gate not in {"preflight", "regenerate-derived"}:
         items = (
-            "library-tests",
+            "forge-tool",
             *selected,
             *evidence_items(gate, reference_smoke),
         )
@@ -157,7 +157,7 @@ def run_tool_cad_ci_layers(
                 "--repo",
                 str(ROOT),
                 "--item",
-                "library-tests",
+                "forge-tool",
             ],
             env=tool_cad_ci_env(),
         )
