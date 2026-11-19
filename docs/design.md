@@ -58,3 +58,33 @@ Model/reference commands consume `FORGE_RUNTIME_IMAGE` from their environment.
 They pull and run that exact immutable image. Generic comparison/reporting code
 stays in released `lib.py.cad.verfication`; Forge keeps only its own policy,
 adapters and expected data.
+
+
+## Verification adapter boundary
+
+Forge model verification has three layers:
+
+```text
+SolidCraft/model adapter
+  -> normalized consumer values
+  -> released cad_verification functions
+  -> model-specific pass/fail policy and evidence
+```
+
+The SolidCraft/model adapter may know the SolidCraft measurement JSON schema and
+extract values such as parameters, bodies, bounds, timeline rows and feature
+state. Those extraction rules are engine-specific and stay in Forge.
+
+Once values are ordinary scalars, vectors, bounds, body envelopes, images or
+semantic statuses, comparison/composition uses released
+`lib.py.cad.verfication` functions. Forge must not keep parallel generic
+comparison math such as `close()`, `vector_close()`, `bbox_close()` or
+`bounds_match()`.
+
+Reference execution remains a thin Forge adapter because choosing/running
+PythonSCAD, pyBOSL2, CadQuery and build123d is consumer policy. Its exported STL
+geometry is validated by the library.
+
+Visual rendering remains a Forge adapter because SolidCraft snapshot commands,
+view selection and camera conversion are engine/model policy. Generic visual
+verification after rendering belongs to the library.

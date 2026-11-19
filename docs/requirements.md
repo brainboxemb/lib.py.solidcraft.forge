@@ -47,3 +47,34 @@ SolidCraft runtime workflow.
 The package keeps its own tested SolidCraft compatibility guard. CI must verify
 that its declared `SOLIDCRAFT_VERSION` agrees with the package/runtime build
 contract rather than silently maintaining unrelated version literals.
+
+
+## Verification ownership boundary
+
+Forge verification code owns only consumer/domain behavior:
+
+- SolidCraft command invocation and measurement-schema parsing;
+- model-specific parameter/history/feature expectations;
+- model-specific mutations;
+- reference source selection and CAD-engine adapters;
+- SolidCraft camera conversion and rendering;
+- model-local baselines, required views and expected geometry.
+
+Generic verification mechanics must come from a released
+`lib.py.cad.verfication` API.
+
+In particular Forge must not reimplement:
+
+- scalar tolerance comparison;
+- numeric vector tolerance comparison;
+- XYZ bounds comparison;
+- order-independent body-envelope comparison;
+- generic mesh verification;
+- image normalization/regression/diff mechanics;
+- generic visual expected-shape projection/drawing;
+- generic visual-view evidence composition;
+- generic semantic result composition.
+
+When Forge needs generic behavior that the library does not yet expose, stop
+consumer implementation and add that behavior to the verification library with
+its own requirements, design, tests and release first.
