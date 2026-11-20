@@ -2,8 +2,8 @@
 schema: 1
 
 variables:
-  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.2.0"
-  REFERENCE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-reference:v0.2.0"
+  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.3.1"
+  REFERENCE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-reference:v0.3.1"
   SOLIDCRAFT_VERSION: "0.42.0"
 
 templates:
