@@ -30,6 +30,14 @@ SolidCraft saves one Selected holes Sketch containing the associative four-circl
 
 Change hole_diameter 8->10 mm and hole_pitch 20->24 mm in the saved .sc design. Without rerunning Python the three selected cuts must follow their associated pattern profiles, including profiles whose centres move away from the original pick points; the unselected profile remains uncut.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+The selected cuts do not change the plate envelope. Volume, cylindrical wall probes and saved-design mutation are required to prove that exactly the chosen patterned profiles are cut.
+
 ## Reference notes
 
 - **SolidCraft** — Native saved-design proves that saved point-based profile selections remain attached to the intended profile curves after pattern spacing and diameter changes.
