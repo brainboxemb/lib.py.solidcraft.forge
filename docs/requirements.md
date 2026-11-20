@@ -13,116 +13,68 @@ documented in the subject-specific Forge documentation.
   `lib.py.cad.verfication`, including CAD-tool-specific adapters such as the
   SolidCraft adapter.
 
-## Runtime build and CI expectation
+## SolidCraft runtime ownership
 
-The runtime build definition and the runtime expected by normal CI are separate
-contracts.
+The reusable SolidCraft CAD runtime is owned by
+`brainboxemb/docker.cad.solidcraft`.
 
-- `docker/solidcraft_runtime/runtime.json` describes what the runtime image
-  build contains.
-- `docker/solidcraft_runtime/Dockerfile` describes how that image is built.
-- root `cad-ci.yml` declares the exact immutable runtime image expected by
-  normal Forge CI.
-- root `cad-ci.yml` also declares the SolidCraft version expected by CI.
-- normal Forge CI must not derive either value from the runtime build files.
-- Forge must check that the explicit CI expectation remains compatible with the
-  current runtime build definition.
+Forge is a consumer only.
 
-A runtime configuration change may therefore build a new immutable image first;
-normal CI changes to that new image only when `cad-ci.yml` is explicitly
-updated.
+Therefore Forge must not own or duplicate:
+
+- the runtime Dockerfile;
+- runtime dependency/version pins;
+- runtime image build/publication workflows;
+- runtime release/version management.
+
+Root `cad-ci.yml` declares the exact immutable released image Forge consumes,
+for example:
+
+```text
+ghcr.io/brainboxemb/cad-solidcraft:v0.1.0
+```
+
+Changing the runtime is a two-repository operation:
+
+1. change, test and release a new immutable version from
+   `docker.cad.solidcraft`;
+2. deliberately update Forge's `FORGE_RUNTIME_IMAGE` to that released tag.
+
+Forge never derives a runtime version from source hashes, timestamps or local
+Docker files.
 
 ## Runtime consumption
 
 Forge CAD-CI commands read the injected repository environment:
 
-- `FORGE_RUNTIME_IMAGE` is the exact immutable image reference;
-- `SOLIDCRAFT_VERSION` is the SolidCraft version expected by CI.
+- `FORGE_RUNTIME_IMAGE` is the exact immutable released image reference;
+- `SOLIDCRAFT_VERSION` is the SolidCraft version expected by Forge CI.
 
 Consumer commands do not parse `cad-ci.yml` themselves.
 
-A missing immutable image is an error. Normal CI does not build a missing image
-implicitly; runtime publication remains the responsibility of the separate
-SolidCraft runtime workflow.
+A missing released image is an error. Forge CI must not build or publish a
+runtime implicitly.
 
 ## Forge package compatibility
 
 The package keeps its own tested SolidCraft compatibility guard. CI must verify
-that its declared `SOLIDCRAFT_VERSION` agrees with the package/runtime build
-contract rather than silently maintaining unrelated version literals.
-
+that its declared `SOLIDCRAFT_VERSION` agrees with the package compatibility
+contract.
 
 ## Shared runtime efficiency
 
 Library ownership and runtime packaging are separate concerns.
 
-`lib.py.cad.verfication` remains an independently designed, tested and
-released Python library. The immutable SolidCraft runtime may and should
-preinstall an exact released version when that library is used by essentially
-every model verification.
+The external runtime may preinstall exact released libraries used by nearly
+every verification run, including `lib.py.cad.verfication`, together with
+stable heavy dependencies.
 
-Therefore:
+Preinstallation:
 
-- `runtime.json` pins the verification-library release version and exact
-  commit that is installed in the image;
-- changing that pin intentionally changes the immutable runtime image ID;
-- model verification must use the library already present in that image rather
-  than reinstalling the same package for every model;
-- preinstallation does not transfer verification-code ownership to Forge;
-- Forge must not copy or modify verification-library implementation inside this
-  repository.
-
-The same principle applies to other stable libraries used by nearly every
-runtime invocation: preinstalling them is an efficiency choice, while their
-code ownership remains with their own package/repository.
-
-
-## Manual runtime publication
-
-SolidCraft runtime images are built and published only by an explicit manual
-workflow invocation.
-
-- the runtime workflow uses `workflow_dispatch`;
-- it must not run on `push`, `pull_request` or path changes;
-- changing `runtime.json`, the Dockerfile or runtime helper scripts only
-  changes the source definition; it does not publish an image;
-- normal Forge CI consumes the explicit immutable image configured in
-  `cad-ci.yml` and must not build a missing image automatically.
-
-The operator sequence is:
-
-1. change and review the runtime definition;
-2. manually run the SolidCraft runtime workflow;
-3. verify the published immutable image;
-4. explicitly update the CI runtime reference.
-
-
-## GitHub Actions cache
-
-Forge runtime publication must not use GitHub Actions cache storage.
-
-- Do not use `actions/cache`.
-- Do not use Buildx `cache-from: type=gha` or `cache-to: type=gha`.
-- Runtime reuse is based on the exact immutable GHCR image reference.
-- A local directory named `.cache` is not GitHub cache storage unless it is
-  persisted through a cache action/service.
-
-
-## Runtime image publication
-
-The manually invoked runtime workflow must publish the exact immutable
-single-platform runtime tag in a form that normal Docker clients can consume.
-
-After publication:
-
-- the exact tag must pass the strict registry/presence check;
-- a real `docker pull` of that exact tag must succeed;
-- publication must not leave an OCI index that references a missing child
-  manifest.
-
-Build provenance/attestation is disabled for this runtime image when it would
-change the registry representation in a way that breaks normal pullability.
-
+- is an execution-efficiency choice;
+- does not transfer code ownership to the runtime repository;
+- must not cause Forge to copy or modify verification-library implementation;
+- must not require Forge to duplicate those runtime dependency pins.
 
 ## Declarative model verification
 
@@ -135,7 +87,7 @@ For SolidCraft-backed model verification:
 - body counts, expected bounds, parameter values, timeline expectations,
   mutation command paths and other model-specific expected values remain with
   the model;
-- the definition contains data only and must not contain checker callbacks;
+- `verify.py` contains data only and must not contain checker callbacks;
 - the model must not parse SolidCraft result JSON, invoke SolidCraft
   verification commands, construct verification checks or write
   `verification.json`.
@@ -146,11 +98,12 @@ verification:
 1. build/locate the exact Forge wheel;
 2. compile/replay the Forge model into the initial native SolidCraft `.sc`
    model;
-3. load the model-local verification definition;
+3. load the model-local `verification/verify.py`;
 4. call released `run_solidcraft_verification()`.
 
 Shared SolidCraft evaluation, mutation, inspection, schema interpretation,
 comparison and report construction are responsibilities of released
 `lib.py.cad.verfication`.
 
-Model migrations are proven one model at a time before catalog expansion.
+Model migrations are proven in reviewable batches after the representative
+simple-box proof.

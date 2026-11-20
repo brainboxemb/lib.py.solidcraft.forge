@@ -16,7 +16,6 @@ Product CAD models are maintained in `2026-011-02.cad.solidcraft`.
 The active CI structure is defined by:
 
 - `.github/workflows/scpf.yml`
-- `.github/workflows/solidcraft-runtime.yml`
 - `cad-ci.yml`
 - `scpf/ci.yml`
 - migrated `examples/<model>/ci.yml` files
@@ -24,8 +23,6 @@ The active CI structure is defined by:
 - `scripts/tool_verify.py`
 - `scripts/forge_example.py`
 - `scripts/model_verify.py`
-- `scripts/solidcraft_runtime.py`
-- `docker/solidcraft_runtime/`
 
 The generic planner/executor is `tool.cad.ci`.
 
@@ -91,28 +88,27 @@ where they are used by Forge release verification or other focused tests.
 
 ## SolidCraft runtime
 
-The active native runtime is built and published only by the separate
-`.github/workflows/solidcraft-runtime.yml` workflow.
+The reusable SolidCraft CAD runtime is owned, built and released by
+`brainboxemb/docker.cad.solidcraft`.
 
-The runtime build definition is:
+Forge is a consumer only. Root `cad-ci.yml` selects one immutable released
+image, for example:
 
 ```text
-docker/
-  solidcraft_runtime/
-    Dockerfile
-    runtime.json
+ghcr.io/brainboxemb/cad-solidcraft:v0.1.0
 ```
 
-Normal Forge CI does not derive its runtime from those files. Root
-`cad-ci.yml` declares `FORGE_RUNTIME_IMAGE` and `SOLIDCRAFT_VERSION`; the
-released CAD-CI library injects them into consumer commands.
+Forge must not duplicate the runtime Dockerfile, dependency/version pins or
+release workflow. Runtime package composition and release management belong in
+`docker.cad.solidcraft`.
 
-`scpf/scpf/version.py::TESTED_SOLIDCRAFT_VERSION` remains the package-level
-compatibility guard. Forge tests require the explicit CI version and runtime
-reference to remain compatible with the current runtime build definition.
+Libraries used on nearly every verification run, including released
+`lib.py.cad.verfication`, may be preinstalled in that runtime for efficiency.
+Their implementation ownership remains with their own repositories.
 
-The old generated SolidCraft command snapshot and old qualification runtime are
-historical and are not part of the current runtime path.
+`scpf/scpf/version.py::TESTED_SOLIDCRAFT_VERSION` remains Forge's package-level
+compatibility guard. Root `cad-ci.yml` keeps the explicit SolidCraft version
+expected by Forge CI.
 
 ## Test ownership
 

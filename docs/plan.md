@@ -8,30 +8,34 @@ detail and history; this plan states what is current and what follows.
 
 ## Current goal
 
-Complete #461: standardize declarative model verification on
-`verification/verify.py`.
+Complete #465: make Forge a consumer of the released
+`docker.cad.solidcraft` runtime and remove runtime packaging/publication from
+this repository.
 
-The distinction is literal:
+The external runtime repository is preparing its initial release:
 
-- `test_*.py` tests the software implementation;
-- `verification/verify.py` declares what must be true about the produced CAD
-  model.
+```text
+ghcr.io/brainboxemb/cad-solidcraft:v0.1.0
+```
 
-The file contains model-specific verification data only. Released
-`lib.py.cad.verfication` owns how that data is checked against SolidCraft.
+Do not change Forge's runtime reference until that immutable release exists and
+has passed its own build/smoke tests.
 
 ## Execution order
 
-1. Complete #461:
-   - rename simple-box `verification/definition.py` to
-     `verification/verify.py`;
-   - update the declarative launcher and boundary tests;
-   - update AGENTS/requirements/design;
-   - do not change verification behavior.
-2. Complete #438: remove the released verification-library code itself from
-   the runtime while keeping stable/heavy dependencies preinstalled.
-3. Rebase #460 on that corrected main.
-4. Migrate exactly the ten #460 models using `verification/verify.py`.
+1. Complete `docker.cad.solidcraft` v0.1.0 release.
+2. In #465:
+   - update `cad-ci.yml` to
+     `ghcr.io/brainboxemb/cad-solidcraft:v0.1.0`;
+   - prove the normal Forge CAD-CI graph against that image;
+   - remove `docker/solidcraft_runtime/**`;
+   - remove `.github/workflows/solidcraft-runtime.yml`;
+   - remove Forge-owned runtime build/publication helper code and tests;
+   - keep only consumer-side runtime selection and SolidCraft compatibility
+     checks.
+3. Merge #465 only after Forge CI is green against the external release.
+4. Resume #460: migrate the first ten model verifiers using
+   `verification/verify.py`.
 5. Continue #432 through reviewable batches.
 6. Add/release missing generic verification semantics in
    `lib.py.cad.verfication` before models that need them.
@@ -41,13 +45,12 @@ The file contains model-specific verification data only. Released
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #461 Use verification/verify.py for model verification definitions | now | Naming prerequisite before expanding the declarative model migration. |
-| #438 Remove verification-library code from the SolidCraft runtime | next | Required runtime/package boundary: library code separate, stable dependencies may stay preinstalled. |
-| #460 Migrate first ten model verifiers to declarative SolidCraft verification | blocked | Resume after both #461 and #438 are merged. |
+| #465 Consume released docker.cad.solidcraft runtime | now | Runtime ownership migration; blocked only until external v0.1.0 is published. |
+| #460 Migrate first ten model verifiers to declarative SolidCraft verification | blocked | Resume after #465 is merged. |
 | #432 Use released declarative CAD verification in model verification | blocked | Umbrella migration; proceeds through #460 and later batches. |
 | #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after model-verification ownership is stable. |
 | #391 Extract reusable CAD verification library from Forge | blocked | Close after remaining shared checker code leaves Forge through staged #432 migration. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | now | Umbrella migration. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | now | Umbrella migration; current infrastructure prerequisite is #465. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Starts after #378 verification output is complete. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
 | #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Independent CLI quality work. |
@@ -58,7 +61,7 @@ The file contains model-specific verification data only. Released
 | #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture. |
 | #335 Use build123d Sheet Metal for the sheet-fold qualification reference | later | Reference-quality improvement. |
 | #325 Research: determine root cause of HUB75 AnchorFrame regression | later | Independent model/API investigation. |
-| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Predates current runtime/CAD-CI design. |
+| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Predates the released docker.cad.solidcraft runtime. |
 | #175 Change 0005: qualify HUB75-like AnchorFrame orientation against known-good Placement poses | later | Domain verification backlog. |
 | #82 Reconsider automatic hiding of the SolidCraft Joints folder | later | Independent product behavior. |
 | #81 Support inline AnchorFrame references for rotated occurrences | later | Forge API backlog. |
@@ -67,4 +70,4 @@ The file contains model-specific verification data only. Released
 | #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
 
 Immediate chain:
-`#461 -> #438 -> #460 -> later #432 batches -> #430 -> #378 -> #366`.
+`docker.cad.solidcraft v0.1.0 -> #465 -> #460 -> later #432 batches -> #430 -> #378 -> #366`.
