@@ -969,41 +969,22 @@ def build(
     )
 
     contract_source = (ROOT / "docs" / "api.md").read_text(encoding="utf-8")
+    contract_body = render_template(
+        "api-design-contract.html",
+        contract_source=escape(contract_source),
+    )
     (out / "api-design-contract.html").write_text(
         page(
             "API design contract",
-            '<main class="wrap"><p class="crumb"><a href="reference/">API Reference</a> / '
-            'API design contract</p><section class="hero small">'
-            '<p class="eyebrow">Cross-object design rules</p><h1>Forge API design contract</h1>'
-            '<p>Design rules that span several public objects live here. Exact '
-            'names, signatures, enum values and object-specific semantics come '
-            'from the Python implementation and public docstrings.</p>'
-            '</section><section class="panel"><pre><code>'
-            + escape(contract_source) + '</code></pre></section></main>',
-            stylesheet="style.css", home="./", cheatsheet="cheatsheet/",
+            contract_body,
+            stylesheet="style.css",
+            home="./",
+            cheatsheet="cheatsheet/",
         ),
         encoding="utf-8",
     )
 
-    reference_overview = (
-        '<p class="crumb">API Reference / Overview</p>'
-        '<section class="hero small">'
-        '<p class="eyebrow">Complete generated lookup</p><h1>API Reference</h1>'
-        '<p>Use the navigation on the left for direct access to task groups, '
-        'selectors and exact public API operations. The layout stays the same '
-        'while you move through the reference.</p>'
-        '<p>If you are still deciding which modelling concept to use, start with '
-        '<a href="../guide/">the API Guide</a>.</p>'
-        '</section>'
-        '<section class="panel"><h2>How to use this reference</h2>'
-        '<p><strong>Browse by task</strong> keeps related constructors and helpers '
-        'together. <strong>Selectors</strong> contains complete generated values '
-        'such as Anchor and Faces. <strong>Core API</strong> gives exact current '
-        'signatures for components, assemblies, shapes and sketches.</p>'
-        '<p><a href="api.json">Machine-readable API index →</a> · '
-        '<a href="../api-design-contract.html">Cross-object API design rules →</a></p>'
-        '</section>'
-    )
+    reference_overview = render_template("reference-overview.html")
     reference_index = reference_shell(
         reference_overview,
         active="overview",
@@ -1094,15 +1075,33 @@ def build(
     )
 
     sections = []
+    example_slugs = {row.slug for row in example_rows}
     for heading, items in CHEATSHEET:
         boxes = []
         for title, description, snippet, linked in items:
-            ref = (f'<p class="tip"><a href="../examples/{linked}/">View working example →</a></p>'
-                   if linked in {row.slug for row in example_rows} else "")
-            anchor = _cheatsheet_anchor(heading, title)
-            boxes.append(f"""<article class="reference" id="{escape(anchor)}"><h3><code>{escape(title)}</code></h3>
-<p>{escape(description)}</p><pre><code>{escape(snippet)}</code></pre>{ref}</article>""")
-        sections.append(f'<section><h2>{escape(heading)}</h2><div class="reference-grid">{"".join(boxes)}</div></section>')
+            link = (
+                f'<p class="tip"><a href="../examples/{escape(linked)}/">'
+                "View working example →</a></p>"
+                if linked in example_slugs
+                else ""
+            )
+            boxes.append(
+                render_template(
+                    "cheatsheet-item.html",
+                    anchor=escape(_cheatsheet_anchor(heading, title)),
+                    title=escape(title),
+                    description=escape(description),
+                    snippet=escape(snippet),
+                    link=link,
+                )
+            )
+        sections.append(
+            render_template(
+                "cheatsheet-section.html",
+                heading=escape(heading),
+                items="".join(boxes),
+            )
+        )
     cheat = render_template(
         "cheatsheet.html",
         solidcraft_version=escape(TESTED_SOLIDCRAFT_VERSION),
