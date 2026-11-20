@@ -60,7 +60,8 @@ materializes each case's existing result/evidence separately.
 - build123d is imported once for its complete case list;
 - CadQuery, PythonSCAD and pyBOSL2 process their complete lists in the shared
   reference process;
-- CADCraft processes the complete diagram list without fail-fast behavior;
+- CADCraft runs inside the same released heavy reference runtime and processes
+  the complete diagram list without fail-fast behavior;
 - a failing case does not prevent later cases in the same batch from running;
 - existing per-model and per-reference output/evidence paths remain unchanged;
 - no generic scheduling/batching is added to lib.py.cad.ci;
@@ -73,7 +74,8 @@ materializes each case's existing result/evidence separately.
 2. Make the batch runners continue through all cases and report failures after
    the complete list.
 3. Keep per-case items lightweight: copy/materialize only their own batch result.
-4. Keep CADCraft as one diagram batch and collect all diagram failures.
+4. Consume released `cad-reference:v0.3.2`, which owns CADCraft 0.20.1, and
+   run diagram rendering inside the same heavy reference container.
 5. Run the representative ten-case verification workload and record timing.
 6. Continue the remaining Qualification migration only after the batch proof is
    green and materially faster.
