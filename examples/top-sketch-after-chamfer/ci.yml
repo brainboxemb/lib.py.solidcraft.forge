@@ -3,7 +3,7 @@ id: top-sketch-after-chamfer
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/top-sketch-after-chamfer/scpf/**
   - examples/top-sketch-after-chamfer/model.yml
