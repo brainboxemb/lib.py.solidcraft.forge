@@ -215,6 +215,29 @@ run. If the reusable workflow does not retain the generated `.cad-ci` evidence,
 the retention mechanism must be added at the workflow/tool boundary rather than
 by adding a Forge-local execution tracker.
 
+### Cold-path timing diagnostics
+
+For #484 the Forge-owned model launcher measures its own execution boundary
+without changing CAD-CI or verification semantics:
+
+```text
+host
+  compile Forge command document
+  docker pull immutable SolidCraft role
+  docker run
+      |
+      +--> Python/module bootstrap (derived from container total minus
+           measured in-runtime total)
+      +--> import released verification library
+      +--> produce native SolidCraft model
+      +--> run released SolidCraft verification
+```
+
+The launcher prints explicit duration values using a monotonic timer and flushes
+them immediately. CAD-CI structured action timing remains authoritative for the
+whole `model_verify` step; these finer values are diagnostic decomposition
+inside that Forge-owned action.
+
 ## Model verification contract-test stage
 
 Each processed declarative model item exposes Q2 and native verification as
