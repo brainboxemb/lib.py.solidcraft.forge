@@ -30,6 +30,14 @@ One vertical angle profile wraps each front-left, front-right, rear-right and re
 
 Change frame_width/depth from 120x80 to 160x120 mm in the saved .sc design; all four profiles follow the calculated corner positions while remaining centred at the same frame height.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+This case adds placement of four already-qualified L-profile components around the frame. The component profile itself is qualified by the bracket case; these bounds describe this case's additional geometry.
+
 ## Reference notes
 
 - **SolidCraft** — component.create/occurrence.copy return real occurrence ids; the replay executor binds those ids before later parametric occurrence.move commands.
