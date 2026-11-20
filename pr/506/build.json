@@ -1,0 +1,68 @@
+{
+  "items": {
+    "examples/simple-box/build123d": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "7894a2eefd529d29140488a931313ebecfdee3c70c90e1dc8343dff824708fd6",
+      "final_step": "verify_reference",
+      "final_target_spec_digest": "5db4fb82566b24279b91225f65076ca1d8d0f25b3504a4878056920372fa5d53",
+      "item_id": "examples-simple-box-build123d",
+      "outputs": [
+        "references"
+      ],
+      "source_commit": "c82f3bc772b294a325bbfdfcc9a3ded56d3d741c"
+    },
+    "examples/simple-box/cadquery": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "d6391be71e14505055a8429a098543d83d7a16e79051089c262ef08f3a8ed5a3",
+      "final_step": "verify_reference",
+      "final_target_spec_digest": "de4482196d26a30e3338250d3adae635b58a50f0f0feee5ffc70d0661f11c7dc",
+      "item_id": "examples-simple-box-cadquery",
+      "outputs": [
+        "references"
+      ],
+      "source_commit": "c82f3bc772b294a325bbfdfcc9a3ded56d3d741c"
+    },
+    "examples/simple-box/pybosl2": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "08698ef6d9e8681867803ddfd7bfc051ff417894ec988e9aa8452cc28394a591",
+      "final_step": "verify_reference",
+      "final_target_spec_digest": "a446279b6c05436a2c7b4c04f88d47fa96d7abbbd1be4e290899169aaa7c4f88",
+      "item_id": "examples-simple-box-pybosl2",
+      "outputs": [
+        "references"
+      ],
+      "source_commit": "c82f3bc772b294a325bbfdfcc9a3ded56d3d741c"
+    },
+    "examples/simple-box/pythonscad": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "93ef7ea8fe2ffb954f0070a857ac86f828ba90eeccbe72f3a5d31c801992d139",
+      "final_step": "verify_reference",
+      "final_target_spec_digest": "9d86628416b6f20b9313b62b457f6e49c2eb0b993839629e8a99fd0c036d9878",
+      "item_id": "examples-simple-box-pythonscad",
+      "outputs": [
+        "references"
+      ],
+      "source_commit": "c82f3bc772b294a325bbfdfcc9a3ded56d3d741c"
+    },
+    "verification/references": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "e3de27174a08fd54358645c666b68bf2c2cc89d7432569c96dfde4fd50f18eaa",
+      "final_step": "verify_references",
+      "final_target_spec_digest": "c88f197e7bdc65d6ee0d73f64b6046c3bf7a6cd201852d40ff9c27717e7b9290",
+      "item_id": "reference-verification",
+      "outputs": [
+        "references"
+      ],
+      "source_commit": "c82f3bc772b294a325bbfdfcc9a3ded56d3d741c"
+    }
+  },
+  "pull_request": 506,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "c82f3bc772b294a325bbfdfcc9a3ded56d3d741c"
+}
