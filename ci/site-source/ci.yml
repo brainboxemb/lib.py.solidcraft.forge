@@ -15,3 +15,10 @@ steps:
       - examples/*/verification/verify.py
       - examples/*/scpf/model.py
     run: [python, ../../site/test_example_metadata.py]
+  - id: test_site_source
+    inputs:
+      - site/**
+      - examples/*/model.yml
+      - examples/*/verification/verify.py
+      - examples/*/scpf/**
+    run: [python, ../../site/test_site.py]
