@@ -2,8 +2,8 @@
 schema: 1
 
 variables:
-  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.2.0"
-  REFERENCE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-reference:v0.2.0"
+  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.3.1"
+  REFERENCE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-reference:v0.3.1"
   SOLIDCRAFT_VERSION: "0.42.0"
 
 templates:
@@ -11,6 +11,7 @@ templates:
     kind: model
     needs:
       - forge-package
+      - cad-verification-package
     watch:
       item:
         - scpf/**
@@ -53,12 +54,15 @@ templates:
 
   forge-reference:
     kind: verification
+    needs:
+      - cad-verification-package
     watch:
       item:
         - model.py
         - ../verification/reference_geometry.json
       repo:
         - verification/reference_validation.py
+        - scripts/forge_example.py
         - scripts/verification_evidence.py
     strategy:
       reuse: true
@@ -70,6 +74,7 @@ templates:
             - ../verification/reference_geometry.json
           repo:
             - verification/reference_validation.py
+            - scripts/forge_example.py
             - scripts/verification_evidence.py
         run: [python, ../../../scripts/verification_evidence.py, verify_reference]
         outputs:
@@ -77,6 +82,8 @@ templates:
 
   forge-reference-build123d:
     kind: verification
+    needs:
+      - cad-verification-package
     watch:
       item:
         - model.py
@@ -84,6 +91,7 @@ templates:
       repo:
         - verification/reference_validation.py
         - verification/build123d_export.py
+        - scripts/forge_example.py
         - scripts/verification_evidence.py
     strategy:
       reuse: true
@@ -96,6 +104,7 @@ templates:
           repo:
             - verification/reference_validation.py
             - verification/build123d_export.py
+            - scripts/forge_example.py
             - scripts/verification_evidence.py
         run: [python, ../../../scripts/verification_evidence.py, verify_reference]
         outputs:

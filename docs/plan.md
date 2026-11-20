@@ -35,65 +35,65 @@ Qualification catalog from 32 current-looking cases to 5. Do not do that.
 
 ## Current goal
 
-Resume #432 and rebuild current durable evidence for the remaining Qualification
-catalog in reviewable batches of approximately 10 cases.
+Complete #538 before starting #537 batch 1.
 
-The first batch follows the existing public Qualification order rather than a
-new arbitrary ordering:
+The runtime/package boundary is corrected as follows:
 
-1. `anchored-holes`;
-2. `hole-family`;
-3. `sheet-fold`;
-4. `top-sketch-after-chamfer`;
-5. `parameter-scope`;
-6. `parent-derived-child-size`;
-7. `components`;
-8. `repeated-parent-attachments`;
-9. `assembly-decorator`;
-10. `group-hierarchy`.
+- docker.cad.solidcraft v0.3.1 removes lib.py.cad.verification from both role
+  images;
+- Forge owns one CAD-CI dependency item, cad-verification-package;
+- that item prepares exactly one wheel from released
+  lib.py.cad.verification 0.12.0 at
+  1254eca6681faaff62b9605fbb5a25178ab71f9a;
+- model verification consumes forge-package + cad-verification-package;
+- reference verification consumes cad-verification-package;
+- both runtime containers receive the verification wheel read-only through
+  PYTHONPATH.
 
-All ten still use procedural `verification/verify_model.py` today.
+This decouples verification-library releases and model-local verify.py changes
+from Docker runtime releases.
 
-Do not implement Forge-local verification workarounds. The first-batch audit
-identified reusable SolidCraft semantics that must land in
-`lib.py.cad.verification` first:
+## Required proof for #538
 
-- #44 partial parameter expectations;
-- #45 partial sketch expectations;
-- #51 declarative count expectations;
-- #52 multiple bodies sharing one name prefix;
-- #53 projected/tolerant inspection expectations.
-
-These library changes should be merged separately but released together as the
-next verification-library release once the complete first-batch prerequisite
-set is green.
+- the verification package item builds/prepares one wheel only once per selected
+  graph;
+- the resulting wheel metadata reports version 0.12.0;
+- staged five declarative model items pass against cad-solidcraft v0.3.1, which
+  contains no cad_verification package;
+- staged reference children pass against cad-reference v0.3.1, which likewise
+  contains no cad_verification package;
+- CAD-CI evidence shows normal dependency ownership rather than per-model wheel
+  downloads;
+- no verification implementation is copied into Forge.
 
 ## Required proof for each ~10-case Forge batch
 
-- every migrated case replaces procedural `verify_model.py` with data-only
-  declarative `verify.py`;
+- every migrated case replaces procedural verify_model.py with data-only
+  declarative verify.py;
 - existing model contract semantics are preserved; incidental SolidCraft fields
   are not promoted into new expectations;
 - every case gets the same four independent reference child items as the staged
   proof cases;
 - migrated cases become normal processed CAD-CI items;
 - no inactive/unrelated case is accidentally selected;
-- durable `build/main` gains current model/reference evidence for the batch;
+- durable build/main gains current model/reference evidence for the batch;
 - selection and runtime are measured before starting the next batch;
 - a batch that unexpectedly selects the whole remaining catalog is treated as a
   selection defect, not normal build time.
 
 ## Execution order
 
-1. Complete lib.py.cad.verification #44, #45, #51, #52 and #53.
-2. Release that prerequisite set once and update the immutable SolidCraft
-   runtime only if the runtime owns the verification-library pin.
-3. Migrate the first ten cases above under #432 and measure selection/runtime.
+1. #12 in docker.cad.solidcraft — release v0.3.1 without embedded
+   cad_verification.
+2. #538 — add the separate verification-wheel CAD-CI dependency and prove the
+   existing staged five model/reference paths against v0.3.1.
+3. #537 — migrate the first ten Qualification cases and measure
+   selection/runtime.
 4. Migrate the next approximately ten remaining cases.
 5. Migrate the final remaining catalog cases.
 6. #497 — rebuild stable Pages from current source + complete authoritative
-   `build/main`, comparing against
-   `backup/gh-pages-before-f11-2026-11-20`.
+   build/main, comparing against
+   backup/gh-pages-before-f11-2026-11-20.
 7. #366 — finish remaining Pages preview/cleanup/cut-over lifecycle.
 8. Continue independent Forge API/product backlog.
 9. #484 runtime/image-distribution optimization may continue independently.
@@ -102,7 +102,9 @@ set is green.
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #432 Use released declarative CAD verification in model verification | now | Resume in ~10-case batches; first batch is blocked only on verification-library #44/#45/#51/#52/#53. |
+| #538 Supply released CAD verification as a CI dependency wheel | now | Correct verification/runtime dependency boundary before expanding the catalog. |
+| #537 Migrate first post-proof Qualification batch to declarative verification | blocked | Batch contract audit is complete; waits for #538 and runtime v0.3.1. |
+| #432 Use released declarative CAD verification in model verification | now | Parent migration issue; execute through ~10-case batch issues beginning with #537. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Keep current 32-case site unchanged until current durable evidence again covers the public Qualification catalog. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Durable build storage is already generic; final Pages lifecycle follows #497. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later, non-blocking | Broad 34-target run showed cold image acquisition plus broad selection; keep performance work independent from verification correctness. |
@@ -127,4 +129,4 @@ set is green.
 
 Immediate chain:
 
-`verification lib #44/#45/#51/#52/#53 -> Forge #432 ~10-case batches -> #497 stable 32-case Pages -> #366 final Pages lifecycle`.
+`runtime v0.3.1 -> #538 verification-wheel dependency -> #537 first 10-case batch -> remaining ~10-case batches -> #497 stable 32-case Pages -> #366 final Pages lifecycle`.

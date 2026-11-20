@@ -4,6 +4,7 @@ process: true
 kind: model
 needs:
   - forge-package
+  - cad-verification-package
 watch:
   - examples/xz-anchor/scpf/**
   - examples/xz-anchor/model.yml

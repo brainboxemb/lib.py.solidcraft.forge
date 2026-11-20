@@ -2,9 +2,10 @@
 """Produce one Forge native model and delegate its checks to the library.
 
 This is the staged declarative model-verification launcher. Host-side execution
-consumes only the `forge-package` CAD-CI dependency, compiles the selected
-Forge model with that exact built wheel and starts the released SolidCraft
-runtime. Inside that runtime the launcher performs only
+consumes the `forge-package` and `cad-verification-package` CAD-CI
+dependencies, compiles the selected Forge model with the exact Forge wheel and
+starts the released SolidCraft runtime with the verification wheel mounted
+read-only. Inside that runtime the launcher performs only
 the Forge-owned producer step: replay the compiled command document into the
 initial native SolidCraft model. All checks, mutations and evidence are then
 owned by released lib.py.cad.verfication.
@@ -201,6 +202,10 @@ def run_host() -> int:
     slug = item_slug()
     output = output_root()
     wheel = dependency_wheel()
+    verification_wheel = dependency_wheel(
+        "cad-verification-package",
+        "brainboxemb_cad_verification_lib-*.whl",
+    )
     image = runtime_image()
 
     if not verify_path(slug).is_file():
@@ -226,6 +231,9 @@ def run_host() -> int:
     )
 
     container_wheel = f"/forge-package/{wheel.name}"
+    container_verification_wheel = (
+        f"/cad-verification/{verification_wheel.name}"
+    )
     container_started = time.perf_counter()
     container_launch_ms = time.time_ns() // 1_000_000
     entry_script = """entry_ms=$(date +%s%3N)
@@ -242,7 +250,10 @@ exec python "$@"
             "--rm",
             "--pull=never",
             "-e",
-            f"PYTHONPATH={container_wheel}",
+            (
+                "PYTHONPATH="
+                f"{container_verification_wheel}:{container_wheel}"
+            ),
             "-e",
             "SOLIDCRAFT_GPU=cpu",
             "-e",
@@ -253,6 +264,8 @@ exec python "$@"
             f"{output}:/output",
             "-v",
             f"{wheel.parent}:/forge-package:ro",
+            "-v",
+            f"{verification_wheel.parent}:/cad-verification:ro",
             "-w",
             "/workspace",
             image,

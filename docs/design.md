@@ -68,18 +68,22 @@ number.
 
 Runtime package composition belongs to `docker.cad.solidcraft`.
 
-It may preinstall frequently reused released libraries and stable dependencies,
-including the CAD verification library, for execution efficiency.
+The runtime images contain CAD engines and stable runtime dependencies only.
+They do not contain `lib.py.cad.verification`.
 
-Forge does not duplicate those pins. It only supplies:
+Forge supplies separately:
 
 ```text
 exact built Forge wheel
+exact released verification wheel
 model source
 model-specific verification data
 ```
 
 to the selected external runtime.
+
+The verification wheel is a CAD-CI dependency output. Updating its pin does not
+change or rebuild the runtime image.
 
 ## Verification
 
@@ -172,12 +176,20 @@ checks live under `ci/forge-tests/ci.yml` and
 explicitly.
 
 The consumer boundary is the generic `CAD_CI_DEPENDENCIES_JSON` mapping.
-`forge_example.dependency_wheel("forge-package")` resolves the exact wheel
-from the dependency item's output root.
 
-`tool_ci.py tool_build` writes only to its own `CAD_CI_OUTPUT`.
-`tool_ci.py tool_test`, `tool_verify.py` and model verification read the
-wheel only from the `forge-package` dependency.
+- `forge-package` exposes the exact Forge wheel;
+- `cad-verification-package` exposes the exact released verification wheel.
+
+`forge_example.dependency_wheel(...)` resolves a wheel from the dependency
+item's output root.
+
+Model verification mounts both wheels read-only into `cad-solidcraft` and
+sets `PYTHONPATH` to those wheel paths. Reference verification mounts only the
+verification wheel into `cad-reference` and adds it ahead of the source tree
+on `PYTHONPATH`.
+
+`tool_ci.py tool_build` writes only to its own `CAD_CI_OUTPUT`. Verification
+package preparation likewise writes only to its own item output.
 
 The item graph deliberately does not encode unit tests or release verification
 as prerequisites of model verification. Those checks remain independent CAD-CI
@@ -249,12 +261,13 @@ Each processed declarative model item exposes Q2 and native verification as
 separate ordered CAD-CI steps:
 
 ```text
-forge-package wheel
+forge-package wheel + cad-verification-package wheel
   -> contract_test
-     -> run model-owned examples/<model>/tests against that exact wheel
+     -> run model-owned examples/<model>/tests against the Forge wheel
   -> model_verify
-     -> compile model to solidcraft.json with that exact wheel
+     -> compile model to solidcraft.json with the Forge wheel
      -> start released SolidCraft runtime
+     -> mount both dependency wheels
      -> replay native model
      -> run released cad-verification model checks
 ```

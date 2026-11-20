@@ -4,6 +4,7 @@ process: true
 kind: model
 needs:
   - forge-package
+  - cad-verification-package
 watch:
   - examples/anchor-topology-mutation/scpf/**
   - examples/anchor-topology-mutation/model.yml

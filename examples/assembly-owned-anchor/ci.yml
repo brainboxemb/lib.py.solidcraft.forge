@@ -4,6 +4,7 @@ process: false
 kind: model
 needs:
   - forge-package
+  - cad-verification-package
 watch:
   - examples/assembly-owned-anchor/scpf/**
   - examples/assembly-owned-anchor/model.yml

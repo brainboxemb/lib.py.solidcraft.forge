@@ -4,6 +4,7 @@ process: true
 kind: model
 needs:
   - forge-package
+  - cad-verification-package
 watch:
   - examples/four-corner-l/scpf/**
   - examples/four-corner-l/model.yml

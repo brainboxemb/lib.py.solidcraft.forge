@@ -20,19 +20,23 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def one_built_wheel(dist: Path) -> Path:
-    """Return the one SCPF wheel from a CAD-CI output dist directory."""
+def one_built_wheel(dist: Path, pattern: str = "scpf-*.whl") -> Path:
+    """Return the one wheel matching pattern from a dependency output."""
 
-    wheels = tuple(dist.glob("scpf-*.whl"))
+    wheels = tuple(dist.glob(pattern))
     if len(wheels) != 1:
         raise RuntimeError(
-            f"expected exactly one built Forge package, found {len(wheels)}"
+            f"expected exactly one wheel matching {pattern!r}, "
+            f"found {len(wheels)}"
         )
     return wheels[0].resolve()
 
 
-def dependency_wheel(name: str = "forge-package") -> Path:
-    """Return the built wheel exposed by one CAD-CI dependency item."""
+def dependency_wheel(
+    name: str = "forge-package",
+    pattern: str = "scpf-*.whl",
+) -> Path:
+    """Return one wheel exposed by a CAD-CI dependency item."""
 
     raw = os.environ.get("CAD_CI_DEPENDENCIES_JSON", "").strip()
     if not raw:
@@ -47,7 +51,7 @@ def dependency_wheel(name: str = "forge-package") -> Path:
     if not isinstance(output_root, str) or not output_root:
         raise RuntimeError(f"{name} dependency output_root is required")
 
-    return one_built_wheel(Path(output_root) / "dist")
+    return one_built_wheel(Path(output_root) / "dist", pattern)
 
 
 def python_environment(package: Path) -> dict[str, str]:
