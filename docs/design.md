@@ -780,3 +780,24 @@ Python retains only:
 Legacy `qualification.*` imports are removed rather than recreated. Their
 historical presentation semantics may be used as a visual compatibility
 reference, but they are not a source-code dependency.
+
+
+### Documentation-only CI path
+
+The selection boundary for example documentation is:
+
+```text
+examples/<slug>/model.yml
+        |
+        v
+ci/site-source
+  -> metadata schema test
+  -> source-only site generation test
+```
+
+It has no dependency on either CAD runtime batch.
+
+`model.yml` is deliberately absent from `forge-model-declarative` and
+`model-verification-batch` execution inputs. This prevents title,
+description, concept or verification-explanation edits from invalidating native
+model evidence.
