@@ -30,6 +30,14 @@ SolidCraft saves one plate with six slot cuts and one native rectangular pattern
 
 Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+The six slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.
+
 ## Reference notes
 
 - **SolidCraft** — Native integration through geometry checks additionally prove one saved RectangularPatternFeature. The four comparison libraries independently prove the final 3 x 2 slot geometry.
