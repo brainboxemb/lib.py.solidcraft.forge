@@ -124,3 +124,31 @@ Forge may declare released CAD-CI item participation with the generic
   requires them.
 - Changing staged participation must not alter model verification ownership or
   verification-library boundaries.
+
+
+## Forge package CI dependency boundary
+
+Forge package creation, Forge unit tests and Forge release verification are
+separate CAD-CI items.
+
+- `forge-package` builds the SCPF wheel exactly once and publishes `dist/`
+  as its item output.
+- `forge-tests` depends on `forge-package`, installs that exact dependency
+  wheel and runs the reusable Forge unit suite.
+- `forge-release` depends on `forge-package`, uses that exact dependency
+  wheel and runs the fixed release-verification example set.
+- model verification items depend on `forge-package` only.
+
+A model verification must not require `forge-tests` or `forge-release` to
+complete before its own model check can execute.
+
+The test and release-verification items must watch Forge package source as well
+as their own test/example sources so a package implementation change still
+selects both checks.
+
+The package wheel must not be rebuilt independently by tests, release
+verification or model items. All consumers use the output root supplied by the
+generic CAD-CI dependency context.
+
+This split changes dependency ownership only. It does not add Forge-local
+selection, scheduling, caching or parallel-execution policy.
