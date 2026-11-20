@@ -1,27 +1,4 @@
 # SolidCraft model verification for eight-flightcase-corners.
 id: eight-flightcase-corners
-process: false
-kind: model
-needs:
-  - forge-package
-watch:
-  - examples/eight-flightcase-corners/scpf/**
-  - examples/eight-flightcase-corners/model.yml
-  - examples/eight-flightcase-corners/verification/**
-  - scripts/forge_example.py
-  - scripts/model_verify.py
-strategy:
-  reuse: true
-steps:
-  - id: model_verify
-    inputs:
-      - examples/eight-flightcase-corners/scpf/**
-      - examples/eight-flightcase-corners/model.yml
-      - examples/eight-flightcase-corners/verification/**
-      - scripts/forge_example.py
-      - scripts/model_verify.py
-      - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verify.py]
-    outputs:
-      - solidcraft.json
-      - model_verify
+template: forge-model-declarative
+process: true
