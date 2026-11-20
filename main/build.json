@@ -10,7 +10,7 @@
       "outputs": [
         "tool_verify"
       ],
-      "source_commit": "94e1346243fed84420edce0843ccf220c0b0e776"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "ci/forge-tests": {
       "engine": "scons",
@@ -20,147 +20,147 @@
       "final_target_spec_digest": "f3a6386bd479f29276c85ac814629322864e3eb1c05ebc82c26931ee07c80e5d",
       "item_id": "forge-tests",
       "outputs": [],
-      "source_commit": "2ade7477dfb0fce335327f0758edbbb720db1879"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/anchor-topology-mutation": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "5d192c3b595bf9f73e0a87f96304b280a918095c08800e6b861a79241b47b80d",
+      "final_bundle_sha256": "e0fdef08b8d013f603b04d218feb4279a09c62299f3a364e05f7430be1273d96",
       "final_step": "model_verify",
-      "final_target_spec_digest": "921bc65674cdf93d38f86d8c3f70b0d4b2c5d0ddc488732978145d8fff7bd249",
+      "final_target_spec_digest": "9c16ccac285c1ac2117f1af699b1c4e13559be16da9924a1f2a0a1cf4a8e0e62",
       "item_id": "anchor-topology-mutation",
       "outputs": [
         "model_verify",
         "solidcraft.json"
       ],
-      "source_commit": "70f3352c1630fb57bced72768e37697de2a3ef25"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/anchor-topology-mutation/build123d": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "17527e5cdbbc790ca67bd12f220e18ca50a6e1353c2ef05c3a5d086e9efd3c87",
+      "final_bundle_sha256": "d955c05e09e9a361b0da8249f3af3859b715b6ae6d927cee25ace14f79a6f21f",
       "final_step": "verify_reference",
       "final_target_spec_digest": "c1117cb9f0ea403b6735d6e2c3dfd27ccde5f2000064ff7d3e6a34f09b1fa845",
       "item_id": "examples-anchor-topology-mutation-build123d",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/anchor-topology-mutation/cadquery": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "92a113fb6b13b333b78686550449e09427dd67ab8cb0849ccee7d301a318887c",
+      "final_bundle_sha256": "ec23c6717304f86f4c9a4c3636b51dbf76610d35a5b0ab7af051fbd5e340a83d",
       "final_step": "verify_reference",
       "final_target_spec_digest": "2300d89d01d2d16cff10e95133bcc5c8b139492def8f0b2fdd3530d4e71ec077",
       "item_id": "examples-anchor-topology-mutation-cadquery",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/anchor-topology-mutation/pybosl2": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "160ddb3ad10a02603af641476373409964d8f515e8ca86017d1b73d4f60032c7",
+      "final_bundle_sha256": "4accca99ab0d6b7f3f44a792996cb7d10868980ede57762078589d5fc78efc65",
       "final_step": "verify_reference",
       "final_target_spec_digest": "1dbf79b4bcac1957b71229eec8151ba80028715cc4f0675a9b22297fb661eb09",
       "item_id": "examples-anchor-topology-mutation-pybosl2",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/anchor-topology-mutation/pythonscad": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "7b0f1af18e7768821a65233b04465d93dbf6931d33d9233c07d0aa44de54275f",
+      "final_bundle_sha256": "4bf35313b15b6c0c46bbec43f7579eefc6a91933d96264100993ebc03a911ef0",
       "final_step": "verify_reference",
       "final_target_spec_digest": "30cefd2f5577c914db45efd6d8234099e436b50c76c03c7804023161d38415cb",
       "item_id": "examples-anchor-topology-mutation-pythonscad",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/attach-angle": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "d848fdabced900ac16c4a4c78facd9765ef30ecee35c44adccde47fa089c1b2f",
+      "final_bundle_sha256": "4f18d001ff7571e6a5602bc0cea10a29a2deb909bd5605de99a1921935282936",
       "final_step": "model_verify",
-      "final_target_spec_digest": "53649a1c73b8b8cea7b6895f820e80bb098a64ae4a3468db309fabb102a4ddaf",
+      "final_target_spec_digest": "3f6f7e604b6c28c74687a41f9e84feabcda15471a29c924aaf21a4cb1e3624c0",
       "item_id": "attach-angle",
       "outputs": [
         "model_verify",
         "solidcraft.json"
       ],
-      "source_commit": "70f3352c1630fb57bced72768e37697de2a3ef25"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/attach-angle/build123d": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "dd1107564f73195bdbc6b532a1a85ea8ca74608d619920e9cb7abd49a2320caa",
+      "final_bundle_sha256": "3e35a3f4b37093f328661213db71ce6a438efd9d6b5839e261d92e78e90a9092",
       "final_step": "verify_reference",
       "final_target_spec_digest": "1f74f52050d8f4121e6ed7c50c82365de95e97ad933d43d428ec664ac54b3a59",
       "item_id": "examples-attach-angle-build123d",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/attach-angle/cadquery": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "0749156361dd35270770dfb6d53d1e07ac10560946b62244488e08eea359d392",
+      "final_bundle_sha256": "cbb7648d6e973bf1b32c9e3c278f261ce6ef5ee873456723edd4814eee905ec0",
       "final_step": "verify_reference",
       "final_target_spec_digest": "00f31635afa3e830c857a380ad0c9444207985de270ebc918f38a72175524d95",
       "item_id": "examples-attach-angle-cadquery",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/attach-angle/pybosl2": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "c7ce5dd23339123471342b8155f840d70fb9b42e71ac20244f382973f289187b",
+      "final_bundle_sha256": "f14b582910b188ef3ceeffef83553c861647c905e73f873ab1a35c351bd50f44",
       "final_step": "verify_reference",
       "final_target_spec_digest": "6f6e7a634ace43674df05fde627ecb92222c762ef7c49a884649086e80ea5d48",
       "item_id": "examples-attach-angle-pybosl2",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/attach-angle/pythonscad": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "fdd06b1b44aa9d8be9648c551b4bb46c09c75e6009ae05990d1022df59efca2a",
+      "final_bundle_sha256": "01fce75d1bd80dccb843b03128b95db6111ac08e2ad58a582911613ea0e29a9b",
       "final_step": "verify_reference",
       "final_target_spec_digest": "5738d64211e0e598ff9622786c084a1be6435d49cce9f588c2d5c214f3ea5ce1",
       "item_id": "examples-attach-angle-pythonscad",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/four-corner-l": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "146c9c1f19f82013e05a89ff331ecb546636fac70a1cb581f02f8114486c7fc3",
+      "final_bundle_sha256": "9be3dd44950396458aa2ac01a0b80626f237abc0d219e20431532ca575b26929",
       "final_step": "model_verify",
-      "final_target_spec_digest": "94879e280ce4439dce754976af463ed6d2e42757ced1c0a98b3bc9c7a95f18f2",
+      "final_target_spec_digest": "9ca047eac6f54598d373e1a6f9677dd7c8f601656d14a064c0fd8fa5f7c3b6c5",
       "item_id": "four-corner-l",
       "outputs": [
         "model_verify",
         "solidcraft.json"
       ],
-      "source_commit": "70f3352c1630fb57bced72768e37697de2a3ef25"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/simple-box": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "5fae944096e7787080d9b5723732dae3757e820f0c001de7e48da509432c855e",
+      "final_bundle_sha256": "9589b77c170568be82bebe0a64dbaf8a99254f9d364dacfd1b226465c71c49c8",
       "final_step": "model_verify",
       "final_target_spec_digest": "f4f4344313995a94d175277f37617c985492b0983992b14d2fd7d09eb7f43c1d",
       "item_id": "simple-box",
@@ -168,95 +168,95 @@
         "model_verify",
         "solidcraft.json"
       ],
-      "source_commit": "2ade7477dfb0fce335327f0758edbbb720db1879"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/simple-box/build123d": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "5b42941766d813eeca5eaa45c34b836d31fd4771510d97d48ddaa9dede51319e",
+      "final_bundle_sha256": "50d9bf691a9bf9081dc76da8c88ebdc4758307d6189214d8a6c926d33da491a7",
       "final_step": "verify_reference",
       "final_target_spec_digest": "c7683ecaf873aa6d5e8594f03d5935be6fc93a0796cfacd2daeae10518bdef95",
       "item_id": "examples-simple-box-build123d",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/simple-box/cadquery": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "0910ba90bed6242553089d7bff751139ba6b42e5243bffcfb588019fbc29dfa8",
+      "final_bundle_sha256": "1c2f2e827b9faf3a4191edc06215276ca1fe178ce4a5b8f58832cd6ca24d7ac7",
       "final_step": "verify_reference",
       "final_target_spec_digest": "1962aea1a6a61cf2d5add181dc53d4d79f09f38e35005693d225fef271a1c6f8",
       "item_id": "examples-simple-box-cadquery",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/simple-box/pybosl2": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "85f7a307608cf2ee47cc426915f40f316279584a19bdb8aed424f776c4b3cff0",
+      "final_bundle_sha256": "0a8fc2a04b987b8232d5ba210f1f11fea7e87b4dccbfd2b3b11bbf7a65f45492",
       "final_step": "verify_reference",
       "final_target_spec_digest": "439f9b9c963d7d95ef252a02332c79c21588c0cdb9893bf63f93e12dd48344a4",
       "item_id": "examples-simple-box-pybosl2",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/simple-box/pythonscad": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "196421c8525a91b90c855e439c8a0e7f550c3a46711c1e4e504d25c7914b0174",
+      "final_bundle_sha256": "3bd3dcf4929a466baed67dcd84d6160e68ba82db9cfd1621e73ff0a15bf5352b",
       "final_step": "verify_reference",
       "final_target_spec_digest": "613245f5420338e6980f01aecb2a2d014e399729977af8ffa99d9bf8e1f876f9",
       "item_id": "examples-simple-box-pythonscad",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "examples/xz-anchor": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "58f211d7b9700128dfadaa00ee3fa7792d3c2061b961612c075911e3285f2c76",
+      "final_bundle_sha256": "d2ab3fecc5cb977ace40102074c9c5908fd793838eea78ca21ad2c4890d0c0c1",
       "final_step": "model_verify",
-      "final_target_spec_digest": "fc3aae6ed47a4f2e188342cdcac952ad0d40cc77f2d879e93dbbaccf45925e80",
+      "final_target_spec_digest": "d1ba18df36900c9282db6a517589757d730862969d13febbb30a56481b099ef6",
       "item_id": "xz-anchor",
       "outputs": [
         "model_verify",
         "solidcraft.json"
       ],
-      "source_commit": "70f3352c1630fb57bced72768e37697de2a3ef25"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "scpf": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "2de008b045904e51f0c7652bd518c9df8330667a854e31cb5eba4a55b12efdb0",
+      "final_bundle_sha256": "b1d59bd57649269add356fa5db97b3beef15635634396a36fa61f10e3a7ec08c",
       "final_step": "tool_build",
       "final_target_spec_digest": "c3539c312909eb4a7d1ff0787aab0174d273e22d5b6363cf95e1dfd1ae09fdd9",
       "item_id": "forge-package",
       "outputs": [
         "dist"
       ],
-      "source_commit": "94e1346243fed84420edce0843ccf220c0b0e776"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     },
     "verification/references": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "8e8a45779253a28ec76a918d6c35bd32c8579ccbb7d70df34207b98e8b490c50",
+      "final_bundle_sha256": "e8f4bd6bf12bdbf97928dac78c6abd9a9b959f20a680e2194476f203e71beda9",
       "final_step": "verify_references",
       "final_target_spec_digest": "72e3943ff72fa36bf3e7966d4da4e2f0bdaa603a1dfa5d097a0dde6e30d56281",
       "item_id": "reference-verification",
       "outputs": [
         "references"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
     }
   },
   "schema": 1,
   "scope": "main",
-  "source_commit": "2ade7477dfb0fce335327f0758edbbb720db1879"
+  "source_commit": "bb71829df633df0ad3ba3154c5eb7911cddbd8d3"
 }
