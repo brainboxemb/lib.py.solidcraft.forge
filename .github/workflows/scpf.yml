@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: write
       packages: read
-    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-pr.yml@5bca68eb109a69e3a05e7711daf394926ee0e7d4
+    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-pr.yml@18812d38e2390c23fd3c431cfde2ce9367bdfd40
 
   cad_ci_main:
     if: github.event_name == 'push'
