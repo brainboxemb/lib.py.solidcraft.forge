@@ -8,79 +8,71 @@ documents in `docs/`. Issues keep detail and history.
 
 ## Current status
 
-The production PR architecture is now one runner:
+The staged F1-F11 verification migration is complete. PR #530 restored the
+existing schema-5 qualification semantics from distributed evidence without
+reintroducing the retired qualification runner.
 
-`CAD-CI run -> prepare-pr -> publish`
+The authoritative durable main output is already generic CAD-CI build-store
+schema 1 on the `build` branch. PR and main publication use released generic
+prepare/update/publish commands.
 
-Released/accepted CAD-CI stack for the next measurement:
+Three staged models already expose four independent nested reference items:
 
-- `lib.py.cad.ci` 0.8.3 at
-  `e8e951ed7e50c4fa754cc158729faf2927cccb31`;
-- `tool.cad.ci` 0.14.1 at
-  `18812d38e2390c23fd3c431cfde2ce9367bdfd40`;
-- external `tool.cad.ci.test` acceptance is green.
+- `simple-box`;
+- `anchor-topology-mutation`;
+- `attach-angle`.
 
-`docker.cad.solidcraft` v0.2.0 remains unchanged:
+The remaining temporary `verification/references` aggregate contains only:
 
-- `ghcr.io/brainboxemb/cad-solidcraft:v0.2.0`;
-- `ghcr.io/brainboxemb/cad-reference:v0.2.0`.
+- `four-corner-l`;
+- `xz-anchor`.
 
-F7-F10 are complete for the staged five-model proof set: `simple-box`, `anchor-topology-mutation`, `attach-angle`, `four-corner-l` and `xz-anchor`. The rest of the model catalog remains `process: false` while F11 summary composition is completed.
-
-Repeated clean one-file measurements show that the remaining PR latency is
-dominated by external SolidCraft runtime acquisition rather than CAD-CI or model
-work:
-
-| tool.cad.ci | run | end-to-end | image pull | container start | in-runtime |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| 0.14.0 | 44766489422 | 41 s | 7.515 s | 8.079 s | 0.564 s |
-| 0.14.1 | 44768874847 | 46 s | 13.307 s | 7.480 s | 0.747 s |
-| 0.14.1 | 44769675996 | 80 s | 54.123 s | 3.365 s | 0.855 s |
-
-Every run selected exactly forge-package + simple-box contract/model verification.
-No Forge unit/release/reference work participated.
-
-The non-image-download path is roughly in the 26-33 s engineering range. The
-<=30 s end-to-end target is therefore not reliable yet because cold GHCR image
-acquisition is highly variable. #484 remains open as a runtime/distribution
-performance follow-up, but it no longer blocks verification-chain migration.
+The current public Pages state is preserved exactly on
+`backup/gh-pages-before-f11-2026-11-20` at
+`127adb3900cdc9ca6194edb1102ea7d505316295` for later presentation comparison.
 
 ## Current goal
 
-Continue #378 with F11: compose semantic verification summaries from already-produced evidence without adding a second verification engine or rerunning CAD inside the summary code.
+Complete reopened #511 by migrating `four-corner-l` from the temporary
+reference aggregate to four independent nested reference items using the
+already released root templates.
 
-Released `lib.py.cad.verification` already owns generic semantic status composition through `SemanticCheck`, `compose_semantic_result()` and `compose_item_results()`. Forge owns only the mapping from current evidence back to the existing qualification-result semantics. F11 preserves the existing public schema/presentation instead of introducing a new report model.
+This is configuration migration only. No new verification, CI-selection,
+runtime or publication behavior is introduced.
 
 ## Required proof
 
-- Forge defines the F11 semantic policy before implementation in `docs/requirements.md` and `docs/design.md`;
-- the summary code executes no Forge compilation, SolidCraft, reference CAD or image comparison;
-- per-case qualification results preserve the existing visible checks `integration`, `native_model`, `geometry`, `saved_design` and `visual`;
-- independent reference evidence remains a separate qualification evidence layer and is not added as a new visible Pages status block;
-- `saved_design` is `not-required` when a model has no saved-design mutation;
-- required failed/missing/review/blocked evidence remains distinguishable;
-- evidence references are preserved;
-- the staged aggregate contains each of the five active proof cases exactly once;
-- the produced per-case result remains compatible in meaning with the existing schema-5 `qualification-result.json` consumed by Pages;
-- CAD-CI fan-in selection must not accidentally turn an incremental model change into a cold rerun of every sibling model/reference item.
+- `four-corner-l/build123d` uses `forge-reference-build123d`;
+- `four-corner-l/cadquery`, `pythonscad` and `pybosl2` use
+  `forge-reference`;
+- all four reference items remain model-local and independently represented;
+- `verification/references` stops watching/executing `four-corner-l` and
+  contains only `xz-anchor`;
+- a four-corner reference change selects the intended child item(s), not the
+  remaining aggregate;
+- durable PR/main publication retains the nested source paths;
+- no generic Forge-local planner, verifier or publisher is added.
 
 ## Execution order
 
-1. #378 — define F11 evidence inputs, semantic mapping and CAD-CI selection behavior.
-2. #378 — implement/test the thin summary consumer against existing evidence.
-3. #378 — run the staged five-model F11 proof.
-4. #366 / #497 — continue durable output and Pages after F11 is green.
-5. #432 — resume broader declarative model migration after the five-model proof chain is complete.
+1. #511 — migrate `four-corner-l` reference children.
+2. Migrate `xz-anchor` references in its own issue/branch/PR and remove the
+   temporary aggregate.
+3. #497 — rebuild stable Pages from current source + authoritative
+   `build/main`, preserving the existing site in broad outline.
+4. #366 — finish remaining Pages preview/cleanup/cut-over work after stable
+   Pages is proven.
+5. #432 — resume broader declarative model migration.
 6. #484 — continue runtime/image-distribution optimization independently.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #378 Use explicit Forge verification stages instead of integration/native gates | now | F7-F10 are green for the staged five-model set; define and prove F11 semantic summary without re-running sibling CAD work. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later, non-blocking | CAD-CI/model work is small; remaining latency is dominated by highly variable GHCR image acquisition. Preserve measurements and optimize runtime distribution separately. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Continue after #378 F11 is green so durable presentation consumes the completed verification evidence model. |
-| #497 Publish stable Pages from the generic build/main baseline | blocked | Depends on stable durable generated output. |
+| #511 Migrate four-corner-l references to isolated CAD-CI items | now | Reopened after the completed F11/performance proof; migrate the next staged reference set using the already accepted nested-item structure. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Generic durable PR/main build publication is already active; remaining work is the Pages cut-over/preview lifecycle after stable Pages. |
+| #497 Publish stable Pages from the generic build/main baseline | blocked | Durable build/main is ready; wait only for the remaining staged reference items to leave the temporary aggregate. |
 | #432 Use released declarative CAD verification in model verification | blocked | Broader model migration waits for completion of the staged five-model verification chain through F11. |
 | #391 Extract reusable CAD verification library from Forge | effectively complete but still open | The reusable library exists and owns generic geometry, visual, SolidCraft and semantic verification; remaining procedural model migration is tracked by #432 rather than requiring more extraction architecture. |
 | #481 Remove stale Forge development branches | blocked | Current connected tooling cannot delete the stale refs. |
@@ -103,4 +95,4 @@ Released `lib.py.cad.verification` already owns generic semantic status composit
 
 Immediate chain:
 
-`#378 F11 semantic summary -> #366/#497 durable output -> #432 broader model migration; #484 continues independently`.
+`#511 four-corner-l references -> xz-anchor references -> #497 stable Pages -> #366 final Pages lifecycle -> #432 broader model migration; #484 continues independently`.
