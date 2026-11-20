@@ -3,18 +3,18 @@
     "examples/attach-angle/build123d": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "7193f884e5edc7f0673147d9e2e7255fc8c6cc0b65d74b05cef6bfc556532bdb",
+      "final_bundle_sha256": "263db25ccaa1d06373f377704b127310a122c02d5a7ae6fd411192e46c6adf9e",
       "final_step": "verify_reference",
       "final_target_spec_digest": "d5dd00bd8f2ab5346bd7b29ae225b052098b091f9d0bf7e9149b8f6998e79473",
       "item_id": "examples-attach-angle-build123d",
       "outputs": [
         "references"
       ],
-      "source_commit": "f69196062aa39a62f155129c28f42c1add664937"
+      "source_commit": "1a0c4dd2a38955ea1890ded20af9d68bda212c57"
     }
   },
   "pull_request": 500,
   "schema": 1,
   "scope": "pr",
-  "source_commit": "f69196062aa39a62f155129c28f42c1add664937"
+  "source_commit": "1a0c4dd2a38955ea1890ded20af9d68bda212c57"
 }
