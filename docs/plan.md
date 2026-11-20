@@ -40,20 +40,33 @@ The current public Pages state remains preserved exactly on
 Complete #534 by adopting exact accepted tool.cad.ci 0.14.2 and proving the
 stale `verification/references` durable item is removed from `build/main`.
 
-In the same small change, correct the real missing test dependency:
-`scpf/tests/test_qualification_summary.py` imports
-`scripts/qualification_summary.py`, so that script must participate in the
-existing `forge-tests` watch/input set.
+In the same change, correct two real test-selection ownership errors:
 
-This must remain a small tool/test-scope update. Do not trigger a broad
-model/reference rerun merely to clean generated state.
+- `scpf/tests/test_qualification_summary.py` imports
+  `scripts/qualification_summary.py`, so that script belongs in the existing
+  `forge-tests` watch/input set;
+- `scpf/tests/test_ci_runtime.py` reads `.github/workflows/scpf.yml`, so the
+  workflow belongs in `forge-tests` watch/input rather than `forge-package`.
+
+The latter matters for incrementality: treating workflow YAML as package source
+marks `forge-package` affected and fans out to every model that consumes the
+package. A workflow-only change must test the workflow contract, not invalidate
+model qualification.
+
+This migration may still execute the package/model dependency chain once because
+`scpf/ci.yml` itself changes to correct the ownership rule. Future workflow
+changes must remain limited to the tool/test scope.
 
 ## Required proof
 
 - every Forge CAD-CI workflow/publication pin uses exact accepted tool 0.14.2;
-- `forge-tests` watches and hashes `scripts/qualification_summary.py`;
-- PR selection remains limited to the intended tool/test scope rather than all
-  staged model/reference items;
+- `forge-tests` watches and hashes both `scripts/qualification_summary.py` and
+  `.github/workflows/scpf.yml`;
+- `forge-package` no longer watches workflow YAML;
+- the existing workflow-contract test expects exact tool 0.14.2;
+- no reference child items are selected by this migration;
+- after this one ownership correction, future workflow-only changes stay in the
+  tool/test scope instead of fanning out through `forge-package`;
 - Forge tests stay green;
 - after merge, normal main durable publication removes
   `verification/references` from `build/main/build.json` and its owned tree;
