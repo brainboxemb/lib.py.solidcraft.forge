@@ -1,10 +1,13 @@
-# Render versioned CADCraft verification/documentation diagrams.
+# Materialize CADCraft evidence produced by the shared reference runtime.
 id: verification-diagrams
 process: true
 kind: verification
+needs:
+  - reference-verification-batch
 watch:
   - verification/diagrams/sources/**
   - scripts/build_diagrams.py
+  - scripts/reference_verification_batch.py
 strategy:
   reuse: true
 steps:
@@ -12,6 +15,7 @@ steps:
     inputs:
       - verification/diagrams/sources/**
       - scripts/build_diagrams.py
-    run: [python, ../../scripts/build_diagrams.py]
+      - scripts/reference_verification_batch.py
+    run: [python, ../../scripts/reference_verification_batch.py, materialize-diagrams]
     outputs:
       - diagrams
