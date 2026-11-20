@@ -12,6 +12,7 @@ Belangrijkste repositories:
 - `tool.cad.ci` — dunne CLI/reusable workflows
 - `tool.cad.ci.test` — externe test van released CAD-CI
 - `lib.py.cad.verification` — generieke CAD-verificatie
+- `docker.cad.solidcraft` — immutable SolidCraft runtime/container
 - `tool.py.lib.ci` — generieke Python-library CI
 - `tool.py.lib.ci.test` — externe test daarvan
 
@@ -38,14 +39,16 @@ Repositorygrenzen:
 - Generieke CAD-CI-logica hoort in `lib.py.cad.ci`.
 - `tool.cad.ci` blijft dun; externe acceptatie hoort in `tool.cad.ci.test`.
 - Generieke CAD/model-verificatie hoort in `lib.py.cad.verification`.
+- De SolidCraft runtime, dependency-pins en containerrelease horen in
+  `docker.cad.solidcraft`; consumers gebruiken alleen een immutable image tag.
 - Forge bezit Forge-compilatie, modellen en model-specifieke verwachtingen,
-  maar geen generieke CI- of verificatielogica.
+  maar geen generieke CI-, verificatie- of runtime-packaginglogica.
 - Gewone Python-library CI hoort in `tool.py.lib.ci`; externe acceptatie
   daarvan in `tool.py.lib.ci.test`.
 
-Als Forge een ontbrekende generieke CAD-CI- of verificatiefunctie blootlegt,
-los die dan eerst op in de eigenaar-repository, test en release die daar, en
-pas daarna Forge aan. Maak geen Forge-lokale workaround.
+Als Forge een ontbrekende generieke CAD-CI-, verificatie- of runtimefunctie
+blootlegt, los die dan eerst op in de eigenaar-repository, test en release die
+daar, en pas daarna Forge aan. Maak geen Forge-lokale workaround.
 
 Begin nu met `lib.py.solidcraft.forge`: inspecteer de actuele toestand en lees
 `AGENTS.md` en `docs/plan.md`. Volg daarna de actuele werkvolgorde uit het
