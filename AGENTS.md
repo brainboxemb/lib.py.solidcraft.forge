@@ -40,6 +40,11 @@ Forge package CI is split into independent items:
 forge-package
   -> forge-tests
   -> forge-release
+
+cad-verification-package
+  -> selected model/reference verification items
+
+forge-package + cad-verification-package
   -> selected model verification items
 ```
 
@@ -49,8 +54,9 @@ The arrows mean package-artifact dependency, not one serial release chain.
 - `forge-tests` installs that wheel and runs the reusable Forge unit suite.
 - `forge-release` release-verifies that wheel with the fixed representative
   examples.
-- each model item depends only on `forge-package` and compiles/verifies with
-  that exact wheel.
+- each declarative model item depends on `forge-package` and
+  `cad-verification-package`, and compiles/verifies with those exact wheels.
+- each reference item depends on `cad-verification-package`.
 
 Model verification must not depend on `forge-tests` or `forge-release`.
 Those are independent checks.
@@ -125,9 +131,12 @@ Forge must not duplicate the runtime Dockerfile, dependency/version pins or
 release workflow. Runtime package composition, role boundaries and release
 management belong in `docker.cad.solidcraft`.
 
-Libraries used on nearly every verification run, including released
-`lib.py.cad.verfication`, may be preinstalled in that runtime for efficiency.
-Their implementation ownership remains with their own repositories.
+The runtime images must not embed `lib.py.cad.verification`. Forge supplies
+the exact released verification package as the `cad-verification-package`
+CAD-CI dependency and mounts that wheel into the selected runtime container.
+
+Changing the verification-library pin or a model-local `verification/verify.py`
+must not require a Docker runtime release.
 
 `scpf/scpf/version.py::TESTED_SOLIDCRAFT_VERSION` remains Forge's package-level
 compatibility guard. Root `cad-ci.yml` keeps the explicit SolidCraft version
