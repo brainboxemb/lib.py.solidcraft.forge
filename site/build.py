@@ -6,14 +6,12 @@ contracts remain in verification/verify.py. Stable Pages attaches accepted
 build/main evidence separately.
 """
 import argparse
-import html
 import json
 from pathlib import Path
 import re
 import shutil
 import sys
 import tomllib
-from string import Template
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scpf"))
@@ -22,6 +20,25 @@ from scpf.runner import run_script
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from guides import GUIDES
 from example_metadata import discover_example_metadata
+from html_writer import (
+    CAD_SITE,
+    LIBRARY_URL,
+    cheatsheet_link,
+    escape,
+    guide_chapter_content,
+    guide_overview_content,
+    guide_shell,
+    list_items,
+    page,
+    plain_text,
+    reference_enum_content,
+    reference_group_content,
+    reference_method_content,
+    reference_shell,
+    render_template,
+    saved_design,
+    tags,
+)
 from api_coverage import (
     EXPORT_COVERAGE,
     CAPABILITY_COVERAGE,
@@ -38,9 +55,6 @@ from api_reference import (
     group_members,
     references_for_guide,
 )
-
-LIBRARY_URL = "https://github.com/brainboxemb/lib.py.solidcraft.forge"
-CAD_SITE = "https://brainboxemb.github.io/2026-011-02.cad.solidcraft/"
 
 CHEATSHEET = [
     ("Model classes", [
@@ -128,24 +142,14 @@ CHEATSHEET = [
 ]
 
 
-def escape(value):
-    return html.escape(str(value), quote=True)
-
-
-def _plain_search_text(value):
-    """Return compact visible text from generated HTML or plain strings."""
-    text = re.sub(r"<[^>]+>", " ", str(value))
-    return " ".join(html.unescape(text).split())
-
-
 def _search_entry(title, kind, url, summary, *, symbol=None, aliases=(), keywords=()):
     entry = {
         "title": title,
         "kind": kind,
         "url": url,
-        "summary": _plain_search_text(summary),
+        "summary": plain_text(summary),
         "aliases": sorted({str(value) for value in aliases if value}),
-        "keywords": _plain_search_text(" ".join(str(value) for value in keywords if value)),
+        "keywords": plain_text(" ".join(str(value) for value in keywords if value)),
     }
     if symbol:
         entry["symbol"] = symbol
@@ -252,7 +256,7 @@ def _guide_search_entries():
             f"guide/{chapter['slug']}/",
             chapter["summary"],
             aliases=(chapter["slug"],),
-            keywords=(_plain_search_text(body),),
+            keywords=(plain_text(body),),
         ))
         headings = list(_GUIDE_HEADING.finditer(body))
         for index, match in enumerate(headings):
@@ -261,8 +265,8 @@ def _guide_search_entries():
                 if index + 1 < len(headings)
                 else len(body)
             )
-            heading = _plain_search_text(match.group(3))
-            section = _plain_search_text(body[match.end():next_start])
+            heading = plain_text(match.group(3))
+            section = plain_text(body[match.end():next_start])
             entries.append(_search_entry(
                 heading,
                 "API Guide",
@@ -336,36 +340,6 @@ def build_search_index():
         "generated_from": "public API docstrings, API Guide, Cheatsheet and example model.yml metadata",
         "entries": unique,
     }
-
-
-def page(title, body, *, stylesheet, home, cheatsheet):
-    """Render the shared site shell from an external template."""
-
-    template = Template(
-        (ROOT / "site" / "templates" / "page.html").read_text(
-            encoding="utf-8"
-        )
-    )
-    return template.substitute(
-        title=escape(title),
-        body=body,
-        stylesheet=escape(stylesheet),
-        home=escape(home),
-        cheatsheet=escape(cheatsheet),
-        library_url=escape(LIBRARY_URL),
-        cad_site=escape(CAD_SITE),
-    )
-
-
-def text(path):
-    return path.read_text(encoding="utf-8")
-
-
-def render_template(name, **values):
-    """Render one external site template."""
-
-    template_path = ROOT / "site" / "templates" / name
-    return Template(text(template_path)).substitute(values)
 
 
 def scpf_version():
@@ -469,27 +443,14 @@ def build(
             "preview_kind": preview_kind,
         }
 
-        timeline = "".join(
-            f"<li><code>{escape(row['command'])}</code></li>"
-            for row in commands["commands"]
+        timeline = list_items(
+            (row["command"] for row in commands["commands"]),
+            code=True,
         )
-        stages = "".join(
-            f"<li>{escape(value)}</li>" for value in info.stages
-        )
-        proves = "".join(
-            f"<li>{escape(value)}</li>"
-            for value in info.verification_proves
-        )
-        concept_tags = "".join(
-            f'<span class="tag">{escape(value)}</span>'
-            for value in info.concepts
-        )
-        saved_design = (
-            "<h3>Saved design</h3>"
-            f"<p>{escape(info.verification_saved_design)}</p>"
-            if info.verification_saved_design
-            else ""
-        )
+        stages = list_items(info.stages)
+        proves = list_items(info.verification_proves)
+        concept_tags = tags(info.concepts)
+        saved_design_html = saved_design(info.verification_saved_design)
         source_url = (
             f"{LIBRARY_URL}/blob/main/examples/{slug}/scpf/model.py"
         )
@@ -510,7 +471,7 @@ def build(
             stages=stages,
             verification_summary=escape(info.verification_summary),
             verification_proves=proves,
-            saved_design=saved_design,
+            saved_design=saved_design_html,
             source=escape(source),
             source_url=escape(source_url),
             timeline=timeline,
@@ -559,199 +520,18 @@ def build(
     # require a click for every enum value or signature.
     guide_root = out / "guide"
     guide_root.mkdir(exist_ok=True)
-    def guide_sidebar(*, active=None, prefix=""):
-        active_chapter = next(
-            (chapter for chapter in GUIDES if chapter["slug"] == active),
-            None,
-        )
-
-        def nav_link(slug, title):
-            cls = ' class="active"' if slug == active else ""
-            link = (
-                f'<a{cls} href="{escape(prefix + slug + "/")}">'
-                f'{escape(title)}</a>'
-            )
-            if slug == active and active_chapter is not None:
-                headings = re.findall(
-                    r'<h2 id="([^"]+)">([^<]+)</h2>',
-                    active_chapter["body"],
-                )
-                if headings:
-                    link += (
-                        '<div class="guide-subnav">'
-                        + "".join(
-                            f'<a href="#{escape(anchor)}">{escape(title)}</a>'
-                            for anchor, title in headings
-                        )
-                        + '</div>'
-                    )
-            return link
-
-        overview_cls = ' class="active"' if active == "overview" else ""
-        return (
-            '<aside class="guide-sidebar">'
-            '<h2>API Guide</h2>'
-            f'<a{overview_cls} href="{escape(prefix or "./")}">Overview</a>'
-            + "".join(
-                nav_link(chapter["slug"], chapter["title"])
-                for chapter in GUIDES
-            )
-            + '</aside>'
-        )
-
-    def guide_shell(content, *, active, prefix):
-        return (
-            '<main class="wrap guide-layout">'
-            + guide_sidebar(active=active, prefix=prefix)
-            + '<article class="guide-article">'
-            + content
-            + '</article></main>'
-        )
-
-    def _member_details(member, *, compact=False):
-        if member["kind"] == "enum":
-            return (
-                '<div class="guide-api-members">'
-                + " · ".join(
-                    f'<code>{escape(member["name"])}.{escape(row["name"])}</code>'
-                    for row in member["members"]
-                )
-                + '</div>'
-            )
-        if member["kind"] == "constant":
-            return f'<p><code>{escape(member["name"])} = {escape(member["value"])}</code></p>'
-        if member.get("signature"):
-            css = ' class="guide-api-signature"' if compact else ""
-            return f'<pre{css}><code>{escape(member["signature"])}</code></pre>'
-        return ""
-
-    def _parameter_details(member, *, heading="Parameters"):
-        parameters = member.get("parameters") or []
-        if not parameters:
-            return ""
-        rows = "".join(
-            "<tr>"
-            f"<td><code>{escape(row['name'])}</code></td>"
-            f"<td>{escape(row['description'])}</td>"
-            "</tr>"
-            for row in parameters
-        )
-        return (
-            f"<h3>{escape(heading)}</h3>"
-            '<table class="api-table"><thead><tr><th>Argument</th><th>Meaning</th></tr></thead>'
-            f"<tbody>{rows}</tbody></table>"
-        )
-
-    def _example_details(member):
-        example = member.get("example") or ""
-        if not example:
-            return ""
-        return "<h3>Example</h3>" + f"<pre><code>{escape(example)}</code></pre>"
-
-    def _guide_group_details(spec):
-        rows = []
-        for member in group_members(spec):
-            rows.append(
-                f'<div class="guide-api-group-member" id="api-{escape(member["name"])}">'
-                f'<h4><code>{escape(member["name"])}</code></h4>'
-                + _member_details(member, compact=True)
-                + (f'<p>{escape(member["summary"])}</p>' if member["summary"] else "")
-                + (
-                    f'<p><strong>Use when:</strong> {escape(member["use_when"])}</p>'
-                    if member["use_when"] else ""
-                )
-                + (
-                    f'<p><strong>Current limits:</strong> {escape(member["limits"])}</p>'
-                    if member["limits"] else ""
-                )
-                + (
-                    f'<p><a href="../../reference/{escape(spec["slug"])}/#{escape(member["name"])}">'
-                    'Detailed parameter reference →</a></p>'
-                    if member.get("parameters") else ""
-                )
-                + '</div>'
-            )
-        return '<div class="guide-api-group-members">' + "".join(rows) + '</div>'
-
-    def guide_api_summary(slug):
-        specs = references_for_guide(slug)
-        if not specs:
-            return ""
-        cards = []
-        for spec in specs:
-            if spec["kind"] == "enum":
-                details = (
-                    '<div class="guide-api-members">'
-                    + " · ".join(
-                        f'<code>{escape(spec["slug"])}.{escape(name)}</code>'
-                        for name, _value in enum_members(spec)
-                    )
-                    + '</div>'
-                )
-            elif spec["kind"] == "group":
-                details = _guide_group_details(spec)
-            else:
-                details = (
-                    f'<pre class="guide-api-signature"><code>'
-                    f'{escape(spec["signature"])}</code></pre>'
-                )
-            cards.append(
-                '<article class="guide-api-item">'
-                f'<h3><a href="../../reference/{escape(spec["slug"])}/">'
-                f'{escape(spec["title"])}</a></h3>'
-                f'<p>{escape(spec["summary"])}</p>'
-                + details
-                + (
-                    f'<p><strong>Use when:</strong> {escape(spec["use_when"])}</p>'
-                    if spec.get("use_when") else ""
-                )
-                + (
-                    f'<p><strong>Current limits:</strong> {escape(spec["limits"])}</p>'
-                    if spec.get("limits") else ""
-                )
-                + '</article>'
-            )
-        return (
-            '<section class="guide-api-summary">'
-            '<h2>API on this page</h2>'
-            '<p class="guide-api-intro">These values and signatures are generated '
-            'from the current Python API. They are shown here so the normal guide '
-            'flow does not require opening the reference for every detail.</p>'
-            '<div class="guide-api-grid">' + "".join(cards) + '</div></section>'
-        )
-
     for chapter in GUIDES:
         slug = chapter["slug"]
         dest = guide_root / slug
         dest.mkdir(exist_ok=True)
-        content = (
-            f'<p class="crumb"><a href="../">API Guide</a> / {escape(chapter["title"])}</p>'
-            + f'<h1>{escape(chapter["title"])}</h1>'
-            + f'<p class="guide-lead">{escape(chapter["summary"])}</p>'
-            + chapter["body"]
-            + guide_api_summary(slug)
-        )
+        content = guide_chapter_content(chapter)
         body = guide_shell(content, active=slug, prefix="../")
         (dest / "index.html").write_text(
             page(chapter["title"], body, stylesheet="../../style.css",
                  home="../../", cheatsheet="../../cheatsheet/"),
             encoding="utf-8",
         )
-    guide_overview = (
-        '<p class="crumb">API Guide / Overview</p>'
-        '<h1>API Guide</h1>'
-        '<p class="guide-lead">Learn the modelling concepts, understand when to '
-        'use them, and see the generated native SolidCraft behaviour.</p>'
-        '<section class="panel"><h2>Start here</h2>'
-        '<p>Use the chapter navigation on the left. The layout remains the same '
-        'while you move through the guide, so you can switch directly between '
-        'components, assemblies, features, transformations and other topics '
-        'without returning to a separate overview page.</p>'
-        '<p>Use the <a href="../reference/">API Reference</a> when you already '
-        'know the concept and need exact signatures, enum values or limits. '
-        'Use the <a href="../cheatsheet/">Cheatsheet</a> for the shortest lookup.</p>'
-        '</section>'
-    )
+    guide_overview = guide_overview_content()
     guide_index = guide_shell(
         guide_overview,
         active="overview",
@@ -766,121 +546,11 @@ def build(
     # from the implementation/docstrings; this block only renders them.
     reference_root = out / "reference"
     reference_root.mkdir(exist_ok=True)
-    def reference_sidebar(*, active=None, prefix=""):
-        def nav_link(slug, title):
-            cls = ' class="active"' if slug == active else ""
-            link = (
-                f'<a{cls} href="{escape(prefix + slug + "/")}">'
-                f'{escape(title)}</a>'
-            )
-            if slug == active:
-                group = next(
-                    (spec for spec in GROUP_REFERENCES if spec["slug"] == slug),
-                    None,
-                )
-                if group is not None:
-                    link += (
-                        '<div class="reference-subnav">'
-                        + "".join(
-                            f'<a href="#{escape(member["name"])}">'
-                            f'{escape(member["name"])}</a>'
-                            for member in group_members(group)
-                        )
-                        + '</div>'
-                    )
-            return link
-
-        component_methods = [
-            spec for spec in METHOD_REFERENCES
-            if (
-                spec["slug"] in {"component", "assembly"}
-                or spec["slug"].startswith("Occurrence.")
-                or spec["slug"].startswith("Assembly.")
-            )
-        ]
-        shape_methods = [
-            spec for spec in METHOD_REFERENCES
-            if spec not in component_methods
-        ]
-
-        overview_cls = ' class="active"' if active == "overview" else ""
-        return (
-            '<aside class="reference-sidebar">'
-            '<h2>API Reference</h2>'
-            f'<a{overview_cls} href="{escape(prefix or "./")}">Overview</a>'
-            '<h3>Browse by task</h3>'
-            + "".join(
-                nav_link(spec["slug"], spec["title"])
-                for spec in GROUP_REFERENCES
-            )
-            + '<h3>Selectors</h3>'
-            + "".join(
-                nav_link(spec["slug"], spec["title"])
-                for spec in ENUM_REFERENCES
-            )
-            + '<h3>Components &amp; assemblies</h3>'
-            + "".join(
-                nav_link(spec["slug"], spec["title"])
-                for spec in component_methods
-            )
-            + '<h3>Shape &amp; sketch</h3>'
-            + "".join(
-                nav_link(spec["slug"], spec["title"])
-                for spec in shape_methods
-            )
-            + '</aside>'
-        )
-
-    def reference_shell(content, *, active, prefix):
-        return (
-            '<main class="wrap reference-layout">'
-            + reference_sidebar(active=active, prefix=prefix)
-            + '<article class="reference-article">'
-            + content
-            + '</article></main>'
-        )
-
     for spec in ENUM_REFERENCES:
         slug = spec["slug"]
         dest = reference_root / slug
         dest.mkdir(exist_ok=True)
-        rows = "".join(
-            f'<tr id="{escape(slug + "." + name)}">'
-            f"<td><code>{escape(slug)}.{escape(name)}</code></td>"
-            f"<td><code>{escape(str(value))}</code></td>"
-            "</tr>"
-            for name, value in enum_members(spec)
-        )
-        content = (
-            '<p class="crumb"><a href="../">API Reference</a> / '
-            + escape(spec["title"]) + '</p>'
-            + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
-            + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p></section>'
-            + '<section class="panel">'
-            + (
-                f'<h2>When to use it</h2><p>{escape(spec["use_when"])}</p>'
-                if spec["use_when"] else ""
-            )
-            + '<h2>Members</h2>'
-            + '<table class="api-table"><thead><tr><th>Name</th><th>Value</th></tr></thead>'
-            + f'<tbody>{rows}</tbody></table>'
-            + (
-                '<h2>Convenience aliases</h2><p>'
-                + " · ".join(f'<code>{escape(name)}</code>' for name in anchor_aliases())
-                + '</p>'
-                if spec["slug"] == "Anchor" else ""
-            )
-            + _parameter_details(spec, heading="Parameters")
-            + _example_details(spec)
-            + (
-                f'<h2>Current limits</h2><p>{escape(spec["limits"])}</p>'
-                if spec["limits"] else ""
-            )
-            + f'<p><a href="../../guide/{escape(spec["guide"])}/#{escape(spec["guide_anchor"])}">'
-              'Worked usage in the guide →</a> · '
-              '<a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
-            + '</section>'
-        )
+        content = reference_enum_content(spec)
         body = reference_shell(content, active=slug, prefix="../")
         (dest / "index.html").write_text(
             page(spec["title"], body, stylesheet="../../style.css",
@@ -891,26 +561,7 @@ def build(
         slug = spec["slug"]
         dest = reference_root / slug
         dest.mkdir(exist_ok=True)
-        content = (
-            '<p class="crumb"><a href="../">API Reference</a> / '
-            + escape(spec["title"]) + '</p>'
-            + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
-            + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p></section>'
-            + '<section class="panel"><h2>Current Python signature</h2>'
-            + f'<pre><code>{escape(spec["signature"])}</code></pre>'
-            + (
-                f'<h2>When to use it</h2><p>{escape(spec["use_when"])}</p>'
-                if spec["use_when"] else ""
-            )
-            + (
-                f'<h2>Current limits</h2><p>{escape(spec["limits"])}</p>'
-                if spec["limits"] else ""
-            )
-            + f'<p><a href="../../guide/{escape(spec["guide"])}/#{escape(spec["guide_anchor"])}">'
-              'Worked usage in the guide →</a> · '
-              '<a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
-            + '</section>'
-        )
+        content = reference_method_content(spec)
         body = reference_shell(content, active=slug, prefix="../")
         (dest / "index.html").write_text(
             page(spec["title"], body, stylesheet="../../style.css",
@@ -921,40 +572,7 @@ def build(
         slug = spec["slug"]
         dest = reference_root / slug
         dest.mkdir(exist_ok=True)
-        member_sections = []
-        for member in group_members(spec):
-            member_sections.append(
-                f'<section class="panel api-group-member" id="{escape(member["name"])}">'
-                f'<h2><code>{escape(member["name"])}</code></h2>'
-                + _member_details(member)
-                + (f'<p>{escape(member["summary"])}</p>' if member["summary"] else "")
-                + (
-                    f'<h3>When to use it</h3><p>{escape(member["use_when"])}</p>'
-                    if member["use_when"] else ""
-                )
-                + _parameter_details(member)
-                + _example_details(member)
-                + (
-                    f'<h3>Current limits</h3><p>{escape(member["limits"])}</p>'
-                    if member["limits"] else ""
-                )
-                + '</section>'
-            )
-        guide_link = (
-            f'<p><a href="../../guide/{escape(spec["guide"])}/#{escape(spec["guide_anchor"])}">'
-            'Worked usage in the guide →</a> · '
-            '<a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
-            if spec.get("guide")
-            else '<p><a href="../../api-design-contract.html">Cross-object API design rules →</a></p>'
-        )
-        content = (
-            '<p class="crumb"><a href="../">API Reference</a> / '
-            + escape(spec["title"]) + '</p>'
-            + '<section class="hero small"><p class="eyebrow">Generated SCPF API reference</p>'
-            + f'<h1>{escape(spec["title"])}</h1><p>{escape(spec["summary"])}</p>'
-            + guide_link + '</section>'
-            + "".join(member_sections)
-        )
+        content = reference_group_content(spec)
         body = reference_shell(content, active=slug, prefix="../")
         (dest / "index.html").write_text(
             page(spec["title"], body, stylesheet="../../style.css",
@@ -1006,16 +624,8 @@ def build(
         slug = info.slug
         case_dir = qualification_root / slug
         case_dir.mkdir(exist_ok=True)
-        proves = "".join(
-            f"<li>{escape(value)}</li>"
-            for value in info.verification_proves
-        )
-        saved_design = (
-            "<h3>Saved design</h3>"
-            f"<p>{escape(info.verification_saved_design)}</p>"
-            if info.verification_saved_design
-            else ""
-        )
+        proves = list_items(info.verification_proves)
+        saved_design_html = saved_design(info.verification_saved_design)
         verification_url = (
             f"{LIBRARY_URL}/blob/main/examples/{slug}/verification/verify.py"
         )
@@ -1026,7 +636,7 @@ def build(
             section=escape(info.section),
             verification_summary=escape(info.verification_summary),
             verification_proves=proves,
-            saved_design=saved_design,
+            saved_design=saved_design_html,
             verification_url=escape(verification_url),
         )
         (case_dir / "index.html").write_text(
@@ -1079,12 +689,7 @@ def build(
     for heading, items in CHEATSHEET:
         boxes = []
         for title, description, snippet, linked in items:
-            link = (
-                f'<p class="tip"><a href="../examples/{escape(linked)}/">'
-                "View working example →</a></p>"
-                if linked in example_slugs
-                else ""
-            )
+            link = cheatsheet_link(linked, example_slugs)
             boxes.append(
                 render_template(
                     "cheatsheet-item.html",
