@@ -1,0 +1,16 @@
+id: cad-verification-package
+kind: tool
+watch:
+  - package.json
+  - ../../scripts/verification_package.py
+strategy:
+  reuse: true
+steps:
+  - id: package_build
+    inputs:
+      - package.json
+      - ../../scripts/verification_package.py
+    run: [python, ../../scripts/verification_package.py]
+    outputs:
+      - dist
+      - package.json
