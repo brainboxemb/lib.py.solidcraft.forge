@@ -28,6 +28,14 @@ SolidCraft saves one plate, one Slot family sketch containing five closed profil
 
 No saved-design mutation is required; this case isolates the five native sketch construction methods and their saved feature history.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+The five slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.
+
 ## Reference notes
 
 - **SolidCraft** — Native integration through geometry checks additionally prove the five sketch.slot.* command identities. The four comparison libraries independently prove the resulting five cut shapes.
