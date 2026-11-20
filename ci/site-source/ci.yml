@@ -1,0 +1,17 @@
+# Validate example-owned presentation metadata without starting CAD runtimes.
+id: site-source
+process: true
+kind: test
+watch:
+  - site/**
+  - examples/*/model.yml
+strategy:
+  reuse: true
+steps:
+  - id: test_example_metadata
+    inputs:
+      - site/**
+      - examples/*/model.yml
+      - examples/*/verification/verify.py
+      - examples/*/scpf/model.py
+    run: [python, ../../site/test_example_metadata.py]
