@@ -10,7 +10,7 @@
       "outputs": [
         "tool_verify"
       ],
-      "source_commit": "3aed83cc28e057821e4ec1fa84dfb281e43dc419"
+      "source_commit": "03f27931bd4e25bf7d395a3477f1326876aecc94"
     },
     "ci/forge-tests": {
       "engine": "scons",
@@ -20,7 +20,7 @@
       "final_target_spec_digest": "66108cb287af48709e6e7de60d32b6489c185e37617fd121957280eb41cfd420",
       "item_id": "forge-tests",
       "outputs": [],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "03f27931bd4e25bf7d395a3477f1326876aecc94"
     },
     "examples/anchor-topology-mutation": {
       "engine": "scons",
@@ -160,7 +160,7 @@
     "examples/simple-box": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "4a3539f74aac1d5e5e5b6ee3736903000833db9ac167d1c96e02824c67008944",
+      "final_bundle_sha256": "52987437602821d5ff15db8cd5e3d59687a235bb9d349c087d9dcff7b8fe1b94",
       "final_step": "model_verify",
       "final_target_spec_digest": "549a2152fbab18ff672009bdc48122fa55dc466409bc294561db63c2713a56a0",
       "item_id": "simple-box",
@@ -168,7 +168,7 @@
         "model_verify",
         "solidcraft.json"
       ],
-      "source_commit": "3aed83cc28e057821e4ec1fa84dfb281e43dc419"
+      "source_commit": "03f27931bd4e25bf7d395a3477f1326876aecc94"
     },
     "examples/simple-box/build123d": {
       "engine": "scons",
@@ -234,14 +234,14 @@
     "scpf": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "79506114463664b7330e2dbb4d5f78edb04d36d4716fedaf8adbc1669ac48e20",
+      "final_bundle_sha256": "7896316491f0f11c0fdf4bc115c28c30ace63ba07c8f7f2c7625f3ec412042aa",
       "final_step": "tool_build",
       "final_target_spec_digest": "c3539c312909eb4a7d1ff0787aab0174d273e22d5b6363cf95e1dfd1ae09fdd9",
       "item_id": "forge-package",
       "outputs": [
         "dist"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "03f27931bd4e25bf7d395a3477f1326876aecc94"
     },
     "verification/references": {
       "engine": "scons",
@@ -258,5 +258,5 @@
   },
   "schema": 1,
   "scope": "main",
-  "source_commit": "3aed83cc28e057821e4ec1fa84dfb281e43dc419"
+  "source_commit": "03f27931bd4e25bf7d395a3477f1326876aecc94"
 }
