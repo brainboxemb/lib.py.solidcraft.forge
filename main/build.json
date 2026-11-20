@@ -51,14 +51,14 @@
     "examples/attach-angle/build123d": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "97e4728acae29414c8f9778b09ea3d9f018304553c77e785e617a7f7fd0504a7",
+      "final_bundle_sha256": "43bc267c4dad2c87fc0675edecbd1eac3f7d047af8e8a8fd856227b83431d417",
       "final_step": "verify_reference",
       "final_target_spec_digest": "d5dd00bd8f2ab5346bd7b29ae225b052098b091f9d0bf7e9149b8f6998e79473",
       "item_id": "examples-attach-angle-build123d",
       "outputs": [
         "references"
       ],
-      "source_commit": "655a625cbce02eff85511b874630a78b5db72bf8"
+      "source_commit": "78d98fd7424949acc329b7e457c9f78ff6c59380"
     },
     "examples/attach-angle/cadquery": {
       "engine": "scons",
@@ -162,5 +162,5 @@
   },
   "schema": 1,
   "scope": "main",
-  "source_commit": "655a625cbce02eff85511b874630a78b5db72bf8"
+  "source_commit": "78d98fd7424949acc329b7e457c9f78ff6c59380"
 }
