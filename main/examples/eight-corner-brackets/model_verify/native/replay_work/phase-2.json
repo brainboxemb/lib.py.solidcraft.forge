@@ -1,0 +1,128 @@
+{
+  "commands": [
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 6,
+        "translate": [
+          "-(frame_width / 2)",
+          "-(frame_depth / 2)",
+          0
+        ]
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 9,
+        "translate": [
+          "-(frame_width / 2)",
+          "-(frame_depth / 2)",
+          "frame_height - 16 mm"
+        ]
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 10,
+        "translate": [
+          "frame_width / 2",
+          "-(frame_depth / 2)",
+          0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "90 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 11,
+        "translate": [
+          "frame_width / 2",
+          "-(frame_depth / 2)",
+          "frame_height - 16 mm"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "90 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 12,
+        "translate": [
+          "frame_width / 2",
+          "frame_depth / 2",
+          0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "180 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 13,
+        "translate": [
+          "frame_width / 2",
+          "frame_depth / 2",
+          "frame_height - 16 mm"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "180 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 14,
+        "translate": [
+          "-(frame_width / 2)",
+          "frame_depth / 2",
+          0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "270 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 15,
+        "translate": [
+          "-(frame_width / 2)",
+          "frame_depth / 2",
+          "frame_height - 16 mm"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "270 deg"
+      }
+    }
+  ]
+}

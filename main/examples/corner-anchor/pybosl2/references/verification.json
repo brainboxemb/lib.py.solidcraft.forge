@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/corner-anchor/pybosl2/model.py",
+          "status": "pass",
+          "stl": "corner-anchor/pybosl2/model.stl"
+        }
+      ],
+      "model": "corner-anchor",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "b4f601173d4a5ffddb7b0e2321b9d9174cce5c30",
+  "status": "pass"
+}

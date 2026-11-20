@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "3a69da1dc537070b89a3fc9bd604ca8d2cfec2d637cff96e70e632c86d98ca76",
+  "duration_seconds": 0.076,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T21:19:38.722Z",
+  "item": "examples-eight-corner-brackets-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "40c17f2fe73c6c5e3e9a63c712cbee0fc5fbe6383ab609c8636c9b009354b389"
+    }
+  },
+  "run_finished_at": "2026-11-20T21:19:39.902Z",
+  "run_started_at": "2026-11-20T21:18:09.353Z",
+  "schema": 3,
+  "started_at": "2026-11-20T21:19:38.682Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "16468648c9b5a906b1fb48734933234151ef586c3f8461b1812d504ba37982ae",
+  "timeout_seconds": null
+}

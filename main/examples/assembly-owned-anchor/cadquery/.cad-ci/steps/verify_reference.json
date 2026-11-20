@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "f120a5c6b8f4988e8441058c81d0e02274b2e4e6ee24ec1079cab42e77de03ab",
+  "duration_seconds": 0.076,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T21:19:37.938Z",
+  "item": "examples-assembly-owned-anchor-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "6df4fa5df6044673676725de07947f881ff64fbc4cd0b18a52edce3444104eb1"
+    }
+  },
+  "run_finished_at": "2026-11-20T21:19:39.902Z",
+  "run_started_at": "2026-11-20T21:18:09.353Z",
+  "schema": 3,
+  "started_at": "2026-11-20T21:19:37.899Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "cd29c2132cbcdb5a3cdded13bd04aa248d6a44d73c5684977d3c8c141c79b972",
+  "timeout_seconds": null
+}

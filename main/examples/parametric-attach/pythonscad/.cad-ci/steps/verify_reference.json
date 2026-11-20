@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "7ca266d1bc3be26ea7c6d6e78e1a316745c98004848be8b91ecb6a11732f4361",
+  "duration_seconds": 0.075,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T21:19:39.346Z",
+  "item": "examples-parametric-attach-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "2d15fe132d37622edffa4ad94daf69db49cfcd5ad8ef32a81f19bbe14a079d96"
+    }
+  },
+  "run_finished_at": "2026-11-20T21:19:39.902Z",
+  "run_started_at": "2026-11-20T21:18:09.353Z",
+  "schema": 3,
+  "started_at": "2026-11-20T21:19:39.307Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "ef0fbc973a9dfd4402c9f1eda7d840900cf814c9601c2c3d82b862bbebdaea99",
+  "timeout_seconds": null
+}
