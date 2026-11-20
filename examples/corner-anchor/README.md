@@ -30,6 +30,14 @@ The marker sits on the front-top-right corner of the base.
 
 Change the base from 40x20 to 80x40 mm; the marker must follow both the new right side and new top.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+The base and marker positions show the intended corner placement. The saved SolidCraft model is then changed to confirm that the marker keeps following that corner.
+
 ## Reference notes
 
 - **BOSL2** — BOSL2 supports side/edge/corner anchors; its anchor also carries orientation, which is a useful design reference for Forge.
