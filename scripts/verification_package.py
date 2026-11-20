@@ -102,7 +102,7 @@ def main() -> int:
         "wheel": wheel.name,
         "sha256": digest,
     }
-    (out / "package.json").write_text(
+    (out / "provenance.json").write_text(
         json.dumps(provenance, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
