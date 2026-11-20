@@ -604,7 +604,7 @@ def _evidence_link(url, label):
 
 
 def qualification_current_evidence(view, title):
-    """Render one stable qualification evidence block from normalized view data."""
+    """Render one stable verification evidence block from normalized view data."""
     parameters = _evidence_table(
         ("Parameter", "Value", "Unit", "Expression"),
         tuple(
@@ -662,31 +662,6 @@ def qualification_current_evidence(view, title):
                 "</details>"
             )
         saved = "<h3>Saved-design results</h3>" + "".join(details)
-
-    reference_fragments = []
-    for row in view["references"]:
-        source_link = _evidence_link(row.get("source_url"), "Open reference source")
-        artifact_links = " · ".join(
-            value
-            for value in (
-                _evidence_link(row.get("stl_url"), "STL"),
-                _evidence_link(row.get("verification_url"), "verification JSON"),
-                _evidence_link(row.get("preview_metadata_url"), "preview metadata"),
-            )
-            if value
-        )
-        reference_fragments.append(
-            render_template(
-                "qualification-reference-row.html",
-                implementation=escape(row["implementation"]),
-                status=qualification_status_badge(row.get("status")),
-                accepted_source_commit=escape(row["accepted_source_commit"]),
-                source_link=source_link,
-                geometry_json=escape(row["geometry_json"]),
-                preview_url=escape(row["preview_url"]),
-                artifact_links=artifact_links,
-            )
-        )
 
     visual_rows = []
     for row in view["visual_views"]:
@@ -756,7 +731,87 @@ def qualification_current_evidence(view, title):
         saved_designs=saved,
         raw_links=raw_links,
         visual_section=visual_section,
-        references="".join(reference_fragments),
+    )
+
+
+def qualification_reference_comparison(
+    reference_sources,
+    source_urls,
+    *,
+    reference_rows=(),
+):
+    """Render reference source always and durable result evidence when available."""
+
+    rows_by_implementation = {
+        str(row.get("implementation", "")).lower(): row
+        for row in reference_rows
+    }
+    fragments = []
+    for implementation, source_code in reference_sources.items():
+        key = str(implementation).lower()
+        row = rows_by_implementation.get(key)
+        source_link = _evidence_link(
+            source_urls.get(key),
+            "Open current reference source",
+        )
+        if row is None:
+            fragments.append(
+                render_template(
+                    "verification-reference-source-row.html",
+                    implementation=escape(implementation),
+                    source_link=source_link,
+                    source_code=escape(source_code),
+                )
+            )
+            continue
+
+        artifact_links = " · ".join(
+            value
+            for value in (
+                _evidence_link(row.get("stl_url"), "STL"),
+                _evidence_link(
+                    row.get("verification_url"),
+                    "verification JSON",
+                ),
+                _evidence_link(
+                    row.get("preview_metadata_url"),
+                    "preview metadata",
+                ),
+            )
+            if value
+        )
+        fragments.append(
+            render_template(
+                "qualification-reference-row.html",
+                implementation=escape(row["implementation"]),
+                status=qualification_status_badge(row.get("status")),
+                accepted_source_commit=escape(
+                    row["accepted_source_commit"]
+                ),
+                accepted_source_link=_evidence_link(
+                    row.get("source_url"),
+                    "Open accepted source",
+                ),
+                source_link=source_link,
+                source_code=escape(source_code),
+                geometry_json=escape(row["geometry_json"]),
+                preview_url=escape(row["preview_url"]),
+                artifact_links=artifact_links,
+            )
+        )
+
+    description = (
+        "Each source is shown from the current Forge tree. Stable result "
+        "evidence is unavailable in this source-only build."
+        if not rows_by_implementation
+        else
+        "Each source is shown from the current Forge tree beside the accepted "
+        "durable result for that independent implementation."
+    )
+    return render_template(
+        "verification-references.html",
+        description=escape(description),
+        references="".join(fragments),
     )
 
 
@@ -781,14 +836,14 @@ def qualification_diagrams(rows):
     )
 
 
-def qualification_card(info, view, case_url):
-    """Render one stable qualification catalog card."""
+def qualification_card(info, view, case_url, *, section_label):
+    """Render one stable verification catalog card."""
     return render_template(
         "qualification-card.html",
         case_url=escape(case_url),
         preview_url=escape(view["preview_url"]),
         title=escape(info.title),
-        section=escape(info.section),
+        section=escape(section_label),
         status_line=qualification_status_line(view),
         description=escape(info.description),
     )

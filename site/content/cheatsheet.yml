@@ -1,0 +1,178 @@
+schema: 1
+groups:
+  - heading: Model classes
+    items:
+      - title: "class Example: ... build(self)"
+        description: "Write a Python model. No main() or show() is required."
+        snippet: |
+          class SimpleBox:
+              def build(self):
+                  return Box(40, 30, 10)
+        example: simple-box
+      - title: Model parameters
+        description: "Numeric model fields become named SolidCraft parameters."
+        snippet: |
+          length = 40.0
+          Box(self.length, 30, 10)
+        example: simple-box
+
+  - heading: Shapes and sketches
+    items:
+      - title: "Box(length, width, height, *, anchor=CENTER)"
+        description: "Native Box centred on XYZ by default; choose anchor=BOTTOM for a bottom-face datum at Z=0."
+        snippet: "Box(40, 30, 10)"
+        example: simple-box
+      - title: "Rectangle2D(width, depth)"
+        description: "Planar XY profile authored inside a Sketch."
+        snippet: |
+          with Sketch(plane='XY') as sketch:
+              Rectangle2D(100, 60)
+        example: anchored-holes
+      - title: "Circle2D(d=...)"
+        description: "A round 2D profile authored inside a Sketch."
+        snippet: |
+          with Sketch(plane='XY') as sketch:
+              Circle2D(d=8)
+        example:
+      - title: "Polygon2D(points, plane=...)"
+        description: "A closed profile on XY, XZ or YZ."
+        snippet: "Polygon2D([(0,0), (40,0), (0,30)], plane='XZ')"
+        example:
+      - title: "Cylinder(d=..., h=..., axis=..., anchor=CENTER)"
+        description: "Native cylinder centred by default; choose an axial anchor such as BOTTOM or LEFT when that end should define the datum."
+        snippet: "Cylinder(d=24, h=14, axis=Axis.X, anchor=LEFT)"
+        example:
+      - title: "Sphere(radius, *, anchor=CENTER)"
+        description: "Native sphere centred by default; cardinal anchors select tangent datums."
+        snippet: "Sphere(12, anchor=LEFT)"
+        example:
+
+  - heading: Features and placement
+    items:
+      - title: "sketch.extrude(distance)"
+        description: "Extrude an explicitly authored Sketch into editable native solid history."
+        snippet: |
+          with Sketch(plane='XY') as sketch:
+              Rectangle2D(80, 50)
+          plate = sketch.extrude(8)
+        example: anchored-holes
+      - title: "sketch.extrude(..., profiles=[...])"
+        description: "Extrude or cut only the closed Sketch regions selected by fixed sketch-local points."
+        snippet: "cut = sketch.extrude(Depth.THROUGH_ALL, profiles=[(-30, 0), (30, 0)], exact_regions=True)"
+        example:
+      - title: "Sketch.sheet_metal(...)"
+        description: "Create a native flat sheet from a closed XY Sketch with an explicit sheet rule."
+        snippet: "sheet = sketch.sheet_metal(thickness=2, bend_radius=2, k_factor=0.5)"
+        example:
+      - title: "Shape.fold(...)"
+        description: "Fold existing sheet material along one straight line while keeping native sheet history."
+        snippet: "sheet = sheet.fold(line=((20,-20,0),(20,20,0)), angle=90, fixed=(-30,0,0))"
+        example:
+      - title: "Sketch.rectangular_pattern(...)"
+        description: "Repeat a profile or earlier Sketch result as a native rectangular sketch pattern."
+        snippet: "row = sketch.rectangular_pattern(seed, count=4, spacing=25, direction=Axis.X)"
+        example:
+      - title: "Sketch.mirror(...)"
+        description: "Mirror a profile, pattern result or earlier mirror result over the Sketch X or Y axis."
+        snippet: "sketch.mirror(row, axis=Axis.Y)"
+        example:
+      - title: "Hole(d=..., depth=...)"
+        description: "A native hole. THROUGH_ALL follows the target body."
+        snippet: "Hole(d=8, depth=Depth.THROUGH_ALL)"
+        example: anchored-holes
+      - title: "shape.rectangular_pattern(...)"
+        description: "Repeat an already-applied native feature in one or two linear directions."
+        snippet: "plate.rectangular_pattern(cut, count=4, spacing=20, direction=Axis.X)"
+        example:
+      - title: "shape.circular_pattern(...)"
+        description: "Repeat an already-applied native feature around a fixed axis."
+        snippet: "plate.circular_pattern(cut, count=6, axis=Axis.Z)"
+        example:
+      - title: "shape.at(target, anchor=..., child=...)"
+        description: "Place a direct CSG shape anchor on another shape anchor; CENTER-to-CENTER is supported first."
+        snippet: "Cylinder(d=8, h=50, axis=Axis.X).at(body)"
+        example: primitive-csg
+      - title: "shape.on(target, face=...)"
+        description: "Place a feature on a selected face of another shape."
+        snippet: "Hole(d=8, depth=Depth.THROUGH_ALL).on(plate, face=Faces.TOP)"
+        example: anchored-holes
+      - title: "TOP + LEFT / BOTTOM + RIGHT"
+        description: "Combine cardinal directions to identify one edge of an axis-aligned rectangular solid."
+        snippet: "body.fillet(2, edges=[BOTTOM + LEFT, BOTTOM + RIGHT])"
+        example:
+      - title: "Box(...).at(..., anchor=...)"
+        description: "Place a native Box by a face, edge or corner anchor without creating a Sketch."
+        snippet: "Box(80, 50, 12).at(0, 0, 0, anchor=FRONT + BOTTOM)"
+        example:
+      - title: "shape.fillet(...)"
+        description: "Round selected edges of a feature-based body."
+        snippet: "body.fillet(2, edges=Edges.VERTICAL)"
+        example:
+      - title: "shape.chamfer(...)"
+        description: "Bevel selected edges using the same edge selectors as fillet."
+        snippet: "body.chamfer(2, edges=Edges.VERTICAL)"
+        example:
+      - title: "shape.shell(...)"
+        description: "Create an open-sided shell (supported feature trees only)."
+        snippet: "Box(80, 50, 30).shell(2, open=Faces.TOP)"
+        example:
+      - title: "a + b / a - b / a & b"
+        description: "Join, cut or intersect supported shapes; operation support depends on the shape types."
+        snippet: "body + Hole(d=8).at(0, 0, 10)"
+        example:
+
+  - heading: Reusable components
+    items:
+      - title: "copy(placement=Placement(...))"
+        description: "Create another occurrence of the same component definition at a declared pose."
+        snippet: "second = first.copy(placement=Placement(x=40))"
+        example: components
+      - title: "model.attach(...)"
+        description: "Fix one reusable component to another through explicit attachment references."
+        snippet: "right = Block().attach(left, parent=Anchor.RIGHT, child=Anchor.LEFT)"
+        example: components
+      - title: "attach(offset=(u, v))"
+        description: "Keep an in-plane attachment offset associative; parameter expressions become native planar-joint values."
+        snippet: "part.attach(base, parent=Anchor.FRONT_TOP_LEFT, child=mount, offset=(0, -wall + 12))"
+        example: components
+      - title: "assembly.with_anchor(...) / anchor(...)"
+        description: "Expose a semantic attachment datum owned by an assembly without adding application-specific anchors to a generic component."
+        snippet: |
+          frame = (left + right).with_anchor("front_top_left", left, ref)
+          parent = frame.anchor("front_top_left")
+        example: components
+      - title: corner anchors
+        description: "Use one of the eight rectangular corner references when attaching components."
+        snippet: "marker = Marker().attach(base, parent=Anchor.FRONT_TOP_RIGHT, child=Anchor.BACK_TOP_RIGHT)"
+        example: corner-anchor
+      - title: AnchorFrame
+        description: "Define an oriented local attachment frame. Return it from anchors() when the datum belongs to the reusable component, or pass it directly to attach() when it belongs only to the assembly."
+        snippet: |
+          mount = AnchorFrame(origin=(0,0,-12), z=(0,1,0), x=(0,0,-1))
+          part.attach(base, parent=Anchor.FRONT_TOP_LEFT, child=mount)
+        example: custom-anchor
+      - title: AnchorTopology
+        description: "Keep a named or assembly-local attachment reference on a planar-face edge or one of its endpoints so SolidCraft can follow changing geometry."
+        snippet: |
+          def anchors(self):
+              return {"mount": AnchorTopology(edge=(0,10,5), on=(0,10,10), corner=(0,0,5))}
+        example: custom-anchor
+      - title: "Placement(rotation=(axis, degrees))"
+        description: "Give a component occurrence one absolute axis-angle orientation."
+        snippet: "second = first.copy(placement=Placement(x=40, rotation=(Z, 180)))"
+        example:
+
+  - heading: Compile and inspect
+    items:
+      - title: "python -m scpf ... --out"
+        description: "Compile a model to SolidCraft command JSON; no SolidCraft app needed."
+        snippet: "python -m scpf examples/simple-box/scpf/model.py --out output/box.json"
+        example: simple-box
+      - title: "python -m scpf replay ..."
+        description: "Send existing command JSON to an open SolidCraft session; does not recompile."
+        snippet: "python -m scpf replay output/box.json"
+        example:
+      - title: "python -m scpf ... --connect"
+        description: "Execute a model in an open SolidCraft GUI document."
+        snippet: "python -m scpf examples/simple-box/scpf/model.py --connect"
+        example:

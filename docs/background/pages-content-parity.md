@@ -19,7 +19,7 @@ look complete.
 | --- | --- | --- |
 | Example title, intent and explanation | `model.yml` + local `README.md` | Preserved |
 | Forge API/model/lowering explanation | local `README.md` | Preserved verbatim from the canonical migration source |
-| Forge model source | current source commit | Preserved |
+| Forge model source | current source commit | Preserved inline on every Verification case, with source link |
 | Generated SolidCraft commands | durable model item `solidcraft.json` | Preserved, immutable build link |
 | Native SolidCraft model/result | durable `model_verify/native/**` | Preserved |
 | Editable parameters and measured bodies | durable baseline `measurements.json` | Preserved |
@@ -27,10 +27,10 @@ look complete.
 | Saved-design mutation results | durable `saved_designs/**` | Preserved where required |
 | Native page preview | durable presentation preview | Replaced by a deterministic current preview |
 | Current visual actual/goal/overlay/diff | durable `visual.json` + images | Preserved where the current model owns `verification/visual.json` |
-| PythonSCAD reference | canonical durable child item | Preserved |
-| pyBOSL2 reference | canonical durable child item | Preserved |
-| CadQuery reference | canonical durable child item | Preserved |
-| build123d reference | canonical durable child item | Preserved |
+| PythonSCAD reference | current `examples/<slug>/pythonscad/model.py` + canonical durable child item | Preserved as inline source beside current result/preview |
+| pyBOSL2 reference | current `examples/<slug>/pybosl2/model.py` + canonical durable child item | Preserved as inline source beside current result/preview |
+| CadQuery reference | current `examples/<slug>/cadquery/model.py` + canonical durable child item | Preserved as inline source beside current result/preview |
+| build123d reference | current `examples/<slug>/build123d/model.py` + canonical durable child item | Preserved as inline source beside current result/preview |
 | Reference expected/measured result | child `verification.json` | Preserved as exact JSON evidence |
 | Reference CAD artifact | child `model.stl` | Preserved |
 | Reference render | child presentation preview | Replaced by a deterministic current render of the verified STL |
@@ -38,6 +38,39 @@ look complete.
 | CADCraft engineering/setup diagrams | durable verification-diagram item | Preserved and displayed from current SVG evidence |
 | Per-item source provenance | `build/main/build.json` | Preserved |
 | Site/build provenance | root `provenance.json` | Added explicitly |
+| Public catalog terminology | site templates/routes | Current public concept is `Verification`; `Qualification` remains historical/internal only |
+| Functional catalog grouping/order | `model.yml.section` + local `model.yml.priority` + `site/content/verification-sections.yml` | Preserved six learning groups and their historical learning order |
+
+## Representative case heading mapping
+
+The preserved `qualification/simple-box/` page was checked heading-by-heading
+against the replacement Verification case composition:
+
+| Preserved heading | Replacement presentation |
+| --- | --- |
+| What this example makes | Verification hero goal from local `README.md` |
+| Forge code | Inline complete Forge source |
+| API used | Engineering explanation → Forge API |
+| Reference code / PythonSCAD / pyBOSL2 / CadQuery / build123d | Independent references, each with inline source beside current preview/result evidence |
+| How Forge builds it in SolidCraft | Engineering explanation → lowering |
+| SolidCraft result | Engineering explanation → SolidCraft result + current durable verification |
+| Editable parameters | Current durable verification → editable parameters |
+| Body size | Current durable verification → measured native bodies |
+| Visual result / Iso / Front / Right | Current visual verification where owned; otherwise the deterministic current presentation preview |
+| Integration tests | Current status line + exact verification checks |
+| Geometry checks | Exact verification checks + preserved geometry rationale |
+| Saved-design test | Preserved explanation + current saved-design evidence |
+| Raw test files | Durable raw evidence links pinned to the immutable build commit |
+| Reference documentation | Preserved local README reference notes |
+
+This mapping is representative of the 32 cases because all case pages are
+composed through the same templates and source/evidence adapters. Per-case
+human text remains example-owned rather than reconstructed centrally.
+
+Reference source rendering is independent from durable evidence. A source-only
+build still shows the complete Forge source and all four independent reference
+sources. Stable Pages adds the accepted result/preview/geometry evidence beside
+those sources, including the accepted evidence-source commit/link.
 
 ## Intentional differences
 
