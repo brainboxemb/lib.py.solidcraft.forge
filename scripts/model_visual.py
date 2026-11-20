@@ -13,6 +13,7 @@ import json
 import math
 from numbers import Real
 from pathlib import Path
+import shutil
 import subprocess
 from typing import Any
 
@@ -305,6 +306,65 @@ def _view_status(evidence: Mapping[str, Any]) -> str:
         if status in states:
             return status
     return "pass"
+
+
+def write_presentation_preview(
+    model_path: Path,
+    measurements_path: Path,
+    output_dir: Path,
+    *,
+    width: int = 720,
+    height: int = 540,
+) -> dict[str, Any]:
+    """Write one current ISO preview without creating verification status."""
+
+    model_path = Path(model_path).resolve()
+    measurements_path = Path(measurements_path).resolve()
+    output_dir = Path(output_dir).resolve()
+    width = _positive_int(width, "presentation preview width")
+    height = _positive_int(height, "presentation preview height")
+
+    measurements = json.loads(measurements_path.read_text(encoding="utf-8"))
+    if not isinstance(measurements, dict):
+        raise ValueError("baseline measurements must contain one object")
+    camera = solidcraft_camera(measurements, "iso")
+
+    presentation = output_dir / "presentation"
+    presentation.mkdir(parents=True, exist_ok=True)
+    preview = presentation / "preview-iso.png"
+    current_iso = output_dir / "visual" / "iso" / "actual.png"
+
+    if current_iso.is_file() and current_iso.stat().st_size > 0:
+        shutil.copyfile(current_iso, preview)
+        renderer = "reused-visual"
+        source = _reference(current_iso, output_dir)
+    else:
+        _snapshot(
+            model_path,
+            preview,
+            camera,
+            width=width,
+            height=height,
+        )
+        renderer = "solidcraft-snapshot"
+        source = _reference(model_path, output_dir)
+
+    metadata = {
+        "schema": 1,
+        "kind": "presentation-preview",
+        "renderer": renderer,
+        "view": "iso",
+        "image": "preview-iso.png",
+        "source": source,
+        "width": width,
+        "height": height,
+        "camera": camera,
+    }
+    (presentation / "preview.json").write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return metadata
 
 
 def run_visual_verification(

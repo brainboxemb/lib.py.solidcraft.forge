@@ -59,6 +59,8 @@ templates:
         - ../verification/reference_geometry.json
       repo:
         - verification/reference_validation.py
+        - verification/reference_preview.py
+        - verification/tests/test_reference_preview.py
         - scripts/forge_example.py
         - scripts/reference_verification_batch.py
     strategy:
@@ -70,6 +72,8 @@ templates:
             - model.py
             - ../verification/reference_geometry.json
           repo:
+            - verification/reference_preview.py
+            - verification/tests/test_reference_preview.py
             - scripts/forge_example.py
             - scripts/reference_verification_batch.py
         run: [python, ../../../scripts/reference_verification_batch.py, materialize]
@@ -85,6 +89,9 @@ templates:
         - model.py
         - ../verification/reference_geometry.json
       repo:
+        - verification/reference_validation.py
+        - verification/reference_preview.py
+        - verification/tests/test_reference_preview.py
         - verification/build123d_export.py
         - scripts/forge_example.py
         - scripts/reference_verification_batch.py
@@ -97,6 +104,8 @@ templates:
             - model.py
             - ../verification/reference_geometry.json
           repo:
+            - verification/reference_preview.py
+            - verification/tests/test_reference_preview.py
             - scripts/forge_example.py
             - scripts/reference_verification_batch.py
         run: [python, ../../../scripts/reference_verification_batch.py, materialize]

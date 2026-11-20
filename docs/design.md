@@ -828,3 +828,229 @@ It has no dependency on either CAD runtime batch.
 `forge-model-declarative` and `model-verification-batch` execution inputs. This
 prevents presentation/documentation edits from invalidating native model
 evidence.
+
+
+## Stable Pages evidence adapter
+
+#497 adds one Forge-owned adapter between generic durable build storage and the
+existing site view-model/template layer.
+
+```text
+source checkout
+  examples/<slug>/model.yml
+  examples/<slug>/README.md
+  examples/<slug>/{scpf,build123d,cadquery,pybosl2,pythonscad}/model.py
+          |
+          +------------------------------+
+                                         v
+immutable build commit -> build/main/build.json
+                         build/main/examples/<slug>/**
+                                         |
+                                         v
+                              site/build_evidence.py
+                                         |
+                              normalized evidence rows
+                                         |
+                                         v
+                                  site/build.py
+                                         |
+                              external HTML templates
+                                         |
+                                         v
+                                complete site directory
+```
+
+`site/build_evidence.py` owns only evidence loading/validation/normalization.
+It does not render HTML, run CAD or invent human explanation.
+
+For stable generation it receives:
+
+- the materialized `build/main` directory;
+- the immutable build-branch commit SHA used for that materialization.
+
+It validates:
+
+- `build.json` uses generic build schema 1 and scope `main`;
+- every current verified example has one `examples/<slug>` item row;
+- each required reference implementation has its own child item row;
+- item evidence is read from the source-path item directory, never from the
+  batch producer directory;
+- public status comes from item/verification evidence;
+- artifact references stay below their owning item root;
+- per-item `source_commit` is retained verbatim.
+
+The normalized example evidence contains at least:
+
+- model item status/provenance;
+- generated `solidcraft.json`;
+- baseline measurements;
+- declarative `model_verify/verification.json`;
+- saved-design evidence and artifact references;
+- `model_verify/visual.json` plus its produced views when present;
+- model presentation preview metadata;
+- four independent reference verification rows, STL artifacts and presentation
+  previews;
+- applicable durable CADCraft diagram references.
+
+The adapter does not require all item `source_commit` values to equal the site
+source commit. Sparse durable main intentionally preserves previously accepted
+unchanged items.
+
+Stable `site/build.py` writes root `provenance.json` with:
+
+- `source_commit`: the source checkout used to generate the site;
+- `build_commit`: the immutable generated `build` branch commit;
+- `build_scope`: `main`;
+- the generic build manifest's `source_commit` for traceability.
+
+This root record describes generation inputs; it does not replace per-item
+provenance.
+
+## Durable presentation preview production
+
+Presentation previews are produced with accepted CAD item output so stable
+Pages can remain a pure evidence consumer.
+
+### Native SolidCraft preview
+
+`scripts/model_verify_declarative.py` always leaves:
+
+```text
+model_verify/presentation/preview-iso.png
+model_verify/presentation/preview.json
+```
+
+after successful baseline model production/verification.
+
+`scripts/model_visual.py` owns the rendering helper because it already owns
+Forge's SolidCraft camera conversion and snapshot invocation.
+
+Rules:
+
+1. Run normal declarative verification first.
+2. If the model's visual policy produced `visual/iso/actual.png`, copy that
+   exact current render to `presentation/preview-iso.png`; do not invoke a
+   second snapshot.
+3. Otherwise load the already-produced baseline measurements, compute the
+   existing deterministic `iso` camera with `solidcraft_camera()`, and invoke
+   one `solidcraft-cli snapshot` against the accepted native model.
+4. Use one fixed presentation size of 720×540, matching the existing approved native visual renders, with no grid and no axes.
+5. Write `preview.json` recording schema/version, `view: "iso"`, dimensions,
+   the source native model path, camera values and whether the image was
+   `reused-visual` or `solidcraft-snapshot`.
+
+The presentation preview is not added to the semantic verification check list.
+Existing `visual.json` remains the only visual-verification status source.
+
+### Independent reference preview
+
+Each verified reference output leaves:
+
+```text
+references/<slug>/<implementation>/model.stl
+references/<slug>/<implementation>/verification.json
+references/<slug>/<implementation>/presentation/preview-iso.png
+references/<slug>/<implementation>/presentation/preview.json
+```
+
+Forge owns this renderer because the released CAD verification library
+explicitly leaves CAD rendering, view selection and camera values to the
+consumer.
+
+A small Forge module under `verification/` renders the already-verified STL
+headlessly with the dependencies already present in the reference runtime
+(`trimesh` and Pillow). It must not open or execute the original reference
+source again.
+
+The renderer:
+
+- loads the accepted STL without changing its geometry;
+- derives target and framing only from mesh bounds;
+- uses the same visible Forge ISO orientation as native previews: SolidCraft
+  uses yaw −45° / pitch +32°, while the released verification projection
+  convention represents that same view as yaw −45° / pitch −32°;
+- uses a bounding-sphere-based orthographic fit with a fixed margin so geometry
+  cannot be clipped by model aspect ratio;
+- rasterizes depth-sorted mesh triangles deterministically to a 720×540 PNG;
+- writes a neutral deterministic presentation image with no labels, grid or
+  axes;
+- writes `preview.json` with renderer schema/version, source STL path, camera,
+  dimensions and mesh bounds.
+
+Preview rendering failure makes the item output incomplete and therefore fails
+the producing Forge step, but it does not change the semantic geometry result
+inside `verification.json`.
+
+The shared reference batch renders all previews in its existing runtime before
+per-reference materialization, so no extra container is started per child item.
+
+## Stable qualification summary on durable main
+
+Stable Pages reuses `scripts/qualification_summary.py` as the public
+five-check adapter. The adapter is execution-free and imports semantic
+composition from the exact durable CAD-verification wheel stored in the same
+`build/main` baseline.
+
+Reference gates read only:
+
+```text
+examples/<slug>/<implementation>/
+  references/<slug>/<implementation>/verification.json
+```
+
+They do not glob batch producer outputs.
+
+Visual semantics follow current evidence ownership:
+
+- durable `model_verify/visual.json` present: current visual verification is
+  required and its actual/goal/overlay/diff evidence is shown;
+- no durable `visual.json`: visual is `not-required` for the current
+  contract;
+- `presentation/preview-iso.png` is shown in both cases but never contributes
+  a visual status.
+
+This deliberately avoids carrying historical visual PASS forward without
+current evidence.
+
+## Stable Pages content composition
+
+Stable case pages keep the Examples/Qualification split but assemble content
+from current sources:
+
+- local README: preserved human goal/API/model/lowering/result/rationale/reference
+  notes;
+- local model/reference Python: editable source;
+- durable model item: status, parameters, measurements, saved designs, current
+  native preview and detailed visual evidence where produced;
+- durable reference child items: result measurements, STL and current preview;
+- durable diagram item: applicable CADCraft SVGs;
+- immutable build links: raw machine evidence.
+
+Presentation previews are visually useful current artifacts, not PASS badges.
+Only structured verification evidence may create PASS/FAIL labels.
+
+The preserved branch
+`backup/gh-pages-before-f11-2026-11-20` is used only for content-category and
+layout regression review. Its images/results are never copied into the new site
+as current evidence.
+
+## Stable Pages publication flow
+
+Stable publication is one main-only flow:
+
+```text
+green Forge main
+  -> accepted build/main publication
+  -> checkout/materialize current source + immutable build branch
+  -> generate complete stable site
+  -> validate content/provenance
+  -> cad-ci publish pages
+  -> gh-pages stable root
+```
+
+Forge supplies the complete generated site directory and Forge-specific
+provenance. Released CAD-CI owns all generated-branch Git/Pages publication,
+freshness and retry mechanics.
+
+#497 deliberately does not add PR Pages scopes. #366 owns the later generic
+preview/cleanup lifecycle.

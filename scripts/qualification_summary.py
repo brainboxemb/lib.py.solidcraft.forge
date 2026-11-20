@@ -186,9 +186,10 @@ def _visual_check(case_root: Path) -> dict[str, Any]:
     report = _read_object(case_root / "model_verify" / "visual.json")
     if report is None:
         return {
-            "status": "missing",
-            "regression_status": "missing",
-            "expected_shape_status": "missing",
+            "status": "not-required",
+            "required": False,
+            "regression_status": "not-required",
+            "expected_shape_status": "not-required",
             "required_views": [],
             "images": [],
             "evidence": [],
@@ -230,6 +231,7 @@ def _visual_check(case_root: Path) -> dict[str, Any]:
 
     return {
         "status": status,
+        "required": True,
         "regression_status": regression_status,
         "expected_shape_status": expected_shape_status,
         "required_views": required_views,
@@ -239,42 +241,40 @@ def _visual_check(case_root: Path) -> dict[str, Any]:
 
 
 def _reference_check(evidence_root: Path, slug: str):
-    """Return the internal reference gate without adding a public status row."""
+    """Return the canonical reference gate without reading batch outputs."""
 
     SemanticCheck, _, compose_semantic_result, _ = _semantic_api()
-    matches = list(
-        Path(evidence_root).glob(f"**/references/{slug}/*/verification.json")
-    )
-    by_name: dict[str, tuple[Path, dict[str, Any]]] = {}
-    duplicate = False
-    for path in matches:
-        report = _read_object(path)
-        implementation = report.get("implementation") if report else None
-        if implementation not in REFERENCE_IMPLEMENTATIONS:
-            continue
-        if implementation in by_name:
-            duplicate = True
-        else:
-            by_name[implementation] = (path, report)
-
     checks = []
     evidence = []
     for implementation in REFERENCE_IMPLEMENTATIONS:
-        row = by_name.get(implementation)
-        status = _check_status(row[1].get("status") if row else None)
-        path = row[0].relative_to(evidence_root).as_posix() if row else None
+        path = (
+            Path(evidence_root)
+            / "examples"
+            / slug
+            / implementation
+            / "references"
+            / slug
+            / implementation
+            / "verification.json"
+        )
+        report = _read_object(path)
+        status = _check_status(report.get("status") if report else None)
+        if report is not None and report.get("implementation") != implementation:
+            status = "error"
+        relative = (
+            path.relative_to(evidence_root).as_posix()
+            if path.is_file()
+            else None
+        )
         checks.append(
             SemanticCheck(
                 implementation,
                 status,
-                evidence={"path": path} if path else None,
+                evidence={"path": relative} if relative else None,
             )
         )
-        if path:
-            evidence.append(path)
-
-    if duplicate:
-        checks.append(SemanticCheck("duplicate_reference", "error"))
+        if relative:
+            evidence.append(relative)
 
     return compose_semantic_result(checks), evidence
 
@@ -298,7 +298,7 @@ def compose_case(evidence_root: Path, slug: str):
         SemanticCheck(
             name,
             _check_status(checks[name]["status"]),
-            required=(name != "saved_design" or checks[name]["required"]),
+            required=checks[name].get("required", True),
             evidence=checks[name],
         )
         for name in PUBLIC_CHECKS

@@ -45,6 +45,8 @@ class SiteSourceTests(unittest.TestCase):
         self.assertNotIn("<h2", guides)
 
         self.assertTrue((SITE / "html_writer.py").is_file())
+        self.assertTrue((SITE / "build_evidence.py").is_file())
+        self.assertTrue((SITE / "qualification_view.py").is_file())
         self.assertTrue((SITE / "templates" / "page.html").is_file())
         self.assertTrue((SITE / "templates" / "guide-overview.html").is_file())
         self.assertTrue((SITE / "templates" / "example.html").is_file())
@@ -53,9 +55,41 @@ class SiteSourceTests(unittest.TestCase):
         self.assertTrue((SITE / "templates" / "reference-overview.html").is_file())
         self.assertTrue((SITE / "templates" / "cheatsheet-item.html").is_file())
         self.assertTrue((SITE / "templates" / "cheatsheet-section.html").is_file())
+        self.assertTrue((SITE / "templates" / "qualification-current.html").is_file())
+        self.assertTrue((SITE / "templates" / "qualification-reference-row.html").is_file())
+        self.assertTrue((SITE / "templates" / "qualification-visual-section.html").is_file())
+        self.assertTrue((SITE / "templates" / "qualification-diagrams.html").is_file())
         self.assertTrue((SITE / "static" / "copy.js").is_file())
         self.assertTrue((SITE / "static" / "search.js").is_file())
         self.assertTrue((SITE / "content" / "guides.json").is_file())
+
+    def test_stable_site_cli_uses_only_durable_build_main_inputs(self):
+        build = (SITE / "build.py").read_text(encoding="utf-8")
+
+        self.assertIn("--build-main", build)
+        self.assertIn("--build-commit", build)
+        for retired in (
+            "--native",
+            "--diagram-root",
+            "--references",
+            "--evidence-sha",
+            "--build-scope",
+            "--build-manifest",
+        ):
+            self.assertNotIn(retired, build)
+
+        workflow = (
+            ROOT / ".github" / "workflows" / "scpf.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("publish_stable_pages:", workflow)
+        self.assertIn("validate_stable_pages_pr:", workflow)
+        self.assertIn("cad-ci build fetch", workflow)
+        self.assertIn("cad-ci build resolve", workflow)
+        self.assertIn("cad-ci publish pages", workflow)
+        self.assertLess(
+            workflow.index("publish_main_build:"),
+            workflow.index("publish_stable_pages:"),
+        )
 
     def test_source_only_site_build_discovers_all_examples(self):
         with tempfile.TemporaryDirectory() as tmp:

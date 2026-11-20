@@ -1,0 +1,11 @@
+<section class="qualification-view" data-view="${view}">
+  <h3>${view} · ${status}</h3>
+  <p class="meta">Regression ${baseline_status} · expected shape ${expected_shape_status}</p>
+  <div class="qualification-view-grid">
+    ${images}
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>${regression_json}</code></pre>
+  </details>
+</section>

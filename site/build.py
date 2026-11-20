@@ -6,6 +6,7 @@ contracts remain in verification/verify.py. Stable Pages attaches accepted
 build/main evidence separately.
 """
 import argparse
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -21,6 +22,8 @@ from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from guides import GUIDES
 from example_metadata import discover_example_metadata
 from example_documentation import discover_example_documentation
+from build_evidence import load_stable_build_evidence
+from qualification_view import diagram_views, qualification_case_view
 from html_writer import (
     CAD_SITE,
     LIBRARY_URL,
@@ -37,6 +40,9 @@ from html_writer import (
     reference_group_content,
     reference_method_content,
     reference_notes,
+    qualification_card,
+    qualification_current_evidence,
+    qualification_diagrams,
     reference_shell,
     render_template,
 )
@@ -355,25 +361,59 @@ def scpf_version():
     return data["project"]["version"]
 
 
+def _stable_qualification_summary(stable, slugs):
+    """Compose current public status using the verification wheel in build/main."""
+
+    wheel = str(stable.verification_wheel_path)
+    scripts = str(ROOT / "scripts")
+    added = []
+    for value in (wheel, scripts):
+        if value not in sys.path:
+            sys.path.insert(0, value)
+            added.append(value)
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "stable_qualification_summary",
+            ROOT / "scripts" / "qualification_summary.py",
+        )
+        if spec is None or spec.loader is None:
+            raise RuntimeError("cannot load qualification summary adapter")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        result, gate = module.compose_cases(
+            stable.root,
+            tuple(slugs),
+        )
+    finally:
+        for value in added:
+            if value in sys.path:
+                sys.path.remove(value)
+
+    if gate.get("status") != "pass":
+        raise ValueError(
+            "stable Pages publication gate is not pass: "
+            + str(gate.get("status"))
+        )
+    cases = result.get("cases")
+    if not isinstance(cases, dict):
+        raise ValueError("qualification summary has no case map")
+    return cases
+
+
 def build(
     out,
     sha,
-    native_root=None,
-    diagram_root=None,
-    reference_evidence_root=None,
-    evidence_sha=None,
-    build_scope=None,
-    build_manifest=None,
+    *,
+    build_main=None,
     build_commit=None,
 ):
-    """Compile the source-driven site.
+    """Compile the source-driven site, optionally with stable build evidence."""
 
-    Legacy evidence arguments remain accepted during the #548 -> #497
-    transition. #497 replaces them with explicit durable build/main loading.
-    """
-    # #497 consumes build/main through a new explicit evidence loader.
-    # Legacy evidence arguments remain accepted until that cut-over so callers
-    # do not break while source architecture is cleaned up.
+    out = Path(out)
+    if (build_main is None) != (build_commit is None):
+        raise ValueError(
+            "stable Pages requires both build_main and build_commit"
+        )
 
     out.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / "site" / "style.css", out / "style.css")
@@ -403,6 +443,47 @@ def build(
             "example metadata/documentation catalogs do not match"
         )
 
+    stable = None
+    stable_by_slug = {}
+    summary_by_slug = {}
+    stable_view_by_slug = {}
+    if build_main is not None:
+        stable = load_stable_build_evidence(
+            Path(build_main),
+            build_commit,
+            (row.slug for row in example_rows),
+        )
+        stable_by_slug = {row.slug: row for row in stable.examples}
+        summary_by_slug = _stable_qualification_summary(
+            stable,
+            (row.slug for row in example_rows),
+        )
+        stable_view_by_slug = {
+            row.slug: qualification_case_view(
+                stable,
+                stable_by_slug[row.slug],
+                summary_by_slug[row.slug],
+                site_source_commit=sha,
+            )
+            for row in example_rows
+        }
+        (out / "provenance.json").write_text(
+            json.dumps(
+                {
+                    "schema": 1,
+                    "source_commit": sha,
+                    "build_commit": stable.build_commit,
+                    "build_scope": "main",
+                    "build_manifest_source_commit": (
+                        stable.manifest_source_commit
+                    ),
+                },
+                indent=2,
+                sort_keys=True,
+            ) + "\n",
+            encoding="utf-8",
+        )
+
     for info in example_rows:
         slug = info.slug
         documentation = documentation_by_slug[slug]
@@ -420,24 +501,15 @@ def build(
         )
         count = len(commands["commands"])
 
-        screenshot = (
-            native_root / slug / "model.png"
-            if native_root is not None
-            else None
-        )
-        if (
-            screenshot is not None
-            and screenshot.is_file()
-            and screenshot.stat().st_size > 0
-        ):
-            shutil.copyfile(screenshot, dest / "preview.png")
-            page_preview = "preview.png"
-            card_preview = f"examples/{slug}/preview.png"
-            qualification_preview = f"../examples/{slug}/preview.png"
-            preview_kind = "native-snapshot"
+        if stable is not None:
+            stable_view = stable_view_by_slug[slug]
+            page_preview = stable_view["preview_url"]
+            card_preview = stable_view["preview_url"]
+            qualification_preview = stable_view["preview_url"]
+            preview_kind = "durable-presentation-preview"
             preview_caption = (
-                f"Native SolidCraft {TESTED_SOLIDCRAFT_VERSION} render "
-                "from supplied accepted evidence."
+                "Current deterministic presentation preview from durable "
+                f"build {stable.build_commit[:12]}."
             )
         else:
             page_preview = "../../static/example-placeholder.svg"
@@ -465,7 +537,7 @@ def build(
             documentation.reference_notes
         )
         source_url = (
-            f"{LIBRARY_URL}/blob/main/examples/{slug}/scpf/model.py"
+            f"{LIBRARY_URL}/blob/{sha}/examples/{slug}/scpf/model.py"
         )
 
         body = render_template(
@@ -524,14 +596,23 @@ def build(
                 preview_url=escape(card_preview),
             )
         )
-        qualification_cards.append(
-            render_template(
-                "example-card.html",
-                **card_values,
-                example_url=f"../examples/{escape(slug)}/",
-                preview_url=escape(qualification_preview),
+        if stable is not None:
+            qualification_cards.append(
+                qualification_card(
+                    info,
+                    stable_view_by_slug[slug],
+                    f"{slug}/",
+                )
             )
-        )
+        else:
+            qualification_cards.append(
+                render_template(
+                    "example-card.html",
+                    **card_values,
+                    example_url=f"../examples/{escape(slug)}/",
+                    preview_url=escape(qualification_preview),
+                )
+            )
 
     # Expanded, navigable documentation remains separate from tiny smoke-test
     # examples and from the quick cheatsheet. Relevant API facts are repeated
@@ -648,7 +729,15 @@ def build(
             documentation.reference_notes
         )
         verification_url = (
-            f"{LIBRARY_URL}/blob/main/examples/{slug}/verification/verify.py"
+            f"{LIBRARY_URL}/blob/{sha}/examples/{slug}/verification/verify.py"
+        )
+        current_evidence = (
+            qualification_current_evidence(
+                stable_view_by_slug[slug],
+                info.title,
+            )
+            if stable is not None
+            else render_template("qualification-evidence-unavailable.html")
         )
         body = render_template(
             "qualification-case.html",
@@ -667,6 +756,7 @@ def build(
             geometry_reason=escape(documentation.geometry_reason),
             reference_notes=reference_notes_html,
             verification_url=escape(verification_url),
+            current_evidence=current_evidence,
         )
         (case_dir / "index.html").write_text(
             page(
@@ -686,11 +776,37 @@ def build(
             ),
             "evidence_source": "build/main",
         }
+        if stable is not None:
+            qualification_manifest[slug].update(
+                {
+                    "status": stable_view_by_slug[slug]["status"],
+                    "accepted_source_commit": (
+                        stable_view_by_slug[slug][
+                            "accepted_source_commit"
+                        ]
+                    ),
+                    "build_commit": stable.build_commit,
+                }
+            )
+
+    if stable is not None:
+        evidence_note = render_template(
+            "qualification-evidence-note.html",
+            build_commit=escape(stable.build_commit),
+        )
+        diagrams = qualification_diagrams(diagram_views(stable))
+    else:
+        evidence_note = render_template(
+            "qualification-evidence-unavailable.html"
+        )
+        diagrams = ""
 
     qualification_index = render_template(
         "qualification-index.html",
         example_count=len(example_rows),
         cards="".join(qualification_cards),
+        evidence_note=evidence_note,
+        diagrams=diagrams,
     )
     (qualification_root / "index.html").write_text(
         page(
@@ -707,6 +823,9 @@ def build(
             {
                 "library_commit": sha,
                 "evidence_source": "build/main",
+                "build_commit": (
+                    stable.build_commit if stable is not None else None
+                ),
                 "cases": qualification_manifest,
             },
             indent=2,
@@ -760,40 +879,35 @@ def build(
     (out / "index.html").write_text(
         page("Examples & cheatsheet", home, stylesheet="style.css", home="./", cheatsheet="cheatsheet/"),
         encoding="utf-8")
-    (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    if stable is not None:
+        manifest["build_commit"] = stable.build_commit
+        manifest["build_manifest_source_commit"] = (
+            stable.manifest_source_commit
+        )
+    (out / "manifest.json").write_text(
+        json.dumps(manifest, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=ROOT / "output" / "site")
     parser.add_argument("--source-sha", required=True)
-    parser.add_argument("--evidence-sha", help="Qualified source commit for reused evidence")
-    parser.add_argument("--native", type=Path, help="Source-matched native screenshot directory")
-    parser.add_argument("--diagram-root", type=Path, help="Generated qualification setup diagrams")
-    parser.add_argument("--references", type=Path, help="Source-matched qualification reference evidence")
     parser.add_argument(
-        "--build-scope",
-        help="Generated build branch scope, for example main or pr/326",
-    )
-    parser.add_argument(
-        "--build-manifest",
+        "--build-main",
         type=Path,
-        help="Generic durable build/main build.json; detailed evidence mapping is handled by stable Pages",
+        help="Materialized durable generated-branch main/ scope",
     )
     parser.add_argument(
         "--build-commit",
-        help="Immutable build branch commit used in evidence links",
+        help="Full immutable generated build-branch commit SHA",
     )
     options = parser.parse_args()
     build(
         options.out,
         options.source_sha,
-        native_root=options.native,
-        diagram_root=options.diagram_root,
-        reference_evidence_root=options.references,
-        evidence_sha=options.evidence_sha,
-        build_scope=options.build_scope,
-        build_manifest=options.build_manifest,
+        build_main=options.build_main,
         build_commit=options.build_commit,
     )
     print(f"Built independent SCPF library site: {options.out}")
