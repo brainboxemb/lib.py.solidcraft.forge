@@ -9,6 +9,7 @@ watch:
   - scpf/pyproject.toml
   - scripts/tool_ci.py
   - scripts/forge_example.py
+  - scripts/qualification_summary.py
 strategy:
   reuse: true
 steps:
@@ -19,4 +20,5 @@ steps:
       - scpf/pyproject.toml
       - scripts/tool_ci.py
       - scripts/forge_example.py
+      - scripts/qualification_summary.py
     run: [python, ../../scripts/tool_ci.py, tool_test]
