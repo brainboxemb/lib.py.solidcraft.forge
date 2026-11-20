@@ -63,9 +63,8 @@ MIGRATED_MODELS = (
     "xz-anchor",
     *BATCH_ONE_MODELS,
     *BATCH_TWO_MODELS,
+    "sketch-pattern-mirror",
 )
-
-LEGACY_MODEL = "sketch-pattern-mirror"
 
 FORBIDDEN_VERIFY_IMPLEMENTATION = (
     "argparse",
@@ -145,18 +144,14 @@ class DeclarativeModelVerificationBoundaryTests(unittest.TestCase):
         verification = ROOT / "examples" / "simple-box" / "verification"
         self.assertTrue((verification / "change_length.json").is_file())
 
-    def test_excluded_model_keeps_legacy_path(self):
-        """The batch may not mechanically migrate an excluded model."""
+    def test_qualification_catalog_has_no_procedural_verifiers(self):
+        """All 32 Qualification cases use declarative verification data."""
 
-        verification = ROOT / "examples" / LEGACY_MODEL / "verification"
-        self.assertTrue((verification / "verify_model.py").is_file())
-        self.assertFalse((verification / "verify.py").exists())
-
-        ci = (
-            ROOT / "examples" / LEGACY_MODEL / "ci.yml"
-        ).read_text(encoding="utf-8")
-        self.assertIn("scripts/model_verify.py", ci)
-        self.assertNotIn("scripts/model_verify_declarative.py", ci)
+        self.assertEqual(len(MIGRATED_MODELS), 32)
+        self.assertEqual(
+            list(ROOT.glob("examples/*/verification/verify_model.py")),
+            [],
+        )
 
     def test_batch_reuses_runtime_but_materializes_per_model(self):
         text = BATCH.read_text(encoding="utf-8")
