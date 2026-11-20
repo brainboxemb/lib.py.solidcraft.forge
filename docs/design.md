@@ -365,9 +365,10 @@ Root `cad-ci.yml` owns reusable Forge-specific templates. Templates contain
 generic execution structure only; model names and expected geometry do not live
 in them.
 
-The model `ci.yml` may provide descendant defaults such as the common
-reference template and effective `process` state. A child may replace the
-template when one implementation needs an extra implementation-specific helper.
+For this pilot each child `ci.yml` explicitly selects its root-owned reference
+template. This matches the externally accepted consumer shape and keeps the
+child configuration inspectable. A child may select a different template when
+one implementation needs an extra implementation-specific helper.
 
 The effective flow for a child source change is:
 
