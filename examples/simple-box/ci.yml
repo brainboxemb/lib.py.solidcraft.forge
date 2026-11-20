@@ -3,7 +3,7 @@ id: simple-box
 process: true
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/simple-box/scpf/**
   - examples/simple-box/model.yml
