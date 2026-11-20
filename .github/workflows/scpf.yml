@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: brainboxemb/tool.cad.ci
-          ref: 8bab91eaf8554533e5f63620421ed9554f66eb91
+          ref: ad7099b4712af13067c1c42ad50e89bf6a8306dd
           path: .cad-ci-tool
 
       - name: Set up Python
