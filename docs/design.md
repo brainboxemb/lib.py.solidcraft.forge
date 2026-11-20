@@ -226,17 +226,20 @@ host
   docker pull immutable SolidCraft role
   docker run
       |
-      +--> Python/module bootstrap (derived from container total minus
-           measured in-runtime total)
+      +--> container creation/start -> entry shell
+      +--> Python interpreter + module bootstrap
       +--> import released verification library
       +--> produce native SolidCraft model
       +--> run released SolidCraft verification
 ```
 
-The launcher prints explicit duration values using a monotonic timer and flushes
-them immediately. CAD-CI structured action timing remains authoritative for the
-whole `model_verify` step; these finer values are diagnostic decomposition
-inside that Forge-owned action.
+The launcher prints explicit duration values and flushes them immediately.
+Host-side phases use a monotonic timer. The container entry shell records the
+first executable point inside the container, and the Python process reports the
+bootstrap interval from that entry marker to the in-runtime Forge function.
+CAD-CI structured action timing remains authoritative for the whole
+`model_verify` step; these finer values are diagnostic decomposition inside
+that Forge-owned action.
 
 ## Model verification contract-test stage
 
