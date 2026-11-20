@@ -20,6 +20,7 @@ from scpf.runner import run_script
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from guides import GUIDES
 from example_metadata import discover_example_metadata
+from example_documentation import discover_example_documentation
 from html_writer import (
     CAD_SITE,
     LIBRARY_URL,
@@ -35,10 +36,9 @@ from html_writer import (
     reference_enum_content,
     reference_group_content,
     reference_method_content,
+    reference_notes,
     reference_shell,
     render_template,
-    saved_design,
-    tags,
 )
 from api_coverage import (
     EXPORT_COVERAGE,
@@ -291,8 +291,12 @@ def _cheatsheet_search_entries():
 
 
 def _example_search_entries():
-    """Return search rows from example-owned metadata."""
+    """Return search rows from example-owned metadata and preserved docs."""
 
+    documentation = {
+        row.slug: row
+        for row in discover_example_documentation()
+    }
     return [
         _search_entry(
             row.title,
@@ -300,7 +304,19 @@ def _example_search_entries():
             f"examples/{row.slug}/",
             row.description,
             aliases=(row.tagline, row.section),
-            keywords=(*row.concepts, *row.verification_proves),
+            keywords=(
+                documentation[row.slug].goal,
+                documentation[row.slug].forge_api,
+                documentation[row.slug].forge_model,
+                documentation[row.slug].lowering,
+                documentation[row.slug].solidcraft_result,
+                documentation[row.slug].saved_design_test,
+                *(
+                    note
+                    for _name, note
+                    in documentation[row.slug].reference_notes
+                ),
+            ),
         )
         for row in discover_example_metadata()
     ]
@@ -324,7 +340,7 @@ def build_search_index():
         unique.append(entry)
     return {
         "schema": 1,
-        "generated_from": "public API docstrings, API Guide, Cheatsheet and example model.yml metadata",
+        "generated_from": "public API docstrings, API Guide, Cheatsheet, example model.yml metadata and local README engineering documentation",
         "entries": unique,
     }
 
@@ -377,16 +393,25 @@ def build(
         "examples": {},
     }
     example_rows = discover_example_metadata()
+    documentation_by_slug = {
+        row.slug: row
+        for row in discover_example_documentation()
+    }
+    if set(documentation_by_slug) != {row.slug for row in example_rows}:
+        raise ValueError(
+            "example metadata/documentation catalogs do not match"
+        )
 
     for info in example_rows:
         slug = info.slug
+        documentation = documentation_by_slug[slug]
         source_path = ROOT / "examples" / slug / "scpf" / "model.py"
         commands = run_script(source_path)
         assert commands.get("commands"), f"{slug}: empty command list"
 
         dest = out / "examples" / slug
         dest.mkdir(parents=True, exist_ok=True)
-        source = text(source_path)
+        source = source_path.read_text(encoding="utf-8")
         (dest / "model.py").write_text(source, encoding="utf-8")
         (dest / "commands.json").write_text(
             json.dumps(commands, indent=2) + "\n",
@@ -435,9 +460,9 @@ def build(
             code=True,
         )
         stages = list_items(info.stages)
-        proves = list_items(info.verification_proves)
-        concept_tags = tags(info.concepts)
-        saved_design_html = saved_design(info.verification_saved_design)
+        reference_notes_html = reference_notes(
+            documentation.reference_notes
+        )
         source_url = (
             f"{LIBRARY_URL}/blob/main/examples/{slug}/scpf/model.py"
         )
@@ -454,11 +479,14 @@ def build(
             ),
             preview_path=escape(page_preview),
             preview_caption=escape(preview_caption),
-            concept_tags=concept_tags,
             stages=stages,
-            verification_summary=escape(info.verification_summary),
-            verification_proves=proves,
-            saved_design=saved_design_html,
+            documentation_goal=escape(documentation.goal),
+            forge_api=escape(documentation.forge_api),
+            forge_model=escape(documentation.forge_model),
+            lowering=escape(documentation.lowering),
+            solidcraft_result=escape(documentation.solidcraft_result),
+            saved_design_test=escape(documentation.saved_design_test),
+            reference_notes=reference_notes_html,
             source=escape(source),
             source_url=escape(source_url),
             timeline=timeline,
@@ -479,7 +507,6 @@ def build(
             "title": escape(info.title),
             "section": escape(info.section),
             "description": escape(info.description),
-            "concept_tags": concept_tags,
             "command_summary": escape(
                 f"{count} generated SolidCraft commands"
             ),
@@ -609,10 +636,12 @@ def build(
 
     for info in example_rows:
         slug = info.slug
+        documentation = documentation_by_slug[slug]
         case_dir = qualification_root / slug
         case_dir.mkdir(exist_ok=True)
-        proves = list_items(info.verification_proves)
-        saved_design_html = saved_design(info.verification_saved_design)
+        reference_notes_html = reference_notes(
+            documentation.reference_notes
+        )
         verification_url = (
             f"{LIBRARY_URL}/blob/main/examples/{slug}/verification/verify.py"
         )
@@ -621,9 +650,13 @@ def build(
             slug=escape(slug),
             title=escape(info.title),
             section=escape(info.section),
-            verification_summary=escape(info.verification_summary),
-            verification_proves=proves,
-            saved_design=saved_design_html,
+            documentation_goal=escape(documentation.goal),
+            forge_api=escape(documentation.forge_api),
+            forge_model=escape(documentation.forge_model),
+            lowering=escape(documentation.lowering),
+            solidcraft_result=escape(documentation.solidcraft_result),
+            saved_design_test=escape(documentation.saved_design_test),
+            reference_notes=reference_notes_html,
             verification_url=escape(verification_url),
         )
         (case_dir / "index.html").write_text(
@@ -638,6 +671,7 @@ def build(
         )
         qualification_manifest[slug] = {
             "title": info.title,
+            "documentation_source": f"examples/{slug}/README.md",
             "verification_source": (
                 f"examples/{slug}/verification/verify.py"
             ),
