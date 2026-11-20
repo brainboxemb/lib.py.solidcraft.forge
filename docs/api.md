@@ -224,6 +224,34 @@ Sketch coordinates rather than parameter expressions.
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
 
+#### Native Sketch pattern and mirror operations
+
+A profile already authored in the active Sketch can seed an associative native
+rectangular pattern:
+
+```python
+seed = sketch.add(Circle2D(d=20), offset=(-304, 0))
+row = sketch.rectangular_pattern(
+    seed,
+    count=9,
+    spacing=76,
+    direction=Axis.X,
+)
+sketch.mirror(row, axis=Axis.Y)
+```
+
+The source may also be a supported Slot profile or a result returned by an
+earlier supported Sketch pattern/mirror operation. Pattern and mirror return
+Sketch operation handles; they do not expose SolidCraft curve ids.
+
+Current limits include attached Sketch qualification, rectangular patterns,
+fixed 2D directions or `Axis.X`/`Axis.Y`, and mirror over the Sketch X/Y
+origin axes. A SolidCraft mirror keeps the entity set selected when the mirror
+was authored; increasing an upstream pattern count later does not
+automatically add the new entities to that existing mirror.
+
+See [change 0033](background/changes/0033-associative-sketch-pattern-mirror.md).
+
 #### Signed and symmetric Sketch extrusion
 
 The current public signature is:
