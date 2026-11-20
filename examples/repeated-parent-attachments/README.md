@@ -30,6 +30,14 @@ Both markers sit on their own parent TOP face. After parent_height changes in th
 
 Change parent_height from 40 to 60 mm in the saved .sc design; both Parent occurrences become 60 mm tall and both Marker occurrences move from Z=40..50 to Z=60..70 without rerunning Python.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+Four rectangular body bounds expose both parent heights and both child positions. saved-design mutation separately proves that both disconnected native joint graphs follow the shared parent-height change.
+
 ## Reference notes
 
 - **SolidCraft** — This case isolates the 0.42 joint-solver behaviour for two disconnected graphs that share reusable component definitions.
