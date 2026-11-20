@@ -8,16 +8,26 @@ watch:
   - examples/simple-box/scpf/**
   - examples/simple-box/model.yml
   - examples/simple-box/verification/**
+  - examples/simple-box/tests/**
   - scripts/forge_example.py
+  - scripts/model_contract_test.py
   - scripts/model_verify_declarative.py
 strategy:
   reuse: true
 steps:
+  - id: contract_test
+    inputs:
+      - examples/simple-box/scpf/**
+      - examples/simple-box/tests/**
+      - scripts/forge_example.py
+      - scripts/model_contract_test.py
+    run: [python, ../../scripts/model_contract_test.py]
   - id: model_verify
     inputs:
       - examples/simple-box/scpf/**
       - examples/simple-box/model.yml
       - examples/simple-box/verification/**
+      - examples/simple-box/tests/**
       - scripts/forge_example.py
       - scripts/model_verify_declarative.py
       - scpf/scpf/version.py

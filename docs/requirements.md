@@ -152,3 +152,67 @@ generic CAD-CI dependency context.
 
 This split changes dependency ownership only. It does not add Forge-local
 selection, scheduling, caching or parallel-execution policy.
+
+## CI reliability during staged verification
+
+Forge CI must run only against an exact externally accepted `tool.cad.ci` /
+`lib.py.cad.ci` release pair.
+
+During the current five-model proof:
+
+- exactly five model verification items participate through released CAD-CI
+  `process` configuration;
+- all other model verification items remain excluded from normal selection;
+- repository-wide reference verification is a separate item and is not counted
+  as one of the five model verification items;
+- the reference item may run only when normal released CAD-CI selection selects
+  it from its own configuration/dependencies;
+- Forge must not add a second planner or consumer-side changed-path engine to
+  enforce this staging.
+
+Structured CAD-CI evidence is authoritative for what executed.
+
+For every selected item/step that runs, the current CAD-CI evidence under the
+item's `.cad-ci` namespace must be sufficient to determine:
+
+- item and step identity;
+- execution outcome;
+- whether the consumer action executed;
+- run start/finish;
+- action start/finish and duration when an action executed.
+
+Console text is diagnostic only and must not be the sole source used to decide
+what CI actually executed.
+
+The five-model proof is considered reliable only when representative changes
+can be explained from:
+
+1. the repository configuration;
+2. the released CAD-CI selected graph;
+3. the resulting structured item/step evidence.
+
+Performance tuning is not part of this reliability requirement.
+
+## Model command-contract coverage
+
+The staged model-verification path preserves the former Q1/Q2 ownership split
+without retaining the old qualification runner.
+
+- Q1 is reusable Forge API/compiler evidence and is covered by the normal
+  `forge-tests` unit suite.
+- Q2 is model-owned command-contract evidence under
+  `examples/<model>/tests/`.
+- Every processed declarative model verification item must run its own
+  command-contract tests against the exact `forge-package` wheel before
+  native SolidCraft replay.
+- A Q2 failure fails that model item before native verification starts.
+- `verification/verify.py` remains data-only and does not contain Q1/Q2 test
+  code.
+- The fixed `forge-release` example set is release verification and is not a
+  substitute for Q2 coverage of every processed model item.
+- A processed model item's CAD-CI watch/step inputs must include its
+  `examples/<model>/tests/**` files so changing the contract test invalidates
+  and reruns that model verification.
+
+This restores command-contract coverage without reintroducing the historical
+qualification orchestration.

@@ -179,3 +179,62 @@ implementation changes.
 
 SCons execution order/parallelism remains generic CAD-CI behavior; this Forge
 change only makes the dependency graph semantically correct.
+
+## Staged CI selection and evidence
+
+The staged proof separates repository participation, Git selection and build
+execution:
+
+```text
+examples/<model>/ci.yml
+  -> process participation
+  -> released CAD-CI changed-path/dependency selection
+  -> SCons target graph
+  -> consumer action
+  -> build/<item>/.cad-ci evidence
+```
+
+Forge owns only the declarative repository configuration. It does not reproduce
+the planner in Forge code or tests.
+
+The five active model items form one bounded proof set. The independent
+`reference-verification` item is not part of that set and remains independently
+selected by released CAD-CI. A run that includes reference verification is
+therefore not automatically a five-model runtime measurement.
+
+Run interpretation uses structured CAD-CI evidence, not buffered console order.
+Consumer output may be emitted late or grouped by SCons, so console timestamps
+are not a reliable per-action timing source.
+
+During CI stabilization, evidence must be inspectable after a representative
+run. If the reusable workflow does not retain the generated `.cad-ci` evidence,
+the retention mechanism must be added at the workflow/tool boundary rather than
+by adding a Forge-local execution tracker.
+
+## Model verification contract-test stage
+
+Each processed declarative model item exposes Q2 and native verification as
+separate ordered CAD-CI steps:
+
+```text
+forge-package wheel
+  -> contract_test
+     -> run model-owned examples/<model>/tests against that exact wheel
+  -> model_verify
+     -> compile model to solidcraft.json with that exact wheel
+     -> start released SolidCraft runtime
+     -> replay native model
+     -> run released cad-verification model checks
+```
+
+A thin Forge-owned model contract-test command resolves `CAD_CI_ITEM` and the
+exact `forge-package` dependency wheel, then delegates execution mechanics to
+`forge_example.run_contract_tests()`. It contains no model expectations.
+
+Keeping Q2 as its own CAD-CI step makes its pass/fail and timing visible in
+normal structured CAD-CI evidence instead of hiding it inside native
+verification.
+
+Each active model item watches its own `tests/**` directory. This keeps
+CAD-CI/SCons responsible for invalidation and execution; Forge does not add a
+second freshness mechanism.
