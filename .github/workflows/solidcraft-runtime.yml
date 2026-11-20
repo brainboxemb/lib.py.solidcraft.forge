@@ -50,6 +50,7 @@ jobs:
           context: docker/solidcraft_runtime
           file: docker/solidcraft_runtime/Dockerfile
           push: true
+          provenance: false
           tags: ${{ steps.metadata.outputs.reference }}
           build-args: |
             PYTHON_IMAGE=${{ steps.metadata.outputs.python_image }}

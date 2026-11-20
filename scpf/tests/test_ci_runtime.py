@@ -79,6 +79,12 @@ class CiRuntimeContractTests(unittest.TestCase):
         self.assertNotIn("cache-from:", text)
         self.assertNotIn("cache-to:", text)
 
+    def test_runtime_workflow_disables_provenance_index(self):
+        """Publish one pullable runtime image instead of an attestation index."""
+
+        text = RUNTIME_WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("provenance: false", text)
+
     def test_runtime_publication_is_manual_only(self):
         """Never build or publish a runtime because source files changed."""
 
