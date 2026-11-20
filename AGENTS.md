@@ -84,6 +84,7 @@ A declaratively migrated model may contain:
 examples/<model>/
   ci.yml
   model.yml
+  README.md
   scpf/
     model.py
   verification/
@@ -95,7 +96,7 @@ Older models may temporarily retain `verification/verify_model.py` until their
 individual migration PR. Do not add new shared verification mechanics to those
 files.
 
-Presentation metadata in `model.yml` uses:
+Presentation metadata in `model.yml` uses only:
 
 ```text
 section
@@ -104,15 +105,13 @@ tagline
 description
 parameters
 stages
-concepts
-verification:
-  summary
-  proves
-  saved_design   # optional
-notes            # optional
 ```
 
-`model.yml` is the authoritative human-facing example/page metadata source.
+`model.yml` is the generic model/page metadata source. The example
+`README.md` owns human engineering explanation such as the goal, Forge API
+and model, SolidCraft lowering/result, saved-design explanation and reference
+notes. Do not infer or summarize those statements during source migrations.
+
 Exact verification values remain in `verification/verify.py`; actual current
 results come from durable `build/main`. Do not add a central Python example
 page catalog.
