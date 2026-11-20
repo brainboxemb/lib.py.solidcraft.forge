@@ -46,6 +46,8 @@ delegates model verification to released `lib.py.cad.verfication`.
 
 A declaratively migrated model keeps only model-specific verification data in
 `verification/definition.py`; it does not own a procedural verification CLI.
+During staged migration it uses `scripts/model_verify_declarative.py`; older
+models retain `scripts/model_verify.py` until their own migration change.
 
 All 32 historical model items have native `model_verify` coverage and
 model-local independent-reference geometry contracts. The shared reference item
