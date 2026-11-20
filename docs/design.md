@@ -213,21 +213,27 @@ by adding a Forge-local execution tracker.
 
 ## Model verification contract-test stage
 
-The declarative model launcher keeps Q2 command-contract verification on the
-host side, before SolidCraft is started:
+Each processed declarative model item exposes Q2 and native verification as
+separate ordered CAD-CI steps:
 
 ```text
 forge-package wheel
-  -> run model-owned examples/<model>/tests against that exact wheel
-  -> compile model to solidcraft.json with that exact wheel
-  -> start released SolidCraft runtime
-  -> replay native model
-  -> run released cad-verification model checks
+  -> contract_test
+     -> run model-owned examples/<model>/tests against that exact wheel
+  -> model_verify
+     -> compile model to solidcraft.json with that exact wheel
+     -> start released SolidCraft runtime
+     -> replay native model
+     -> run released cad-verification model checks
 ```
 
-The shared helper `forge_example.run_contract_tests()` owns only the mechanics
-of executing a model's existing unittest files with the exact dependency wheel.
-It does not contain model expectations.
+A thin Forge-owned model contract-test command resolves `CAD_CI_ITEM` and the
+exact `forge-package` dependency wheel, then delegates execution mechanics to
+`forge_example.run_contract_tests()`. It contains no model expectations.
+
+Keeping Q2 as its own CAD-CI step makes its pass/fail and timing visible in
+normal structured CAD-CI evidence instead of hiding it inside native
+verification.
 
 Each active model item watches its own `tests/**` directory. This keeps
 CAD-CI/SCons responsible for invalidation and execution; Forge does not add a
