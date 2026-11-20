@@ -28,6 +28,14 @@ The Arm sits on the Base TOP face and its 30x10 footprint is quarter-turned to 1
 
 Not required; this case isolates native orientation/clocking and is qualified by measured bounds plus fixed-camera visual regression.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+The non-square arm size shows whether the quarter-turn is correct. The saved SolidCraft model is also checked for the expected joint angle.
+
 ## Reference notes
 
 - **SolidCraft** — The joint angle is the persisted native relationship value that clocks the child about the attachment normal.
