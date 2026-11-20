@@ -1,0 +1,45 @@
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / ${title}</div>
+  <section class="hero small">
+    <p class="eyebrow">${section}</p>
+    <h1>${title}</h1>
+    <p class="guide-lead">${tagline}</p>
+    <p>${description}</p>
+    <p class="meta"><span>${parameters}</span><span>${command_summary}</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="${preview_path}" alt="${title}: ${preview_caption}" loading="lazy">
+    <figcaption>${preview_caption}</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>What this example demonstrates</h2>
+      <div class="tags">${concept_tags}</div>
+      <h3>Model stages</h3>
+      <ol>${stages}</ol>
+    </section>
+    <section class="panel">
+      <h2>What verification proves</h2>
+      <p>${verification_summary}</p>
+      <ul>${verification_proves}</ul>
+      ${saved_design}
+    </section>
+  </div>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>${source}</code></pre>
+      <p><a href="${source_url}">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands">${timeline}</ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build, not by this page metadata.
+  </section>
+</main>
