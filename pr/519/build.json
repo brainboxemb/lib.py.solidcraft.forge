@@ -1,0 +1,55 @@
+{
+  "items": {
+    "ci/forge-release": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "ff111949a1d54d98aa2270eb7cd9ee1ba50487699ee22ef94c2d235cf97ec367",
+      "final_step": "tool_verify",
+      "final_target_spec_digest": "d474813193dd5bafaad1d8209e92fd500a420b66801c3d288e70913992ade90a",
+      "item_id": "forge-release",
+      "outputs": [
+        "tool_verify"
+      ],
+      "source_commit": "6bbd7800cf9bc0d3f12fc5b080c873f0062dfb05"
+    },
+    "ci/forge-tests": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
+      "final_step": "tool_test",
+      "final_target_spec_digest": "66108cb287af48709e6e7de60d32b6489c185e37617fd121957280eb41cfd420",
+      "item_id": "forge-tests",
+      "outputs": [],
+      "source_commit": "6bbd7800cf9bc0d3f12fc5b080c873f0062dfb05"
+    },
+    "examples/simple-box": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "eb7e2d47e8026d2d34e8b8f6fa9de5c6378a7c690dd0a981713627679c45e8cf",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "549a2152fbab18ff672009bdc48122fa55dc466409bc294561db63c2713a56a0",
+      "item_id": "simple-box",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "6bbd7800cf9bc0d3f12fc5b080c873f0062dfb05"
+    },
+    "scpf": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "0e2a113ecf712001534ff9aecc69938afc3cd6698dd90a2744028d40f3d8ecb1",
+      "final_step": "tool_build",
+      "final_target_spec_digest": "c3539c312909eb4a7d1ff0787aab0174d273e22d5b6363cf95e1dfd1ae09fdd9",
+      "item_id": "forge-package",
+      "outputs": [
+        "dist"
+      ],
+      "source_commit": "6bbd7800cf9bc0d3f12fc5b080c873f0062dfb05"
+    }
+  },
+  "pull_request": 519,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "6bbd7800cf9bc0d3f12fc5b080c873f0062dfb05"
+}
