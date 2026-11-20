@@ -12,22 +12,10 @@ current and what follows.
 The CI reliability baseline from #478 is complete and recorded in
 `docs/background/ci-baseline-2026-11-20.md`.
 
-Forge uses externally accepted `tool.cad.ci` v0.12.2 at exact commit
-`8bab91eaf8554533e5f63620421ed9554f66eb91`, with released
-`lib.py.cad.ci` 0.7.1 underneath it.
+Forge currently pins externally accepted `tool.cad.ci` v0.12.2 with
+`lib.py.cad.ci` 0.7.1.
 
-Exactly five model verification items are active in the staged proof.
-Structured CAD-CI output/evidence is retained as the reusable workflow build
-artifact when materialized output exists.
-
-The performance/runtime and stale-branch findings remain parked and do not
-block generated-output migration.
-
-## Current goal
-
-Complete #489 as the first concrete part of #366.
-
-Prove one sparse PR durable-build scope:
+#489 proved the first durable generated-output path:
 
 ```text
 simple-box verification
@@ -37,14 +25,33 @@ simple-box verification
   -> build/pr/<PR>/examples/simple-box/
 ```
 
-This issue does not publish stable `build/main` and does not touch
-`gh-pages`.
+The generated `build` branch changed only under the PR scope; existing
+`build/main` remained untouched.
+
+The existing `build/main` is still the retired publication format and is not
+readable by the current generic build-store.
+
+Released and externally accepted `tool.cad.ci` v0.12.3 at
+`ad7099b4712af13067c1c42ad50e89bf6a8306dd` fixes the direct stable-main
+bootstrap blocker: unselected `build prepare-main` now uses the library
+full-run `process` selection.
+
+## Current goal
+
+Complete #491:
+
+1. pin exact accepted `tool.cad.ci` v0.12.3;
+2. update the exact-pin contract test;
+3. prove normal Forge CI remains green.
+
+Then continue #366 by creating a new authoritative generic `build/main`
+baseline from the current processed item set.
 
 ## Execution order
 
-1. #489 — prove `simple-box` as one durable PR scope on `build`.
-2. #366 — extend the proven mechanism to stable/main build output.
-3. Extend durable build publication to the migrated active items.
+1. #491 — adopt exact tool.cad.ci v0.12.3.
+2. #366 — bootstrap the new generic `build/main` baseline.
+3. Extend durable main updates to migrated active items.
 4. Cut Pages publication over to `cad-ci publish pages`.
 5. Remove superseded Forge-owned publication code.
 6. Resume #430/#378 verification-feature work.
@@ -55,9 +62,9 @@ This issue does not publish stable `build/main` and does not touch
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #489 Prove simple-box verified output as a durable build PR scope | now | First #366 proof. Publish only accepted simple-box output to one sparse PR scope on `build`. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Umbrella generated-output migration; stable/main and Pages follow the #489 proof. |
-| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Measured and parked; runtime/image follow-up is separate. |
+| #491 Pin externally accepted tool.cad.ci 0.12.3 for stable main build bootstrap | now | Exact accepted pin required before the generic `build/main` bootstrap. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Main generated-output umbrella; PR scope is proven, stable main is next. |
+| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Measured and parked; runtime/image follow-up remains separate. |
 | #481 Remove stale Forge development branches | blocked | Branch rule is merged; physical deletion of stale refs remains unavailable through current connected tooling. |
 | #430 Prove visual render, regression and expected-shape evidence with simple-box | later | Q6 work resumes after durable generated output is stable. |
 | #378 Use explicit Forge verification stages instead of integration/native gates | later | Continue five-model verification stages after #366. |
@@ -87,4 +94,4 @@ Generated `build` and `gh-pages` are exceptions.
 
 Immediate chain:
 
-`#489 simple-box PR build -> #366 build/main -> gh-pages`.
+`#491 -> #366 build/main -> gh-pages`.
