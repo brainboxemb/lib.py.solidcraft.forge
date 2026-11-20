@@ -152,3 +152,43 @@ generic CAD-CI dependency context.
 
 This split changes dependency ownership only. It does not add Forge-local
 selection, scheduling, caching or parallel-execution policy.
+
+## CI reliability during staged verification
+
+Forge CI must run only against an exact externally accepted `tool.cad.ci` /
+`lib.py.cad.ci` release pair.
+
+During the current five-model proof:
+
+- exactly five model verification items participate through released CAD-CI
+  `process` configuration;
+- all other model verification items remain excluded from normal selection;
+- repository-wide reference verification is a separate item and is not counted
+  as one of the five model verification items;
+- the reference item may run only when normal released CAD-CI selection selects
+  it from its own configuration/dependencies;
+- Forge must not add a second planner or consumer-side changed-path engine to
+  enforce this staging.
+
+Structured CAD-CI evidence is authoritative for what executed.
+
+For every selected item/step that runs, the current CAD-CI evidence under the
+item's `.cad-ci` namespace must be sufficient to determine:
+
+- item and step identity;
+- execution outcome;
+- whether the consumer action executed;
+- run start/finish;
+- action start/finish and duration when an action executed.
+
+Console text is diagnostic only and must not be the sole source used to decide
+what CI actually executed.
+
+The five-model proof is considered reliable only when representative changes
+can be explained from:
+
+1. the repository configuration;
+2. the released CAD-CI selected graph;
+3. the resulting structured item/step evidence.
+
+Performance tuning is not part of this reliability requirement.
