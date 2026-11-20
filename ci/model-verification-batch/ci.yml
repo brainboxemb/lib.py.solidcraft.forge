@@ -6,15 +6,10 @@ needs:
   - forge-package
   - cad-verification-package
 watch:
-  - examples/*/ci.yml
-  - examples/*/scpf/**
-  - examples/*/model.yml
-  - examples/*/verification/**
   - scripts/forge_example.py
   - scripts/model_verify_declarative.py
   - scripts/model_verification_batch.py
   - scripts/model_visual.py
-  - scpf/scpf/version.py
 strategy:
   reuse: true
 steps:
