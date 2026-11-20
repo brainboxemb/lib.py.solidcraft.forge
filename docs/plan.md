@@ -9,49 +9,39 @@ current and what follows.
 
 ## Current status
 
-The CI reliability baseline from #478 is complete and recorded in
-`docs/background/ci-baseline-2026-11-20.md`.
+Forge uses externally accepted `tool.cad.ci` v0.12.3 at exact commit
+`ad7099b4712af13067c1c42ad50e89bf6a8306dd`, with released
+`lib.py.cad.ci` 0.7.1 underneath it.
 
-Forge currently pins externally accepted `tool.cad.ci` v0.12.2 with
-`lib.py.cad.ci` 0.7.1.
+#489 proved sparse PR durable-build publication for `simple-box`.
 
-#489 proved the first durable generated-output path:
+The generated `build` branch now has a current generic PR scope, while
+`build/main` still contains the retired Forge-owned publication format.
 
-```text
-simple-box verification
-  -> reusable CAD-CI build artifact
-  -> cad-ci build prepare-pr
-  -> cad-ci publish build
-  -> build/pr/<PR>/examples/simple-box/
-```
-
-The generated `build` branch changed only under the PR scope; existing
-`build/main` remained untouched.
-
-The existing `build/main` is still the retired publication format and is not
-readable by the current generic build-store.
-
-Released and externally accepted `tool.cad.ci` v0.12.3 at
-`ad7099b4712af13067c1c42ad50e89bf6a8306dd` fixes the direct stable-main
-bootstrap blocker: unselected `build prepare-main` now uses the library
-full-run `process` selection.
+The generic tool can now prepare a complete main candidate from exactly the
+current `process: true` item set.
 
 ## Current goal
 
-Complete #491:
+Complete #493 as the stable-main bootstrap:
 
-1. pin exact accepted `tool.cad.ci` v0.12.3;
-2. update the exact-pin contract test;
-3. prove normal Forge CI remains green.
+```text
+push main
+  -> full processed CAD-CI run
+  -> complete accepted build artifact
+  -> cad-ci build prepare-main
+  -> cad-ci publish build --scope main
+  -> authoritative generic build/main
+```
 
-Then continue #366 by creating a new authoritative generic `build/main`
-baseline from the current processed item set.
+PR behavior remains incremental and keeps the already proven sparse PR path.
 
 ## Execution order
 
-1. #491 — adopt exact tool.cad.ci v0.12.3.
-2. #366 — bootstrap the new generic `build/main` baseline.
-3. Extend durable main updates to migrated active items.
+1. #493 — replace retired `build/main` with one generic complete baseline.
+2. #366 — switch future main publications from bootstrap/full replacement to
+   partial `update-main`.
+3. Extend durable publication to all migrated active items as needed.
 4. Cut Pages publication over to `cad-ci publish pages`.
 5. Remove superseded Forge-owned publication code.
 6. Resume #430/#378 verification-feature work.
@@ -62,11 +52,11 @@ baseline from the current processed item set.
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #491 Pin externally accepted tool.cad.ci 0.12.3 for stable main build bootstrap | now | Exact accepted pin required before the generic `build/main` bootstrap. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Main generated-output umbrella; PR scope is proven, stable main is next. |
+| #493 Bootstrap the authoritative generic build/main baseline | now | Direct #366 step. Replace the incompatible retired main scope atomically from a complete processed run. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | PR scope is proven; partial stable-main updates and Pages follow the bootstrap. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Measured and parked; runtime/image follow-up remains separate. |
 | #481 Remove stale Forge development branches | blocked | Branch rule is merged; physical deletion of stale refs remains unavailable through current connected tooling. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | later | Q6 work resumes after durable generated output is stable. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | later | Q6 resumes after generated output is stable. |
 | #378 Use explicit Forge verification stages instead of integration/native gates | later | Continue five-model verification stages after #366. |
 | #432 Use released declarative CAD verification in model verification | blocked | Eleven models are declarative; 21 retain legacy `verify_model.py`. Broader migration waits for stable generated output. |
 | #391 Extract reusable CAD verification library from Forge | blocked | Close only after remaining procedural verification has migrated through #432. |
@@ -87,11 +77,6 @@ baseline from the current processed item set.
 | #8 Add generic hollow primitives: Tube, RectTube and OvalTube | later | Major Forge feature backlog. |
 | #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
 
-## Branch hygiene
-
-Development branches should exist only while their issue is actively worked on.
-Generated `build` and `gh-pages` are exceptions.
-
 Immediate chain:
 
-`#491 -> #366 build/main -> gh-pages`.
+`#493 build/main bootstrap -> #366 partial main -> gh-pages`.
