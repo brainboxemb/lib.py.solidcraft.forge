@@ -41,7 +41,10 @@ hand-authored webpage content from Python.
   `section`, `title`, `tagline`, `description`, `parameters`, `stages`;
 - legacy case documentation is migrated verbatim from the last canonical
   `qualification/cases.py` source into each example directory, with provenance;
-- no verification prose is newly inferred or summarized during that migration;
+- the per-case geometry sufficiency rationale (`bounds_reason`) is migrated
+  verbatim from the last canonical `qualification/geometry_contracts.py`;
+- no verification prose or geometry rationale is newly inferred or summarized
+  during that migration;
 - exact numeric verification contracts remain only in `verification/verify.py`;
 - current PASS/FAIL and measured evidence remain sourced only from durable
   `build/main`;
