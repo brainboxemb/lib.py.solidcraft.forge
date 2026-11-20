@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Verification · SCPF Python library</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../">Examples</a>
+      <a href="../guide/">API Guide</a>
+      <a href="../reference/">API Reference</a>
+      <a href="../verification/">Verification</a>
+      <a href="../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../">← Library</a> / Verification</div>
+  <section class="hero small">
+    <p class="eyebrow">Current verification catalog</p>
+    <h1>Verification</h1>
+    <p>
+      These 32 examples combine local engineering documentation
+      with accepted durable CAD-CI evidence.
+    </p>
+  </section>
+  <section class="notice">
+  Current status, measurements and images are read from immutable durable build
+  <code>407f42bf410ecb4e2403fceaa661371a51afeea2</code>. GitHub Actions artifacts are transport only
+  and are not linked from this site.
+</section>
+
+  <section class="verification-group">
+  <div class="section-heading">
+    <h2>1 · Basic geometry</h2>
+    <p>Primitives, profiles, CSG and simple reusable reference geometry.</p>
+  </div>
+  <div class="cards qualification-grid"><article class="card qualification-card">
+  <a href="simple-box/" class="qualification-card-image" aria-label="View Parameterized Box">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/simple-box/model_verify/presentation/preview-iso.png" alt="Parameterized Box current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">1 · Basic geometry</p>
+    <h2><a href="simple-box/">Parameterized Box</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual PASS</span></div>
+    <p>A minimal Forge model that exposes length, width and height as editable SolidCraft parameters and lowers directly to one native Box feature.</p>
+    <a class="button" href="simple-box/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="round-top-sketch/" class="qualification-card-image" aria-label="View TOP Sketch on circular body">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/round-top-sketch/model_verify/presentation/preview-iso.png" alt="TOP Sketch on circular body current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">1 · Basic geometry</p>
+    <h2><a href="round-top-sketch/">TOP Sketch on circular body</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>A circular base extrusion receives a second explicit Sketch on its TOP face and joins a smaller circular hub without rectangular-body metadata.</p>
+    <a class="button" href="round-top-sketch/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="circle-negative-extrude/" class="qualification-card-image" aria-label="View Negative circle profile extrusion">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/circle-negative-extrude/model_verify/presentation/preview-iso.png" alt="Negative circle profile extrusion current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">1 · Basic geometry</p>
+    <h2><a href="circle-negative-extrude/">Negative circle profile extrusion</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>One minimal circular profile verifies explicit sketch authoring and a signed negative extrusion direction.</p>
+    <a class="button" href="circle-negative-extrude/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="primitive-csg/" class="qualification-card-image" aria-label="View Primitive CSG">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/primitive-csg/model_verify/presentation/preview-iso.png" alt="Primitive CSG current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">1 · Basic geometry</p>
+    <h2><a href="primitive-csg/">Primitive CSG</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>Sphere, Box and X-axis Cylinder primitives are translated and combined with union, subtraction and intersection independently of feature-history modelling.</p>
+    <a class="button" href="primitive-csg/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="bracket/" class="qualification-card-image" aria-label="View Minimal L-profile">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/bracket/model_verify/presentation/preview-iso.png" alt="Minimal L-profile current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">1 · Basic geometry</p>
+    <h2><a href="bracket/">Minimal L-profile</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>An L-shaped polygon is authored in XZ and symmetrically extruded without holes, fillets or secondary features.</p>
+    <a class="button" href="bracket/">View current evidence →</a>
+  </div>
+</article>
+</div>
+</section>
+<section class="verification-group">
+  <div class="section-heading">
+    <h2>2 · Parent/child features and faces</h2>
+    <p>Features that belong to an existing object and use a meaningful parent face.</p>
+  </div>
+  <div class="cards qualification-grid"><article class="card qualification-card">
+  <a href="anchored-holes/" class="qualification-card-image" aria-label="View Face-relative hole with native pattern">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/anchored-holes/model_verify/presentation/preview-iso.png" alt="Face-relative hole with native pattern current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">2 · Parent/child features and faces</p>
+    <h2><a href="anchored-holes/">Face-relative hole with native pattern</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>A rectangular plate with one TOP-face hole source that is cut once and repeated as an editable native rectangular pattern.</p>
+    <a class="button" href="anchored-holes/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="hole-family/" class="qualification-card-image" aria-label="View Native Hole family">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/hole-family/model_verify/presentation/preview-iso.png" alt="Native Hole family current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">2 · Parent/child features and faces</p>
+    <h2><a href="hole-family/">Native Hole family</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>A single plate exercising simple, counterbore, countersink and threaded holes as direct native SolidCraft Hole features.</p>
+    <a class="button" href="hole-family/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="sheet-fold/" class="qualification-card-image" aria-label="View Flat sheet, through hole and 90° fold">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/sheet-fold/model_verify/presentation/preview-iso.png" alt="Flat sheet, through hole and 90° fold current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">2 · Parent/child features and faces</p>
+    <h2><a href="sheet-fold/">Flat sheet, through hole and 90° fold</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>An 80 × 40 mm flat sheet blank with one through hole and one 90 degree native fold using a shared sheet rule.</p>
+    <a class="button" href="sheet-fold/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="top-sketch-after-chamfer/" class="qualification-card-image" aria-label="View TOP Sketch after chamfer">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/top-sketch-after-chamfer/model_verify/presentation/preview-iso.png" alt="TOP Sketch after chamfer current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">2 · Parent/child features and faces</p>
+    <h2><a href="top-sketch-after-chamfer/">TOP Sketch after chamfer</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>A chamfered plate with a centered through hole whose sketch is attached to the resulting TOP face after the chamfer.</p>
+    <a class="button" href="top-sketch-after-chamfer/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="circular-feature-pattern/" class="qualification-card-image" aria-label="View Native circular feature pattern">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/circular-feature-pattern/model_verify/presentation/preview-iso.png" alt="Native circular feature pattern current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">2 · Parent/child features and faces</p>
+    <h2><a href="circular-feature-pattern/">Native circular feature pattern</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>A plate receives one source through-hole cut and SolidCraft repeats that feature around a pitch circle as one editable circular pattern.</p>
+    <a class="button" href="circular-feature-pattern/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="rectangular-pattern/" class="qualification-card-image" aria-label="View Native rectangular feature pattern">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/rectangular-pattern/model_verify/presentation/preview-iso.png" alt="Native rectangular feature pattern current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">2 · Parent/child features and faces</p>
+    <h2><a href="rectangular-pattern/">Native rectangular feature pattern</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>A plate receives one Slot source cut and SolidCraft repeats that existing feature in a rectangular rows-and-columns pattern.</p>
+    <a class="button" href="rectangular-pattern/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="slot-family/" class="qualification-card-image" aria-label="View Native sketch Slot family">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/slot-family/model_verify/presentation/preview-iso.png" alt="Native sketch Slot family current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">2 · Parent/child features and faces</p>
+    <h2><a href="slot-family/">Native sketch Slot family</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>One plate sketch contains five closed Slot profiles created with the five native Slot construction methods and removed with one through cut.</p>
+    <a class="button" href="slot-family/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="rounded-rectangle-sketch/" class="qualification-card-image" aria-label="View Explicit rounded-rectangle sketch pad">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/rounded-rectangle-sketch/model_verify/presentation/preview-iso.png" alt="Explicit rounded-rectangle sketch pad current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">2 · Parent/child features and faces</p>
+    <h2><a href="rounded-rectangle-sketch/">Explicit rounded-rectangle sketch pad</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>A named face-attached Sketch uses RoundedRectangle2D to create a joined rounded pad with native straight and arc sketch geometry.</p>
+    <a class="button" href="rounded-rectangle-sketch/">View current evidence →</a>
+  </div>
+</article>
+</div>
+</section>
+<section class="verification-group">
+  <div class="section-heading">
+    <h2>3 · Parameters and dependencies</h2>
+    <p>Editable values, component-local parameters and inherited symbolic dependencies.</p>
+  </div>
+  <div class="cards qualification-grid"><article class="card qualification-card">
+  <a href="parameter-scope/" class="qualification-card-image" aria-label="View Explicit component parameters and shared dependencies">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/parameter-scope/model_verify/presentation/preview-iso.png" alt="Explicit component parameters and shared dependencies current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">3 · Parameters and dependencies</p>
+    <h2><a href="parameter-scope/">Explicit component parameters and shared dependencies</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>Five Panel occurrences demonstrate local component parameters, explicit overrides, shared parent dependencies and a derived half-width expression.</p>
+    <a class="button" href="parameter-scope/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="parent-derived-child-size/" class="qualification-card-image" aria-label="View Child dimensions derived from parent parameters">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/parent-derived-child-size/model_verify/presentation/preview-iso.png" alt="Child dimensions derived from parent parameters current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">3 · Parameters and dependencies</p>
+    <h2><a href="parent-derived-child-size/">Child dimensions derived from parent parameters</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>A parent block and child component preserve width and depth expressions so saved-design edits to the parent rebuild both bodies.</p>
+    <a class="button" href="parent-derived-child-size/">View current evidence →</a>
+  </div>
+</article>
+</div>
+</section>
+<section class="verification-group">
+  <div class="section-heading">
+    <h2>4 · Components and occurrences</h2>
+    <p>Reusable physical parts and more than one placed occurrence.</p>
+  </div>
+  <div class="cards qualification-grid"><article class="card qualification-card">
+  <a href="components/" class="qualification-card-image" aria-label="View Reuse one component definition in two placements">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/components/model_verify/presentation/preview-iso.png" alt="Reuse one component definition in two placements current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">4 · Components and occurrences</p>
+    <h2><a href="components/">Reuse one component definition in two placements</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>One Block component definition is instantiated twice with a simple translated copy and no attachment relationship.</p>
+    <a class="button" href="components/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="assembly-decorator/" class="qualification-card-image" aria-label="View Imported @assembly subassembly">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/assembly-decorator/model_verify/presentation/preview-iso.png" alt="Imported @assembly subassembly current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">4 · Components and occurrences</p>
+    <h2><a href="assembly-decorator/">Imported @assembly subassembly</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>An imported PostPair assembly creates two occurrences of one Post definition without adding an extra geometry layer.</p>
+    <a class="button" href="assembly-decorator/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="group-hierarchy/" class="qualification-card-image" aria-label="View Named native group hierarchy">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/group-hierarchy/model_verify/presentation/preview-iso.png" alt="Named native group hierarchy current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">4 · Components and occurrences</p>
+    <h2><a href="group-hierarchy/">Named native group hierarchy</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+    <p>Two shared Panel occurrences are grouped under PanelGroup while a separate Frame remains a direct root component.</p>
+    <a class="button" href="group-hierarchy/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="four-corner-l/" class="qualification-card-image" aria-label="View Four centred vertical L-profiles">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/four-corner-l/model_verify/presentation/preview-iso.png" alt="Four centred vertical L-profiles current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">4 · Components and occurrences</p>
+    <h2><a href="four-corner-l/">Four centred vertical L-profiles</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual PASS</span></div>
+    <p>A parametric frame reuses one short L-profile component at each side corner with assembly-calculated positions and rotations.</p>
+    <a class="button" href="four-corner-l/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="eight-corner-brackets/" class="qualification-card-image" aria-label="View Eight vertical L-profiles: two per side corner">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/eight-corner-brackets/model_verify/presentation/preview-iso.png" alt="Eight vertical L-profiles: two per side corner current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">4 · Components and occurrences</p>
+    <h2><a href="eight-corner-brackets/">Eight vertical L-profiles: two per side corner</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>A parametric frame reuses one L-profile component in eight calculated placements, two on every rounded side corner.</p>
+    <a class="button" href="eight-corner-brackets/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="eight-flightcase-corners/" class="qualification-card-image" aria-label="View Eight flightcase corner protectors">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/eight-flightcase-corners/model_verify/presentation/preview-iso.png" alt="Eight flightcase corner protectors current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">4 · Components and occurrences</p>
+    <h2><a href="eight-flightcase-corners/">Eight flightcase corner protectors</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>A parameterized case reuses one three-plate corner protector with assembly-owned positions and 3D orientations.</p>
+    <a class="button" href="eight-flightcase-corners/">View current evidence →</a>
+  </div>
+</article>
+</div>
+</section>
+<section class="verification-group">
+  <div class="section-heading">
+    <h2>5 · Anchors and local frames</h2>
+    <p>Richer component references — faces, corners, topology and oriented local frames.</p>
+  </div>
+  <div class="cards qualification-grid"><article class="card qualification-card">
+  <a href="parametric-anchor/" class="qualification-card-image" aria-label="View Face anchor follows parent geometry">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/parametric-anchor/model_verify/presentation/preview-iso.png" alt="Face anchor follows parent geometry current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">5 · Anchors and local frames</p>
+    <h2><a href="parametric-anchor/">Face anchor follows parent geometry</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>A Block attached to the Base RIGHT face remains tied to native parent topology when the parent width changes.</p>
+    <a class="button" href="parametric-anchor/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="corner-anchor/" class="qualification-card-image" aria-label="View Topology-backed corner anchor">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/corner-anchor/model_verify/presentation/preview-iso.png" alt="Topology-backed corner anchor current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">5 · Anchors and local frames</p>
+    <h2><a href="corner-anchor/">Topology-backed corner anchor</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>A Marker uses matching parent and child corner anchors so the native relationship follows two changing parent dimensions.</p>
+    <a class="button" href="corner-anchor/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="anchor-topology-mutation/" class="qualification-card-image" aria-label="View Explicit topology pick follows parent resize">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/anchor-topology-mutation/model_verify/presentation/preview-iso.png" alt="Explicit topology pick follows parent resize current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">5 · Anchors and local frames</p>
+    <h2><a href="anchor-topology-mutation/">Explicit topology pick follows parent resize</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual PASS</span></div>
+    <p>An explicit AnchorTopology identifies one baseline edge/face/corner selection and SolidCraft retains that topology when the parent dimensions change.</p>
+    <a class="button" href="anchor-topology-mutation/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="assembly-owned-anchor/" class="qualification-card-image" aria-label="View Assembly-owned named anchor">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/assembly-owned-anchor/model_verify/presentation/preview-iso.png" alt="Assembly-owned named anchor current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">5 · Anchors and local frames</p>
+    <h2><a href="assembly-owned-anchor/">Assembly-owned named anchor</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>An assembly publishes a named corner datum and a Marker consumes it without adding application-specific anchor names to the generic Base component.</p>
+    <a class="button" href="assembly-owned-anchor/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="xz-anchor/" class="qualification-card-image" aria-label="View Anchors on XZ-profile extrusion">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/xz-anchor/model_verify/presentation/preview-iso.png" alt="Anchors on XZ-profile extrusion current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">5 · Anchors and local frames</p>
+    <h2><a href="xz-anchor/">Anchors on XZ-profile extrusion</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual PASS</span></div>
+    <p>A Board authored from an XZ polygon and extruded in Y exposes standard corner anchors used by independent left and right Marker components.</p>
+    <a class="button" href="xz-anchor/">View current evidence →</a>
+  </div>
+</article>
+</div>
+</section>
+<section class="verification-group">
+  <div class="section-heading">
+    <h2>6 · Associative relationships</h2>
+    <p>Editable distances and local offsets that must keep their meaning after parameter changes.</p>
+  </div>
+  <div class="cards qualification-grid"><article class="card qualification-card">
+  <a href="repeated-parent-attachments/" class="qualification-card-image" aria-label="View Attachments on repeated parent occurrences">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/repeated-parent-attachments/model_verify/presentation/preview-iso.png" alt="Attachments on repeated parent occurrences current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">6 · Associative relationships</p>
+    <h2><a href="repeated-parent-attachments/">Attachments on repeated parent occurrences</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>Two Parent occurrences share one height parameter and each owns a Marker attached from parent TOP to child BOTTOM.</p>
+    <a class="button" href="repeated-parent-attachments/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="attach-angle/" class="qualification-card-image" aria-label="View Native attachment clocking angle">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/attach-angle/model_verify/presentation/preview-iso.png" alt="Native attachment clocking angle current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">6 · Associative relationships</p>
+    <h2><a href="attach-angle/">Native attachment clocking angle</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual PASS</span></div>
+    <p>A rectangular Arm is attached to a Base with a 90 degree clocking angle so orientation remains relationship intent rather than baked child geometry.</p>
+    <a class="button" href="attach-angle/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="parametric-attach/" class="qualification-card-image" aria-label="View Editable distance between attached components">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/parametric-attach/model_verify/presentation/preview-iso.png" alt="Editable distance between attached components current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">6 · Associative relationships</p>
+    <h2><a href="parametric-attach/">Editable distance between attached components</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>A Block is attached to a Base with a symbolic gap so editing the saved SolidCraft design moves the attached component without rerunning Python.</p>
+    <a class="button" href="parametric-attach/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="parametric-offset/" class="qualification-card-image" aria-label="View Editable local offset at an attachment">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/parametric-offset/model_verify/presentation/preview-iso.png" alt="Editable local offset at an attachment current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">6 · Associative relationships</p>
+    <h2><a href="parametric-offset/">Editable local offset at an attachment</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>A Marker is corner-attached to a Base with a symbolic local planar offset that remains editable in the saved SolidCraft relationship.</p>
+    <a class="button" href="parametric-offset/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="sketch-pattern-mirror/" class="qualification-card-image" aria-label="View Associative sketch pattern and mirror">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/sketch-pattern-mirror/model_verify/presentation/preview-iso.png" alt="Associative sketch pattern and mirror current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">6 · Associative relationships</p>
+    <h2><a href="sketch-pattern-mirror/">Associative sketch pattern and mirror</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>One Circle seed and one Slot seed generate repeated cut geometry through native sketch pattern and mirror relationships rather than Python-expanded copies.</p>
+    <a class="button" href="sketch-pattern-mirror/">View current evidence →</a>
+  </div>
+</article>
+<article class="card qualification-card">
+  <a href="selective-profile-extrude/" class="qualification-card-image" aria-label="View Selective Sketch profile extrusion">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/examples/selective-profile-extrude/model_verify/presentation/preview-iso.png" alt="Selective Sketch profile extrusion current preview" loading="lazy">
+  </a>
+  <div class="qualification-card-content">
+    <p class="eyebrow">6 · Associative relationships</p>
+    <h2><a href="selective-profile-extrude/">Selective Sketch profile extrusion</a></h2>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+    <p>A patterned Circle sketch retains four generated profiles while one native extrusion selects only the intended three closed regions.</p>
+    <a class="button" href="selective-profile-extrude/">View current evidence →</a>
+  </div>
+</article>
+</div>
+</section>
+
+  <section class="panel">
+  <h2>Engineering diagrams</h2>
+  <p>Current CADCraft diagrams from durable build evidence. These SVGs are generated from versioned CADCraft source commands; they are not embedded in the site builder.</p>
+  <div class="qualification-gallery"><figure class="qualification-setup-diagram">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-depth.svg" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-depth.svg" alt="Front and rear outside L-bracket rows - depth view (contact shown)" loading="lazy">
+  </a>
+  <figcaption><strong>Front and rear outside L-bracket rows - depth view (contact shown)</strong><br>CADCraft 0.20.1 · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-depth.svg">open durable SVG evidence</a></figcaption>
+</figure>
+<figure class="qualification-setup-diagram">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-front-corners.svg" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-front-corners.svg" alt="Four front corner topology frames" loading="lazy">
+  </a>
+  <figcaption><strong>Four front corner topology frames</strong><br>CADCraft 0.20.1 · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-front-corners.svg">open durable SVG evidence</a></figcaption>
+</figure>
+<figure class="qualification-setup-diagram">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-goal.svg" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-goal.svg" alt="Four outside brackets - front view" loading="lazy">
+  </a>
+  <figcaption><strong>Four outside brackets - front view</strong><br>CADCraft 0.20.1 · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-goal.svg">open durable SVG evidence</a></figcaption>
+</figure>
+<figure class="qualification-setup-diagram">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-local-axes.svg" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-local-axes.svg" alt="Corner bracket local axes and child joint frames" loading="lazy">
+  </a>
+  <figcaption><strong>Corner bracket local axes and child joint frames</strong><br>CADCraft 0.20.1 · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-local-axes.svg">open durable SVG evidence</a></figcaption>
+</figure>
+<figure class="qualification-setup-diagram">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-anatomy.svg" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-anatomy.svg" alt="SolidCraft joint origins A and B" loading="lazy">
+  </a>
+  <figcaption><strong>SolidCraft joint origins A and B</strong><br>CADCraft 0.20.1 · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-anatomy.svg">open durable SVG evidence</a></figcaption>
+</figure>
+<figure class="qualification-setup-diagram">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-references.svg" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-references.svg" alt="Topology-backed parent and explicit child joint origin" loading="lazy">
+  </a>
+  <figcaption><strong>Topology-backed parent and explicit child joint origin</strong><br>CADCraft 0.20.1 · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/407f42bf410ecb4e2403fceaa661371a51afeea2/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-references.svg">open durable SVG evidence</a></figcaption>
+</figure>
+</div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../static/copy.js"></script>
+<script src="../static/search.js"></script>
+</body>
+</html>
