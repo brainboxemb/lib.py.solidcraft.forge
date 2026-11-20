@@ -614,17 +614,20 @@ metadata. It must not maintain a central model-name/page-content registry.
 
 ## Site source separation
 
-Hand-authored webpage content must not live as large Python string literals.
+HTML markup must not live in Python site modules.
 
 - complete page layout belongs in external templates;
+- reusable dynamic fragments such as rows, links, tags, lists, navigation and
+  API blocks also belong in external templates;
 - prose-heavy guide content belongs in external Markdown or template content;
 - CSS and browser JavaScript belong in static files;
 - generated API facts continue to come from the public implementation/docstrings;
 - example facts come from local `model.yml`, source files and durable evidence.
 
 Python site modules may load, validate and normalize source data, construct
-view-models, render templates and write generated output. They must not embed
-complete hand-authored pages, guide chapters or model-specific SVG galleries.
+view-models, render templates and write generated output. They may supply
+escaped dynamic text/data to templates, but must not contain HTML markup
+strings, page fragments, guide chapters or model-specific SVG galleries.
 
 The current site must not depend on retired `qualification.*` source modules.
 The 32 current `examples/` directories and durable `build/main` are the
