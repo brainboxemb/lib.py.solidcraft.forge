@@ -27,18 +27,19 @@ Therefore Forge must not own or duplicate:
 - runtime image build/publication workflows;
 - runtime release/version management.
 
-Root `cad-ci.yml` declares the exact immutable released image Forge consumes,
-for example:
+Root `cad-ci.yml` declares the exact immutable released role images Forge
+consumes:
 
 ```text
-ghcr.io/brainboxemb/cad-solidcraft:v0.1.0
+FORGE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-solidcraft:v0.2.0
+REFERENCE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-reference:v0.2.0
 ```
 
-Changing the runtime is a two-repository operation:
+Changing either runtime role is a two-repository operation:
 
 1. change, test and release a new immutable version from
    `docker.cad.solidcraft`;
-2. deliberately update Forge's `FORGE_RUNTIME_IMAGE` to that released tag.
+2. deliberately update Forge's corresponding immutable role image.
 
 Forge never derives a runtime version from source hashes, timestamps or local
 Docker files.
@@ -47,8 +48,14 @@ Docker files.
 
 Forge CAD-CI commands read the injected repository environment:
 
-- `FORGE_RUNTIME_IMAGE` is the exact immutable released image reference;
+- `FORGE_RUNTIME_IMAGE` is the exact immutable released SolidCraft
+  model/visual verification image;
+- `REFERENCE_RUNTIME_IMAGE` is the exact immutable released independent
+  reference-engine image;
 - `SOLIDCRAFT_VERSION` is the SolidCraft version expected by Forge CI.
+
+Model verification must not use the reference image. Independent reference
+verification must not use the SolidCraft image.
 
 Consumer commands do not parse `cad-ci.yml` themselves.
 
@@ -158,15 +165,13 @@ selection, scheduling, caching or parallel-execution policy.
 Forge CI must run only against an exact externally accepted `tool.cad.ci` /
 `lib.py.cad.ci` release pair.
 
-During the current five-model proof:
+During the current one-model proof:
 
-- exactly five model verification items participate through released CAD-CI
-  `process` configuration;
-- all other model verification items remain excluded from normal selection;
-- repository-wide reference verification is a separate item and is not counted
-  as one of the five model verification items;
-- the reference item may run only when normal released CAD-CI selection selects
-  it from its own configuration/dependencies;
+- `simple-box` is the only model verification item with `process: true`;
+- every other historical model item remains explicit `process: false`;
+- independent reference items remain separately selected by normal released
+  CAD-CI changed-path/dependency semantics;
+- reference execution is not part of the simple-box model runtime measurement;
 - Forge must not add a second planner or consumer-side changed-path engine to
   enforce this staging.
 
@@ -184,14 +189,32 @@ item's `.cad-ci` namespace must be sufficient to determine:
 Console text is diagnostic only and must not be the sole source used to decide
 what CI actually executed.
 
-The five-model proof is considered reliable only when representative changes
-can be explained from:
+The one-model proof is considered reliable only when representative
+`simple-box` changes can be explained from:
 
 1. the repository configuration;
 2. the released CAD-CI selected graph;
 3. the resulting structured item/step evidence.
 
-Performance tuning is not part of this reliability requirement.
+For #484, performance interpretation must additionally separate immutable
+SolidCraft image acquisition from subsequent container/process/model work.
+
+The Forge-owned model launcher may emit diagnostic duration lines for:
+
+- Forge command compilation;
+- immutable image pull;
+- Docker container creation/start to the container entry shell;
+- Python interpreter/module bootstrap from container entry to the Forge runtime
+  function;
+- total container/process execution;
+- in-runtime verification-library import;
+- native model production;
+- released SolidCraft verification;
+- total in-runtime work.
+
+These durations are diagnostics only. They must not affect selection, execution,
+pass/fail decisions or structured CAD-CI evidence. Verification semantics must
+not be weakened to improve timing.
 
 ## Model command-contract coverage
 

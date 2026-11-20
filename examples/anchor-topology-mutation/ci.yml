@@ -1,6 +1,6 @@
 # SolidCraft model verification for anchor-topology-mutation.
 id: anchor-topology-mutation
-process: true
+process: false
 kind: model
 needs:
   - forge-package

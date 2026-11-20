@@ -18,6 +18,7 @@ import os
 from pathlib import Path
 import runpy
 import subprocess
+import time
 
 from forge_example import compile_commands, dependency_wheel, write_commands
 
@@ -106,20 +107,63 @@ def run_inside_runtime(
 ) -> int:
     """Produce the native model and hand all verification to the library."""
 
+    inside_started = time.perf_counter()
+
+    entry_ms = os.environ.get("FORGE_CONTAINER_ENTRY_MS", "").strip()
+    if entry_ms:
+        python_bootstrap_s = (
+            time.time_ns() // 1_000_000 - int(entry_ms)
+        ) / 1000.0
+        print(
+            f"FORGE TIMING python_bootstrap_s={python_bootstrap_s:.3f}",
+            flush=True,
+        )
+
+    import_started = time.perf_counter()
     from cad_verification import run_solidcraft_verification
+    print(
+        "FORGE TIMING "
+        f"cad_verification_import_s={time.perf_counter() - import_started:.3f}",
+        flush=True,
+    )
 
     path = verify_path(slug)
     if not path.is_file():
         raise RuntimeError(f"missing verification file: {path}")
 
+    definition_started = time.perf_counter()
     definition = load_definition(path)
+    print(
+        "FORGE TIMING "
+        f"definition_load_s={time.perf_counter() - definition_started:.3f}",
+        flush=True,
+    )
+
+    native_started = time.perf_counter()
     model = produce_native_model(input_path.resolve(), output_dir.resolve())
+    print(
+        "FORGE TIMING "
+        f"native_model_s={time.perf_counter() - native_started:.3f}",
+        flush=True,
+    )
+
+    verification_started = time.perf_counter()
     report = run_solidcraft_verification(
         model,
         output_dir.resolve(),
         definition,
     )
-    print(f"{slug} model verification: {report['status']}")
+    print(
+        "FORGE TIMING "
+        f"solidcraft_verification_s={time.perf_counter() - verification_started:.3f}",
+        flush=True,
+    )
+    print(
+        "FORGE TIMING "
+        f"inside_runtime_total_s={time.perf_counter() - inside_started:.3f}",
+        flush=True,
+    )
+    print(f"{slug} model verification: {report['status']}", flush=True)
     return 0 if report["status"] == "pass" else 1
 
 
@@ -136,12 +180,33 @@ def run_host() -> int:
             f"missing declarative verification file for {slug}"
         )
 
+    compile_started = time.perf_counter()
     document = compile_commands(slug, wheel)
     write_commands(document, output / "solidcraft.json")
+    print(
+        "FORGE TIMING "
+        f"compile_commands_s={time.perf_counter() - compile_started:.3f}",
+        flush=True,
+    )
 
+    pull_started = time.perf_counter()
     subprocess.run(["docker", "pull", image], check=True)
+    print(
+        "FORGE TIMING "
+        f"image_pull_s={time.perf_counter() - pull_started:.3f}",
+        flush=True,
+    )
 
     container_wheel = f"/forge-package/{wheel.name}"
+    container_started = time.perf_counter()
+    container_launch_ms = time.time_ns() // 1_000_000
+    entry_script = """entry_ms=$(date +%s%3N)
+elapsed_ms=$((entry_ms - FORGE_CONTAINER_LAUNCH_MS))
+printf 'FORGE TIMING container_start_s=%d.%03d\n' \
+  "$((elapsed_ms / 1000))" "$((elapsed_ms % 1000))"
+export FORGE_CONTAINER_ENTRY_MS="$entry_ms"
+exec python "$@"
+"""
     subprocess.run(
         [
             "docker",
@@ -152,6 +217,8 @@ def run_host() -> int:
             f"PYTHONPATH={container_wheel}",
             "-e",
             "SOLIDCRAFT_GPU=cpu",
+            "-e",
+            f"FORGE_CONTAINER_LAUNCH_MS={container_launch_ms}",
             "-v",
             f"{ROOT}:/workspace:ro",
             "-v",
@@ -161,7 +228,10 @@ def run_host() -> int:
             "-w",
             "/workspace",
             image,
-            "python",
+            "sh",
+            "-c",
+            entry_script,
+            "forge-runtime",
             "/workspace/scripts/model_verify_declarative.py",
             "--inside-runtime",
             "--slug",
@@ -172,6 +242,11 @@ def run_host() -> int:
             "/output/model_verify",
         ],
         check=True,
+    )
+    print(
+        "FORGE TIMING "
+        f"container_process_total_s={time.perf_counter() - container_started:.3f}",
+        flush=True,
     )
     return 0
 

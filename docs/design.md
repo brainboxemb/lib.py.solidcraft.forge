@@ -30,12 +30,14 @@ docker.cad.solidcraft
   -> build/test
   -> immutable release vX.Y.Z
   -> ghcr.io/brainboxemb/cad-solidcraft:vX.Y.Z
+  -> ghcr.io/brainboxemb/cad-reference:vX.Y.Z
 
 lib.py.solidcraft.forge
   cad-ci.yml
-  -> selects one immutable released runtime
-  -> tool.cad.ci injects FORGE_RUNTIME_IMAGE
-  -> model/reference commands pull and run it
+  -> selects both immutable runtime roles
+  -> tool.cad.ci injects repository variables
+  -> model commands use FORGE_RUNTIME_IMAGE
+  -> reference commands use REFERENCE_RUNTIME_IMAGE
 ```
 
 Forge contains no runtime build or publication path.
@@ -43,8 +45,8 @@ Forge contains no runtime build or publication path.
 A runtime update is explicit:
 
 1. release a new `docker.cad.solidcraft` version;
-2. verify that immutable image in the runtime repository;
-3. update Forge's `FORGE_RUNTIME_IMAGE`;
+2. verify both immutable role images in the runtime repository;
+3. update the corresponding Forge runtime role variable(s);
 4. prove Forge CI against the new release.
 
 ## Version roles
@@ -79,8 +81,9 @@ to the selected external runtime.
 
 ## Verification
 
-Model/reference commands consume `FORGE_RUNTIME_IMAGE` from their environment.
-They pull and run that exact immutable release.
+Model commands consume `FORGE_RUNTIME_IMAGE`. Independent reference commands
+consume `REFERENCE_RUNTIME_IMAGE`. Each command pulls and runs only its exact
+immutable role image.
 
 Verification behavior stays in released `lib.py.cad.verfication`, including
 CAD-tool-specific adapters. Forge keeps Forge compilation and model-specific
@@ -138,10 +141,11 @@ Forge item ci.yml
 Forge contains no helper that interprets `process`, no duplicate changed-path
 selection and no second execution policy.
 
-During the five-model proof, the `scpf` item remains active. Exactly five model
-verification items participate; the other model verification items remain
-present in the repository but are excluded by the released CAD-CI planner.
-Shared/reference items remain active where required by existing dependencies.
+During the current one-model proof, the `scpf` item remains active and only
+`simple-box` participates as a model-verification item. All other historical
+model items remain present but are excluded with `process: false`. Reference
+items remain independently selectable where their own changed
+paths/dependencies require them.
 
 
 ## Forge package CI item graph
@@ -197,10 +201,10 @@ examples/<model>/ci.yml
 Forge owns only the declarative repository configuration. It does not reproduce
 the planner in Forge code or tests.
 
-The five active model items form one bounded proof set. The independent
-`reference-verification` item is not part of that set and remains independently
-selected by released CAD-CI. A run that includes reference verification is
-therefore not automatically a five-model runtime measurement.
+The active model proof set contains only `simple-box`. Independent reference
+items are not part of the model runtime measurement and remain independently
+selected by released CAD-CI. A run that also contains reference verification is
+therefore not a simple-box-only runtime measurement.
 
 Run interpretation uses structured CAD-CI evidence, not buffered console order.
 Consumer output may be emitted late or grouped by SCons, so console timestamps
@@ -210,6 +214,32 @@ During CI stabilization, evidence must be inspectable after a representative
 run. If the reusable workflow does not retain the generated `.cad-ci` evidence,
 the retention mechanism must be added at the workflow/tool boundary rather than
 by adding a Forge-local execution tracker.
+
+### Cold-path timing diagnostics
+
+For #484 the Forge-owned model launcher measures its own execution boundary
+without changing CAD-CI or verification semantics:
+
+```text
+host
+  compile Forge command document
+  docker pull immutable SolidCraft role
+  docker run
+      |
+      +--> container creation/start -> entry shell
+      +--> Python interpreter + module bootstrap
+      +--> import released verification library
+      +--> produce native SolidCraft model
+      +--> run released SolidCraft verification
+```
+
+The launcher prints explicit duration values and flushes them immediately.
+Host-side phases use a monotonic timer. The container entry shell records the
+first executable point inside the container, and the Python process reports the
+bootstrap interval from that entry marker to the in-runtime Forge function.
+CAD-CI structured action timing remains authoritative for the whole
+`model_verify` step; these finer values are diagnostic decomposition inside
+that Forge-owned action.
 
 ## Model verification contract-test stage
 
