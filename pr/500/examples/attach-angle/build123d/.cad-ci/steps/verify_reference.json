@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "7193f884e5edc7f0673147d9e2e7255fc8c6cc0b65d74b05cef6bfc556532bdb",
+  "duration_seconds": 52.083,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T13:55:21.120Z",
+  "item": "examples-attach-angle-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "9b451a5253bfb764020a03c82d75c08e851ed3a62b297a56f496dafd8f5ddf4c"
+    }
+  },
+  "run_finished_at": "2026-11-20T13:55:21.150Z",
+  "run_started_at": "2026-11-20T13:54:27.154Z",
+  "schema": 3,
+  "started_at": "2026-11-20T13:54:29.037Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "d5dd00bd8f2ab5346bd7b29ae225b052098b091f9d0bf7e9149b8f6998e79473",
+  "timeout_seconds": null
+}
