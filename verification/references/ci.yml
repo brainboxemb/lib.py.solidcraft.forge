@@ -1,12 +1,27 @@
-# Independent reference verification for every current Forge model item.
+# Transitional aggregate for active models not yet migrated to child reference items.
 id: reference-verification
 kind: verification
 watch:
-  - examples/*/verification/reference_geometry.json
-  - examples/*/pythonscad/**
-  - examples/*/pybosl2/**
-  - examples/*/cadquery/**
-  - examples/*/build123d/**
+  - examples/simple-box/verification/reference_geometry.json
+  - examples/simple-box/pythonscad/**
+  - examples/simple-box/pybosl2/**
+  - examples/simple-box/cadquery/**
+  - examples/simple-box/build123d/**
+  - examples/anchor-topology-mutation/verification/reference_geometry.json
+  - examples/anchor-topology-mutation/pythonscad/**
+  - examples/anchor-topology-mutation/pybosl2/**
+  - examples/anchor-topology-mutation/cadquery/**
+  - examples/anchor-topology-mutation/build123d/**
+  - examples/four-corner-l/verification/reference_geometry.json
+  - examples/four-corner-l/pythonscad/**
+  - examples/four-corner-l/pybosl2/**
+  - examples/four-corner-l/cadquery/**
+  - examples/four-corner-l/build123d/**
+  - examples/xz-anchor/verification/reference_geometry.json
+  - examples/xz-anchor/pythonscad/**
+  - examples/xz-anchor/pybosl2/**
+  - examples/xz-anchor/cadquery/**
+  - examples/xz-anchor/build123d/**
   - verification/reference_validation.py
   - verification/build123d_export.py
   - scripts/verification_evidence.py
@@ -15,14 +30,33 @@ strategy:
 steps:
   - id: verify_references
     inputs:
-      - examples/*/verification/reference_geometry.json
-      - examples/*/pythonscad/**
-      - examples/*/pybosl2/**
-      - examples/*/cadquery/**
-      - examples/*/build123d/**
+      - examples/simple-box/verification/reference_geometry.json
+      - examples/simple-box/pythonscad/**
+      - examples/simple-box/pybosl2/**
+      - examples/simple-box/cadquery/**
+      - examples/simple-box/build123d/**
+      - examples/anchor-topology-mutation/verification/reference_geometry.json
+      - examples/anchor-topology-mutation/pythonscad/**
+      - examples/anchor-topology-mutation/pybosl2/**
+      - examples/anchor-topology-mutation/cadquery/**
+      - examples/anchor-topology-mutation/build123d/**
+      - examples/four-corner-l/verification/reference_geometry.json
+      - examples/four-corner-l/pythonscad/**
+      - examples/four-corner-l/pybosl2/**
+      - examples/four-corner-l/cadquery/**
+      - examples/four-corner-l/build123d/**
+      - examples/xz-anchor/verification/reference_geometry.json
+      - examples/xz-anchor/pythonscad/**
+      - examples/xz-anchor/pybosl2/**
+      - examples/xz-anchor/cadquery/**
+      - examples/xz-anchor/build123d/**
       - verification/reference_validation.py
       - verification/build123d_export.py
       - scripts/verification_evidence.py
-    run: [python, ../../scripts/verification_evidence.py, verify_references, all]
+    run:
+      - python
+      - ../../scripts/verification_evidence.py
+      - verify_references
+      - simple-box,anchor-topology-mutation,four-corner-l,xz-anchor
     outputs:
       - references

@@ -60,10 +60,23 @@ class CiPackageDependencyContractTests(unittest.TestCase):
     def test_every_model_depends_only_on_package(self):
         configs = sorted(EXAMPLES.glob("*/ci.yml"))
         self.assertEqual(len(configs), 32)
+
+        root_ci = (ROOT / "cad-ci.yml").read_text(encoding="utf-8")
+        model_template = (
+            "  forge-model-declarative:\n"
+            "    kind: model\n"
+            "    needs:\n"
+            "      - forge-package\n"
+        )
+        self.assertIn(model_template, root_ci)
+
         for path in configs:
             with self.subTest(path=path):
                 text = path.read_text(encoding="utf-8")
-                self.assertEqual(needs(text), {"forge-package"})
+                if "template: forge-model-declarative" in text:
+                    self.assertEqual(needs(text), set())
+                else:
+                    self.assertEqual(needs(text), {"forge-package"})
                 self.assertNotIn("forge-tool", text)
                 self.assertNotIn("forge-tests", text)
                 self.assertNotIn("forge-release", text)

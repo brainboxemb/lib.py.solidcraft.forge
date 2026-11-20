@@ -4,58 +4,65 @@ This file is the current source of truth for unfinished work in
 `lib.py.solidcraft.forge`.
 
 Permanent requirements/design/API/release contracts belong in the primary
-documents in `docs/`. Issues keep detail and history; this plan states what is
-current and what follows.
+documents in `docs/`. Issues keep detail and history.
 
 ## Current status
 
-Forge uses externally accepted `tool.cad.ci` v0.12.3 at exact commit
-`ad7099b4712af13067c1c42ad50e89bf6a8306dd`, with released
-`lib.py.cad.ci` 0.7.1.
+Forge is migrating this pilot to the current externally accepted generic stack:
 
-The durable build migration has now proven:
+- `lib.py.cad.ci` 0.8.2;
+- `tool.cad.ci` 0.13.2 commit
+  `8d4c990cb22b794e268d361f09bc2757d15e1c94`;
+- `tool.cad.ci.test` acceptance is green for fresh cacheless Git-diff
+  selection, nested item paths, parent-relative shared inputs and nested
+  durable parent/child publication.
 
-- sparse PR publication through #489;
-- a complete generic `build/main` bootstrap through #493.
-
-The authoritative `build/main` is generic build-store schema 1 and contains
-exactly the current processed item set. Existing PR scopes are preserved.
-
-The remaining temporary behavior is:
-
-- PR publication is hard-coded to `simple-box`;
-- main pushes use `full_run: true` and replace the complete main scope.
+Forge durable build publication already uses affected-item PR/main updates.
+The remaining reference-verification configuration is still too coarse:
+`verification/references` processes all reference implementations together.
 
 ## Current goal
 
-Complete #495 and move durable build publication to steady-state affected-item
-updates.
+Complete #498 as the first real-consumer proof of isolated nested reference
+items.
 
-PRs:
-
-```text
-incremental CAD-CI
-  -> prepare-pr --base/--head
-  -> publish sparse PR scope
-```
-
-Main:
+Only `attach-angle` is migrated in this issue:
 
 ```text
-incremental CAD-CI
-  -> fetch current build branch
-  -> update-main --base/--head
-  -> publish updated main scope
+examples/attach-angle/
+  ci.yml
+  build123d/ci.yml
+  cadquery/ci.yml
+  pythonscad/ci.yml
+  pybosl2/ci.yml
 ```
 
-No publication happens when the reusable run produces no build artifact.
+The four reference implementations become independent CAD-CI items.
+
+The existing aggregate reference item remains temporarily only for the other
+four active model items, so the pilot creates no coverage gap and does not
+duplicate attach-angle work.
+
+## Required proof
+
+- Forge pins exact accepted tool.cad.ci 0.13.2.
+- A build123d-only source change selects the attach-angle build123d child only.
+- The other three attach-angle reference children are not executed.
+- A shared attach-angle reference contract change selects all four children.
+- The attach-angle model item remains green.
+- Reference expectations remain model-local.
+- The temporary aggregate covers only the remaining active model set.
+- Inactive process:false model references are not pulled into the run.
+- Durable affected-item publication remains green.
 
 ## Execution order
 
-1. #495 — switch PR and main durable build publication to affected-item updates.
-2. #366 — cut Pages over to `cad-ci publish pages`.
-3. Add generic PR build/Page cleanup for closed PR scopes.
-4. Remove superseded Forge-owned publication code.
+1. #498 — attach-angle isolated reference-item pilot.
+2. Migrate each remaining active model reference set in separate reviewable
+   changes, removing it from the temporary aggregate at the same time.
+3. Remove the temporary aggregate when the fifth active model is migrated.
+4. #497 / #366 — resume stable Pages publication from the generic build/main
+   baseline.
 5. Resume #430/#378 verification-feature work.
 6. Resume #432 broader declarative model migration after generated output is
    stable.
@@ -64,16 +71,17 @@ No publication happens when the reusable run produces no build artifact.
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #495 Switch durable build publication to affected-item PR and main updates | now | Replace bootstrap/simple-box-specific publication with generic steady-state selection and partial main updates. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Build PR/main is nearly complete; Pages follows #495. |
-| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Measured and parked; runtime/image follow-up remains separate. |
-| #481 Remove stale Forge development branches | blocked | Branch rule is merged; physical deletion of stale refs remains unavailable through current connected tooling. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | later | Q6 resumes after generated output is stable. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | later | Continue five-model verification stages after #366. |
-| #432 Use released declarative CAD verification in model verification | blocked | Eleven models are declarative; 21 retain legacy `verify_model.py`. Broader migration waits for stable generated output. |
-| #391 Extract reusable CAD verification library from Forge | blocked | Close only after remaining procedural verification has migrated through #432. |
-| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by measured #484/runtime-repository work. |
-| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture. |
+| #498 Pilot isolated reference items with attach-angle | now | First Forge consumer proof of the externally accepted nested Git-diff design. |
+| #497 Publish stable Pages from the generic build/main baseline | blocked | Resume after the reference-item pilot proves the corrected CI structure. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Durable affected build updates are in place; Pages remains. |
+| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Performance work stays separate from selection/reference structure. |
+| #481 Remove stale Forge development branches | blocked | Current connected tooling cannot delete the stale refs. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | later | Resume after generated output and reference selection are stable. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | later | Continue verification-stage work after the CI structure is stable. |
+| #432 Use released declarative CAD verification in model verification | blocked | Broader migration follows stable generated output/reference selection. |
+| #391 Extract reusable CAD verification library from Forge | blocked | Complete only after procedural verification is migrated. |
+| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by runtime repository and #484. |
+| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to the superseded qualification architecture. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
 | #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Independent CLI quality work. |
 | #355 Support current SolidCraft parametric Slot API in Forge | later | Independent product/API work. |
@@ -91,4 +99,4 @@ No publication happens when the reusable run produces no build artifact.
 
 Immediate chain:
 
-`#495 affected build updates -> #366 gh-pages`.
+`#498 attach-angle pilot -> remaining active reference sets -> #497/#366 Pages`.

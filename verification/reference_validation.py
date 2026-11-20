@@ -164,12 +164,13 @@ def verify_one(
 def verify_model(
     slug: str,
     output: Path,
+    implementations: tuple[str, ...] = IMPLEMENTATIONS,
 ) -> dict[str, Any]:
-    """Verify all four required independent implementations."""
+    """Verify the selected independent implementations for one model."""
 
     results = [
         verify_one(slug, implementation, output)
-        for implementation in IMPLEMENTATIONS
+        for implementation in implementations
     ]
     return {
         "model": slug,
@@ -178,11 +179,38 @@ def verify_model(
     }
 
 
+def selected_implementations(value: str) -> tuple[str, ...]:
+    """Parse and validate one implementation selection."""
+
+    if value.strip().lower() == "all":
+        return IMPLEMENTATIONS
+
+    selected = tuple(
+        item
+        for item in value.replace(",", " ").split()
+        if item
+    )
+    if not selected:
+        raise RuntimeError("at least one implementation must be selected")
+
+    unknown = sorted(set(selected) - set(IMPLEMENTATIONS))
+    if unknown:
+        raise RuntimeError(
+            "unknown reference implementation(s): " + ", ".join(unknown)
+        )
+    return selected
+
+
 def main() -> int:
     """Verify explicitly selected model references."""
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cases", required=True)
+    parser.add_argument(
+        "--implementations",
+        default="all",
+        help="all or a comma/space-separated implementation list",
+    )
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--source-sha", required=True)
     args = parser.parse_args()
@@ -205,8 +233,13 @@ def main() -> int:
     if not slugs:
         raise RuntimeError("at least one model must be selected")
 
+    implementations = selected_implementations(args.implementations)
+
     args.out.mkdir(parents=True, exist_ok=True)
-    models = [verify_model(slug, args.out) for slug in slugs]
+    models = [
+        verify_model(slug, args.out, implementations)
+        for slug in slugs
+    ]
     report = {
         "schema": 1,
         "source_sha": args.source_sha,

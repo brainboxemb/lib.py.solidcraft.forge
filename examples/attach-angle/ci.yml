@@ -1,37 +1,4 @@
 # SolidCraft model verification for attach-angle.
 id: attach-angle
+template: forge-model-declarative
 process: true
-kind: model
-needs:
-  - forge-package
-watch:
-  - examples/attach-angle/scpf/**
-  - examples/attach-angle/model.yml
-  - examples/attach-angle/verification/**
-  - examples/attach-angle/tests/**
-  - scripts/forge_example.py
-  - scripts/model_contract_test.py
-  - scripts/model_verify_declarative.py
-strategy:
-  reuse: true
-steps:
-  - id: contract_test
-    inputs:
-      - examples/attach-angle/scpf/**
-      - examples/attach-angle/tests/**
-      - scripts/forge_example.py
-      - scripts/model_contract_test.py
-    run: [python, ../../scripts/model_contract_test.py]
-  - id: model_verify
-    inputs:
-      - examples/attach-angle/scpf/**
-      - examples/attach-angle/model.yml
-      - examples/attach-angle/verification/**
-      - examples/attach-angle/tests/**
-      - scripts/forge_example.py
-      - scripts/model_verify_declarative.py
-      - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verify_declarative.py]
-    outputs:
-      - solidcraft.json
-      - model_verify

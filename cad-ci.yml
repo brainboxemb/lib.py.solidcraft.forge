@@ -5,8 +5,102 @@ variables:
   FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.1.0"
   SOLIDCRAFT_VERSION: "0.42.0"
 
+templates:
+  forge-model-declarative:
+    kind: model
+    needs:
+      - forge-package
+    watch:
+      item:
+        - scpf/**
+        - model.yml
+        - verification/**
+        - tests/**
+      repo:
+        - scripts/forge_example.py
+        - scripts/model_contract_test.py
+        - scripts/model_verify_declarative.py
+    strategy:
+      reuse: true
+    steps:
+      - id: contract_test
+        inputs:
+          item:
+            - scpf/**
+            - tests/**
+          repo:
+            - scripts/forge_example.py
+            - scripts/model_contract_test.py
+        run: [python, ../../scripts/model_contract_test.py]
+      - id: model_verify
+        inputs:
+          item:
+            - scpf/**
+            - model.yml
+            - verification/**
+            - tests/**
+          repo:
+            - scripts/forge_example.py
+            - scripts/model_verify_declarative.py
+            - scpf/scpf/version.py
+        run: [python, ../../scripts/model_verify_declarative.py]
+        outputs:
+          - solidcraft.json
+          - model_verify
+
+  forge-reference:
+    kind: verification
+    watch:
+      item:
+        - model.py
+        - ../verification/reference_geometry.json
+      repo:
+        - verification/reference_validation.py
+        - scripts/verification_evidence.py
+    strategy:
+      reuse: true
+    steps:
+      - id: verify_reference
+        inputs:
+          item:
+            - model.py
+            - ../verification/reference_geometry.json
+          repo:
+            - verification/reference_validation.py
+            - scripts/verification_evidence.py
+        run: [python, ../../../scripts/verification_evidence.py, verify_reference]
+        outputs:
+          - references
+
+  forge-reference-build123d:
+    kind: verification
+    watch:
+      item:
+        - model.py
+        - ../verification/reference_geometry.json
+      repo:
+        - verification/reference_validation.py
+        - verification/build123d_export.py
+        - scripts/verification_evidence.py
+    strategy:
+      reuse: true
+    steps:
+      - id: verify_reference
+        inputs:
+          item:
+            - model.py
+            - ../verification/reference_geometry.json
+          repo:
+            - verification/reference_validation.py
+            - verification/build123d_export.py
+            - scripts/verification_evidence.py
+        run: [python, ../../../scripts/verification_evidence.py, verify_reference]
+        outputs:
+          - references
+
 items:
   - scpf
   - ci/*
   - examples/*
+  - examples/*/*
   - verification/references
