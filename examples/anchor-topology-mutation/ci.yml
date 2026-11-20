@@ -3,7 +3,7 @@ id: anchor-topology-mutation
 process: true
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/anchor-topology-mutation/scpf/**
   - examples/anchor-topology-mutation/model.yml
