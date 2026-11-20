@@ -26,11 +26,10 @@ jobs:
       packages: read
     uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-ci.yml@ad7099b4712af13067c1c42ad50e89bf6a8306dd
     with:
-      full_run: true
       upload_build: true
       build_artifact_name: forge-cad-ci-main-build
 
-  publish_simple_box_pr:
+  publish_pr_build:
     needs: cad_ci_pr
     if: >-
       github.event_name == 'pull_request' &&
@@ -67,19 +66,9 @@ jobs:
           name: ${{ needs.cad_ci_pr.outputs.build_artifact_name }}
           path: candidate-build
 
-      - name: Check simple-box candidate
-        id: simple_box_candidate
-        shell: bash
-        run: |
-          if [ -f candidate-build/examples/simple-box/.cad-ci/item.json ]; then
-            echo "available=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "available=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Prepare simple-box PR build scope
-        if: steps.simple_box_candidate.outputs.available == 'true'
+      - name: Prepare affected PR build scope
         env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
@@ -89,10 +78,10 @@ jobs:
             --out prepared-build \
             --source-commit "$SOURCE_SHA" \
             --pull-request "$PR_NUMBER" \
-            --items simple-box
+            --base "$BASE_SHA" \
+            --head "$SOURCE_SHA"
 
-      - name: Publish simple-box PR build scope
-        if: steps.simple_box_candidate.outputs.available == 'true'
+      - name: Publish affected PR build scope
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           SOURCE_REF: ${{ github.event.pull_request.head.ref }}
@@ -103,7 +92,7 @@ jobs:
             --candidate prepared-build \
             --scope pr \
             --pull-request "$PR_NUMBER" \
-            --message "build: PR #$PR_NUMBER simple-box" \
+            --message "build: PR #$PR_NUMBER affected items" \
             --source-ref "$SOURCE_REF" \
             --expected-source "$SOURCE_SHA"
 
@@ -137,23 +126,30 @@ jobs:
       - name: Install accepted CAD CI tool
         run: python -m pip install ./.cad-ci-tool
 
-      - name: Download complete verified CAD CI output
+      - name: Download verified CAD CI output
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.cad_ci_main.outputs.build_artifact_name }}
           path: candidate-build
 
-      - name: Prepare complete main build scope
+      - name: Fetch current durable build branch
+        run: cad-ci build fetch --repo . --out generated-build
+
+      - name: Prepare affected main build update
         env:
+          BASE_SHA: ${{ github.event.before }}
           SOURCE_SHA: ${{ github.sha }}
         run: |
-          cad-ci build prepare-main \
+          cad-ci build update-main \
             --repo . \
             --candidate-root candidate-build \
+            --main generated-build/main \
             --out prepared-main \
-            --source-commit "$SOURCE_SHA"
+            --source-commit "$SOURCE_SHA" \
+            --base "$BASE_SHA" \
+            --head "$SOURCE_SHA"
 
-      - name: Publish authoritative main build scope
+      - name: Publish affected main build update
         env:
           SOURCE_REF: ${{ github.ref_name }}
           SOURCE_SHA: ${{ github.sha }}
@@ -162,6 +158,6 @@ jobs:
             --repo . \
             --candidate prepared-main \
             --scope main \
-            --message "build: main $SOURCE_SHA" \
+            --message "build: main $SOURCE_SHA affected items" \
             --source-ref "$SOURCE_REF" \
             --expected-source "$SOURCE_SHA"
