@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: read
       packages: read
-    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-ci.yml@0e7d8a876d95484a4c8870356f3b0ca67e5e493b
+    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-ci.yml@8bab91eaf8554533e5f63620421ed9554f66eb91
     with:
       upload_build: true
       build_artifact_name: forge-cad-ci-build
