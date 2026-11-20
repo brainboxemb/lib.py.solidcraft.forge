@@ -1,28 +1,4 @@
 # SolidCraft model verification for corner-anchor.
 id: corner-anchor
-process: false
-kind: model
-needs:
-  - forge-package
-  - model-verification-batch
-watch:
-  - examples/corner-anchor/scpf/**
-  - examples/corner-anchor/model.yml
-  - examples/corner-anchor/verification/**
-  - scripts/forge_example.py
-  - scripts/model_verify_declarative.py
-strategy:
-  reuse: true
-steps:
-  - id: model_verify
-    inputs:
-      - examples/corner-anchor/scpf/**
-      - examples/corner-anchor/model.yml
-      - examples/corner-anchor/verification/**
-      - scripts/forge_example.py
-      - scripts/model_verify_declarative.py
-      - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verification_batch.py, materialize]
-    outputs:
-      - solidcraft.json
-      - model_verify
+template: forge-model-declarative
+process: true
