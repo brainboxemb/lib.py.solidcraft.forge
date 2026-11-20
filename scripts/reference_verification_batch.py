@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run all active independent reference checks in one shared reference runtime."""
+"""Run all active independent verification in one shared reference runtime."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ def output_root() -> Path:
 
 
 def runtime_image() -> str:
-    """Return the immutable reference runtime image."""
+    """Return the immutable heavy reference runtime image."""
 
     value = os.environ.get("REFERENCE_RUNTIME_IMAGE", "").strip()
     if not value:
@@ -60,7 +60,9 @@ def processed_reference_slugs() -> tuple[str, ...]:
         if config.get("process", True) is False:
             continue
         model_root = ci_path.parent
-        if not (model_root / "verification" / "reference_geometry.json").is_file():
+        if not (
+            model_root / "verification" / "reference_geometry.json"
+        ).is_file():
             continue
         missing = [
             implementation
@@ -80,14 +82,48 @@ def processed_reference_slugs() -> tuple[str, ...]:
     return tuple(slugs)
 
 
+def run_inside_runtime(cases: str, commit: str) -> int:
+    """Run references and CADCraft diagrams, collecting both results."""
+
+    reference = subprocess.run(
+        [
+            "python",
+            "/workspace/verification/reference_validation.py",
+            "--cases",
+            cases,
+            "--implementations",
+            "all",
+            "--out",
+            "/output/references",
+            "--source-sha",
+            commit,
+        ],
+        cwd="/workspace",
+        check=False,
+    )
+
+    diagrams = subprocess.run(
+        [
+            "python",
+            "/workspace/scripts/build_diagrams.py",
+            "--out",
+            "/output/diagrams",
+        ],
+        cwd="/workspace",
+        check=False,
+    )
+
+    return 0 if reference.returncode == 0 and diagrams.returncode == 0 else 1
+
+
 def run_batch() -> int:
-    """Run the complete active reference set in one container."""
+    """Run all active heavy-reference work in one container."""
 
     output = output_root()
-    references = output / "references"
-    if references.exists():
-        shutil.rmtree(references)
-    references.mkdir(parents=True)
+    for name in ("references", "diagrams"):
+        path = output / name
+        if path.exists():
+            shutil.rmtree(path)
 
     wheel = dependency_wheel(
         "cad-verification-package",
@@ -128,13 +164,10 @@ def run_batch() -> int:
             ),
             image,
             "python",
-            "/workspace/verification/reference_validation.py",
+            "/workspace/scripts/reference_verification_batch.py",
+            "inside",
             "--cases",
             ",".join(slugs),
-            "--implementations",
-            "all",
-            "--out",
-            "/output/references",
             "--source-sha",
             source_sha(),
         ],
@@ -242,20 +275,48 @@ def materialize_case() -> int:
     return 0 if implementation_row.get("status") == "pass" else 1
 
 
+def materialize_diagrams() -> int:
+    """Copy CADCraft evidence from the shared heavy-reference batch."""
+
+    batch = dependency_output_root(BATCH_DEPENDENCY)
+    source = batch / "diagrams"
+    if not source.is_dir():
+        raise RuntimeError(f"missing CADCraft batch result: {source}")
+
+    destination = output_root() / "diagrams"
+    shutil.copytree(source, destination, dirs_exist_ok=True)
+
+    provenance = json.loads(
+        (destination / "provenance.json").read_text(encoding="utf-8")
+    )
+    return 0 if provenance.get("status") == "pass" else 1
+
+
 def main() -> int:
-    """Dispatch batch production or per-case materialization."""
+    """Dispatch batch production, in-runtime work or materialization."""
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "operation",
         nargs="?",
-        choices=("batch", "materialize"),
+        choices=("batch", "inside", "materialize", "materialize-diagrams"),
         default="batch",
     )
+    parser.add_argument("--cases")
+    parser.add_argument("--source-sha")
     args = parser.parse_args()
 
+    if args.operation == "inside":
+        if not args.cases or not args.source_sha:
+            parser.error("inside requires --cases and --source-sha")
+        return run_inside_runtime(args.cases, args.source_sha)
+
+    if args.cases is not None or args.source_sha is not None:
+        parser.error("--cases/--source-sha require inside")
     if args.operation == "materialize":
         return materialize_case()
+    if args.operation == "materialize-diagrams":
+        return materialize_diagrams()
     return run_batch()
 
 
