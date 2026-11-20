@@ -8,3 +8,19 @@ stages:
   - Create the parameterized Base
   - Attach Marker with FRONT_TOP_RIGHT to BACK_TOP_RIGHT
   - Preserve the corner relationship through parent resize
+concepts:
+  - Anchor
+  - corner attachment
+  - attach
+  - saved-design associativity
+verification:
+  summary: >
+    Verifies a standard corner-to-corner attachment that remains associative
+    when the parent width and height change.
+  proves:
+    - Base and marker occupy the expected baseline envelopes.
+    - The marker is positioned through the corner relationship rather than a fixed world coordinate.
+    - Parent resize moves the marker to the corresponding resized corner.
+  saved_design: >
+    The saved design enlarges the parent and verifies the marker's new
+    topology-backed corner placement.
