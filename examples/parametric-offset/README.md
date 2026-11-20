@@ -30,6 +30,14 @@ The marker moves within the selected corner anchor's local attachment plane.
 
 Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+The base and marker sizes and positions show the local offset. The saved SolidCraft model is then changed to confirm that the planar joint updates correctly.
+
 ## Reference notes
 
 - **BOSL2** — Important reference: attach() operates in the local coordinate system at the parent anchor, not blindly in world coordinates.
