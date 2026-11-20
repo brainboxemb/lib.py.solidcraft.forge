@@ -8,3 +8,20 @@ stages:
   - Create the parameterized FrameBlock
   - Create one reusable LProfile definition
   - Place eight calculated top and bottom corner occurrences
+concepts:
+  - reusable component
+  - occurrence copies
+  - Placement
+  - rotation
+  - parametric assembly
+verification:
+  summary: >
+    Verifies eight placements of one reusable L-profile around a parameterized
+    frame, including top/bottom positions and corner rotations.
+  proves:
+    - The result contains the frame plus eight bracket bodies.
+    - Every bracket envelope matches its intended corner and height.
+    - Resizing the frame recalculates all eight occurrence placements.
+  saved_design: >
+    The saved design changes frame width, depth and height and verifies all
+    eight brackets at the corresponding resized corner locations.
