@@ -4,7 +4,7 @@ process: false
 kind: model
 needs:
   - forge-package
-  - cad-verification-package
+  - model-verification-batch
 watch:
   - examples/parametric-attach/scpf/**
   - examples/parametric-attach/model.yml
@@ -22,7 +22,7 @@ steps:
       - scripts/forge_example.py
       - scripts/model_verify_declarative.py
       - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verify_declarative.py]
+    run: [python, ../../scripts/model_verification_batch.py, materialize]
     outputs:
       - solidcraft.json
       - model_verify
