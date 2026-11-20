@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import time
 
 import yaml
 
@@ -95,8 +96,16 @@ def run_batch() -> int:
     image = runtime_image()
     slugs = processed_reference_slugs()
 
+    batch_started = time.perf_counter()
+    pull_started = time.perf_counter()
     subprocess.run(["docker", "pull", image], check=True)
+    print(
+        "REFERENCE BATCH TIMING "
+        f"image_pull_s={time.perf_counter() - pull_started:.3f}",
+        flush=True,
+    )
 
+    container_started = time.perf_counter()
     completed = subprocess.run(
         [
             "docker",
@@ -131,6 +140,16 @@ def run_batch() -> int:
         ],
         cwd=ROOT,
         check=False,
+    )
+    print(
+        "REFERENCE BATCH TIMING "
+        f"container_process_s={time.perf_counter() - container_started:.3f}",
+        flush=True,
+    )
+    print(
+        "REFERENCE BATCH TIMING "
+        f"total_s={time.perf_counter() - batch_started:.3f}",
+        flush=True,
     )
     return completed.returncode
 
