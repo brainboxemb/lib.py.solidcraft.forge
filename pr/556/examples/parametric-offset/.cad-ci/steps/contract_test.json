@@ -1,0 +1,22 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
+  "duration_seconds": 0.368,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:24.558Z",
+  "item": "parametric-offset",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {},
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:24.331Z",
+  "status": "pass",
+  "step": "contract_test",
+  "target_spec_digest": "6029bc04cd95b650bf659adba754b9ecc0095e4a5767a47792d56ba3ca7c8846",
+  "timeout_seconds": null
+}

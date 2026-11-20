@@ -1,0 +1,33 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "b5be7aef6bfc1a37ab40250faf53d9d8652e859a34640d3177a26a7e9847cb33",
+  "duration_seconds": 0.21,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:15.260Z",
+  "item": "assembly-decorator",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "model_verify": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "87c2d7fecbc2a573782db70e5d127c6d2083fe7cb4c9ad467ea8890282647203"
+    },
+    "solidcraft.json": {
+      "kind": "file",
+      "mode": 420,
+      "sha256": "499bfc434d926980cbe8850b8e7ef7b7b1e9d02a35422bb99d67185fca61d4e9"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:15.193Z",
+  "status": "pass",
+  "step": "model_verify",
+  "target_spec_digest": "376bb0ec58de924271e4351f81e2fb25d39639a48c7e1dc286c8bf0c286667f7",
+  "timeout_seconds": null
+}

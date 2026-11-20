@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "75bee6e4203e2bd7def52fcaa70c557189de325a1a26edfb59aed33d31bbf534",
+  "duration_seconds": 0.206,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:41.212Z",
+  "item": "examples-eight-corner-brackets-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "22fbf8eb6a29eb5ae950a6940655b3c968f8ad3f65206f7fe4fd2f15df6e04fe"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:41.143Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "acd6a234c623ca13487fb0414799db233c4eacd3a916473a0eb59afa855c6734",
+  "timeout_seconds": null
+}

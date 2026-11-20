@@ -1,0 +1,22 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
+  "duration_seconds": 0.372,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:18.010Z",
+  "item": "circular-feature-pattern",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {},
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:17.779Z",
+  "status": "pass",
+  "step": "contract_test",
+  "target_spec_digest": "c1a7b78a23cc6d7fc8205261749b56834a34db2bb5eea7567e47ffd889249492",
+  "timeout_seconds": null
+}

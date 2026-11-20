@@ -1,0 +1,167 @@
+{
+  "models": [
+    {
+      "error": null,
+      "model": "anchor-topology-mutation",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "anchored-holes",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "assembly-decorator",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "assembly-owned-anchor",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "attach-angle",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "bracket",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "circle-negative-extrude",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "circular-feature-pattern",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "components",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "corner-anchor",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "eight-corner-brackets",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "eight-flightcase-corners",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "four-corner-l",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "group-hierarchy",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "hole-family",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "parameter-scope",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "parametric-anchor",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "parametric-attach",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "parametric-offset",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "parent-derived-child-size",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "primitive-csg",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "rectangular-pattern",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "repeated-parent-attachments",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "round-top-sketch",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "rounded-rectangle-sketch",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "selective-profile-extrude",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "sheet-fold",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "simple-box",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "sketch-pattern-mirror",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "slot-family",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "top-sketch-after-chamfer",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "xz-anchor",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "af793a620092f90d8526e09290ccd978f60826c9",
+  "status": "pass"
+}

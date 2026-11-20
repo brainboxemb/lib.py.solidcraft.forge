@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "2a4f9a2f3dd9ceae1560f64ee2bb4457d756cd1a45a2a12091f668f18658bc75",
+  "duration_seconds": 0.205,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:57.134Z",
+  "item": "examples-sketch-pattern-mirror-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "7f13458998e0be61dc51597558c61779eb4b2d42e88a8aa002080a5d09ae6409"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:57.068Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "7ba1a6e0045c602c6a3c77e05045133479cdc5adfcf73bfbf52e2650f3fe1cbe",
+  "timeout_seconds": null
+}

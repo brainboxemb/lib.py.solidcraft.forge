@@ -1,0 +1,97 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "4d8e968e3a8a2431b77645088d8819e558408fc4b9a611bb6db46f4f67c60d46",
+  "variables": {
+    "$parent": 2,
+    "$child": 5
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "base_width",
+        "expression": "120",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "base_depth",
+        "expression": "80",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "ParentBlock",
+        "grounded": true
+      },
+      "bindings": {
+        "$parent": 2
+      }
+    },
+    {
+      "index": 3,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": "base_width",
+        "width": "base_depth",
+        "height": 10.0,
+        "corner": [
+          "-base_width / 2",
+          "-base_depth / 2",
+          0
+        ],
+        "body_name": "ParentBlock"
+      }
+    },
+    {
+      "index": 4,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 5,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "DerivedChild",
+        "grounded": false
+      },
+      "bindings": {
+        "$child": 5
+      }
+    },
+    {
+      "index": 6,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": "base_width / 2",
+        "width": "base_depth / 2",
+        "height": 6.0,
+        "operation": "new",
+        "corner": [
+          "-((base_width / 2) / 2)",
+          "-((base_depth / 2) / 2)",
+          20.0
+        ],
+        "body_name": "DerivedChild"
+      }
+    },
+    {
+      "index": 7,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    }
+  ],
+  "completed": 8
+}

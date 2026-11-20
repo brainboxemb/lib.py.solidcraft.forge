@@ -1,0 +1,33 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "d3bc032b3807728f1352ae59c5d1e5407c2336f0003f5a97a45e99cb9b085ee2",
+  "duration_seconds": 0.222,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:20.603Z",
+  "item": "eight-flightcase-corners",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "model_verify": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "9637b6a89c5395f8464d5c6353b10fbe10cec1f79c11b37ac00358ce0f89065b"
+    },
+    "solidcraft.json": {
+      "kind": "file",
+      "mode": 420,
+      "sha256": "a5c9f2fbde86779b93a3d89e9cdc49b85b38b558a4ebdd665cafe86941a9da29"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:20.536Z",
+  "status": "pass",
+  "step": "model_verify",
+  "target_spec_digest": "7fd47da24edb6d8e2c4cbcefc92ca2c1143b8386083e43930b62b4c936fcc63f",
+  "timeout_seconds": null
+}

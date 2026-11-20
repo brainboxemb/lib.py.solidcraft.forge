@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "9abf1f3b8ca3ab2b4374a118e5779f1212e3a944692bc6ad94d5065fe76c2906",
+  "duration_seconds": 0.205,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:51.212Z",
+  "item": "examples-rectangular-pattern-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "57790d210e98311dba3d26d785b358b2ad272bbbad29cfce1d9d65b02a0c5108"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:51.145Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "bc98903625b1a0accb39c196f3bc3bfd5d72aed7d6d576ab2461106450f148ad",
+  "timeout_seconds": null
+}

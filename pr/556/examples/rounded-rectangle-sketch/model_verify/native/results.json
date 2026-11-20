@@ -1,0 +1,324 @@
+[
+  {
+    "display_value": 80.0,
+    "name": "base_width",
+    "unit": "mm",
+    "value": 80.0
+  },
+  {
+    "display_value": 60.0,
+    "name": "base_depth",
+    "unit": "mm",
+    "value": 60.0
+  },
+  {
+    "display_value": 5.0,
+    "name": "base_height",
+    "unit": "mm",
+    "value": 5.0
+  },
+  {
+    "display_value": 40.0,
+    "name": "pad_width",
+    "unit": "mm",
+    "value": 40.0
+  },
+  {
+    "display_value": 30.0,
+    "name": "pad_depth",
+    "unit": "mm",
+    "value": 30.0
+  },
+  {
+    "display_value": 5.0,
+    "name": "radius",
+    "unit": "mm",
+    "value": 5.0
+  },
+  {
+    "display_value": 8.0,
+    "name": "pad_height",
+    "unit": "mm",
+    "value": 8.0
+  },
+  {
+    "bodies": [
+      "RoundedRectangleSketch"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "RoundedRectangleSketch"
+    ],
+    "feature": 1,
+    "ms": 2.910008,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "body": "RoundedRectangleSketch",
+    "faces": [
+      {
+        "area": 4800.0,
+        "centroid": [
+          0.0,
+          0.0,
+          5.0
+        ],
+        "exact": true,
+        "index": 0,
+        "name": "F1:+z",
+        "plane_normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "point": [
+          -20.0,
+          -10.0,
+          5.0
+        ]
+      },
+      {
+        "area": 400.0,
+        "centroid": [
+          0.0,
+          30.0,
+          2.5000000000000004
+        ],
+        "exact": true,
+        "index": 1,
+        "name": "F1:+y",
+        "plane_normal": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "point": [
+          37.578048854703496,
+          30.0,
+          2.4219511452965063
+        ]
+      },
+      {
+        "area": 300.0,
+        "centroid": [
+          -40.0,
+          0.0,
+          2.5
+        ],
+        "exact": true,
+        "index": 2,
+        "name": "F1:-x",
+        "plane_normal": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          -40.0,
+          27.603986446980738,
+          2.396013553019261
+        ]
+      },
+      {
+        "area": 400.0,
+        "centroid": [
+          0.0,
+          -30.0,
+          2.5000000000000004
+        ],
+        "exact": true,
+        "index": 3,
+        "name": "F1:-y",
+        "plane_normal": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "point": [
+          -37.578048854703496,
+          -30.0,
+          2.4219511452965063
+        ]
+      },
+      {
+        "area": 300.0,
+        "centroid": [
+          40.0,
+          0.0,
+          2.5
+        ],
+        "exact": true,
+        "index": 4,
+        "name": "F1:+x",
+        "plane_normal": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          40.0,
+          -27.603986446980738,
+          2.396013553019261
+        ]
+      },
+      {
+        "area": 4800.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "exact": true,
+        "index": 5,
+        "name": "F1:-z",
+        "plane_normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "point": [
+          -20.0,
+          -10.0,
+          0.0
+        ]
+      }
+    ]
+  },
+  {
+    "attachment": "exact_face",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Rounded pad",
+    "projected": null,
+    "sketch": 2
+  },
+  {
+    "arcs": [
+      "a1",
+      "a2",
+      "a3",
+      "a4"
+    ],
+    "centre": "p13",
+    "constraints": [
+      "k1",
+      "k2",
+      "k3",
+      "k4",
+      "k7",
+      "k8",
+      "k9",
+      "k10",
+      "k11",
+      "k12",
+      "k15",
+      "k16",
+      "k17",
+      "k18",
+      "k19",
+      "k20",
+      "k21"
+    ],
+    "created": {
+      "constraints": [
+        "k1",
+        "k2",
+        "k3",
+        "k4",
+        "k5",
+        "k6",
+        "k7",
+        "k8",
+        "k10",
+        "k11",
+        "k12",
+        "k13",
+        "k14",
+        "k15",
+        "k16",
+        "k17",
+        "k18",
+        "k19",
+        "k20",
+        "k21"
+      ],
+      "curves": [
+        "l1",
+        "l2",
+        "l3",
+        "l4",
+        "a1",
+        "a2",
+        "a3",
+        "a4",
+        "l5"
+      ],
+      "dimensions": [
+        "k9"
+      ],
+      "points": [
+        "corner1",
+        "corner2",
+        "p5",
+        "p6",
+        "a1.center",
+        "p7",
+        "p8",
+        "a2.center",
+        "p9",
+        "p10",
+        "a3.center",
+        "p11",
+        "p12",
+        "a4.center",
+        "p13"
+      ]
+    },
+    "curves": [
+      "l1",
+      "l2",
+      "l3",
+      "l4",
+      "a1",
+      "a2",
+      "a3",
+      "a4"
+    ],
+    "diagonal": "l5",
+    "param": "d4",
+    "sides": {
+      "bottom": "l1",
+      "left": "l4",
+      "right": "l2",
+      "top": "l3"
+    },
+    "sketch": {
+      "dof": 0,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 1,
+    "sketch": 2
+  },
+  {
+    "bodies": [
+      "RoundedRectangleSketch"
+    ],
+    "changed_bodies": [
+      "RoundedRectangleSketch"
+    ],
+    "created_bodies": [],
+    "feature": 3,
+    "ms": 21.111247,
+    "name": "Rounded pad",
+    "removed_bodies": [],
+    "warning": null
+  }
+]

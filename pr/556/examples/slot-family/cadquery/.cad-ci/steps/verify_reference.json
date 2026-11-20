@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "4d8ccf640221bb988f9d7df72f70a11f74247d6a39ca607ceef5bf90dcac6a17",
+  "duration_seconds": 0.205,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:57.558Z",
+  "item": "examples-slot-family-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "0859fa1a4f24dafd53dde6b2a685c8eed73c6775db06e9a6840bc72cb0e5ab15"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:57.491Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "1f107a0eeb159e0af9e92cdd7a9ddcdcbcf3c866939e6dc5ff5ea57be70d5791",
+  "timeout_seconds": null
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "879ea28f3fe984e3fa13dfbcb750d737933573cec6a9c714b33565062b97e974",
+  "duration_seconds": 0.211,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:48.030Z",
+  "item": "examples-parametric-offset-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "1761c3f1f6ff5ec423891228cf9b5ace5688ac779140566dddcd6e663776d97b"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:47.962Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "5805805d17b171b442648f256148da3176b52f1b6f1b2e3085d4089ab7ffe83a",
+  "timeout_seconds": null
+}

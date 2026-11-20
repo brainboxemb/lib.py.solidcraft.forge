@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "89483d97d0973405f2379ac6837e5678bb3935bde8b6335445d126d46fb5c92f",
+  "duration_seconds": 0.204,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:41.634Z",
+  "item": "examples-eight-corner-brackets-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "274429f61fd3056086055b3c4b95f67fb54a822e0ff84f1cdb0e156c8fea157e"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:41.568Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "df577a3a137a592dac9b9b41eccdbb91cff7b49275f14289cc68bb030e3d0edd",
+  "timeout_seconds": null
+}

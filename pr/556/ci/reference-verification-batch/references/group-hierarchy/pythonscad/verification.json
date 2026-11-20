@@ -1,0 +1,38 @@
+{
+  "geometry": {
+    "bounds": {
+      "actual_max": [
+        17.5,
+        25.0,
+        40.0
+      ],
+      "actual_min": [
+        -17.5,
+        -1.0,
+        0.0
+      ],
+      "expected_max": [
+        17.5,
+        25.0,
+        40.0
+      ],
+      "expected_min": [
+        -17.5,
+        -1.0,
+        0.0
+      ],
+      "max_delta_mm": 0.0,
+      "pass": true,
+      "tolerance_mm": 0.5
+    }
+  },
+  "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
+  "source": "examples/group-hierarchy/pythonscad/model.py",
+  "status": "pass",
+  "stl": "group-hierarchy/pythonscad/model.stl"
+}

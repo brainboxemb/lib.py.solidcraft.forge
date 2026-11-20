@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "aa33a06dd6d6bd62f5fe961c878d96b01df22ff20c3f5c13a303dea3757ff644",
+  "duration_seconds": 0.203,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:55.024Z",
+  "item": "examples-sheet-fold-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "1f5b90502a4ac42885af511db2fdd919a37978bfdc59b5b02dba598bc1ed7f58"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:54.958Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "8c670296ac01f96be9eefd27d45414ed4c1e4366a8e34bdabdf336aa1c7953e3",
+  "timeout_seconds": null
+}

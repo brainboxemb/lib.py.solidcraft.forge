@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "ac41bcf84564be857a3b408dd2bb00b8ee503f9f48c487dce8f1c1b1b4d49b52",
+  "duration_seconds": 0.205,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:34.425Z",
+  "item": "examples-assembly-decorator-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "28615c1feb6ab32bf701a4a86c44649ab1af1e71679fd4767ef6016c79092ba8"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:34.357Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "1d872f9103a642dbaf7e7fa8280e872a9578029ca67b3f63e1f4bda71f2d82ab",
+  "timeout_seconds": null
+}

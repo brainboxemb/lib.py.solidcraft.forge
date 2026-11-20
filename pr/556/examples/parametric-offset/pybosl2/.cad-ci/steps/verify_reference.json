@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "9e6e8f2a4dfcfde02ccabaee8f23966de0f26b9dcb5de8a9d3393a2f0eb75527",
+  "duration_seconds": 0.205,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:54:48.468Z",
+  "item": "examples-parametric-offset-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "54b054b099fa3f6867d0fa234896abaeb6d9d1e1a82dd0a44884ddd8486a6384"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:55:00.957Z",
+  "run_started_at": "2026-11-20T22:51:43.467Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:54:48.400Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "2878aa26aeb5cbfad7ebfec1e99afeff21e9a505894481f181563d04a4588872",
+  "timeout_seconds": null
+}
