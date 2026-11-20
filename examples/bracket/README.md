@@ -70,6 +70,8 @@ tests.
 
 > Documentation provenance: the engineering text below is copied verbatim from the last canonical `qualification/cases.py` source before its removal, commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`. Machine verification lives in [`verification/verify.py`](verification/verify.py).
 
+**Legacy title:** `Minimal L-profile`
+
 **Legacy group:** `fundamentals`
 
 ### Goal
