@@ -51,6 +51,22 @@ class ExampleMetadataTests(unittest.TestCase):
                 self.assertTrue(row.geometry_reason)
                 self.assertGreaterEqual(len(row.reference_notes), 1)
 
+    def test_bracket_readme_describes_current_minimal_l_profile(self):
+        root = ROOT / "examples" / "bracket"
+        source = (root / "README.md").read_text(encoding="utf-8")
+        documentation = {
+            row.slug: row
+            for row in discover_example_documentation()
+        }["bracket"]
+
+        self.assertIn("# Minimal L-profile", source)
+        self.assertIn("**Group:** `fundamentals`", source)
+        self.assertEqual(documentation.title, "Minimal L-profile")
+        self.assertEqual(documentation.group, "fundamentals")
+        self.assertNotIn("two mounting holes", source)
+        self.assertNotIn("valid fillet point", source)
+        self.assertNotIn("source/bracket.json", source)
+
     def test_model_yml_keeps_only_agreed_generic_fields(self):
         import yaml
 
