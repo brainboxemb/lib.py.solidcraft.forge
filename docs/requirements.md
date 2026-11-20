@@ -245,29 +245,27 @@ qualification orchestration.
 Successful transient verification output becomes durable only through the
 released CAD-CI build-store/publication commands.
 
-For the first migration proof:
+For pull requests Forge delegates the complete lifecycle to the exact externally
+accepted `tool.cad.ci` reusable PR workflow:
 
-- the reusable Forge CAD-CI job remains the only producer of candidate
-  `simple-box` verification output;
-- a downstream publication job may consume the reusable workflow's materialized
-  build artifact but must not rerun model verification;
-- the candidate is validated by `cad-ci build prepare-pr`;
-- the sparse PR candidate contains only the explicitly selected
-  `simple-box` item path;
-- the accepted candidate is published by `cad-ci publish build` below
-  `build/pr/<pull-request>/examples/simple-box/`;
-- the item-local public `.cad-ci` evidence is preserved;
-- existing `build/main` and unrelated PR scopes are preserved;
-- Forge must not implement its own build-store copy, manifest validation,
-  generated-branch race retry or Git publication logic.
+- one reusable PR job performs changed-path-selected CAD-CI execution;
+- if materialized `build/` output exists, the same runner invokes
+  `cad-ci build prepare-pr --base/--head`;
+- the same runner publishes the sparse PR scope with
+  `cad-ci publish build --scope pr`;
+- no GitHub artifact upload/download boundary exists between verification and
+  PR publication;
+- no second Forge-owned publication runner exists;
+- on `pull_request.closed`, normal CAD-CI execution is skipped and the same
+  reusable workflow invokes `cad-ci publish build-cleanup`;
+- same-repository PR publication may use `contents: write`; fork PRs must not
+  receive durable publication privileges;
+- generated-branch validation, source freshness and retry behavior remain
+  released CAD-CI responsibilities.
 
-Publishing a PR build scope is permitted only after the reusable CAD-CI job
-succeeds. Publication is a consumer of accepted verification output, not an
-alternative verification path.
-
-The first proof is intentionally limited to same-repository pull requests where
-the workflow token can write the generated `build` branch. Fork PRs must not
-gain write publication privileges.
+Forge must not install/build its own copy of the accepted CAD-CI stack inside a
+second publication job and must not implement its own build-store copy,
+manifest validation, generated-branch race retry or Git publication logic.
 
 ## Stable build main bootstrap
 
@@ -289,8 +287,9 @@ accepted run of the current processed item set:
 - the retired main manifest is neither parsed nor translated;
 - every stored item keeps its public `.cad-ci` evidence.
 
-Only the publication job receives `contents: write`. Verification jobs remain
-read-only consumers of source/packages.
+The main/push path keeps write permission confined to its separate publication
+job. The PR path uses the accepted single-runner reusable PR workflow, which
+owns the required PR publication permission and same-repository guard.
 
 The bootstrap full run is transitional. Once a valid generic main baseline
 exists, future #366 work must use partial main updates rather than requiring a
@@ -303,15 +302,15 @@ incremental.
 
 For pull requests:
 
-- the normal reusable CAD-CI run remains changed-path selected;
+- Forge calls the exact accepted `reusable-pr.yml` revision once;
+- that single reusable job remains changed-path selected;
 - `cad-ci build prepare-pr --base/--head` derives the sparse durable scope from
-  the same released planner semantics;
+  the same released planner semantics on the same runner;
 - the PR scope contains all affected processed top-level items, not a
   Forge-hard-coded model name;
 - unrelated item output is absent;
-- when a pull request is closed or merged, Forge invokes released
-  `cad-ci publish build-cleanup --pull-request <number>`;
-- close-only events must not run normal CAD-CI verification;
+- close-only events execute only released PR-scope cleanup and do not run normal
+  CAD-CI verification;
 - cleanup must preserve `build/main` and every unrelated PR scope;
 - Forge must not implement generated-branch deletion logic itself.
 

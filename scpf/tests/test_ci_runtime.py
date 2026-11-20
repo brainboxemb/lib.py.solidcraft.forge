@@ -12,7 +12,8 @@ CAD_CI = ROOT / "cad-ci.yml"
 WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
 MODEL_VERIFY = ROOT / "scripts" / "model_verify_declarative.py"
 REFERENCE_VERIFY = ROOT / "scripts" / "verification_evidence.py"
-TOOL_COMMIT = "bbdd473638d64e01acab69722092b2a12f99b84d"
+PR_TOOL_COMMIT = "5bca68eb109a69e3a05e7711daf394926ee0e7d4"
+MAIN_TOOL_COMMIT = "bbdd473638d64e01acab69722092b2a12f99b84d"
 
 
 def configured_variable(name: str) -> str:
@@ -101,50 +102,46 @@ class CiRuntimeContractTests(unittest.TestCase):
         """Keep the Forge workflow a thin CAD-CI consumer."""
 
         text = WORKFLOW.read_text(encoding="utf-8")
+
+        self.assertIn("types: [opened, synchronize, reopened, closed]", text)
+
+        self.assertIn("cad_ci_pr:", text)
+        self.assertIn("if: github.event_name == 'pull_request'", text)
         self.assertIn(
             "uses: brainboxemb/tool.cad.ci/.github/workflows/"
-            f"reusable-ci.yml@{TOOL_COMMIT}",
+            f"reusable-pr.yml@{PR_TOOL_COMMIT}",
             text,
         )
-        self.assertIn("cad_ci_pr:", text)
-        self.assertIn("types: [opened, synchronize, reopened, closed]", text)
-        self.assertIn("github.event.action != 'closed'", text)
-        self.assertIn("cleanup_pr_build:", text)
-        self.assertIn("github.event.action == 'closed'", text)
-        self.assertIn("cad-ci publish build-cleanup", text)
-        self.assertIn('--pull-request "$PR_NUMBER"', text)
-        self.assertIn("cad_ci_main:", text)
-        self.assertIn("upload_build: true", text)
-        self.assertIn("build_artifact_name: forge-cad-ci-build", text)
-        self.assertIn("build_artifact_name: forge-cad-ci-main-build", text)
-        self.assertNotIn("full_run: true", text)
-        self.assertIn("publish_pr_build:", text)
-        self.assertIn("publish_main_build:", text)
         self.assertIn("contents: write", text)
-        self.assertIn("actions/download-artifact@v4", text)
-        self.assertIn("cad-ci build prepare-pr", text)
-        self.assertNotIn("--items simple-box", text)
+        self.assertIn("packages: read", text)
+        self.assertNotIn("cleanup_pr_build:", text)
+        self.assertNotIn("publish_pr_build:", text)
+        self.assertNotIn("build_artifact_name: forge-cad-ci-build", text)
+
+        self.assertIn("cad_ci_main:", text)
+        self.assertIn(
+            "uses: brainboxemb/tool.cad.ci/.github/workflows/"
+            f"reusable-ci.yml@{MAIN_TOOL_COMMIT}",
+            text,
+        )
+        self.assertIn("build_artifact_name: forge-cad-ci-main-build", text)
+        self.assertIn("publish_main_build:", text)
+        self.assertEqual(text.count("actions/download-artifact@v4"), 1)
         self.assertIn("cad-ci build fetch", text)
         self.assertIn("cad-ci build update-main", text)
         self.assertIn("--main generated-build/main", text)
-        self.assertIn("cad-ci publish build", text)
-        self.assertIn("--scope pr", text)
         self.assertIn("--scope main", text)
         self.assertIn("--base \"$BASE_SHA\"", text)
         self.assertIn("--head \"$SOURCE_SHA\"", text)
         self.assertIn("--source-ref \"$SOURCE_REF\"", text)
         self.assertIn("--expected-source \"$SOURCE_SHA\"", text)
-        self.assertIn(
-            "github.event.pull_request.head.repo.full_name == github.repository",
-            text,
-        )
-        self.assertIn(
-            f"ref: {TOOL_COMMIT}",
-            text,
-        )
+        self.assertIn(f"ref: {MAIN_TOOL_COMMIT}", text)
+
+        self.assertNotIn("cleanup_existing_stale_pr_builds:", text)
         self.assertNotIn("runtime_check:", text)
         self.assertNotIn("environment_json:", text)
         self.assertNotIn("solidcraft_runtime.py", text)
+
 
 
 if __name__ == "__main__":

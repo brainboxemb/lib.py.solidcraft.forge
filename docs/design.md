@@ -10,11 +10,13 @@ Normal Forge CI is intentionally simple:
 
 ```text
 GitHub workflow
-  -> tool.cad.ci reusable-ci
+  -> pull request: tool.cad.ci reusable-pr
      -> read cad-ci.yml
-     -> inject repository variables
      -> execute selected SCons targets
-        -> Forge-owned commands
+     -> prepare/publish sparse PR output on the same runner
+  -> main push: tool.cad.ci reusable-ci
+     -> read cad-ci.yml
+     -> execute selected SCons targets
 ```
 
 The GitHub workflow does not understand runtime packaging or selected item
@@ -269,41 +271,39 @@ Each active model item watches its own `tests/**` directory. This keeps
 CAD-CI/SCons responsible for invalidation and execution; Forge does not add a
 second freshness mechanism.
 
-## Durable PR build proof
+## Durable PR build flow
 
-The first generated-output migration uses the existing reusable build artifact
-as the boundary between verification and publication:
+Pull-request verification and durable publication use one externally accepted
+reusable workflow and one runner:
 
 ```text
-cad_ci reusable job
-  -> materialized build artifact
-     build/examples/simple-box/...
-       |
-       v
-PR publication job
-  -> download artifact
-  -> cad-ci build prepare-pr --items simple-box
-  -> cad-ci publish build --scope pr
-       |
-       v
-generated build branch
-  pr/<number>/examples/simple-box/...
+pull_request open/update
+  -> tool.cad.ci reusable-pr
+     -> checkout exact PR source
+     -> execute changed-path-selected CAD-CI graph
+     -> materialized build output exists?
+        no  -> success
+        yes -> prepare-pr --base PR_BASE --head PR_HEAD
+             -> publish build --scope pr
+
+pull_request closed
+  -> same reusable-pr workflow
+     -> no normal CAD-CI execution
+     -> publish build-cleanup --pull-request PR_NUMBER
 ```
 
-The publication job is intentionally thin. It checks out the Forge source
-revision, installs the exact accepted `tool.cad.ci` revision, downloads the
-artifact produced by the reusable CI job and invokes the generic CLI.
+There is no intermediate build artifact transport and no second Forge-owned PR
+publication runner. The same workspace containing verified `build/` output is
+used directly by the released prepare/publish commands.
 
-The generic library validates candidate evidence, creates the sparse build
-manifest, preserves unrelated generated-branch scopes, checks publication
+Forge owns only the GitHub event wiring and the exact accepted reusable workflow
+revision. The generic library validates candidate evidence, creates the sparse
+build manifest, preserves unrelated generated-branch scopes, checks source
 freshness and retries generated-branch races.
 
-The PR proof does not create or update `build/main`. Stable main publication
-is a later #366 step after the sparse PR path is proven.
-
-The job runs only for same-repository pull requests, requires
-`contents: write` only on that publication job, and never executes for fork
-pull requests. Verification itself keeps read-only source permissions.
+Same-repository PRs may publish with the workflow's `contents: write`
+permission. Fork PRs keep verification behavior but durable publication is
+guarded by the released workflow.
 
 ## Stable main bootstrap flow
 
@@ -346,14 +346,15 @@ Once the generic main baseline exists, the bootstrap full-run path is removed.
 
 ```text
 PR open/update event
-  -> cad_ci_pr (incremental)
-  -> artifact exists?
+  -> one released reusable-pr job
+  -> incremental CAD-CI
+  -> build output exists?
      -> prepare-pr --base PR_BASE --head PR_HEAD
      -> publish build --scope pr
 
 PR closed/merged event
-  -> no CAD-CI verification
-  -> released tool.cad.ci
+  -> same released reusable-pr workflow
+  -> no normal CAD-CI verification
   -> publish build-cleanup --pull-request PR_NUMBER
   -> remove only build/pr/PR_NUMBER
 

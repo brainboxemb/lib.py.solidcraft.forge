@@ -8,84 +8,74 @@ documents in `docs/`. Issues keep detail and history.
 
 ## Current status
 
-The generic CAD-CI baseline is accepted:
+The generic CAD-CI stack currently accepted for Forge PR migration is:
 
-- `lib.py.cad.ci` 0.8.3;
-- `tool.cad.ci` 0.13.3 at
-  `bbdd473638d64e01acab69722092b2a12f99b84d`;
-- external acceptance covers nested selection/publication and streamed concise
-  execution logging.
+- `lib.py.cad.ci` 0.8.3 at
+  `e8e951ed7e50c4fa754cc158729faf2927cccb31`;
+- `tool.cad.ci` 0.14.0 at
+  `5bca68eb109a69e3a05e7711daf394926ee0e7d4`;
+- external `tool.cad.ci.test` acceptance is green for the one-runner
+  `reusable-pr.yml` contract.
 
-Durable PR build lifecycle cleanup is complete. Closed PR scopes are removed
-through released CAD-CI and generated `build/pr/*` scopes are no longer left
-behind.
-
-`docker.cad.solidcraft` v0.2.0 is released as two immutable roles:
+`docker.cad.solidcraft` v0.2.0 remains the immutable runtime split:
 
 - `ghcr.io/brainboxemb/cad-solidcraft:v0.2.0`;
 - `ghcr.io/brainboxemb/cad-reference:v0.2.0`.
 
-PR #514 is merged. Forge now consumes those two immutable roles and only
-`simple-box` remains `process: true` as a model-verification item.
+Only `simple-box` remains `process: true` as a model-verification item.
 
-The first decomposed cold `simple-box:model_verify` measurement on v0.2.0 was
-about 12.2 s total:
+Representative PR #517 on the old split PR architecture took about 55 seconds
+end-to-end:
 
-- Forge compile: ~0.12 s;
-- SolidCraft image pull: ~7.65 s;
-- container creation/start: ~3.17 s;
-- Python bootstrap: ~0.17 s;
-- verification-library import: ~0.75 s;
-- native model production: ~0.11 s;
-- SolidCraft verification itself: ~0.04 s.
+- first CAD-CI runner: about 38 seconds;
+- second publication runner: about 15 seconds.
 
-The model/verification work is therefore no longer the dominant cost. Remaining
-cold-path cost is primarily image acquisition plus Docker container startup.
+Inside `simple-box:model_verify`, model/verification work itself is small; the
+cold path is dominated by SolidCraft image acquisition/container startup.
 
 ## Current goal
 
-Complete #516 with one representative `simple-box`-specific change so the
-end-to-end selected graph and total CI time are measured without shared
-runtime/reference changes contaminating selection.
+Complete #518 by replacing Forge's split PR path with the externally accepted
+single-runner `reusable-pr.yml` flow.
 
-This is the final measurement required before #484 can be closed.
+After that architecture is merged, create one disposable simple-box-only PR and
+measure the complete PR event from start to green against the <=30 second goal.
 
 ## Required proof
 
-- exactly one `simple-box` model-verification item participates;
-- normal Forge package dependency work is selected only where required;
-- no other model-verification item runs;
-- no independent reference item runs;
-- `cad-reference:v0.2.0` is not pulled;
-- structured CAD-CI evidence identifies the `simple-box` step durations;
-- the live log confirms the already measured cold-path decomposition;
-- no verification semantics are changed merely to improve timing.
+- one Forge PR job calls exact tool.cad.ci 0.14.0 `reusable-pr.yml`;
+- no Forge-owned PR artifact handoff remains;
+- no Forge-owned second PR publication runner remains;
+- close-only PR events use the same reusable workflow cleanup path;
+- the main/push flow is unchanged by #518;
+- a disposable simple-box-only PR selects exactly the expected one-model graph;
+- end-to-end PR timing is recorded from GitHub Actions;
+- no verification semantics are weakened for timing.
 
 ## Execution order
 
-1. #516 — measure a normal simple-box-only selected run.
-2. Close #484 after recording the resulting timing and selection evidence.
-3. #430 / #378 — continue visual and staged verification on `simple-box`
-   only.
-4. #366 / #497 — resume durable main/Pages work only after the one-model path
-   is stable.
-5. #432 — broader model migration remains blocked until the simple-box proof is
-   complete.
+1. #518 — migrate the Forge PR workflow to one runner.
+2. Merge #518 after the new PR workflow itself is green.
+3. Create one disposable simple-box-only measurement PR.
+4. Compare end-to-end time with the <=30 second target.
+5. Update/close #484 only after that measured result is recorded.
+6. #430 / #378 — continue visual and staged verification on simple-box.
+7. #366 / #497 — continue main/Pages work after the PR path is stable.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #516 Measure one-model simple-box CI after runtime v0.2.0 adoption | now | Final uncontaminated selection/timing proof after merged #514. |
-| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | blocked | Runtime split and phase timing are proven; close after #516 records the normal simple-box-only run. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | next | Correct one-model continuation after #484/#516. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | next | Continue through simple-box only after runtime timing is stable. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Resume after the one-model runtime/verification path is stable. |
+| #518 Use tool.cad.ci 0.14.0 single-runner PR workflow | now | Removes the known second-runner/artifact overhead and establishes the production PR architecture before the next timing proof. |
+| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | blocked | Runtime split is proven; final status depends on the one-runner simple-box end-to-end measurement after #518. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | next | Continue after the PR performance path is stable. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | next | Continue through simple-box only after the timing proof. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Main/Pages continuation waits for the PR path measurement. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Depends on stable durable generated output. |
-| #432 Use released declarative CAD verification in model verification | blocked | Broader catalog migration must not resume before simple-box is stable. |
+| #432 Use released declarative CAD verification in model verification | blocked | Broader catalog migration waits for simple-box stability. |
 | #391 Extract reusable CAD verification library from Forge | blocked | Complete only after procedural verification is migrated. |
 | #481 Remove stale Forge development branches | blocked | Current connected tooling cannot delete the stale refs. |
-| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by docker.cad.solidcraft v0.2.0 and #484. |
+| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by docker.cad.solidcraft v0.2.0 and #484/#518. |
 | #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
 | #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Independent CLI quality work. |
@@ -104,4 +94,4 @@ This is the final measurement required before #484 can be closed.
 
 Immediate chain:
 
-`#516 simple-box measurement -> close #484 -> #430/#378 simple-box verification -> #366/#497`.
+`#518 single-runner PR -> disposable simple-box timing -> #484 decision -> #430/#378`.
