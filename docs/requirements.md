@@ -578,3 +578,54 @@ CAD-CI continues to own logical selection, dependencies, SCons state, caching
 and durable publication. Forge owns only the batch runtime invocation and the
 mapping from batch results back to existing per-case outputs. No generic worker
 pool or batch scheduler is added to lib.py.cad.ci.
+
+
+## Example-owned presentation metadata
+
+Every current Forge Qualification example is self-describing for generated
+documentation.
+
+`examples/<slug>/model.yml` is the authoritative source for human-facing
+example metadata. The required schema contains:
+
+- `section`;
+- `title`;
+- `tagline`;
+- `description`;
+- `parameters`;
+- non-empty `stages`;
+- non-empty `concepts`;
+- `verification.summary`;
+- non-empty `verification.proves`.
+
+`verification.saved_design` and `notes` are optional human-facing
+explanations.
+
+These fields explain intent. They must not become a second machine verification
+contract. Exact expected geometry, parameters, tolerances and saved-design
+expectations remain in `verification/verify.py`.
+
+Generated Pages obtain actual status, measurements and evidence links from the
+accepted durable `build/main` item output. `model.yml` must never claim a
+current PASS/FAIL result.
+
+The site generator discovers examples from the filesystem and their local
+metadata. It must not maintain a central model-name/page-content registry.
+
+## Site source separation
+
+Hand-authored webpage content must not live as large Python string literals.
+
+- complete page layout belongs in external templates;
+- prose-heavy guide content belongs in external Markdown or template content;
+- CSS and browser JavaScript belong in static files;
+- generated API facts continue to come from the public implementation/docstrings;
+- example facts come from local `model.yml`, source files and durable evidence.
+
+Python site modules may load, validate and normalize source data, construct
+view-models, render templates and write generated output. They must not embed
+complete hand-authored pages, guide chapters or model-specific SVG galleries.
+
+The current site must not depend on retired `qualification.*` source modules.
+The 32 current `examples/` directories and durable `build/main` are the
+catalog/evidence sources.
