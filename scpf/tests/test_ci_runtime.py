@@ -66,6 +66,12 @@ class CiRuntimeContractTests(unittest.TestCase):
             text,
         )
         self.assertIn("cad_ci_pr:", text)
+        self.assertIn("types: [opened, synchronize, reopened, closed]", text)
+        self.assertIn("github.event.action != 'closed'", text)
+        self.assertIn("cleanup_pr_build:", text)
+        self.assertIn("github.event.action == 'closed'", text)
+        self.assertIn("cad-ci publish build-cleanup", text)
+        self.assertIn('--pull-request "$PR_NUMBER"', text)
         self.assertIn("cad_ci_main:", text)
         self.assertIn("upload_build: true", text)
         self.assertIn("build_artifact_name: forge-cad-ci-build", text)
