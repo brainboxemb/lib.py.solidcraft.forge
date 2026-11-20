@@ -109,6 +109,16 @@ def run_inside_runtime(
 
     inside_started = time.perf_counter()
 
+    entry_ms = os.environ.get("FORGE_CONTAINER_ENTRY_MS", "").strip()
+    if entry_ms:
+        python_bootstrap_s = (
+            time.time_ns() // 1_000_000 - int(entry_ms)
+        ) / 1000.0
+        print(
+            f"FORGE TIMING python_bootstrap_s={python_bootstrap_s:.3f}",
+            flush=True,
+        )
+
     import_started = time.perf_counter()
     from cad_verification import run_solidcraft_verification
     print(
@@ -189,6 +199,14 @@ def run_host() -> int:
 
     container_wheel = f"/forge-package/{wheel.name}"
     container_started = time.perf_counter()
+    container_launch_ms = time.time_ns() // 1_000_000
+    entry_script = """entry_ms=$(date +%s%3N)
+elapsed_ms=$((entry_ms - FORGE_CONTAINER_LAUNCH_MS))
+printf 'FORGE TIMING container_start_s=%d.%03d\n' \
+  "$((elapsed_ms / 1000))" "$((elapsed_ms % 1000))"
+export FORGE_CONTAINER_ENTRY_MS="$entry_ms"
+exec python "$@"
+"""
     subprocess.run(
         [
             "docker",
@@ -199,6 +217,8 @@ def run_host() -> int:
             f"PYTHONPATH={container_wheel}",
             "-e",
             "SOLIDCRAFT_GPU=cpu",
+            "-e",
+            f"FORGE_CONTAINER_LAUNCH_MS={container_launch_ms}",
             "-v",
             f"{ROOT}:/workspace:ro",
             "-v",
@@ -208,7 +228,10 @@ def run_host() -> int:
             "-w",
             "/workspace",
             image,
-            "python",
+            "sh",
+            "-c",
+            entry_script,
+            "forge-runtime",
             "/workspace/scripts/model_verify_declarative.py",
             "--inside-runtime",
             "--slug",
