@@ -7,10 +7,7 @@ Permanent requirements/design/API/release contracts belong in the primary
 documents in `docs/`. Issues keep detail and history; this plan states what is
 current and what follows.
 
-## Current goal
-
-Complete #473: reorganize Forge documentation so the primary documents are
-obvious and current.
+## Current documentation structure
 
 Primary documents:
 
@@ -23,38 +20,41 @@ Primary documents:
 
 Secondary documentation:
 
-- `docs/manual/` — current task-oriented usage/developer guidance;
-- `docs/background/` — historical design records, audits, change records,
-  research, migration notes and vendor/reference background;
-- `docs/agent/` — generated/machine-oriented information.
+- `docs/manual/` — current task-oriented guidance;
+- `docs/background/` — historical/narrow design, changes, research and migration records;
+- `docs/agent/` — generated machine-oriented API material.
 
-The former numbered API-design document was not current enough to preserve
-unchanged. Its current cross-object contract is being reconciled with the
-exported API and implemented change records in `docs/api.md`.
+## Current goal
+
+Complete #472: make model verification depend only on the Forge package build
+rather than the complete Forge tool-verification item.
+
+The existing CAD-CI item dependency/output model appears sufficient. Do not add
+a new generic CAD-CI feature unless implementation proves that current
+primitives cannot express the required package artifact dependency.
 
 ## Execution order
 
-1. Update the API contract to current Forge behavior, including signed Sketch
-   extrusion, native Slot constructors, circular feature patterns and the
-   explicit native Hole family.
-2. Create `docs/development.md` as the primary guide for working on Forge
-   itself: local setup, repository layout, tests, CI, documentation and
-   release-preparation workflow.
-3. Rename the release-process document to `docs/release.md` and make its
-   current-state wording match the active CI/publication architecture.
-4. Move current task-oriented user/developer detail pages to `docs/manual/`.
-5. Move historical/narrow design, change, migration and vendor material to
-   `docs/background/` while preserving history.
-6. Update README, AGENTS and all internal Markdown references.
-7. Verify no active references point at the old numbered/root paths.
-8. Make no Forge API/compiler/verification/CI behavior changes in this issue.
+1. Re-audit the current Forge package/test/release-verification item boundary.
+2. Split package build, Forge unit tests and Forge release verification into
+   semantically separate CAD-CI items using existing dependency outputs.
+3. Make migrated model verification depend only on the exact Forge package
+   artifact it consumes.
+4. Preserve Forge unit tests and release verification as independent active
+   checks.
+5. Measure the resulting five-model run with the new CAD-CI timing evidence.
+6. Only then decide whether the remaining repeated Docker/SolidCraft model
+   runtime needs a separate performance change.
+7. Continue the five-model declarative/visual verification chain under
+   #432/#430/#378.
+8. Continue durable build/Pages publication under #366 after the verification
+   stages are stable.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #473 Reorganize Forge documentation around primary docs, manual and background | now | Current documentation-maintenance task. |
-| #472 Make model verification depend only on the Forge package build | next | Resume after documentation maintenance; no new CAD-CI feature appears necessary. |
+| #472 Make model verification depend only on the Forge package build | now | Next architecture/performance correction; existing CAD-CI primitives should be tried first. |
 | #432 Use released declarative CAD verification in model verification | next | Continue the five-model verification migration after #472. |
 | #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after the dependency/runtime structure is corrected. |
 | #391 Extract reusable CAD verification library from Forge | blocked | Close only after remaining shared checker ownership has left Forge through #432. |
@@ -79,4 +79,4 @@ exported API and implemented change records in `docs/api.md`.
 
 Immediate chain:
 
-`#473 -> #472 -> five-model #432/#430/#378 -> #366`.
+`#472 -> five-model #432/#430/#378 -> #366`.
