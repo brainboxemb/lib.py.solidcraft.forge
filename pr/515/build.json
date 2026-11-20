@@ -1,0 +1,55 @@
+{
+  "items": {
+    "ci/forge-release": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "ff111949a1d54d98aa2270eb7cd9ee1ba50487699ee22ef94c2d235cf97ec367",
+      "final_step": "tool_verify",
+      "final_target_spec_digest": "b9c4ab2f2b7a21ffb489078edb84e0c9ca9bdbeee4309a8e4a777a7204822e68",
+      "item_id": "forge-release",
+      "outputs": [
+        "tool_verify"
+      ],
+      "source_commit": "1ebfaa48547ae41509b1e440e021df774b3c08ff"
+    },
+    "ci/forge-tests": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
+      "final_step": "tool_test",
+      "final_target_spec_digest": "890dd08bb173b9fdfb38114fba9fac5ce87f4001813009956748f5125bcb62ea",
+      "item_id": "forge-tests",
+      "outputs": [],
+      "source_commit": "1ebfaa48547ae41509b1e440e021df774b3c08ff"
+    },
+    "examples/simple-box": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "bfc43e0db89cc6627cd74324f7f2a3232cad0c660cea7bbfeac8eb6ff69357b1",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "ea00a3873ac214193514ef255a1ca286176dd756878bee4fd1ce7bf8662f6359",
+      "item_id": "simple-box",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "1ebfaa48547ae41509b1e440e021df774b3c08ff"
+    },
+    "scpf": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "d2428d7f4e36c2d28c81c6f88f96f86a8ffe8cc08cb795e5c9d015a9f0054795",
+      "final_step": "tool_build",
+      "final_target_spec_digest": "9a08a8e5e2041e0dc4a3afe918a41ffc813cca694f619ad5e55c1960916c09bb",
+      "item_id": "forge-package",
+      "outputs": [
+        "dist"
+      ],
+      "source_commit": "1ebfaa48547ae41509b1e440e021df774b3c08ff"
+    }
+  },
+  "pull_request": 515,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "1ebfaa48547ae41509b1e440e021df774b3c08ff"
+}
