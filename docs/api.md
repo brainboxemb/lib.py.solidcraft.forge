@@ -1,9 +1,14 @@
-# Python CAD API design
+# Forge API
 
-> **Normative public API contract.** This document is the single source of
-> truth for user-facing Forge/SCPF semantics. Compiler code, qualification
-> fixtures, README examples and the website must follow this contract; they do
-> not redefine it.
+> **Primary cross-object API contract.** This document defines stable
+> user-facing Forge/SCPF semantics that span more than one public Python object.
+> Exact exported names, signatures, defaults and enum members come from the
+> current Python implementation and its public docstrings. The generated API
+> reference and agent index are derived from those implementation sources.
+>
+> When implementation and this cross-object contract disagree, treat that as
+> documentation/API drift to be resolved explicitly; do not silently preserve
+> obsolete wording from this document.
 
 SCPF exposes CAD objects and relationships, not JSON commands, transports, or
 an independent geometry engine. SolidCraft creates and evaluates the actual
@@ -126,7 +131,7 @@ from the actual Box bottom face regardless of the constructor anchor.
 This is intentionally a breaking cleanup while Forge remains unstable. Models
 that require an old base/bottom datum must state it explicitly with `anchor=`.
 
-See [change 0022](changes/0022-native-box-origin.md).
+See [change 0022](background/changes/0022-native-box-origin.md).
 
 ### `at()`
 
@@ -199,10 +204,10 @@ displacement. Explicit `anchor=CENTER` is not supported for Polygon2D or
 Text2D yet. Polygon2D keeps its existing offset/lowering limits.
 
 Semantic profile centering was introduced by
-[change 0018](changes/0018-sketch-profile-centering.md). The profile-specific
+[change 0018](background/changes/0018-sketch-profile-centering.md). The profile-specific
 omitted-anchor rule that preserves coordinate-defined Text2D placement is
 recorded in
-[change 0020](changes/0020-coordinate-profile-default-anchor.md).
+[change 0020](background/changes/0020-coordinate-profile-default-anchor.md).
 
 Selective Sketch extrusion uses SolidCraft's own profile selection. Pass fixed
 sketch-local points with `Sketch.extrude(..., profiles=[(x, y), ...])`.
@@ -218,6 +223,81 @@ Sketch coordinates rather than parameter expressions.
 
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
+
+#### Native Sketch pattern and mirror operations
+
+A profile already authored in the active Sketch can seed an associative native
+rectangular pattern:
+
+```python
+seed = sketch.add(Circle2D(d=20), offset=(-304, 0))
+row = sketch.rectangular_pattern(
+    seed,
+    count=9,
+    spacing=76,
+    direction=Axis.X,
+)
+sketch.mirror(row, axis=Axis.Y)
+```
+
+The source may also be a supported Slot profile or a result returned by an
+earlier supported Sketch pattern/mirror operation. Pattern and mirror return
+Sketch operation handles; they do not expose SolidCraft curve ids.
+
+Current limits include attached Sketch qualification, rectangular patterns,
+fixed 2D directions or `Axis.X`/`Axis.Y`, and mirror over the Sketch X/Y
+origin axes. A SolidCraft mirror keeps the entity set selected when the mirror
+was authored; increasing an upstream pattern count later does not
+automatically add the new entities to that existing mirror.
+
+See [change 0033](background/changes/0033-associative-sketch-pattern-mirror.md).
+
+#### Signed and symmetric Sketch extrusion
+
+The current public signature is:
+
+```python
+Sketch.extrude(
+    distance,
+    *,
+    sym=False,
+    profiles=None,
+    exact_regions=False,
+)
+```
+
+A positive finite `distance` follows the sketch-plane normal. A negative
+finite distance reverses that normal. `sym=True` requires a positive finite
+distance and splits the extrusion equally across both sides of the sketch
+plane. `Depth.THROUGH_ALL` is available only for an attached Sketch and cannot
+be combined with `sym=True`.
+
+Forge does not expose a second `direction=` argument for current Sketch
+extrusion. Direction is expressed by the sign of `distance` or by
+`sym=True`.
+
+See [change 0024](background/changes/0024-signed-sketch-extrude.md).
+
+#### Native Slot profiles
+
+Explicit Sketches support the five native SolidCraft Slot constructors:
+
+```python
+SlotCenterToCenter2D(p0, p1, width)
+SlotOverall2D(p0, p1, width)
+SlotCenterPoint2D(center, end, width)
+SlotArcThreePoint2D(start, through, end, width)
+SlotArcCenter2D(center, start, width, *, end=None, sweep=None)
+```
+
+Slot authoring points are fixed sketch-local numeric coordinates. Native direct
+Slot width is currently a fixed positive number; parametric Slot dimensions
+belong to SolidCraft's separate dimensioned-sketch capability.
+
+Slots can participate in the supported native sketch
+`rectangular_pattern()` and `mirror()` operations.
+
+See [change 0027](background/changes/0027-native-sketch-slot-family.md).
 
 ### Occurrence `Placement`
 
@@ -270,7 +350,7 @@ Attachments remain explicit relationships and Placement expressions reuse
 existing parameters instead of publishing helper parameters.
 
 The replay-variable correction is recorded in
-[change 0013](changes/0013-correct-0010-placement-cases.md).
+[change 0013](background/changes/0013-correct-0010-placement-cases.md).
 
 SolidCraft 0.42 has one grounding limitation: an expression-based
 `occurrence.move` on a grounded occurrence does not follow later parameter
@@ -278,7 +358,7 @@ changes. Therefore Forge leaves a physical root occurrence ungrounded when its
 Placement position contains Parameters or Expressions. A fixed root occurrence
 still uses the normal grounded behaviour. This is a backend compatibility rule,
 not a change to the public meaning of Placement. See
-[change 0014](changes/0014-parametric-root-grounding.md).
+[change 0014](background/changes/0014-parametric-root-grounding.md).
 
 ### `attach()`
 
@@ -318,9 +398,9 @@ not lower anchor frames.
 
 Chained normal attachments remain unsupported until their SolidCraft solve and
 replay order has been qualified. See
-[change 0010](changes/0010-replay-safe-attachments.md),
-[change 0013](changes/0013-correct-0010-placement-cases.md) and
-[change 0017](changes/0017-transform-safe-attachments.md).
+[change 0010](background/changes/0010-replay-safe-attachments.md),
+[change 0013](background/changes/0013-correct-0010-placement-cases.md) and
+[change 0017](background/changes/0017-transform-safe-attachments.md).
 
 ### `group()`
 
@@ -340,7 +420,7 @@ SolidCraft 0.42 `occurrence.copy(parent=...)` when a later copy belongs under a
 different group or back at the design root. The component definition remains
 shared.
 
-See [change 0011](changes/0011-grouping-is-hierarchy-only.md).
+See [change 0011](background/changes/0011-grouping-is-hierarchy-only.md).
 
 ## Direction, face and anchor vocabulary
 
@@ -406,7 +486,7 @@ bracket = Bracket(inside_corner_radius=self.corner_radius)
 
 Forge must preserve that existing dependency instead of creating unrelated or
 duplicated child parameters. This contract is recorded in
-[change 0003](changes/0003-explicit-component-parameter-publication.md).
+[change 0003](background/changes/0003-explicit-component-parameter-publication.md).
 
 Reusable component definition identity also includes fixed build-only inputs.
 Forge rejects arbitrary mutable/opaque Python objects, but its own immutable
@@ -415,7 +495,7 @@ primitive data. This includes public expressions such as `BOTTOM + LEFT`,
 `Edges.from_profile(...)`, axis tokens such as `X`, and fixed bound offsets
 such as `X.MIN + 10`. Two different selector inputs must not share one native
 component definition. See
-[change 0021](changes/0021-selector-definition-identity.md).
+[change 0021](background/changes/0021-selector-definition-identity.md).
 
 Parameter namespacing applies only to native CAD expressions. Ordinary strings
 are opaque user data. A text value, material name, sketch name, feature name or
@@ -425,7 +505,7 @@ name.
 For example, publishing a child parameter named `width` may rename the native
 parameter reference to `d1_Label_width`, but `Text2D("width")` must still
 produce the literal text `"width"`. This compiler rule is recorded in
-[change 0015](changes/0015-typed-native-expressions.md).
+[change 0015](background/changes/0015-typed-native-expressions.md).
 
 Parameter publication by itself is not proof that a saved design remains
 associative. Forge tracks dependencies carried by emitted native expressions.
@@ -436,7 +516,7 @@ follow later SolidCraft edits. Internal Forge numeric checks and authoring-time
 pick coordinates do not count as user `pv()` calls.
 
 Root model classes and root `@assembly` classes use the same diagnostic rule.
-See [change 0016](changes/0016-parameter-dependency-diagnostics.md).
+See [change 0016](background/changes/0016-parameter-dependency-diagnostics.md).
 
 ## Features and operations
 
@@ -452,6 +532,60 @@ See [change 0016](changes/0016-parameter-dependency-diagnostics.md).
 - `Anchor.INNER_BOTTOM` refers to the inner floor of a shelled body.
 - `X.MIN/CENTER/MAX` and `Y.MIN/CENTER/MAX` express placement relative to
   parent bounds rather than copied world coordinates.
+
+### Native Hole family
+
+Forge exposes explicit native hole intent rather than requiring a caller to
+construct every recess or thread from Boolean primitives:
+
+```python
+Hole(*, d, depth=Depth.THROUGH_ALL, direction=None)
+
+CounterboreHole(
+    *,
+    d,
+    counterbore_d,
+    counterbore_depth,
+    depth=Depth.THROUGH_ALL,
+    direction=None,
+)
+
+CountersinkHole(
+    *,
+    d,
+    countersink_d,
+    countersink_angle=90,
+    depth=Depth.THROUGH_ALL,
+    direction=None,
+)
+
+ThreadedHole(
+    *,
+    thread,
+    depth=Depth.THROUGH_ALL,
+    d=None,
+    direction=None,
+    hand="right",
+    thread_depth=None,
+    modeled=False,
+    ease_out=None,
+)
+```
+
+The simple `Hole` remains compatible with the existing face-relative repeated
+hole path. The explicit native Hole-family constructors are positioned with
+`at()` and keep their recess/thread intent in one native feature.
+
+See [change 0037](background/changes/0037-explicit-native-hole-family.md).
+
+### Native history patterns
+
+`rectangular_pattern()` and `circular_pattern()` operate on already-applied
+native history features rather than expanding independent Python copies.
+Circular patterns support the currently documented principal/fixed XYZ axis and
+optional fixed axis origin forms.
+
+See [change 0036](background/changes/0036-native-circular-feature-patterns.md).
 
 ## Reference implementations
 

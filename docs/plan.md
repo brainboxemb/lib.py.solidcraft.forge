@@ -3,68 +3,62 @@
 This file is the current source of truth for unfinished work in
 `lib.py.solidcraft.forge`.
 
-Permanent requirements/design belong in the normal documentation. Issues keep
-detail and history; this plan states what is current and what follows.
+Permanent requirements/design/API/release contracts belong in the primary
+documents in `docs/`. Issues keep detail and history; this plan states what is
+current and what follows.
+
+## Current documentation structure
+
+Primary documents:
+
+- `docs/api.md`
+- `docs/design.md`
+- `docs/development.md`
+- `docs/plan.md`
+- `docs/requirements.md`
+- `docs/release.md`
+
+Secondary documentation:
+
+- `docs/manual/` — current task-oriented guidance;
+- `docs/background/` — historical/narrow design, changes, research and migration records;
+- `docs/agent/` — generated machine-oriented API material.
 
 ## Current goal
 
-Complete #470: adopt the exact released `tool.cad.ci 0.11.0` stack and use
-released item-level `process` participation to run a controlled five-model
-verification proof.
+Complete #472: make model verification depend only on the Forge package build
+rather than the complete Forge tool-verification item.
 
-The prerequisite chain is complete and externally accepted:
-
-- `lib.py.cad.ci` v0.6.0 at
-  `dac8c5b5e1147a401730fda31f9bf9de2278c4ee`;
-- `tool.cad.ci` v0.11.0 at
-  `96d4c9d6076b7452933c048ace65cf2b0a159d64`;
-- `tool.cad.ci.test` main is green against that exact released stack.
-
-Forge must consume this behavior, not reimplement it.
-
-## Five-model proof set
-
-Exactly these model verification items remain processed:
-
-- simple-box;
-- anchor-topology-mutation;
-- attach-angle;
-- four-corner-l;
-- xz-anchor.
-
-Every other model verification item is explicitly non-processed for this phase.
-
-The Forge `scpf` item remains processed. Shared/reference work remains
-processed where required by the existing graph.
+The existing CAD-CI item dependency/output model appears sufficient. Do not add
+a new generic CAD-CI feature unless implementation proves that current
+primitives cannot express the required package artifact dependency.
 
 ## Execution order
 
-1. Pin Forge's reusable workflow to exact `tool.cad.ci` commit
-   `96d4c9d6076b7452933c048ace65cf2b0a159d64`.
-2. Add only declarative item participation state:
-   - the five proof models stay `process: true`;
-   - every other model verification item becomes `process: false`;
-   - do not add Forge-local selection code.
-3. Prove the resulting Forge CAD-CI graph is green with the `scpf` tool/library
-   checks still active.
-4. After #470 is green, continue the five-model vertical chain:
-   - #432 declarative verification ownership;
-   - #430 visual verification;
-   - #378 remaining verification stages;
-   - #366 durable output/publication.
-5. Only after the complete five-model chain is stable, enable remaining model
-   verification items one at a time.
-6. Run the final ownership/publication audit after the full catalog is enabled.
+1. Re-audit the current Forge package/test/release-verification item boundary.
+2. Split package build, Forge unit tests and Forge release verification into
+   semantically separate CAD-CI items using existing dependency outputs.
+3. Make migrated model verification depend only on the exact Forge package
+   artifact it consumes.
+4. Preserve Forge unit tests and release verification as independent active
+   checks.
+5. Measure the resulting five-model run with the new CAD-CI timing evidence.
+6. Only then decide whether the remaining repeated Docker/SolidCraft model
+   runtime needs a separate performance change.
+7. Continue the five-model declarative/visual verification chain under
+   #432/#430/#378.
+8. Continue durable build/Pages publication under #366 after the verification
+   stages are stable.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #470 Adopt tool.cad.ci 0.11.0 and run five-model process proof | now | Current implementation step; released prerequisite is satisfied. |
-| #432 Use released declarative CAD verification in model verification | next | Umbrella verification-ownership work continues on the five processed models after #470. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Continue after the five-model process graph is established. |
+| #472 Make model verification depend only on the Forge package build | now | Next architecture/performance correction; existing CAD-CI primitives should be tried first. |
+| #432 Use released declarative CAD verification in model verification | next | Continue the five-model verification migration after #472. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after the dependency/runtime structure is corrected. |
 | #391 Extract reusable CAD verification library from Forge | blocked | Close only after remaining shared checker ownership has left Forge through #432. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | next | Umbrella migration; continue through the five-model vertical chain after #470. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | next | Umbrella migration after #472/#432. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Publication follows the remaining five-model verification stages. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
 | #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Independent CLI quality work. |
@@ -85,4 +79,4 @@ processed where required by the existing graph.
 
 Immediate chain:
 
-`#470 -> five-model #432/#430/#378 -> #366 -> enable remaining models one by one`.
+`#472 -> five-model #432/#430/#378 -> #366`.

@@ -1845,7 +1845,7 @@ These examples are API smoke tests, not substitutes for a full mechanical CAD pr
         encoding="utf-8",
     )
 
-    contract_source = (ROOT / "docs" / "05-cad-api-design.md").read_text(encoding="utf-8")
+    contract_source = (ROOT / "docs" / "api.md").read_text(encoding="utf-8")
     (out / "api-design-contract.html").write_text(
         page(
             "API design contract",

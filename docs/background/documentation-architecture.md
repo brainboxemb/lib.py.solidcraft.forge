@@ -1,3 +1,5 @@
+> Historical/background record. The current documentation structure is defined in [../development.md](../development.md).
+
 # Documentation architecture
 
 Forge documentation has one source for each kind of information. Generated
