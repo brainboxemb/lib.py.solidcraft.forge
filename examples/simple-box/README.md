@@ -30,6 +30,14 @@ One rectangular solid with the requested 40 x 30 x 10 mm dimensions and an error
 
 Required because this case explicitly claims an editable native Box. Change length from 40 to 50 mm in the saved .sc design; the Box must rebuild to 50 x 30 x 10 mm without rerunning Python.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+This case is one rectangular solid. Its body size fully describes the visible geometry. The saved SolidCraft model is checked separately to confirm that the dimensions remain editable parameters.
+
 ## Reference notes
 
 - **OpenSCAD** — cube([40,30,10]) is the constructive-geometry baseline; Forge differs by preserving editable SolidCraft history.
