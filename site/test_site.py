@@ -32,12 +32,18 @@ class SiteSourceTests(unittest.TestCase):
 
         self.assertNotIn("<!doctype html", build.lower())
         self.assertNotIn('"""<main', build)
+        self.assertNotIn('<section class="hero small">', build)
+        self.assertNotIn('<article class="reference"', build)
         self.assertNotIn("GUIDES = [", guides)
         self.assertNotIn("<h2", guides)
 
         self.assertTrue((SITE / "templates" / "page.html").is_file())
         self.assertTrue((SITE / "templates" / "example.html").is_file())
         self.assertTrue((SITE / "templates" / "home.html").is_file())
+        self.assertTrue((SITE / "templates" / "api-design-contract.html").is_file())
+        self.assertTrue((SITE / "templates" / "reference-overview.html").is_file())
+        self.assertTrue((SITE / "templates" / "cheatsheet-item.html").is_file())
+        self.assertTrue((SITE / "templates" / "cheatsheet-section.html").is_file())
         self.assertTrue((SITE / "static" / "copy.js").is_file())
         self.assertTrue((SITE / "static" / "search.js").is_file())
         self.assertTrue((SITE / "content" / "guides.json").is_file())
