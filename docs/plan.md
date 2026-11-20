@@ -28,19 +28,22 @@ The file contains model-specific verification data only. Released
    - update the declarative launcher and boundary tests;
    - update AGENTS/requirements/design;
    - do not change verification behavior.
-2. Rebase #460 on the new main.
-3. Migrate exactly the ten #460 models using `verification/verify.py`.
-4. Continue #432 through reviewable batches.
-5. Add/release missing generic verification semantics in
+2. Complete #438: remove the released verification-library code itself from
+   the runtime while keeping stable/heavy dependencies preinstalled.
+3. Rebase #460 on that corrected main.
+4. Migrate exactly the ten #460 models using `verification/verify.py`.
+5. Continue #432 through reviewable batches.
+6. Add/release missing generic verification semantics in
    `lib.py.cad.verfication` before models that need them.
-6. Resume #430, then #378 and #366.
+7. Resume #430, then #378 and #366.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
 | #461 Use verification/verify.py for model verification definitions | now | Naming prerequisite before expanding the declarative model migration. |
-| #460 Migrate first ten model verifiers to declarative SolidCraft verification | blocked | Resume immediately after #461 is merged. |
+| #438 Remove verification-library code from the SolidCraft runtime | next | Required runtime/package boundary: library code separate, stable dependencies may stay preinstalled. |
+| #460 Migrate first ten model verifiers to declarative SolidCraft verification | blocked | Resume after both #461 and #438 are merged. |
 | #432 Use released declarative CAD verification in model verification | blocked | Umbrella migration; proceeds through #460 and later batches. |
 | #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after model-verification ownership is stable. |
 | #391 Extract reusable CAD verification library from Forge | blocked | Close after remaining shared checker code leaves Forge through staged #432 migration. |
@@ -64,4 +67,4 @@ The file contains model-specific verification data only. Released
 | #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
 
 Immediate chain:
-`#461 -> #460 -> later #432 batches -> #430 -> #378 -> #366`.
+`#461 -> #438 -> #460 -> later #432 batches -> #430 -> #378 -> #366`.
