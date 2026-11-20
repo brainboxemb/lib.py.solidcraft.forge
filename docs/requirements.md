@@ -203,6 +203,9 @@ The Forge-owned model launcher may emit diagnostic duration lines for:
 
 - Forge command compilation;
 - immutable image pull;
+- Docker container creation/start to the container entry shell;
+- Python interpreter/module bootstrap from container entry to the Forge runtime
+  function;
 - total container/process execution;
 - in-runtime verification-library import;
 - native model production;
