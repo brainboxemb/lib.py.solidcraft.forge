@@ -33,7 +33,7 @@
       "final_target_spec_digest": "cf53532f00e4214a4f855eab4674753f5376baed501bf3beb598d39294d4dbf1",
       "item_id": "forge-tests",
       "outputs": [],
-      "source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46"
+      "source_commit": "f8bf0b01228b23407d9ab67462cc2afd44fe83be"
     },
     "ci/model-verification-batch": {
       "engine": "scons",
@@ -65,10 +65,10 @@
       "engine_schema": 1,
       "final_bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
       "final_step": "test_site_source",
-      "final_target_spec_digest": "92998ae4eab7fa6045e79296f44acb623f0cbb802b62ad435e1eeb9d2eb93fda",
+      "final_target_spec_digest": "3255e8a891eb70b576102f0ef838d73e1fe5c889a3e651228a4ec1524fcf9a25",
       "item_id": "site-source",
       "outputs": [],
-      "source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46"
+      "source_commit": "f8bf0b01228b23407d9ab67462cc2afd44fe83be"
     },
     "ci/verification-diagrams": {
       "engine": "scons",
@@ -2049,5 +2049,5 @@
   },
   "schema": 1,
   "scope": "main",
-  "source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46"
+  "source_commit": "f8bf0b01228b23407d9ab67462cc2afd44fe83be"
 }
