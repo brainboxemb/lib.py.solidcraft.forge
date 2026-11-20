@@ -490,41 +490,41 @@ generation, not generic model comparison.
 
 ## Semantic verification summary
 
-Forge composes final verification meaning only from evidence that has already
-been produced by normal CAD-CI/model/reference work.
+F11 restores the semantic qualification result already used by the public
+Qualification pages. It must not introduce a new public report vocabulary or a
+new sixth visible qualification level.
 
-The summary layer must not:
+For each case the public semantic checks remain:
 
-- compile Forge models;
-- start SolidCraft;
-- execute PythonSCAD, pyBOSL2, CadQuery or build123d;
-- render or compare images;
-- mutate saved designs;
-- implement a second CAD-CI selection or dependency engine.
+- `integration`;
+- `native_model`;
+- `geometry`;
+- `saved_design`;
+- `visual`.
 
-Released `lib.py.cad.verification` owns generic semantic status validation,
-precedence, evidence preservation and aggregate composition. Forge owns the
-semantic names and the mapping from Forge evidence to those names.
+This is the existing schema-5 `qualification-result.json` meaning. The current
+Pages presentation and status labels remain the compatibility target.
 
-For each staged model the required semantic checks are:
+Independent PythonSCAD, pyBOSL2, CadQuery and build123d results remain separate
+reference evidence. Their presence and success are qualification prerequisites,
+but F11 must not add a new visible `reference` row to the public case status
+summary merely because storage/CI is being migrated.
 
-- `native_model` — the CAD-CI `model_verify` step completed successfully and
-  produced its declared model output;
-- `geometry` — the baseline `cad-verification` check is present and passing;
-- `saved_design` — every `saved_design_*` verification check passes, or the
-  semantic check is `not-required` when no such check exists;
-- `visual` — the model-local visual semantic result is present and passing;
-- `reference` — all four independent reference implementations for the model
-  are present and passing.
+Forge composes the result only from already-produced CAD-CI, model-verification,
+visual and reference evidence. The summary layer must not compile Forge models,
+start SolidCraft, execute reference CAD, render/compare images, mutate designs,
+or implement a second CAD-CI selector.
 
-The summary must preserve evidence references for every semantic check.
+Released `lib.py.cad.verification` owns generic semantic status precedence and
+composition. Forge owns only the mapping from Forge evidence to the existing
+qualification fields.
 
-Missing required evidence maps to `missing`; explicit failed evidence maps to
-`fail`; explicit review/blocked/error states remain distinguishable when
-present. The summary must not convert an incomplete result into pass merely
-because no producer was executed.
+`saved_design` is `not-required` when no saved-design check exists.
 
-The staged aggregate contains exactly these five model IDs once each:
+Missing/failed/error/review/blocked evidence must remain distinguishable.
+Evidence references must be preserved.
+
+The staged proof covers exactly:
 
 - `simple-box`;
 - `anchor-topology-mutation`;
@@ -532,11 +532,7 @@ The staged aggregate contains exactly these five model IDs once each:
 - `four-corner-l`;
 - `xz-anchor`.
 
-Summary composition must be executable against a resolved tree of existing
-evidence. It must not require declaring all model/reference producers as direct
-CAD-CI prerequisites merely to read their already accepted results, because on
-a fresh hosted runner such a fan-in would cold-rerun every prerequisite.
-
-Wiring the completed summary into durable build/Pages publication is subsequent
-#366/#497 work. F11 proves the semantic consumer and its five-model result
-without introducing publication logic into verification code.
+F11 code operates on a resolved evidence tree and is independent from producer
+execution. Wiring a durable resolved tree into the collector belongs to
+#366/#497, so F11 must not create a cold CAD-CI fan-in that rebuilds every
+producer.
