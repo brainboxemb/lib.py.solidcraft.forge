@@ -25,7 +25,7 @@ Released/accepted CAD-CI stack for the next measurement:
 - `ghcr.io/brainboxemb/cad-solidcraft:v0.2.0`;
 - `ghcr.io/brainboxemb/cad-reference:v0.2.0`.
 
-Only `simple-box` is active as a model-verification item.
+`simple-box` is the first completed visual proof. The next staged step restores the remaining four proof models only; the rest of the catalog remains `process: false`.
 
 Repeated clean one-file measurements show that the remaining PR latency is
 dominated by external SolidCraft runtime acquisition rather than CAD-CI or model
@@ -47,41 +47,46 @@ performance follow-up, but it no longer blocks verification-chain migration.
 
 ## Current goal
 
-Complete #430 for `simple-box` only as the first visual proof.
+Continue #378 by applying the proven simple-box visual path to exactly four
+remaining staged proof models:
 
-Generic visual mechanics are already released in `lib.py.cad.verification`
-0.10.0 and that exact release is present in `cad-solidcraft:v0.2.0`.
+- `anchor-topology-mutation`;
+- `attach-angle`;
+- `four-corner-l`;
+- `xz-anchor`.
+
+Together with `simple-box`, this restores the five-model proof set. No other
+catalog model is enabled in this change.
 
 ## Required proof
 
-- simple-box owns required views, baseline provenance and expected box data in
-  `verification/visual.json`;
-- approved front/right/iso baseline PNGs are model-local;
-- Forge derives deterministic SolidCraft cameras from the existing baseline
-  measurement artifact;
-- SolidCraft writes actual PNG + camera JSON per required view;
-- released `verify_visual_view()` produces regression/diff/goal/overlay
-  evidence;
-- released semantic composition produces the overall required-view status;
-- front/top camera conversion preserves the historical projection convention;
-- no generic image comparison/projection implementation is copied into Forge;
-- the normal simple-box `model_verify` path is green;
-- no additional catalog model is enabled in #430.
+- each of the four models owns visual policy, approved baseline provenance and
+  expected-shape data under its own `verification/` directory;
+- historical approved regression pixels are preserved exactly as model-local
+  encoded baseline payloads and decoded by released
+  `lib.py.cad.verification`;
+- front/right/iso views produce actual, camera, diff, goal and overlay evidence;
+- `four-corner-l` preserves the historical L-arm visual decomposition rather
+  than reducing expected shape to outer body bounds;
+- the common Forge adapter contains no generic image comparison/projection
+  implementation;
+- exactly these four items change from `process: false` to `process: true`;
+- the five-model staged set is green before any broader catalog expansion.
 
 ## Execution order
 
-1. #430 — complete simple-box visual render/regression/expected-shape proof.
-2. #378 — continue explicit verification stages from the proven simple-box path.
+1. #378 — enable and prove visual evidence for the remaining four staged models.
+2. #378 — continue the next explicit verification stages/summary from the
+   five-model proof set.
 3. #366 / #497 — continue durable output and Pages after verification is stable.
-4. #484 — continue runtime/image-distribution optimization independently from
-   the functional chain, using the retained timing evidence.
+4. #484 — continue runtime/image-distribution optimization independently using
+   the retained timing evidence.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | now | Next functional proof; keep generic visual mechanics in released lib.py.cad.verification. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | next | Continue from the proven simple-box visual path. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | now | Simple-box visual proof is complete; apply the proven path to the remaining four staged proof models only. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later, non-blocking | CAD-CI/model work is small; remaining latency is dominated by highly variable GHCR image acquisition. Preserve measurements and optimize runtime distribution separately. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Main/Pages continuation waits for PR performance path. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Depends on stable durable generated output. |
@@ -107,4 +112,4 @@ Generic visual mechanics are already released in `lib.py.cad.verification`
 
 Immediate chain:
 
-`#430 simple-box visual proof -> #378 staged verification -> #366/#497 durable output; #484 continues independently`.
+`#378 five-model staged proof -> next #378 verification stage -> #366/#497 durable output; #484 continues independently`.
