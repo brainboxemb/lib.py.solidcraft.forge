@@ -23,58 +23,56 @@ The remaining reference-verification configuration is still too coarse:
 
 ## Current goal
 
-Complete #505 by migrating `simple-box` from the temporary aggregate to four
-independent nested reference items.
+Complete #508 by migrating `anchor-topology-mutation` from the temporary
+aggregate to four independent nested reference items.
 
-The attach-angle pilot is complete. The generic stack and nested-item behavior
-are already proven; this change only applies that accepted structure to the next
-active model.
+The attach-angle and simple-box migrations are complete. The generic stack and
+nested-item behavior are already proven; this change applies that accepted
+structure to the next active model.
 
 Target structure:
 
 ```text
-examples/simple-box/
+examples/anchor-topology-mutation/
   build123d/ci.yml
   cadquery/ci.yml
   pythonscad/ci.yml
   pybosl2/ci.yml
 ```
 
-The temporary aggregate must stop watching and executing `simple-box` in the
-same change, leaving only:
+The temporary aggregate must stop watching and executing
+`anchor-topology-mutation` in the same change, leaving only:
 
-- `anchor-topology-mutation`;
 - `four-corner-l`;
 - `xz-anchor`.
 
 ## Required proof
 
-- all four simple-box reference children are represented independently;
+- all four anchor-topology-mutation reference children are represented independently;
 - build123d uses `forge-reference-build123d`;
 - cadquery, pythonscad and pybosl2 use `forge-reference`;
 - reference expectations remain model-local;
-- the temporary aggregate covers only the remaining three active models;
+- the temporary aggregate covers only the remaining two active models;
 - inactive `process: false` references remain excluded;
 - selected execution and durable affected-item publication remain green.
 
 ## Execution order
 
-1. #505 — migrate simple-box reference children.
-2. Migrate `anchor-topology-mutation` references in a separate issue/PR.
-3. Migrate `four-corner-l` references in a separate issue/PR.
-4. Migrate `xz-anchor` references in a separate issue/PR and remove the
+1. #508 — migrate anchor-topology-mutation reference children.
+2. Migrate `four-corner-l` references in a separate issue/PR.
+3. Migrate `xz-anchor` references in a separate issue/PR and remove the
    temporary aggregate.
-5. #497 / #366 — resume stable Pages publication from the generic build/main
+4. #497 / #366 — resume stable Pages publication from the generic build/main
    baseline.
-6. Resume #430/#378 verification-feature work.
-7. Resume #432 broader declarative model migration after generated output is
+5. Resume #430/#378 verification-feature work.
+6. Resume #432 broader declarative model migration after generated output is
    stable.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #505 Migrate simple-box references to isolated CAD-CI items | now | Next active-model migration after the completed attach-angle pilot. |
+| #508 Migrate anchor-topology-mutation references to isolated CAD-CI items | now | Next active-model migration after completed attach-angle and simple-box reference splits. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Resume after the reference-item pilot proves the corrected CI structure. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Durable affected build updates are in place; Pages remains. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Performance work stays separate from selection/reference structure. |
@@ -102,4 +100,4 @@ same change, leaving only:
 
 Immediate chain:
 
-`#505 simple-box -> anchor-topology-mutation -> four-corner-l -> xz-anchor -> #497/#366 Pages`.
+`#508 anchor-topology-mutation -> four-corner-l -> xz-anchor -> #497/#366 Pages`.
