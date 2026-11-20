@@ -47,20 +47,26 @@ performance follow-up, but it no longer blocks verification-chain migration.
 
 ## Current goal
 
-Resume the functional verification chain with #430 / #378 on simple-box while
-preserving the current measured performance evidence.
+Complete #430 for `simple-box` only as the first visual proof.
 
-No verification semantics may be weakened for performance.
+Generic visual mechanics are already released in `lib.py.cad.verification`
+0.10.0 and that exact release is present in `cad-solidcraft:v0.2.0`.
 
 ## Required proof
 
-- Forge PR workflow pins exact accepted 0.14.1;
-- main/push workflow remains unchanged;
-- the PR workflow contract test pins the same PR tool commit;
-- a disposable model.yml-only PR selects exactly forge-package + simple-box;
-- record event start, job duration, bootstrap timing, image pull, container
-  start and publication timing;
-- if still above 30 s, optimize only the newly measured remaining bottleneck.
+- simple-box owns required views, baseline provenance and expected box data in
+  `verification/visual.json`;
+- approved front/right/iso baseline PNGs are model-local;
+- Forge derives deterministic SolidCraft cameras from the existing baseline
+  measurement artifact;
+- SolidCraft writes actual PNG + camera JSON per required view;
+- released `verify_visual_view()` produces regression/diff/goal/overlay
+  evidence;
+- released semantic composition produces the overall required-view status;
+- front/top camera conversion preserves the historical projection convention;
+- no generic image comparison/projection implementation is copied into Forge;
+- the normal simple-box `model_verify` path is green;
+- no additional catalog model is enabled in #430.
 
 ## Execution order
 

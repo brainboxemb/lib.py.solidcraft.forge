@@ -383,3 +383,73 @@ models whose references have not yet been split. That aggregate:
 
 Forge must not add a second Git-diff selector or cache/fingerprint mechanism.
 The exact released CAD-CI planner owns affected-item selection.
+
+
+## Visual model verification
+
+Forge visual verification separates model/engine policy from generic image
+mechanics.
+
+Forge owns:
+
+- which views a model requires;
+- conversion from measured SolidCraft body bounds to the deterministic
+  SolidCraft snapshot camera;
+- the `solidcraft-cli snapshot` invocation;
+- approved model-local baseline PNGs;
+- model-local expected geometry;
+- the fact that visual verification is required for that model.
+
+Released `lib.py.cad.verification` owns:
+
+- normalization and image comparison;
+- visual-regression metrics and diff creation;
+- orthographic projection and expected box/hole/slot drawing;
+- goal and overlay generation;
+- one-view `VisualViewEvidence`;
+- generic semantic result composition.
+
+A visual-enabled model stores policy below its own verification directory:
+
+```text
+examples/<model>/verification/
+  visual.json
+  baselines/
+    <view>.png
+```
+
+`visual.json` contains data only. It must not contain Python callbacks or a
+second implementation of generic image/projection logic.
+
+The historical render contract remains:
+
+- SolidCraft snapshot: 720 x 540;
+- normalized regression: 96 x 72;
+- changed-pixel threshold: 12;
+- maximum mean absolute difference: 6.0;
+- maximum changed-pixel fraction: 0.08.
+
+Approved baselines are versioned model data. A CI render must never replace or
+approve its own baseline.
+
+For each required view, normal model verification retains:
+
+- actual PNG;
+- SolidCraft camera JSON;
+- regression diff PNG when a baseline exists;
+- independent expected-shape goal PNG;
+- overlay PNG;
+- structured view evidence with pass/fail/missing state.
+
+The visual stage reuses the baseline measurements already produced by
+`run_solidcraft_verification()`. It must not reevaluate the native model only
+to derive camera bounds.
+
+The historical projection convention remains:
+
+- front view: X right, Z up;
+- top view: X right, Y up.
+
+SolidCraft and the verification library share yaw direction. The equivalent
+verification-library orthographic camera uses the negated SolidCraft pitch and
+a half-height distance equal to `0.4 * SolidCraft distance`.

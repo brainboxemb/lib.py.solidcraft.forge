@@ -1,0 +1,389 @@
+#!/usr/bin/env python3
+"""Forge-owned SolidCraft visual rendering for model-local visual policy.
+
+Generic normalization, regression, projection and expected-shape drawing stay
+in released lib.py.cad.verification. This module owns only model policy loading,
+SolidCraft camera conversion and the SolidCraft snapshot invocation.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Mapping
+import json
+import math
+from numbers import Real
+from pathlib import Path
+import subprocess
+from typing import Any
+
+
+VIEWS = {
+    "front": (0.0, 0.0),
+    "right": (-math.pi / 2.0, 0.0),
+    "top": (0.0, math.pi / 2.0),
+    "iso": (-math.pi / 4.0, math.radians(32.0)),
+}
+
+
+def _number(value: Any, name: str) -> float:
+    """Return one finite numeric policy/evidence value."""
+
+    if isinstance(value, bool) or not isinstance(value, Real):
+        raise ValueError(f"{name} must be a number")
+    result = float(value)
+    if not math.isfinite(result):
+        raise ValueError(f"{name} must be finite")
+    return result
+
+
+def _positive_int(value: Any, name: str) -> int:
+    """Return one positive integer."""
+
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
+
+
+def _xyz(value: Any, name: str) -> tuple[float, float, float]:
+    """Return one finite XYZ tuple."""
+
+    if isinstance(value, (str, bytes)):
+        raise ValueError(f"{name} must contain three numbers")
+    try:
+        values = tuple(value)
+    except TypeError as exc:
+        raise ValueError(f"{name} must contain three numbers") from exc
+    if len(values) != 3:
+        raise ValueError(f"{name} must contain three numbers")
+    return (
+        _number(values[0], f"{name}[0]"),
+        _number(values[1], f"{name}[1]"),
+        _number(values[2], f"{name}[2]"),
+    )
+
+
+def load_visual_policy(path: Path) -> dict[str, Any]:
+    """Load and validate one model-local visual policy object."""
+
+    path = Path(path)
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict) or value.get("schema") != 1:
+        raise ValueError(f"visual policy must use schema 1: {path}")
+
+    views = value.get("views")
+    if not isinstance(views, dict) or not views:
+        raise ValueError("visual policy requires at least one view")
+    for name, row in views.items():
+        if name not in VIEWS:
+            raise ValueError(f"unsupported visual view: {name}")
+        if not isinstance(row, dict):
+            raise ValueError(f"visual view must be an object: {name}")
+        baseline = row.get("baseline")
+        if not isinstance(baseline, str) or not baseline.strip():
+            raise ValueError(f"visual view requires a baseline: {name}")
+
+    render = value.get("render")
+    if not isinstance(render, dict):
+        raise ValueError("visual policy requires render settings")
+    _positive_int(render.get("width"), "render width")
+    _positive_int(render.get("height"), "render height")
+
+    regression = value.get("regression")
+    if not isinstance(regression, dict):
+        raise ValueError("visual policy requires regression settings")
+    _positive_int(regression.get("width"), "regression width")
+    _positive_int(regression.get("height"), "regression height")
+    threshold = _positive_int(
+        regression.get("changed_pixel_threshold"),
+        "changed_pixel_threshold",
+    )
+    if threshold > 255:
+        raise ValueError("changed_pixel_threshold may not exceed 255")
+    if _number(regression.get("max_mean_difference"), "max_mean_difference") < 0:
+        raise ValueError("max_mean_difference may not be negative")
+    fraction = _number(
+        regression.get("max_changed_fraction"),
+        "max_changed_fraction",
+    )
+    if not 0 <= fraction <= 1:
+        raise ValueError("max_changed_fraction must be between 0 and 1")
+
+    provenance = value.get("baseline_provenance")
+    if not isinstance(provenance, dict) or provenance.get("approval") != "approved":
+        raise ValueError("visual baselines must have explicit approved provenance")
+
+    boxes = value.get("expected_boxes")
+    if not isinstance(boxes, list) or not boxes:
+        raise ValueError("visual policy requires expected_boxes")
+    for index, box in enumerate(boxes):
+        if not isinstance(box, dict):
+            raise ValueError(f"expected_boxes[{index}] must be an object")
+        _xyz(box.get("minimum"), f"expected_boxes[{index}].minimum")
+        _xyz(box.get("maximum"), f"expected_boxes[{index}].maximum")
+
+    return value
+
+
+def model_bounds(
+    measurements: Mapping[str, Any],
+) -> tuple[tuple[float, float, float], tuple[float, float, float]]:
+    """Return the complete measured SolidCraft body envelope."""
+
+    bodies = measurements.get("bodies")
+    if not isinstance(bodies, list) or not bodies:
+        raise ValueError("SolidCraft measurements require at least one body")
+
+    minimum = [math.inf, math.inf, math.inf]
+    maximum = [-math.inf, -math.inf, -math.inf]
+    for index, body in enumerate(bodies):
+        if not isinstance(body, Mapping):
+            raise ValueError(f"bodies[{index}] must be an object")
+        bbox = body.get("bbox")
+        if not isinstance(bbox, Mapping):
+            raise ValueError(f"bodies[{index}].bbox must be an object")
+        low = _xyz(bbox.get("min"), f"bodies[{index}].bbox.min")
+        high = _xyz(bbox.get("max"), f"bodies[{index}].bbox.max")
+        for axis in range(3):
+            if high[axis] < low[axis]:
+                raise ValueError(f"bodies[{index}] has inverted bounds")
+            minimum[axis] = min(minimum[axis], low[axis])
+            maximum[axis] = max(maximum[axis], high[axis])
+
+    return tuple(minimum), tuple(maximum)
+
+
+def solidcraft_camera(
+    measurements: Mapping[str, Any],
+    view: str,
+) -> dict[str, Any]:
+    """Build the historical deterministic SolidCraft orthographic camera."""
+
+    if view not in VIEWS:
+        raise ValueError(f"unsupported visual view: {view}")
+    low, high = model_bounds(measurements)
+    target = [(a + b) / 2.0 for a, b in zip(low, high)]
+    spans = [b - a for a, b in zip(low, high)]
+    size = max(max(spans), 1.0)
+    yaw, pitch = VIEWS[view]
+    return {
+        "target": target,
+        "yaw": yaw,
+        "pitch": pitch,
+        "roll": 0.0,
+        "distance": size * 1.65,
+        "fov": 0.0,
+    }
+
+
+def verification_camera_values(camera: Mapping[str, Any]) -> dict[str, Any]:
+    """Translate a SolidCraft camera to released-library camera values."""
+
+    target = _xyz(camera.get("target"), "camera target")
+    yaw = _number(camera.get("yaw"), "camera yaw")
+    pitch = _number(camera.get("pitch"), "camera pitch")
+    distance = _number(camera.get("distance"), "camera distance")
+    if distance <= 0:
+        raise ValueError("camera distance must be positive")
+    return {
+        "target": target,
+        "yaw_deg": math.degrees(yaw),
+        "pitch_deg": -math.degrees(pitch),
+        "distance": 0.4 * distance,
+    }
+
+
+def _verification_camera(camera: Mapping[str, Any]):
+    """Construct the generic released-library camera lazily in the runtime."""
+
+    from cad_verification import OrthographicCamera
+
+    return OrthographicCamera(**verification_camera_values(camera))
+
+
+def _expected_boxes(policy: Mapping[str, Any]):
+    """Construct released generic expected boxes from model-local data."""
+
+    from cad_verification import ExpectedBox
+
+    return tuple(
+        ExpectedBox(
+            minimum=_xyz(row["minimum"], "expected box minimum"),
+            maximum=_xyz(row["maximum"], "expected box maximum"),
+            label=row.get("label"),
+        )
+        for row in policy["expected_boxes"]
+    )
+
+
+def _reference(path: Path, output_dir: Path) -> str:
+    """Return one output-root-relative artifact reference."""
+
+    return path.resolve().relative_to(output_dir.resolve()).as_posix()
+
+
+def _snapshot(
+    model_path: Path,
+    output_path: Path,
+    camera: Mapping[str, Any],
+    *,
+    width: int,
+    height: int,
+) -> None:
+    """Render one deterministic SolidCraft PNG."""
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        [
+            "solidcraft-cli",
+            "snapshot",
+            str(model_path),
+            "--out",
+            str(output_path),
+            "--width",
+            str(width),
+            "--height",
+            str(height),
+            "--camera",
+            json.dumps(camera, separators=(",", ":")),
+            "--no-grid",
+            "--no-axes",
+        ],
+        check=True,
+    )
+    if not output_path.is_file() or output_path.stat().st_size == 0:
+        raise RuntimeError(f"SolidCraft snapshot is missing or empty: {output_path}")
+
+
+def _view_status(evidence: Mapping[str, Any]) -> str:
+    """Return the required-view status from library visual evidence."""
+
+    states = {
+        evidence.get("baseline_status"),
+        evidence.get("expected_shape_status"),
+    }
+    for status in ("error", "fail", "missing"):
+        if status in states:
+            return status
+    return "pass"
+
+
+def run_visual_verification(
+    model_path: Path,
+    measurements_path: Path,
+    policy_path: Path,
+    output_dir: Path,
+) -> dict[str, Any]:
+    """Render and verify all model-required visual views."""
+
+    from cad_verification import (
+        SemanticCheck,
+        VerificationFailure,
+        compose_semantic_result,
+        verify_visual_view,
+    )
+
+    model_path = Path(model_path).resolve()
+    measurements_path = Path(measurements_path).resolve()
+    policy_path = Path(policy_path).resolve()
+    output_dir = Path(output_dir).resolve()
+
+    policy = load_visual_policy(policy_path)
+    measurements = json.loads(measurements_path.read_text(encoding="utf-8"))
+    if not isinstance(measurements, dict):
+        raise ValueError("baseline measurements must contain one object")
+
+    render = policy["render"]
+    regression = policy["regression"]
+    boxes = _expected_boxes(policy)
+    visual_root = output_dir / "visual"
+    visual_root.mkdir(parents=True, exist_ok=True)
+
+    checks = []
+    views = []
+    for view_name, view_policy in policy["views"].items():
+        view_root = visual_root / view_name
+        view_root.mkdir(parents=True, exist_ok=True)
+
+        camera = solidcraft_camera(measurements, view_name)
+        camera_path = view_root / "camera.json"
+        camera_path.write_text(
+            json.dumps(camera, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+
+        actual_path = view_root / "actual.png"
+        _snapshot(
+            model_path,
+            actual_path,
+            camera,
+            width=render["width"],
+            height=render["height"],
+        )
+
+        baseline_path = policy_path.parent / view_policy["baseline"]
+        diff_path = view_root / "diff.png"
+        goal_path = view_root / "goal.png"
+        overlay_path = view_root / "overlay.png"
+
+        try:
+            visual = verify_visual_view(
+                actual_path,
+                actual_reference=_reference(actual_path, output_dir),
+                baseline_path=baseline_path,
+                normalized_size=(
+                    regression["width"],
+                    regression["height"],
+                ),
+                changed_pixel_threshold=regression["changed_pixel_threshold"],
+                max_mean_difference=regression["max_mean_difference"],
+                max_changed_fraction=regression["max_changed_fraction"],
+                diff_path=diff_path,
+                diff_reference=_reference(diff_path, output_dir),
+                camera=_verification_camera(camera),
+                boxes=boxes,
+                goal_path=goal_path,
+                goal_reference=_reference(goal_path, output_dir),
+                overlay_path=overlay_path,
+                overlay_reference=_reference(overlay_path, output_dir),
+            )
+            evidence = visual.to_evidence()
+            status = _view_status(evidence)
+        except VerificationFailure as exc:
+            evidence = (
+                dict(exc.evidence)
+                if isinstance(exc.evidence, Mapping)
+                else {"error": str(exc)}
+            )
+            status = "fail"
+
+        row = {
+            "view": view_name,
+            "status": status,
+            "camera": _reference(camera_path, output_dir),
+            "baseline": view_policy["baseline"],
+            "evidence": evidence,
+        }
+        views.append(row)
+        checks.append(
+            SemanticCheck(
+                name=view_name,
+                status=status,
+                required=True,
+                evidence=row,
+            )
+        )
+
+    semantic = compose_semantic_result(checks)
+    report = {
+        "schema": "forge-visual-verification",
+        "schema_version": 1,
+        "status": semantic["status"],
+        "baseline_provenance": policy["baseline_provenance"],
+        "views": views,
+        "semantic": semantic,
+    }
+    (output_dir / "visual.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return report
