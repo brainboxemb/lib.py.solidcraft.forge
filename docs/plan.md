@@ -44,7 +44,8 @@ Complete #546: activate the final six already-declarative Qualification cases.
 ## Required proof for #546
 
 - all 32 model items declare `process: true`;
-- all 32 use `template: forge-model-declarative`;
+- all 32 use the released declarative verification path;
+- the six newly activated model items use `template: forge-model-declarative`;
 - all 32 have build123d, CadQuery, pyBOSL2 and PythonSCAD child configs;
 - the shared SolidCraft/reference runtime batches remain unchanged;
 - all 32 model verifications pass in one PR run;
