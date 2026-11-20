@@ -9,7 +9,8 @@ primary current contract.
 - `vendor/` — versioned SolidCraft research/reference notes;
 - `microcad-inspiration.md` — external design inspiration;
 - `documentation-architecture.md` — earlier documentation-architecture record;
-- `generated-output.md` — generated-output/publication migration record.
+- `generated-output.md` — generated-output/publication migration record;
+- `reference-libraries.md` — pinned external comparison-library working notes.
 
 Current contracts live one level up in `api.md`, `design.md`,
 `development.md`, `plan.md`, `requirements.md` and `release.md`.
