@@ -5,12 +5,6 @@ kind: verification
 needs:
   - cad-verification-package
 watch:
-  - examples/*/ci.yml
-  - examples/*/verification/reference_geometry.json
-  - examples/*/build123d/**
-  - examples/*/cadquery/**
-  - examples/*/pybosl2/**
-  - examples/*/pythonscad/**
   - scripts/forge_example.py
   - scripts/reference_verification_batch.py
   - verification/reference_validation.py
