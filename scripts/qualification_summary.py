@@ -111,7 +111,7 @@ def _native_check(case_root: Path) -> dict[str, Any]:
     step = _read_object(case_root / ".cad-ci" / "steps" / "model_verify.json")
     native = case_root / "model_verify" / "native"
     names = ("model.sc", "model.step", "results.json")
-    present = [name for name in names if _nonempty(native / name)]
+    present = [f"model_verify/native/{name}" for name in names if _nonempty(native / name)]
 
     if len(present) == len(names):
         status = "pass"
@@ -221,10 +221,17 @@ def _visual_check(case_root: Path) -> dict[str, Any]:
             if isinstance(path, str):
                 images.append(path)
 
+    regression_status = _composed_check_status("regression", regression)
+    expected_shape_status = _composed_check_status("expected_shape", expected)
+    if status == "pass" and (
+        regression_status != "pass" or expected_shape_status != "pass"
+    ):
+        status = "missing"
+
     return {
         "status": status,
-        "regression_status": _composed_check_status("regression", regression),
-        "expected_shape_status": _composed_check_status("expected_shape", expected),
+        "regression_status": regression_status,
+        "expected_shape_status": expected_shape_status,
         "required_views": required_views,
         "images": sorted(set(images)),
         "evidence": ["model_verify/visual.json"],
