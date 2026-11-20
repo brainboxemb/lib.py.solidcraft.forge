@@ -25,7 +25,7 @@ Released/accepted CAD-CI stack for the next measurement:
 - `ghcr.io/brainboxemb/cad-solidcraft:v0.2.0`;
 - `ghcr.io/brainboxemb/cad-reference:v0.2.0`.
 
-F7-F10 are complete for the staged verification proof. `simple-box` remains only the representative pipeline/example fixture used to prove the infrastructure. The staged verification models are `anchor-topology-mutation`, `attach-angle`, `four-corner-l` and `xz-anchor`. The rest of the model catalog remains `process: false` while F11 summary composition is completed.
+F7-F10 are complete for the staged five-model proof set: `simple-box`, `anchor-topology-mutation`, `attach-angle`, `four-corner-l` and `xz-anchor`. The rest of the model catalog remains `process: false` while F11 summary composition is completed.
 
 Repeated clean one-file measurements show that the remaining PR latency is
 dominated by external SolidCraft runtime acquisition rather than CAD-CI or model
@@ -59,7 +59,7 @@ Released `lib.py.cad.verification` already owns generic semantic status composit
 - `saved_design` is `not-required` when a model has no saved-design mutation;
 - required failed/missing/review/blocked evidence remains distinguishable;
 - evidence references are preserved;
-- the staged verification aggregate contains each of the four active verification models exactly once and excludes `simple-box` as a presentation/verification result;
+- the staged aggregate contains each of the five active proof models exactly once;
 - CAD-CI fan-in selection must not accidentally turn an incremental model change into a cold rerun of every sibling model/reference item.
 
 ## Execution order
@@ -75,7 +75,7 @@ Released `lib.py.cad.verification` already owns generic semantic status composit
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #378 Use explicit Forge verification stages instead of integration/native gates | now | F7-F10 are green for the staged proof; `simple-box` is infrastructure/example proof only. Define F11 for the four staged verification models without re-running sibling CAD work. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | now | F7-F10 are green for the staged five-model set; define and prove F11 semantic summary without re-running sibling CAD work. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later, non-blocking | CAD-CI/model work is small; remaining latency is dominated by highly variable GHCR image acquisition. Preserve measurements and optimize runtime distribution separately. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Continue after #378 F11 is green so durable presentation consumes the completed verification evidence model. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Depends on stable durable generated output. |
