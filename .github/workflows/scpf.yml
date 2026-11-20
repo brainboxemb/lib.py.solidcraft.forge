@@ -201,3 +201,48 @@ jobs:
             --message "build: main $SOURCE_SHA affected items" \
             --source-ref "$SOURCE_REF" \
             --expected-source "$SOURCE_SHA"
+
+
+  cleanup_existing_stale_pr_builds:
+    needs: publish_main_build
+    if: >-
+      always() &&
+      github.event_name == 'push' &&
+      startsWith(
+        github.event.head_commit.message,
+        'Clean durable PR build scopes when pull requests close'
+      )
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Forge main source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Checkout accepted CAD CI tool
+        uses: actions/checkout@v4
+        with:
+          repository: brainboxemb/tool.cad.ci
+          ref: bbdd473638d64e01acab69722092b2a12f99b84d
+          path: .cad-ci-tool
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install accepted CAD CI tool
+        run: python -m pip install ./.cad-ci-tool
+
+      - name: Remove existing stale PR build scopes
+        run: |
+          set -euo pipefail
+          for pr in 490 492 494 496 499 500 502 506 509 510 512; do
+            cad-ci publish build-cleanup \
+              --repo . \
+              --pull-request "$pr" \
+              --message "build: cleanup stale PR #$pr"
+          done
