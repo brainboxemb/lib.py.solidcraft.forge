@@ -49,12 +49,26 @@ def reference_identity() -> tuple[str, str]:
     if not value:
         raise RuntimeError("CAD_CI_ITEM_PATH is required for verify_reference")
 
-    parts = Path(value).parts
-    if len(parts) < 3 or parts[0] != "examples":
+    path = Path(value)
+    if path.is_absolute():
+        repo_value = os.environ.get("CAD_CI_REPO", "").strip()
+        if not repo_value:
+            raise RuntimeError(
+                "CAD_CI_REPO is required with an absolute CAD_CI_ITEM_PATH"
+            )
+        try:
+            path = path.resolve().relative_to(Path(repo_value).resolve())
+        except ValueError as exc:
+            raise RuntimeError(
+                "CAD_CI_ITEM_PATH must be inside CAD_CI_REPO"
+            ) from exc
+
+    parts = path.parts
+    if len(parts) != 3 or parts[0] != "examples":
         raise RuntimeError(
             "reference item path must be examples/<model>/<implementation>"
         )
-    return parts[-2], parts[-1]
+    return parts[1], parts[2]
 
 
 def run_reference_validation(
