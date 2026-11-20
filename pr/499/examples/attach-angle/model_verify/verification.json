@@ -1,0 +1,142 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "6845d9cbfc51c7e9fc7c7fa685da592de93d2debccd8ab885d5e0b7a3f158ce1",
+          "size": 2181
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Base",
+                "max": [
+                  30.0,
+                  30.0,
+                  10.0
+                ],
+                "min": [
+                  -30.0,
+                  -30.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  30.0,
+                  30.0,
+                  10.0
+                ],
+                "min": [
+                  -30.0,
+                  -30.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Arm",
+                "max": [
+                  5.000000000000001,
+                  15.0,
+                  16.0
+                ],
+                "min": [
+                  -5.000000000000001,
+                  -15.0,
+                  10.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  5.0,
+                  15.0,
+                  16.0
+                ],
+                "min": [
+                  -5.0,
+                  -15.0,
+                  10.0
+                ]
+              },
+              "max_delta": 8.881784197001252e-16
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "body_name": "Arm",
+            "bounds": {
+              "actual_max": [
+                5.000000000000001,
+                15.0,
+                16.0
+              ],
+              "actual_min": [
+                -5.000000000000001,
+                -15.0,
+                10.0
+              ],
+              "deltas": [
+                8.881784197001252e-16,
+                0.0,
+                0.0,
+                8.881784197001252e-16,
+                0.0,
+                0.0
+              ],
+              "expected_max": [
+                5.0,
+                15.0,
+                16.0
+              ],
+              "expected_min": [
+                -5.0,
+                -15.0,
+                10.0
+              ],
+              "kind": "bounds",
+              "label": "Arm bounds",
+              "max_delta": 8.881784197001252e-16,
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "name_prefix": "Arm"
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "attach-angle"
+}
