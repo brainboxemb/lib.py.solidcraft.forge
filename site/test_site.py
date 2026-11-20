@@ -89,6 +89,12 @@ class SiteSourceTests(unittest.TestCase):
                 "build/main",
             )
 
+            simple_case = qualification["cases"]["simple-box"]
+            self.assertEqual(
+                simple_case["documentation_source"],
+                "examples/simple-box/README.md",
+            )
+
             for slug in manifest["examples"]:
                 with self.subTest(slug=slug):
                     self.assertTrue(
@@ -102,6 +108,22 @@ class SiteSourceTests(unittest.TestCase):
                             / "index.html"
                         ).is_file()
                     )
+
+            simple_page = (
+                out / "examples" / "simple-box" / "index.html"
+            ).read_text(encoding="utf-8")
+            self.assertIn(
+                "Establish the smallest model/parameter contract",
+                simple_page,
+            )
+            self.assertIn(
+                "parameters.add for the public dimensions",
+                simple_page,
+            )
+            self.assertIn(
+                "cube([40,30,10]) is the constructive-geometry baseline",
+                simple_page,
+            )
 
             home = (out / "index.html").read_text(encoding="utf-8")
             self.assertIn("static/copy.js", home)
