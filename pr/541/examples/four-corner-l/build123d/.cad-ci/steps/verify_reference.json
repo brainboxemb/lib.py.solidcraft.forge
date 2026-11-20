@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "c20cf10b41a152bc1c6cf150e443ad86d2f89d5d7f9e109d569406129107c8ed",
+  "duration_seconds": 0.092,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:01:52.735Z",
+  "item": "examples-four-corner-l-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "e7823eb0f76684e78cea86804d5707c540fed0055fc1320923a16d4464d11a4b"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:01:57.009Z",
+  "run_started_at": "2026-11-20T19:59:52.758Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:01:52.673Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "ef2388dc0597812ac962e8d77ce8375ddb51235e942a73e4fad1786d13e1ff12",
+  "timeout_seconds": null
+}

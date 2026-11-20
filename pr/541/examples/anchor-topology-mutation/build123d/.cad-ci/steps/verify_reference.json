@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "034c2378ec5f1f6353c5d8d568de2b5291f9d3eb6d78621046a3ac74e8951cc8",
+  "duration_seconds": 0.091,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:01:50.802Z",
+  "item": "examples-anchor-topology-mutation-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "42cbb2d4376e9e3b5c7ed78c15304f96ee0b9c2bd2b25d9d77da3de7b6af0563"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:01:57.009Z",
+  "run_started_at": "2026-11-20T19:59:52.758Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:01:50.741Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "30d9c068049139385c79d2353c343272a522b7abde5f3f9ae2f745bbc6aea692",
+  "timeout_seconds": null
+}

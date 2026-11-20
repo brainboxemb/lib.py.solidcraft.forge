@@ -1,0 +1,33 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "9eda217e3b26270577bc7e5395418fac006282e3d73c8a13976d05b9faffaa34",
+  "duration_seconds": 0.129,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:01:50.250Z",
+  "item": "top-sketch-after-chamfer",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "model_verify": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "a533345c08e03f8c9ae9da474d54e906c9981e8e1ac645f4b36f4ecc9b6ccfff"
+    },
+    "solidcraft.json": {
+      "kind": "file",
+      "mode": 420,
+      "sha256": "2caf4ce5cd751bc6b53d504895f067cc7853f5502502336206265c37eb3cdf8f"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:01:57.009Z",
+  "run_started_at": "2026-11-20T19:59:52.758Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:01:50.183Z",
+  "status": "pass",
+  "step": "model_verify",
+  "target_spec_digest": "966dbe0de5fe00157a575c54c9b6469d82497a93f25342e64e8c453823e2a6e0",
+  "timeout_seconds": null
+}

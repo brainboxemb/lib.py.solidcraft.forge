@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "e7c7f86e6384e4b4eada5a032356d8d896d1b6331cd7f442fdcd8730a3a11c4d",
+  "duration_seconds": 0.093,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:01:51.385Z",
+  "item": "examples-anchored-holes-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "66717133a41642ed09c9bc89ff2e89ff782a416797ca6184a06dec3cbafc1fd7"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:01:57.009Z",
+  "run_started_at": "2026-11-20T19:59:52.758Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:01:51.322Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "d39324a5bff744f19c591136332c481c9eb6d85a8cf69589f7956fb99b877818",
+  "timeout_seconds": null
+}

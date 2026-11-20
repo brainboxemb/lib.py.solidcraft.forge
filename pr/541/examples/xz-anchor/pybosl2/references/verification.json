@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/xz-anchor/pybosl2/model.py",
+          "status": "pass",
+          "stl": "xz-anchor/pybosl2/model.stl"
+        }
+      ],
+      "model": "xz-anchor",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "e31679f1c229a4ebcecf73d7995edd9d868c9258",
+  "status": "pass"
+}

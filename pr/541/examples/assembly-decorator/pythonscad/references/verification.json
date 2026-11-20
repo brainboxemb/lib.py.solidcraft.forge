@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                5.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -5.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                5.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -5.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/assembly-decorator/pythonscad/model.py",
+          "status": "pass",
+          "stl": "assembly-decorator/pythonscad/model.stl"
+        }
+      ],
+      "model": "assembly-decorator",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "e31679f1c229a4ebcecf73d7995edd9d868c9258",
+  "status": "pass"
+}

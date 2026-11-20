@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "4ec400b254aeb47dd248087246f51dde5e66d5083b6bf7654c46312428d32808",
+  "duration_seconds": 0.093,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:01:53.802Z",
+  "item": "examples-hole-family-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "cb4c1bc7763466733bf09179caf4e0d70f602355d64138ca8bcfa084daf30ed9"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:01:57.009Z",
+  "run_started_at": "2026-11-20T19:59:52.758Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:01:53.739Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "b00f271f646bd52a11fddb6f639d2eb19784f6432ec44a90e6e1a6dd325edb87",
+  "timeout_seconds": null
+}

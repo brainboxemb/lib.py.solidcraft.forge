@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "ad34877eb6828db5cdf9dbafd83884b8571cce4796ac098c7cedf7c6e903a724",
+  "duration_seconds": 0.092,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:01:56.131Z",
+  "item": "examples-top-sketch-after-chamfer-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "26d8cd9514caf78005c06c2d2e90804c54a890562f63d7bd83395cb3dbe70e01"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:01:57.009Z",
+  "run_started_at": "2026-11-20T19:59:52.758Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:01:56.070Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "e309e2f2abc06fcb76d6a0382e4afc4b97988359364c7c96178f6fc4624de0a3",
+  "timeout_seconds": null
+}

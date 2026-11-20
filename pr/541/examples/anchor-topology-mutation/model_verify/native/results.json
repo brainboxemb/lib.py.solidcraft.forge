@@ -1,0 +1,131 @@
+[
+  {
+    "display_value": 40.0,
+    "name": "base_width",
+    "unit": "mm",
+    "value": 40.0
+  },
+  {
+    "display_value": 20.0,
+    "name": "base_height",
+    "unit": "mm",
+    "value": 20.0
+  },
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "Board",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Board"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Board"
+    ],
+    "feature": 3,
+    "ms": 3.002368,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 4,
+    "grounded": false,
+    "name": "Marker",
+    "occurrence": 5,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Board",
+      "Marker"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Marker"
+    ],
+    "feature": 6,
+    "ms": 1.5361070000000001,
+    "name": "Box2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "occurrence": 5,
+    "pending": false,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        -20.0,
+        -10.0,
+        20.0,
+        1.0
+      ]
+    ]
+  },
+  {
+    "conflicts": [],
+    "dof": [
+      {
+        "dof": 0,
+        "occurrence": 0
+      },
+      {
+        "dof": 0,
+        "occurrence": 2
+      },
+      {
+        "dof": 0,
+        "occurrence": 5
+      }
+    ],
+    "errors": [],
+    "fixed": [
+      0,
+      2
+    ],
+    "joint": 7,
+    "name": "Attach Marker to Board"
+  },
+  {
+    "changed": 1,
+    "visibility": {
+      "hidden_bodies": [],
+      "hidden_joints": [
+        7
+      ],
+      "hidden_occurrences": [],
+      "hidden_origin": [],
+      "hidden_sketches": [],
+      "shown_sketches": []
+    },
+    "visible": false
+  }
+]
