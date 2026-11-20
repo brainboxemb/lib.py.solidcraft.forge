@@ -23,8 +23,13 @@ The remaining reference-verification configuration is still too coarse:
 
 ## Current goal
 
-Complete #508 by migrating `anchor-topology-mutation` from the temporary
-aggregate to four independent nested reference items.
+Complete #507 so closed or merged pull requests cannot leave stale durable
+`build/pr/<number>` scopes behind.
+
+The generated build branch currently contains stale scopes for PRs 490, 492,
+494, 496, 499, 500, 502, 506, 509 and 510 while no pull request is open.
+Cleanup support already exists in the released CAD-CI stack; Forge must wire the
+pull-request lifecycle to that released command before model migration continues.
 
 The attach-angle and simple-box migrations are complete. The generic stack and
 nested-item behavior are already proven; this change applies that accepted
@@ -48,6 +53,12 @@ The temporary aggregate must stop watching and executing
 
 ## Required proof
 
+- `pull_request.closed` invokes the released `cad-ci publish build-cleanup`
+  path for that PR number;
+- normal PR verification does not run for a close-only event;
+- cleanup preserves `build/main` and unrelated PR scopes;
+- cleanup is safe when the scope is already absent;
+- existing stale generated PR scopes are removed once;
 - all four anchor-topology-mutation reference children are represented independently;
 - build123d uses `forge-reference-build123d`;
 - cadquery, pythonscad and pybosl2 use `forge-reference`;
@@ -58,21 +69,23 @@ The temporary aggregate must stop watching and executing
 
 ## Execution order
 
-1. #508 — migrate anchor-topology-mutation reference children.
-2. Migrate `four-corner-l` references in a separate issue/PR.
-3. Migrate `xz-anchor` references in a separate issue/PR and remove the
+1. #507 — clean closed PR build scopes and wire automatic cleanup.
+2. #508 — resume anchor-topology-mutation reference children migration.
+3. Migrate `four-corner-l` references in a separate issue/PR.
+4. Migrate `xz-anchor` references in a separate issue/PR and remove the
    temporary aggregate.
-4. #497 / #366 — resume stable Pages publication from the generic build/main
+5. #497 / #366 — resume stable Pages publication from the generic build/main
    baseline.
-5. Resume #430/#378 verification-feature work.
-6. Resume #432 broader declarative model migration after generated output is
+6. Resume #430/#378 verification-feature work.
+7. Resume #432 broader declarative model migration after generated output is
    stable.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #508 Migrate anchor-topology-mutation references to isolated CAD-CI items | now | Next active-model migration after completed attach-angle and simple-box reference splits. |
+| #507 Clean durable PR build scopes when pull requests close | now | Generated build state contains ten stale closed-PR scopes; wire the released cleanup path and remove the accumulated scopes before further migration. |
+| #508 Migrate anchor-topology-mutation references to isolated CAD-CI items | blocked | Resume after #507 restores correct PR-scope lifecycle. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Resume after the reference-item pilot proves the corrected CI structure. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Durable affected build updates are in place; Pages remains. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Performance work stays separate from selection/reference structure. |
@@ -100,4 +113,4 @@ The temporary aggregate must stop watching and executing
 
 Immediate chain:
 
-`#508 anchor-topology-mutation -> four-corner-l -> xz-anchor -> #497/#366 Pages`.
+`#507 PR cleanup -> #508 anchor-topology-mutation -> four-corner-l -> xz-anchor -> #497/#366 Pages`.
