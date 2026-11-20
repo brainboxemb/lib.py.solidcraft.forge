@@ -124,14 +124,19 @@ expected by Forge CI.
 
 ## Public API documentation
 
-The public API source split is documented in
-`docs/background/documentation-architecture.md`.
+The primary API contract is `docs/api.md`.
 
 Exact public names, signatures, defaults and enum values come from the Python
-implementation and its docstrings. Cross-object rules are documented in
-`docs/api.md`.
+implementation and its docstrings. Cross-object semantic rules live in
+`docs/api.md`; documentation-generation/development rules live in
+`docs/development.md`.
 
-`docs/agent/forge-api.json` is generated from the public API.
+`docs/agent/forge-api.json` is generated from the same public API sources.
+Do not maintain a second handwritten API manual in `scpf/README.md`, AGENTS,
+or the agent directory.
+
+Historical documentation-architecture discussion is preserved under
+`docs/background/documentation-architecture.md`.
 
 ## Current work
 
