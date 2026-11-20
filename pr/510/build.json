@@ -1,0 +1,107 @@
+{
+  "items": {
+    "ci/forge-release": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "ff111949a1d54d98aa2270eb7cd9ee1ba50487699ee22ef94c2d235cf97ec367",
+      "final_step": "tool_verify",
+      "final_target_spec_digest": "a5af56b6a5c2270bb0ad3cb7f72bb3d17de8cab7d7d1dbceb4b1ba117c058f64",
+      "item_id": "forge-release",
+      "outputs": [
+        "tool_verify"
+      ],
+      "source_commit": "e1aeb02aa01be0043b0a2d55f0bdcc24425de01c"
+    },
+    "ci/forge-tests": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
+      "final_step": "tool_test",
+      "final_target_spec_digest": "6a920830e28c302981b3391a00b2acbda81f942bb3e9e43169c71de80469fa43",
+      "item_id": "forge-tests",
+      "outputs": [],
+      "source_commit": "e1aeb02aa01be0043b0a2d55f0bdcc24425de01c"
+    },
+    "examples/anchor-topology-mutation": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "95952315cb7fb6ff281497751b1602d28ad171e6e185f0c132e59b929d6c94d3",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "921bc65674cdf93d38f86d8c3f70b0d4b2c5d0ddc488732978145d8fff7bd249",
+      "item_id": "anchor-topology-mutation",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "e1aeb02aa01be0043b0a2d55f0bdcc24425de01c"
+    },
+    "examples/attach-angle": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "5a0d5735f824f5de016fcdfd0462ee9952f0d3d93913e09b1f618f9baca7954d",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "53649a1c73b8b8cea7b6895f820e80bb098a64ae4a3468db309fabb102a4ddaf",
+      "item_id": "attach-angle",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "e1aeb02aa01be0043b0a2d55f0bdcc24425de01c"
+    },
+    "examples/four-corner-l": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "9b161929dd7969b5bf205402cd5a51daf1f0e6d9a95d1543830b174ef4c4decf",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "94879e280ce4439dce754976af463ed6d2e42757ced1c0a98b3bc9c7a95f18f2",
+      "item_id": "four-corner-l",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "e1aeb02aa01be0043b0a2d55f0bdcc24425de01c"
+    },
+    "examples/simple-box": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "36d5411464b34ecf16fb8e12285be14557be53d76774db28b9b2e9d490751fbd",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "f71bb2b59fb7ab3c5f7c624c0ee0a7d8693616f9ddf88458f2173e97c83b94f2",
+      "item_id": "simple-box",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "e1aeb02aa01be0043b0a2d55f0bdcc24425de01c"
+    },
+    "examples/xz-anchor": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "5c356da150cb018b10de8d0ddaeb9b0ef5124250322449261bc35cfec8665397",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "fc3aae6ed47a4f2e188342cdcac952ad0d40cc77f2d879e93dbbaccf45925e80",
+      "item_id": "xz-anchor",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "e1aeb02aa01be0043b0a2d55f0bdcc24425de01c"
+    },
+    "scpf": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "259f6c75cca05cf8ed4b86b3e8e2b3f2c00a0d3dd6160955dca4a50620053889",
+      "final_step": "tool_build",
+      "final_target_spec_digest": "35eb742d2b61f69169fd103fc2c4676979c29d7436a302215fcb106a939cfddc",
+      "item_id": "forge-package",
+      "outputs": [
+        "dist"
+      ],
+      "source_commit": "e1aeb02aa01be0043b0a2d55f0bdcc24425de01c"
+    }
+  },
+  "pull_request": 510,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "e1aeb02aa01be0043b0a2d55f0bdcc24425de01c"
+}
