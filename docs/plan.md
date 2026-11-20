@@ -8,14 +8,14 @@ documents in `docs/`. Issues keep detail and history.
 
 ## Current status
 
-Forge still consumes externally accepted `tool.cad.ci` 0.12.3 in its
-workflow. The generic stack has since advanced and is externally accepted at:
+Forge is migrating this pilot to the current externally accepted generic stack:
 
-- `lib.py.cad.ci` 0.8.1;
-- `tool.cad.ci` 0.13.1 commit
-  `f357b70599e5b0a6cf39a25de6a70e43a04e85b1`;
+- `lib.py.cad.ci` 0.8.2;
+- `tool.cad.ci` 0.13.2 commit
+  `8d4c990cb22b794e268d361f09bc2757d15e1c94`;
 - `tool.cad.ci.test` acceptance is green for fresh cacheless Git-diff
-  selection, nested items, item-root paths and parent-relative shared inputs.
+  selection, nested item paths, parent-relative shared inputs and nested
+  durable parent/child publication.
 
 Forge durable build publication already uses affected-item PR/main updates.
 The remaining reference-verification configuration is still too coarse:
@@ -45,7 +45,7 @@ duplicate attach-angle work.
 
 ## Required proof
 
-- Forge pins exact accepted tool.cad.ci 0.13.1.
+- Forge pins exact accepted tool.cad.ci 0.13.2.
 - A build123d-only source change selects the attach-angle build123d child only.
 - The other three attach-angle reference children are not executed.
 - A shared attach-angle reference contract change selects all four children.
