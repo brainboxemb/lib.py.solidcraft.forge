@@ -447,3 +447,65 @@ aggregate disappears after the last active model is split.
 
 This is a migration bridge only. It is not a second planner and it must never
 expand back to inactive/all-catalog verification.
+
+
+## Visual verification flow
+
+Visual evidence remains inside the normal model-verification item and its
+existing SolidCraft runtime:
+
+```text
+model_verify
+  -> replay native model.sc
+  -> run_solidcraft_verification()
+     -> baseline/measurements.json
+  -> Forge visual adapter
+     -> derive deterministic camera from baseline measurements
+     -> solidcraft-cli snapshot model.sc
+     -> camera JSON + actual PNG
+  -> released verify_visual_view()
+     -> normalize actual/baseline
+     -> regression metrics + diff
+     -> expected-shape goal
+     -> expected-shape overlay
+     -> VisualViewEvidence
+  -> released compose_semantic_result()
+     -> required view result
+  -> visual.json evidence
+```
+
+There is no second visual CI item or runner for the simple-box proof.
+
+### Camera conversion
+
+For measured global body bounds:
+
+- target is the center of the complete envelope;
+- framing size is the largest XYZ span with a 1 mm minimum;
+- SolidCraft camera distance is `size * 1.65`;
+- SolidCraft front is yaw 0°, pitch 0°;
+- right is yaw -90°, pitch 0°;
+- top is yaw 0°, pitch +90°;
+- iso is yaw -45°, pitch +32°;
+- roll is zero and fov is zero.
+
+The corresponding released-library `OrthographicCamera` receives:
+
+- the same target;
+- SolidCraft yaw converted to degrees;
+- the negated SolidCraft pitch converted to degrees;
+- `distance = 0.4 * SolidCraft distance`.
+
+This preserves the established front/top image-axis conventions without
+copying generic projection code into Forge.
+
+### Simple-box proof
+
+Issue #430 enables the visual path for `simple-box` only.
+
+Its model-local policy requires front, right and iso regression views and one
+expected box from (-20,-15,0) to (20,15,10). Approved historical baseline PNGs
+remain model-local and are compared by the released visual API.
+
+Other models are not enabled by this change. The proven path is applied to the
+remaining staged proof models later under #378.
