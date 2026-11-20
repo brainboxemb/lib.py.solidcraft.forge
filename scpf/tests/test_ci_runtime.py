@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CAD_CI = ROOT / "cad-ci.yml"
 RUNTIME_SCRIPT = ROOT / "scripts" / "solidcraft_runtime.py"
 WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
+RUNTIME_WORKFLOW = ROOT / ".github" / "workflows" / "solidcraft-runtime.yml"
 REPOSITORY = "brainboxemb/lib.py.solidcraft.forge"
 TOOL_COMMIT = "c2db9e6b6553052df12d2498e9436ba7be056fe6"
 
@@ -68,6 +69,16 @@ class CiRuntimeContractTests(unittest.TestCase):
         expected = configured_variable("SOLIDCRAFT_VERSION")
         self.assertEqual(expected, TESTED_SOLIDCRAFT_VERSION)
         self.assertEqual(expected, metadata["solidcraft_version"])
+
+    def test_runtime_publication_is_manual_only(self):
+        """Never build or publish a runtime because source files changed."""
+
+        text = RUNTIME_WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("  workflow_dispatch:", text)
+
+        on_block = text.split("permissions:", 1)[0]
+        self.assertNotIn("  push:", on_block)
+        self.assertNotIn("  pull_request:", on_block)
 
     def test_normal_workflow_delegates_without_runtime_resolution(self):
         text = WORKFLOW.read_text(encoding="utf-8")
