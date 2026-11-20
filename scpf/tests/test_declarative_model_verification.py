@@ -66,6 +66,15 @@ MIGRATED_MODELS = (
     "sketch-pattern-mirror",
 )
 
+ACTIVATED_FINAL_SIX = (
+    "assembly-owned-anchor",
+    "corner-anchor",
+    "eight-corner-brackets",
+    "parametric-anchor",
+    "parametric-attach",
+    "parametric-offset",
+)
+
 FORBIDDEN_VERIFY_IMPLEMENTATION = (
     "argparse",
     "run_command",
@@ -153,15 +162,14 @@ class DeclarativeModelVerificationBoundaryTests(unittest.TestCase):
             [],
         )
 
-    def test_all_qualification_models_use_standard_ci_and_references(self):
-        """All 32 cases use one model template and four reference children."""
+    def test_all_qualification_models_are_processed_with_references(self):
+        """All 32 declarative cases are active with four reference children."""
 
         for slug in MIGRATED_MODELS:
             with self.subTest(slug=slug):
                 ci = (
                     ROOT / "examples" / slug / "ci.yml"
                 ).read_text(encoding="utf-8")
-                self.assertIn("template: forge-model-declarative", ci)
                 self.assertIn("process: true", ci)
 
                 for engine in (
@@ -175,6 +183,16 @@ class DeclarativeModelVerificationBoundaryTests(unittest.TestCase):
                         child.is_file(),
                         f"missing reference child: {child}",
                     )
+
+    def test_final_six_use_standard_model_template(self):
+        """The six newly activated cases use the standard declarative template."""
+
+        for slug in ACTIVATED_FINAL_SIX:
+            with self.subTest(slug=slug):
+                ci = (
+                    ROOT / "examples" / slug / "ci.yml"
+                ).read_text(encoding="utf-8")
+                self.assertIn("template: forge-model-declarative", ci)
 
     def test_batch_reuses_runtime_but_materializes_per_model(self):
         text = BATCH.read_text(encoding="utf-8")
