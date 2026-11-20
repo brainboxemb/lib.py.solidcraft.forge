@@ -8,46 +8,47 @@ detail and history; this plan states what is current and what follows.
 
 ## Current goal
 
-Complete #444: make the manually published immutable SolidCraft runtime tag
-immediately and reliably pullable.
+Complete #440 with **simple-box only**.
 
-#449, #446 and #452 are already on green `main`:
+The repository baseline is healthy:
 
 - runtime publication is manual-only;
-- runtime publication does not use GitHub Actions cache storage;
-- normal Forge CAD-CI authenticates Docker to GHCR through released
-  `tool.cad.ci` 0.10.0.
+- runtime publication uses no GitHub Actions cache storage;
+- the immutable runtime is directly pullable;
+- normal Forge CAD-CI uses released `tool.cad.ci` 0.10.0 and is green;
+- the runtime contains released `lib.py.cad.verfication` 0.10.0.
 
-#444 changes only publication validation/representation. Runtime package
-composition is handled separately by #438.
+For #440, Forge keeps only simple-box-specific expectation/mutation data.
+Released `run_solidcraft_verification()` owns the actual SolidCraft
+verification execution/reporting.
 
 ## Execution order
 
-1. Complete #444:
-   - publish the single-platform runtime with `provenance: false`;
-   - require both manifest presence and a real Docker pull;
-   - treat a missing child manifest as unavailable;
-   - prove normal Forge CAD-CI remains green.
-2. Complete #438:
-   - remove `lib.py.cad.verfication` itself from the runtime image;
-   - keep stable heavy dependencies preinstalled for efficiency;
-   - supply the exact released verification wheel separately.
-3. Complete #440 with **simple-box only**.
-4. Continue #432 in small reviewable model batches.
-5. Resume #430, finish #378, then #366.
+1. Complete #440:
+   - keep Forge compile/replay as the shared producer step;
+   - add a small simple-box `verification/definition.py`;
+   - remove simple-box's procedural `verify_model.py`;
+   - make the shared model launcher load the declarative definition and call
+     released `run_solidcraft_verification()`;
+   - change no other model verifier;
+   - prove the complete simple-box `model_verify` path through normal CAD-CI.
+2. Continue #432 in small reviewable model batches only after #440 is green.
+3. When a later model needs reusable verification semantics not present in the
+   released library, implement/test/release them in
+   `lib.py.cad.verfication` first.
+4. Resume #430 visual verification.
+5. Complete #378 diagrams/summary and then #366 publication.
 6. Run the final ownership audit.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #444 Keep published immutable SolidCraft runtime image available after merge | now | Fix and prove the immutable runtime publication/pull path on top of current green main. |
-| #438 Remove verification-library code from the SolidCraft runtime | next | Correct the package boundary after runtime publication itself is reliable. |
-| #440 Prove declarative SolidCraft verification with simple-box | blocked | Exactly one model after #444/#438. |
+| #440 Prove declarative SolidCraft verification with simple-box | now | One-model proof of the final declarative model-verification structure. |
 | #432 Use released declarative CAD verification in model verification | blocked | Continue only after #440 proves the final one-model structure. |
 | #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after model-verification ownership is stable. |
-| #391 Extract reusable CAD verification library from Forge | blocked | Close after remaining shared checker code leaves Forge. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | now | Umbrella migration; current path is #444, #438, #440, then staged model migration. |
+| #391 Extract reusable CAD verification library from Forge | blocked | Close after remaining shared checker code leaves Forge through staged #432 migration. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | now | Umbrella migration; current work is #440, then staged #432 migration. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Starts after #378 verification output is complete. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
 | #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Independent CLI quality work. |
@@ -67,4 +68,4 @@ composition is handled separately by #438.
 | #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
 
 Immediate chain:
-`#444 -> #438 -> #440 simple-box -> #432 batches -> #430 -> #378 -> #366`.
+`#440 simple-box -> #432 batches -> #430 -> #378 -> #366`.

@@ -152,3 +152,54 @@ re-published by the manual runtime workflow.
 
 This changes publication representation only. Runtime package composition is
 owned separately by #438.
+
+
+## Declarative model verification flow
+
+The final model-verification path has one Forge producer step followed by the
+released verification-library runner:
+
+```text
+examples/<model>/scpf/model.py
+  -> scripts/model_verify.py
+     -> exact built Forge wheel
+     -> compile Forge model to command document
+     -> replay command document to initial native model.sc
+     -> load examples/<model>/verification/definition.py
+     -> run_solidcraft_verification(model.sc, output, VERIFICATION)
+        -> baseline evaluation/checks
+        -> saved-design mutation/evaluation/checks
+        -> inspections
+        -> artifacts + verification.json
+```
+
+`scripts/model_verify.py` may know how Forge produces the initial native
+SolidCraft model and how to locate a model-local definition. It must not know
+the SolidCraft measurement schema, implement numeric/body/timeline comparisons,
+or duplicate mutation/evaluation verification logic.
+
+A migrated model definition exports one `VERIFICATION` value built from
+released types such as:
+
+```python
+SolidCraftVerification(
+    verification_id="simple-box",
+    baseline=SolidCraftModelExpectation(...),
+    saved_designs=(
+        SolidCraftSavedDesign(
+            id="length_50",
+            command_path=...,
+            expectation=SolidCraftModelExpectation(...),
+        ),
+    ),
+)
+```
+
+Generated SolidCraft timeline names are not model-owned unless explicitly
+checked. `SolidCraftTimelineExpectation` therefore uses the released 0.10.0
+partial-field contract.
+
+During staged migration, older models may temporarily retain procedural
+`verify_model.py` files. The shared launcher may support both forms only as a
+temporary compatibility path; new generic verification behavior must not be
+implemented in Forge.
