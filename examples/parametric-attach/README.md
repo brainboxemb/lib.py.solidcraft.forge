@@ -30,6 +30,14 @@ The child sits 10 mm away from the parent's RIGHT face along the joint normal.
 
 Change gap from 10 to 30 mm in the saved .sc design; the child must move another 20 mm without rerunning Python.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+The two rectangular body bounds describe the baseline gap geometry. Saved joint recompute is proved separately by saved-design.
+
 ## Reference notes
 
 - **BOSL2** — Conceptually similar to an attachment displacement along the local anchor normal rather than a world-axis translate.
