@@ -9,7 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  cad_ci:
+  cad_ci_pr:
+    if: github.event_name == 'pull_request'
     permissions:
       contents: read
       packages: read
@@ -18,12 +19,23 @@ jobs:
       upload_build: true
       build_artifact_name: forge-cad-ci-build
 
+  cad_ci_main:
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: read
+    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-ci.yml@ad7099b4712af13067c1c42ad50e89bf6a8306dd
+    with:
+      full_run: true
+      upload_build: true
+      build_artifact_name: forge-cad-ci-main-build
+
   publish_simple_box_pr:
-    needs: cad_ci
+    needs: cad_ci_pr
     if: >-
       github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
-      needs.cad_ci.outputs.build_artifact_name != ''
+      needs.cad_ci_pr.outputs.build_artifact_name != ''
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -52,7 +64,7 @@ jobs:
       - name: Download verified CAD CI output
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.cad_ci.outputs.build_artifact_name }}
+          name: ${{ needs.cad_ci_pr.outputs.build_artifact_name }}
           path: candidate-build
 
       - name: Check simple-box candidate
@@ -92,5 +104,64 @@ jobs:
             --scope pr \
             --pull-request "$PR_NUMBER" \
             --message "build: PR #$PR_NUMBER simple-box" \
+            --source-ref "$SOURCE_REF" \
+            --expected-source "$SOURCE_SHA"
+
+  publish_main_build:
+    needs: cad_ci_main
+    if: >-
+      github.event_name == 'push' &&
+      needs.cad_ci_main.outputs.build_artifact_name != ''
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Forge main source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Checkout accepted CAD CI tool
+        uses: actions/checkout@v4
+        with:
+          repository: brainboxemb/tool.cad.ci
+          ref: ad7099b4712af13067c1c42ad50e89bf6a8306dd
+          path: .cad-ci-tool
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install accepted CAD CI tool
+        run: python -m pip install ./.cad-ci-tool
+
+      - name: Download complete verified CAD CI output
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.cad_ci_main.outputs.build_artifact_name }}
+          path: candidate-build
+
+      - name: Prepare complete main build scope
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          cad-ci build prepare-main \
+            --repo . \
+            --candidate-root candidate-build \
+            --out prepared-main \
+            --source-commit "$SOURCE_SHA"
+
+      - name: Publish authoritative main build scope
+        env:
+          SOURCE_REF: ${{ github.ref_name }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          cad-ci publish build \
+            --repo . \
+            --candidate prepared-main \
+            --scope main \
+            --message "build: main $SOURCE_SHA" \
             --source-ref "$SOURCE_REF" \
             --expected-source "$SOURCE_SHA"
