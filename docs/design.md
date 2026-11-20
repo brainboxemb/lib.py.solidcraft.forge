@@ -669,9 +669,10 @@ own durable evidence-tree materialization and Pages wiring.
 
 The snapshot branch
 `backup/gh-pages-before-f11-2026-11-20` is the presentation regression
-reference. The migration must preserve the current Examples/Qualification
-split, qualification cases, visible status semantics and main evidence
-presentation unless a separately justified change is made.
+reference. The preserved branch remains the presentation regression reference, but the
+current public split is Examples/Verification. Qualification remains historical
+terminology; visible status semantics and main evidence presentation are still
+preserved unless a separately justified change is made.
 
 
 ## Verification batch execution
@@ -756,7 +757,7 @@ The stable site source boundary is:
 
 ```text
 examples/<slug>/model.yml
-  generic title/description/parameters/stages
+  generic section/priority/title/description/parameters/stages
             |
 examples/<slug>/README.md
   preserved human engineering explanation
@@ -779,8 +780,7 @@ generated Pages
 The generator discovers the 32 example directories. There is no central
 `EXAMPLES` catalog duplicating their local metadata or documentation.
 
-The example metadata loader validates the agreed six-field `model.yml`
-schema. A separate documentation loader reads the local `README.md` and
+The example metadata loader validates the agreed `model.yml` presentation schema. A separate documentation loader reads the local `README.md` and
 preserves its engineering statements without inference. Numeric truth is not
 parsed back out of prose; the renderer uses `verification/verify.py` and
 durable evidence where technical details are required.
@@ -796,6 +796,11 @@ Python retains only:
 - evidence resolution;
 - view-model composition;
 - template rendering.
+
+Cheatsheet content is declarative site content. Its headings, descriptions,
+snippets and linked example slugs live under `site/content/`; the build layer
+only loads, validates and renders them. Verification section slug-to-label/order
+translation follows the same rule.
 
 HTML rendering is an explicit layer. `site/build.py` and source/evidence
 loaders do not assemble markup. External templates own page and reusable
@@ -1014,12 +1019,12 @@ current evidence.
 
 ## Stable Pages content composition
 
-Stable case pages keep the Examples/Qualification split but assemble content
-from current sources:
+Stable case pages use the current Examples/Verification split and assemble
+content from current sources:
 
 - local README: preserved human goal/API/model/lowering/result/rationale/reference
   notes;
-- local model/reference Python: editable source;
+- local model/reference Python: editable source, rendered independently of durable evidence availability;
 - durable model item: status, parameters, measurements, saved designs, current
   native preview and detailed visual evidence where produced;
 - durable reference child items: result measurements, STL and current preview;
@@ -1054,3 +1059,70 @@ freshness and retry mechanics.
 
 #497 deliberately does not add PR Pages scopes. #366 owns the later generic
 preview/cleanup lifecycle.
+
+
+## Verification page source-comparison composition
+
+The stable model page is primarily a source-and-result comparison page.
+
+For one `examples/<slug>` model, the presentation flow is:
+
+```text
+examples/<slug>/scpf/model.py
+  -> inline Forge source
+
+examples/<slug>/{pythonscad,pybosl2,cadquery,build123d}/model.py
+  -> inline independent reference source rows
+
+build/main/examples/<slug>/**
+  -> accepted status, measurements, previews and raw artifacts
+
+README.md + model.yml
+  -> preserved engineering explanation and generic page metadata
+```
+
+The page renderer joins these sources only for presentation. It does not copy
+reference source into durable verification output and it does not infer
+verification truth from Python source.
+
+Each reference row therefore contains both halves of the comparison:
+
+1. the complete reference Python source;
+2. the accepted current result/preview/evidence for that reference child item.
+
+The Forge source is shown as a first-class block before or alongside the
+independent references. GitHub source links remain available but are not a
+substitute for visible code.
+
+Public routing and navigation call this area `Verification` and use
+`verification/`. Historical `qualification` names are migration/internal
+compatibility details only and are not part of the intended public information
+architecture.
+
+
+### Verification catalog grouping
+
+The verification overview is not a flat alphabetical card list. The renderer
+uses the existing `ExampleMetadata.section` value loaded from each
+`examples/<slug>/model.yml` as the grouping key. Group membership therefore
+stays owned by each example and remains part of the agreed presentation metadata
+schema.
+
+The renderer groups cards after discovery. Section order is determined by the
+section configuration's `priority`; example order inside a section is determined
+by each example's local `model.yml.priority`, with slug only as a deterministic
+tie-breaker. No central section-membership or example-order registry is introduced.
+
+The section slug-to-label/priority mapping is presentation metadata, not a model
+membership registry. It lives as declarative configuration in
+`site/content/verification-sections.yml`; Python only loads and validates that
+configuration so all renderers use exactly the preserved labels:
+
+```text
+fundamentals  -> 1 · Basic geometry
+features      -> 2 · Parent/child features and faces
+parameters    -> 3 · Parameters and dependencies
+components    -> 4 · Components and occurrences
+anchors       -> 5 · Anchors and local frames
+associativity -> 6 · Associative relationships
+```

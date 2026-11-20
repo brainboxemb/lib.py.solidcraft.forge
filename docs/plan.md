@@ -17,15 +17,39 @@ declarative and durable.
   child results and all 6 current CADCraft SVG diagrams;
 - #548 is complete: all verified examples own preserved human engineering
   documentation in local `README.md` files, while `model.yml` remains the
-  agreed six-field generic presentation schema;
+  agreed generic presentation schema, now including local presentation `priority`;
 - the historical case text and geometry-sufficiency rationale were migrated
   verbatim and audited 32/32 with zero mismatches;
 - site layout, guide prose and browser scripts are no longer embedded as
   complete pages in `site/build.py`.
+- remaining hand-authored site content/configuration, including cheatsheet content
+  and verification section labels/priority, must live under `site/content/` rather
+  than as Python literals.
 
-The stable public Pages site is still the retired publication baseline. The
-pre-cut-over snapshot remains preserved on
+The live public Pages site has been deliberately switched back to the preserved
+pre-cut-over baseline after the failed #556 cut-over. The snapshot remains on
 `backup/gh-pages-before-f11-2026-11-20`.
+
+Do not publish the replacement site again until #497 content-parity, terminology,
+grouping/source-comparison and stable-generation checks are green and the
+replacement has been reviewed.
+
+The #557 replacement renderer restores the content-parity regressions found
+after #556:
+
+- complete Forge source is visible inline on every Verification case page;
+- PythonSCAD, pyBOSL2, CadQuery and build123d source is visible inline beside
+  each current reference result/preview;
+- public routing/navigation/labels use Verification;
+- the catalog is grouped into the preserved six functional sections;
+- section and example learning order is declarative through local priorities;
+- section labels/descriptions and cheatsheet content live under `site/content/`,
+  not as hand-authored Python presentation constants.
+
+PR #557 has passed both the selected site-source CAD-CI graph and complete
+stable-site generation against resolved durable `build/main` evidence. The live
+site remains deliberately on the preserved backup until the replacement is
+reviewed and deliberately republished.
 
 The current durable evidence is complete for machine verification but not yet
 for visual content parity:
@@ -53,6 +77,15 @@ engineering information on the preserved public site.
 - root `provenance.json` records the site source commit and the immutable
   build-branch commit used for generation;
 - all 32 verified examples are present;
+- the public site uses `Verification` terminology and URL/navigation labels;
+  retired `Qualification` terminology is not presented as the current public
+  concept;
+- every verification model page shows the complete Forge model source inline
+  and shows each available PythonSCAD, pyBOSL2, CadQuery and build123d
+  reference source inline beside its current result/preview;
+- the verification index is grouped by each example's existing `model.yml.section`
+  value; the generator must not replace that distributed metadata with a new
+  central hand-authored grouping registry;
 - preserved README engineering statements remain verbatim source material and
   are never reconstructed from machine evidence;
 - current status, parameters, measurements, geometry checks, saved-design
@@ -74,19 +107,24 @@ engineering information on the preserved public site.
 ## Execution order
 
 1. Freeze the old-vs-new content/source inventory and durable evidence mapping.
-2. Define the missing visual derivation/output contract before adding rendering
-   code; keep verification truth separate from presentation derivation.
-3. Implement a Forge-owned durable-evidence loader for canonical
+2. [complete in #557] Restore the source-comparison contract, Verification
+   terminology and grouped/priority-driven catalog presentation.
+3. [complete in #556] Keep verification truth separate from deterministic
+   presentation preview derivation.
+4. [complete in #556] Implement a Forge-owned durable-evidence loader for canonical
    `build/main/examples/<slug>/` item outputs and per-item provenance.
-4. Render current model/reference/status/measurement/saved-design/diagram data
-   through the existing external template layer.
-5. Produce or deterministically derive the missing current native/reference
-   presentation images from accepted durable CAD artifacts.
-6. Add content-parity tests against the preserved Pages baseline categories.
-7. Generate a complete stable site with source + an immutable build commit.
-8. Publish the stable root through released `cad-ci publish pages` and prove
-   provenance/freshness.
-9. Continue #366 for final generic Pages preview/cleanup lifecycle work.
+5. [complete in #556/#557] Render current model/reference/status/measurement/
+   saved-design/diagram data through external templates.
+6. [complete in #556] Produce deterministic current native/reference
+   presentation previews from accepted durable CAD artifacts.
+7. [complete in #557] Add regression tests for source visibility, Verification
+   terminology, grouping, priorities and configuration separation.
+8. [complete in PR #557 CI] Generate the complete stable site from PR source
+   plus resolved durable build evidence.
+9. Review the generated replacement against the preserved production baseline;
+   only then republish the stable root through released `cad-ci publish pages`.
+10. Continue #366 for final generic Pages preview/cleanup lifecycle work after
+    stable publication is intentionally restored.
 
 ## Open issue assessment — 2026-11-20
 

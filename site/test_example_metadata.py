@@ -6,7 +6,7 @@ from __future__ import annotations
 from pathlib import Path
 import unittest
 
-from example_metadata import discover_example_metadata
+from example_metadata import discover_example_metadata, load_section_presentation
 from example_documentation import (
     LEGACY_CASE_SOURCE_COMMIT,
     discover_example_documentation,
@@ -72,6 +72,7 @@ class ExampleMetadataTests(unittest.TestCase):
 
         expected = {
             "section",
+            "priority",
             "title",
             "tagline",
             "description",
@@ -85,6 +86,29 @@ class ExampleMetadataTests(unittest.TestCase):
                 ).read_text(encoding="utf-8")
                 data = yaml.safe_load(source)
                 self.assertEqual(set(data), expected)
+
+    def test_section_and_example_priorities_are_complete_and_deterministic(self):
+        rows = discover_example_metadata()
+        sections = load_section_presentation()
+
+        self.assertEqual(
+            set(sections),
+            {row.section for row in rows},
+        )
+        self.assertEqual(
+            len({priority for priority, _label, _description in sections.values()}),
+            len(sections),
+        )
+
+        by_section = {}
+        for row in rows:
+            self.assertGreater(row.priority, 0)
+            by_section.setdefault(row.section, []).append(row)
+
+        for section, section_rows in by_section.items():
+            with self.subTest(section=section):
+                priorities = [row.priority for row in section_rows]
+                self.assertEqual(len(priorities), len(set(priorities)))
 
     def test_metadata_never_claims_current_verification_status(self):
         forbidden = {"pass", "fail", "passed", "failed", "status"}

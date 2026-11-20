@@ -20,9 +20,10 @@ sys.path.insert(0, str(ROOT / "scpf"))
 from scpf.runner import run_script
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
 from guides import GUIDES
-from example_metadata import discover_example_metadata
+from example_metadata import discover_example_metadata, section_presentation
 from example_documentation import discover_example_documentation
-from build_evidence import load_stable_build_evidence
+from cheatsheet_content import load_cheatsheet
+from build_evidence import IMPLEMENTATIONS, load_stable_build_evidence
 from qualification_view import diagram_views, qualification_case_view
 from html_writer import (
     CAD_SITE,
@@ -42,16 +43,11 @@ from html_writer import (
     reference_notes,
     qualification_card,
     qualification_current_evidence,
+    qualification_reference_comparison,
     qualification_diagrams,
     reference_shell,
     render_template,
 )
-from api_coverage import (
-    EXPORT_COVERAGE,
-    CAPABILITY_COVERAGE,
-    coverage_rank,
-)
-from capability_map import CAPABILITY_GROUPS, SOLIDCRAFT_CAPABILITIES
 from api_reference import (
     ENUM_REFERENCES,
     GROUP_REFERENCES,
@@ -62,91 +58,6 @@ from api_reference import (
     group_members,
     references_for_guide,
 )
-
-CHEATSHEET = [
-    ("Model classes", [
-        ("class Example: ... build(self)", "Write a Python model. No main() or show() is required.",
-         "class SimpleBox:\n    def build(self):\n        return Box(40, 30, 10)", "simple-box"),
-        ("Model parameters", "Numeric model fields become named SolidCraft parameters.",
-         "length = 40.0\nBox(self.length, 30, 10)", "simple-box"),
-    ]),
-    ("Shapes and sketches", [
-        ("Box(length, width, height, *, anchor=CENTER)", "Native Box centred on XYZ by default; choose anchor=BOTTOM for a bottom-face datum at Z=0.",
-         "Box(40, 30, 10)", "simple-box"),
-        ("Rectangle2D(width, depth)", "Planar XY profile authored inside a Sketch.",
-         "with Sketch(plane='XY') as sketch:\n    Rectangle2D(100, 60)", "anchored-holes"),
-        ("Circle2D(d=...)", "A round 2D profile authored inside a Sketch.",
-         "with Sketch(plane='XY') as sketch:\n    Circle2D(d=8)", None),
-        ("Polygon2D(points, plane=...)", "A closed profile on XY, XZ or YZ.",
-         "Polygon2D([(0,0), (40,0), (0,30)], plane='XZ')", None),
-        ("Cylinder(d=..., h=..., axis=..., anchor=CENTER)", "Native cylinder centred by default; choose an axial anchor such as BOTTOM or LEFT when that end should define the datum.",
-         "Cylinder(d=24, h=14, axis=Axis.X, anchor=LEFT)", None),
-        ("Sphere(radius, *, anchor=CENTER)", "Native sphere centred by default; cardinal anchors select tangent datums.",
-         "Sphere(12, anchor=LEFT)", None),
-    ]),
-    ("Features and placement", [
-        ("sketch.extrude(distance)", "Extrude an explicitly authored Sketch into editable native solid history.",
-         "with Sketch(plane='XY') as sketch:\n    Rectangle2D(80, 50)\nplate = sketch.extrude(8)", "anchored-holes"),
-        ("sketch.extrude(..., profiles=[...])", "Extrude or cut only the closed Sketch regions selected by fixed sketch-local points.",
-         "cut = sketch.extrude(Depth.THROUGH_ALL, profiles=[(-30, 0), (30, 0)], exact_regions=True)", None),
-        ("Sketch.sheet_metal(...)", "Create a native flat sheet from a closed XY Sketch with an explicit sheet rule.",
-         "sheet = sketch.sheet_metal(thickness=2, bend_radius=2, k_factor=0.5)", None),
-        ("Shape.fold(...)", "Fold existing sheet material along one straight line while keeping native sheet history.",
-         "sheet = sheet.fold(line=((20,-20,0),(20,20,0)), angle=90, fixed=(-30,0,0))", None),
-        ("Sketch.rectangular_pattern(...)", "Repeat a profile or earlier Sketch result as a native rectangular sketch pattern.",
-         "row = sketch.rectangular_pattern(seed, count=4, spacing=25, direction=Axis.X)", None),
-        ("Sketch.mirror(...)", "Mirror a profile, pattern result or earlier mirror result over the Sketch X or Y axis.",
-         "sketch.mirror(row, axis=Axis.Y)", None),
-        ("Hole(d=..., depth=...)", "A native hole. THROUGH_ALL follows the target body.",
-         "Hole(d=8, depth=Depth.THROUGH_ALL)", "anchored-holes"),
-        ("shape.rectangular_pattern(...)", "Repeat an already-applied native feature in one or two linear directions.",
-         "plate.rectangular_pattern(cut, count=4, spacing=20, direction=Axis.X)", None),
-        ("shape.circular_pattern(...)", "Repeat an already-applied native feature around a fixed axis.",
-         "plate.circular_pattern(cut, count=6, axis=Axis.Z)", None),
-        ("shape.at(target, anchor=..., child=...)", "Place a direct CSG shape anchor on another shape anchor; CENTER-to-CENTER is supported first.",
-         "Cylinder(d=8, h=50, axis=Axis.X).at(body)", "primitive-csg"),
-        ("shape.on(target, face=...)", "Place a feature on a selected face of another shape.",
-         "Hole(d=8, depth=Depth.THROUGH_ALL).on(plate, face=Faces.TOP)", "anchored-holes"),
-        ("TOP + LEFT / BOTTOM + RIGHT", "Combine cardinal directions to identify one edge of an axis-aligned rectangular solid.",
-         "body.fillet(2, edges=[BOTTOM + LEFT, BOTTOM + RIGHT])", None),
-        ("Box(...).at(..., anchor=...)", "Place a native Box by a face, edge or corner anchor without creating a Sketch.",
-         "Box(80, 50, 12).at(0, 0, 0, anchor=FRONT + BOTTOM)", None),
-        ("shape.fillet(...)", "Round selected edges of a feature-based body.",
-         "body.fillet(2, edges=Edges.VERTICAL)", None),
-        ("shape.chamfer(...)", "Bevel selected edges using the same edge selectors as fillet.",
-         "body.chamfer(2, edges=Edges.VERTICAL)", None),
-        ("shape.shell(...)", "Create an open-sided shell (supported feature trees only).",
-         "Box(80, 50, 30).shell(2, open=Faces.TOP)", None),
-        ("a + b / a - b / a & b", "Join, cut or intersect supported shapes; operation support depends on the shape types.",
-         "body + Hole(d=8).at(0, 0, 10)", None),
-    ]),
-    ("Reusable components", [
-        ("copy(placement=Placement(...))", "Create another occurrence of the same component definition at a declared pose.",
-         "second = first.copy(placement=Placement(x=40))", "components"),
-        ("model.attach(...)", "Fix one reusable component to another through explicit attachment references.",
-         "right = Block().attach(left, parent=Anchor.RIGHT, child=Anchor.LEFT)", "components"),
-        ("attach(offset=(u, v))", "Keep an in-plane attachment offset associative; parameter expressions become native planar-joint values.",
-         "part.attach(base, parent=Anchor.FRONT_TOP_LEFT, child=mount, offset=(0, -wall + 12))", "components"),
-        ("assembly.with_anchor(...) / anchor(...)", "Expose a semantic attachment datum owned by an assembly without adding application-specific anchors to a generic component.",
-         "frame = (left + right).with_anchor(\"front_top_left\", left, ref)\nparent = frame.anchor(\"front_top_left\")", "components"),
-        ("corner anchors", "Use one of the eight rectangular corner references when attaching components.",
-         "marker = Marker().attach(base, parent=Anchor.FRONT_TOP_RIGHT, child=Anchor.BACK_TOP_RIGHT)", "corner-anchor"),
-        ("AnchorFrame", "Define an oriented local attachment frame. Return it from anchors() when the datum belongs to the reusable component, or pass it directly to attach() when it belongs only to the assembly.",
-         "mount = AnchorFrame(origin=(0,0,-12), z=(0,1,0), x=(0,0,-1))\npart.attach(base, parent=Anchor.FRONT_TOP_LEFT, child=mount)", "custom-anchor"),
-        ("AnchorTopology", "Keep a named or assembly-local attachment reference on a planar-face edge or one of its endpoints so SolidCraft can follow changing geometry.",
-         "def anchors(self):\n    return {\"mount\": AnchorTopology(edge=(0,10,5), on=(0,10,10), corner=(0,0,5))}", "custom-anchor"),
-        ("Placement(rotation=(axis, degrees))", "Give a component occurrence one absolute axis-angle orientation.",
-         "second = first.copy(placement=Placement(x=40, rotation=(Z, 180)))", None),
-    ]),
-    ("Compile and inspect", [
-        ("python -m scpf ... --out", "Compile a model to SolidCraft command JSON; no SolidCraft app needed.",
-         "python -m scpf examples/simple-box/scpf/model.py --out output/box.json", "simple-box"),
-        ("python -m scpf replay ...", "Send existing command JSON to an open SolidCraft session; does not recompile.",
-         "python -m scpf replay output/box.json", None),
-        ("python -m scpf ... --connect", "Execute a model in an open SolidCraft GUI document.",
-         "python -m scpf examples/simple-box/scpf/model.py --connect", None),
-    ]),
-]
 
 
 def _search_entry(title, kind, url, summary, *, symbol=None, aliases=(), keywords=()):
@@ -282,7 +193,7 @@ def _cheatsheet_anchor(heading, title):
 
 def _cheatsheet_search_entries():
     entries = []
-    for heading, items in CHEATSHEET:
+    for heading, items in load_cheatsheet():
         for title, description, snippet, _linked in items:
             anchor = _cheatsheet_anchor(heading, title)
             entries.append(_search_entry(
@@ -428,7 +339,7 @@ def build(
     )
     (out / ".nojekyll").write_text("", encoding="utf-8")
     cards = []
-    qualification_cards = []
+    verification_cards_by_section = {}
     manifest = {
         "library_commit": sha,
         "examples": {},
@@ -486,6 +397,9 @@ def build(
 
     for info in example_rows:
         slug = info.slug
+        _section_priority, section_label, _section_description = (
+            section_presentation(info.section)
+        )
         documentation = documentation_by_slug[slug]
         source_path = ROOT / "examples" / slug / "scpf" / "model.py"
         commands = run_script(source_path)
@@ -597,22 +511,22 @@ def build(
             )
         )
         if stable is not None:
-            qualification_cards.append(
-                qualification_card(
-                    info,
-                    stable_view_by_slug[slug],
-                    f"{slug}/",
-                )
+            verification_card = qualification_card(
+                info,
+                stable_view_by_slug[slug],
+                f"{slug}/",
+                section_label=section_label,
             )
         else:
-            qualification_cards.append(
-                render_template(
-                    "example-card.html",
-                    **card_values,
-                    example_url=f"../examples/{escape(slug)}/",
-                    preview_url=escape(qualification_preview),
-                )
+            verification_card = render_template(
+                "example-card.html",
+                **{**card_values, "section": escape(section_label)},
+                example_url=f"../examples/{escape(slug)}/",
+                preview_url=escape(qualification_preview),
             )
+        verification_cards_by_section.setdefault(info.section, []).append(
+            (info.priority, info.slug, verification_card)
+        )
 
     # Expanded, navigable documentation remains separate from tiny smoke-test
     # examples and from the quick cheatsheet. Relevant API facts are repeated
@@ -714,16 +628,19 @@ def build(
         encoding="utf-8",
     )
 
-    # Qualification source pages are derived from the same local example
-    # metadata. #497 attaches accepted build/main status and measurements.
-    qualification_root = out / "qualification"
-    qualification_root.mkdir(exist_ok=True)
-    qualification_manifest = {}
+    # Verification pages are derived from the same local example metadata.
+    # #497 attaches accepted build/main status and measurements.
+    verification_root = out / "verification"
+    verification_root.mkdir(exist_ok=True)
+    verification_manifest = {}
 
     for info in example_rows:
         slug = info.slug
+        _section_priority, section_label, _section_description = (
+            section_presentation(info.section)
+        )
         documentation = documentation_by_slug[slug]
-        case_dir = qualification_root / slug
+        case_dir = verification_root / slug
         case_dir.mkdir(exist_ok=True)
         reference_notes_html = reference_notes(
             documentation.reference_notes
@@ -731,6 +648,19 @@ def build(
         verification_url = (
             f"{LIBRARY_URL}/blob/{sha}/examples/{slug}/verification/verify.py"
         )
+        reference_sources = {
+            implementation: (
+                ROOT / "examples" / slug / implementation / "model.py"
+            ).read_text(encoding="utf-8")
+            for implementation in IMPLEMENTATIONS
+        }
+        reference_source_urls = {
+            implementation: (
+                f"{LIBRARY_URL}/blob/{sha}/examples/{slug}/"
+                f"{implementation}/model.py"
+            )
+            for implementation in IMPLEMENTATIONS
+        }
         current_evidence = (
             qualification_current_evidence(
                 stable_view_by_slug[slug],
@@ -739,11 +669,20 @@ def build(
             if stable is not None
             else render_template("qualification-evidence-unavailable.html")
         )
+        reference_comparison = qualification_reference_comparison(
+            reference_sources,
+            reference_source_urls,
+            reference_rows=(
+                stable_view_by_slug[slug]["references"]
+                if stable is not None
+                else ()
+            ),
+        )
         body = render_template(
             "qualification-case.html",
             slug=escape(slug),
             title=escape(info.title),
-            section=escape(info.section),
+            section=escape(section_label),
             documentation_goal=escape(documentation.goal),
             forge_api=escape(documentation.forge_api),
             forge_model=escape(documentation.forge_model),
@@ -756,7 +695,10 @@ def build(
             geometry_reason=escape(documentation.geometry_reason),
             reference_notes=reference_notes_html,
             verification_url=escape(verification_url),
+            forge_source=escape((ROOT / "examples" / slug / "scpf" / "model.py").read_text(encoding="utf-8")),
+            forge_source_url=escape(f"{LIBRARY_URL}/blob/{sha}/examples/{slug}/scpf/model.py"),
             current_evidence=current_evidence,
+            reference_comparison=reference_comparison,
         )
         (case_dir / "index.html").write_text(
             page(
@@ -768,7 +710,7 @@ def build(
             ),
             encoding="utf-8",
         )
-        qualification_manifest[slug] = {
+        verification_manifest[slug] = {
             "title": info.title,
             "documentation_source": f"examples/{slug}/README.md",
             "verification_source": (
@@ -777,7 +719,7 @@ def build(
             "evidence_source": "build/main",
         }
         if stable is not None:
-            qualification_manifest[slug].update(
+            verification_manifest[slug].update(
                 {
                     "status": stable_view_by_slug[slug]["status"],
                     "accepted_source_commit": (
@@ -801,24 +743,45 @@ def build(
         )
         diagrams = ""
 
-    qualification_index = render_template(
+    verification_groups = "".join(
+        render_template(
+            "verification-group.html",
+            section=escape(label),
+            description=escape(description),
+            cards="".join(
+                card
+                for _priority, _slug, card in sorted(
+                    verification_cards_by_section[section],
+                    key=lambda item: (item[0], item[1]),
+                )
+            ),
+        )
+        for section, (priority, label, description) in sorted(
+            (
+                (section, section_presentation(section))
+                for section in verification_cards_by_section
+            ),
+            key=lambda item: (item[1][0], item[0]),
+        )
+    )
+    verification_index = render_template(
         "qualification-index.html",
         example_count=len(example_rows),
-        cards="".join(qualification_cards),
+        groups=verification_groups,
         evidence_note=evidence_note,
         diagrams=diagrams,
     )
-    (qualification_root / "index.html").write_text(
+    (verification_root / "index.html").write_text(
         page(
-            "Qualification",
-            qualification_index,
+            "Verification",
+            verification_index,
             stylesheet="../style.css",
             home="../",
             cheatsheet="../cheatsheet/",
         ),
         encoding="utf-8",
     )
-    (qualification_root / "manifest.json").write_text(
+    (verification_root / "manifest.json").write_text(
         json.dumps(
             {
                 "library_commit": sha,
@@ -826,7 +789,7 @@ def build(
                 "build_commit": (
                     stable.build_commit if stable is not None else None
                 ),
-                "cases": qualification_manifest,
+                "cases": verification_manifest,
             },
             indent=2,
         ) + "\n",
@@ -835,7 +798,7 @@ def build(
 
     sections = []
     example_slugs = {row.slug for row in example_rows}
-    for heading, items in CHEATSHEET:
+    for heading, items in load_cheatsheet():
         boxes = []
         for title, description, snippet, linked in items:
             link = cheatsheet_link(linked, example_slugs)

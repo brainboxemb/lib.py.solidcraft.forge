@@ -149,7 +149,7 @@ jobs:
         run: |
           python site/build.py             --out generated-site             --source-sha "$SOURCE_SHA"             --build-main resolved-build-main             --build-commit "$BUILD_COMMIT"
           test -s generated-site/provenance.json
-          test -s generated-site/qualification/manifest.json
+          test -s generated-site/verification/manifest.json
           python - <<'PY'
           import json
           import os

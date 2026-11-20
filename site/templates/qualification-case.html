@@ -1,11 +1,18 @@
 <main class="wrap">
-  <div class="crumb"><a href="../">← Qualification</a> / ${title}</div>
+  <div class="crumb"><a href="../">← Verification</a> / ${title}</div>
   <section class="hero small">
     <p class="eyebrow">${section}</p>
     <h1>${title}</h1>
     <p class="guide-lead">${documentation_goal}</p>
   </section>
+  <section class="panel">
+    <h2>Forge code</h2>
+    <p>This is the complete Forge source used for this example.</p>
+    <pre><code>${forge_source}</code></pre>
+    <p><a href="${forge_source_url}">Open the editable Forge source in GitHub →</a></p>
+  </section>
   ${current_evidence}
+  ${reference_comparison}
   <section class="panel">
     <h2>Engineering explanation</h2>
     <h3>Forge API</h3>

@@ -1,0 +1,26 @@
+schema: 1
+sections:
+  fundamentals:
+    priority: 10
+    label: 1 · Basic geometry
+    description: Primitives, profiles, CSG and simple reusable reference geometry.
+  features:
+    priority: 20
+    label: 2 · Parent/child features and faces
+    description: Features that belong to an existing object and use a meaningful parent face.
+  parameters:
+    priority: 30
+    label: 3 · Parameters and dependencies
+    description: Editable values, component-local parameters and inherited symbolic dependencies.
+  components:
+    priority: 40
+    label: 4 · Components and occurrences
+    description: Reusable physical parts and more than one placed occurrence.
+  anchors:
+    priority: 50
+    label: 5 · Anchors and local frames
+    description: Richer component references — faces, corners, topology and oriented local frames.
+  associativity:
+    priority: 60
+    label: 6 · Associative relationships
+    description: Editable distances and local offsets that must keep their meaning after parameter changes.

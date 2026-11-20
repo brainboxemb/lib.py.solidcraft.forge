@@ -100,6 +100,7 @@ Presentation metadata in `model.yml` uses only:
 
 ```text
 section
+priority
 title
 tagline
 description
@@ -107,7 +108,7 @@ parameters
 stages
 ```
 
-`model.yml` is the generic model/page metadata source. The example
+`model.yml` is the generic model/page metadata source. `priority` is presentation-only ordering within the declared section; lower values render first. The example
 `README.md` owns human engineering explanation such as the goal, Forge API
 and model, SolidCraft lowering/result, saved-design explanation, geometry
 sufficiency rationale and reference notes. Do not infer or summarize those

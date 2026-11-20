@@ -601,7 +601,7 @@ human engineering documentation, not a value to reconstruct later from machine
 checks.
 
 `model.yml` keeps only the agreed generic page metadata fields:
-`section`, `title`, `tagline`, `description`, `parameters`, and
+`section`, `priority`, `title`, `tagline`, `description`, `parameters`, and
 `stages`. It is not a second verification contract.
 
 Machine expectations, tolerances and saved-design checks remain solely in
@@ -609,13 +609,14 @@ Machine expectations, tolerances and saved-design checks remain solely in
 
 ## Example-owned presentation metadata
 
-Every current Forge Qualification example is self-describing for generated
+Every current Forge verification example is self-describing for generated
 documentation.
 
 `examples/<slug>/model.yml` is the authoritative source for human-facing
 example metadata. The required schema contains:
 
 - `section`;
+- positive integer `priority`;
 - `title`;
 - `tagline`;
 - `description`;
@@ -625,8 +626,7 @@ example metadata. The required schema contains:
 Verification explanation and historical engineering rationale live in the
 example documentation, not in additional `model.yml` verification fields.
 
-These fields describe the example for navigation/presentation. They must not
-become a second machine verification contract. Exact expected geometry, parameters, tolerances and saved-design
+These fields describe the example for navigation/presentation. `priority` is presentation-only and controls ordering within the example's section; lower values render first. These fields must not become a second machine verification contract. Exact expected geometry, parameters, tolerances and saved-design
 expectations remain in `verification/verify.py`.
 
 Generated Pages obtain actual status, measurements and evidence links from the
@@ -739,3 +739,41 @@ The stable site is published only as one complete directory through
 `cad-ci publish pages`. Forge must not reimplement Pages Git fetch, merge,
 retry, race or push mechanics. #497 changes only the stable root; PR preview and
 preview cleanup lifecycle remains outside this cut-over.
+
+
+## Public verification Pages
+
+The current public concept is **verification**, not qualification.
+
+- navigation, headings, page titles and stable public URLs must use
+  `Verification` / `verification/`;
+- retired `Qualification` terminology may remain only in historical material or
+  temporary internal implementation names during migration; it must not be
+  presented as the current user-facing architecture;
+- every verified model page must show the complete Forge Python model source
+  inline;
+- every available independent reference implementation (PythonSCAD, pyBOSL2,
+  CadQuery and build123d) must show its complete Python source inline beside
+  that implementation's current preview/result evidence;
+- reference source visibility is source-owned and must not depend on durable evidence availability; source-only builds still show all four reference sources, while stable builds add current durable result evidence beside them;
+- source links are supplementary; replacing inline source with links is a
+  content regression;
+- displayed source must come from the owning example source tree, while
+  PASS/FAIL, measurements and generated CAD artifacts continue to come from the
+  accepted durable build evidence;
+- the verification index must group examples by the existing `section` field in
+  each example's `model.yml`;
+- grouping order must be deterministic, and no second central catalog of group
+  membership may be introduced;
+- each example declares a local integer `priority` in its `model.yml`; examples
+  inside one section are sorted by that priority and then slug as a deterministic
+  tie-breaker;
+- section presentation configuration uses `priority`, not positional `order`;
+- public section label/priority translation is presentation configuration under
+  `site/content/verification-sections.yml`, not Python source;
+- the six existing section slugs keep the preserved public labels and order:
+  `fundamentals` → `1 · Basic geometry`, `features` →
+  `2 · Parent/child features and faces`, `parameters` →
+  `3 · Parameters and dependencies`, `components` →
+  `4 · Components and occurrences`, `anchors` → `5 · Anchors and local frames`,
+  and `associativity` → `6 · Associative relationships`.
