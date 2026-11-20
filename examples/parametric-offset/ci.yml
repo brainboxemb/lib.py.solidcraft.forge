@@ -1,5 +1,6 @@
 # SolidCraft model verification for parametric-offset.
 id: parametric-offset
+process: false
 kind: model
 needs:
   - forge-tool

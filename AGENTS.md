@@ -26,6 +26,10 @@ The active CI structure is defined by:
 
 The generic planner/executor is `tool.cad.ci`.
 
+During staged model verification, Forge may declare item-level `process` state in
+`examples/<model>/ci.yml`. Forge does not interpret that field; released
+`tool.cad.ci` / `lib.py.cad.ci` own its selection and execution semantics.
+
 ## Current verification steps
 
 The Forge tool item runs:

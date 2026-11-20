@@ -1,5 +1,6 @@
 # SolidCraft model verification for group-hierarchy.
 id: group-hierarchy
+process: false
 kind: model
 needs:
   - forge-tool

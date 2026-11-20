@@ -1,5 +1,6 @@
 # SolidCraft model verification for assembly-owned-anchor.
 id: assembly-owned-anchor
+process: false
 kind: model
 needs:
   - forge-tool

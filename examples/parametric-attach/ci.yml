@@ -1,5 +1,6 @@
 # SolidCraft model verification for parametric-attach.
 id: parametric-attach
+process: false
 kind: model
 needs:
   - forge-tool

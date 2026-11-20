@@ -1,5 +1,6 @@
 # SolidCraft model verification for selective-profile-extrude.
 id: selective-profile-extrude
+process: false
 kind: model
 needs:
   - forge-tool

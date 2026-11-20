@@ -1,5 +1,6 @@
 # SolidCraft model verification for primitive-csg.
 id: primitive-csg
+process: false
 kind: model
 needs:
   - forge-tool

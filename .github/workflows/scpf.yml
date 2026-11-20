@@ -13,4 +13,4 @@ jobs:
     permissions:
       contents: read
       packages: read
-    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-ci.yml@c60bf64a393dff33440d22e9e9347cbbaba71c4b
+    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-ci.yml@96d4c9d6076b7452933c048ace65cf2b0a159d64

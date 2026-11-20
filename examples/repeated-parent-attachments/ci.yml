@@ -1,5 +1,6 @@
 # SolidCraft model verification for repeated-parent-attachments.
 id: repeated-parent-attachments
+process: false
 kind: model
 needs:
   - forge-tool
