@@ -17,68 +17,68 @@ The generic CAD-CI baseline is accepted:
   execution logging.
 
 Durable PR build lifecycle cleanup is complete. Closed PR scopes are removed
-through released CAD-CI and the accumulated stale `build/pr/*` scopes have been
-removed; the generated build branch currently contains only `main/`.
+through released CAD-CI and generated `build/pr/*` scopes are no longer left
+behind.
 
 `docker.cad.solidcraft` v0.2.0 is released as two immutable roles:
 
 - `ghcr.io/brainboxemb/cad-solidcraft:v0.2.0`;
 - `ghcr.io/brainboxemb/cad-reference:v0.2.0`.
 
-Hosted-runner clean-pull evidence for the immutable release was:
+PR #514 is merged. Forge now consumes those two immutable roles and only
+`simple-box` remains `process: true` as a model-verification item.
 
-- SolidCraft role: 13.386 s;
-- reference role: 46.679 s.
+The first decomposed cold `simple-box:model_verify` measurement on v0.2.0 was
+about 12.2 s total:
 
-The preceding `:edge` proof measured 9.974 s and 23.073 s respectively.
-Normal model verification must therefore load only the lightweight SolidCraft
-role; reference-image cost must not be charged to the model path.
+- Forge compile: ~0.12 s;
+- SolidCraft image pull: ~7.65 s;
+- container creation/start: ~3.17 s;
+- Python bootstrap: ~0.17 s;
+- verification-library import: ~0.75 s;
+- native model production: ~0.11 s;
+- SolidCraft verification itself: ~0.04 s.
 
-The previous five-model Forge staging was premature. The active model proof is
-again exactly one model: `simple-box`.
+The model/verification work is therefore no longer the dominant cost. Remaining
+cold-path cost is primarily image acquisition plus Docker container startup.
 
 ## Current goal
 
-Complete #484 by adopting the two immutable v0.2.0 runtime roles and measuring
-the remaining cold path with only `simple-box` active as a model-verification
-item.
+Complete #516 with one representative `simple-box`-specific change so the
+end-to-end selected graph and total CI time are measured without shared
+runtime/reference changes contaminating selection.
+
+This is the final measurement required before #484 can be closed.
 
 ## Required proof
 
-- `FORGE_RUNTIME_IMAGE` is exactly
-  `ghcr.io/brainboxemb/cad-solidcraft:v0.2.0`;
-- `REFERENCE_RUNTIME_IMAGE` is exactly
-  `ghcr.io/brainboxemb/cad-reference:v0.2.0`;
-- model verification consumes only `FORGE_RUNTIME_IMAGE`;
-- independent reference verification consumes only
-  `REFERENCE_RUNTIME_IMAGE`;
-- `simple-box` is the only model item with `process: true`;
-- every other historical model item remains explicit `process: false`;
-- structured CAD-CI evidence and the live log identify the actual
-  `simple-box:model_verify` duration;
-- the live log separates SolidCraft image acquisition from the subsequent
-  container/model work;
-- no verification semantics are weakened to improve timing.
-
-Broader model/reference migration does not resume merely because this PR is
-green. The one-model timing must first be understood.
+- exactly one `simple-box` model-verification item participates;
+- normal Forge package dependency work is selected only where required;
+- no other model-verification item runs;
+- no independent reference item runs;
+- `cad-reference:v0.2.0` is not pulled;
+- structured CAD-CI evidence identifies the `simple-box` step durations;
+- the live log confirms the already measured cold-path decomposition;
+- no verification semantics are changed merely to improve timing.
 
 ## Execution order
 
-1. #484 — adopt runtime v0.2.0 and prove the one-model `simple-box` path.
-2. #430 / #378 — continue visual and staged verification on `simple-box`
+1. #516 — measure a normal simple-box-only selected run.
+2. Close #484 after recording the resulting timing and selection evidence.
+3. #430 / #378 — continue visual and staged verification on `simple-box`
    only.
-3. #366 / #497 — resume durable main/Pages work only after the one-model path
+4. #366 / #497 — resume durable main/Pages work only after the one-model path
    is stable.
-4. #432 — broader model migration remains blocked until the simple-box proof is
+5. #432 — broader model migration remains blocked until the simple-box proof is
    complete.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | now | v0.2.0 is released; adopt the two roles and analyze one simple-box model path. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | next | Correct one-model continuation after #484. |
+| #516 Measure one-model simple-box CI after runtime v0.2.0 adoption | now | Final uncontaminated selection/timing proof after merged #514. |
+| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | blocked | Runtime split and phase timing are proven; close after #516 records the normal simple-box-only run. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | next | Correct one-model continuation after #484/#516. |
 | #378 Use explicit Forge verification stages instead of integration/native gates | next | Continue through simple-box only after runtime timing is stable. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Resume after the one-model runtime/verification path is stable. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Depends on stable durable generated output. |
@@ -104,4 +104,4 @@ green. The one-model timing must first be understood.
 
 Immediate chain:
 
-`#484 simple-box runtime proof -> #430/#378 simple-box verification -> #366/#497`.
+`#516 simple-box measurement -> close #484 -> #430/#378 simple-box verification -> #366/#497`.
