@@ -1,4 +1,4 @@
-"""Guard the staged declarative model-verification boundary."""
+"""Guard the complete declarative model-verification boundary."""
 
 from __future__ import annotations
 
@@ -152,6 +152,29 @@ class DeclarativeModelVerificationBoundaryTests(unittest.TestCase):
             list(ROOT.glob("examples/*/verification/verify_model.py")),
             [],
         )
+
+    def test_all_qualification_models_use_standard_ci_and_references(self):
+        """All 32 cases use one model template and four reference children."""
+
+        for slug in MIGRATED_MODELS:
+            with self.subTest(slug=slug):
+                ci = (
+                    ROOT / "examples" / slug / "ci.yml"
+                ).read_text(encoding="utf-8")
+                self.assertIn("template: forge-model-declarative", ci)
+                self.assertIn("process: true", ci)
+
+                for engine in (
+                    "build123d",
+                    "cadquery",
+                    "pybosl2",
+                    "pythonscad",
+                ):
+                    child = ROOT / "examples" / slug / engine / "ci.yml"
+                    self.assertTrue(
+                        child.is_file(),
+                        f"missing reference child: {child}",
+                    )
 
     def test_batch_reuses_runtime_but_materializes_per_model(self):
         text = BATCH.read_text(encoding="utf-8")
