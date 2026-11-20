@@ -87,6 +87,14 @@ class DiagramEvidenceTests(unittest.TestCase):
         self.assertIn("verification/diagrams/sources/**", text)
         self.assertIn("- diagrams", text)
 
+    def test_renderer_collects_all_diagram_results_before_failure(self):
+        text = SCRIPT.read_text(encoding="utf-8")
+        self.assertIn("for source_path in sources:", text)
+        self.assertIn("failed = False", text)
+        self.assertIn('row["status"] = "pass"', text)
+        self.assertIn('"status": "fail"', text)
+        self.assertIn("return 1 if failed else 0", text)
+
     def test_renderer_does_not_execute_forge_or_solidcraft(self):
         text = SCRIPT.read_text(encoding="utf-8")
         self.assertIn("cadcraft-cli", text)
