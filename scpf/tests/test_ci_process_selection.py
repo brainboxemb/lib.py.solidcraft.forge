@@ -23,6 +23,16 @@ EXPECTED_PROCESSED = {
     "sheet-fold",
     "simple-box",
     "top-sketch-after-chamfer",
+    "bracket",
+    "circle-negative-extrude",
+    "circular-feature-pattern",
+    "eight-flightcase-corners",
+    "primitive-csg",
+    "rectangular-pattern",
+    "round-top-sketch",
+    "rounded-rectangle-sketch",
+    "selective-profile-extrude",
+    "slot-family",
     "xz-anchor",
 }
 
