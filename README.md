@@ -56,32 +56,37 @@ The detailed API-oriented developer documentation is in `scpf/README.md`.
 
 ## Current CI architecture
 
-GitHub uses two separate workflows:
+The normal Forge workflow is `.github/workflows/scpf.yml`. Planning and
+execution are delegated to released `tool.cad.ci`.
 
-- `.github/workflows/scpf.yml` (**Forge**) for Forge/model CI;
-- `.github/workflows/solidcraft-runtime.yml` (**SolidCraft runtime**) for the immutable Docker runtime.
+Repository-specific CI items are declared by `cad-ci.yml` from:
 
-Planning and execution are delegated to the pinned reusable workflows from
-`brainboxemb/tool.cad.ci`. Repository-specific work is declared in
-`cad-ci.yml`, `scpf/ci.yml` and migrated model `ci.yml` files.
+- `scpf/ci.yml` — `forge-package`;
+- `ci/forge-tests/ci.yml` — `forge-tests`;
+- `ci/forge-release/ci.yml` — `forge-release`;
+- `examples/<model>/ci.yml` — model verification;
+- `verification/references/ci.yml` — independent reference verification.
 
-The Forge release chain is:
+The Forge package graph is:
 
 ```text
-tool_build -> tool_test -> tool_verify
+forge-package
+  dist/scpf-*.whl
+      |
+      +--> forge-tests
+      +--> forge-release
+      +--> selected model_verify items
 ```
 
-- `tool_build` builds the Forge package;
-- `tool_test` runs Forge unit tests;
-- `tool_verify` release-verifies that built package with the fixed
-  representative example set.
+`forge-package` builds the wheel once. Forge unit tests, release-verification
+examples and model verification all consume that exact dependency artifact.
 
-Per-model SolidCraft checking is separate:
+A model does not depend on the unit-test or release-verification item. Its only
+Forge package prerequisite is `forge-package`.
 
-- `model_verify` compiles one migrated model with the exact built Forge
-  package and verifies the resulting native model in SolidCraft.
-
-All 32 historical model cases now have native `model_verify` coverage. Issue #378 tracks the remaining reference, visual, diagram and summary verification layers.
+All 32 historical model cases have native `model_verify` coverage. During the
+staged proof, exactly five model items are marked `process: true`; issue #378
+tracks the remaining reference, visual, diagram and summary layers.
 
 ## Verification runtime
 
