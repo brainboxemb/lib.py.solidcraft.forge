@@ -24,41 +24,60 @@ Secondary documentation:
 - `docs/background/` — historical/narrow design, changes, research and migration records;
 - `docs/agent/` — generated machine-oriented API material.
 
+## Current status
+
+Issue #472 is implemented in PR #475.
+
+At this snapshot:
+
+- PR #475 is open, mergeable and its Forge workflow is green;
+- the package/test/release split uses existing CAD-CI dependency outputs;
+- `forge-package` builds the wheel once;
+- `forge-tests`, `forge-release` and model verification consume that package
+  independently;
+- the staged proof still processes exactly five model verification items:
+  `simple-box`, `anchor-topology-mutation`, `attach-angle`,
+  `four-corner-l` and `xz-anchor`.
+
+Issue #476 is a documentation-only task to keep one ready-to-copy central-CI
+chat handoff under `docs/manual/`. That handoff is not a second source of
+truth and must always direct a new chat back to the live repository state and
+this plan.
+
 ## Current goal
 
-Complete #472: make model verification depend only on the Forge package build
-rather than the complete Forge tool-verification item.
-
-The existing CAD-CI item dependency/output model appears sufficient. Do not add
-a new generic CAD-CI feature unless implementation proves that current
-primitives cannot express the required package artifact dependency.
+1. Finish #476 as a small documentation-only PR.
+2. Merge #475 when its current green state is still valid.
+3. Measure the resulting five-model run before opening or implementing any
+   further performance change.
+4. Continue the staged declarative/visual verification chain under
+   #432/#430/#378.
+5. Continue durable build/Pages publication under #366 after the verification
+   stages are stable.
 
 ## Execution order
 
-1. Re-audit the current Forge package/test/release-verification item boundary.
-2. Split package build, Forge unit tests and Forge release verification into
-   semantically separate CAD-CI items using existing dependency outputs.
-3. Make migrated model verification depend only on the exact Forge package
-   artifact it consumes.
-4. Preserve Forge unit tests and release verification as independent active
-   checks.
-5. Measure the resulting five-model run with the new CAD-CI timing evidence.
-6. Only then decide whether the remaining repeated Docker/SolidCraft model
-   runtime needs a separate performance change.
-7. Continue the five-model declarative/visual verification chain under
-   #432/#430/#378.
-8. Continue durable build/Pages publication under #366 after the verification
-   stages are stable.
+1. Keep #476 limited to the copyable chat handoff and manual index.
+2. Recheck PR #475 before merge; do not treat this plan snapshot as a substitute
+   for current PR status.
+3. After #475 lands, update this plan and close #472.
+4. Compare timing evidence for the five-model run. If repeated Docker/SolidCraft
+   startup is still the dominant cost, create a separate issue before changing
+   execution behavior.
+5. Continue #432 with the released `lib.py.cad.verification` boundary.
+6. Use #430/#378 for the remaining simple-box visual/verification-stage proof.
+7. Complete #366 only after the verification path is stable.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #472 Make model verification depend only on the Forge package build | now | Next architecture/performance correction; existing CAD-CI primitives should be tried first. |
-| #432 Use released declarative CAD verification in model verification | next | Continue the five-model verification migration after #472. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after the dependency/runtime structure is corrected. |
+| #476 Add reusable central CI handoff bootstrap document | now | Documentation-only task requested for copy/paste into future chats; must stay subordinate to live repository state and `docs/plan.md`. |
+| #472 Make model verification depend only on the Forge package build | effectively complete but still open | Implemented by green PR #475; merge and post-merge plan update remain. |
+| #432 Use released declarative CAD verification in model verification | next | Continue the five-model verification migration after #472 is merged. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after #472 is merged and the package/model dependency structure is stable. |
 | #391 Extract reusable CAD verification library from Forge | blocked | Close only after remaining shared checker ownership has left Forge through #432. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | next | Umbrella migration after #472/#432. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | next | Umbrella migration after #472/#432; continue with the staged five-model proof. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Publication follows the remaining five-model verification stages. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
 | #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Independent CLI quality work. |
@@ -79,4 +98,4 @@ primitives cannot express the required package artifact dependency.
 
 Immediate chain:
 
-`#472 -> five-model #432/#430/#378 -> #366`.
+`#476 documentation -> merge #475/#472 -> five-model #432/#430/#378 -> #366`.

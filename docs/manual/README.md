@@ -2,6 +2,7 @@
 
 Current task-oriented guidance for using and verifying Forge.
 
+- [Central CI chat handoff](central-ci-chat-handoff.md)
 - [Windows setup](windows-setup.md)
 - [Verification](verification.md)
 - [Face workplanes](face-workplanes.md)
