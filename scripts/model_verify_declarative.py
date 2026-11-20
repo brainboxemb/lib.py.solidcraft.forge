@@ -51,10 +51,10 @@ def runtime_image() -> str:
     return value
 
 
-def definition_path(slug: str) -> Path:
-    """Return one model-local declarative verification definition."""
+def verify_path(slug: str) -> Path:
+    """Return one model-local declarative verification file."""
 
-    return ROOT / "examples" / slug / "verification" / "definition.py"
+    return ROOT / "examples" / slug / "verification" / "verify.py"
 
 
 def load_definition(path: Path):
@@ -67,7 +67,7 @@ def load_definition(path: Path):
 
     if not isinstance(definition, SolidCraftVerification):
         raise RuntimeError(
-            f"verification definition must export SolidCraftVerification: {path}"
+            f"verification file must export SolidCraftVerification: {path}"
         )
     return definition
 
@@ -107,9 +107,9 @@ def run_inside_runtime(
 
     from cad_verification import run_solidcraft_verification
 
-    path = definition_path(slug)
+    path = verify_path(slug)
     if not path.is_file():
-        raise RuntimeError(f"missing verification definition: {path}")
+        raise RuntimeError(f"missing verification file: {path}")
 
     definition = load_definition(path)
     model = produce_native_model(input_path.resolve(), output_dir.resolve())
@@ -130,9 +130,9 @@ def run_host() -> int:
     wheel = dependency_wheel()
     image = runtime_image()
 
-    if not definition_path(slug).is_file():
+    if not verify_path(slug).is_file():
         raise RuntimeError(
-            f"missing declarative verification definition for {slug}"
+            f"missing declarative verification file for {slug}"
         )
 
     document = compile_commands(slug, wheel)

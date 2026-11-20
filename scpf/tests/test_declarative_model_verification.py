@@ -18,7 +18,7 @@ class DeclarativeModelVerificationBoundaryTests(unittest.TestCase):
     def test_simple_box_is_declarative(self):
         """The first migrated model contains data, not a procedural verifier."""
 
-        self.assertTrue((SIMPLE_BOX / "definition.py").is_file())
+        self.assertTrue((SIMPLE_BOX / "verify.py").is_file())
         self.assertFalse((SIMPLE_BOX / "verify_model.py").exists())
         self.assertTrue((SIMPLE_BOX / "change_length.json").is_file())
 
@@ -55,10 +55,10 @@ class DeclarativeModelVerificationBoundaryTests(unittest.TestCase):
             with self.subTest(value=value):
                 self.assertNotIn(value, text)
 
-    def test_simple_box_definition_contains_no_checker_implementation(self):
-        """The model definition contains only model-specific verification data."""
+    def test_simple_box_verify_contains_no_checker_implementation(self):
+        """The model verification file contains only model-specific verification data."""
 
-        text = (SIMPLE_BOX / "definition.py").read_text(encoding="utf-8")
+        text = (SIMPLE_BOX / "verify.py").read_text(encoding="utf-8")
         forbidden = (
             "argparse",
             "run_command",
