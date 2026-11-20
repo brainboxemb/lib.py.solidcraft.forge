@@ -8,3 +8,16 @@ stages:
   - Create the native Box base
   - Create a named TOP-face rounded-rectangle Sketch
   - Join the rounded pad extrusion to the base
+concepts:
+  - RoundedRectangle2D
+  - face-attached Sketch
+  - joined extrusion
+  - solved sketch constraints
+verification:
+  summary: >
+    Verifies that RoundedRectangle2D produces true native rounded sketch
+    geometry and a joined pad on the selected face.
+  proves:
+    - The base and rounded pad form one body with the expected envelope and volume.
+    - The rounded sketch contains the expected closed profile and remains fully solved.
+    - Native history preserves the Box, named sketch and joined extrusion in order.
