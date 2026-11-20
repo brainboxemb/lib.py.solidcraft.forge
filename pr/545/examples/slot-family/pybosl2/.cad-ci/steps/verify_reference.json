@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "7619e7055446c711c9179b413fbefac754f3e02d2e7c6b67068275d3b8ca6341",
+  "duration_seconds": 0.128,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T21:03:51.840Z",
+  "item": "examples-slot-family-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "97b7d302a9363b1fa3a84e30fa39feef3860910240e71432581961e55103d4e3"
+    }
+  },
+  "run_finished_at": "2026-11-20T21:03:53.826Z",
+  "run_started_at": "2026-11-20T21:01:39.347Z",
+  "schema": 3,
+  "started_at": "2026-11-20T21:03:51.770Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "8b8369975f2ac556c01d61565233d0340aad9f84f5e49e3dfb5110bc2f65e491",
+  "timeout_seconds": null
+}

@@ -1,0 +1,51 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.25
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/simple-box/pythonscad/model.py",
+          "status": "pass",
+          "stl": "simple-box/pythonscad/model.stl"
+        }
+      ],
+      "model": "simple-box",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "0009fc0ca1a6557354fd5f23fbc177090ba061b8",
+  "status": "pass"
+}

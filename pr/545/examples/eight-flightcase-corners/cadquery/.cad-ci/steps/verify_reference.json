@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "dc2d39164e6ff68d29508ad17f4647f71d56cb6da166c1f66ac448d4dcfa2694",
+  "duration_seconds": 0.127,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T21:03:43.795Z",
+  "item": "examples-eight-flightcase-corners-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "c19935009f55e9a0d2af700f5e46b2bb39ee1b3dc4806088fce9fc79c27ba2e2"
+    }
+  },
+  "run_finished_at": "2026-11-20T21:03:53.826Z",
+  "run_started_at": "2026-11-20T21:01:39.347Z",
+  "schema": 3,
+  "started_at": "2026-11-20T21:03:43.727Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "f1dd205db57a3d56a79b40ac97d4d3b00c57bd587650777a83bd7bad92fd84b0",
+  "timeout_seconds": null
+}

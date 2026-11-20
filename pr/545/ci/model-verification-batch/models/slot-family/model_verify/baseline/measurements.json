@@ -1,0 +1,127 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 40543.15796506047,
+      "bbox": {
+        "max": [
+          80.0,
+          60.0,
+          5.000000000000003
+        ],
+        "min": [
+          -80.0,
+          -60.0,
+          -8.88178419700126e-16
+        ]
+      },
+      "center_of_mass": [
+        0.027637014531441826,
+        0.08716948027225906,
+        2.4999999999806697
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 72,
+      "face_types": {
+        "cylinder": 14,
+        "plane": 12
+      },
+      "faces": 26,
+      "kernel": {
+        "edges": 72,
+        "faces": 26,
+        "shells": 1,
+        "vertices": 48
+      },
+      "mass_g": 115.48938881549171,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "SlotFamily",
+      "notes": [],
+      "vertices": 48,
+      "volume_mm3": 89526.6579965052
+    }
+  ],
+  "body_count": 1,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "160",
+      "model": false,
+      "name": "width",
+      "unit": "mm",
+      "value": 160.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "120",
+      "model": false,
+      "name": "depth",
+      "unit": "mm",
+      "value": 120.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "5",
+      "model": false,
+      "name": "thickness",
+      "unit": "mm",
+      "value": 5.0
+    }
+  ],
+  "sketches": [
+    {
+      "curves": 29,
+      "dof": 27,
+      "id": 2,
+      "name": "Slot family",
+      "profiles": 5,
+      "status": "solved",
+      "visible": false
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 3.178062,
+      "name": "Box1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 0.7872979999999999,
+      "name": "Slot family",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 79.823804,
+      "name": "Slot family",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 40543.15796506047,
+    "edges": 72,
+    "faces": 26,
+    "mass_g": 115.48938881549171,
+    "open_bodies_skipped": 0,
+    "vertices": 48,
+    "volume_mm3": 89526.6579965052
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "a4c1b1a90900def3a3b3c4527b1b204ac8a39ebcfa8ff3af3bd24c0996a54369",
+  "duration_seconds": 0.126,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T21:03:49.456Z",
+  "item": "examples-selective-profile-extrude-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "6c159e3f9ddaeb6c2b89ce52eda60944fd53f3c10fdc942fb3be648f6b4e12d3"
+    }
+  },
+  "run_finished_at": "2026-11-20T21:03:53.826Z",
+  "run_started_at": "2026-11-20T21:01:39.347Z",
+  "schema": 3,
+  "started_at": "2026-11-20T21:03:49.389Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "29a9c8122f2b63e545003dbf414345ee64d9ef3b4d539f789b8d1d4ea4684e10",
+  "timeout_seconds": null
+}

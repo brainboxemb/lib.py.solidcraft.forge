@@ -1,0 +1,73 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                10.0,
+                9.945218953682733,
+                0.0
+              ],
+              "actual_min": [
+                -10.0,
+                -9.945218953682733,
+                -30.0
+              ],
+              "expected_max": [
+                10.0,
+                10.0,
+                0.0
+              ],
+              "expected_min": [
+                -10.0,
+                -10.0,
+                -30.0
+              ],
+              "max_delta_mm": 0.05478104631726666,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 1.352984501007286,
+                "delta_mm": 0.0392760020225249,
+                "expected_mm": 1.3137084989847612,
+                "label": "circular side outside the diagonal",
+                "pass": true,
+                "point": [
+                  8.0,
+                  8.0,
+                  -15.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 9356.02608679917,
+              "delta_mm3": 68.75187397021,
+              "expected_mm3": 9424.77796076938,
+              "pass": true,
+              "tolerance_mm3": 100.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/circle-negative-extrude/pythonscad/model.py",
+          "status": "pass",
+          "stl": "circle-negative-extrude/pythonscad/model.stl"
+        }
+      ],
+      "model": "circle-negative-extrude",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "0009fc0ca1a6557354fd5f23fbc177090ba061b8",
+  "status": "pass"
+}

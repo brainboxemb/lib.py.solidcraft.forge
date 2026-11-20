@@ -1,0 +1,443 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "972b509b3569d44c50cf9529a4640ab287478d9e2f52e77f4881dd8b8574dc0f",
+  "variables": {
+    "$face_point_1": [
+      -64.22205101855957,
+      -24.222051018559572,
+      5.0
+    ],
+    "$face_index_1": 0,
+    "$sketch_1_profile_1": [
+      "c1"
+    ],
+    "$sketch_1_operation_1": [
+      "c1",
+      "c2",
+      "c3",
+      "c4"
+    ],
+    "$sketch_1_operation_2": [
+      "c5",
+      "c6",
+      "c7",
+      "c8"
+    ],
+    "$face_point_2": [
+      88.76181998219417,
+      21.059427232647987,
+      5.0
+    ],
+    "$face_index_2": 0,
+    "$sketch_2_profile_1": [
+      "l1",
+      "a1",
+      "l2",
+      "a2"
+    ],
+    "$sketch_2_operation_1": [
+      "l1",
+      "a1",
+      "l2",
+      "a2",
+      "l4",
+      "a3",
+      "l5",
+      "a4"
+    ],
+    "$sketch_2_operation_2": [
+      "l7",
+      "a5",
+      "l8",
+      "a6",
+      "l9",
+      "a7",
+      "l10",
+      "a8"
+    ],
+    "$sketch_2_operation_3": [
+      "l12",
+      "a9",
+      "l13",
+      "a10",
+      "l14",
+      "a11",
+      "l15",
+      "a12"
+    ],
+    "$sketch_2_operation_4": [
+      "l16",
+      "a13",
+      "l17",
+      "a14",
+      "l18",
+      "a15",
+      "l19",
+      "a16"
+    ]
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "hole_diameter",
+        "expression": "8",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "hole_columns",
+        "expression": "4",
+        "unit": ""
+      }
+    },
+    {
+      "index": 2,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "hole_pitch",
+        "expression": "25",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 3,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "slot_count",
+        "expression": "2",
+        "unit": ""
+      }
+    },
+    {
+      "index": 4,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "slot_pitch",
+        "expression": "50",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 5,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 240,
+        "width": 160,
+        "height": 5,
+        "corner": [
+          -120.0,
+          -80.0,
+          0
+        ],
+        "body_name": "SketchPatternMirror"
+      }
+    },
+    {
+      "index": 6,
+      "command": "model.faces",
+      "resolved_params": {
+        "body": "SketchPatternMirror"
+      },
+      "bindings": {
+        "$face_point_1": [
+          -64.22205101855957,
+          -24.222051018559572,
+          5.0
+        ],
+        "$face_index_1": 0
+      }
+    },
+    {
+      "index": 7,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": {
+          "face": [
+            -64.22205101855957,
+            -24.222051018559572,
+            5.0
+          ],
+          "body": "SketchPatternMirror",
+          "index": 0
+        },
+        "project_edges": false,
+        "name": "Dog holes"
+      }
+    },
+    {
+      "index": 8,
+      "command": "sketch.circle.center",
+      "resolved_params": {
+        "center": [
+          -60.0,
+          -45.0
+        ],
+        "diameter": "hole_diameter"
+      },
+      "bindings": {
+        "$sketch_1_profile_1": [
+          "c1"
+        ]
+      }
+    },
+    {
+      "index": 9,
+      "command": "sketch.pattern.rectangular",
+      "resolved_params": {
+        "entities": [
+          "c1"
+        ],
+        "count": "hole_columns",
+        "spacing": "hole_pitch",
+        "dir": [
+          1.0,
+          0.0
+        ]
+      },
+      "bindings": {
+        "$sketch_1_operation_1": [
+          "c1",
+          "c2",
+          "c3",
+          "c4"
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "command": "sketch.mirror",
+      "resolved_params": {
+        "entities": [
+          "c1",
+          "c2",
+          "c3",
+          "c4"
+        ],
+        "line": "x"
+      },
+      "bindings": {
+        "$sketch_1_operation_2": [
+          "c5",
+          "c6",
+          "c7",
+          "c8"
+        ]
+      }
+    },
+    {
+      "index": 11,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 12,
+      "command": "solid.extrude",
+      "resolved_params": {
+        "operation": "cut",
+        "targets": [
+          "SketchPatternMirror"
+        ],
+        "name": "Dog holes",
+        "through_all": true,
+        "direction": "negative"
+      }
+    },
+    {
+      "index": 13,
+      "command": "model.faces",
+      "resolved_params": {
+        "body": "SketchPatternMirror"
+      },
+      "bindings": {
+        "$face_point_2": [
+          88.76181998219417,
+          21.059427232647987,
+          5.0
+        ],
+        "$face_index_2": 0
+      }
+    },
+    {
+      "index": 14,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": {
+          "face": [
+            88.76181998219417,
+            21.059427232647987,
+            5.0
+          ],
+          "body": "SketchPatternMirror",
+          "index": 0
+        },
+        "project_edges": false,
+        "name": "Clamp slots"
+      }
+    },
+    {
+      "index": 15,
+      "command": "sketch.slot.center_to_center",
+      "resolved_params": {
+        "p0": [
+          20.0,
+          20.0
+        ],
+        "p1": [
+          40.0,
+          20.0
+        ],
+        "width": 8.0
+      },
+      "bindings": {
+        "$sketch_2_profile_1": [
+          "l1",
+          "a1",
+          "l2",
+          "a2"
+        ]
+      }
+    },
+    {
+      "index": 16,
+      "command": "sketch.pattern.rectangular",
+      "resolved_params": {
+        "entities": [
+          "l1",
+          "a1",
+          "l2",
+          "a2"
+        ],
+        "count": "slot_count",
+        "spacing": "slot_pitch",
+        "dir": [
+          1.0,
+          0.0
+        ]
+      },
+      "bindings": {
+        "$sketch_2_operation_1": [
+          "l1",
+          "a1",
+          "l2",
+          "a2",
+          "l4",
+          "a3",
+          "l5",
+          "a4"
+        ]
+      }
+    },
+    {
+      "index": 17,
+      "command": "sketch.mirror",
+      "resolved_params": {
+        "entities": [
+          "l1",
+          "a1",
+          "l2",
+          "a2",
+          "l4",
+          "a3",
+          "l5",
+          "a4"
+        ],
+        "line": "y"
+      },
+      "bindings": {
+        "$sketch_2_operation_2": [
+          "l7",
+          "a5",
+          "l8",
+          "a6",
+          "l9",
+          "a7",
+          "l10",
+          "a8"
+        ]
+      }
+    },
+    {
+      "index": 18,
+      "command": "sketch.mirror",
+      "resolved_params": {
+        "entities": [
+          "l1",
+          "a1",
+          "l2",
+          "a2",
+          "l4",
+          "a3",
+          "l5",
+          "a4"
+        ],
+        "line": "x"
+      },
+      "bindings": {
+        "$sketch_2_operation_3": [
+          "l12",
+          "a9",
+          "l13",
+          "a10",
+          "l14",
+          "a11",
+          "l15",
+          "a12"
+        ]
+      }
+    },
+    {
+      "index": 19,
+      "command": "sketch.mirror",
+      "resolved_params": {
+        "entities": [
+          "l7",
+          "a5",
+          "l8",
+          "a6",
+          "l9",
+          "a7",
+          "l10",
+          "a8"
+        ],
+        "line": "x"
+      },
+      "bindings": {
+        "$sketch_2_operation_4": [
+          "l16",
+          "a13",
+          "l17",
+          "a14",
+          "l18",
+          "a15",
+          "l19",
+          "a16"
+        ]
+      }
+    },
+    {
+      "index": 20,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 21,
+      "command": "solid.extrude",
+      "resolved_params": {
+        "operation": "cut",
+        "targets": [
+          "SketchPatternMirror"
+        ],
+        "name": "Clamp slots",
+        "through_all": true,
+        "direction": "negative"
+      }
+    }
+  ],
+  "completed": 22
+}

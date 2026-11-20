@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                480.0,
+                10.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                480.0,
+                10.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/parameter-scope/build123d/model.py",
+          "status": "pass",
+          "stl": "parameter-scope/build123d/model.stl"
+        }
+      ],
+      "model": "parameter-scope",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "0009fc0ca1a6557354fd5f23fbc177090ba061b8",
+  "status": "pass"
+}
