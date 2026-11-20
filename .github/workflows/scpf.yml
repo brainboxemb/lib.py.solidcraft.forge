@@ -17,3 +17,80 @@ jobs:
     with:
       upload_build: true
       build_artifact_name: forge-cad-ci-build
+
+  publish_simple_box_pr:
+    needs: cad_ci
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      needs.cad_ci.outputs.build_artifact_name != ''
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Forge source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Checkout accepted CAD CI tool
+        uses: actions/checkout@v4
+        with:
+          repository: brainboxemb/tool.cad.ci
+          ref: 8bab91eaf8554533e5f63620421ed9554f66eb91
+          path: .cad-ci-tool
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install accepted CAD CI tool
+        run: python -m pip install ./.cad-ci-tool
+
+      - name: Download verified CAD CI output
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.cad_ci.outputs.build_artifact_name }}
+          path: candidate-build
+
+      - name: Check simple-box candidate
+        id: simple_box_candidate
+        shell: bash
+        run: |
+          if [ -f candidate-build/examples/simple-box/.cad-ci/item.json ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare simple-box PR build scope
+        if: steps.simple_box_candidate.outputs.available == 'true'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          cad-ci build prepare-pr \
+            --repo . \
+            --candidate-root candidate-build \
+            --out prepared-build \
+            --source-commit "$SOURCE_SHA" \
+            --pull-request "$PR_NUMBER" \
+            --items simple-box
+
+      - name: Publish simple-box PR build scope
+        if: steps.simple_box_candidate.outputs.available == 'true'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          SOURCE_REF: ${{ github.event.pull_request.head.ref }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          cad-ci publish build \
+            --repo . \
+            --candidate prepared-build \
+            --scope pr \
+            --pull-request "$PR_NUMBER" \
+            --message "build: PR #$PR_NUMBER simple-box" \
+            --source-ref "$SOURCE_REF" \
+            --expected-source "$SOURCE_SHA"
