@@ -142,3 +142,40 @@ During the five-model proof, the `scpf` item remains active. Exactly five model
 verification items participate; the other model verification items remain
 present in the repository but are excluded by the released CAD-CI planner.
 Shared/reference items remain active where required by existing dependencies.
+
+
+## Forge package CI item graph
+
+Forge uses the existing CAD-CI item dependency/output contract:
+
+```text
+forge-package
+  output: dist/scpf-*.whl
+      |
+      +--> forge-tests
+      |
+      +--> forge-release
+      |
+      +--> selected model_verify items
+```
+
+`forge-package` remains configured by `scpf/ci.yml`. The independent package
+checks live under `ci/forge-tests/ci.yml` and
+`ci/forge-release/ci.yml`; root `cad-ci.yml` discovers those CI items
+explicitly.
+
+The consumer boundary is the generic `CAD_CI_DEPENDENCIES_JSON` mapping.
+`forge_example.dependency_wheel("forge-package")` resolves the exact wheel
+from the dependency item's output root.
+
+`tool_ci.py tool_build` writes only to its own `CAD_CI_OUTPUT`.
+`tool_ci.py tool_test`, `tool_verify.py` and model verification read the
+wheel only from the `forge-package` dependency.
+
+The item graph deliberately does not encode unit tests or release verification
+as prerequisites of model verification. Those checks remain independent CAD-CI
+targets and keep source watches that select them when Forge package
+implementation changes.
+
+SCons execution order/parallelism remains generic CAD-CI behavior; this Forge
+change only makes the dependency graph semantically correct.
