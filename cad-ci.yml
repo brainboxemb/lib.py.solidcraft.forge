@@ -2,7 +2,7 @@
 schema: 1
 
 variables:
-  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/lib.py.solidcraft.forge/solidcraft-runtime:runtime-49cdb04d98d6d818dd3726640e7ee1b6973068edece43e5dc14dd870426e32cd"
+  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.1.0"
   SOLIDCRAFT_VERSION: "0.42.0"
 
 items:

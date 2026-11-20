@@ -10,8 +10,6 @@ watch:
   - verification/reference_validation.py
   - verification/build123d_export.py
   - scripts/verification_evidence.py
-  - scripts/solidcraft_runtime.py
-  - docker/solidcraft_runtime/**
 strategy:
   reuse: true
 steps:
@@ -25,8 +23,6 @@ steps:
       - verification/reference_validation.py
       - verification/build123d_export.py
       - scripts/verification_evidence.py
-      - scripts/solidcraft_runtime.py
-      - docker/solidcraft_runtime/**
     run: [python, ../../scripts/verification_evidence.py, verify_references, all]
     outputs:
       - references

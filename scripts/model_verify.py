@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compile and verify one Forge model in the pinned SolidCraft runtime."""
+"""Compile and verify one Forge model in the released SolidCraft runtime."""
 
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ def output_root() -> Path:
 
 
 def runtime_image() -> str:
-    """Return the immutable runtime prepared before the CAD-CI run."""
+    """Return the immutable released runtime selected by Forge CAD-CI."""
 
     value = os.environ.get("FORGE_RUNTIME_IMAGE", "").strip()
     if not value:

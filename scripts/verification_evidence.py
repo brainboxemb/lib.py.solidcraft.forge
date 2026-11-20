@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run shared Forge verification evidence in the immutable verification runtime."""
+"""Run shared Forge verification evidence in the released SolidCraft runtime."""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ def output_dir() -> Path:
 
 
 def runtime_image() -> str:
-    """Return the immutable Forge verification runtime image."""
+    """Return the immutable released SolidCraft runtime image."""
 
     value = os.environ.get("FORGE_RUNTIME_IMAGE", "").strip()
     if not value:
