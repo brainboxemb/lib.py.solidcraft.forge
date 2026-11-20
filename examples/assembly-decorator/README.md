@@ -28,6 +28,14 @@ Two identical 10 x 10 x 20 mm posts remain at X=-15 and X=+15 while the imported
 
 No saved-design mutation in this fixture; it isolates imported @assembly construction and native lowering.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+This case adds reusable assembly construction around two rectangular posts; the geometry contribution is completely described by their bounds.
+
 ## Reference notes
 
 - **PythonSCAD** — The public Python object/decorator layer should remain natural while still producing reusable native CAD structure.
