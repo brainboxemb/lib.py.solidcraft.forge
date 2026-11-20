@@ -9,6 +9,8 @@ watch:
   - scripts/reference_verification_batch.py
   - verification/reference_validation.py
   - verification/build123d_export.py
+  - scripts/build_diagrams.py
+  - verification/diagrams/sources/**
 strategy:
   reuse: true
 steps:
@@ -24,6 +26,9 @@ steps:
       - scripts/reference_verification_batch.py
       - verification/reference_validation.py
       - verification/build123d_export.py
+      - scripts/build_diagrams.py
+      - verification/diagrams/sources/**
     run: [python, ../../scripts/reference_verification_batch.py, batch]
     outputs:
       - references
+      - diagrams
