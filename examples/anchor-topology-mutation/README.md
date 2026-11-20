@@ -30,6 +30,14 @@ On the 40x20x20 board the marker is centered on the front-top-left corner select
 
 Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the unchanged native relationship must move the marker to the new front-top-left corner without rerunning Python.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+The board and marker positions describe the visible result. After resizing the saved model, the marker must still follow the same selected edge and corner.
+
 ## Reference notes
 
 - **SolidCraft** — This is a direct test of native topology persistence: the initial pick identifies topology, while later parameter changes move that topology.
