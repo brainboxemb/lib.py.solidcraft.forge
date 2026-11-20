@@ -557,7 +557,7 @@ verification/diagrams/sources/*.cadcraft.json
         -> ensure exact CADCraft 0.20.1 binary
         -> verify archive SHA-256
         -> replay each source command list
-        -> render SVG + save DXF
+        -> render SVG (DXF may remain as historical/internal CADCraft evidence)
         -> copy source JSON into output
         -> write provenance.json
 ```
@@ -580,109 +580,82 @@ model PRs.
 
 ## F11 semantic summary flow
 
-F11 is an execution-free Forge consumer over already-produced evidence.
-
-The semantic input model is:
+F11 is an execution-free adapter from the new distributed evidence layout back
+to the existing public qualification semantics.
 
 ```text
 resolved evidence tree
-  examples/<model>/.cad-ci/steps/model_verify.json
-  examples/<model>/model_verify/verification.json
-  examples/<model>/model_verify/visual.json
+  examples/<case>/.cad-ci/steps/contract_test.json
+  examples/<case>/.cad-ci/steps/model_verify.json
+  examples/<case>/solidcraft.json
+  examples/<case>/model_verify/verification.json
+  examples/<case>/model_verify/visual.json
   reference verification.json files
        |
        v
-Forge summary adapter
-  -> SemanticCheck(native_model)
-  -> SemanticCheck(geometry)
-  -> SemanticCheck(saved_design)
-  -> SemanticCheck(visual)
-  -> SemanticCheck(reference)
+Forge qualification-summary adapter
+       |
+       +--> released cad_verification semantic composition
        |
        v
-released cad_verification.compose_semantic_result()
-       |
-       v
-released cad_verification.compose_item_results()
+schema-5-compatible qualification case meaning
+  integration
+  native_model
+  geometry
+  saved_design
+  visual
 ```
 
-The Forge adapter knows only the Forge evidence layout and semantic policy. It
-does not replay CAD, parse raw SolidCraft result JSON, compare geometry, compare
-pixels or execute reference engines.
+The old Qualification pages are the presentation compatibility target. F11
+does not invent another public status level.
+
+### Integration
+
+The existing `integration` meaning is restored from the model-owned
+`contract_test` CAD-CI step plus the generated non-empty `solidcraft.json`
+command document. The command count remains evidence as before.
 
 ### Native model
 
-`native_model` is derived from the existing CAD-CI
-`.cad-ci/steps/model_verify.json` result for that model. A successful
-`model_verify` step proves that the Forge producer/replay/verification action
-completed and its declared output bundle exists.
-
-The summary does not infer native success from the mere presence of
-`model.sc`.
+`native_model` represents successful production of the editable native model,
+not the correctness of its geometry. The adapter uses the model-verification
+step/evidence and native artifacts only; geometry remains a separate check.
 
 ### Geometry and saved design
 
 `model_verify/verification.json` is the released verification-library report.
+Its `baseline` check supplies `geometry`. Checks whose IDs start with
+`saved_design_` supply `saved_design`; no such checks means
+`not-required`.
 
-The check with id `baseline` supplies the model's `geometry` semantic state.
-Its complete report row is retained as evidence.
-
-Every report check whose id starts with `saved_design_` contributes to
-`saved_design`:
-
-- no matching checks -> `not-required`;
-- all matching checks pass -> `pass`;
-- otherwise the semantic state follows the strongest non-passing evidence.
-
-The summary does not inspect SolidCraft measurement JSON or duplicate numeric,
-body, parameter or timeline comparison logic.
+Generic status precedence is delegated to released
+`lib.py.cad.verification`.
 
 ### Visual
 
-`model_verify/visual.json` already contains the composed released-library
-visual semantic result. F11 preserves that result/evidence and maps its overall
-status to the model-level `visual` check.
-
-It does not reopen images or rerun visual comparison.
+`model_verify/visual.json` already contains released-library semantic visual
+evidence. F11 maps it back to the existing public `visual` check and preserves
+the regression/expected-shape detail needed by Pages. It never reopens images
+or reruns comparison.
 
 ### References
 
-Reference evidence currently has two storage shapes during migration:
+Independent reference results stay separate evidence, matching the current
+Qualification site. F11 verifies that the expected reference evidence is
+present/acceptable for qualification, but does not add a new visible
+`reference` status row to the public case result.
 
-1. isolated reference child items for `simple-box`,
-   `anchor-topology-mutation` and `attach-angle`;
-2. the transitional `verification/references` aggregate for
-   `four-corner-l` and `xz-anchor`.
+### Aggregate and Pages boundary
 
-F11 normalizes those storage shapes into one model-level `reference` semantic
-check. A model passes reference verification only when PythonSCAD, pyBOSL2,
-CadQuery and build123d are each present exactly once and each reports pass.
+The staged proof contains the five current proof cases exactly once.
 
-The storage-shape normalization is Forge migration policy. Generic semantic
-status composition remains in `lib.py.cad.verification`.
+Do not implement F11 as a cold CAD-CI fan-in with every producer in `needs`.
+On a fresh runner that would rebuild all producers. The collector consumes a
+resolved evidence tree. F11 proves the adapter and result semantics; #366/#497
+own durable evidence-tree materialization and Pages wiring.
 
-### Aggregate
-
-The staged aggregate contains exactly the five active model IDs once each and
-preserves deterministic model order.
-
-The summary output contains:
-
-- one semantic result per model;
-- one aggregate semantic result;
-- evidence paths identifying every consumed source.
-
-### CI selection boundary
-
-Do not implement F11 as a normal cold fan-in item with all five models and all
-reference items in `needs`.
-
-Released CAD-CI correctly makes every direct prerequisite current before a
-consumer runs. On a fresh hosted runner, requesting such a summary would
-therefore rebuild every sibling producer even when only one model changed.
-
-F11 instead keeps summary composition independent from producer execution: its
-input is an already resolved evidence tree. Unit/contract tests use fixture
-trees, and the staged integration proof uses already accepted build evidence.
-The later #366/#497 publication work decides when and where that resolved tree
-is materialized for durable summaries.
+The snapshot branch
+`backup/gh-pages-before-f11-2026-11-20` is the presentation regression
+reference. The migration must preserve the current Examples/Qualification
+split, qualification cases, visible status semantics and main evidence
+presentation unless a separately justified change is made.
