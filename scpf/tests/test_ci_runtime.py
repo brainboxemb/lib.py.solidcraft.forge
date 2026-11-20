@@ -61,6 +61,23 @@ class CiRuntimeContractTests(unittest.TestCase):
         self.assertIn('os.environ.get("REFERENCE_RUNTIME_IMAGE"', reference_text)
         self.assertNotIn('os.environ.get("FORGE_RUNTIME_IMAGE"', reference_text)
 
+    def test_model_launcher_exposes_cold_path_timing(self):
+        """Keep #484 timing decomposition visible without changing semantics."""
+
+        text = MODEL_VERIFY.read_text(encoding="utf-8")
+        for label in (
+            "compile_commands_s=",
+            "image_pull_s=",
+            "cad_verification_import_s=",
+            "definition_load_s=",
+            "native_model_s=",
+            "solidcraft_verification_s=",
+            "inside_runtime_total_s=",
+            "container_process_total_s=",
+        ):
+            self.assertIn(label, text)
+        self.assertIn("time.perf_counter()", text)
+
     def test_solidcraft_version_matches_forge(self):
         """Keep Forge's compatibility declaration explicit."""
 
