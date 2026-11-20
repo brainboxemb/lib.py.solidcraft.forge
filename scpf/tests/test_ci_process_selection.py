@@ -10,18 +10,28 @@ EXAMPLES = ROOT / "examples"
 
 EXPECTED_PROCESSED = {
     "anchor-topology-mutation",
+    "anchored-holes",
+    "assembly-decorator",
     "attach-angle",
+    "components",
     "four-corner-l",
+    "group-hierarchy",
+    "hole-family",
+    "parameter-scope",
+    "parent-derived-child-size",
+    "repeated-parent-attachments",
+    "sheet-fold",
     "simple-box",
+    "top-sketch-after-chamfer",
     "xz-anchor",
 }
 
 
 class CiProcessSelectionContractTests(unittest.TestCase):
-    """Keep the five-model staged proof explicit without reimplementing CAD-CI."""
+    """Keep the explicitly migrated Qualification set visible to CAD-CI."""
 
     def test_only_staged_proof_models_are_processed(self):
-        """Declare process state for all 32 historical model items."""
+        """Declare process state for all 32 historical Qualification items."""
 
         configured = {}
         for ci_path in sorted(EXAMPLES.glob("*/ci.yml")):

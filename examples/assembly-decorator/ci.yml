@@ -1,27 +1,4 @@
 # SolidCraft model verification for assembly-decorator.
 id: assembly-decorator
-process: false
-kind: model
-needs:
-  - forge-package
-watch:
-  - examples/assembly-decorator/scpf/**
-  - examples/assembly-decorator/model.yml
-  - examples/assembly-decorator/verification/**
-  - scripts/forge_example.py
-  - scripts/model_verify.py
-strategy:
-  reuse: true
-steps:
-  - id: model_verify
-    inputs:
-      - examples/assembly-decorator/scpf/**
-      - examples/assembly-decorator/model.yml
-      - examples/assembly-decorator/verification/**
-      - scripts/forge_example.py
-      - scripts/model_verify.py
-      - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verify.py]
-    outputs:
-      - solidcraft.json
-      - model_verify
+template: forge-model-declarative
+process: true

@@ -9,6 +9,25 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 LAUNCHER = ROOT / "scripts" / "model_verify_declarative.py"
 
+BATCH_ONE_MODELS = (
+    "anchored-holes",
+    "hole-family",
+    "sheet-fold",
+    "top-sketch-after-chamfer",
+    "parameter-scope",
+    "parent-derived-child-size",
+    "components",
+    "repeated-parent-attachments",
+    "assembly-decorator",
+    "group-hierarchy",
+)
+
+BATCH_ONE_SAVED_DESIGN_MODELS = {
+    "parameter-scope",
+    "parent-derived-child-size",
+    "repeated-parent-attachments",
+}
+
 MIGRATED_MODELS = (
     "simple-box",
     "anchor-topology-mutation",
@@ -21,6 +40,7 @@ MIGRATED_MODELS = (
     "parametric-attach",
     "parametric-offset",
     "xz-anchor",
+    *BATCH_ONE_MODELS,
 )
 
 LEGACY_MODEL = "bracket"
@@ -68,6 +88,20 @@ class DeclarativeModelVerificationBoundaryTests(unittest.TestCase):
                 )
                 for value in FORBIDDEN_VERIFY_IMPLEMENTATION:
                     self.assertNotIn(value, text)
+
+    def test_batch_one_saved_design_contract_is_model_specific(self):
+        """Only the three historical batch-one mutation cases keep mutations."""
+
+        for slug in BATCH_ONE_MODELS:
+            with self.subTest(slug=slug):
+                text = (
+                    ROOT / "examples" / slug / "verification" / "verify.py"
+                ).read_text(encoding="utf-8")
+                has_saved_design = "SolidCraftSavedDesign(" in text
+                self.assertEqual(
+                    has_saved_design,
+                    slug in BATCH_ONE_SAVED_DESIGN_MODELS,
+                )
 
     def test_simple_box_keeps_its_model_specific_mutation(self):
         """The representative model keeps its own mutation command data."""
