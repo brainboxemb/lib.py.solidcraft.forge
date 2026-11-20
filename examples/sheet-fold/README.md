@@ -28,6 +28,14 @@ SolidCraft 0.42 keeps one connected sheet-metal body with the Ø6 hole on the fi
 
 No saved-design mutation is required in this first sheet-metal qualification. unit, integration and native geometry checks prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+The formed bounding box does not prove sheet thickness, the Ø6 cutout or that the upright region came from a native bend. Volume and native sheet history/flat-pattern evidence are required.
+
 ## Reference notes
 
 - **build123d** — The pinned build123d 0.12.0 reference uses make_brake_formed for an independent final-geometry comparison. Its newer BuildSheet/bend API is design input only and is not silently substituted into the pinned reference runtime.
