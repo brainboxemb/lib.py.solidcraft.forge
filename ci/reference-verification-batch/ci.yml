@@ -1,0 +1,35 @@
+# Produce all active independent CAD references in one runtime.
+id: reference-verification-batch
+process: true
+kind: verification
+needs:
+  - cad-verification-package
+watch:
+  - examples/*/ci.yml
+  - examples/*/verification/reference_geometry.json
+  - examples/*/build123d/**
+  - examples/*/cadquery/**
+  - examples/*/pybosl2/**
+  - examples/*/pythonscad/**
+  - scripts/forge_example.py
+  - scripts/reference_verification_batch.py
+  - verification/reference_validation.py
+  - verification/build123d_export.py
+strategy:
+  reuse: true
+steps:
+  - id: verify_references
+    inputs:
+      - examples/*/ci.yml
+      - examples/*/verification/reference_geometry.json
+      - examples/*/build123d/**
+      - examples/*/cadquery/**
+      - examples/*/pybosl2/**
+      - examples/*/pythonscad/**
+      - scripts/forge_example.py
+      - scripts/reference_verification_batch.py
+      - verification/reference_validation.py
+      - verification/build123d_export.py
+    run: [python, ../../scripts/reference_verification_batch.py, batch]
+    outputs:
+      - references
