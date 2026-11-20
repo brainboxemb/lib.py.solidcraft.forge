@@ -8,58 +8,92 @@ documents in `docs/`. Issues keep detail and history.
 
 ## Current status
 
-The current 32-case Qualification catalog is fully declarative, active and
-durable.
+The 32-case verification catalog and its documentation sources are current,
+declarative and durable.
 
-- all 32 examples use data-only `verification/verify.py`;
-- all 32 are `process: true`;
-- all 32 have four independent reference child items;
-- #548 is complete on main commit `21c10dea1b7a274e132615d3e032e1d67f6555cd`;
-- the corresponding main CAD-CI run and durable `build/main` publication are
-  green;
-- durable `build/main` contains 32/32 current `model_verify` outputs;
-- example/page source ownership is now local to `model.yml`, `README.md`,
-  `verification/verify.py` and external site templates.
+- #548 and #554 are complete on current main;
+- current main and the corresponding durable `build/main` update are green;
+- `build/main` contains 32/32 model verification items, 128/128 reference
+  child results and all 6 current CADCraft SVG diagrams;
+- #548 is complete: all verified examples own preserved human engineering
+  documentation in local `README.md` files, while `model.yml` remains the
+  agreed six-field generic presentation schema;
+- the historical case text and geometry-sufficiency rationale were migrated
+  verbatim and audited 32/32 with zero mismatches;
+- site layout, guide prose and browser scripts are no longer embedded as
+  complete pages in `site/build.py`.
 
-One source-quality defect remains before stable Pages cut-over:
-`examples/bracket/README.md` still contains stale prose for an older bracket
-implementation above the current Minimal L-profile documentation.
-
-The current public Pages state remains preserved on
+The stable public Pages site is still the retired publication baseline. The
+pre-cut-over snapshot remains preserved on
 `backup/gh-pages-before-f11-2026-11-20`.
+
+The current durable evidence is complete for machine verification but not yet
+for visual content parity:
+
+- native visual-verification PNG evidence exists for 5/32 examples;
+- the other 27 examples have no current visual-verification policy; #497 adds
+  current presentation previews without treating those previews as visual PASS;
+- all 128 independent references have current STL + structured verification
+  evidence;
+- none of those 128 reference outputs currently has a durable rendered image.
 
 ## Current goal
 
-Complete #554: make the bracket README describe only the current Minimal
-L-profile while preserving the canonical engineering statements migrated by
-#548.
+Complete #497: generate and publish stable Pages from current Forge source plus
+the authoritative generic `build/main` baseline without reducing the useful
+engineering information on the preserved public site.
 
-## Required proof for #554
+## Required proof for #497
 
-- no stale claim remains about fillets, mounting holes or the older bracket
-  implementation;
-- title, parameters and stages agree with the current `model.yml`;
-- Goal / Forge API / Forge model / lowering / SolidCraft result / saved-design
-  text / geometry rationale / reference notes remain unchanged from the
-  canonical pre-removal qualification sources;
-- model geometry and verification behavior do not change;
-- site-source tests remain green.
+- stable site generation reads accepted evidence from
+  `build/main/examples/<slug>/` and the corresponding reference child item
+  paths, not from retired `qualification/**` output or batch producer paths;
+- per-item `source_commit` provenance is preserved; a sparse durable baseline
+  is not misrepresented as one uniform model source commit;
+- root `provenance.json` records the site source commit and the immutable
+  build-branch commit used for generation;
+- all 32 verified examples are present;
+- preserved README engineering statements remain verbatim source material and
+  are never reconstructed from machine evidence;
+- current status, parameters, measurements, geometry checks, saved-design
+  results, reference checks and raw evidence links come from durable evidence;
+- the six current CADCraft diagrams are consumed from durable build output;
+- old-vs-new content inventory covers every public information category before
+  cut-over;
+- missing native/reference visual presentation is resolved from current durable
+  CAD evidence before cut-over; historical images must not be presented as
+  current evidence;
+- presentation-only source changes reuse accepted technical evidence and do not
+  rerun model/reference verification merely to rebuild Pages;
+- the complete site is published through released `cad-ci publish pages`;
+- no PR Pages preview/cleanup behavior is added in #497; a PR-only complete
+  site-generation validation is allowed and does not publish `gh-pages`;
+- normal incremental Forge CI and durable build publication remain green after
+  merge.
 
 ## Execution order
 
-1. Fix #554 as a source-content correction only.
-2. Re-read the plan after merge.
-3. Continue #497: generate stable Pages from current source + durable
-   `build/main`, preserving content parity and durable evidence links.
-4. Finish generic Pages publication/lifecycle in #366.
+1. Freeze the old-vs-new content/source inventory and durable evidence mapping.
+2. Define the missing visual derivation/output contract before adding rendering
+   code; keep verification truth separate from presentation derivation.
+3. Implement a Forge-owned durable-evidence loader for canonical
+   `build/main/examples/<slug>/` item outputs and per-item provenance.
+4. Render current model/reference/status/measurement/saved-design/diagram data
+   through the existing external template layer.
+5. Produce or deterministically derive the missing current native/reference
+   presentation images from accepted durable CAD artifacts.
+6. Add content-parity tests against the preserved Pages baseline categories.
+7. Generate a complete stable site with source + an immutable build commit.
+8. Publish the stable root through released `cad-ci publish pages` and prove
+   provenance/freshness.
+9. Continue #366 for final generic Pages preview/cleanup lifecycle work.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #554 Fix stale pre-migration content in bracket example README | now | Current bracket README contradicts the active Minimal L-profile model; fix source content before Pages consumes it. |
-| #497 Publish stable Pages from the generic build/main baseline | blocked | #548 is complete; wait only for #554 source correction, then generate stable Pages from current source + 32-case build/main. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Final generic Pages publication lifecycle follows #497. |
+| #497 Publish stable Pages from the generic build/main baseline | now | #548 and the 32-case durable baseline are complete; stable Pages is the active migration. Visual parity is the remaining evidence gap before cut-over. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Durable build storage is active; final generic Pages preview/cleanup lifecycle follows #497 stable publication. |
 | #391 Extract reusable CAD verification library from Forge | effectively complete but still open | Generic verification ownership and consumer migration are complete; cleanup/close separately. |
 | #481 Remove stale Forge development branches | blocked | Current connected tooling cannot safely delete stale refs. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by v0.3.2 runtime batching and measured #484 work. |
@@ -81,4 +115,4 @@ L-profile while preserving the canonical engineering statements migrated by
 
 Immediate chain:
 
-`#554 bracket README correction -> #497 stable Pages -> #366 final Pages lifecycle`.
+`#497 stable Pages -> #366 final Pages lifecycle`.

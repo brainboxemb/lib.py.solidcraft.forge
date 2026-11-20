@@ -536,16 +536,21 @@ qualification fields.
 
 `saved_design` is `not-required` when no saved-design check exists.
 
+`visual` is `not-required` when the current durable model item has no
+`model_verify/visual.json`. A presentation preview is never evidence for a
+visual PASS. When `visual.json` exists, its current status and view evidence
+remain required and are composed normally.
+
+Independent-reference summary input is read only from the canonical
+`examples/<slug>/<implementation>/` child items. Batch producer copies are not
+additional public/reference summary inputs.
+
 Missing/failed/error/review/blocked evidence must remain distinguishable.
 Evidence references must be preserved.
 
-The staged proof covers exactly:
-
-- `simple-box`;
-- `anchor-topology-mutation`;
-- `attach-angle`;
-- `four-corner-l`;
-- `xz-anchor`.
+The original staged F11 proof used five cases. Stable Pages now applies the
+same adapter semantics to the complete active catalog using the resolved
+durable evidence tree.
 
 F11 code operates on a resolved evidence tree and is independent from producer
 execution. Wiring a durable resolved tree into the collector belongs to
@@ -667,3 +672,70 @@ The lightweight site-source item owns `model.yml` and `README.md` validation
 and generated documentation checks. CAD verification inputs are the model source,
 verification contract, model-specific command/test data and shared runtime
 helpers only.
+
+
+## Stable Pages durable evidence contract
+
+Stable Pages combines current source documentation with the accepted generic
+`build/main` baseline. The stable site is never a source of verification
+truth itself.
+
+- canonical model evidence is read from
+  `build/main/examples/<slug>/`;
+- canonical independent reference evidence is read from the corresponding
+  `build/main/examples/<slug>/<implementation>/` child item;
+- batch producer outputs under `build/main/ci/*-batch/` are implementation
+  detail, not a second public evidence namespace;
+- `build/main/build.json` is authoritative for item membership and per-item
+  source provenance;
+- unchanged accepted items may have an older `source_commit` than the site
+  source commit;
+- root site `provenance.json` records both the site source commit and the
+  immutable build-branch commit used for generation;
+- current status/measurements/results shown by Pages must come from durable
+  evidence, not from `model.yml`, README prose or historical Pages output;
+- preserved human engineering text remains sourced from the local README and
+  must not be regenerated from verification JSON.
+
+The cut-over is a content migration, not a content reduction. The stable site
+must retain or replace with equivalent current data the existing useful
+example, native, reference, saved-design, visual, diagram and raw-evidence
+information categories.
+
+### Durable presentation previews
+
+Every accepted model and independent reference item used by stable Pages must
+provide one current deterministic ISO presentation image at:
+
+```text
+presentation/preview-iso.png
+```
+
+This artifact has presentation semantics only.
+
+- it is derived from the accepted native model or the already-verified
+  reference STL belonging to that item;
+- it does not create a new verification check or status;
+- its presence must never be rendered as `visual=PASS`;
+- a model that already produced the current ISO visual-verification render
+  reuses that render rather than taking a duplicate snapshot;
+- a model without visual-verification policy receives one deterministic
+  720×540 SolidCraft ISO snapshot from its accepted model and baseline measurements;
+- reference items receive one deterministic ISO render of their verified STL;
+- CAD rendering, view choice and camera policy remain Forge-owned consumer
+  behavior, consistent with the released CAD verification library boundary;
+- historical backup renders may be used only as migration references and must
+  never be labelled as current evidence.
+
+Keeping previews in accepted item output allows presentation-only site changes
+to reuse current CAD evidence without rerunning model/reference verification.
+
+### Stable Pages publication
+
+Forge owns complete site generation and content. Released CAD-CI owns generated
+branch publication.
+
+The stable site is published only as one complete directory through
+`cad-ci publish pages`. Forge must not reimplement Pages Git fetch, merge,
+retry, race or push mechanics. #497 changes only the stable root; PR preview and
+preview cleanup lifecycle remains outside this cut-over.
