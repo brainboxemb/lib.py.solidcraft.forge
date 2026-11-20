@@ -1,0 +1,42 @@
+{
+  "commands": [
+    {
+      "command": "sketch.edit",
+      "params": {
+        "sketch": 4
+      }
+    },
+    {
+      "command": "sketch.mirror",
+      "params": {
+        "entities": [
+          "l1",
+          "a1",
+          "l2",
+          "a2",
+          "l4",
+          "a3",
+          "l5",
+          "a4"
+        ],
+        "line": "y"
+      }
+    },
+    {
+      "command": "sketch.mirror",
+      "params": {
+        "entities": [
+          "l1",
+          "a1",
+          "l2",
+          "a2",
+          "l4",
+          "a3",
+          "l5",
+          "a4"
+        ],
+        "line": "x"
+      }
+    }
+  ]
+}

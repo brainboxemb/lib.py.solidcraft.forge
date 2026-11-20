@@ -134,6 +134,12 @@
     },
     {
       "compile_error": null,
+      "input": "/output/models/sketch-pattern-mirror/solidcraft.json",
+      "output": "/output/models/sketch-pattern-mirror/model_verify",
+      "slug": "sketch-pattern-mirror"
+    },
+    {
+      "compile_error": null,
       "input": "/output/models/slot-family/solidcraft.json",
       "output": "/output/models/slot-family/model_verify",
       "slug": "slot-family"
@@ -152,5 +158,5 @@
     }
   ],
   "schema": 1,
-  "source_sha": "d056a55a93bc1e32b47dbed8feed3a58459a91ec"
+  "source_sha": "363108c4676120ed57454abc3973bdaaf0a3a845"
 }

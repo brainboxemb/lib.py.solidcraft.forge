@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "59374be82d9c8dcc6edd761449f0327e1437febe1e71ecd932785ee703702ba4",
-  "duration_seconds": 0.122,
+  "bundle_sha256": "34a16ca24fb7a59cea813904b826f236e78af39cc5d51d23046fe84c85af4cb2",
+  "duration_seconds": 0.128,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T20:56:22.400Z",
+  "finished_at": "2026-11-20T21:08:33.943Z",
   "item": "examples-anchor-topology-mutation-pythonscad",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,13 +14,13 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "ae04c32ef4394106c743ef57e67601d81eaedb3758aa2e12f6d963167abc60b2"
+      "sha256": "fcb37083e369f43e3576cc04c2b883acba214aae00639b3ea67df3385ab4212e"
     }
   },
-  "run_finished_at": "2026-11-20T20:56:35.455Z",
-  "run_started_at": "2026-11-20T20:54:33.799Z",
+  "run_finished_at": "2026-11-20T21:08:48.117Z",
+  "run_started_at": "2026-11-20T21:06:39.072Z",
   "schema": 3,
-  "started_at": "2026-11-20T20:56:22.333Z",
+  "started_at": "2026-11-20T21:08:33.877Z",
   "status": "pass",
   "step": "verify_reference",
   "target_spec_digest": "126a52a91db74cca843529f522db732fe5d95c8f670f4739599d63981e8b9b24",
