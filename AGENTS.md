@@ -133,6 +133,13 @@ Their implementation ownership remains with their own repositories.
 compatibility guard. Root `cad-ci.yml` keeps the explicit SolidCraft version
 expected by Forge CI.
 
+Version-pinned SolidCraft engineering references live under
+`docs/reference/solidcraft/<version>/`. Before targeting a newer SolidCraft
+release, add a new sibling version directory with exact upstream provenance and
+capture the version-specific reference material before compatibility changes.
+Never overwrite an already qualified version directory. The procedure is in
+`docs/development.md`.
+
 ## Test ownership
 
 - `scpf/tests/` — reusable Forge API/compiler tests.
@@ -194,9 +201,10 @@ The primary human documents are:
 - `docs/requirements.md`;
 - `docs/release.md`.
 
-Current task guidance belongs under `docs/manual/`. Historical/narrow design,
-change, audit, migration and vendor/reference records belong under
-`docs/background/`. Generated machine-oriented API data remains under
+Current task guidance belongs under `docs/manual/`. Current version-pinned
+external engineering references belong under `docs/reference/`. Historical or
+narrow design, change, audit, migration and superseded research records belong
+under `docs/background/`. Generated machine-oriented API data remains under
 `docs/agent/`.
 
 ## Repository plan

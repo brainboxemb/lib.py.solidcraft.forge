@@ -164,6 +164,7 @@ Primary repository documents:
 Secondary documentation:
 
 - `docs/manual/` — current task-oriented guidance.
+- `docs/reference/` — current version-pinned external engineering references.
 - `docs/background/` — historical design, change, research and migration records.
 - `docs/agent/` — generated machine-oriented API information.
 
