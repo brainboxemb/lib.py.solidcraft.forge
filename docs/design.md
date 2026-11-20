@@ -118,3 +118,26 @@ During staged migration, older models keep their existing
 switched explicitly to `scripts/model_verify_declarative.py` in its own
 migration change. New generic verification behavior must not be implemented in
 Forge.
+
+
+## Staged item participation
+
+Forge uses released CAD-CI `process` only as declarative repository
+configuration.
+
+The flow is:
+
+```text
+Forge item ci.yml
+  -> process: true|false
+  -> released tool.cad.ci
+  -> released lib.py.cad.ci planner/executor
+```
+
+Forge contains no helper that interprets `process`, no duplicate changed-path
+selection and no second execution policy.
+
+During the five-model proof, the `scpf` item remains active. Exactly five model
+verification items participate; the other model verification items remain
+present in the repository but are excluded by the released CAD-CI planner.
+Shared/reference items remain active where required by existing dependencies.
