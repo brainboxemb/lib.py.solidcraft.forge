@@ -165,13 +165,13 @@ selection, scheduling, caching or parallel-execution policy.
 Forge CI must run only against an exact externally accepted `tool.cad.ci` /
 `lib.py.cad.ci` release pair.
 
-During the current one-model proof:
+During the current staged five-model proof:
 
-- `simple-box` is the only model verification item with `process: true`;
+- exactly `simple-box`, `anchor-topology-mutation`, `attach-angle`,
+  `four-corner-l` and `xz-anchor` have model verification enabled;
 - every other historical model item remains explicit `process: false`;
 - independent reference items remain separately selected by normal released
   CAD-CI changed-path/dependency semantics;
-- reference execution is not part of the simple-box model runtime measurement;
 - Forge must not add a second planner or consumer-side changed-path engine to
   enforce this staging.
 
@@ -189,8 +189,8 @@ item's `.cad-ci` namespace must be sufficient to determine:
 Console text is diagnostic only and must not be the sole source used to decide
 what CI actually executed.
 
-The one-model proof is considered reliable only when representative
-`simple-box` changes can be explained from:
+The staged proof is considered reliable only when representative active-model
+changes can be explained from:
 
 1. the repository configuration;
 2. the released CAD-CI selected graph;
@@ -486,3 +486,57 @@ Requirements:
 Forge owns these diagram sources and CADCraft-specific invocation. This work
 does not belong in lib.py.cad.verification because it is documentation/evidence
 generation, not generic model comparison.
+
+
+## Semantic verification summary
+
+Forge composes final verification meaning only from evidence that has already
+been produced by normal CAD-CI/model/reference work.
+
+The summary layer must not:
+
+- compile Forge models;
+- start SolidCraft;
+- execute PythonSCAD, pyBOSL2, CadQuery or build123d;
+- render or compare images;
+- mutate saved designs;
+- implement a second CAD-CI selection or dependency engine.
+
+Released `lib.py.cad.verification` owns generic semantic status validation,
+precedence, evidence preservation and aggregate composition. Forge owns the
+semantic names and the mapping from Forge evidence to those names.
+
+For each staged model the required semantic checks are:
+
+- `native_model` — the CAD-CI `model_verify` step completed successfully and
+  produced its declared model output;
+- `geometry` — the baseline `cad-verification` check is present and passing;
+- `saved_design` — every `saved_design_*` verification check passes, or the
+  semantic check is `not-required` when no such check exists;
+- `visual` — the model-local visual semantic result is present and passing;
+- `reference` — all four independent reference implementations for the model
+  are present and passing.
+
+The summary must preserve evidence references for every semantic check.
+
+Missing required evidence maps to `missing`; explicit failed evidence maps to
+`fail`; explicit review/blocked/error states remain distinguishable when
+present. The summary must not convert an incomplete result into pass merely
+because no producer was executed.
+
+The staged aggregate contains exactly these five model IDs once each:
+
+- `simple-box`;
+- `anchor-topology-mutation`;
+- `attach-angle`;
+- `four-corner-l`;
+- `xz-anchor`.
+
+Summary composition must be executable against a resolved tree of existing
+evidence. It must not require declaring all model/reference producers as direct
+CAD-CI prerequisites merely to read their already accepted results, because on
+a fresh hosted runner such a fan-in would cold-rerun every prerequisite.
+
+Wiring the completed summary into durable build/Pages publication is subsequent
+#366/#497 work. F11 proves the semantic consumer and its five-model result
+without introducing publication logic into verification code.
