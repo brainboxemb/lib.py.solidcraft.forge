@@ -8,3 +8,20 @@ stages:
   - Create Base and Companion components
   - Publish the semantic corner anchor on the assembly
   - Attach Marker through the assembly-owned datum
+concepts:
+  - assembly.with_anchor
+  - assembly.anchor
+  - semantic datum
+  - attach
+  - saved-design associativity
+verification:
+  summary: >
+    Verifies that an anchor owned by the assembly can position another component
+    without adding application-specific anchor names to the reusable base part.
+  proves:
+    - Base, companion and marker remain three distinct native bodies.
+    - The marker occupies the expected assembly-owned corner datum.
+    - Resizing the base moves the semantic datum and marker associatively.
+  saved_design: >
+    The saved design changes the base width and height and verifies that the
+    published assembly datum follows the resized base.
