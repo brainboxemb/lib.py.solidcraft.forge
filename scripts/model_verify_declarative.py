@@ -3,7 +3,7 @@
 
 This is the staged declarative model-verification launcher. Host-side execution
 compiles the selected Forge model with the exact built Forge wheel and starts
-the pinned SolidCraft runtime. Inside that runtime the launcher performs only
+the released SolidCraft runtime. Inside that runtime the launcher performs only
 the Forge-owned producer step: replay the compiled command document into the
 initial native SolidCraft model. All checks, mutations and evidence are then
 owned by released lib.py.cad.verfication.
@@ -43,7 +43,7 @@ def output_root() -> Path:
 
 
 def runtime_image() -> str:
-    """Return the immutable runtime configured for normal Forge CI."""
+    """Return the immutable released runtime selected by Forge CAD-CI."""
 
     value = os.environ.get("FORGE_RUNTIME_IMAGE", "").strip()
     if not value:
@@ -58,7 +58,7 @@ def verify_path(slug: str) -> Path:
 
 
 def load_definition(path: Path):
-    """Load one data-only model definition inside the pinned runtime."""
+    """Load one data-only model definition inside the released runtime."""
 
     namespace = runpy.run_path(str(path))
     definition = namespace.get("VERIFICATION")
@@ -123,7 +123,7 @@ def run_inside_runtime(
 
 
 def run_host() -> int:
-    """Compile with the built Forge wheel and invoke the pinned runtime."""
+    """Compile with the built Forge wheel and invoke the released runtime."""
 
     slug = item_slug()
     output = output_root()

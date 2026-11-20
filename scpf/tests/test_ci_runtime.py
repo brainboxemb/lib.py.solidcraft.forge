@@ -1,9 +1,7 @@
-"""Keep the explicit Forge CI runtime expectation aligned with its build."""
+"""Keep Forge runtime consumption explicit and externally owned."""
 
 from pathlib import Path
 import re
-import subprocess
-import sys
 import unittest
 
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
@@ -11,10 +9,7 @@ from scpf.version import TESTED_SOLIDCRAFT_VERSION
 
 ROOT = Path(__file__).resolve().parents[2]
 CAD_CI = ROOT / "cad-ci.yml"
-RUNTIME_SCRIPT = ROOT / "scripts" / "solidcraft_runtime.py"
 WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
-RUNTIME_WORKFLOW = ROOT / ".github" / "workflows" / "solidcraft-runtime.yml"
-REPOSITORY = "brainboxemb/lib.py.solidcraft.forge"
 TOOL_COMMIT = "c60bf64a393dff33440d22e9e9347cbbaba71c4b"
 
 
@@ -32,70 +27,38 @@ def configured_variable(name: str) -> str:
     return match.group(1)
 
 
-def runtime_metadata() -> dict[str, str]:
-    """Resolve build-time runtime metadata through the build-owned helper."""
-
-    output = subprocess.check_output(
-        [
-            sys.executable,
-            str(RUNTIME_SCRIPT),
-            "metadata",
-            "--repository",
-            REPOSITORY,
-        ],
-        cwd=ROOT,
-        text=True,
-    )
-    return {
-        key: value
-        for line in output.splitlines()
-        if "=" in line
-        for key, value in (line.split("=", 1),)
-    }
-
-
 class CiRuntimeContractTests(unittest.TestCase):
-    """Prove normal CI and runtime publication describe the same runtime."""
+    """Prove Forge consumes one released external CAD runtime."""
 
-    def test_explicit_runtime_matches_current_build_definition(self):
-        metadata = runtime_metadata()
-        self.assertEqual(
-            configured_variable("FORGE_RUNTIME_IMAGE"),
-            metadata["reference"],
+    def test_runtime_is_external_immutable_release(self):
+        """Use a SemVer release from docker.cad.solidcraft."""
+
+        reference = configured_variable("FORGE_RUNTIME_IMAGE")
+        self.assertRegex(
+            reference,
+            r"^ghcr\.io/brainboxemb/cad-solidcraft:v\d+\.\d+\.\d+$",
         )
 
-    def test_explicit_solidcraft_version_matches_forge_and_runtime(self):
-        metadata = runtime_metadata()
-        expected = configured_variable("SOLIDCRAFT_VERSION")
-        self.assertEqual(expected, TESTED_SOLIDCRAFT_VERSION)
-        self.assertEqual(expected, metadata["solidcraft_version"])
+    def test_solidcraft_version_matches_forge(self):
+        """Keep Forge's compatibility declaration explicit."""
 
-    def test_runtime_workflow_does_not_use_github_cache(self):
-        """Use the immutable GHCR image instead of GitHub cache state."""
+        self.assertEqual(
+            configured_variable("SOLIDCRAFT_VERSION"),
+            TESTED_SOLIDCRAFT_VERSION,
+        )
 
-        text = RUNTIME_WORKFLOW.read_text(encoding="utf-8")
-        self.assertNotIn("actions/cache", text)
-        self.assertNotIn("type=gha", text)
-        self.assertNotIn("cache-from:", text)
-        self.assertNotIn("cache-to:", text)
+    def test_forge_owns_no_runtime_packaging(self):
+        """Runtime build and release files belong to docker.cad.solidcraft."""
 
-    def test_runtime_workflow_disables_provenance_index(self):
-        """Publish one pullable runtime image instead of an attestation index."""
+        self.assertFalse((ROOT / "docker" / "solidcraft_runtime").exists())
+        self.assertFalse(
+            (ROOT / ".github" / "workflows" / "solidcraft-runtime.yml").exists()
+        )
+        self.assertFalse((ROOT / "scripts" / "solidcraft_runtime.py").exists())
 
-        text = RUNTIME_WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("provenance: false", text)
+    def test_normal_workflow_delegates_to_released_cad_ci(self):
+        """Keep the Forge workflow a thin CAD-CI consumer."""
 
-    def test_runtime_publication_is_manual_only(self):
-        """Never build or publish a runtime because source files changed."""
-
-        text = RUNTIME_WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("  workflow_dispatch:", text)
-
-        on_block = text.split("permissions:", 1)[0]
-        self.assertNotIn("  push:", on_block)
-        self.assertNotIn("  pull_request:", on_block)
-
-    def test_normal_workflow_delegates_without_runtime_resolution(self):
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn(
             "uses: brainboxemb/tool.cad.ci/.github/workflows/"
@@ -104,7 +67,7 @@ class CiRuntimeContractTests(unittest.TestCase):
         )
         self.assertNotIn("runtime_check:", text)
         self.assertNotIn("environment_json:", text)
-        self.assertNotIn("solidcraft_runtime.py metadata", text)
+        self.assertNotIn("solidcraft_runtime.py", text)
 
 
 if __name__ == "__main__":

@@ -9,8 +9,6 @@ watch:
   - examples/xz-anchor/verification/**
   - scripts/forge_example.py
   - scripts/model_verify.py
-  - scripts/solidcraft_runtime.py
-  - docker/solidcraft_runtime/**
 strategy:
   reuse: true
 steps:
@@ -21,8 +19,6 @@ steps:
       - examples/xz-anchor/verification/**
       - scripts/forge_example.py
       - scripts/model_verify.py
-      - scripts/solidcraft_runtime.py
-      - docker/solidcraft_runtime/**
       - scpf/scpf/version.py
     run: [python, ../../scripts/model_verify.py]
     outputs:
