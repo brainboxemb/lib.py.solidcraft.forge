@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "9a9414f167e5e77d4f1973f940a70a4e7a59e8e17b66ff0e79f917045c98f585",
+  "duration_seconds": 3.161,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T17:16:08.898Z",
+  "item": "examples-anchor-topology-mutation-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "369c233a8096a8d66dc40ec71846338e6122f1c5b5a4e95ce1f7e772f540b0a7"
+    }
+  },
+  "run_finished_at": "2026-11-20T17:16:55.841Z",
+  "run_started_at": "2026-11-20T17:14:37.282Z",
+  "schema": 3,
+  "started_at": "2026-11-20T17:16:05.737Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "2300d89d01d2d16cff10e95133bcc5c8b139492def8f0b2fdd3530d4e71ec077",
+  "timeout_seconds": null
+}
