@@ -29,13 +29,14 @@ docker.cad.solidcraft
   versions.env + Dockerfile
   -> build/test
   -> immutable release vX.Y.Z
-  -> ghcr.io/brainboxemb/cad-solidcraft:vX.Y.Z
+  -> cad-solidcraft:vX.Y.Z
+  -> cad-reference:vX.Y.Z
 
 lib.py.solidcraft.forge
   cad-ci.yml
-  -> selects one immutable released runtime
-  -> tool.cad.ci injects FORGE_RUNTIME_IMAGE
-  -> model/reference commands pull and run it
+  -> selects both immutable role images
+  -> model verification uses FORGE_SOLIDCRAFT_IMAGE
+  -> reference verification uses FORGE_REFERENCE_IMAGE
 ```
 
 Forge contains no runtime build or publication path.
@@ -44,7 +45,7 @@ A runtime update is explicit:
 
 1. release a new `docker.cad.solidcraft` version;
 2. verify that immutable image in the runtime repository;
-3. update Forge's `FORGE_RUNTIME_IMAGE`;
+3. update the matching Forge role-image variable;
 4. prove Forge CI against the new release.
 
 ## Version roles
@@ -79,8 +80,9 @@ to the selected external runtime.
 
 ## Verification
 
-Model/reference commands consume `FORGE_RUNTIME_IMAGE` from their environment.
-They pull and run that exact immutable release.
+Model commands consume `FORGE_SOLIDCRAFT_IMAGE`. Independent reference
+commands consume `FORGE_REFERENCE_IMAGE`. Each command pulls only its own
+immutable role image.
 
 Verification behavior stays in released `lib.py.cad.verfication`, including
 CAD-tool-specific adapters. Forge keeps Forge compilation and model-specific
@@ -138,10 +140,11 @@ Forge item ci.yml
 Forge contains no helper that interprets `process`, no duplicate changed-path
 selection and no second execution policy.
 
-During the five-model proof, the `scpf` item remains active. Exactly five model
-verification items participate; the other model verification items remain
-present in the repository but are excluded by the released CAD-CI planner.
-Shared/reference items remain active where required by existing dependencies.
+During the current performance proof, the `scpf` item remains active and
+`simple-box` is the only processed model-verification item. The other four
+previous proof models remain present but are `process: false`. Independent
+reference items are temporarily `process: false` so their separate heavy
+runtime cannot affect the SolidCraft timing measurement.
 
 
 ## Forge package CI item graph
@@ -197,10 +200,10 @@ examples/<model>/ci.yml
 Forge owns only the declarative repository configuration. It does not reproduce
 the planner in Forge code or tests.
 
-The five active model items form one bounded proof set. The independent
-`reference-verification` item is not part of that set and remains independently
-selected by released CAD-CI. A run that includes reference verification is
-therefore not automatically a five-model runtime measurement.
+The current bounded proof set contains one model item: `simple-box`.
+Reference verification is deliberately excluded from this timing run and will
+resume separately against `cad-reference:v0.2.0` after the model path is
+understood.
 
 Run interpretation uses structured CAD-CI evidence, not buffered console order.
 Consumer output may be emitted late or grouped by SCons, so console timestamps
@@ -416,3 +419,30 @@ aggregate disappears after the last active model is split.
 
 This is a migration bridge only. It is not a second planner and it must never
 expand back to inactive/all-catalog verification.
+
+
+## One-model timing decomposition
+
+The #484 simple-box investigation measures the existing execution path without
+changing it.
+
+Host-side phases:
+
+```text
+Forge compile/write
+  -> docker pull immutable cad-solidcraft
+  -> docker run
+```
+
+Inside the existing container process:
+
+```text
+load model verification definition
+  -> replay Forge command document to native SolidCraft model
+  -> released run_solidcraft_verification()
+```
+
+The launcher emits one concise duration line per phase. Comparing
+`container_run_total` with `inside_total` exposes container/Python
+startup+shutdown overhead. These timing lines are diagnostic only; CAD-CI
+structured evidence remains authoritative for the complete action duration.

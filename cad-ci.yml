@@ -2,7 +2,8 @@
 schema: 1
 
 variables:
-  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.1.0"
+  FORGE_SOLIDCRAFT_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.2.0"
+  FORGE_REFERENCE_IMAGE: "ghcr.io/brainboxemb/cad-reference:v0.2.0"
   SOLIDCRAFT_VERSION: "0.42.0"
 
 templates:
@@ -49,6 +50,7 @@ templates:
           - model_verify
 
   forge-reference:
+    process: false
     kind: verification
     watch:
       item:
@@ -73,6 +75,7 @@ templates:
           - references
 
   forge-reference-build123d:
+    process: false
     kind: verification
     watch:
       item:

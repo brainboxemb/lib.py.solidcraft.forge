@@ -18,11 +18,19 @@ import os
 from pathlib import Path
 import runpy
 import subprocess
+import time
 
 from forge_example import compile_commands, dependency_wheel, write_commands
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def report_timing(phase: str, started: float) -> None:
+    """Print one diagnostic phase duration without affecting verification."""
+
+    duration = time.monotonic() - started
+    print(f"Forge model timing: phase={phase} seconds={duration:.3f}", flush=True)
 
 
 def item_slug() -> str:
@@ -46,9 +54,9 @@ def output_root() -> Path:
 def runtime_image() -> str:
     """Return the immutable released runtime selected by Forge CAD-CI."""
 
-    value = os.environ.get("FORGE_RUNTIME_IMAGE", "").strip()
+    value = os.environ.get("FORGE_SOLIDCRAFT_IMAGE", "").strip()
     if not value:
-        raise RuntimeError("FORGE_RUNTIME_IMAGE is required for model_verify")
+        raise RuntimeError("FORGE_SOLIDCRAFT_IMAGE is required for model_verify")
     return value
 
 
@@ -112,13 +120,24 @@ def run_inside_runtime(
     if not path.is_file():
         raise RuntimeError(f"missing verification file: {path}")
 
+    inside_started = time.monotonic()
+
+    phase_started = time.monotonic()
     definition = load_definition(path)
+    report_timing("definition_load", phase_started)
+
+    phase_started = time.monotonic()
     model = produce_native_model(input_path.resolve(), output_dir.resolve())
+    report_timing("native_replay", phase_started)
+
+    phase_started = time.monotonic()
     report = run_solidcraft_verification(
         model,
         output_dir.resolve(),
         definition,
     )
+    report_timing("verification", phase_started)
+    report_timing("inside_total", inside_started)
     print(f"{slug} model verification: {report['status']}")
     return 0 if report["status"] == "pass" else 1
 
@@ -126,6 +145,7 @@ def run_inside_runtime(
 def run_host() -> int:
     """Compile with the built Forge wheel and invoke the released runtime."""
 
+    host_started = time.monotonic()
     slug = item_slug()
     output = output_root()
     wheel = dependency_wheel()
@@ -138,10 +158,14 @@ def run_host() -> int:
 
     document = compile_commands(slug, wheel)
     write_commands(document, output / "solidcraft.json")
+    report_timing("host_prepare", host_started)
 
+    phase_started = time.monotonic()
     subprocess.run(["docker", "pull", image], check=True)
+    report_timing("image_pull", phase_started)
 
     container_wheel = f"/forge-package/{wheel.name}"
+    phase_started = time.monotonic()
     subprocess.run(
         [
             "docker",

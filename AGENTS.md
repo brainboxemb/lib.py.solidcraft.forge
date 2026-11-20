@@ -109,12 +109,15 @@ where they are used by Forge release verification or other focused tests.
 The reusable SolidCraft CAD runtime is owned, built and released by
 `brainboxemb/docker.cad.solidcraft`.
 
-Forge is a consumer only. Root `cad-ci.yml` selects one immutable released
-image, for example:
+Forge is a consumer only. Root `cad-ci.yml` selects the immutable role images:
 
 ```text
-ghcr.io/brainboxemb/cad-solidcraft:v0.1.0
+ghcr.io/brainboxemb/cad-solidcraft:v0.2.0
+ghcr.io/brainboxemb/cad-reference:v0.2.0
 ```
+
+Normal model/visual verification uses the SolidCraft role; independent reference
+verification uses the reference role.
 
 Forge must not duplicate the runtime Dockerfile, dependency/version pins or
 release workflow. Runtime package composition and release management belong in

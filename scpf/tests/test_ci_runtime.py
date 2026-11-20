@@ -10,6 +10,10 @@ from scpf.version import TESTED_SOLIDCRAFT_VERSION
 ROOT = Path(__file__).resolve().parents[2]
 CAD_CI = ROOT / "cad-ci.yml"
 WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
+MODEL_LAUNCHER = ROOT / "scripts" / "model_verify_declarative.py"
+REFERENCE_LAUNCHER = ROOT / "scripts" / "verification_evidence.py"
+MODEL_LAUNCHER = ROOT / "scripts" / "model_verify_declarative.py"
+REFERENCE_LAUNCHER = ROOT / "scripts" / "verification_evidence.py"
 TOOL_COMMIT = "bbdd473638d64e01acab69722092b2a12f99b84d"
 
 
@@ -33,11 +37,28 @@ class CiRuntimeContractTests(unittest.TestCase):
     def test_runtime_is_external_immutable_release(self):
         """Use a SemVer release from docker.cad.solidcraft."""
 
-        reference = configured_variable("FORGE_RUNTIME_IMAGE")
+        solidcraft = configured_variable("FORGE_SOLIDCRAFT_IMAGE")
+        reference = configured_variable("FORGE_REFERENCE_IMAGE")
         self.assertRegex(
-            reference,
+            solidcraft,
             r"^ghcr\.io/brainboxemb/cad-solidcraft:v\d+\.\d+\.\d+$",
         )
+        self.assertRegex(
+            reference,
+            r"^ghcr\.io/brainboxemb/cad-reference:v\d+\.\d+\.\d+$",
+        )
+        self.assertEqual(solidcraft, "ghcr.io/brainboxemb/cad-solidcraft:v0.2.0")
+        self.assertEqual(reference, "ghcr.io/brainboxemb/cad-reference:v0.2.0")
+
+    def test_launchers_use_their_explicit_runtime_roles(self):
+        """Keep model and reference execution on separate immutable images."""
+
+        model = MODEL_LAUNCHER.read_text(encoding="utf-8")
+        reference = REFERENCE_LAUNCHER.read_text(encoding="utf-8")
+        self.assertIn("FORGE_SOLIDCRAFT_IMAGE", model)
+        self.assertNotIn("FORGE_REFERENCE_IMAGE", model)
+        self.assertIn("FORGE_REFERENCE_IMAGE", reference)
+        self.assertNotIn("FORGE_SOLIDCRAFT_IMAGE", reference)
 
     def test_solidcraft_version_matches_forge(self):
         """Keep Forge's compatibility declaration explicit."""

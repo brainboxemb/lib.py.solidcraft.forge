@@ -1,6 +1,6 @@
 # SolidCraft model verification for xz-anchor.
 id: xz-anchor
-process: true
+process: false
 kind: model
 needs:
   - forge-package

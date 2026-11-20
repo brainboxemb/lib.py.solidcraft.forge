@@ -8,101 +8,95 @@ documents in `docs/`. Issues keep detail and history.
 
 ## Current status
 
-Forge is migrating this pilot to the current externally accepted generic stack:
+The generic CI stack remains externally owned and accepted:
 
 - `lib.py.cad.ci` 0.8.3;
-- `tool.cad.ci` 0.13.3 commit
-  `bbdd473638d64e01acab69722092b2a12f99b84d`;
-- `tool.cad.ci.test` acceptance is green for fresh cacheless Git-diff
-  selection, nested item paths, parent-relative shared inputs, nested durable
-  parent/child publication and streamed concise execution logging.
+- `tool.cad.ci` 0.13.3 at
+  `bbdd473638d64e01acab69722092b2a12f99b84d`.
 
-Forge durable build publication already uses affected-item PR/main updates.
-The remaining reference-verification configuration is still too coarse:
-`verification/references` processes all reference implementations together.
+Closed-PR durable build cleanup is complete through #507 / PR #513.
+
+The runtime owner released v0.2.0 as two immutable role images:
+
+- `ghcr.io/brainboxemb/cad-solidcraft:v0.2.0`;
+- `ghcr.io/brainboxemb/cad-reference:v0.2.0`.
+
+The previous five-model staging was premature. The active performance proof
+returns to one model: `simple-box`.
 
 ## Current goal
 
-Complete #507 so closed or merged pull requests cannot leave stale durable
-`build/pr/<number>` scopes behind.
+Complete #484 by adopting v0.2.0 and measuring one cold/warm simple-box path.
 
-The generated build branch currently contains stale scopes for PRs 490, 492,
-494, 496, 499, 500, 502, 506, 509 and 510 while no pull request is open.
-Cleanup support already exists in the released CAD-CI stack; Forge must wire the
-pull-request lifecycle to that released command before model migration continues.
+Required staging:
 
-The attach-angle and simple-box migrations are complete. The generic stack and
-nested-item behavior are already proven; this change applies that accepted
-structure to the next active model.
+- `simple-box` is the only active model-verification item;
+- anchor-topology-mutation, attach-angle, four-corner-l and xz-anchor are
+  `process: false`;
+- reference verification is temporarily `process: false` during the timing
+  proof;
+- model verification uses `cad-solidcraft:v0.2.0`;
+- reference verification is pinned to `cad-reference:v0.2.0` for later
+  resumption;
+- no Forge-local runtime packaging, scheduler or cache is introduced.
 
-Target structure:
+## Measured clean baseline
 
-```text
-examples/anchor-topology-mutation/
-  build123d/ci.yml
-  cadquery/ci.yml
-  pythonscad/ci.yml
-  pybosl2/ci.yml
-```
+PR #515 run `44758695910` is the first uncontaminated one-model v0.2.0 run.
 
-The temporary aggregate must stop watching and executing
-`anchor-topology-mutation` in the same change, leaving only:
+- structured `simple-box:model_verify` duration: 12.054 s;
+- pre-pull host work: about 0.279 s;
+- `cad-solidcraft:v0.2.0` pull: about 5.540 s;
+- post-pull to verification pass: about 6.115 s;
+- post-pull to completed target: about 6.238 s;
+- no reference target ran and the reference image was not pulled.
 
-- `four-corner-l`;
-- `xz-anchor`.
+The runtime split therefore removed most of the old ~44 s cold cost. The
+remaining post-pull ~6.2 s is still above the historical ~1.4-1.9 s warm-model
+range and must be decomposed before #484 is complete.
 
 ## Required proof
 
-- `pull_request.closed` invokes the released `cad-ci publish build-cleanup`
-  path for that PR number;
-- normal PR verification does not run for a close-only event;
-- cleanup preserves `build/main` and unrelated PR scopes;
-- cleanup is safe when the scope is already absent;
-- existing stale generated PR scopes are removed once;
-- all four anchor-topology-mutation reference children are represented independently;
-- build123d uses `forge-reference-build123d`;
-- cadquery, pythonscad and pybosl2 use `forge-reference`;
-- reference expectations remain model-local;
-- the temporary aggregate covers only the remaining two active models;
-- inactive `process: false` references remain excluded;
-- selected execution and durable affected-item publication remain green.
+1. The adoption PR is green with exactly one active model-verification item.
+2. A representative simple-box-only source change selects simple-box and its
+   normal Forge package dependency path, not the other four models or reference
+   verification.
+3. Structured CAD-CI evidence confirms the model action duration.
+4. The live log separates the v0.2.0 image pull from post-pull model work.
+5. Compare against the old ~44 s cold first-model result and ~1.4-1.9 s warm
+   model range.
+6. Emit diagnostic phase timing for container/Python startup, native replay and
+   verification, then explain the remaining ~6.2 s before changing process
+   lifetime.
 
 ## Execution order
 
-1. #507 — clean closed PR build scopes and wire automatic cleanup.
-2. #508 — resume anchor-topology-mutation reference children migration.
-3. Migrate `four-corner-l` references in a separate issue/PR.
-4. Migrate `xz-anchor` references in a separate issue/PR and remove the
-   temporary aggregate.
-5. #497 / #366 — resume stable Pages publication from the generic build/main
-   baseline.
-6. Resume #430/#378 verification-feature work.
-7. Resume #432 broader declarative model migration after generated output is
-   stable.
+1. #484 — adopt v0.2.0 roles and prove one simple-box runtime path.
+2. #430 / #378 — continue the complete visual/evidence proof on simple-box only.
+3. #366 / #497 — resume durable build/Pages work after the one-model path is stable.
+4. #432 — broader model migration only after the simple-box chain is complete.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #507 Clean durable PR build scopes when pull requests close | now | Generated build state contains ten stale closed-PR scopes; wire the released cleanup path and remove the accumulated scopes before further migration. |
-| #508 Migrate anchor-topology-mutation references to isolated CAD-CI items | blocked | Resume after #507 restores correct PR-scope lifecycle. |
-| #497 Publish stable Pages from the generic build/main baseline | blocked | Resume after the reference-item pilot proves the corrected CI structure. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Durable affected build updates are in place; Pages remains. |
-| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Performance work stays separate from selection/reference structure. |
-| #481 Remove stale Forge development branches | blocked | Current connected tooling cannot delete the stale refs. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | later | Resume after generated output and reference selection are stable. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | later | Continue verification-stage work after the CI structure is stable. |
-| #432 Use released declarative CAD verification in model verification | blocked | Broader migration follows stable generated output/reference selection. |
+| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | now | v0.2.0 is released; prove it with simple-box only. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | next | Correct continuation after the runtime baseline is stable. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | next | Continue through simple-box only. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Resume after simple-box runtime/evidence is stable. |
+| #497 Publish stable Pages from the generic build/main baseline | blocked | Depends on #366. |
+| #432 Use released declarative CAD verification in model verification | blocked | Broader catalog migration remains paused. |
 | #391 Extract reusable CAD verification library from Forge | blocked | Complete only after procedural verification is migrated. |
-| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by runtime repository and #484. |
-| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to the superseded qualification architecture. |
+| #481 Remove stale Forge development branches | blocked | Current connected tooling cannot delete stale refs. |
+| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by docker.cad.solidcraft v0.2.0 and #484. |
+| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
 | #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Independent CLI quality work. |
 | #355 Support current SolidCraft parametric Slot API in Forge | later | Independent product/API work. |
 | #354 Support standalone sketch extrusions as boolean operands | later | Independent product/API work. |
 | #349 Coverage: expose the remaining SolidCraft SOLID › CREATE features in Forge | later | Feature-coverage backlog. |
 | #347 Patterns should accept any applied Shape feature, not only Sketch.extrude | later | Forge feature backlog. |
-| #335 Use build123d Sheet Metal for the sheet-fold qualification reference | later | Reference-quality improvement. |
+| #335 Use build123d Sheet Metal for the sheet-fold qualification reference | later | Reference-quality improvement after references resume. |
 | #325 Research: determine root cause of HUB75 AnchorFrame regression | later | Independent model/API investigation. |
 | #175 Change 0005: qualify HUB75-like AnchorFrame orientation against known-good Placement poses | later | Domain verification backlog. |
 | #82 Reconsider automatic hiding of the SolidCraft Joints folder | later | Independent product behavior. |
@@ -113,4 +107,4 @@ The temporary aggregate must stop watching and executing
 
 Immediate chain:
 
-`#507 PR cleanup -> #508 anchor-topology-mutation -> four-corner-l -> xz-anchor -> #497/#366 Pages`.
+`#484 simple-box timing -> #430/#378 simple-box evidence -> #366/#497 publication`.

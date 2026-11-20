@@ -27,18 +27,19 @@ Therefore Forge must not own or duplicate:
 - runtime image build/publication workflows;
 - runtime release/version management.
 
-Root `cad-ci.yml` declares the exact immutable released image Forge consumes,
-for example:
+Root `cad-ci.yml` declares the exact immutable released role images Forge
+consumes:
 
 ```text
-ghcr.io/brainboxemb/cad-solidcraft:v0.1.0
+FORGE_SOLIDCRAFT_IMAGE=ghcr.io/brainboxemb/cad-solidcraft:v0.2.0
+FORGE_REFERENCE_IMAGE=ghcr.io/brainboxemb/cad-reference:v0.2.0
 ```
 
-Changing the runtime is a two-repository operation:
+Changing a runtime role is a two-repository operation:
 
 1. change, test and release a new immutable version from
    `docker.cad.solidcraft`;
-2. deliberately update Forge's `FORGE_RUNTIME_IMAGE` to that released tag.
+2. deliberately update the matching Forge image variable to that released tag.
 
 Forge never derives a runtime version from source hashes, timestamps or local
 Docker files.
@@ -47,8 +48,14 @@ Docker files.
 
 Forge CAD-CI commands read the injected repository environment:
 
-- `FORGE_RUNTIME_IMAGE` is the exact immutable released image reference;
+- `FORGE_SOLIDCRAFT_IMAGE` is the exact immutable image used by normal
+  SolidCraft model/visual verification;
+- `FORGE_REFERENCE_IMAGE` is the exact immutable image used by independent
+  PythonSCAD/pyBOSL2/CadQuery/build123d reference verification;
 - `SOLIDCRAFT_VERSION` is the SolidCraft version expected by Forge CI.
+
+Model verification must not use the reference image. Independent reference
+verification must not use the SolidCraft image.
 
 Consumer commands do not parse `cad-ci.yml` themselves.
 
@@ -158,15 +165,15 @@ selection, scheduling, caching or parallel-execution policy.
 Forge CI must run only against an exact externally accepted `tool.cad.ci` /
 `lib.py.cad.ci` release pair.
 
-During the current five-model proof:
+During the current one-model performance proof:
 
-- exactly five model verification items participate through released CAD-CI
-  `process` configuration;
-- all other model verification items remain excluded from normal selection;
-- repository-wide reference verification is a separate item and is not counted
-  as one of the five model verification items;
-- the reference item may run only when normal released CAD-CI selection selects
-  it from its own configuration/dependencies;
+- `simple-box` is the only model verification item with `process: true`;
+- anchor-topology-mutation, attach-angle, four-corner-l and xz-anchor are
+  explicitly `process: false`;
+- reference verification is temporarily `process: false` so its heavier
+  independent runtime does not contaminate SolidCraft model timing;
+- Forge package build/tests/release checks remain processed as independent
+  non-model checks;
 - Forge must not add a second planner or consumer-side changed-path engine to
   enforce this staging.
 
@@ -184,14 +191,16 @@ item's `.cad-ci` namespace must be sufficient to determine:
 Console text is diagnostic only and must not be the sole source used to decide
 what CI actually executed.
 
-The five-model proof is considered reliable only when representative changes
-can be explained from:
+The one-model proof is considered reliable only when representative simple-box
+changes can be explained from:
 
 1. the repository configuration;
 2. the released CAD-CI selected graph;
 3. the resulting structured item/step evidence.
 
-Performance tuning is not part of this reliability requirement.
+For #484, timing interpretation additionally separates immutable image
+acquisition from the remaining container/process/model work without weakening
+verification.
 
 ## Model command-contract coverage
 
@@ -361,3 +370,17 @@ models whose references have not yet been split. That aggregate:
 
 Forge must not add a second Git-diff selector or cache/fingerprint mechanism.
 The exact released CAD-CI planner owns affected-item selection.
+
+
+## Model performance diagnostics
+
+During the bounded #484 one-model investigation, the Forge model launcher may
+emit concise phase durations for diagnosis.
+
+- phase timing is console diagnostics only and is not verification evidence;
+- timing values must not participate in CAD-CI target signatures, output bundle
+  contents, pass/fail decisions or model expectations;
+- diagnostics may measure host preparation, immutable image pull, container run,
+  native replay and released verification execution;
+- adding diagnostics must not change the verification commands or lifecycle
+  being measured.

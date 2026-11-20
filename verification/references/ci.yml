@@ -1,5 +1,6 @@
 # Transitional aggregate for active models not yet migrated to child reference items.
 id: reference-verification
+process: false
 kind: verification
 watch:
   - examples/four-corner-l/verification/reference_geometry.json
