@@ -12,8 +12,8 @@ CAD_CI = ROOT / "cad-ci.yml"
 WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
 MODEL_VERIFY = ROOT / "scripts" / "model_verify_declarative.py"
 REFERENCE_VERIFY = ROOT / "scripts" / "verification_evidence.py"
-PR_TOOL_COMMIT = "18812d38e2390c23fd3c431cfde2ce9367bdfd40"
-MAIN_TOOL_COMMIT = "bbdd473638d64e01acab69722092b2a12f99b84d"
+PR_TOOL_COMMIT = "4c1016d594368146fb9c16602f01c158e85d9afb"
+MAIN_TOOL_COMMIT = "4c1016d594368146fb9c16602f01c158e85d9afb"
 
 
 def configured_variable(name: str) -> str:
