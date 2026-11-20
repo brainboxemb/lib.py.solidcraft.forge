@@ -12,6 +12,8 @@ MODEL = ROOT / "examples/simple-box/scpf/model.py"
 
 class SimpleBoxCommandTests(unittest.TestCase):
     def test_box_lowers_directly_to_native_solid_box(self):
+        """Keep the representative simple-box lowering contract explicit."""
+
         commands = run_script(MODEL)["commands"]
 
         feature_commands = [
