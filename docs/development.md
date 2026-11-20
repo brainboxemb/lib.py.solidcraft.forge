@@ -140,8 +140,12 @@ preparation, not routine development bookkeeping.
 Each `examples/<slug>/` directory owns the material needed to explain that
 example.
 
-- `model.yml` contains human-facing page metadata, concepts and a concise
-  explanation of what the verification proves;
+- `model.yml` contains only the generic page/model metadata fields
+  `section`, `title`, `tagline`, `description`, `parameters` and
+  `stages`;
+- `README.md` contains the human engineering explanation for the example,
+  including goal, Forge API/model, SolidCraft lowering/result, saved-design
+  explanation and reference notes;
 - `scpf/model.py` is the implementation shown/executed;
 - `verification/verify.py` is the exact machine-readable verification
   contract;
@@ -149,7 +153,9 @@ example.
 - accepted current PASS/FAIL and measurement evidence comes from
   `build/main`.
 
-Do not add example descriptions to a central Python registry. Do not duplicate
+Do not add example descriptions to a central Python registry. During source
+migrations, preserve existing README engineering statements rather than
+summarizing or reinterpreting them. Do not duplicate
 verification bounds/volumes/tolerances into prose merely to render a page.
 
 Site layout belongs in external templates/static assets. Prose-heavy site
