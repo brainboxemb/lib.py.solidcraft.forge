@@ -28,6 +28,14 @@ One 20 mm diameter cylindrical body spans X/Y -10..10 mm and Z -30..0 mm, with a
 
 No saved-design mutation in this fixture; it isolates direct circle-profile lowering and negative extrusion semantics.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+A box can share the same envelope as this cylinder. Circular volume and a radial surface probe are required.
+
 ## Reference notes
 
 - **OpenSCAD** — Comparable to a circle followed by linear_extrude(height=30) after selecting the opposite extrusion direction.
