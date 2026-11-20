@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Assembly-owned named anchor · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../qualification/">Qualification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Assembly-owned named anchor</div>
+  <section class="hero small">
+    <p class="eyebrow">anchors</p>
+    <h1>Assembly-owned named anchor</h1>
+    <p class="guide-lead">A semantic datum belongs to the assembly rather than the reusable part</p>
+    <p>An assembly publishes a named corner datum and a Marker consumes it without adding application-specific anchor names to the generic Base component.</p>
+    <p class="meta"><span>Base 40 × 30 × 20 mm; Companion 10 mm cube; Marker 10 mm cube</span><span>14 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/assembly-owned-anchor/model_verify/presentation/preview-iso.png" alt="Assembly-owned named anchor: Current deterministic presentation preview from durable build 1b13ad62ca66." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build 1b13ad62ca66.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create Base and Companion components</li><li>Publish the semantic corner anchor on the assembly</li><li>Attach Marker through the assembly-owned datum</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify that an assembly can publish a semantic attachment name without putting that application-specific datum on the reusable component, and that a consumer of the name still lowers to an associative native relationship.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>(base + companion).with_anchor(&#x27;inspection_corner&#x27;, base, Anchor.FRONT_TOP_RIGHT); datum = frame.anchor(&#x27;inspection_corner&#x27;); Marker().attach(datum.target, parent=datum.reference, ...)</code></p>
+    <h2>Forge model</h2>
+    <p>The assembly stores a name mapped to an existing target occurrence plus a normal Forge anchor reference. The reusable Base knows nothing about the semantic name.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>with_anchor()/anchor() are Forge-side semantic indirection only. The resulting native joint is the same topology-backed FRONT_TOP_RIGHT relationship that a direct attach would emit; no extra native helper object is required.</p>
+    <h2>SolidCraft result</h2>
+    <p>The marker sits on the base front-top-right corner while an unrelated companion occurrence remains part of the same assembly.</p>
+    <h2>Saved-design test</h2>
+    <p>Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the marker created through the assembly-owned name must follow the moved corner without rerunning Python.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The three body sizes and positions describe the visible assembly. The saved SolidCraft model is checked separately to confirm which assembly owns the anchor and which parts are related.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>BOSL2</strong> — Semantic attachment names belong naturally to the assembly that owns their meaning rather than to a generic reusable component.</li><li><strong>SolidCraft</strong> — The semantic name disappears during lowering; the persisted native relationship remains topology-backed and associative.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Qualification: an assembly-owned named anchor remains associative.&quot;&quot;&quot;
+
+
+class Base:
+    width = 40.0
+    height = 20.0
+    DEPTH = 30.0
+
+    def build(self):
+        return Box(
+            self.width,
+            self.DEPTH,
+            self.height,
+            anchor=Anchor.BOTTOM,
+        )
+
+
+class Companion:
+    SIZE = 10.0
+
+    def build(self):
+        # Position is not part of this qualification. Keep its old visible
+        # location inside this unique component definition.
+        return Box(self.SIZE, self.SIZE, self.SIZE).move(x=70, z=self.SIZE / 2)
+
+
+class Marker:
+    def build(self):
+        return Box(10, 10, 10)
+
+
+class AssemblyOwnedAnchor:
+    base_width = 40.0
+    base_height = 20.0
+
+    def build(self):
+        base = Base(
+            width=self.base_width,
+            height=self.base_height,
+            name=&quot;base&quot;,
+        )
+        companion = Companion(name=&quot;companion&quot;)
+
+        frame = (base + companion).with_anchor(
+            &quot;inspection_corner&quot;,
+            base,
+            Anchor.FRONT_TOP_RIGHT,
+        )
+        datum = frame.anchor(&quot;inspection_corner&quot;)
+
+        marker = Marker().attach(
+            datum.target,
+            parent=datum.reference,
+            child=Anchor.BACK_TOP_RIGHT,
+            offset=datum.offset,
+        )
+        return frame + marker
+
+
+AssemblyOwnedAnchor()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/assembly-owned-anchor/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.move</code></li><li><code>joint.create</code></li><li><code>browser.visibility</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

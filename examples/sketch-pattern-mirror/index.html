@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Associative sketch pattern and mirror · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../qualification/">Qualification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Associative sketch pattern and mirror</div>
+  <section class="hero small">
+    <p class="eyebrow">associativity</p>
+    <h1>Associative sketch pattern and mirror</h1>
+    <p class="guide-lead">Native sketch patterns and mirrors drive repeated holes and slots</p>
+    <p>One Circle seed and one Slot seed generate repeated cut geometry through native sketch pattern and mirror relationships rather than Python-expanded copies.</p>
+    <p class="meta"><span>240 × 160 × 5 mm plate; Ø8 holes; 25 mm hole pitch; 8 mm slots</span><span>22 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/sketch-pattern-mirror/model_verify/presentation/preview-iso.png" alt="Associative sketch pattern and mirror: Current deterministic presentation preview from durable build 1b13ad62ca66." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build 1b13ad62ca66.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the plate and Dog holes sketch</li><li>Pattern and mirror the Circle seed before one cut</li><li>Pattern and mirror the Slot seed before one cut</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify that one Circle seed and one Slot seed drive repeated sketch geometry through native SolidCraft rectangular patterns and mirrors instead of Python-expanded copies.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>seed = sketch.add(Circle2D(...)); sketch.rectangular_pattern(seed, ...); sketch.mirror(pattern, axis=Axis.X/Y); same flow for SlotCenterToCenter2D</code></p>
+    <h2>Forge model</h2>
+    <p>One 240 x 160 x 5 mm plate with two attached Sketches. Dog holes use one Circle seed, one native sketch pattern and one mirror. Clamp slots use one Slot seed, one native sketch pattern and three mirrors. Each Sketch is cut once.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge binds the real native curves returned by the seed profile, feeds those ids into sketch.pattern.rectangular, binds the pattern curves, and feeds those into sketch.mirror. User Python never contains SolidCraft-generated ids.</p>
+    <h2>SolidCraft result</h2>
+    <p>SolidCraft saves one Dog holes Sketch and one Clamp slots Sketch with associative pattern/mirror relationships. Baseline geometry contains 8 Ø8 holes and 8 straight Slots. No expanded set of independent seed commands is emitted.</p>
+    <h2>Saved-design test</h2>
+    <p>Change hole_diameter 8-&gt;10 mm, hole_pitch 25-&gt;30 mm and slot_pitch 50-&gt;30 mm in the saved .sc design. Without rerunning Python all existing pattern and mirror copies must follow the changed seed and spacing. Pattern counts remain native editable parameters, but SolidCraft 0.42 mirrors a fixed selected entity set and does not automatically adopt new entities added later by an upstream count change.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>The Circle and Slot cuts do not change the plate envelope. Volume, 3D wall probes and saved-design mutation are required to prove the associative sketch pattern/mirror result.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — The native saved design is the source of truth for the associative sketch pattern/mirror relationships and their saved-design mutation.</li><li><strong>PythonSCAD</strong> — Independent final geometry confirms the repeated cuts without relying on Forge&#x27;s command lowering.</li><li><strong>CadQuery</strong> — Independent final geometry confirms the expected hole and Slot positions.</li><li><strong>build123d</strong> — Independent final geometry confirms the expected profile repetition and cut result.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Native associative Sketch pattern/mirror qualification.
+
+One Circle seed and one Slot seed drive all repeated cut geometry. Pattern
+counts and spacing stay as editable SolidCraft parameters.
+&quot;&quot;&quot;
+
+
+class SketchPatternMirror:
+    hole_diameter = 8.0
+    hole_columns = 4
+    hole_pitch = 25.0
+    slot_count = 2
+    slot_pitch = 50.0
+
+    SLOT_WIDTH = 8.0
+
+    def build(self):
+        board = Box(240, 160, 5, anchor=Anchor.BOTTOM)
+
+        with Sketch(name=&quot;Dog holes&quot;, on=board, parent=Anchor.TOP) as holes:
+            seed = holes.add(
+                Circle2D(d=self.hole_diameter),
+                offset=(-60, -45),
+            )
+            row = holes.rectangular_pattern(
+                seed,
+                count=self.hole_columns,
+                spacing=self.hole_pitch,
+                direction=Axis.X,
+            )
+            holes.mirror(row, axis=Axis.X)
+
+        board = board - holes.extrude(Depth.THROUGH_ALL)
+
+        with Sketch(name=&quot;Clamp slots&quot;, on=board, parent=Anchor.TOP) as slots:
+            seed = SlotCenterToCenter2D((20, 20), (40, 20), self.SLOT_WIDTH)
+            arm = slots.rectangular_pattern(
+                seed,
+                count=self.slot_count,
+                spacing=self.slot_pitch,
+                direction=Axis.X,
+            )
+            left = slots.mirror(arm, axis=Axis.Y)
+            slots.mirror(arm, axis=Axis.X)
+            slots.mirror(left, axis=Axis.X)
+
+        return board - slots.extrude(Depth.THROUGH_ALL)
+
+
+SketchPatternMirror()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/sketch-pattern-mirror/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>solid.box</code></li><li><code>model.faces</code></li><li><code>sketch.create</code></li><li><code>sketch.circle.center</code></li><li><code>sketch.pattern.rectangular</code></li><li><code>sketch.mirror</code></li><li><code>sketch.finish</code></li><li><code>solid.extrude</code></li><li><code>model.faces</code></li><li><code>sketch.create</code></li><li><code>sketch.slot.center_to_center</code></li><li><code>sketch.pattern.rectangular</code></li><li><code>sketch.mirror</code></li><li><code>sketch.mirror</code></li><li><code>sketch.mirror</code></li><li><code>sketch.finish</code></li><li><code>solid.extrude</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

@@ -1,30 +1,87 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>4 · Associative corner anchor · SCPF Python library</title>
-<link rel="stylesheet" href="../../style.css"></head>
-<body><header class="top"><div class="wrap nav">
-<a class="brand" href="../../">SCPF <span>Python library</span></a>
-<div class="site-search" data-search-index="../../search-index.json">
-<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
-<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
-       placeholder="Search API…" aria-label="Search SCPF documentation"
-       aria-expanded="false" aria-controls="site-search-results">
-<span class="site-search-shortcut" aria-hidden="true">/</span>
-<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Topology-backed corner anchor · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../qualification/">Qualification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
 </div>
-<nav aria-label="Main"><a href="../../">Examples</a><a href="../../guide/">API Guide</a><a href="../../reference/">API Reference</a><a href="../../qualification/">Qualification</a><a href="../../cheatsheet/">Cheatsheet</a>
-<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a></nav></div></header>
-<div class="development-banner" role="status"><div class="wrap">
-<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
-</div></div>
-<main class="wrap"><div class="crumb"><a href="../../">← Examples</a> / 4 · Associative corner anchor</div>
-<section class="hero small"><p class="eyebrow">Small API regression fixture</p>
-<h1>4 · Associative corner anchor</h1><p>Attach one reusable component to a named corner that follows parent size changes.</p>
-<p class="meta"><span>Compiled: 11 native commands</span><span>Native SolidCraft 0.42.0 render, verified against this source commit.</span></p></section>
-<figure class="example-image"><img src="preview.png" alt="4 · Associative corner anchor: Native SolidCraft 0.42.0 render, verified against this source commit." loading="lazy">
-<figcaption>Native SolidCraft 0.42.0 render, verified against this source commit.</figcaption></figure>
-<div class="twocol"><section class="panel"><h2>Python source</h2><pre><code>class Base:
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Topology-backed corner anchor</div>
+  <section class="hero small">
+    <p class="eyebrow">anchors</p>
+    <h1>Topology-backed corner anchor</h1>
+    <p class="guide-lead">A standard corner reference follows parent width and height</p>
+    <p>A Marker uses matching parent and child corner anchors so the native relationship follows two changing parent dimensions.</p>
+    <p class="meta"><span>Base 40 × 30 × 20 mm; Marker 10 mm cube</span><span>11 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/corner-anchor/model_verify/presentation/preview-iso.png" alt="Topology-backed corner anchor: Current deterministic presentation preview from durable build 1b13ad62ca66." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build 1b13ad62ca66.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the parameterized Base</li><li>Attach Marker with FRONT_TOP_RIGHT to BACK_TOP_RIGHT</li><li>Preserve the corner relationship through parent resize</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify a corner reference that follows both parent width and height changes.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>Anchor.FRONT_TOP_RIGHT paired with child Anchor.BACK_TOP_RIGHT</code></p>
+    <h2>Forge model</h2>
+    <p>A standard corner Anchor is resolved to an edge/on/corner native topology reference rather than a free point.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>joint.create receives SolidCraft edge/on/corner picks so the saved design can re-find the corner after geometry changes.</p>
+    <h2>SolidCraft result</h2>
+    <p>The marker sits on the front-top-right corner of the base.</p>
+    <h2>Saved-design test</h2>
+    <p>Change the base from 40x20 to 80x40 mm; the marker must follow both the new right side and new top.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The base and marker positions show the intended corner placement. The saved SolidCraft model is then changed to confirm that the marker keeps following that corner.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>BOSL2</strong> — BOSL2 supports side/edge/corner anchors; its anchor also carries orientation, which is a useful design reference for Forge.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>class Base:
     width = 40.0
     height = 20.0
 
@@ -56,236 +113,29 @@ class CornerAnchor:
 
 CornerAnchor()
 </code></pre>
-<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/main/examples/corner-anchor/scpf/model.py">Open the editable source in GitHub →</a></section>
-<section class="panel"><h2>Generated command sequence</h2><ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.move</code></li><li><code>joint.create</code></li><li><code>browser.visibility</code></li></ol>
-<p><a class="button" href="commands.json">View command JSON →</a></p></section></div>
-<section class="notice">The generated JSON is automatically rebuilt and checked by CI for every relevant change.
-These examples are API smoke tests, not substitutes for a full mechanical CAD project or a native geometry certification.</section>
-<p><a href="../../cheatsheet/">Related SCPF syntax in the cheatsheet →</a></p></main>
-<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
-<a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a></div></footer>
-<script>(() => {
-  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
-  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/corner-anchor/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.move</code></li><li><code>joint.create</code></li><li><code>browser.visibility</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
 
-  async function copyText(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-    const helper = document.createElement('textarea');
-    helper.value = text;
-    helper.setAttribute('readonly', '');
-    helper.style.position = 'fixed';
-    helper.style.opacity = '0';
-    document.body.appendChild(helper);
-    helper.select();
-    document.execCommand('copy');
-    helper.remove();
-  }
-
-  document.querySelectorAll('pre > code').forEach((code) => {
-    const pre = code.parentElement;
-    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'code-block';
-    pre.parentNode.insertBefore(wrapper, pre);
-    wrapper.appendChild(pre);
-
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'code-copy';
-    button.title = 'Copy code';
-    button.setAttribute('aria-label', 'Copy code');
-    button.innerHTML = copyIcon;
-    wrapper.appendChild(button);
-
-    button.addEventListener('click', async () => {
-      try {
-        await copyText(code.textContent);
-        button.innerHTML = doneIcon;
-        button.classList.add('copied');
-        button.title = 'Copied';
-        button.setAttribute('aria-label', 'Copied');
-        window.setTimeout(() => {
-          button.innerHTML = copyIcon;
-          button.classList.remove('copied');
-          button.title = 'Copy code';
-          button.setAttribute('aria-label', 'Copy code');
-        }, 1400);
-      } catch (_error) {
-        button.title = 'Copy failed';
-        button.setAttribute('aria-label', 'Copy failed');
-      }
-    });
-  });
-})();
-</script>
-<script>
-(() => {
-  const root = document.querySelector('.site-search');
-  if (!root) return;
-
-  const input = root.querySelector('.site-search-input');
-  const results = root.querySelector('.site-search-results');
-  const indexUrl = root.dataset.searchIndex;
-  let indexPromise = null;
-  let visible = [];
-
-  const normal = (value) => String(value || '')
-    .toLowerCase()
-    .replace(/[_.:/-]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const raw = (value) => String(value || '').toLowerCase().trim();
-
-  function loadIndex() {
-    if (!indexPromise) {
-      indexPromise = fetch(indexUrl)
-        .then((response) => {
-          if (!response.ok) throw new Error('Search index unavailable');
-          return response.json();
-        })
-        .then((data) => data.entries || []);
-    }
-    return indexPromise;
-  }
-
-  function score(entry, query) {
-    const qRaw = raw(query);
-    const q = normal(query);
-    if (!q) return -1;
-
-    const titleRaw = raw(entry.title);
-    const title = normal(entry.title);
-    const aliases = entry.aliases || [];
-    const aliasRaw = aliases.map(raw);
-    const aliasText = normal(aliases.join(' '));
-    const haystack = normal([
-      entry.title,
-      entry.summary,
-      entry.keywords,
-      aliases.join(' '),
-    ].join(' '));
-
-    if (titleRaw === qRaw) return 1000;
-    if (aliasRaw.includes(qRaw)) return 920;
-    if (title.startsWith(q)) return 820;
-    if (aliasText.startsWith(q)) return 760;
-    if (title.includes(q)) return 680;
-    if (aliasText.includes(q)) return 620;
-    if (haystack.includes(q)) return 500;
-
-    const words = q.split(' ').filter(Boolean);
-    if (words.length && words.every((word) => haystack.includes(word))) {
-      return 380 + words.length * 10;
-    }
-    return -1;
-  }
-
-  function closeResults() {
-    results.hidden = true;
-    results.replaceChildren();
-    input.setAttribute('aria-expanded', 'false');
-    visible = [];
-  }
-
-  function render(entries, query) {
-    const ranked = entries
-      .map((entry, order) => ({entry, order, score: score(entry, query)}))
-      .filter((row) => row.score >= 0)
-      .sort((a, b) => b.score - a.score || a.order - b.order)
-      .slice(0, 10);
-
-    results.replaceChildren();
-    visible = ranked.map((row) => row.entry);
-    if (!ranked.length) {
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'No documentation found.';
-      results.appendChild(empty);
-    } else {
-      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
-      ranked.forEach(({entry}) => {
-        const link = document.createElement('a');
-        link.className = 'site-search-result';
-        link.href = new URL(entry.url, indexBase).href;
-
-        const heading = document.createElement('span');
-        heading.className = 'site-search-result-title';
-        heading.textContent = entry.title;
-
-        const kind = document.createElement('span');
-        kind.className = 'site-search-result-kind';
-        kind.textContent = entry.kind;
-
-        const summary = document.createElement('span');
-        summary.className = 'site-search-result-summary';
-        summary.textContent = entry.summary;
-
-        link.append(heading, kind, summary);
-        results.appendChild(link);
-      });
-    }
-    results.hidden = false;
-    input.setAttribute('aria-expanded', 'true');
-  }
-
-  async function search() {
-    const query = input.value.trim();
-    if (!query) {
-      closeResults();
-      return;
-    }
-    try {
-      render(await loadIndex(), query);
-    } catch (_error) {
-      results.replaceChildren();
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'Search is unavailable.';
-      results.appendChild(empty);
-      results.hidden = false;
-      input.setAttribute('aria-expanded', 'true');
-    }
-  }
-
-  input.addEventListener('input', search);
-  input.addEventListener('focus', () => {
-    if (input.value.trim()) search();
-  });
-  input.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      closeResults();
-      input.blur();
-    } else if (event.key === 'Enter' && visible.length) {
-      event.preventDefault();
-      results.querySelector('.site-search-result')?.click();
-    }
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!root.contains(event.target)) closeResults();
-  });
-
-  document.addEventListener('keydown', (event) => {
-    const target = event.target;
-    const typing = target instanceof HTMLInputElement
-      || target instanceof HTMLTextAreaElement
-      || target instanceof HTMLSelectElement
-      || target?.isContentEditable;
-    const shortcut = (event.ctrlKey || event.metaKey)
-      && event.key.toLowerCase() === 'k';
-    const slash = event.key === '/' && !typing && !event.ctrlKey
-      && !event.metaKey && !event.altKey;
-    if (shortcut || slash) {
-      event.preventDefault();
-      input.focus();
-      input.select();
-    }
-  });
-})();
-</script>
-</body></html>
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

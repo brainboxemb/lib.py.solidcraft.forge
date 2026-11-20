@@ -1,25 +1,44 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>Positioning and orientation · SCPF Python library</title>
-<link rel="stylesheet" href="../../style.css"></head>
-<body><header class="top"><div class="wrap nav">
-<a class="brand" href="../../">SCPF <span>Python library</span></a>
-<div class="site-search" data-search-index="../../search-index.json">
-<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
-<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
-       placeholder="Search API…" aria-label="Search SCPF documentation"
-       aria-expanded="false" aria-controls="site-search-results">
-<span class="site-search-shortcut" aria-hidden="true">/</span>
-<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Positioning and orientation · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../qualification/">Qualification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
 </div>
-<nav aria-label="Main"><a href="../../">Examples</a><a href="../../guide/">API Guide</a><a href="../../reference/">API Reference</a><a href="../../qualification/">Qualification</a><a href="../../cheatsheet/">Cheatsheet</a>
-<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a></nav></div></header>
-<div class="development-banner" role="status"><div class="wrap">
-<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
-</div></div>
-<main class="wrap guide-layout"><aside class="guide-sidebar"><h2>API Guide</h2><a href="../">Overview</a><a href="../getting-started/">Getting started</a><a href="../model-objects/">Model objects and parameters</a><a class="active" href="../transformations/">Positioning and orientation</a><div class="guide-subnav"><a href="#choose">Which one do I use?</a><a href="#axes">Start with the coordinate system</a><a href="#at">Use at() to place or align geometry</a><a href="#on">Use on() for a feature on a face</a><a href="#shape-attach">Shape.attach() is lower-level within-part placement</a><a href="#placement">Use Placement for a component occurrence</a><a href="#occurrence-attach">Use Occurrence.attach() for separate physical parts</a><a href="#move">Shape.move() is a local geometry translation</a><a href="#copies">Copies can have different placements</a><a href="#limits">Current limits</a></div><a href="../assembly-basics/">From one component to an assembly</a><a href="../geometry/">Geometry, sketches and Boolean operations</a><a href="../features/">Features and references</a><a href="../components/">Components and assemblies</a><a href="../verification/">Verification and API boundaries</a></aside><article class="guide-article"><p class="crumb"><a href="../">API Guide</a> / Positioning and orientation</p><h1>Positioning and orientation</h1><p class="guide-lead">Where geometry and component occurrences go, and when to use at(), on(), attach() or Placement.</p>
-<h2 id="choose">Which one do I use?</h2>
+<main class="wrap guide-layout"><aside class="guide-sidebar"><h2>API Guide</h2><a href="../">Overview</a><a href="../getting-started/">Getting started</a><a href="../model-objects/">Model objects and parameters</a><a class="active" href="../transformations/">Positioning and orientation</a><div class="guide-subnav"><a href="#choose">Which one do I use?</a><a href="#axes">Start with the coordinate system</a><a href="#at">Use at() to place or align geometry</a><a href="#on">Use on() for a feature on a face</a><a href="#shape-attach">Shape.attach() is lower-level within-part placement</a><a href="#placement">Use Placement for a component occurrence</a><a href="#occurrence-attach">Use Occurrence.attach() for separate physical parts</a><a href="#move">Shape.move() is a local geometry translation</a><a href="#copies">Copies can have different placements</a><a href="#limits">Current limits</a></div><a href="../assembly-basics/">From one component to an assembly</a><a href="../geometry/">Geometry, sketches and Boolean operations</a><a href="../features/">Features and references</a><a href="../components/">Components and assemblies</a><a href="../verification/">Verification and API boundaries</a></aside><article class="guide-article"><p class="crumb"><a href="../">API Guide</a> / Positioning and orientation</p><h1>Positioning and orientation</h1><p class="guide-lead">Where geometry and component occurrences go, and when to use at(), on(), attach() or Placement.</p><h2 id="choose">Which one do I use?</h2>
 <p>These APIs all affect where something ends up, but they mean different things.
 Choose the one that matches the rule in the model.</p>
 <table><thead><tr><th>You want to…</th><th>Use</th><th>What it means</th></tr></thead><tbody>
@@ -42,7 +61,7 @@ change the model coordinates.</p>
 a component occurrence has a pose in the assembly.</p>
 
 <h2 id="at">Use at() to place or align geometry</h2>
-<pre><code>from scpf import Anchor, Axis, Box, Cylinder
+<pre class="code-block"><code>from scpf import Anchor, Axis, Box, Cylinder
 
 pin = Cylinder(d=8, h=20, axis=Axis.X).at(
     10, 0, 5,
@@ -59,7 +78,7 @@ its own datums belongs at that coordinate.</p>
 use <code>on()</code>.</p>
 
 <h2 id="on">Use on() for a feature on a face</h2>
-<pre><code>from scpf import Box, Depth, Faces, Hole
+<pre class="code-block"><code>from scpf import Box, Depth, Faces, Hole
 
 plate = Box(100, 60, 10)
 hole = Hole(d=8, depth=Depth.THROUGH_ALL).on(
@@ -76,7 +95,7 @@ feature starts or is supported. The offset is measured in that face.</p>
 selected body face.</p>
 
 <h2 id="shape-attach">Shape.attach() is lower-level within-part placement</h2>
-<pre><code>from scpf import Anchor, Boss, X, Y
+<pre class="code-block"><code>from scpf import Anchor, Boss, X, Y
 
 boss = Boss(d=7, h=12, hole_d=2.5).attach(
     case,
@@ -90,7 +109,7 @@ parent and child anchors.</p>
 target are still geometry inside one part.</p>
 
 <h2 id="placement">Use Placement for a component occurrence</h2>
-<pre><code>from scpf import Placement, X, Z, component
+<pre class="code-block"><code>from scpf import Placement, X, Z, component
 
 @component
 class Panel:
@@ -119,7 +138,7 @@ rotation is one axis-angle orientation.</p>
 It only says where this occurrence is.</p>
 
 <h2 id="occurrence-attach">Use Occurrence.attach() for separate physical parts</h2>
-<pre><code>from scpf import Anchor
+<pre class="code-block"><code>from scpf import Anchor
 
 left = Block()
 right = Block().attach(
@@ -139,14 +158,14 @@ chapter, <a href="../assembly-basics/">From one component to an assembly</a>,
 builds on this distinction.</p>
 
 <h2 id="move">Shape.move() is a local geometry translation</h2>
-<pre><code>body = Box(40, 20, 10)
+<pre class="code-block"><code>body = Box(40, 20, 10)
 shifted = body.move(x=10, y=0, z=25)</code></pre>
 <p><code>move()</code> translates supported geometry inside its current shape
 expression. It is not the normal way to position a component occurrence.
 Use <code>Placement</code> for occurrences.</p>
 
 <h2 id="copies">Copies can have different placements</h2>
-<pre><code>first = Panel(
+<pre class="code-block"><code>first = Panel(
     placement=Placement(z=160, rotation=(X, 90))
 )
 second = first.copy(
@@ -164,231 +183,15 @@ Placement.</p>
 <tr><td><code>Shape.attach(...)</code></td><td>Lower-level within-part feature anchoring.</td></tr>
 <tr><td><code>Placement(...)</code></td><td>Absolute occurrence pose with one optional axis-angle rotation.</td></tr>
 <tr><td><code>Occurrence.attach(...)</code></td><td>Assembly relationship between separate component occurrences.</td></tr>
-</tbody></table></article></main>
-<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
-<a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a></div></footer>
-<script>(() => {
-  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
-  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
-
-  async function copyText(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-    const helper = document.createElement('textarea');
-    helper.value = text;
-    helper.setAttribute('readonly', '');
-    helper.style.position = 'fixed';
-    helper.style.opacity = '0';
-    document.body.appendChild(helper);
-    helper.select();
-    document.execCommand('copy');
-    helper.remove();
-  }
-
-  document.querySelectorAll('pre > code').forEach((code) => {
-    const pre = code.parentElement;
-    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'code-block';
-    pre.parentNode.insertBefore(wrapper, pre);
-    wrapper.appendChild(pre);
-
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'code-copy';
-    button.title = 'Copy code';
-    button.setAttribute('aria-label', 'Copy code');
-    button.innerHTML = copyIcon;
-    wrapper.appendChild(button);
-
-    button.addEventListener('click', async () => {
-      try {
-        await copyText(code.textContent);
-        button.innerHTML = doneIcon;
-        button.classList.add('copied');
-        button.title = 'Copied';
-        button.setAttribute('aria-label', 'Copied');
-        window.setTimeout(() => {
-          button.innerHTML = copyIcon;
-          button.classList.remove('copied');
-          button.title = 'Copy code';
-          button.setAttribute('aria-label', 'Copy code');
-        }, 1400);
-      } catch (_error) {
-        button.title = 'Copy failed';
-        button.setAttribute('aria-label', 'Copy failed');
-      }
-    });
-  });
-})();
-</script>
-<script>
-(() => {
-  const root = document.querySelector('.site-search');
-  if (!root) return;
-
-  const input = root.querySelector('.site-search-input');
-  const results = root.querySelector('.site-search-results');
-  const indexUrl = root.dataset.searchIndex;
-  let indexPromise = null;
-  let visible = [];
-
-  const normal = (value) => String(value || '')
-    .toLowerCase()
-    .replace(/[_.:/-]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const raw = (value) => String(value || '').toLowerCase().trim();
-
-  function loadIndex() {
-    if (!indexPromise) {
-      indexPromise = fetch(indexUrl)
-        .then((response) => {
-          if (!response.ok) throw new Error('Search index unavailable');
-          return response.json();
-        })
-        .then((data) => data.entries || []);
-    }
-    return indexPromise;
-  }
-
-  function score(entry, query) {
-    const qRaw = raw(query);
-    const q = normal(query);
-    if (!q) return -1;
-
-    const titleRaw = raw(entry.title);
-    const title = normal(entry.title);
-    const aliases = entry.aliases || [];
-    const aliasRaw = aliases.map(raw);
-    const aliasText = normal(aliases.join(' '));
-    const haystack = normal([
-      entry.title,
-      entry.summary,
-      entry.keywords,
-      aliases.join(' '),
-    ].join(' '));
-
-    if (titleRaw === qRaw) return 1000;
-    if (aliasRaw.includes(qRaw)) return 920;
-    if (title.startsWith(q)) return 820;
-    if (aliasText.startsWith(q)) return 760;
-    if (title.includes(q)) return 680;
-    if (aliasText.includes(q)) return 620;
-    if (haystack.includes(q)) return 500;
-
-    const words = q.split(' ').filter(Boolean);
-    if (words.length && words.every((word) => haystack.includes(word))) {
-      return 380 + words.length * 10;
-    }
-    return -1;
-  }
-
-  function closeResults() {
-    results.hidden = true;
-    results.replaceChildren();
-    input.setAttribute('aria-expanded', 'false');
-    visible = [];
-  }
-
-  function render(entries, query) {
-    const ranked = entries
-      .map((entry, order) => ({entry, order, score: score(entry, query)}))
-      .filter((row) => row.score >= 0)
-      .sort((a, b) => b.score - a.score || a.order - b.order)
-      .slice(0, 10);
-
-    results.replaceChildren();
-    visible = ranked.map((row) => row.entry);
-    if (!ranked.length) {
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'No documentation found.';
-      results.appendChild(empty);
-    } else {
-      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
-      ranked.forEach(({entry}) => {
-        const link = document.createElement('a');
-        link.className = 'site-search-result';
-        link.href = new URL(entry.url, indexBase).href;
-
-        const heading = document.createElement('span');
-        heading.className = 'site-search-result-title';
-        heading.textContent = entry.title;
-
-        const kind = document.createElement('span');
-        kind.className = 'site-search-result-kind';
-        kind.textContent = entry.kind;
-
-        const summary = document.createElement('span');
-        summary.className = 'site-search-result-summary';
-        summary.textContent = entry.summary;
-
-        link.append(heading, kind, summary);
-        results.appendChild(link);
-      });
-    }
-    results.hidden = false;
-    input.setAttribute('aria-expanded', 'true');
-  }
-
-  async function search() {
-    const query = input.value.trim();
-    if (!query) {
-      closeResults();
-      return;
-    }
-    try {
-      render(await loadIndex(), query);
-    } catch (_error) {
-      results.replaceChildren();
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'Search is unavailable.';
-      results.appendChild(empty);
-      results.hidden = false;
-      input.setAttribute('aria-expanded', 'true');
-    }
-  }
-
-  input.addEventListener('input', search);
-  input.addEventListener('focus', () => {
-    if (input.value.trim()) search();
-  });
-  input.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      closeResults();
-      input.blur();
-    } else if (event.key === 'Enter' && visible.length) {
-      event.preventDefault();
-      results.querySelector('.site-search-result')?.click();
-    }
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!root.contains(event.target)) closeResults();
-  });
-
-  document.addEventListener('keydown', (event) => {
-    const target = event.target;
-    const typing = target instanceof HTMLInputElement
-      || target instanceof HTMLTextAreaElement
-      || target instanceof HTMLSelectElement
-      || target?.isContentEditable;
-    const shortcut = (event.ctrlKey || event.metaKey)
-      && event.key.toLowerCase() === 'k';
-    const slash = event.key === '/' && !typing && !event.ctrlKey
-      && !event.metaKey && !event.altKey;
-    if (shortcut || slash) {
-      event.preventDefault();
-      input.focus();
-      input.select();
-    }
-  });
-})();
-</script>
-</body></html>
+</tbody></table>
+</article></main>
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

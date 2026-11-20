@@ -1,463 +1,804 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>Qualification · Face-relative hole with native pattern · SCPF Python library</title>
-<link rel="stylesheet" href="../../style.css"></head>
-<body><header class="top"><div class="wrap nav">
-<a class="brand" href="../../">SCPF <span>Python library</span></a>
-<div class="site-search" data-search-index="../../search-index.json">
-<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
-<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
-       placeholder="Search API…" aria-label="Search SCPF documentation"
-       aria-expanded="false" aria-controls="site-search-results">
-<span class="site-search-shortcut" aria-hidden="true">/</span>
-<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Face-relative hole with native pattern · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../qualification/">Qualification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
 </div>
-<nav aria-label="Main"><a href="../../">Examples</a><a href="../../guide/">API Guide</a><a href="../../reference/">API Reference</a><a href="../../qualification/">Qualification</a><a href="../../cheatsheet/">Cheatsheet</a>
-<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a></nav></div></header>
-<div class="development-banner" role="status"><div class="wrap">
-<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
-</div></div>
 <main class="wrap">
-<div class="crumb"><a href="../">← Qualification</a> / Face-relative hole with native pattern</div>
-
-<section class="hero small">
-  <p class="eyebrow">Forge model example</p>
-  <div class="qualification-status-line"><span class="qualification-status pass">PASS</span></div>
-  <h1>Face-relative hole with native pattern</h1>
-</section>
-
-<section class="panel qualification-example-overview">
-  <h2>What this example makes</h2>
-  <p>One plate with two through holes at the requested Y spacing, one source cut and one native rectangular pattern feature.</p>
-  <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Face-relative hole with native pattern expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
-  <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-iso.png" alt="Face-relative hole with native pattern native SolidCraft preview"></a><figcaption>Native SolidCraft preview from the generated build output.</figcaption></figure>
-</section>
-
-<section class="panel">
-  <h2>Forge code</h2>
-  <p>This is the complete Forge source used for this example.</p>
-  <pre><code>&quot;&quot;&quot;Face-relative Hole cut repeated by one native history pattern.&quot;&quot;&quot;
-
-from dataclasses import dataclass
-
-
-@dataclass
-class AnchoredHoles:
-    &quot;&quot;&quot;Two through holes, each 20 mm from the center along the Y axis.&quot;&quot;&quot;
-
-    width: float = 100
-    depth: float = 60
-    thickness: float = 10
-    spacing: float = 40
-
-    def build(self):
-        with Sketch(name=&quot;Base&quot;, plane=&quot;XY&quot;) as sketch:
-            profile = Rectangle2D(self.width, self.depth)
-            sketch.add(
-                profile,
-                offset=(self.width / 2, self.depth / 2),
-            )
-
-        plate = sketch.extrude(self.thickness)
-
-        with Sketch(
-            name=&quot;Hole&quot;,
-            on=plate,
-            parent=Anchor.TOP,
-        ) as hole:
-            hole.add(
-                Circle2D(d=8),
-                offset=(
-                    self.width / 2,
-                    (self.depth - self.spacing) / 2,
-                ),
-            )
-
-        source_cut = hole.extrude(Depth.THROUGH_ALL)
-        plate = plate - source_cut
-
-        return plate.rectangular_pattern(
-            source_cut,
-            count=2,
-            spacing=self.spacing,
-            direction=Axis.Y,
-        )
-
-
-AnchoredHoles()
-</code></pre>
-  <h3>API used</h3>
-  <p><code>with Sketch(on=plate, parent=Anchor.TOP): Circle2D(...); source_cut = sketch.extrude(Depth.THROUGH_ALL); plate.rectangular_pattern(source_cut, ...)</code></p>
-</section>
-
-<section class="panel">
-  <h2>Reference code</h2>
-  <p>The same model is written independently with the reference libraries below.
-  This makes it easier to compare modelling style and the resulting shape.</p>
+  <div class="crumb"><a href="../">← Qualification</a> / Face-relative hole with native pattern</div>
+  <section class="hero small">
+    <p class="eyebrow">features</p>
+    <h1>Face-relative hole with native pattern</h1>
+    <p class="guide-lead">Verify one TOP-face source hole cut followed by one native rectangular history pattern.</p>
+  </section>
+  <section class="panel qualification-current">
+  <h2>Current durable verification</h2>
+  <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+  <figure class="qualification-case-preview">
+    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/model_verify/presentation/preview-iso.png" alt="Face-relative hole with native pattern current durable preview" loading="lazy">
+    </a>
+    <figcaption>Current deterministic presentation preview from durable build evidence. This preview is presentation output, not an extra verification check.</figcaption>
+  </figure>
+  <p class="source-stamp">
+    Site source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · accepted model evidence source
+    <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · durable build <code>1b13ad62ca6626a0584ec8ea427535936a8d9312</code>
+  </p>
+  <h3>Editable parameters</h3>
+  <div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>width</td><td>100.0</td><td>mm</td><td>100</td></tr><tr><td>depth</td><td>60.0</td><td>mm</td><td>60</td></tr><tr><td>thickness</td><td>10.0</td><td>mm</td><td>10</td></tr><tr><td>spacing</td><td>40.0</td><td>mm</td><td>40</td></tr></tbody></table></div>
+  <h3>Measured native bodies</h3>
+  <div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>AnchoredHoles</td><td>[0.0, 0.0, 0.0]</td><td>[100.0, 60.0, 10.0]</td><td>58994.69035083114</td><td>8</td><td>18</td><td>True</td></tr></tbody></table></div>
+  <h3>Verification checks</h3>
+  <details class="qualification-detail-block">
+  <summary><code>baseline</code> · <span class="qualification-status pass">PASS</span></summary>
   
-  <div class="qualification-reference-list">
-    <section class="qualification-reference-row"><div class="qualification-reference-source"><h4>PythonSCAD</h4><pre><code>&quot;&quot;&quot;PythonSCAD reference: a 100 x 60 x 10 plate with two through holes.
+  <pre><code>{
+  &quot;body_count&quot;: {
+    &quot;actual&quot;: 1,
+    &quot;expected&quot;: 1,
+    &quot;label&quot;: &quot;SolidCraft body count&quot;,
+    &quot;pass&quot;: true
+  },
+  &quot;body_envelopes&quot;: {
+    &quot;actual_count&quot;: 1,
+    &quot;expected_count&quot;: 1,
+    &quot;kind&quot;: &quot;body_envelopes&quot;,
+    &quot;matched_pairs&quot;: [
+      {
+        &quot;actual&quot;: {
+          &quot;label&quot;: &quot;AnchoredHoles&quot;,
+          &quot;max&quot;: [
+            100.0,
+            60.0,
+            10.0
+          ],
+          &quot;min&quot;: [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;label&quot;: null,
+          &quot;max&quot;: [
+            100.0,
+            60.0,
+            10.0
+          ],
+          &quot;min&quot;: [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        &quot;max_delta&quot;: 0.0
+      }
+    ],
+    &quot;pass&quot;: true,
+    &quot;tolerance&quot;: 0.001,
+    &quot;unmatched_actual&quot;: [],
+    &quot;unmatched_expected&quot;: []
+  },
+  &quot;named_bodies&quot;: [
+    {
+      &quot;face_type_counts&quot;: {
+        &quot;actual&quot;: {
+          &quot;cylinder&quot;: 2
+        },
+        &quot;expected&quot;: {
+          &quot;cylinder&quot;: 2
+        },
+        &quot;label&quot;: &quot;sole body face type counts&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;selector&quot;: &quot;sole&quot;,
+      &quot;volume&quot;: {
+        &quot;actual&quot;: 58994.69035083114,
+        &quot;delta&quot;: 2.013257471844554e-08,
+        &quot;expected&quot;: 58994.69035085127,
+        &quot;kind&quot;: &quot;scalar&quot;,
+        &quot;label&quot;: &quot;sole body volume&quot;,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.5
+      }
+    }
+  ],
+  &quot;timeline&quot;: {
+    &quot;actual&quot;: [
+      {
+        &quot;name&quot;: &quot;Base&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;,
+        &quot;warning&quot;: null
+      },
+      {
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;,
+        &quot;warning&quot;: null
+      },
+      {
+        &quot;name&quot;: &quot;Hole&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;,
+        &quot;warning&quot;: null
+      },
+      {
+        &quot;name&quot;: &quot;Hole&quot;,
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;,
+        &quot;warning&quot;: null
+      },
+      {
+        &quot;name&quot;: &quot;RectangularPattern1&quot;,
+        &quot;type&quot;: &quot;RectangularPatternFeature&quot;,
+        &quot;warning&quot;: null
+      }
+    ],
+    &quot;expected&quot;: [
+      {
+        &quot;name&quot;: &quot;Base&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;,
+        &quot;warning&quot;: null
+      },
+      {
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;,
+        &quot;warning&quot;: null
+      },
+      {
+        &quot;name&quot;: &quot;Hole&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;,
+        &quot;warning&quot;: null
+      },
+      {
+        &quot;name&quot;: &quot;Hole&quot;,
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;,
+        &quot;warning&quot;: null
+      },
+      {
+        &quot;name&quot;: &quot;RectangularPattern1&quot;,
+        &quot;type&quot;: &quot;RectangularPatternFeature&quot;,
+        &quot;warning&quot;: null
+      }
+    ],
+    &quot;label&quot;: &quot;SolidCraft timeline&quot;,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+</details>
 
-This case deliberately uses the lower-left-bottom corner as world origin. The
-PythonSCAD cube center code &quot;---&quot; places that datum on the minimum side of all
-three axes, so the plate grows directly into +X/+Y/+Z without a corrective
-translation.
-&quot;&quot;&quot;
-
-from pythonscad import *
-
-width = 100
-depth = 60
-thickness = 10
-spacing = 40
-
-plate = cube([width, depth, thickness], center=&quot;---&quot;)
-hole = cylinder(d=8, h=thickness + 2, center=True)
-left_hole = hole.translate([width / 2, depth / 2 - spacing / 2, thickness / 2])
-right_hole = hole.translate([width / 2, depth / 2 + spacing / 2, thickness / 2])
-model = plate - (left_hole | right_hole)
-</code></pre><p><a href="reference-pythonscad.py">Open PythonSCAD source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pythonscad/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pythonscad/model-iso.png" alt="Face-relative hole with native pattern PythonSCAD reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pythonscad/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pythonscad/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [0.0, 0.0, 0.0], &#x27;max&#x27;: [100.0, 60.0, 10.0]}</code></td><td><code>{&#x27;min&#x27;: [0.0, 0.0, 0.0], &#x27;max&#x27;: [100.0, 60.0, 10.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>58994.69035085127 mm³</code></td><td><code>59033.375802148956 mm³</code></td><td>difference 38.685451297686086 mm³; allowed 55.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>6 surface measurements</code></td><td><code>6/6 within tolerance</code></td><td>largest difference 0.116233 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>pyBOSL2</h4><pre><code>&quot;&quot;&quot;pyBOSL2 reference: a plate with two symmetric through holes.
-
-The qualification intent uses the lower-left-bottom world corner as (0, 0, 0).
-pyBOSL2 primitives are centred by default, so this reference places their
-centres explicitly while preserving the same visible geometry.
-&quot;&quot;&quot;
-
-from pybosl2 import cuboid, cyl
-
-width = 100
-depth = 60
-thickness = 10
-spacing = 40
-
-plate = cuboid([width, depth, thickness]).translate(
-    [width / 2, depth / 2, thickness / 2]
-)
-hole = cyl(diameter=8, height=thickness + 2)
-left_hole = hole.translate(
-    [width / 2, depth / 2 - spacing / 2, thickness / 2]
-)
-right_hole = hole.translate(
-    [width / 2, depth / 2 + spacing / 2, thickness / 2]
-)
-model = plate - (left_hole | right_hole)
-</code></pre><p><a href="reference-pybosl2.py">Open pyBOSL2 source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pybosl2/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pybosl2/model-iso.png" alt="Face-relative hole with native pattern pyBOSL2 reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pybosl2/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pybosl2/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [0.0, 0.0, 0.0], &#x27;max&#x27;: [100.0, 60.0, 10.0]}</code></td><td><code>{&#x27;min&#x27;: [0.0, 0.0, 0.0], &#x27;max&#x27;: [100.0, 60.0, 10.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>58994.69035085127 mm³</code></td><td><code>59033.37579852197 mm³</code></td><td>difference 38.68544767070125 mm³; allowed 55.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>6 surface measurements</code></td><td><code>6/6 within tolerance</code></td><td>largest difference 0.116234 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>CadQuery</h4><pre><code>&quot;&quot;&quot;CadQuery reference for a plate with two symmetric through holes.&quot;&quot;&quot;
-
-import cadquery as cq
-
-
-width = 100.0
-depth = 60.0
-thickness = 10.0
-spacing = 40.0
-
-plate = (
-    cq.Workplane(&quot;XY&quot;)
-    .box(width, depth, thickness, centered=(False, False, False))
-    .faces(&quot;&gt;Z&quot;)
-    .workplane()
-    .pushPoints([
-        (width / 2, depth / 2 - spacing / 2),
-        (width / 2, depth / 2 + spacing / 2),
-    ])
-    .hole(8.0)
-)
-
-model = cq.Assembly()
-model.add(plate, name=&quot;plate&quot;)
-</code></pre><p><a href="reference-cadquery.py">Open CadQuery source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/cadquery/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/cadquery/model-iso.png" alt="Face-relative hole with native pattern CadQuery reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/cadquery/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/cadquery/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [0.0, 0.0, 0.0], &#x27;max&#x27;: [100.0, 60.0, 10.0]}</code></td><td><code>{&#x27;min&#x27;: [0.0, 0.0, 0.0], &#x27;max&#x27;: [100.0, 60.0, 10.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>58994.69035085127 mm³</code></td><td><code>58995.10696812817 mm³</code></td><td>difference 0.41661727690370753 mm³; allowed 55.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>6 surface measurements</code></td><td><code>6/6 within tolerance</code></td><td>largest difference 0.00124467 mm</td></tr></tbody></table></div></details></div></section><section class="qualification-reference-row"><div class="qualification-reference-source"><h4>build123d</h4><pre><code>&quot;&quot;&quot;build123d reference for the original lower-left-bottom plate datum.&quot;&quot;&quot;
-from build123d import Align, Box, BuildPart, Cylinder, Locations, Mode
-
-width, depth, thickness, spacing = 100.0, 60.0, 10.0, 40.0
-
-with BuildPart() as model:
-    Box(
-        width,
-        depth,
-        thickness,
-        align=(Align.MIN, Align.MIN, Align.MIN),
-    )
-    with Locations(
-        (width / 2, depth / 2 - spacing / 2, thickness / 2),
-        (width / 2, depth / 2 + spacing / 2, thickness / 2),
-    ):
-        Cylinder(4.0, thickness + 2, mode=Mode.SUBTRACT)
-</code></pre><p><a href="reference-build123d.py">Open build123d source →</a></p></div><div class="qualification-reference-output"><figure class="qualification-reference-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/build123d/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/build123d/model-iso.png" alt="Face-relative hole with native pattern build123d reference render"></a><figcaption>Independently exported STL · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/build123d/model.stl">Open STL in build output</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/build123d/result.json">Open measurements</a></figcaption></figure><details class="qualification-reference-checks qualification-detail-block"><summary>Reference result checks · PASS · 4/4 passed</summary><div class="qualification-table-scroll"><table><thead><tr><th>Check</th><th>Status</th><th>Expected</th><th>Measured</th><th>Detail</th></tr></thead><tbody><tr><td><strong>bounds</strong></td><td>PASS</td><td><code>{&#x27;min&#x27;: [0.0, 0.0, 0.0], &#x27;max&#x27;: [100.0, 60.0, 10.0]}</code></td><td><code>{&#x27;min&#x27;: [0.0, 0.0, 0.0], &#x27;max&#x27;: [100.0, 60.0, 10.0]}</code></td><td>max difference 0.0 mm; allowed 0.5 mm</td></tr><tr><td><strong>watertight</strong></td><td>PASS</td><td><code>True</code></td><td><code>True</code></td><td>closed mesh</td></tr><tr><td><strong>volume</strong></td><td>PASS</td><td><code>58994.69035085127 mm³</code></td><td><code>58995.10696812817 mm³</code></td><td>difference 0.41661727690370753 mm³; allowed 55.0 mm³</td></tr><tr><td><strong>surface distance probes</strong></td><td>PASS</td><td><code>6 surface measurements</code></td><td><code>6/6 within tolerance</code></td><td>largest difference 0.00124467 mm</td></tr></tbody></table></div></details></div></section>
-  </div>
+  
+  <h3>Durable raw evidence</h3>
+  <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+</section>
+<section class="notice">
+  <strong>Current visual verification: not required.</strong>
+  This model has no current <code>verification/visual.json</code> policy. The durable isometric image above is a current presentation preview, not a visual PASS claim.
 </section>
 
 <section class="panel">
-  <h2>How Forge builds it in SolidCraft</h2>
-  <p>Forge emits one attached Hole sketch/cut and one native solid.pattern.rectangular history feature. No Forge-side repeat helper or expanded duplicate profiles are used.</p>
-  <details>
-    <summary>Show generated SolidCraft commands</summary>
-    <pre><code>parameters.add
-parameters.add
-parameters.add
-parameters.add
-sketch.create
-sketch.rectangle.two_point
-sketch.finish
-solid.extrude
-model.faces
-sketch.create
-sketch.circle.center
-sketch.finish
-solid.extrude
-solid.pattern.rectangular</code></pre>
-  </details>
+  <h2>Independent references</h2>
+  <p>Each reference is a separately selected durable CAD-CI child item. Geometry status comes from its current verification JSON; the image is a deterministic presentation render of that verified STL.</p>
+  <div class="qualification-reference-list"><section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/anchored-holes/pythonscad/model.py" target="_blank" rel="noopener">Open reference source</a></p>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      100.0,
+      60.0,
+      10.0
+    ],
+    &quot;actual_min&quot;: [
+      0.0,
+      0.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      100.0,
+      60.0,
+      10.0
+    ],
+    &quot;expected_min&quot;: [
+      0.0,
+      0.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 3.8837672697042076,
+      &quot;delta_mm&quot;: 0.1162327302957924,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=1&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        1.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.8837672697042054,
+      &quot;delta_mm&quot;: 0.11623273029579462,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.8837672697042045,
+      &quot;delta_mm&quot;: 0.1162327302957955,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=9&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        9.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.8837672697042027,
+      &quot;delta_mm&quot;: 0.11623273029579728,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=1&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        1.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.8837672697042027,
+      &quot;delta_mm&quot;: 0.11623273029579728,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.8837672697042027,
+      &quot;delta_mm&quot;: 0.11623273029579728,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=9&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        9.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 59033.375802148956,
+    &quot;delta_mm3&quot;: 38.685451297686086,
+    &quot;expected_mm3&quot;: 58994.69035085127,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 55.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/pythonscad/references/anchored-holes/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/pythonscad/references/anchored-holes/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/pythonscad/references/anchored-holes/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/pythonscad/references/anchored-holes/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/pythonscad/references/anchored-holes/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/anchored-holes/pybosl2/model.py" target="_blank" rel="noopener">Open reference source</a></p>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      100.0,
+      60.0,
+      10.0
+    ],
+    &quot;actual_min&quot;: [
+      0.0,
+      0.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      100.0,
+      60.0,
+      10.0
+    ],
+    &quot;expected_min&quot;: [
+      0.0,
+      0.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 3.8837661726277553,
+      &quot;delta_mm&quot;: 0.11623382737224475,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=1&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        1.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.8837661726277553,
+      &quot;delta_mm&quot;: 0.11623382737224475,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.8837661726277553,
+      &quot;delta_mm&quot;: 0.11623382737224475,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=9&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        9.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.8837661743164062,
+      &quot;delta_mm&quot;: 0.11623382568359375,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=1&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        1.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.8837661743164062,
+      &quot;delta_mm&quot;: 0.11623382568359375,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.8837661743164062,
+      &quot;delta_mm&quot;: 0.11623382568359375,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=9&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        9.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 59033.37579852197,
+    &quot;delta_mm3&quot;: 38.68544767070125,
+    &quot;expected_mm3&quot;: 58994.69035085127,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 55.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/pybosl2/references/anchored-holes/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/pybosl2/references/anchored-holes/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/pybosl2/references/anchored-holes/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/pybosl2/references/anchored-holes/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/pybosl2/references/anchored-holes/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/anchored-holes/cadquery/model.py" target="_blank" rel="noopener">Open reference source</a></p>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      100.0,
+      60.0,
+      10.0
+    ],
+    &quot;actual_min&quot;: [
+      0.0,
+      0.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      100.0,
+      60.0,
+      10.0
+    ],
+    &quot;expected_min&quot;: [
+      0.0,
+      0.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 3.9987555098489307,
+      &quot;delta_mm&quot;: 0.0012444901510693107,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=1&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        1.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987555098489307,
+      &quot;delta_mm&quot;: 0.0012444901510693107,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987555098489307,
+      &quot;delta_mm&quot;: 0.0012444901510693107,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=9&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        9.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987553319714304,
+      &quot;delta_mm&quot;: 0.0012446680285695955,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=1&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        1.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987553319714304,
+      &quot;delta_mm&quot;: 0.0012446680285695955,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987553319714304,
+      &quot;delta_mm&quot;: 0.0012446680285695955,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=9&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        9.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 58995.10696812817,
+    &quot;delta_mm3&quot;: 0.41661727690370753,
+    &quot;expected_mm3&quot;: 58994.69035085127,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 55.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/cadquery/references/anchored-holes/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/cadquery/references/anchored-holes/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/cadquery/references/anchored-holes/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/cadquery/references/anchored-holes/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/cadquery/references/anchored-holes/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/anchored-holes/build123d/model.py" target="_blank" rel="noopener">Open reference source</a></p>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      100.0,
+      60.0,
+      10.0
+    ],
+    &quot;actual_min&quot;: [
+      0.0,
+      0.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      100.0,
+      60.0,
+      10.0
+    ],
+    &quot;expected_min&quot;: [
+      0.0,
+      0.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 3.9987555098489307,
+      &quot;delta_mm&quot;: 0.0012444901510693107,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=1&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        1.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987555098489307,
+      &quot;delta_mm&quot;: 0.0012444901510693107,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987555098489307,
+      &quot;delta_mm&quot;: 0.0012444901510693107,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;front hole at z=9&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        10.0,
+        9.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987553319714304,
+      &quot;delta_mm&quot;: 0.0012446680285695955,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=1&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        1.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987553319714304,
+      &quot;delta_mm&quot;: 0.0012446680285695955,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987553319714304,
+      &quot;delta_mm&quot;: 0.0012446680285695955,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;rear hole at z=9&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        50.0,
+        50.0,
+        9.0
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 58995.10696812817,
+    &quot;delta_mm3&quot;: 0.41661727690370753,
+    &quot;expected_mm3&quot;: 58994.69035085127,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 55.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/build123d/references/anchored-holes/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/build123d/references/anchored-holes/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/build123d/references/anchored-holes/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/build123d/references/anchored-holes/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/anchored-holes/build123d/references/anchored-holes/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+</div>
 </section>
 
-<section class="panel"><h2>SolidCraft result</h2><p>Built and measured with <strong>SolidCraft 0.42.0</strong>. Open the measurement details to inspect body sizes and editable parameters.</p><details class="qualification-detail-block"><summary><strong>Original model</strong> · 1 bodies</summary><h4>Editable parameters</h4><table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td><code>width</code></td><td>100.0</td></tr><tr><td><code>depth</code></td><td>60.0</td></tr><tr><td><code>thickness</code></td><td>10.0</td></tr><tr><td><code>spacing</code></td><td>40.0</td></tr></tbody></table><h4>Body size</h4><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>AnchoredHoles</td><td><code>[0, 0, 0]</code></td><td><code>[100, 60, 10]</code></td></tr></tbody></table></details><details class="qualification-detail-block qualification-semantic-checks"><summary><strong>Semantic validation</strong> · PASS · 7/7 checks passed</summary><div class="qualification-table-scroll"><table class="qualification-checks"><thead><tr><th>Status</th><th>Level</th><th>Check</th><th>Expected</th><th>Actual</th></tr></thead><tbody><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>declared target geometry</td><td><code>[{&quot;label&quot;: &quot;AnchoredHoles&quot;, &quot;min&quot;: [0, 0, 0], &quot;max&quot;: [100, 60, 10]}]</code></td><td><code>[{&quot;min&quot;: [0.0, 0.0, 0.0], &quot;max&quot;: [100.0, 60.0, 10.0]}]</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>one plate body</td><td><code>1</code></td><td><code>1</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>plate outer bounds</td><td><code>{&quot;min&quot;: [0, 0, 0], &quot;max&quot;: [100, 60, 10]}</code></td><td><code>{&quot;max&quot;: [100.0, 60.0, 10.0], &quot;min&quot;: [0.0, 0.0, 0.0]}</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>two cylindrical hole walls</td><td><code>2</code></td><td><code>2</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>shared geometry volume</td><td><code>{&quot;volume_mm3&quot;: 58994.69035085127, &quot;tolerance_mm3&quot;: 0.5}</code></td><td><code>{&quot;volume_mm3&quot;: 58994.69035083114}</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>one source hole cut is repeated by native rectangular history</td><td><code>{&quot;types&quot;: [&quot;Sketch&quot;, &quot;ExtrudeFeature&quot;, &quot;Sketch&quot;, &quot;ExtrudeFeature&quot;, &quot;RectangularPatternFeature&quot;], &quot;explicit_names&quot;: {&quot;0&quot;: &quot;Base&quot;, &quot;2&quot;: &quot;Hole&quot;, &quot;3&quot;: &quot;Hole&quot;, &quot;4&quot;: &quot;RectangularPattern1&quot;}}</code></td><td><code>{&quot;types&quot;: [&quot;Sketch&quot;, &quot;ExtrudeFeature&quot;, &quot;Sketch&quot;, &quot;ExtrudeFeature&quot;, &quot;RectangularPatternFeature&quot;], &quot;names&quot;: [&quot;Base&quot;, &quot;Extrude1&quot;, &quot;Hole&quot;, &quot;Hole&quot;, &quot;RectangularPattern1&quot;]}</code></td></tr><tr><td><span class="qualification-status pass">PASS</span></td><td>GEOMETRY</td><td>anchored-hole native history has no feature warnings</td><td><code>null</code></td><td><code>[]</code></td></tr></tbody></table></div></details></section>
-
-<section class="panel qualification-visual-check"><h2>Visual result</h2><p>Actual is the SolidCraft render. Goal shows the expected shape. Overlay places both on top of each other so differences are easy to see.</p><p class="meta"><strong>Views checked:</strong> Top, Right, Iso</p><p class="meta"><strong>Image checks:</strong> expected shape PASS; saved render PASS.</p><section class="qualification-view" data-view="top"><h3>Top</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-top.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-top.png" alt="Face-relative hole with native pattern top Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft top view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/goal-top.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/goal-top.png" alt="Face-relative hole with native pattern top Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same top view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/overlay-top.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/overlay-top.png" alt="Face-relative hole with native pattern top Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual top view</figcaption></figure></div></section><section class="qualification-view" data-view="right"><h3>Right</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-right.png" alt="Face-relative hole with native pattern right Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft right view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/goal-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/goal-right.png" alt="Face-relative hole with native pattern right Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same right view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/overlay-right.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/overlay-right.png" alt="Face-relative hole with native pattern right Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual right view</figcaption></figure></div></section><section class="qualification-view" data-view="iso"><h3>Iso</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-iso.png" alt="Face-relative hole with native pattern iso Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft iso view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/goal-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/goal-iso.png" alt="Face-relative hole with native pattern iso Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same iso view</figcaption></figure><figure class="qualification-visual-item"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/overlay-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/overlay-iso.png" alt="Face-relative hole with native pattern iso Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual iso view</figcaption></figure></div></section><details class="qualification-extra-views"><summary>Show extra saved-render views</summary><section class="qualification-view" data-view="front"><h3>Front</h3><div class="qualification-view-grid"><figure class="qualification-visual-item"><a href="model-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Actual image"><img src="model-front.png" alt="Face-relative hole with native pattern front Actual" loading="lazy"></a><figcaption><strong>Actual</strong><br>Current SolidCraft front view</figcaption></figure><figure class="qualification-visual-item"><a href="goal-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Goal image"><img src="goal-front.png" alt="Face-relative hole with native pattern front Goal" loading="lazy"></a><figcaption><strong>Goal</strong><br>Expected geometry in the same front view</figcaption></figure><figure class="qualification-visual-item"><a href="overlay-front.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size Overlay image"><img src="overlay-front.png" alt="Face-relative hole with native pattern front Overlay" loading="lazy"></a><figcaption><strong>Overlay</strong><br>Expected geometry over the actual front view</figcaption></figure></div></section></details></section>
-
-<details class="panel qualification-technical-details">
-  <summary><strong>Technical test details</strong></summary>
-  <div class="qualification-technical-details-body">
-    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration · Native model · Geometry · Saved design N/R · Visual</span></div>
-    <div class="qualification-case-test-evidence"><h3>Integration tests</h3><p><strong>PASS</strong> — these example-owned tests prove the generated SolidCraft command contract before native execution.</p><ul><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/51b79c223939c84980206593fe9b062f474ca220/examples/anchored-holes/tests/test_contract.py"><code>examples/anchored-holes/tests/test_contract.py</code></a></li></ul></div>
-
-    <h3>Geometry checks</h3>
-    <p>These are the sizes and measurement points used by the automated checks.</p>
-    <div class="qualification-proof-contract"><div class="qualification-table-scroll"><table><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th></tr></thead><tbody><tr><td>AnchoredHoles</td><td><code>[0, 0, 0]</code></td><td><code>[100, 60, 10]</code></td></tr></tbody></table></div><ul class="qualification-proof-summary"><li><strong>Is the size check enough for this model?</strong> No — The holes do not change the outer plate bounds. Volume and 3D hole-wall probes are required.</li><li><strong>Views checked:</strong> top, right, iso</li><li><strong>Internal features checked:</strong> 2</li><li><strong>Expected volume:</strong> 58994.69035085127 mm³ (±55.0 mm³)</li><li><strong>Closed solid expected:</strong> True</li><li><strong>Surface points checked:</strong> 6</li></ul><details class="qualification-detail-block qualification-proof-details"><summary>Show all geometry check points</summary><h4>Internal features</h4><ul><li><strong>front hole Ø8 through</strong>: centre <code>[50.0, 10.0]</code>, diameter 8.0 mm, Z <code>[0.0, 10.0]</code></li><li><strong>rear hole Ø8 through</strong>: centre <code>[50.0, 50.0]</code>, diameter 8.0 mm, Z <code>[0.0, 10.0]</code></li></ul><h4>Surface measurement points</h4><ul><li>front hole at z=1: point <code>[50.0, 10.0, 1.0]</code> → 4.0 mm (±0.3 mm)</li><li>front hole at z=5: point <code>[50.0, 10.0, 5.0]</code> → 4.0 mm (±0.3 mm)</li><li>front hole at z=9: point <code>[50.0, 10.0, 9.0]</code> → 4.0 mm (±0.3 mm)</li><li>rear hole at z=1: point <code>[50.0, 50.0, 1.0]</code> → 4.0 mm (±0.3 mm)</li><li>rear hole at z=5: point <code>[50.0, 50.0, 5.0]</code> → 4.0 mm (±0.3 mm)</li><li>rear hole at z=9: point <code>[50.0, 50.0, 9.0]</code> → 4.0 mm (±0.3 mm)</li></ul></details><p class="meta"><a href="proof-contract.json">Open geometry check data →</a></p></div>
-
-    <h3>Saved-design test</h3><p><strong>No saved-model change is required. No saved-design mutation in this fixture; geometry and feature placement are measured at geometry.</p>
-
-    <h3>Raw test files</h3>
-    <ul><li><a href="model.py">Forge fixture source</a></li><li><a href="reference-pythonscad.py">PythonSCAD reference source</a></li><li><a href="reference-pybosl2.py">pyBOSL2 reference source</a></li><li><a href="reference-cadquery.py">CadQuery reference source</a></li><li><a href="reference-build123d.py">build123d reference source</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/solidcraft.json">Generated command JSON in build output</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/results.json">results.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/measurements.json">measurements.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/joint-inspect.json">joint-inspect.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model.sc">model.sc</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model.step">model.step</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/qualification-result.json">qualification-result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/validation.json">validation.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/visual-validation.json">visual-validation.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/camera-front.json">camera-front.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/camera-iso.json">camera-iso.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/camera-right.json">camera-right.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/camera-top.json">camera-top.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model.png">Native snapshot: model.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-top.png">Native snapshot: model-top.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/goal-top.png">Native snapshot: goal-top.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/overlay-top.png">Native snapshot: overlay-top.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-front.png">Native snapshot: model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/goal-front.png">Native snapshot: goal-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/overlay-front.png">Native snapshot: overlay-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/visual-diff-front.png">Native snapshot: visual-diff-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-right.png">Native snapshot: model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/goal-right.png">Native snapshot: goal-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/overlay-right.png">Native snapshot: overlay-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/visual-diff-right.png">Native snapshot: visual-diff-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/model-iso.png">Native snapshot: model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/goal-iso.png">Native snapshot: goal-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/overlay-iso.png">Native snapshot: overlay-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/scpf/visual-diff-iso.png">Native snapshot: visual-diff-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pythonscad/result.json">Reference evidence: reference-pythonscad/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pythonscad/model.stl">Reference evidence: reference-pythonscad/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pythonscad/model-front.png">Reference evidence: reference-pythonscad/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pythonscad/model-right.png">Reference evidence: reference-pythonscad/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pythonscad/model-iso.png">Reference evidence: reference-pythonscad/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pybosl2/result.json">Reference evidence: reference-pybosl2/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pybosl2/model.stl">Reference evidence: reference-pybosl2/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pybosl2/model-front.png">Reference evidence: reference-pybosl2/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pybosl2/model-right.png">Reference evidence: reference-pybosl2/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/pybosl2/model-iso.png">Reference evidence: reference-pybosl2/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/cadquery/result.json">Reference evidence: reference-cadquery/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/cadquery/model.stl">Reference evidence: reference-cadquery/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/cadquery/model-front.png">Reference evidence: reference-cadquery/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/cadquery/model-right.png">Reference evidence: reference-cadquery/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/cadquery/model-iso.png">Reference evidence: reference-cadquery/model-iso.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/build123d/result.json">Reference evidence: reference-build123d/result.json</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/build123d/model.stl">Reference evidence: reference-build123d/model.stl</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/build123d/model-front.png">Reference evidence: reference-build123d/model-front.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/build123d/model-right.png">Reference evidence: reference-build123d/model-right.png</a></li><li><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/b64666b7a7ff73c61942f514bef38ebd2f9ca314/main/examples/anchored-holes/build123d/model-iso.png">Reference evidence: reference-build123d/model-iso.png</a></li></ul>
-
-    <h3>Reference documentation</h3>
-    <ul><li><strong><a href="https://openscad.org/documentation.html">OpenSCAD</a>:</strong> Comparable geometry normally uses difference() and repeated cylinders. This case instead qualifies one semantic TOP-face source cut plus native SolidCraft pattern history; native solid.hole itself is qualified separately by hole-family.</li></ul>
-  </div>
-</details>
+  <section class="panel">
+    <h2>Engineering explanation</h2>
+    <h3>Forge API</h3>
+    <p><code>with Sketch(on=plate, parent=Anchor.TOP): Circle2D(...); source_cut = sketch.extrude(Depth.THROUGH_ALL); plate.rectangular_pattern(source_cut, ...)</code></p>
+    <h3>Forge model</h3>
+    <p>A feature-based plate with one face-attached source hole cut and one native rectangular pattern that creates the second hole.</p>
+    <h3>How Forge builds it in SolidCraft</h3>
+    <p>Forge emits one attached Hole sketch/cut and one native solid.pattern.rectangular history feature. No Forge-side repeat helper or expanded duplicate profiles are used.</p>
+    <h3>SolidCraft result</h3>
+    <p>One plate with two through holes at the requested Y spacing, one source cut and one native rectangular pattern feature.</p>
+    <h3>Saved-design test</h3>
+    <p>No saved-design mutation in this fixture; geometry and feature placement are measured at geometry.</p>
+    <h3>Geometry evidence</h3>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>The holes do not change the outer plate bounds. Volume and 3D hole-wall probes are required.</p>
+    <h3>Reference notes</h3>
+    <ul><li><strong>OpenSCAD</strong> — Comparable geometry normally uses difference() and repeated cylinders. This case instead qualifies one semantic TOP-face source cut plus native SolidCraft pattern history; native solid.hole itself is qualified separately by hole-family.</li></ul>
+  </section>
+  <section class="panel">
+    <h2>Sources of truth</h2>
+    <p>
+      General model/page metadata is stored in <code>model.yml</code>.
+      Preserved engineering explanation is stored in <code>README.md</code>.
+      Exact expected values and tolerances are defined by
+      <code>verification/verify.py</code>.
+    </p>
+    <p>
+      <a href="../../examples/anchored-holes/">Open the example →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/anchored-holes/verification/verify.py">Open verification/verify.py →</a>
+    </p>
+  </section>
 </main>
 
-<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
-<a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a></div></footer>
-<script>(() => {
-  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
-  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
-
-  async function copyText(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-    const helper = document.createElement('textarea');
-    helper.value = text;
-    helper.setAttribute('readonly', '');
-    helper.style.position = 'fixed';
-    helper.style.opacity = '0';
-    document.body.appendChild(helper);
-    helper.select();
-    document.execCommand('copy');
-    helper.remove();
-  }
-
-  document.querySelectorAll('pre > code').forEach((code) => {
-    const pre = code.parentElement;
-    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'code-block';
-    pre.parentNode.insertBefore(wrapper, pre);
-    wrapper.appendChild(pre);
-
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'code-copy';
-    button.title = 'Copy code';
-    button.setAttribute('aria-label', 'Copy code');
-    button.innerHTML = copyIcon;
-    wrapper.appendChild(button);
-
-    button.addEventListener('click', async () => {
-      try {
-        await copyText(code.textContent);
-        button.innerHTML = doneIcon;
-        button.classList.add('copied');
-        button.title = 'Copied';
-        button.setAttribute('aria-label', 'Copied');
-        window.setTimeout(() => {
-          button.innerHTML = copyIcon;
-          button.classList.remove('copied');
-          button.title = 'Copy code';
-          button.setAttribute('aria-label', 'Copy code');
-        }, 1400);
-      } catch (_error) {
-        button.title = 'Copy failed';
-        button.setAttribute('aria-label', 'Copy failed');
-      }
-    });
-  });
-})();
-</script>
-<script>
-(() => {
-  const root = document.querySelector('.site-search');
-  if (!root) return;
-
-  const input = root.querySelector('.site-search-input');
-  const results = root.querySelector('.site-search-results');
-  const indexUrl = root.dataset.searchIndex;
-  let indexPromise = null;
-  let visible = [];
-
-  const normal = (value) => String(value || '')
-    .toLowerCase()
-    .replace(/[_.:/-]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const raw = (value) => String(value || '').toLowerCase().trim();
-
-  function loadIndex() {
-    if (!indexPromise) {
-      indexPromise = fetch(indexUrl)
-        .then((response) => {
-          if (!response.ok) throw new Error('Search index unavailable');
-          return response.json();
-        })
-        .then((data) => data.entries || []);
-    }
-    return indexPromise;
-  }
-
-  function score(entry, query) {
-    const qRaw = raw(query);
-    const q = normal(query);
-    if (!q) return -1;
-
-    const titleRaw = raw(entry.title);
-    const title = normal(entry.title);
-    const aliases = entry.aliases || [];
-    const aliasRaw = aliases.map(raw);
-    const aliasText = normal(aliases.join(' '));
-    const haystack = normal([
-      entry.title,
-      entry.summary,
-      entry.keywords,
-      aliases.join(' '),
-    ].join(' '));
-
-    if (titleRaw === qRaw) return 1000;
-    if (aliasRaw.includes(qRaw)) return 920;
-    if (title.startsWith(q)) return 820;
-    if (aliasText.startsWith(q)) return 760;
-    if (title.includes(q)) return 680;
-    if (aliasText.includes(q)) return 620;
-    if (haystack.includes(q)) return 500;
-
-    const words = q.split(' ').filter(Boolean);
-    if (words.length && words.every((word) => haystack.includes(word))) {
-      return 380 + words.length * 10;
-    }
-    return -1;
-  }
-
-  function closeResults() {
-    results.hidden = true;
-    results.replaceChildren();
-    input.setAttribute('aria-expanded', 'false');
-    visible = [];
-  }
-
-  function render(entries, query) {
-    const ranked = entries
-      .map((entry, order) => ({entry, order, score: score(entry, query)}))
-      .filter((row) => row.score >= 0)
-      .sort((a, b) => b.score - a.score || a.order - b.order)
-      .slice(0, 10);
-
-    results.replaceChildren();
-    visible = ranked.map((row) => row.entry);
-    if (!ranked.length) {
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'No documentation found.';
-      results.appendChild(empty);
-    } else {
-      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
-      ranked.forEach(({entry}) => {
-        const link = document.createElement('a');
-        link.className = 'site-search-result';
-        link.href = new URL(entry.url, indexBase).href;
-
-        const heading = document.createElement('span');
-        heading.className = 'site-search-result-title';
-        heading.textContent = entry.title;
-
-        const kind = document.createElement('span');
-        kind.className = 'site-search-result-kind';
-        kind.textContent = entry.kind;
-
-        const summary = document.createElement('span');
-        summary.className = 'site-search-result-summary';
-        summary.textContent = entry.summary;
-
-        link.append(heading, kind, summary);
-        results.appendChild(link);
-      });
-    }
-    results.hidden = false;
-    input.setAttribute('aria-expanded', 'true');
-  }
-
-  async function search() {
-    const query = input.value.trim();
-    if (!query) {
-      closeResults();
-      return;
-    }
-    try {
-      render(await loadIndex(), query);
-    } catch (_error) {
-      results.replaceChildren();
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'Search is unavailable.';
-      results.appendChild(empty);
-      results.hidden = false;
-      input.setAttribute('aria-expanded', 'true');
-    }
-  }
-
-  input.addEventListener('input', search);
-  input.addEventListener('focus', () => {
-    if (input.value.trim()) search();
-  });
-  input.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      closeResults();
-      input.blur();
-    } else if (event.key === 'Enter' && visible.length) {
-      event.preventDefault();
-      results.querySelector('.site-search-result')?.click();
-    }
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!root.contains(event.target)) closeResults();
-  });
-
-  document.addEventListener('keydown', (event) => {
-    const target = event.target;
-    const typing = target instanceof HTMLInputElement
-      || target instanceof HTMLTextAreaElement
-      || target instanceof HTMLSelectElement
-      || target?.isContentEditable;
-    const shortcut = (event.ctrlKey || event.metaKey)
-      && event.key.toLowerCase() === 'k';
-    const slash = event.key === '/' && !typing && !event.ctrlKey
-      && !event.metaKey && !event.altKey;
-    if (shortcut || slash) {
-      event.preventDefault();
-      input.focus();
-      input.select();
-    }
-  });
-})();
-</script>
-</body></html>
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

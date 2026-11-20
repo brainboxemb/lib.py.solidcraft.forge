@@ -1,29 +1,61 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>API design contract · SCPF Python library</title>
-<link rel="stylesheet" href="style.css"></head>
-<body><header class="top"><div class="wrap nav">
-<a class="brand" href="./">SCPF <span>Python library</span></a>
-<div class="site-search" data-search-index="./search-index.json">
-<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
-<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
-       placeholder="Search API…" aria-label="Search SCPF documentation"
-       aria-expanded="false" aria-controls="site-search-results">
-<span class="site-search-shortcut" aria-hidden="true">/</span>
-<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>API design contract · SCPF Python library</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="./">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="./search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="./">Examples</a>
+      <a href="./guide/">API Guide</a>
+      <a href="./reference/">API Reference</a>
+      <a href="./qualification/">Qualification</a>
+      <a href="cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
 </div>
-<nav aria-label="Main"><a href="./">Examples</a><a href="./guide/">API Guide</a><a href="./reference/">API Reference</a><a href="./qualification/">Qualification</a><a href="cheatsheet/">Cheatsheet</a>
-<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a></nav></div></header>
-<div class="development-banner" role="status"><div class="wrap">
-<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
-</div></div>
-<main class="wrap"><p class="crumb"><a href="reference/">API Reference</a> / API design contract</p><section class="hero small"><p class="eyebrow">Cross-object design rules</p><h1>Forge API design contract</h1><p>Design rules that span several public objects live here. Exact names, signatures, enum values and object-specific semantics come from the Python implementation and public docstrings.</p></section><section class="panel"><pre><code># Python CAD API design
+<main class="wrap">
+<p class="crumb"><a href="reference/">API Reference</a> / API design contract</p>
+<section class="hero small">
+<p class="eyebrow">Cross-object design rules</p>
+<h1>Forge API design contract</h1>
+<p>Design rules that span several public objects live here. Exact names, signatures, enum values and object-specific semantics come from the Python implementation and public docstrings.</p>
+</section>
+<section class="panel"><pre><code># Forge API
 
-&gt; **Normative public API contract.** This document is the single source of
-&gt; truth for user-facing Forge/SCPF semantics. Compiler code, qualification
-&gt; fixtures, README examples and the website must follow this contract; they do
-&gt; not redefine it.
+&gt; **Primary cross-object API contract.** This document defines stable
+&gt; user-facing Forge/SCPF semantics that span more than one public Python object.
+&gt; Exact exported names, signatures, defaults and enum members come from the
+&gt; current Python implementation and its public docstrings. The generated API
+&gt; reference and agent index are derived from those implementation sources.
+&gt;
+&gt; When implementation and this cross-object contract disagree, treat that as
+&gt; documentation/API drift to be resolved explicitly; do not silently preserve
+&gt; obsolete wording from this document.
 
 SCPF exposes CAD objects and relationships, not JSON commands, transports, or
 an independent geometry engine. SolidCraft creates and evaluates the actual
@@ -146,7 +178,7 @@ from the actual Box bottom face regardless of the constructor anchor.
 This is intentionally a breaking cleanup while Forge remains unstable. Models
 that require an old base/bottom datum must state it explicitly with `anchor=`.
 
-See [change 0022](changes/0022-native-box-origin.md).
+See [change 0022](background/changes/0022-native-box-origin.md).
 
 ### `at()`
 
@@ -219,10 +251,10 @@ displacement. Explicit `anchor=CENTER` is not supported for Polygon2D or
 Text2D yet. Polygon2D keeps its existing offset/lowering limits.
 
 Semantic profile centering was introduced by
-[change 0018](changes/0018-sketch-profile-centering.md). The profile-specific
+[change 0018](background/changes/0018-sketch-profile-centering.md). The profile-specific
 omitted-anchor rule that preserves coordinate-defined Text2D placement is
 recorded in
-[change 0020](changes/0020-coordinate-profile-default-anchor.md).
+[change 0020](background/changes/0020-coordinate-profile-default-anchor.md).
 
 Selective Sketch extrusion uses SolidCraft&#x27;s own profile selection. Pass fixed
 sketch-local points with `Sketch.extrude(..., profiles=[(x, y), ...])`.
@@ -238,6 +270,81 @@ Sketch coordinates rather than parameter expressions.
 
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
+
+#### Native Sketch pattern and mirror operations
+
+A profile already authored in the active Sketch can seed an associative native
+rectangular pattern:
+
+```python
+seed = sketch.add(Circle2D(d=20), offset=(-304, 0))
+row = sketch.rectangular_pattern(
+    seed,
+    count=9,
+    spacing=76,
+    direction=Axis.X,
+)
+sketch.mirror(row, axis=Axis.Y)
+```
+
+The source may also be a supported Slot profile or a result returned by an
+earlier supported Sketch pattern/mirror operation. Pattern and mirror return
+Sketch operation handles; they do not expose SolidCraft curve ids.
+
+Current limits include attached Sketch qualification, rectangular patterns,
+fixed 2D directions or `Axis.X`/`Axis.Y`, and mirror over the Sketch X/Y
+origin axes. A SolidCraft mirror keeps the entity set selected when the mirror
+was authored; increasing an upstream pattern count later does not
+automatically add the new entities to that existing mirror.
+
+See [change 0033](background/changes/0033-associative-sketch-pattern-mirror.md).
+
+#### Signed and symmetric Sketch extrusion
+
+The current public signature is:
+
+```python
+Sketch.extrude(
+    distance,
+    *,
+    sym=False,
+    profiles=None,
+    exact_regions=False,
+)
+```
+
+A positive finite `distance` follows the sketch-plane normal. A negative
+finite distance reverses that normal. `sym=True` requires a positive finite
+distance and splits the extrusion equally across both sides of the sketch
+plane. `Depth.THROUGH_ALL` is available only for an attached Sketch and cannot
+be combined with `sym=True`.
+
+Forge does not expose a second `direction=` argument for current Sketch
+extrusion. Direction is expressed by the sign of `distance` or by
+`sym=True`.
+
+See [change 0024](background/changes/0024-signed-sketch-extrude.md).
+
+#### Native Slot profiles
+
+Explicit Sketches support the five native SolidCraft Slot constructors:
+
+```python
+SlotCenterToCenter2D(p0, p1, width)
+SlotOverall2D(p0, p1, width)
+SlotCenterPoint2D(center, end, width)
+SlotArcThreePoint2D(start, through, end, width)
+SlotArcCenter2D(center, start, width, *, end=None, sweep=None)
+```
+
+Slot authoring points are fixed sketch-local numeric coordinates. Native direct
+Slot width is currently a fixed positive number; parametric Slot dimensions
+belong to SolidCraft&#x27;s separate dimensioned-sketch capability.
+
+Slots can participate in the supported native sketch
+`rectangular_pattern()` and `mirror()` operations.
+
+See [change 0027](background/changes/0027-native-sketch-slot-family.md).
 
 ### Occurrence `Placement`
 
@@ -290,7 +397,7 @@ Attachments remain explicit relationships and Placement expressions reuse
 existing parameters instead of publishing helper parameters.
 
 The replay-variable correction is recorded in
-[change 0013](changes/0013-correct-0010-placement-cases.md).
+[change 0013](background/changes/0013-correct-0010-placement-cases.md).
 
 SolidCraft 0.42 has one grounding limitation: an expression-based
 `occurrence.move` on a grounded occurrence does not follow later parameter
@@ -298,7 +405,7 @@ changes. Therefore Forge leaves a physical root occurrence ungrounded when its
 Placement position contains Parameters or Expressions. A fixed root occurrence
 still uses the normal grounded behaviour. This is a backend compatibility rule,
 not a change to the public meaning of Placement. See
-[change 0014](changes/0014-parametric-root-grounding.md).
+[change 0014](background/changes/0014-parametric-root-grounding.md).
 
 ### `attach()`
 
@@ -338,9 +445,9 @@ not lower anchor frames.
 
 Chained normal attachments remain unsupported until their SolidCraft solve and
 replay order has been qualified. See
-[change 0010](changes/0010-replay-safe-attachments.md),
-[change 0013](changes/0013-correct-0010-placement-cases.md) and
-[change 0017](changes/0017-transform-safe-attachments.md).
+[change 0010](background/changes/0010-replay-safe-attachments.md),
+[change 0013](background/changes/0013-correct-0010-placement-cases.md) and
+[change 0017](background/changes/0017-transform-safe-attachments.md).
 
 ### `group()`
 
@@ -360,7 +467,7 @@ SolidCraft 0.42 `occurrence.copy(parent=...)` when a later copy belongs under a
 different group or back at the design root. The component definition remains
 shared.
 
-See [change 0011](changes/0011-grouping-is-hierarchy-only.md).
+See [change 0011](background/changes/0011-grouping-is-hierarchy-only.md).
 
 ## Direction, face and anchor vocabulary
 
@@ -426,7 +533,7 @@ bracket = Bracket(inside_corner_radius=self.corner_radius)
 
 Forge must preserve that existing dependency instead of creating unrelated or
 duplicated child parameters. This contract is recorded in
-[change 0003](changes/0003-explicit-component-parameter-publication.md).
+[change 0003](background/changes/0003-explicit-component-parameter-publication.md).
 
 Reusable component definition identity also includes fixed build-only inputs.
 Forge rejects arbitrary mutable/opaque Python objects, but its own immutable
@@ -435,7 +542,7 @@ primitive data. This includes public expressions such as `BOTTOM + LEFT`,
 `Edges.from_profile(...)`, axis tokens such as `X`, and fixed bound offsets
 such as `X.MIN + 10`. Two different selector inputs must not share one native
 component definition. See
-[change 0021](changes/0021-selector-definition-identity.md).
+[change 0021](background/changes/0021-selector-definition-identity.md).
 
 Parameter namespacing applies only to native CAD expressions. Ordinary strings
 are opaque user data. A text value, material name, sketch name, feature name or
@@ -445,7 +552,7 @@ name.
 For example, publishing a child parameter named `width` may rename the native
 parameter reference to `d1_Label_width`, but `Text2D(&quot;width&quot;)` must still
 produce the literal text `&quot;width&quot;`. This compiler rule is recorded in
-[change 0015](changes/0015-typed-native-expressions.md).
+[change 0015](background/changes/0015-typed-native-expressions.md).
 
 Parameter publication by itself is not proof that a saved design remains
 associative. Forge tracks dependencies carried by emitted native expressions.
@@ -456,7 +563,7 @@ follow later SolidCraft edits. Internal Forge numeric checks and authoring-time
 pick coordinates do not count as user `pv()` calls.
 
 Root model classes and root `@assembly` classes use the same diagnostic rule.
-See [change 0016](changes/0016-parameter-dependency-diagnostics.md).
+See [change 0016](background/changes/0016-parameter-dependency-diagnostics.md).
 
 ## Features and operations
 
@@ -472,6 +579,60 @@ See [change 0016](changes/0016-parameter-dependency-diagnostics.md).
 - `Anchor.INNER_BOTTOM` refers to the inner floor of a shelled body.
 - `X.MIN/CENTER/MAX` and `Y.MIN/CENTER/MAX` express placement relative to
   parent bounds rather than copied world coordinates.
+
+### Native Hole family
+
+Forge exposes explicit native hole intent rather than requiring a caller to
+construct every recess or thread from Boolean primitives:
+
+```python
+Hole(*, d, depth=Depth.THROUGH_ALL, direction=None)
+
+CounterboreHole(
+    *,
+    d,
+    counterbore_d,
+    counterbore_depth,
+    depth=Depth.THROUGH_ALL,
+    direction=None,
+)
+
+CountersinkHole(
+    *,
+    d,
+    countersink_d,
+    countersink_angle=90,
+    depth=Depth.THROUGH_ALL,
+    direction=None,
+)
+
+ThreadedHole(
+    *,
+    thread,
+    depth=Depth.THROUGH_ALL,
+    d=None,
+    direction=None,
+    hand=&quot;right&quot;,
+    thread_depth=None,
+    modeled=False,
+    ease_out=None,
+)
+```
+
+The simple `Hole` remains compatible with the existing face-relative repeated
+hole path. The explicit native Hole-family constructors are positioned with
+`at()` and keep their recess/thread intent in one native feature.
+
+See [change 0037](background/changes/0037-explicit-native-hole-family.md).
+
+### Native history patterns
+
+`rectangular_pattern()` and `circular_pattern()` operate on already-applied
+native history features rather than expanding independent Python copies.
+Circular patterns support the currently documented principal/fixed XYZ axis and
+optional fixed axis origin forms.
+
+See [change 0036](background/changes/0036-native-circular-feature-patterns.md).
 
 ## Reference implementations
 
@@ -509,231 +670,16 @@ A public API behaviour is not considered complete merely because one example
 renders correctly. It needs the appropriate Q1-Q6 evidence. A qualification
 fixture is evidence for this document; the fixture itself is never the API
 definition.
-</code></pre></section></main>
-<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
-<a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a></div></footer>
-<script>(() => {
-  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
-  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
+</code></pre></section>
+</main>
 
-  async function copyText(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-    const helper = document.createElement('textarea');
-    helper.value = text;
-    helper.setAttribute('readonly', '');
-    helper.style.position = 'fixed';
-    helper.style.opacity = '0';
-    document.body.appendChild(helper);
-    helper.select();
-    document.execCommand('copy');
-    helper.remove();
-  }
-
-  document.querySelectorAll('pre > code').forEach((code) => {
-    const pre = code.parentElement;
-    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'code-block';
-    pre.parentNode.insertBefore(wrapper, pre);
-    wrapper.appendChild(pre);
-
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'code-copy';
-    button.title = 'Copy code';
-    button.setAttribute('aria-label', 'Copy code');
-    button.innerHTML = copyIcon;
-    wrapper.appendChild(button);
-
-    button.addEventListener('click', async () => {
-      try {
-        await copyText(code.textContent);
-        button.innerHTML = doneIcon;
-        button.classList.add('copied');
-        button.title = 'Copied';
-        button.setAttribute('aria-label', 'Copied');
-        window.setTimeout(() => {
-          button.innerHTML = copyIcon;
-          button.classList.remove('copied');
-          button.title = 'Copy code';
-          button.setAttribute('aria-label', 'Copy code');
-        }, 1400);
-      } catch (_error) {
-        button.title = 'Copy failed';
-        button.setAttribute('aria-label', 'Copy failed');
-      }
-    });
-  });
-})();
-</script>
-<script>
-(() => {
-  const root = document.querySelector('.site-search');
-  if (!root) return;
-
-  const input = root.querySelector('.site-search-input');
-  const results = root.querySelector('.site-search-results');
-  const indexUrl = root.dataset.searchIndex;
-  let indexPromise = null;
-  let visible = [];
-
-  const normal = (value) => String(value || '')
-    .toLowerCase()
-    .replace(/[_.:/-]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const raw = (value) => String(value || '').toLowerCase().trim();
-
-  function loadIndex() {
-    if (!indexPromise) {
-      indexPromise = fetch(indexUrl)
-        .then((response) => {
-          if (!response.ok) throw new Error('Search index unavailable');
-          return response.json();
-        })
-        .then((data) => data.entries || []);
-    }
-    return indexPromise;
-  }
-
-  function score(entry, query) {
-    const qRaw = raw(query);
-    const q = normal(query);
-    if (!q) return -1;
-
-    const titleRaw = raw(entry.title);
-    const title = normal(entry.title);
-    const aliases = entry.aliases || [];
-    const aliasRaw = aliases.map(raw);
-    const aliasText = normal(aliases.join(' '));
-    const haystack = normal([
-      entry.title,
-      entry.summary,
-      entry.keywords,
-      aliases.join(' '),
-    ].join(' '));
-
-    if (titleRaw === qRaw) return 1000;
-    if (aliasRaw.includes(qRaw)) return 920;
-    if (title.startsWith(q)) return 820;
-    if (aliasText.startsWith(q)) return 760;
-    if (title.includes(q)) return 680;
-    if (aliasText.includes(q)) return 620;
-    if (haystack.includes(q)) return 500;
-
-    const words = q.split(' ').filter(Boolean);
-    if (words.length && words.every((word) => haystack.includes(word))) {
-      return 380 + words.length * 10;
-    }
-    return -1;
-  }
-
-  function closeResults() {
-    results.hidden = true;
-    results.replaceChildren();
-    input.setAttribute('aria-expanded', 'false');
-    visible = [];
-  }
-
-  function render(entries, query) {
-    const ranked = entries
-      .map((entry, order) => ({entry, order, score: score(entry, query)}))
-      .filter((row) => row.score >= 0)
-      .sort((a, b) => b.score - a.score || a.order - b.order)
-      .slice(0, 10);
-
-    results.replaceChildren();
-    visible = ranked.map((row) => row.entry);
-    if (!ranked.length) {
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'No documentation found.';
-      results.appendChild(empty);
-    } else {
-      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
-      ranked.forEach(({entry}) => {
-        const link = document.createElement('a');
-        link.className = 'site-search-result';
-        link.href = new URL(entry.url, indexBase).href;
-
-        const heading = document.createElement('span');
-        heading.className = 'site-search-result-title';
-        heading.textContent = entry.title;
-
-        const kind = document.createElement('span');
-        kind.className = 'site-search-result-kind';
-        kind.textContent = entry.kind;
-
-        const summary = document.createElement('span');
-        summary.className = 'site-search-result-summary';
-        summary.textContent = entry.summary;
-
-        link.append(heading, kind, summary);
-        results.appendChild(link);
-      });
-    }
-    results.hidden = false;
-    input.setAttribute('aria-expanded', 'true');
-  }
-
-  async function search() {
-    const query = input.value.trim();
-    if (!query) {
-      closeResults();
-      return;
-    }
-    try {
-      render(await loadIndex(), query);
-    } catch (_error) {
-      results.replaceChildren();
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'Search is unavailable.';
-      results.appendChild(empty);
-      results.hidden = false;
-      input.setAttribute('aria-expanded', 'true');
-    }
-  }
-
-  input.addEventListener('input', search);
-  input.addEventListener('focus', () => {
-    if (input.value.trim()) search();
-  });
-  input.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      closeResults();
-      input.blur();
-    } else if (event.key === 'Enter' && visible.length) {
-      event.preventDefault();
-      results.querySelector('.site-search-result')?.click();
-    }
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!root.contains(event.target)) closeResults();
-  });
-
-  document.addEventListener('keydown', (event) => {
-    const target = event.target;
-    const typing = target instanceof HTMLInputElement
-      || target instanceof HTMLTextAreaElement
-      || target instanceof HTMLSelectElement
-      || target?.isContentEditable;
-    const shortcut = (event.ctrlKey || event.metaKey)
-      && event.key.toLowerCase() === 'k';
-    const slash = event.key === '/' && !typing && !event.ctrlKey
-      && !event.metaKey && !event.altKey;
-    if (shortcut || slash) {
-      event.preventDefault();
-      input.focus();
-      input.select();
-    }
-  });
-})();
-</script>
-</body></html>
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="./static/copy.js"></script>
+<script src="./static/search.js"></script>
+</body>
+</html>

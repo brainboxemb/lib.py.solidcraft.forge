@@ -1,26 +1,45 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>Components and assemblies · SCPF Python library</title>
-<link rel="stylesheet" href="../../style.css"></head>
-<body><header class="top"><div class="wrap nav">
-<a class="brand" href="../../">SCPF <span>Python library</span></a>
-<div class="site-search" data-search-index="../../search-index.json">
-<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
-<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
-       placeholder="Search API…" aria-label="Search SCPF documentation"
-       aria-expanded="false" aria-controls="site-search-results">
-<span class="site-search-shortcut" aria-hidden="true">/</span>
-<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Components and assemblies · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../qualification/">Qualification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
 </div>
-<nav aria-label="Main"><a href="../../">Examples</a><a href="../../guide/">API Guide</a><a href="../../reference/">API Reference</a><a href="../../qualification/">Qualification</a><a href="../../cheatsheet/">Cheatsheet</a>
-<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a></nav></div></header>
-<div class="development-banner" role="status"><div class="wrap">
-<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
-</div></div>
-<main class="wrap guide-layout"><aside class="guide-sidebar"><h2>API Guide</h2><a href="../">Overview</a><a href="../getting-started/">Getting started</a><a href="../model-objects/">Model objects and parameters</a><a href="../transformations/">Positioning and orientation</a><a href="../assembly-basics/">From one component to an assembly</a><a href="../geometry/">Geometry, sketches and Boolean operations</a><a href="../features/">Features and references</a><a class="active" href="../components/">Components and assemblies</a><div class="guide-subnav"><a href="#definition">One definition, several occurrences</a><a href="#component-parameters">Component parameter visibility</a><a href="#placement">Occurrence placement</a><a href="#attach">Component attachment</a><a href="#attach-offset">Associative in-plane attachment offset</a><a href="#assembly-anchor">Assembly-owned named anchors</a><a href="#anchor-frame">AnchorFrame: point plus orientation</a><a href="#anchor-topology">AnchorTopology: follow an edge or corner</a><a href="#verify">What to test in an assembly</a></div><a href="../verification/">Verification and API boundaries</a></aside><article class="guide-article"><p class="crumb"><a href="../">API Guide</a> / Components and assemblies</p><h1>Components and assemblies</h1><p class="guide-lead">Reusable definitions, occurrence transforms, grouping and attachments.</p>
-<h2 id="definition">One definition, several occurrences</h2>
-<pre><code>from scpf import Box, assembly, component
+<main class="wrap guide-layout"><aside class="guide-sidebar"><h2>API Guide</h2><a href="../">Overview</a><a href="../getting-started/">Getting started</a><a href="../model-objects/">Model objects and parameters</a><a href="../transformations/">Positioning and orientation</a><a href="../assembly-basics/">From one component to an assembly</a><a href="../geometry/">Geometry, sketches and Boolean operations</a><a href="../features/">Features and references</a><a class="active" href="../components/">Components and assemblies</a><div class="guide-subnav"><a href="#definition">One definition, several occurrences</a><a href="#component-parameters">Component parameter visibility</a><a href="#placement">Occurrence placement</a><a href="#attach">Component attachment</a><a href="#attach-offset">Associative in-plane attachment offset</a><a href="#assembly-anchor">Assembly-owned named anchors</a><a href="#anchor-frame">AnchorFrame: point plus orientation</a><a href="#anchor-topology">AnchorTopology: follow an edge or corner</a><a href="#verify">What to test in an assembly</a></div><a href="../verification/">Verification and API boundaries</a></aside><article class="guide-article"><p class="crumb"><a href="../">API Guide</a> / Components and assemblies</p><h1>Components and assemblies</h1><p class="guide-lead">Reusable definitions, occurrence transforms, grouping and attachments.</p><h2 id="definition">One definition, several occurrences</h2>
+<pre class="code-block"><code>from scpf import Box, assembly, component
 
 @component
 class Beam:
@@ -51,7 +70,7 @@ fusion of its children.</p>
 <h2 id="component-parameters">Component parameter visibility</h2>
 <p>Reusable component defaults are fixed by default. Publish selected child
 parameters explicitly with <code>include=</code>:</p>
-<pre><code>@component(include=(&quot;inside_corner_radius&quot;,))
+<pre class="code-block"><code>@component(include=(&quot;inside_corner_radius&quot;,))
 class CornerBracket:
     width = 24.0
     inside_corner_radius = 4.0
@@ -69,12 +88,12 @@ supplied. <code>copy(placement=Placement(...))</code> creates the new occurrence
 with the supplied absolute pose in the parent coordinate frame. The compiler
 uses creation-time copy translation where SolidCraft can represent it and a
 native fallback only where required.</p>
-<pre><code>center = BeamComponent()
+<pre class="code-block"><code>center = BeamComponent()
 array = center
 for x in (-240, -120, 120, 240):
     array = array + center.copy(placement=Placement(x=x))</code></pre>
 <h2 id="attach">Component attachment</h2>
-<pre><code>right = BeamComponent().attach(
+<pre class="code-block"><code>right = BeamComponent().attach(
     left, parent=Anchor.RIGHT, child=Anchor.LEFT
 )
 
@@ -94,7 +113,7 @@ plane. Numeric values and parameter expressions are both supported. Forge
 lowers a non-zero or symbolic in-plane offset to a native planar joint and
 keeps <code>u</code> and <code>v</code> as SolidCraft joint values, so they are
 re-evaluated when their parameters change.</p>
-<pre><code>wood = Parameter(&quot;wood_thickness&quot;, 18)
+<pre class="code-block"><code>wood = Parameter(&quot;wood_thickness&quot;, 18)
 
 bracket = Bracket().attach(
     side,
@@ -113,7 +132,7 @@ defined by that corner frame rather than by world Z.</p>
 component, keep it on the assembly with <code>with_anchor()</code>. The anchor
 stores the target occurrence plus its attachment reference. Consumers resolve
 it by name with <code>anchor()</code>.</p>
-<pre><code>frame = (left + right + bottom).with_anchor(
+<pre class="code-block"><code>frame = (left + right + bottom).with_anchor(
     &quot;front_top_left&quot;,
     left,
     AnchorTopology(
@@ -145,7 +164,7 @@ thickness while the reusable part keeps a fixed mounting correction.</p>
 normal and <code>x</code> fixes the rotation around that normal. Use it when a
 single point or rectangular <code>Anchor</code> is not enough to describe how
 the occurrence must be oriented.</p>
-<pre><code>from scpf import Anchor, AnchorFrame
+<pre class="code-block"><code>from scpf import Anchor, AnchorFrame
 
 mount = AnchorFrame(
     origin=(0, 0, -12),
@@ -164,7 +183,7 @@ name. If the frame exists only because of a particular assembly or mounting
 choice, construct the <a href="../../reference/attachment-references/#AnchorFrame"><code>AnchorFrame</code></a> in that assembly and pass it
 directly to <code>attach()</code>. This keeps application knowledge out of the
 generic component definition.</p>
-<pre><code>@component
+<pre class="code-block"><code>@component
 class Sensor:
     def anchors(self):
         return {
@@ -188,7 +207,7 @@ owns the transform. A direct <code>AnchorFrame</code> on an explicitly rotated
 occurrence is not supported yet.</p>
 <h2 id="anchor-topology">AnchorTopology: follow an edge or corner</h2>
 <p><code>AnchorTopology</code> is a named component datum that stays attached to native SolidCraft topology. <code>edge</code> picks an edge, <code>on</code> selects its adjacent planar face and <code>corner</code> optionally chooses one endpoint. The coordinates are selection picks; SolidCraft keeps the selected edge, face and endpoint by topology name as the design changes.</p>
-<pre><code>from scpf import AnchorTopology, Box, component
+<pre class="code-block"><code>from scpf import AnchorTopology, Box, component
 
 @component
 class Board:
@@ -213,231 +232,15 @@ expose a separate public Joint object.</p>
 per shared definition, expected <code>occurrence.copy</code> counts,
 and native <code>translate</code>, <code>axis</code> and <code>angle</code>
 parameters for rotated occurrences. Separately verify native SolidCraft
-geometry and its bounding dimensions before trusting an assembly image.</p><section class="guide-api-summary"><h2>API on this page</h2><p class="guide-api-intro">These values and signatures are generated from the current Python API. They are shown here so the normal guide flow does not require opening the reference for every detail.</p><div class="guide-api-grid"><article class="guide-api-item"><h3><a href="../../reference/Assembly.with_anchor/">Assembly.with_anchor()</a></h3><p>Expose one named attachment datum owned by this assembly.</p><pre class="guide-api-signature"><code>Assembly.with_anchor(self, name, target, reference, *, offset=(0, 0))</code></pre><p><strong>Use when:</strong> A mounting/reference name belongs to the meaning of the larger assembly rather than to the generic reusable component itself.</p><p><strong>Current limits:</strong> target must already belong to this Assembly. with_anchor() exposes a reference; it does not create an attachment by itself.</p></article><article class="guide-api-item"><h3><a href="../../reference/Assembly.anchor/">Assembly.anchor()</a></h3><p>Return one named assembly-owned attachment datum.</p><pre class="guide-api-signature"><code>Assembly.anchor(self, name)</code></pre><p><strong>Use when:</strong> A consumer needs the target/reference pair previously exposed with with_anchor() in order to create an attachment.</p><p><strong>Current limits:</strong> The name must resolve to exactly one assembly-owned anchor.</p></article></div></section></article></main>
-<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
-<a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a></div></footer>
-<script>(() => {
-  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
-  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
-
-  async function copyText(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-    const helper = document.createElement('textarea');
-    helper.value = text;
-    helper.setAttribute('readonly', '');
-    helper.style.position = 'fixed';
-    helper.style.opacity = '0';
-    document.body.appendChild(helper);
-    helper.select();
-    document.execCommand('copy');
-    helper.remove();
-  }
-
-  document.querySelectorAll('pre > code').forEach((code) => {
-    const pre = code.parentElement;
-    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'code-block';
-    pre.parentNode.insertBefore(wrapper, pre);
-    wrapper.appendChild(pre);
-
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'code-copy';
-    button.title = 'Copy code';
-    button.setAttribute('aria-label', 'Copy code');
-    button.innerHTML = copyIcon;
-    wrapper.appendChild(button);
-
-    button.addEventListener('click', async () => {
-      try {
-        await copyText(code.textContent);
-        button.innerHTML = doneIcon;
-        button.classList.add('copied');
-        button.title = 'Copied';
-        button.setAttribute('aria-label', 'Copied');
-        window.setTimeout(() => {
-          button.innerHTML = copyIcon;
-          button.classList.remove('copied');
-          button.title = 'Copy code';
-          button.setAttribute('aria-label', 'Copy code');
-        }, 1400);
-      } catch (_error) {
-        button.title = 'Copy failed';
-        button.setAttribute('aria-label', 'Copy failed');
-      }
-    });
-  });
-})();
-</script>
-<script>
-(() => {
-  const root = document.querySelector('.site-search');
-  if (!root) return;
-
-  const input = root.querySelector('.site-search-input');
-  const results = root.querySelector('.site-search-results');
-  const indexUrl = root.dataset.searchIndex;
-  let indexPromise = null;
-  let visible = [];
-
-  const normal = (value) => String(value || '')
-    .toLowerCase()
-    .replace(/[_.:/-]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const raw = (value) => String(value || '').toLowerCase().trim();
-
-  function loadIndex() {
-    if (!indexPromise) {
-      indexPromise = fetch(indexUrl)
-        .then((response) => {
-          if (!response.ok) throw new Error('Search index unavailable');
-          return response.json();
-        })
-        .then((data) => data.entries || []);
-    }
-    return indexPromise;
-  }
-
-  function score(entry, query) {
-    const qRaw = raw(query);
-    const q = normal(query);
-    if (!q) return -1;
-
-    const titleRaw = raw(entry.title);
-    const title = normal(entry.title);
-    const aliases = entry.aliases || [];
-    const aliasRaw = aliases.map(raw);
-    const aliasText = normal(aliases.join(' '));
-    const haystack = normal([
-      entry.title,
-      entry.summary,
-      entry.keywords,
-      aliases.join(' '),
-    ].join(' '));
-
-    if (titleRaw === qRaw) return 1000;
-    if (aliasRaw.includes(qRaw)) return 920;
-    if (title.startsWith(q)) return 820;
-    if (aliasText.startsWith(q)) return 760;
-    if (title.includes(q)) return 680;
-    if (aliasText.includes(q)) return 620;
-    if (haystack.includes(q)) return 500;
-
-    const words = q.split(' ').filter(Boolean);
-    if (words.length && words.every((word) => haystack.includes(word))) {
-      return 380 + words.length * 10;
-    }
-    return -1;
-  }
-
-  function closeResults() {
-    results.hidden = true;
-    results.replaceChildren();
-    input.setAttribute('aria-expanded', 'false');
-    visible = [];
-  }
-
-  function render(entries, query) {
-    const ranked = entries
-      .map((entry, order) => ({entry, order, score: score(entry, query)}))
-      .filter((row) => row.score >= 0)
-      .sort((a, b) => b.score - a.score || a.order - b.order)
-      .slice(0, 10);
-
-    results.replaceChildren();
-    visible = ranked.map((row) => row.entry);
-    if (!ranked.length) {
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'No documentation found.';
-      results.appendChild(empty);
-    } else {
-      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
-      ranked.forEach(({entry}) => {
-        const link = document.createElement('a');
-        link.className = 'site-search-result';
-        link.href = new URL(entry.url, indexBase).href;
-
-        const heading = document.createElement('span');
-        heading.className = 'site-search-result-title';
-        heading.textContent = entry.title;
-
-        const kind = document.createElement('span');
-        kind.className = 'site-search-result-kind';
-        kind.textContent = entry.kind;
-
-        const summary = document.createElement('span');
-        summary.className = 'site-search-result-summary';
-        summary.textContent = entry.summary;
-
-        link.append(heading, kind, summary);
-        results.appendChild(link);
-      });
-    }
-    results.hidden = false;
-    input.setAttribute('aria-expanded', 'true');
-  }
-
-  async function search() {
-    const query = input.value.trim();
-    if (!query) {
-      closeResults();
-      return;
-    }
-    try {
-      render(await loadIndex(), query);
-    } catch (_error) {
-      results.replaceChildren();
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'Search is unavailable.';
-      results.appendChild(empty);
-      results.hidden = false;
-      input.setAttribute('aria-expanded', 'true');
-    }
-  }
-
-  input.addEventListener('input', search);
-  input.addEventListener('focus', () => {
-    if (input.value.trim()) search();
-  });
-  input.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      closeResults();
-      input.blur();
-    } else if (event.key === 'Enter' && visible.length) {
-      event.preventDefault();
-      results.querySelector('.site-search-result')?.click();
-    }
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!root.contains(event.target)) closeResults();
-  });
-
-  document.addEventListener('keydown', (event) => {
-    const target = event.target;
-    const typing = target instanceof HTMLInputElement
-      || target instanceof HTMLTextAreaElement
-      || target instanceof HTMLSelectElement
-      || target?.isContentEditable;
-    const shortcut = (event.ctrlKey || event.metaKey)
-      && event.key.toLowerCase() === 'k';
-    const slash = event.key === '/' && !typing && !event.ctrlKey
-      && !event.metaKey && !event.altKey;
-    if (shortcut || slash) {
-      event.preventDefault();
-      input.focus();
-      input.select();
-    }
-  });
-})();
-</script>
-</body></html>
+geometry and its bounding dimensions before trusting an assembly image.</p>
+<section class="guide-api-summary"><h2>API on this page</h2><p class="guide-api-intro">These values and signatures are generated from the current Python API. They are shown here so the normal guide flow does not require opening the reference for every detail.</p><div class="guide-api-grid"><article class="guide-api-item"><h3><a href="../../reference/Assembly.with_anchor/">Assembly.with_anchor()</a></h3><p>Expose one named attachment datum owned by this assembly.</p><pre class="guide-api-signature"><code>Assembly.with_anchor(self, name, target, reference, *, offset=(0, 0))</code></pre><p><strong>Use when:</strong> A mounting/reference name belongs to the meaning of the larger assembly rather than to the generic reusable component itself.</p><p><strong>Current limits:</strong> target must already belong to this Assembly. with_anchor() exposes a reference; it does not create an attachment by itself.</p></article><article class="guide-api-item"><h3><a href="../../reference/Assembly.anchor/">Assembly.anchor()</a></h3><p>Return one named assembly-owned attachment datum.</p><pre class="guide-api-signature"><code>Assembly.anchor(self, name)</code></pre><p><strong>Use when:</strong> A consumer needs the target/reference pair previously exposed with with_anchor() in order to create an attachment.</p><p><strong>Current limits:</strong> The name must resolve to exactly one assembly-owned anchor.</p></article></div></section></article></main>
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

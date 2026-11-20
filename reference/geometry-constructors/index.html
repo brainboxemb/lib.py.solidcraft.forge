@@ -1,248 +1,51 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>Geometry constructors · SCPF Python library</title>
-<link rel="stylesheet" href="../../style.css"></head>
-<body><header class="top"><div class="wrap nav">
-<a class="brand" href="../../">SCPF <span>Python library</span></a>
-<div class="site-search" data-search-index="../../search-index.json">
-<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
-<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
-       placeholder="Search API…" aria-label="Search SCPF documentation"
-       aria-expanded="false" aria-controls="site-search-results">
-<span class="site-search-shortcut" aria-hidden="true">/</span>
-<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Geometry constructors · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../qualification/">Qualification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
 </div>
-<nav aria-label="Main"><a href="../../">Examples</a><a href="../../guide/">API Guide</a><a href="../../reference/">API Reference</a><a href="../../qualification/">Qualification</a><a href="../../cheatsheet/">Cheatsheet</a>
-<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a></nav></div></header>
-<div class="development-banner" role="status"><div class="wrap">
-<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
-</div></div>
 <main class="wrap reference-layout"><aside class="reference-sidebar"><h2>API Reference</h2><a href="../">Overview</a><h3>Browse by task</h3><a class="active" href="../geometry-constructors/">Geometry constructors</a><div class="reference-subnav"><a href="#Box">Box</a><a href="#Cylinder">Cylinder</a><a href="#Cone">Cone</a><a href="#Sphere">Sphere</a><a href="#Rectangle2D">Rectangle2D</a><a href="#RoundedRectangle2D">RoundedRectangle2D</a><a href="#Circle2D">Circle2D</a><a href="#Polygon2D">Polygon2D</a></div><a href="../sketch-slot-constructors/">Native Slot constructors</a><a href="../feature-constructors/">Feature constructors</a><a href="../parameters-positioning/">Parameters and positioning helpers</a><a href="../attachment-references/">Custom attachment references</a><a href="../execution-api/">Compiler and runner API</a><a href="../diagnostics/">Errors and warnings</a><h3>Selectors</h3><a href="../Faces/">Faces</a><a href="../Anchor/">Anchor</a><a href="../Axis/">Axis</a><a href="../Depth/">Depth</a><a href="../Edges/">Edges</a><h3>Components &amp; assemblies</h3><a href="../component/">component() / @component</a><a href="../assembly/">assembly() / @assembly</a><a href="../Occurrence.copy/">Occurrence.copy()</a><a href="../Occurrence.attach/">Occurrence.attach()</a><a href="../Occurrence.group/">Occurrence.group()</a><a href="../Assembly.group/">Assembly.group()</a><a href="../Assembly.with_anchor/">Assembly.with_anchor()</a><a href="../Assembly.anchor/">Assembly.anchor()</a><h3>Shape &amp; sketch</h3><a href="../Shape/">Shape</a><a href="../Shape.at/">Shape.at()</a><a href="../Shape.on/">Shape.on()</a><a href="../Shape.attach/">Shape.attach()</a><a href="../Shape.fillet/">Shape.fillet()</a><a href="../Shape.chamfer/">Shape.chamfer()</a><a href="../Shape.shell/">Shape.shell()</a><a href="../Shape.fold/">Shape.fold()</a><a href="../Shape.rectangular_pattern/">Shape.rectangular_pattern()</a><a href="../Shape.circular_pattern/">Shape.circular_pattern()</a><a href="../Sketch/">Sketch</a><a href="../Sketch.add/">Sketch.add()</a><a href="../Sketch.rectangular_pattern/">Sketch.rectangular_pattern()</a><a href="../Sketch.mirror/">Sketch.mirror()</a><a href="../Sketch.sheet_metal/">Sketch.sheet_metal()</a><a href="../Sketch.extrude/">Sketch.extrude()</a></aside><article class="reference-article"><p class="crumb"><a href="../">API Reference</a> / Geometry constructors</p><section class="hero small"><p class="eyebrow">Generated SCPF API reference</p><h1>Geometry constructors</h1><p>Direct 3D primitives and 2D profile constructors.</p><p><a href="../../guide/geometry/#solids">Worked usage in the guide →</a> · <a href="../../api-design-contract.html">Cross-object API design rules →</a></p></section><section class="panel api-group-member" id="Box"><h2><code>Box</code></h2><pre><code>Box(length, width, thickness, *, anchor=&lt;Anchor.CENTER: &#x27;center&#x27;&gt;)</code></pre><p>Create a native rectangular solid around a declared anchor datum.</p><h3>When to use it</h3><p>Model a simple rectangular part directly without introducing a Sketch.</p><h3>Parameters</h3><table class="api-table"><thead><tr><th>Argument</th><th>Meaning</th></tr></thead><tbody><tr><td><code>length</code></td><td>Box size along X, in mm.</td></tr><tr><td><code>width</code></td><td>Box size along Y, in mm.</td></tr><tr><td><code>thickness</code></td><td>Box size along Z, in mm.</td></tr><tr><td><code>anchor</code></td><td>Box datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER.</td></tr></tbody></table><h3>Example</h3><pre><code>Box(80, 50, 12, anchor=Anchor.BOTTOM)</code></pre><h3>Current limits</h3><p>The default anchor is CENTER, so an unplaced Box is centred around the model origin in X, Y and Z. Use anchor=BOTTOM for a box whose bottom face centre is at Z=0. Use at() for later placement.</p></section><section class="panel api-group-member" id="Cylinder"><h2><code>Cylinder</code></h2><pre><code>Cylinder(*, d, h, axis=&lt;Axis.Z: &#x27;Z&#x27;&gt;, anchor=&lt;Anchor.CENTER: &#x27;center&#x27;&gt;)</code></pre><p>Create a cylindrical solid centred around the origin by default.</p><h3>When to use it</h3><p>Model a cylinder along Axis.X, Axis.Y or Axis.Z. Use BOTTOM for a Z-axis base, LEFT for an X-axis base or FRONT for a Y-axis base.</p><h3>Parameters</h3><table class="api-table"><thead><tr><th>Argument</th><th>Meaning</th></tr></thead><tbody><tr><td><code>d</code></td><td>Cylinder diameter in mm.</td></tr><tr><td><code>h</code></td><td>Cylinder length along the selected axis, in mm.</td></tr><tr><td><code>axis</code></td><td>Cylinder axis. Use Axis.X, Axis.Y or Axis.Z. Defaults to Axis.Z.</td></tr><tr><td><code>anchor</code></td><td>Cylinder datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER.</td></tr></tbody></table><h3>Example</h3><pre><code>Cylinder(d=8, h=20, axis=Axis.X, anchor=Anchor.LEFT)</code></pre><h3>Current limits</h3><p>Anchors refer to world XYZ bounds after choosing the cylinder axis. at() places the selected anchor at the requested coordinate.</p></section><section class="panel api-group-member" id="Cone"><h2><code>Cone</code></h2><pre><code>Cone(*, d, top_d=0, h, axis=&lt;Axis.Z: &#x27;Z&#x27;&gt;, anchor=&lt;Anchor.CENTER: &#x27;center&#x27;&gt;)</code></pre><p>Create a native cone or tapered cylinder (frustum).</p><h3>When to use it</h3><p>Model a cone, tapered pin or lightly conical cylinder directly with SolidCraft&#x27;s native solid.cone feature.</p><h3>Parameters</h3><table class="api-table"><thead><tr><th>Argument</th><th>Meaning</th></tr></thead><tbody><tr><td><code>d</code></td><td>Diameter at the base end, in mm.</td></tr><tr><td><code>top_d</code></td><td>Diameter at the other end, in mm. Defaults to 0 for a full cone.</td></tr><tr><td><code>h</code></td><td>Length along the selected axis, in mm.</td></tr><tr><td><code>axis</code></td><td>Cone axis. Use Axis.X, Axis.Y or Axis.Z. Defaults to Axis.Z.</td></tr><tr><td><code>anchor</code></td><td>CENTER or one of the two axial end datums.</td></tr></tbody></table><h3>Example</h3><pre><code>Cone(d=20, top_d=20.2, h=20, anchor=Anchor.BOTTOM)</code></pre><h3>Current limits</h3><p>Because the two end radii may differ, transverse tangent anchors are intentionally not exposed. Use CENTER or the selected axis&#x27; two end anchors: LEFT/RIGHT for X, FRONT/BACK for Y, BOTTOM/TOP for Z.</p></section><section class="panel api-group-member" id="Sphere"><h2><code>Sphere</code></h2><pre><code>Sphere(radius, *, anchor=&lt;Anchor.CENTER: &#x27;center&#x27;&gt;)</code></pre><p>Create a sphere centred on the origin unless another anchor is given.</p><h3>When to use it</h3><p>Model a spherical primitive, optionally with a tangent-point anchor.</p><h3>Parameters</h3><table class="api-table"><thead><tr><th>Argument</th><th>Meaning</th></tr></thead><tbody><tr><td><code>radius</code></td><td>Sphere radius in mm.</td></tr><tr><td><code>anchor</code></td><td>Sphere datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER.</td></tr></tbody></table><h3>Example</h3><pre><code>Sphere(12, anchor=Anchor.BOTTOM)</code></pre><h3>Current limits</h3><p>Cardinal anchors select points on the sphere&#x27;s world-aligned bounds. Sphere has no separate orientation axis; use at() for placement.</p></section><section class="panel api-group-member" id="Rectangle2D"><h2><code>Rectangle2D</code></h2><pre><code>Rectangle2D(width, depth)</code></pre><p>Create a rectangular 2D profile.</p><h3>When to use it</h3><p>Author a simple rectangle inside an explicit Sketch before extrusion.</p><h3>Parameters</h3><table class="api-table"><thead><tr><th>Argument</th><th>Meaning</th></tr></thead><tbody><tr><td><code>width</code></td><td>Rectangle size along the first local sketch axis, in mm. On XY this is X.</td></tr><tr><td><code>depth</code></td><td>Rectangle size along the second local sketch axis, in mm. On XY this is Y.</td></tr></tbody></table><h3>Example</h3><pre><code>Rectangle2D(80, 50)</code></pre><h3>Current limits</h3><p>The dimension-defined profile is centred on the Sketch origin by default. Use Sketch.add(..., offset=(u, v)) for a deliberate local displacement.</p></section><section class="panel api-group-member" id="RoundedRectangle2D"><h2><code>RoundedRectangle2D</code></h2><pre><code>RoundedRectangle2D(width, depth, radius)</code></pre><p>Create a native rounded-rectangle 2D profile.</p><h3>When to use it</h3><p>A sketch needs a rectangle with true circular corner arcs rather than a polygonal approximation.</p><h3>Parameters</h3><table class="api-table"><thead><tr><th>Argument</th><th>Meaning</th></tr></thead><tbody><tr><td><code>width</code></td><td>Rectangle size along the first local sketch axis, in mm.</td></tr><tr><td><code>depth</code></td><td>Rectangle size along the second local sketch axis, in mm.</td></tr><tr><td><code>radius</code></td><td>Radius of each corner arc, in mm.</td></tr></tbody></table><h3>Example</h3><pre><code>RoundedRectangle2D(80, 50, 6)</code></pre><h3>Current limits</h3><p>Current support is inside an explicit Sketch. width and depth must be positive. radius must be positive and below half the shorter side.</p></section><section class="panel api-group-member" id="Circle2D"><h2><code>Circle2D</code></h2><pre><code>Circle2D(*, d=None, r=None)</code></pre><p>Create a circular 2D profile by diameter or radius.</p><h3>When to use it</h3><p>Author a circular profile inside an explicit Sketch.</p><h3>Parameters</h3><table class="api-table"><thead><tr><th>Argument</th><th>Meaning</th></tr></thead><tbody><tr><td><code>d</code></td><td>Circle diameter in mm. Supply d or r, not both.</td></tr><tr><td><code>r</code></td><td>Circle radius in mm. Supply r or d, not both.</td></tr></tbody></table><h3>Example</h3><pre><code>Circle2D(d=8)</code></pre><h3>Current limits</h3><p>Supply exactly one of d= or r=. The Sketch determines the plane.</p></section><section class="panel api-group-member" id="Polygon2D"><h2><code>Polygon2D</code></h2><pre><code>Polygon2D(points, *, plane=&#x27;XY&#x27;, ids=None, world=False)</code></pre><p>Create a closed named or unnamed polygon profile.</p><h3>When to use it</h3><p>A 2D profile needs arbitrary straight segments or named vertices and segments that later drive selectors such as Edges.from_profile().</p><h3>Parameters</h3><table class="api-table"><thead><tr><th>Argument</th><th>Meaning</th></tr></thead><tbody><tr><td><code>points</code></td><td>Polygon vertices in order. Use (u, v) pairs, or (name, (u, v)) pairs when naming vertices, in mm.</td></tr><tr><td><code>plane</code></td><td>Sketch plane: &quot;XY&quot;, &quot;XZ&quot; or &quot;YZ&quot;. Defaults to &quot;XY&quot;.</td></tr><tr><td><code>ids</code></td><td>Optional segment names, one per polygon edge in vertex order.</td></tr><tr><td><code>world</code></td><td>When True with plane=&quot;XZ&quot;, read each input point as world (x, z) instead of native sketch coordinates.</td></tr></tbody></table><h3>Example</h3><pre><code>Polygon2D([(0, 0), (40, 0), (40, 20), (0, 20)], plane=&quot;XY&quot;)</code></pre><h3>Current limits</h3><p>At least three 2D points are required. Named and unnamed points cannot be mixed. world=True currently supports only plane=&quot;XZ&quot;.</p></section></article></main>
-<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
-<a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a></div></footer>
-<script>(() => {
-  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
-  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
-
-  async function copyText(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-    const helper = document.createElement('textarea');
-    helper.value = text;
-    helper.setAttribute('readonly', '');
-    helper.style.position = 'fixed';
-    helper.style.opacity = '0';
-    document.body.appendChild(helper);
-    helper.select();
-    document.execCommand('copy');
-    helper.remove();
-  }
-
-  document.querySelectorAll('pre > code').forEach((code) => {
-    const pre = code.parentElement;
-    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'code-block';
-    pre.parentNode.insertBefore(wrapper, pre);
-    wrapper.appendChild(pre);
-
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'code-copy';
-    button.title = 'Copy code';
-    button.setAttribute('aria-label', 'Copy code');
-    button.innerHTML = copyIcon;
-    wrapper.appendChild(button);
-
-    button.addEventListener('click', async () => {
-      try {
-        await copyText(code.textContent);
-        button.innerHTML = doneIcon;
-        button.classList.add('copied');
-        button.title = 'Copied';
-        button.setAttribute('aria-label', 'Copied');
-        window.setTimeout(() => {
-          button.innerHTML = copyIcon;
-          button.classList.remove('copied');
-          button.title = 'Copy code';
-          button.setAttribute('aria-label', 'Copy code');
-        }, 1400);
-      } catch (_error) {
-        button.title = 'Copy failed';
-        button.setAttribute('aria-label', 'Copy failed');
-      }
-    });
-  });
-})();
-</script>
-<script>
-(() => {
-  const root = document.querySelector('.site-search');
-  if (!root) return;
-
-  const input = root.querySelector('.site-search-input');
-  const results = root.querySelector('.site-search-results');
-  const indexUrl = root.dataset.searchIndex;
-  let indexPromise = null;
-  let visible = [];
-
-  const normal = (value) => String(value || '')
-    .toLowerCase()
-    .replace(/[_.:/-]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const raw = (value) => String(value || '').toLowerCase().trim();
-
-  function loadIndex() {
-    if (!indexPromise) {
-      indexPromise = fetch(indexUrl)
-        .then((response) => {
-          if (!response.ok) throw new Error('Search index unavailable');
-          return response.json();
-        })
-        .then((data) => data.entries || []);
-    }
-    return indexPromise;
-  }
-
-  function score(entry, query) {
-    const qRaw = raw(query);
-    const q = normal(query);
-    if (!q) return -1;
-
-    const titleRaw = raw(entry.title);
-    const title = normal(entry.title);
-    const aliases = entry.aliases || [];
-    const aliasRaw = aliases.map(raw);
-    const aliasText = normal(aliases.join(' '));
-    const haystack = normal([
-      entry.title,
-      entry.summary,
-      entry.keywords,
-      aliases.join(' '),
-    ].join(' '));
-
-    if (titleRaw === qRaw) return 1000;
-    if (aliasRaw.includes(qRaw)) return 920;
-    if (title.startsWith(q)) return 820;
-    if (aliasText.startsWith(q)) return 760;
-    if (title.includes(q)) return 680;
-    if (aliasText.includes(q)) return 620;
-    if (haystack.includes(q)) return 500;
-
-    const words = q.split(' ').filter(Boolean);
-    if (words.length && words.every((word) => haystack.includes(word))) {
-      return 380 + words.length * 10;
-    }
-    return -1;
-  }
-
-  function closeResults() {
-    results.hidden = true;
-    results.replaceChildren();
-    input.setAttribute('aria-expanded', 'false');
-    visible = [];
-  }
-
-  function render(entries, query) {
-    const ranked = entries
-      .map((entry, order) => ({entry, order, score: score(entry, query)}))
-      .filter((row) => row.score >= 0)
-      .sort((a, b) => b.score - a.score || a.order - b.order)
-      .slice(0, 10);
-
-    results.replaceChildren();
-    visible = ranked.map((row) => row.entry);
-    if (!ranked.length) {
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'No documentation found.';
-      results.appendChild(empty);
-    } else {
-      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
-      ranked.forEach(({entry}) => {
-        const link = document.createElement('a');
-        link.className = 'site-search-result';
-        link.href = new URL(entry.url, indexBase).href;
-
-        const heading = document.createElement('span');
-        heading.className = 'site-search-result-title';
-        heading.textContent = entry.title;
-
-        const kind = document.createElement('span');
-        kind.className = 'site-search-result-kind';
-        kind.textContent = entry.kind;
-
-        const summary = document.createElement('span');
-        summary.className = 'site-search-result-summary';
-        summary.textContent = entry.summary;
-
-        link.append(heading, kind, summary);
-        results.appendChild(link);
-      });
-    }
-    results.hidden = false;
-    input.setAttribute('aria-expanded', 'true');
-  }
-
-  async function search() {
-    const query = input.value.trim();
-    if (!query) {
-      closeResults();
-      return;
-    }
-    try {
-      render(await loadIndex(), query);
-    } catch (_error) {
-      results.replaceChildren();
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'Search is unavailable.';
-      results.appendChild(empty);
-      results.hidden = false;
-      input.setAttribute('aria-expanded', 'true');
-    }
-  }
-
-  input.addEventListener('input', search);
-  input.addEventListener('focus', () => {
-    if (input.value.trim()) search();
-  });
-  input.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      closeResults();
-      input.blur();
-    } else if (event.key === 'Enter' && visible.length) {
-      event.preventDefault();
-      results.querySelector('.site-search-result')?.click();
-    }
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!root.contains(event.target)) closeResults();
-  });
-
-  document.addEventListener('keydown', (event) => {
-    const target = event.target;
-    const typing = target instanceof HTMLInputElement
-      || target instanceof HTMLTextAreaElement
-      || target instanceof HTMLSelectElement
-      || target?.isContentEditable;
-    const shortcut = (event.ctrlKey || event.metaKey)
-      && event.key.toLowerCase() === 'k';
-    const slash = event.key === '/' && !typing && !event.ctrlKey
-      && !event.metaKey && !event.altKey;
-    if (shortcut || slash) {
-      event.preventDefault();
-      input.focus();
-      input.select();
-    }
-  });
-})();
-</script>
-</body></html>
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

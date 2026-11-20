@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Native attachment clocking angle · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../qualification/">Qualification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Native attachment clocking angle</div>
+  <section class="hero small">
+    <p class="eyebrow">associativity</p>
+    <h1>Native attachment clocking angle</h1>
+    <p class="guide-lead">Joint clocking stays a native 90 degree attachment value</p>
+    <p>A rectangular Arm is attached to a Base with a 90 degree clocking angle so orientation remains relationship intent rather than baked child geometry.</p>
+    <p class="meta"><span>Base 60 × 60 × 10 mm; Arm 30 × 10 × 6 mm; attachment angle 90°</span><span>9 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/attach-angle/model_verify/presentation/preview-iso.png" alt="Native attachment clocking angle: Current deterministic presentation preview from durable build 1b13ad62ca66." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build 1b13ad62ca66.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the Base and reusable Arm components</li><li>Attach Arm TOP-to-BOTTOM with a 90 degree joint angle</li><li>Keep the rotated Arm orientation in native attachment history</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify that attach(angle=...) remains a native rigid-joint turn rather than being pre-baked into child geometry or an occurrence rotation.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>Arm().attach(base, parent=Anchor.TOP, child=Anchor.BOTTOM, angle=90)</code></p>
+    <h2>Forge model</h2>
+    <p>One square Base and one non-square 30x10 Arm. The child definition stays neutral; only the attachment carries the quarter-turn.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>joint.create(type=&#x27;rigid&#x27;, angle=90) is the only authored clocking relationship. Forge does not rotate the Arm occurrence separately.</p>
+    <h2>SolidCraft result</h2>
+    <p>The Arm sits on the Base TOP face and its 30x10 footprint is quarter-turned to 10x30 in world XY.</p>
+    <h2>Saved-design test</h2>
+    <p>Not required; this case isolates native orientation/clocking and is qualified by measured bounds plus fixed-camera visual regression.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The non-square arm size shows whether the quarter-turn is correct. The saved SolidCraft model is also checked for the expected joint angle.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — The joint angle is the persisted native relationship value that clocks the child about the attachment normal.</li><li><strong>BOSL2</strong> — Conceptually comparable to spin/clocking around an attachment normal, while the child geometry remains reusable and neutral.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Qualification: attach(angle=...) is a native joint clocking value.&quot;&quot;&quot;
+
+
+class Base:
+    WIDTH = 60.0
+    DEPTH = 60.0
+    HEIGHT = 10.0
+
+    def build(self):
+        return Box(self.WIDTH, self.DEPTH, self.HEIGHT, anchor=Anchor.BOTTOM)
+
+
+class Arm:
+    LENGTH = 30.0
+    WIDTH = 10.0
+    HEIGHT = 6.0
+
+    def build(self):
+        return Box(self.LENGTH, self.WIDTH, self.HEIGHT, anchor=Anchor.BOTTOM)
+
+
+class AttachAngle:
+    def build(self):
+        base = Base()
+        arm = Arm().attach(
+            base,
+            parent=Anchor.TOP,
+            child=Anchor.BOTTOM,
+            angle=90,
+        )
+        return base + arm
+
+
+AttachAngle()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/attach-angle/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.move</code></li><li><code>joint.create</code></li><li><code>browser.visibility</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

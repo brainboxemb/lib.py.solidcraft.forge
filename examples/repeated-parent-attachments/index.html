@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Attachments on repeated parent occurrences · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../qualification/">Qualification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Attachments on repeated parent occurrences</div>
+  <section class="hero small">
+    <p class="eyebrow">associativity</p>
+    <h1>Attachments on repeated parent occurrences</h1>
+    <p class="guide-lead">Two disconnected joint graphs follow one shared parent height</p>
+    <p>Two Parent occurrences share one height parameter and each owns a Marker attached from parent TOP to child BOTTOM.</p>
+    <p class="meta"><span>Parent height 40 mm; second parent at X=60 mm; editable shared parent_height</span><span>14 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/repeated-parent-attachments/model_verify/presentation/preview-iso.png" alt="Attachments on repeated parent occurrences: Current deterministic presentation preview from durable build 1b13ad62ca66." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build 1b13ad62ca66.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create two occurrences of one Parent definition</li><li>Attach one Marker to the TOP face of each Parent occurrence</li><li>Keep both attachment graphs dependent on the shared parent_height</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify two disconnected rigid-joint graphs when two occurrences of one shared parent definition each own one attached child.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>right = left.copy(placement=Placement(x=60)); marker_a = Marker().attach(left, parent=Anchor.TOP, child=Anchor.BOTTOM); marker_b = marker_a.copy().attach(right, parent=Anchor.TOP, child=Anchor.BOTTOM)</code></p>
+    <h2>Forge model</h2>
+    <p>Two Parent occurrences share one definition and one parent_height dependency. Two Marker occurrences share one definition. Each Marker has exactly one rigid Attachment to a different Parent occurrence.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge creates one Parent definition plus one translated copy and one Marker definition plus one copy. Each Marker receives its symbolic computed seed Placement through a replay-bound occurrence.move, followed by exactly one authored rigid joint.create to its replay-bound Parent occurrence. No generated placement joint is allowed.</p>
+    <h2>SolidCraft result</h2>
+    <p>Both markers sit on their own parent TOP face. After parent_height changes in the saved design, both disconnected joint graphs must rebuild so both markers follow the changed top faces.</p>
+    <h2>Saved-design test</h2>
+    <p>Change parent_height from 40 to 60 mm in the saved .sc design; both Parent occurrences become 60 mm tall and both Marker occurrences move from Z=40..50 to Z=60..70 without rerunning Python.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>Four rectangular body bounds expose both parent heights and both child positions. saved-design mutation separately proves that both disconnected native joint graphs follow the shared parent-height change.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — This case isolates the 0.42 joint-solver behaviour for two disconnected graphs that share reusable component definitions.</li><li><strong>BOSL2</strong> — Two independent TOP-to-BOTTOM attachments express the same parent/child intent without SolidCraft-specific replay identity.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Qualification: two repeated parents, each with one attached child.&quot;&quot;&quot;
+
+
+class Parent:
+    _height = 40.0
+
+    def build(self):
+        return Box(20, 20, self._height, anchor=Anchor.BOTTOM)
+
+
+class Marker:
+    def build(self):
+        return Box(10, 10, 10, anchor=Anchor.BOTTOM)
+
+
+class RepeatedParentAttachments:
+    parent_height = 40.0
+
+    def build(self):
+        left = Parent(_height=self.parent_height)
+        right = left.copy(placement=Placement(x=60))
+
+        left_marker = Marker().attach(
+            left,
+            parent=Anchor.TOP,
+            child=Anchor.BOTTOM,
+        )
+        right_marker = left_marker.copy().attach(
+            right,
+            parent=Anchor.TOP,
+            child=Anchor.BOTTOM,
+        )
+        return left + right + left_marker + right_marker
+
+
+RepeatedParentAttachments()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/repeated-parent-attachments/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.copy</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>joint.create</code></li><li><code>joint.create</code></li><li><code>browser.visibility</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

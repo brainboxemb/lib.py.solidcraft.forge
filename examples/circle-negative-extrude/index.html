@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Negative circle profile extrusion · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../qualification/">Qualification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Negative circle profile extrusion</div>
+  <section class="hero small">
+    <p class="eyebrow">fundamentals</p>
+    <h1>Negative circle profile extrusion</h1>
+    <p class="guide-lead">An explicit Circle2D sketch extrudes along negative Z</p>
+    <p>One minimal circular profile verifies explicit sketch authoring and a signed negative extrusion direction.</p>
+    <p class="meta"><span>Ø20 mm profile; 30 mm negative extrusion</span><span>6 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/1b13ad62ca6626a0584ec8ea427535936a8d9312/main/examples/circle-negative-extrude/model_verify/presentation/preview-iso.png" alt="Negative circle profile extrusion: Current deterministic presentation preview from durable build 1b13ad62ca66." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build 1b13ad62ca66.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create an explicit XY Sketch</li><li>Add the Ø20 Circle2D profile</li><li>Extrude the sketch 30 mm in negative Z</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Qualify Circle2D authored inside an explicit Sketch and a negative signed extrusion distance with one minimal native model.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>with Sketch(plane=&#x27;XY&#x27;): Circle2D(d=20); sketch.extrude(-30)</code></p>
+    <h2>Forge model</h2>
+    <p>One circular 2D profile authored in an explicit XY Sketch and extruded 30 mm along negative Z; no CSG or attachment is involved.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>The signed Forge distance is normalized to a positive native distance plus solid.extrude(direction=&#x27;negative&#x27;).</p>
+    <h2>SolidCraft result</h2>
+    <p>One 20 mm diameter cylindrical body spans X/Y -10..10 mm and Z -30..0 mm, with an error-free saved SolidCraft timeline.</p>
+    <h2>Saved-design test</h2>
+    <p>No saved-design mutation in this fixture; it isolates direct circle-profile lowering and negative extrusion semantics.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>A box can share the same envelope as this cylinder. Circular volume and a radial surface probe are required.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>OpenSCAD</strong> — Comparable to a circle followed by linear_extrude(height=30) after selecting the opposite extrusion direction.</li><li><strong>SolidCraft</strong> — The persisted native extrusion direction and measured Z bounds are the source of truth for negative-direction semantics.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Qualification: explicitly sketched Circle2D extrusion in negative Z.&quot;&quot;&quot;
+
+
+class NegativeCircleExtrude:
+    diameter = 20.0
+    height = 30.0
+
+    def build(self):
+        with Sketch(plane=&quot;XY&quot;) as sketch:
+            Circle2D(d=self.diameter)
+        return sketch.extrude(-self.height)
+
+
+NegativeCircleExtrude()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/circle-negative-extrude/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>sketch.create</code></li><li><code>sketch.circle.center</code></li><li><code>sketch.finish</code></li><li><code>solid.extrude</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_from": "public API docstrings, API Guide and Cheatsheet",
+  "generated_from": "public API docstrings, API Guide, Cheatsheet, example model.yml metadata and local README engineering documentation",
   "entries": [
     {
       "title": "Faces",
@@ -3561,6 +3561,358 @@
         "Compile and inspect"
       ],
       "keywords": "python -m scpf examples/simple-box/scpf/model.py --connect"
+    },
+    {
+      "title": "Explicit topology pick follows parent resize",
+      "kind": "Example",
+      "url": "examples/anchor-topology-mutation/",
+      "summary": "An explicit AnchorTopology identifies one baseline edge/face/corner selection and SolidCraft retains that topology when the parent dimensions change.",
+      "aliases": [
+        "A fixed baseline topology pick remains attached to the selected corner",
+        "anchors"
+      ],
+      "keywords": "Verify the AnchorTopology contract directly: Forge supplies fixed baseline edge/face/corner pick coordinates once, then native SolidCraft must retain that selected topology when the parent dimensions change. anchors() -> AnchorTopology(edge=..., on=..., corner=..., z=..., x=...); attach(parent='front_top_left_pick', child=AnchorFrame()) One parametric Board, one named topology anchor with deliberately fixed numeric pick points, and one centered Marker attached to that anchor. AnchorTopology is inlined into joint.create as edge/on/corner plus optional z/x. No persistent joint.origin and no Forge-side recomputation of the pick coordinates occurs after the saved design is mutated. On the 40x20x20 board the marker is centered on the front-top-left corner selected by the explicit topology pick. Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the unchanged native relationship must move the marker to the new front-top-left corner without rerunning Python. The board and marker positions describe the visible result. After resizing the saved model, the marker must still follow the same selected edge and corner. This is a direct test of native topology persistence: the initial pick identifies topology, while later parameter changes move that topology. The higher-level intent is still a semantic attachment point, but this fixture specifically qualifies Forge's lower-level explicit topology reference."
+    },
+    {
+      "title": "Face-relative hole with native pattern",
+      "kind": "Example",
+      "url": "examples/anchored-holes/",
+      "summary": "A rectangular plate with one TOP-face hole source that is cut once and repeated as an editable native rectangular pattern.",
+      "aliases": [
+        "One attached source cut repeated by native rectangular history",
+        "features"
+      ],
+      "keywords": "Verify one TOP-face source hole cut followed by one native rectangular history pattern. with Sketch(on=plate, parent=Anchor.TOP): Circle2D(...); source_cut = sketch.extrude(Depth.THROUGH_ALL); plate.rectangular_pattern(source_cut, ...) A feature-based plate with one face-attached source hole cut and one native rectangular pattern that creates the second hole. Forge emits one attached Hole sketch/cut and one native solid.pattern.rectangular history feature. No Forge-side repeat helper or expanded duplicate profiles are used. One plate with two through holes at the requested Y spacing, one source cut and one native rectangular pattern feature. No saved-design mutation in this fixture; geometry and feature placement are measured at geometry. The holes do not change the outer plate bounds. Volume and 3D hole-wall probes are required. Comparable geometry normally uses difference() and repeated cylinders. This case instead qualifies one semantic TOP-face source cut plus native SolidCraft pattern history; native solid.hole itself is qualified separately by hole-family."
+    },
+    {
+      "title": "Imported @assembly subassembly",
+      "kind": "Example",
+      "url": "examples/assembly-decorator/",
+      "summary": "An imported PostPair assembly creates two occurrences of one Post definition without adding an extra geometry layer.",
+      "aliases": [
+        "An imported assembly returns reusable native component occurrences",
+        "components"
+      ],
+      "keywords": "Verify the public @assembly decorator on an imported reusable subassembly, independently of anchor or feature complexity. @component class Post; @assembly class PostPair; root model imports and returns PostPair() One reusable Post component definition plus two occurrences produced inside an imported @assembly factory. The root model treats the returned subassembly as ordinary assembly geometry. The Python-only @assembly wrapper disappears during lowering: Forge emits one Post component definition and one copied occurrence placed directly by occurrence.copy; no occurrence.move is needed. Two identical 10 x 10 x 20 mm posts remain at X=-15 and X=+15 while the imported @assembly result builds from a replay-safe component/copy command plan. No saved-design mutation in this fixture; it isolates imported @assembly construction and native lowering. This case adds reusable assembly construction around two rectangular posts; the geometry contribution is completely described by their bounds. The public Python object/decorator layer should remain natural while still producing reusable native CAD structure. The resulting assembly must lower to native component/occurrence commands and build without special runtime handling."
+    },
+    {
+      "title": "Assembly-owned named anchor",
+      "kind": "Example",
+      "url": "examples/assembly-owned-anchor/",
+      "summary": "An assembly publishes a named corner datum and a Marker consumes it without adding application-specific anchor names to the generic Base component.",
+      "aliases": [
+        "A semantic datum belongs to the assembly rather than the reusable part",
+        "anchors"
+      ],
+      "keywords": "Verify that an assembly can publish a semantic attachment name without putting that application-specific datum on the reusable component, and that a consumer of the name still lowers to an associative native relationship. (base + companion).with_anchor('inspection_corner', base, Anchor.FRONT_TOP_RIGHT); datum = frame.anchor('inspection_corner'); Marker().attach(datum.target, parent=datum.reference, ...) The assembly stores a name mapped to an existing target occurrence plus a normal Forge anchor reference. The reusable Base knows nothing about the semantic name. with_anchor()/anchor() are Forge-side semantic indirection only. The resulting native joint is the same topology-backed FRONT_TOP_RIGHT relationship that a direct attach would emit; no extra native helper object is required. The marker sits on the base front-top-right corner while an unrelated companion occurrence remains part of the same assembly. Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the marker created through the assembly-owned name must follow the moved corner without rerunning Python. The three body sizes and positions describe the visible assembly. The saved SolidCraft model is checked separately to confirm which assembly owns the anchor and which parts are related. Semantic attachment names belong naturally to the assembly that owns their meaning rather than to a generic reusable component. The semantic name disappears during lowering; the persisted native relationship remains topology-backed and associative."
+    },
+    {
+      "title": "Native attachment clocking angle",
+      "kind": "Example",
+      "url": "examples/attach-angle/",
+      "summary": "A rectangular Arm is attached to a Base with a 90 degree clocking angle so orientation remains relationship intent rather than baked child geometry.",
+      "aliases": [
+        "Joint clocking stays a native 90 degree attachment value",
+        "associativity"
+      ],
+      "keywords": "Verify that attach(angle=...) remains a native rigid-joint turn rather than being pre-baked into child geometry or an occurrence rotation. Arm().attach(base, parent=Anchor.TOP, child=Anchor.BOTTOM, angle=90) One square Base and one non-square 30x10 Arm. The child definition stays neutral; only the attachment carries the quarter-turn. joint.create(type='rigid', angle=90) is the only authored clocking relationship. Forge does not rotate the Arm occurrence separately. The Arm sits on the Base TOP face and its 30x10 footprint is quarter-turned to 10x30 in world XY. Not required; this case isolates native orientation/clocking and is qualified by measured bounds plus fixed-camera visual regression. The non-square arm size shows whether the quarter-turn is correct. The saved SolidCraft model is also checked for the expected joint angle. The joint angle is the persisted native relationship value that clocks the child about the attachment normal. Conceptually comparable to spin/clocking around an attachment normal, while the child geometry remains reusable and neutral."
+    },
+    {
+      "title": "Minimal L-profile",
+      "kind": "Example",
+      "url": "examples/bracket/",
+      "summary": "An L-shaped polygon is authored in XZ and symmetrically extruded without holes, fillets or secondary features.",
+      "aliases": [
+        "A simple XZ L-profile provides a clean reusable geometry baseline",
+        "fundamentals"
+      ],
+      "keywords": "Provide a deliberately simple reusable L-shaped reference component for later attachment/orientation qualification. with Sketch(plane='XZ'): Polygon2D(..., plane='XZ'); sketch.extrude(width, direction=Direction.SYMMETRIC) One symbolic L profile extruded symmetrically through its width; no holes, fillets, anchors or secondary features. Native XZ sketch/polygon plus symmetric extrusion. No assembly commands are present yet. A clean 40 mm L profile with 12 mm arms and 24 mm symmetric extrusion width. Not yet an attachment mutation case. This component is intentionally the geometry baseline for upcoming multi-orientation anchor tests. A filled box can share the L-profile envelope. L-profile volume and a probe in the missing corner are required. Equivalent baseline is a 2D L polygon followed by linear_extrude(center=true). Later attachment cases can reuse this simple shape while testing anchor/orient semantics independently of bracket feature complexity."
+    },
+    {
+      "title": "Negative circle profile extrusion",
+      "kind": "Example",
+      "url": "examples/circle-negative-extrude/",
+      "summary": "One minimal circular profile verifies explicit sketch authoring and a signed negative extrusion direction.",
+      "aliases": [
+        "An explicit Circle2D sketch extrudes along negative Z",
+        "fundamentals"
+      ],
+      "keywords": "Qualify Circle2D authored inside an explicit Sketch and a negative signed extrusion distance with one minimal native model. with Sketch(plane='XY'): Circle2D(d=20); sketch.extrude(-30) One circular 2D profile authored in an explicit XY Sketch and extruded 30 mm along negative Z; no CSG or attachment is involved. The signed Forge distance is normalized to a positive native distance plus solid.extrude(direction='negative'). One 20 mm diameter cylindrical body spans X/Y -10..10 mm and Z -30..0 mm, with an error-free saved SolidCraft timeline. No saved-design mutation in this fixture; it isolates direct circle-profile lowering and negative extrusion semantics. A box can share the same envelope as this cylinder. Circular volume and a radial surface probe are required. Comparable to a circle followed by linear_extrude(height=30) after selecting the opposite extrusion direction. The persisted native extrusion direction and measured Z bounds are the source of truth for negative-direction semantics."
+    },
+    {
+      "title": "Native circular feature pattern",
+      "kind": "Example",
+      "url": "examples/circular-feature-pattern/",
+      "summary": "A plate receives one source through-hole cut and SolidCraft repeats that feature around a pitch circle as one editable circular pattern.",
+      "aliases": [
+        "One source cut is repeated by a native circular History pattern",
+        "features"
+      ],
+      "keywords": "Qualify one real SolidCraft circular History pattern over an existing cut feature, rather than Forge-expanded repeated holes. source = bolt.extrude(Depth.THROUGH_ALL); body = body - source; body.circular_pattern(source, count=bolts, axis=Axis.Z) One 100 x 100 x 6 mm plate, one native \u00d88 source cut on a 60 mm pitch circle and one native six-instance circular feature pattern. Forge emits the source Sketch/cut once, then exactly one solid.pattern.circular with features=['BoltHole']; bolts is a dimensionless native count parameter and pcd remains a millimetre parameter used by the source profile position. SolidCraft saves one plate with six through holes and one native CircularPatternFeature that references the original BoltHole cut. Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature. The six bolt holes do not change the plate envelope. Volume, cylindrical-wall probes and native pattern-history checks are required. Native integration through saved-design checks prove one saved CircularPatternFeature and count mutation. The four comparison libraries independently prove the baseline six-hole geometry."
+    },
+    {
+      "title": "Reuse one component definition in two placements",
+      "kind": "Example",
+      "url": "examples/components/",
+      "summary": "One Block component definition is instantiated twice with a simple translated copy and no attachment relationship.",
+      "aliases": [
+        "Two touching occurrences share one reusable Block definition",
+        "components"
+      ],
+      "keywords": "Verify that one reusable component definition can have two occurrences with ordinary Placement and no attachment relationship. left = Block(); right = left.copy(placement=Placement(x=Block.length)) Two ModelInstance occurrences share one ModelDefinition. The second occurrence carries only Placement metadata; neither occurrence carries an Attachment. Forge creates one Block component definition and one occurrence.copy with translate=[40,0,0]. No joint.create and no later occurrence.move are needed. Two identical blocks touch face-to-face at X=20 while retaining one shared editable component definition. No mutation in this base case; parameter-driven Placement is qualified separately. The two body sizes and positions describe the visible result. The saved SolidCraft model is checked separately to confirm that both occurrences reuse one component definition. One component definition may be placed more than once; this case qualifies that basic component/occurrence structure without introducing a joint."
+    },
+    {
+      "title": "Topology-backed corner anchor",
+      "kind": "Example",
+      "url": "examples/corner-anchor/",
+      "summary": "A Marker uses matching parent and child corner anchors so the native relationship follows two changing parent dimensions.",
+      "aliases": [
+        "A standard corner reference follows parent width and height",
+        "anchors"
+      ],
+      "keywords": "Verify a corner reference that follows both parent width and height changes. Anchor.FRONT_TOP_RIGHT paired with child Anchor.BACK_TOP_RIGHT A standard corner Anchor is resolved to an edge/on/corner native topology reference rather than a free point. joint.create receives SolidCraft edge/on/corner picks so the saved design can re-find the corner after geometry changes. The marker sits on the front-top-right corner of the base. Change the base from 40x20 to 80x40 mm; the marker must follow both the new right side and new top. The base and marker positions show the intended corner placement. The saved SolidCraft model is then changed to confirm that the marker keeps following that corner. BOSL2 supports side/edge/corner anchors; its anchor also carries orientation, which is a useful design reference for Forge."
+    },
+    {
+      "title": "Eight vertical L-profiles: two per side corner",
+      "kind": "Example",
+      "url": "examples/eight-corner-brackets/",
+      "summary": "A parametric frame reuses one L-profile component in eight calculated placements, two on every rounded side corner.",
+      "aliases": [
+        "One reusable L-profile is placed at top and bottom of each frame corner",
+        "components"
+      ],
+      "keywords": "Place two short vertical angle profiles on each rounded side corner, one at the bottom and one at the top. The assembly calculates all eight poses directly from frame dimensions. LProfile.copy(placement=Placement(x=..., y=..., z=..., rotation=(Z, ...))) One rounded parametric FrameBlock plus eight occurrences of one neutral LProfile definition. Position and clocking belong to the assembly; there is no Attachment. Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id. Each rounded vertical side corner carries exactly two outside angle profiles. On the 60 mm frame they occupy Z=0..16 and Z=44..60. Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow the calculated X/Y positions and each upper member moves to Z=74..90. This case adds eight placements of the qualified corner-bracket geometry. Per-occurrence bounds and the visual decomposition describe the added placement geometry; native relationships are checked separately. component.create/occurrence.copy return real occurrence ids; the replay executor binds those ids before later parametric occurrence.move commands. One neutral component is repeated by assembly-owned placement."
+    },
+    {
+      "title": "Eight flightcase corner protectors",
+      "kind": "Example",
+      "url": "examples/eight-flightcase-corners/",
+      "summary": "A parameterized case reuses one three-plate corner protector with assembly-owned positions and 3D orientations.",
+      "aliases": [
+        "One neutral trihedral protector is reused on all eight case corners",
+        "components"
+      ],
+      "keywords": "Reuse one neutral three-plate corner protector on all eight case corners. The assembly calculates each XYZ position and 3D orientation directly from case dimensions. FlightcaseCorner.copy(placement=Placement(x=..., y=..., z=..., rotation=(axis, angle))) One rounded CaseBlock plus eight occurrences of one neutral trihedral protector. Position and orientation belong to the assembly; there is no Attachment. Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id. Each of the eight case corners is wrapped by three connected plates: one horizontal and two vertical. The protector outer envelope is a fixed 24x24x24 mm at every corner. Change case_width/depth/height from 120x80x60 to 160x120x90 mm; all protectors follow the calculated corner positions without rerunning Python, while every protector remains exactly 24x24x24 mm. This case qualifies eight corner placements around the case. Per-occurrence bounds and the visual decomposition describe this case's placement geometry; native relationships are checked separately. component.create/occurrence.copy return real occurrence ids; the replay executor binds those ids before later parametric occurrence.move commands. One neutral trihedral part is reused in eight assembly-owned poses."
+    },
+    {
+      "title": "Four centred vertical L-profiles",
+      "kind": "Example",
+      "url": "examples/four-corner-l/",
+      "summary": "A parametric frame reuses one short L-profile component at each side corner with assembly-calculated positions and rotations.",
+      "aliases": [
+        "One L-profile definition is placed around all four frame corners",
+        "components"
+      ],
+      "keywords": "Place one short vertical angle profile around each of the four rounded side corners of a rectangular frame. The assembly calculates each occurrence pose directly from frame dimensions. LProfile.copy(placement=Placement(x=..., y=..., z=..., rotation=(Z, ...))) One rounded parametric FrameBlock plus four occurrences of one neutral vertical LProfile definition. Position and clocking belong to the assembly; there is no Attachment. Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id. One vertical angle profile wraps each front-left, front-right, rear-right and rear-left rounded side corner. All four occupy Z=22..38 on the 60 mm frame. Change frame_width/depth from 120x80 to 160x120 mm in the saved .sc design; all four profiles follow the calculated corner positions while remaining centred at the same frame height. This case adds placement of four already-qualified L-profile components around the frame. The component profile itself is qualified by the bracket case; these bounds describe this case's additional geometry. component.create/occurrence.copy return real occurrence ids; the replay executor binds those ids before later parametric occurrence.move commands. The neutral angle profile is reused while the assembly owns position and orientation."
+    },
+    {
+      "title": "Named native group hierarchy",
+      "kind": "Example",
+      "url": "examples/group-hierarchy/",
+      "summary": "Two shared Panel occurrences are grouped under PanelGroup while a separate Frame remains a direct root component.",
+      "aliases": [
+        "A grouped pair of Panels remains a real nested SolidCraft component",
+        "components"
+      ],
+      "keywords": "Verify that group(name) creates a real nested native component rather than a Python-only label. (left + right).group('PanelGroup'); group + Frame() Two Panel occurrences share one definition under a named PanelGroup component, while Frame remains a direct root child. Forge emits component.create(name='PanelGroup'), creates Panel with parent='PanelGroup', copies its occurrence, and creates Frame at the design root. Two 10 x 2 x 20 mm panels remain nested under PanelGroup and one 35 x 10 x 40 mm frame remains at root; native BOM inspection must preserve that hierarchy. No saved-design mutation in this fixture; it isolates persisted native grouping and hierarchy. The body sizes describe the visible parts. The saved SolidCraft model is checked separately to confirm the expected group and BOM structure. Native components form a tree; top-level BOM inspection exposes direct children while flat BOM inspection expands subassemblies. Python-side composition should lower to inspectable native CAD structure rather than remain a transient wrapper."
+    },
+    {
+      "title": "Native Hole family",
+      "kind": "Example",
+      "url": "examples/hole-family/",
+      "summary": "A single plate exercising simple, counterbore, countersink and threaded holes as direct native SolidCraft Hole features.",
+      "aliases": [
+        "Four native mechanical hole intents on one plate",
+        "features"
+      ],
+      "keywords": "Qualify the four normal mechanical hole intents as direct native features: simple, counterbore, countersink and threaded. Hole(...); CounterboreHole(...); CountersinkHole(...); ThreadedHole(...) One 120 x 40 x 12 mm plate with four explicitly positioned Hole-family features. ThreadedHole keeps thread intent separate from the simple bore diameter. Each Forge Hole-family object lowers one-to-one to one native solid.hole command. Counterbore and countersink use the native hole type fields; ThreadedHole uses native thread metadata/modeling fields. No sketch or helper subtraction solid is synthesized. One plate contains four editable native Hole features: \u00d86 simple, \u00d86/\u00d812 x 4 counterbore, \u00d86/\u00d812 90\u00b0 countersink, and an M6 modeled threaded hole using an explicit \u00d85 tap drill. No saved-design mutation is required in this first Hole-family qualification; unit, integration and native geometry checks prove API, native command identity and geometry while visual proves the visible forms. All four Hole-family features leave the outer plate envelope unchanged. 3D probes are required for the simple bore, counterbore recess, countersink cone and threaded tap-drill envelope; native history separately proves thread metadata and modeled-thread intent. build123d 0.12.0 provides native Hole, CounterBoreHole and CounterSinkHole operations. Its core library has no equivalent native tapped-hole metadata feature, so the fourth reference cut is the \u00d85 M6 tap-drill envelope. CadQuery independently expresses simple, counterbore and countersink geometry; the threaded reference uses the \u00d85 tap-drill envelope because native thread metadata is SolidCraft-specific. Constructive geometry independently reproduces the four hole envelopes; the thread reference is the \u00d85 tap-drill envelope. Constructive geometry independently reproduces the four hole envelopes; the thread reference is the \u00d85 tap-drill envelope."
+    },
+    {
+      "title": "Explicit component parameters and shared dependencies",
+      "kind": "Example",
+      "url": "examples/parameter-scope/",
+      "summary": "Five Panel occurrences demonstrate local component parameters, explicit overrides, shared parent dependencies and a derived half-width expression.",
+      "aliases": [
+        "Published child parameters stay distinct from inherited shared values",
+        "parameters"
+      ],
+      "keywords": "Verify that reusable component defaults stay fixed unless explicitly included, while selected defaults become native parameters and parent Parameters/Expressions are reused rather than duplicated in the child. @component(include=('width',)) class Panel; Panel(width=self.shared_width); Panel(width=half(self.shared_width)) Only explicitly included width defaults become component-local Parameters. The lower-case depth default remains fixed. Inherited Parameter/Expression inputs become external bindings to the existing parent dependency. Explicitly included component parameters are namespaced with the internal definition number plus readable component name (for example d1_Panel_width); unincluded child defaults stay fixed; inherited names such as shared_width remain unprefixed and are emitted once even when several child definitions use them. The saved SolidCraft design exposes d1_Panel_width, d2_Panel_2_width and shared_width; changing shared_width updates both directly-bound children and the derived half-width child without rerunning Python. Change shared_width from 80 to 100 mm in the saved native design; widths must change from [40,40,60,80,80] to [40,50,60,100,100]. The body sizes and positions describe the visible result. The saved SolidCraft model is checked separately to confirm that shared parameters are reused instead of duplicated. Reference geometry remains ordinary Python; Forge adds explicit native parameter publication because that is persistence/editability intent rather than geometry syntax. Native parameters and expressions are the source of truth for saved-design editability and rebuild behaviour."
+    },
+    {
+      "title": "Face anchor follows parent geometry",
+      "kind": "Example",
+      "url": "examples/parametric-anchor/",
+      "summary": "A Block attached to the Base RIGHT face remains tied to native parent topology when the parent width changes.",
+      "aliases": [
+        "RIGHT-to-LEFT attachment follows an editable parent width",
+        "anchors"
+      ],
+      "keywords": "Verify that a standard face anchor remains tied to changing parent topology. Anchor.RIGHT / Anchor.LEFT with parent parameter propagation The attachment references the parent's semantic RIGHT face, not a frozen absolute X coordinate. joint.create uses a native face reference derived from the parent occurrence; the parent width remains a SolidCraft parameter. The attached block stays on the parent's right face. Change base_width from 40 to 80 mm in the saved design; the block follows the moved RIGHT face. The two body sizes and positions show the initial face-relative placement. The saved SolidCraft model is then changed to confirm that the same anchor is still used. BOSL2 cardinal anchors similarly express a meaningful side of the parent instead of an absolute coordinate."
+    },
+    {
+      "title": "Editable distance between attached components",
+      "kind": "Example",
+      "url": "examples/parametric-attach/",
+      "summary": "A Block is attached to a Base with a symbolic gap so editing the saved SolidCraft design moves the attached component without rerunning Python.",
+      "aliases": [
+        "Attachment gap remains an editable native relationship parameter",
+        "associativity"
+      ],
+      "keywords": "Verify that distance along the attachment normal remains a native editable joint parameter. attach(..., gap=self.gap) Rigid Attachment with a symbolic gap expression; anchor identities are unchanged. The child receives a symbolic seed pose so a floating graph starts at the authored mating position; joint.create(type='rigid', offset='gap') remains the relationship and the gap remains a native expression in both places rather than a flattened number. The child sits 10 mm away from the parent's RIGHT face along the joint normal. Change gap from 10 to 30 mm in the saved .sc design; the child must move another 20 mm without rerunning Python. The two rectangular body bounds describe the baseline gap geometry. Saved joint recompute is proved separately by saved-design. Conceptually similar to an attachment displacement along the local anchor normal rather than a world-axis translate."
+    },
+    {
+      "title": "Editable local offset at an attachment",
+      "kind": "Example",
+      "url": "examples/parametric-offset/",
+      "summary": "A Marker is corner-attached to a Base with a symbolic local planar offset that remains editable in the saved SolidCraft relationship.",
+      "aliases": [
+        "Attachment-plane offset keeps its local coordinate meaning",
+        "associativity"
+      ],
+      "keywords": "Verify the existing local (u,v) attachment-plane offset and make its coordinate semantics explicit. attach(..., offset=(u, v)) Attachment stores two symbolic local planar values; these are not world X/Y/Z coordinates. The computed child seed pose retains the symbolic local offset, then the actual relationship is joint.create(type='planar', values=[u,v,angle]). The seed move is not an additional joint. The marker moves within the selected corner anchor's local attachment plane. Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm. The base and marker sizes and positions show the local offset. The saved SolidCraft model is then changed to confirm that the planar joint updates correctly. Important reference: attach() operates in the local coordinate system at the parent anchor, not blindly in world coordinates. A raw translate([x,y,z]) is world/object transform syntax and therefore is not equivalent to this local joint offset."
+    },
+    {
+      "title": "Child dimensions derived from parent parameters",
+      "kind": "Example",
+      "url": "examples/parent-derived-child-size/",
+      "summary": "A parent block and child component preserve width and depth expressions so saved-design edits to the parent rebuild both bodies.",
+      "aliases": [
+        "A reusable child keeps half-size expressions from its parent",
+        "parameters"
+      ],
+      "keywords": "Isolate one dependency contract: a reusable child receives width and depth expressions derived from parent parameters, and those child dimensions remain editable/associative in the saved SolidCraft design. DerivedChild(width=self.base_width / 2, depth=self.base_depth / 2) One ParentBlock and one DerivedChild. Only base_width and base_depth are published as document parameters; the child carries expressions that reference those existing parent parameters instead of receiving independent duplicated values. The parent and child sketch dimensions preserve base_width/base_depth expressions. Forge must not flatten base_width / 2 or base_depth / 2 to numeric constants when compiling the child component. At 120x80 mm parent size, the child measures 60x40 mm. Its fixed height and fixed body layout are deliberately unrelated to this qualification. Change base_width/base_depth from 120x80 to 160x120 mm in the saved .sc design; without rerunning Python the child must rebuild from 60x40 to 80x60 mm. The geometry is two rectangular bodies whose declared sizes and positions are sufficient; the parent-to-child expression is proved by native mutation. Native parameters and expressions must preserve the parent-to-child dimensional dependency after the Python compiler has finished. The Python model expresses the dependency with ordinary arithmetic rather than a special application-specific sizing API."
+    },
+    {
+      "title": "Primitive CSG",
+      "kind": "Example",
+      "url": "examples/primitive-csg/",
+      "summary": "Sphere, Box and X-axis Cylinder primitives are translated and combined with union, subtraction and intersection independently of feature-history modelling.",
+      "aliases": [
+        "Direct primitives and Boolean operators form one native CSG result",
+        "fundamentals"
+      ],
+      "keywords": "Qualify direct primitive/CSG modelling independently of feature-history geometry: Sphere and Box union, translated primitives, one native X-axis Cylinder cut and intersection. Sphere(); Box(...).move(...); Cylinder(..., axis=Axis.X).at(...); + / - / & A Shape CSG tree rooted in Sphere so Forge deliberately selects the direct CSG compiler instead of the feature-history Box compiler. solid.sphere(new), solid.box(join), one X-axis solid.cylinder(cut), then solid.box(intersect). SolidCraft accepts the complete CSG command path, produces one valid clipped body and evaluates the native timeline without errors. No saved-design mutation in this case; it isolates primitive CSG lowering. Parametric edits are covered by dedicated saved-design cases. Many different Boolean results can share this envelope. Surface probes must prove the surviving sphere, bore, clipped box and unioned extension. Closest to ordinary union()/difference()/intersection() with translate()/rotate() around primitives. Useful comparison for Python objects and operators while Forge still delegates all geometry to SolidCraft."
+    },
+    {
+      "title": "Native rectangular feature pattern",
+      "kind": "Example",
+      "url": "examples/rectangular-pattern/",
+      "summary": "A plate receives one Slot source cut and SolidCraft repeats that existing feature in a rectangular rows-and-columns pattern.",
+      "aliases": [
+        "One Slot cut is repeated by a two-direction native History pattern",
+        "features"
+      ],
+      "keywords": "Qualify a real SolidCraft rectangular History pattern over one existing cut feature, rather than Forge-expanded repeated geometry. source = slot.extrude(-4); body = body - source; body.rectangular_pattern(source, count=columns, spacing=pitch, direction=Axis.X, count2=rows, spacing2=row_pitch, direction2=Axis.Y) One 120 x 80 x 4 mm plate, one native straight Slot cut and one native 3 x 2 rectangular feature pattern. Forge emits the source Sketch/cut once, then exactly one solid.pattern.rectangular with features=['Slot']; columns/rows are dimensionless native parameters and pitches remain millimetre parameters. SolidCraft saves one plate with six slot cuts and one native rectangular pattern History feature that references the original Slot cut. Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature. The six slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required. Native integration through geometry checks additionally prove one saved RectangularPatternFeature. The four comparison libraries independently prove the final 3 x 2 slot geometry."
+    },
+    {
+      "title": "Attachments on repeated parent occurrences",
+      "kind": "Example",
+      "url": "examples/repeated-parent-attachments/",
+      "summary": "Two Parent occurrences share one height parameter and each owns a Marker attached from parent TOP to child BOTTOM.",
+      "aliases": [
+        "Two disconnected joint graphs follow one shared parent height",
+        "associativity"
+      ],
+      "keywords": "Verify two disconnected rigid-joint graphs when two occurrences of one shared parent definition each own one attached child. right = left.copy(placement=Placement(x=60)); marker_a = Marker().attach(left, parent=Anchor.TOP, child=Anchor.BOTTOM); marker_b = marker_a.copy().attach(right, parent=Anchor.TOP, child=Anchor.BOTTOM) Two Parent occurrences share one definition and one parent_height dependency. Two Marker occurrences share one definition. Each Marker has exactly one rigid Attachment to a different Parent occurrence. Forge creates one Parent definition plus one translated copy and one Marker definition plus one copy. Each Marker receives its symbolic computed seed Placement through a replay-bound occurrence.move, followed by exactly one authored rigid joint.create to its replay-bound Parent occurrence. No generated placement joint is allowed. Both markers sit on their own parent TOP face. After parent_height changes in the saved design, both disconnected joint graphs must rebuild so both markers follow the changed top faces. Change parent_height from 40 to 60 mm in the saved .sc design; both Parent occurrences become 60 mm tall and both Marker occurrences move from Z=40..50 to Z=60..70 without rerunning Python. Four rectangular body bounds expose both parent heights and both child positions. saved-design mutation separately proves that both disconnected native joint graphs follow the shared parent-height change. This case isolates the 0.42 joint-solver behaviour for two disconnected graphs that share reusable component definitions. Two independent TOP-to-BOTTOM attachments express the same parent/child intent without SolidCraft-specific replay identity."
+    },
+    {
+      "title": "TOP Sketch on circular body",
+      "kind": "Example",
+      "url": "examples/round-top-sketch/",
+      "summary": "A circular base extrusion receives a second explicit Sketch on its TOP face and joins a smaller circular hub without rectangular-body metadata.",
+      "aliases": [
+        "A face-attached sketch resolves the largest +Z face of round geometry",
+        "fundamentals"
+      ],
+      "keywords": "Verify that a TOP-attached explicit Sketch can select the largest +Z planar face of a circular extrusion without rectangular-body metadata. disc = Sketch(... Circle2D ...).extrude(10); with Sketch(on=disc, parent=Anchor.TOP): Circle2D(d=44); body + hub.extrude(16) One \u00d8100 x 10 mm circular base plus one \u00d844 x 16 mm hub joined from the selected top face. Forge emits the circular base extrusion, model.faces with plane_normal=[0,0,1] and max=area, then a face-attached Hub Sketch and join extrusion. No rectangular base lookup is required. One stepped cylindrical body spans Z=0..26 mm. Disc and Hub remain two solved native Sketch/Extrude feature pairs and the Hub is attached to the actual top face of the Disc. No saved-design mutation; this fixture isolates support-face lookup on a non-rectangular feature body. The outer bounds alone do not prove the two circular radii. Volume, radial surface probes and native Sketch history are required. Native geometry proves the face-attached Hub Sketch builds on the circular Disc and stays solved. Independent CSG reference proves the stepped-cylinder geometry. Independent union reference proves the same two-radius stepped body. Independent builder reference proves the same baseline geometry."
+    },
+    {
+      "title": "Explicit rounded-rectangle sketch pad",
+      "kind": "Example",
+      "url": "examples/rounded-rectangle-sketch/",
+      "summary": "A named face-attached Sketch uses RoundedRectangle2D to create a joined rounded pad with native straight and arc sketch geometry.",
+      "aliases": [
+        "RoundedRectangle2D remains true native rounded sketch geometry",
+        "features"
+      ],
+      "keywords": "Qualify RoundedRectangle2D in the explicit named Sketch API using true native rounded-rectangle sketch geometry. with Sketch(name='Rounded pad', on=body): add(RoundedRectangle2D(...)); body + sketch.extrude(...) One 80 x 60 x 5 mm base plate plus a centered 40 x 30 mm rounded-rectangle pad with 5 mm corner radius and 8 mm height. The named explicit Sketch emits one sketch.rectangle.rounded with true arc corners, then a native solid.extrude(operation='join'). The result is one joined body: an 80 x 60 x 5 mm base plate with a centered 40 x 30 x 8 mm rounded pad on top. The Rounded pad sketch has one closed profile made from four straight edges and four corner arcs. SolidCraft 0.42 also adds one construction diagonal between opposite arc centres; that construction line is not part of the profile. No saved-design mutation in this fixture; it isolates explicit rounded-rectangle sketch geometry and native join extrusion. A sharp rectangular pad can share the same envelope. Rounded-pad volume and a corner-distance probe are required. Native rounded sketch rectangles preserve true arc geometry and remain inspectable in the saved sketch. The explicit Sketch scope keeps 2D profile authoring separate from the subsequent 3D extrusion."
+    },
+    {
+      "title": "Selective Sketch profile extrusion",
+      "kind": "Example",
+      "url": "examples/selective-profile-extrude/",
+      "summary": "A patterned Circle sketch retains four generated profiles while one native extrusion selects only the intended three closed regions.",
+      "aliases": [
+        "One associative pattern keeps all profiles while a cut selects only three",
+        "associativity"
+      ],
+      "keywords": "Verify that one associative Sketch pattern can keep all generated profiles while one native extrusion selects only the intended closed regions by sketch-local points. sketch.rectangular_pattern(...); sketch.extrude(Depth.THROUGH_ALL, profiles=[(x, y), ...], exact_regions=True) One 120 x 60 x 5 mm plate, one Circle seed, one native four-instance sketch pattern and one through-all cut selecting three of the four circle profiles. Forge emits the Circle and native sketch pattern once, then passes three fixed point selections directly to solid.extrude profiles with exact_regions=true. No profile indices, generated curve ids or deleted pattern copies appear in user Python. SolidCraft saves one Selected holes Sketch containing the associative four-circle pattern and one cut ExtrudeFeature that removes exactly three profiles while leaving the fourth region uncut. Change hole_diameter 8->10 mm and hole_pitch 20->24 mm in the saved .sc design. Without rerunning Python the three selected cuts must follow their associated pattern profiles, including profiles whose centres move away from the original pick points; the unselected profile remains uncut. The selected cuts do not change the plate envelope. Volume, cylindrical wall probes and saved-design mutation are required to prove that exactly the chosen patterned profiles are cut. Native saved-design proves that saved point-based profile selections remain attached to the intended profile curves after pattern spacing and diameter changes. Independent final geometry confirms the baseline three-hole result without using Forge's profile-selection lowering. Independent final geometry confirms that only three of the four possible patterned positions are cut. Independent final geometry confirms the selected-hole plate."
+    },
+    {
+      "title": "Flat sheet, through hole and 90\u00b0 fold",
+      "kind": "Example",
+      "url": "examples/sheet-fold/",
+      "summary": "An 80 \u00d7 40 mm flat sheet blank with one through hole and one 90 degree native fold using a shared sheet rule.",
+      "aliases": [
+        "Native sheet-metal history with a recoverable flat pattern",
+        "features"
+      ],
+      "keywords": "Qualify the fabrication workflow used by later bent parts: create one flat sheet blank, cut an ordinary Hole while flat, fold existing material, and recover the developed flat pattern. with Sketch(...): Rectangle2D(...); blank.sheet_metal(thickness=..., bend_radius=..., k_factor=...); sheet + Hole(...).at(...); sheet.fold(line=..., angle=..., fixed=...) One 80 x 40 mm rectangular flat blank with a shared 2 mm sheet rule, one \u00d86 through hole in the fixed flat, and one 90 degree fold along the Y direction near the right side. Forge emits one sheet.manage_rules, one Blank sketch, one sheet.flange(type='base'), one native solid.hole and one native sheet.fold. No solid.extrude or fused-solid bend approximation is used. SolidCraft 0.42 keeps one connected sheet-metal body with the \u00d86 hole on the fixed flat, one native Fold feature and a flat pattern that recovers the original rectangular blank and cutout. No saved-design mutation is required in this first sheet-metal qualification. unit, integration and native geometry checks prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank. The formed bounding box does not prove sheet thickness, the \u00d86 cutout or that the upright region came from a native bend. Volume and native sheet history/flat-pattern evidence are required. The pinned build123d 0.12.0 reference uses make_brake_formed for an independent final-geometry comparison. Its newer BuildSheet/bend API is design input only and is not silently substituted into the pinned reference runtime. Independent final geometry is built from flat and bent solid envelopes; CadQuery does not provide the same native sheet-history contract. Constructive geometry independently represents the formed envelope and through hole; native sheet rules/history remain SolidCraft-only evidence. Constructive geometry independently represents the formed envelope and through hole; native sheet rules/history remain SolidCraft-only evidence."
+    },
+    {
+      "title": "Parameterized Box",
+      "kind": "Example",
+      "url": "examples/simple-box/",
+      "summary": "A minimal Forge model that exposes length, width and height as editable SolidCraft parameters and lowers directly to one native Box feature.",
+      "aliases": [
+        "Three editable dimensions driving one native box",
+        "fundamentals"
+      ],
+      "keywords": "Establish the smallest model/parameter contract: three public Python fields create one editable native box. class fields -> Parameter; Box(length, width, height); build() One root Shape with symbolic length, width and height; no occurrence or assembly layer. parameters.add for the public dimensions, followed directly by native solid.box; no sketch is synthesized. One rectangular solid with the requested 40 x 30 x 10 mm dimensions and an error-free timeline. Required because this case explicitly claims an editable native Box. Change length from 40 to 50 mm in the saved .sc design; the Box must rebuild to 50 x 30 x 10 mm without rerunning Python. This case is one rectangular solid. Its body size fully describes the visible geometry. The saved SolidCraft model is checked separately to confirm that the dimensions remain editable parameters. cube([40,30,10]) is the constructive-geometry baseline; Forge differs by preserving editable SolidCraft history."
+    },
+    {
+      "title": "Associative sketch pattern and mirror",
+      "kind": "Example",
+      "url": "examples/sketch-pattern-mirror/",
+      "summary": "One Circle seed and one Slot seed generate repeated cut geometry through native sketch pattern and mirror relationships rather than Python-expanded copies.",
+      "aliases": [
+        "Native sketch patterns and mirrors drive repeated holes and slots",
+        "associativity"
+      ],
+      "keywords": "Verify that one Circle seed and one Slot seed drive repeated sketch geometry through native SolidCraft rectangular patterns and mirrors instead of Python-expanded copies. seed = sketch.add(Circle2D(...)); sketch.rectangular_pattern(seed, ...); sketch.mirror(pattern, axis=Axis.X/Y); same flow for SlotCenterToCenter2D One 240 x 160 x 5 mm plate with two attached Sketches. Dog holes use one Circle seed, one native sketch pattern and one mirror. Clamp slots use one Slot seed, one native sketch pattern and three mirrors. Each Sketch is cut once. Forge binds the real native curves returned by the seed profile, feeds those ids into sketch.pattern.rectangular, binds the pattern curves, and feeds those into sketch.mirror. User Python never contains SolidCraft-generated ids. SolidCraft saves one Dog holes Sketch and one Clamp slots Sketch with associative pattern/mirror relationships. Baseline geometry contains 8 \u00d88 holes and 8 straight Slots. No expanded set of independent seed commands is emitted. Change hole_diameter 8->10 mm, hole_pitch 25->30 mm and slot_pitch 50->30 mm in the saved .sc design. Without rerunning Python all existing pattern and mirror copies must follow the changed seed and spacing. Pattern counts remain native editable parameters, but SolidCraft 0.42 mirrors a fixed selected entity set and does not automatically adopt new entities added later by an upstream count change. The Circle and Slot cuts do not change the plate envelope. Volume, 3D wall probes and saved-design mutation are required to prove the associative sketch pattern/mirror result. The native saved design is the source of truth for the associative sketch pattern/mirror relationships and their saved-design mutation. Independent final geometry confirms the repeated cuts without relying on Forge's command lowering. Independent final geometry confirms the expected hole and Slot positions. Independent final geometry confirms the expected profile repetition and cut result."
+    },
+    {
+      "title": "Native sketch Slot family",
+      "kind": "Example",
+      "url": "examples/slot-family/",
+      "summary": "One plate sketch contains five closed Slot profiles created with the five native Slot construction methods and removed with one through cut.",
+      "aliases": [
+        "All five SolidCraft Slot construction methods live in one explicit sketch",
+        "features"
+      ],
+      "keywords": "Qualify all five SolidCraft 0.42 Slot construction methods as direct SCPF sketch profiles rather than approximating them with rounded rectangles or hand-built curves. SlotCenterToCenter2D(...); SlotOverall2D(...); SlotCenterPoint2D(...); SlotArcThreePoint2D(...); SlotArcCenter2D(...) inside one explicit Sketch One 160 x 120 x 5 mm plate with five separate closed Slot profiles in one named sketch, removed with one through-all cut. Each public constructor emits exactly its matching sketch.slot.* command; the sketch is finished once and one native cut extrusion removes all five profiles. SolidCraft saves one plate, one Slot family sketch containing five closed profiles and one error-free cut extrusion. The native timeline must not contain sketch.rectangle.rounded as a substitute for Slot construction. No saved-design mutation is required; this case isolates the five native sketch construction methods and their saved feature history. The five slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required. Native integration through geometry checks additionally prove the five sketch.slot.* command identities. The four comparison libraries independently prove the resulting five cut shapes."
+    },
+    {
+      "title": "TOP Sketch after chamfer",
+      "kind": "Example",
+      "url": "examples/top-sketch-after-chamfer/",
+      "summary": "A chamfered plate with a centered through hole whose sketch is attached to the resulting TOP face after the chamfer.",
+      "aliases": [
+        "Face-attached sketch remains valid after topology-changing chamfer",
+        "features"
+      ],
+      "keywords": "Verify that a TOP-attached Sketch still selects the resulting planar +Z face after a native chamfer changes the body's topology. Box(...).chamfer(..., edges=Edges.VERTICAL); with Sketch(on=plate, parent=Anchor.TOP): Circle2D(...); cut through all One 100 x 70 x 10 mm plate, four 8 mm plan-view corner chamfers, then one native TOP-attached Sketch containing a centered 12 mm through hole. Forge emits solid.chamfer before model.faces. Replay selects the largest +Z planar face by plane_normal and area, tolerating only tiny numeric-vector noise from the native kernel, then passes its point/index to face-attached sketch.create. SolidCraft 0.42 builds one chamfered plate with one centered through hole. The Top hole Sketch remains a solved feature attached to the actual post-chamfer top face. No saved-design mutation in this fixture; it isolates stable face lookup after topology-changing native features. The outer bounds do not prove the four corner chamfers or the through hole. Volume, cylindrical-wall probes and native timeline/sketch checks are required. Independent CSG reference cuts the four corner wedges before subtracting the central through hole. Independent feature reference applies a vertical-edge chamfer before creating the top-face hole. Independent builder reference applies the same feature order: Box, vertical-edge chamfer, top-face hole."
+    },
+    {
+      "title": "Anchors on XZ-profile extrusion",
+      "kind": "Example",
+      "url": "examples/xz-anchor/",
+      "summary": "A Board authored from an XZ polygon and extruded in Y exposes standard corner anchors used by independent left and right Marker components.",
+      "aliases": [
+        "Standard corner anchors work on an XZ-authored board",
+        "anchors"
+      ],
+      "keywords": "Verify standard corner anchors on geometry authored as an XZ polygon and extruded in Y. with Sketch(plane='XZ'): Polygon2D(..., plane='XZ', world=True); sketch.extrude(...); standard corner Anchors Forge recovers rectangular bounds/topology from the XZ profile while preserving symbolic width and height. RightMarker and LeftMarker are separate small test parts so this case tests the board anchors, not copied-occurrence addressing. Two joint.create commands use the Board corner topology plus explicit RightMarker and LeftMarker occurrence references. No generated Component:N name is required. Left and right markers attach to their respective front-top corners with mirrored spatial results. Change board width/height from 40x20 to 80x40 mm; both markers follow their own corners. The board and marker positions describe the visible XZ placement. After resizing the saved model, the markers must still use the same selected anchors. The profile/extrusion resembles polygon()+linear_extrude(), but Forge retains native SolidCraft parameters and attachment topology. Mirrored corner anchors are a useful check that local anchor frames, not a single global direction assumption, control attachment."
     }
   ]
 }
