@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "7b64aaaaf107acb0471290eb176c7e2d5db8a89de986c0a847e829174ba4a689",
+  "duration_seconds": 3.839,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T19:21:50.053Z",
+  "item": "examples-assembly-decorator-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "959b8f33afacf88e2547a29be70171e67ae8edda6c58a1658678e74178a9a900"
+    }
+  },
+  "run_finished_at": "2026-11-20T19:23:41.155Z",
+  "run_started_at": "2026-11-20T19:20:00.356Z",
+  "schema": 3,
+  "started_at": "2026-11-20T19:21:46.215Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "e3f5d545de9932c9df2dae008dd7c35b621753e999e4dc09886c8e6d4c491df0",
+  "timeout_seconds": null
+}

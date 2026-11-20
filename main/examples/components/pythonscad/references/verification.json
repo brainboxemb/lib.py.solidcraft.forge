@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/components/pythonscad/model.py",
+          "status": "pass",
+          "stl": "components/pythonscad/model.stl"
+        }
+      ],
+      "model": "components",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "a0fe98b441afef21803b3e219b2969ef589abc40",
+  "status": "pass"
+}

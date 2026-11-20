@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "c1929bfe6626feee8b3db92cc0519e07669ec795dd0ded0fffdbfdc85b7fdd44",
+  "duration_seconds": 5.19,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T19:23:32.997Z",
+  "item": "examples-top-sketch-after-chamfer-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "d6725294d9c225e32ab3b6a714fc0c300eab867400ce5483a98faca0941cc21d"
+    }
+  },
+  "run_finished_at": "2026-11-20T19:23:41.155Z",
+  "run_started_at": "2026-11-20T19:20:00.356Z",
+  "schema": 3,
+  "started_at": "2026-11-20T19:23:27.808Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "b9aa8ecb696d15bc23580ed4ac1601ae0dce5865b889e27a5ff82cdc9d04c990",
+  "timeout_seconds": null
+}

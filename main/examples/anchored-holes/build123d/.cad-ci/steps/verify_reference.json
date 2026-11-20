@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "fe0e5cf34b23f5eaf3fd3104ba7b1fae5b3a58085835fe9bc6d342e490377354",
+  "duration_seconds": 44.296,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T19:21:32.960Z",
+  "item": "examples-anchored-holes-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "255778b06b42c1e9e489c6e02bad802462f68ec19bb9ec1dc6eadb21658f0f92"
+    }
+  },
+  "run_finished_at": "2026-11-20T19:23:41.155Z",
+  "run_started_at": "2026-11-20T19:20:00.356Z",
+  "schema": 3,
+  "started_at": "2026-11-20T19:20:48.665Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "f56979d77ccc1d3ced2a90770271425f685977ad52f916fd7ced527ce5c29bb9",
+  "timeout_seconds": null
+}
