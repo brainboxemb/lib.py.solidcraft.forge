@@ -285,7 +285,12 @@ For pull requests:
   the same released planner semantics;
 - the PR scope contains all affected processed top-level items, not a
   Forge-hard-coded model name;
-- unrelated item output is absent.
+- unrelated item output is absent;
+- when a pull request is closed or merged, Forge invokes released
+  `cad-ci publish build-cleanup --pull-request <number>`;
+- close-only events must not run normal CAD-CI verification;
+- cleanup must preserve `build/main` and every unrelated PR scope;
+- Forge must not implement generated-branch deletion logic itself.
 
 For main pushes:
 
