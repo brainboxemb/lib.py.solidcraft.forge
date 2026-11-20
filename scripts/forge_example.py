@@ -32,6 +32,25 @@ def one_built_wheel(dist: Path, pattern: str = "scpf-*.whl") -> Path:
     return wheels[0].resolve()
 
 
+
+def dependency_output_root(name: str) -> Path:
+    """Return the materialized output root for one CAD-CI dependency item."""
+
+    raw = os.environ.get("CAD_CI_DEPENDENCIES_JSON", "").strip()
+    if not raw:
+        raise RuntimeError("CAD_CI_DEPENDENCIES_JSON is required")
+
+    dependencies = json.loads(raw)
+    dependency = dependencies.get(name)
+    if not isinstance(dependency, dict):
+        raise RuntimeError(f"{name} dependency context is required")
+
+    output_root = dependency.get("output_root")
+    if not isinstance(output_root, str) or not output_root:
+        raise RuntimeError(f"{name} dependency output_root is required")
+    return Path(output_root).resolve()
+
+
 def dependency_wheel(
     name: str = "forge-package",
     pattern: str = "scpf-*.whl",
