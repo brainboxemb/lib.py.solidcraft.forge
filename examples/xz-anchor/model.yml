@@ -8,3 +8,20 @@ stages:
   - Create the Board from an XZ profile
   - Extrude the profile in Y
   - Attach left and right Markers to standard BACK_TOP corners
+concepts:
+  - XZ Sketch
+  - Polygon2D
+  - standard corner Anchor
+  - component attachment
+  - saved-design associativity
+verification:
+  summary: >
+    Verifies that standard rectangular corner anchors work correctly on a body
+    authored from an XZ profile and extruded in Y.
+  proves:
+    - The board and both marker bodies occupy the intended baseline envelopes.
+    - Left and right markers resolve the corresponding BACK_TOP corner relationships.
+    - Resizing the XZ-authored board moves both attached markers to the new corners.
+  saved_design: >
+    The saved design changes board width and height and verifies both marker
+    attachments against the resized XZ-profile body.
