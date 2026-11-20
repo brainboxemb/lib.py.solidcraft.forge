@@ -42,37 +42,77 @@ def source_sha() -> str:
     ).strip()
 
 
-def verify_references(cases: str) -> None:
-    """Run selected independent model references and write structured evidence."""
+def reference_identity() -> tuple[str, str]:
+    """Return model slug and implementation from the current nested item path."""
+
+    value = os.environ.get("CAD_CI_ITEM_PATH", "").strip()
+    if not value:
+        raise RuntimeError("CAD_CI_ITEM_PATH is required for verify_reference")
+
+    parts = Path(value).parts
+    if len(parts) < 3 or parts[0] != "examples":
+        raise RuntimeError(
+            "reference item path must be examples/<model>/<implementation>"
+        )
+    return parts[-2], parts[-1]
+
+
+def run_reference_validation(
+    cases: str,
+    *,
+    implementations: str | None = None,
+) -> None:
+    """Run selected reference validation in the released runtime."""
 
     out = output_dir()
     image = runtime_image()
     subprocess.run(["docker", "pull", image], check=True)
+
+    command = [
+        "docker",
+        "run",
+        "--rm",
+        "-v",
+        f"{ROOT}:/workspace:ro",
+        "-v",
+        f"{out}:/output",
+        "-w",
+        "/workspace",
+        "-e",
+        "PYTHONPATH=/workspace/scpf:/workspace",
+        image,
+        "python",
+        "/workspace/verification/reference_validation.py",
+        "--cases",
+        cases,
+        "--out",
+        "/output/references",
+        "--source-sha",
+        source_sha(),
+    ]
+    if implementations is not None:
+        command.extend(["--implementations", implementations])
+
     subprocess.run(
-        [
-            "docker",
-            "run",
-            "--rm",
-            "-v",
-            f"{ROOT}:/workspace:ro",
-            "-v",
-            f"{out}:/output",
-            "-w",
-            "/workspace",
-            "-e",
-            "PYTHONPATH=/workspace/scpf:/workspace",
-            image,
-            "python",
-            "/workspace/verification/reference_validation.py",
-            "--cases",
-            cases,
-            "--out",
-            "/output/references",
-            "--source-sha",
-            source_sha(),
-        ],
+        command,
         cwd=ROOT,
         check=True,
+    )
+
+
+def verify_references(cases: str) -> None:
+    """Run selected model reference sets and write structured evidence."""
+
+    run_reference_validation(cases)
+
+
+def verify_reference() -> None:
+    """Run exactly the reference implementation represented by this CI item."""
+
+    slug, implementation = reference_identity()
+    run_reference_validation(
+        slug,
+        implementations=implementation,
     )
 
 
@@ -80,15 +120,24 @@ def main() -> int:
     """Dispatch the requested shared verification action."""
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("operation", choices=("verify_references",))
+    parser.add_argument(
+        "operation",
+        choices=("verify_references", "verify_reference"),
+    )
     parser.add_argument(
         "cases",
         nargs="?",
-        default="all",
-        help="all or a comma/space-separated model list",
+        help="all or a comma/space-separated model list for verify_references",
     )
     args = parser.parse_args()
-    verify_references(args.cases)
+
+    if args.operation == "verify_reference":
+        if args.cases is not None:
+            parser.error("verify_reference does not accept a cases argument")
+        verify_reference()
+        return 0
+
+    verify_references(args.cases or "all")
     return 0
 
 
