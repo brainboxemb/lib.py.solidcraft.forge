@@ -8,3 +8,19 @@ stages:
   - Create the Base and Marker components
   - Attach matching corner references
   - Apply the symbolic local attachment-plane offset
+concepts:
+  - corner attachment
+  - local attachment offset
+  - symbolic relationship value
+  - saved-design mutation
+verification:
+  summary: >
+    Verifies that an attachment-plane offset remains a local editable
+    relationship value rather than becoming a fixed world-space translation.
+  proves:
+    - Base and marker occupy the intended baseline envelopes.
+    - The marker offset is interpreted in the attachment frame.
+    - Editing the offset moves the marker while preserving the corner relationship.
+  saved_design: >
+    The saved design changes the local shift and verifies the marker's new
+    attachment-frame-relative position.
