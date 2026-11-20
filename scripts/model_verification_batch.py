@@ -10,6 +10,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import traceback
+import time
 
 import yaml
 
@@ -81,12 +82,23 @@ def write_manifest(batch_root: Path, wheel: Path) -> Path:
         case_root = batch_root / slug
         case_root.mkdir(parents=True, exist_ok=True)
         command_path = case_root / "solidcraft.json"
-        write_commands(compile_commands(slug, wheel), command_path)
+        try:
+            write_commands(compile_commands(slug, wheel), command_path)
+            compile_error = None
+        except Exception as exc:  # compile all models before failing the batch
+            compile_error = "".join(
+                traceback.format_exception_only(type(exc), exc)
+            ).strip()
+            print(
+                f"{slug} Forge compile: error: {compile_error}",
+                flush=True,
+            )
         rows.append(
             {
                 "slug": slug,
                 "input": f"/output/models/{slug}/solidcraft.json",
                 "output": f"/output/models/{slug}/model_verify",
+                "compile_error": compile_error,
             }
         )
 
@@ -121,15 +133,29 @@ def run_host_batch() -> int:
         "cad-verification-package",
         "brainboxemb_cad_verification_lib-*.whl",
     )
+    batch_started = time.perf_counter()
+    compile_started = time.perf_counter()
     manifest = write_manifest(batch_root, forge_wheel)
+    print(
+        "FORGE BATCH TIMING "
+        f"compile_all_s={time.perf_counter() - compile_started:.3f}",
+        flush=True,
+    )
     image = runtime_image()
 
+    pull_started = time.perf_counter()
     subprocess.run(["docker", "pull", image], check=True)
+    print(
+        "FORGE BATCH TIMING "
+        f"image_pull_s={time.perf_counter() - pull_started:.3f}",
+        flush=True,
+    )
 
     container_forge_wheel = f"/forge-package/{forge_wheel.name}"
     container_verification_wheel = (
         f"/cad-verification/{verification_wheel.name}"
     )
+    container_started = time.perf_counter()
     completed = subprocess.run(
         [
             "docker",
@@ -163,6 +189,16 @@ def run_host_batch() -> int:
         cwd=ROOT,
         check=False,
     )
+    print(
+        "FORGE BATCH TIMING "
+        f"container_process_s={time.perf_counter() - container_started:.3f}",
+        flush=True,
+    )
+    print(
+        "FORGE BATCH TIMING "
+        f"total_s={time.perf_counter() - batch_started:.3f}",
+        flush=True,
+    )
     return completed.returncode
 
 
@@ -181,6 +217,9 @@ def run_inside_runtime(manifest_path: Path) -> int:
     for row in rows:
         slug = row["slug"]
         try:
+            compile_error = row.get("compile_error")
+            if compile_error:
+                raise RuntimeError(f"Forge compile failed: {compile_error}")
             code = verify_one(
                 slug,
                 Path(row["input"]),
