@@ -1,0 +1,31 @@
+{
+  "items": {
+    "ci/forge-tests": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
+      "final_step": "tool_test",
+      "final_target_spec_digest": "f3a6386bd479f29276c85ac814629322864e3eb1c05ebc82c26931ee07c80e5d",
+      "item_id": "forge-tests",
+      "outputs": [],
+      "source_commit": "46abaeacdb45ba902e716c799575d9f3dd01aaad"
+    },
+    "examples/simple-box": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "8bfc0abe311864ff3f1e0924dc6e5415c90d41d28a9b76393fd1f4d066c86869",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "f4f4344313995a94d175277f37617c985492b0983992b14d2fd7d09eb7f43c1d",
+      "item_id": "simple-box",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "46abaeacdb45ba902e716c799575d9f3dd01aaad"
+    }
+  },
+  "pull_request": 525,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "46abaeacdb45ba902e716c799575d9f3dd01aaad"
+}
