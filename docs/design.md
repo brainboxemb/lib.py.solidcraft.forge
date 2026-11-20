@@ -315,11 +315,17 @@ candidate selection plus generic `update-main`.
 Once the generic main baseline exists, the bootstrap full-run path is removed.
 
 ```text
-PR event
+PR open/update event
   -> cad_ci_pr (incremental)
   -> artifact exists?
      -> prepare-pr --base PR_BASE --head PR_HEAD
      -> publish build --scope pr
+
+PR closed/merged event
+  -> no CAD-CI verification
+  -> released tool.cad.ci
+  -> publish build-cleanup --pull-request PR_NUMBER
+  -> remove only build/pr/PR_NUMBER
 
 main push
   -> cad_ci_main (incremental)
@@ -342,6 +348,10 @@ without requiring a full model/reference rerun.
 
 The publication jobs retain source freshness checks and generated-branch race
 retry from `tool.cad.ci` / `lib.py.cad.ci`.
+
+PR-scope lifecycle cleanup is also delegated to the released stack. Forge only
+owns the GitHub event wiring and the PR number; it does not inspect or mutate
+generated branch contents itself.
 
 
 ## Nested reference-item migration
