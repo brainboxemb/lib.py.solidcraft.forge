@@ -39,7 +39,7 @@ templates:
         inputs:
           item:
             - scpf/**
-                - verification/**
+            - verification/**
             - tests/**
           repo:
             - scripts/forge_example.py
