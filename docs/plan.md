@@ -35,75 +35,70 @@ Qualification catalog from 32 current-looking cases to 5. Do not do that.
 
 ## Current goal
 
-Complete #538 before starting #537 batch 1.
+Complete #537: migrate the first post-proof Qualification batch of ten existing
+cases to the released declarative verification path.
 
-The runtime/package boundary is corrected as follows:
+The runtime/package boundary is already proven by #538:
 
-- docker.cad.solidcraft v0.3.1 removes lib.py.cad.verification from both role
-  images;
-- Forge owns one CAD-CI dependency item, cad-verification-package;
-- that item prepares exactly one wheel from released
-  lib.py.cad.verification 0.12.0 at
-  1254eca6681faaff62b9605fbb5a25178ab71f9a;
-- model verification consumes forge-package + cad-verification-package;
-- reference verification consumes cad-verification-package;
-- both runtime containers receive the verification wheel read-only through
-  PYTHONPATH.
+- docker.cad.solidcraft v0.3.1 contains no cad_verification package;
+- cad-verification-package supplies released lib.py.cad.verification 0.12.0 at
+  exact commit 1254eca6681faaff62b9605fbb5a25178ab71f9a;
+- model/reference consumers receive that wheel through normal CAD-CI needs
+  edges.
 
-This decouples verification-library releases and model-local verify.py changes
-from Docker runtime releases.
+Batch 1 contains exactly:
 
-## Required proof for #538
+1. anchored-holes;
+2. hole-family;
+3. sheet-fold;
+4. top-sketch-after-chamfer;
+5. parameter-scope;
+6. parent-derived-child-size;
+7. components;
+8. repeated-parent-attachments;
+9. assembly-decorator;
+10. group-hierarchy.
 
-- the verification package item builds/prepares one wheel only once per selected
-  graph;
-- the resulting wheel metadata reports version 0.12.0;
-- staged five declarative model items pass against cad-solidcraft v0.3.1, which
-  contains no cad_verification package;
-- staged reference children pass against cad-reference v0.3.1, which likewise
-  contains no cad_verification package;
-- CAD-CI evidence shows normal dependency ownership rather than per-model wheel
-  downloads;
-- no verification implementation is copied into Forge.
+Migration preserves each existing procedural VerificationCheck contract. Shared
+helper functions in verify_model.py are not requirements unless a listed check
+uses them.
 
-## Required proof for each ~10-case Forge batch
+Saved-design mutation remains model-specific:
 
-- every migrated case replaces procedural verify_model.py with data-only
-  declarative verify.py;
-- existing model contract semantics are preserved; incidental SolidCraft fields
-  are not promoted into new expectations;
-- every case gets the same four independent reference child items as the staged
-  proof cases;
-- migrated cases become normal processed CAD-CI items;
-- no inactive/unrelated case is accidentally selected;
-- durable build/main gains current model/reference evidence for the batch;
-- selection and runtime are measured before starting the next batch;
-- a batch that unexpectedly selects the whole remaining catalog is treated as a
-  selection defect, not normal build time.
+- required: parameter-scope, parent-derived-child-size,
+  repeated-parent-attachments;
+- not required: the other seven batch cases.
+
+## Required proof for #537
+
+- all ten cases use data-only verification/verify.py;
+- no verification/verify_model.py remains for those ten;
+- existing expected geometry/parameters/timeline/sketch/inspection semantics are
+  preserved without promoting incidental SolidCraft fields into policy;
+- all ten model items use the proven declarative model template/path;
+- all ten have four independent nested reference child items;
+- the batch selects only these ten cases plus true dependencies, not the
+  remaining catalog;
+- every model/reference result is PASS;
+- durable build/main gains current evidence for exactly this batch;
+- selection and timing are recorded before the next batch;
+- Pages remains unchanged.
 
 ## Execution order
 
-1. #12 in docker.cad.solidcraft — release v0.3.1 without embedded
-   cad_verification.
-2. #538 — add the separate verification-wheel CAD-CI dependency and prove the
-   existing staged five model/reference paths against v0.3.1.
-3. #537 — migrate the first ten Qualification cases and measure
-   selection/runtime.
-4. Migrate the next approximately ten remaining cases.
-5. Migrate the final remaining catalog cases.
-6. #497 — rebuild stable Pages from current source + complete authoritative
-   build/main, comparing against
-   backup/gh-pages-before-f11-2026-11-20.
-7. #366 — finish remaining Pages preview/cleanup/cut-over lifecycle.
-8. Continue independent Forge API/product backlog.
-9. #484 runtime/image-distribution optimization may continue independently.
-
+1. Read and map all ten current procedural contracts.
+2. Replace each with the smallest equivalent declarative definition.
+3. Add four reference child configs per case and enable normal processing.
+4. Run one PR proof for the complete ten-case batch.
+5. Correct only demonstrated contract/mapping errors; do not add broad policy.
+6. Merge and prove durable main output for the batch.
+7. Record selection/runtime and define the next approximately ten-case batch.
+8. Continue remaining catalog batches before #497 Pages.
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #538 Supply released CAD verification as a CI dependency wheel | now | Correct verification/runtime dependency boundary before expanding the catalog. |
-| #537 Migrate first post-proof Qualification batch to declarative verification | blocked | Batch contract audit is complete; waits for #538 and runtime v0.3.1. |
+| #537 Migrate first post-proof Qualification batch to declarative verification | now | Runtime/wheel boundary is proven; migrate exactly the first ten current Qualification cases while preserving procedural semantics. |
 | #432 Use released declarative CAD verification in model verification | now | Parent migration issue; execute through ~10-case batch issues beginning with #537. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Keep current 32-case site unchanged until current durable evidence again covers the public Qualification catalog. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Durable build storage is already generic; final Pages lifecycle follows #497. |
@@ -129,4 +124,4 @@ from Docker runtime releases.
 
 Immediate chain:
 
-`runtime v0.3.1 -> #538 verification-wheel dependency -> #537 first 10-case batch -> remaining ~10-case batches -> #497 stable 32-case Pages -> #366 final Pages lifecycle`.
+`#537 first 10-case batch -> remaining ~10-case batches -> #497 stable 32-case Pages -> #366 final Pages lifecycle`.
