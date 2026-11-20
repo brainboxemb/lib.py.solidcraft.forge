@@ -39,6 +39,32 @@ def plain_text(value):
     return " ".join(html.unescape(text).split())
 
 
+_GUIDE_HEADING = re.compile(
+    r'<h([23])\s+id="([^"]+)">(.*?)</h\1>',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def guide_sections(body):
+    """Return visible heading/section text from rendered guide content."""
+    headings = list(_GUIDE_HEADING.finditer(body))
+    result = []
+    for index, match in enumerate(headings):
+        next_start = (
+            headings[index + 1].start()
+            if index + 1 < len(headings)
+            else len(body)
+        )
+        result.append(
+            (
+                match.group(2),
+                plain_text(match.group(3)),
+                plain_text(body[match.end():next_start]),
+            )
+        )
+    return result
+
+
 def render_template(name, **values):
     """Render one external site template."""
     template_path = ROOT / "site" / "templates" / name
