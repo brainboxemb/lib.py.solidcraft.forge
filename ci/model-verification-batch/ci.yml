@@ -17,8 +17,7 @@ steps:
     inputs:
       - examples/*/ci.yml
       - examples/*/scpf/**
-      - examples/*/model.yml
-      - examples/*/verification/**
+          - examples/*/verification/**
       - scripts/forge_example.py
       - scripts/model_verify_declarative.py
       - scripts/model_verification_batch.py
