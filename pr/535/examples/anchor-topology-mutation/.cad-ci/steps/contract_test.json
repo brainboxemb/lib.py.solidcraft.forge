@@ -1,0 +1,22 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
+  "duration_seconds": 0.218,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T17:48:21.624Z",
+  "item": "anchor-topology-mutation",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {},
+  "run_finished_at": "2026-11-20T17:48:45.762Z",
+  "run_started_at": "2026-11-20T17:48:13.133Z",
+  "schema": 3,
+  "started_at": "2026-11-20T17:48:21.407Z",
+  "status": "pass",
+  "step": "contract_test",
+  "target_spec_digest": "fc9c60e4148f0b37a96b7aeac5d97559af7158b1de194229862f7884861e108a",
+  "timeout_seconds": null
+}

@@ -1,0 +1,107 @@
+{
+  "items": {
+    "ci/forge-release": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "ff111949a1d54d98aa2270eb7cd9ee1ba50487699ee22ef94c2d235cf97ec367",
+      "final_step": "tool_verify",
+      "final_target_spec_digest": "d474813193dd5bafaad1d8209e92fd500a420b66801c3d288e70913992ade90a",
+      "item_id": "forge-release",
+      "outputs": [
+        "tool_verify"
+      ],
+      "source_commit": "e9fd000a8b03a327abc422413b6313db2ac32f19"
+    },
+    "ci/forge-tests": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
+      "final_step": "tool_test",
+      "final_target_spec_digest": "c96c517cd5fd668cfb3e6a6d2ba885c8dfe8633d9aa346662183b99aa366f5e1",
+      "item_id": "forge-tests",
+      "outputs": [],
+      "source_commit": "e9fd000a8b03a327abc422413b6313db2ac32f19"
+    },
+    "examples/anchor-topology-mutation": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "0e689cab05fcc9471efee31aa8030338ea6037a81cff275443a93657b569c07a",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "9c16ccac285c1ac2117f1af699b1c4e13559be16da9924a1f2a0a1cf4a8e0e62",
+      "item_id": "anchor-topology-mutation",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "e9fd000a8b03a327abc422413b6313db2ac32f19"
+    },
+    "examples/attach-angle": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "d6ecfaabc5f964ade7cf7275d5728b7a0af14c741b46e2364723920d115d2129",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "3f6f7e604b6c28c74687a41f9e84feabcda15471a29c924aaf21a4cb1e3624c0",
+      "item_id": "attach-angle",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "e9fd000a8b03a327abc422413b6313db2ac32f19"
+    },
+    "examples/four-corner-l": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "880958ceed892583d2e039a9b485df25b4bb7af0af72ad6d3b87ec8f723e5959",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "9ca047eac6f54598d373e1a6f9677dd7c8f601656d14a064c0fd8fa5f7c3b6c5",
+      "item_id": "four-corner-l",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "e9fd000a8b03a327abc422413b6313db2ac32f19"
+    },
+    "examples/simple-box": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "6947083d5e7f512917833ef937f1e2fdfa7fa91548eed83fbc7d00b46195854f",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "f4f4344313995a94d175277f37617c985492b0983992b14d2fd7d09eb7f43c1d",
+      "item_id": "simple-box",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "e9fd000a8b03a327abc422413b6313db2ac32f19"
+    },
+    "examples/xz-anchor": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "7fb05cffe70ff3be1523184f102080a185b6975c64419b3cb4e4bf418304611d",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "d1ba18df36900c9282db6a517589757d730862969d13febbb30a56481b099ef6",
+      "item_id": "xz-anchor",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "e9fd000a8b03a327abc422413b6313db2ac32f19"
+    },
+    "scpf": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "dbdc85e9c365019eae6aab33ff9008fb296d5f80fc4aa2f3acbcd9e5e0945822",
+      "final_step": "tool_build",
+      "final_target_spec_digest": "c3539c312909eb4a7d1ff0787aab0174d273e22d5b6363cf95e1dfd1ae09fdd9",
+      "item_id": "forge-package",
+      "outputs": [
+        "dist"
+      ],
+      "source_commit": "e9fd000a8b03a327abc422413b6313db2ac32f19"
+    }
+  },
+  "pull_request": 535,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "e9fd000a8b03a327abc422413b6313db2ac32f19"
+}
