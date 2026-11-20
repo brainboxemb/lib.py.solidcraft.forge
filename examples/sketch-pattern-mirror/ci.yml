@@ -3,7 +3,7 @@ id: sketch-pattern-mirror
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/sketch-pattern-mirror/scpf/**
   - examples/sketch-pattern-mirror/model.yml
