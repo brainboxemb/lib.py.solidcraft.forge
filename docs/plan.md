@@ -11,26 +11,29 @@ current and what follows.
 
 The CI reliability baseline from #478 is complete.
 
-Forge currently pins externally accepted `tool.cad.ci` v0.12.1 with
-`lib.py.cad.ci` 0.7.1.
+Forge now pins externally accepted `tool.cad.ci` v0.12.2 at exact commit
+`8bab91eaf8554533e5f63620421ed9554f66eb91`, with released
+`lib.py.cad.ci` 0.7.1 underneath it.
 
-Released and externally accepted `tool.cad.ci` v0.12.2 at
-`8bab91eaf8554533e5f63620421ed9554f66eb91` fixes only reusable workflow
-artifact transport when a successful run materializes no `build/` output.
+The verified baseline, timing comparison and parked findings are recorded in
+`docs/background/ci-baseline-2026-11-20.md`.
 
-The verified CI baseline report is prepared in #485 / PR #486 but its docs-only
-run exposes exactly that v0.12.1 transport defect.
+Key state:
+
+- exactly five model items are active in the staged proof;
+- Q1, Q2 and declarative Q4/Q5 coverage are proven;
+- Q6 visual verification remains pending;
+- structured CAD-CI evidence is retained;
+- valid no-output runs no longer fail artifact transport;
+- cold runtime performance is measured and parked in #484 and
+  `docker.cad.solidcraft` #4;
+- stale branch deletion remains parked in #481.
+
+These parked findings do not block durable generated-output work.
 
 ## Current goal
 
-Complete #487:
-
-1. pin exact accepted `tool.cad.ci` v0.12.2;
-2. update the exact-pin contract test;
-3. prove normal Forge CI;
-4. prove docs-only/no-output Forge CI.
-
-Then rerun/merge #486 and continue #366:
+Complete #485 by landing the permanent CI baseline report, then continue #366:
 
 ```text
 main
@@ -39,29 +42,31 @@ main
   -> gh-pages
 ```
 
+For #366, first prove one model end to end before broadening the cut-over.
+
 ## Execution order
 
-1. #487 — adopt exact tool.cad.ci v0.12.2.
-2. #485 / PR #486 — land the permanent CI baseline report.
-3. #366 — prove one model end to end from verified output to `build`.
-4. Extend durable output to migrated Forge/model items.
-5. Cut Pages over to the generic CAD-CI publisher.
+1. #485 — merge the permanent CI baseline report.
+2. #366 — prove one verified model's accepted output on `build`.
+3. Extend the same durable-output mechanism to the migrated Forge/model items.
+4. Cut Pages publication over to `tool.cad.ci publish pages`.
+5. Remove superseded Forge-owned generated-output/publication code.
 6. Resume #430/#378 verification-feature work.
-7. Resume #432 broader declarative model migration after generated output is stable.
+7. Resume #432 broader declarative model migration only after generated output
+   is stable.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #487 Pin externally accepted tool.cad.ci 0.12.2 artifact transport fix | now | Required to make valid no-output Forge runs succeed without a local workaround. |
-| #485 Record the verified Forge CI baseline and parked findings | next | PR #486 is ready after #487 lands and reruns green. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Main CI-development path after the baseline report. |
-| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Measured and parked; runtime/image follow-up is recorded separately. |
-| #481 Remove stale Forge development branches | blocked | Branch rule is merged; physical stale-ref deletion is unavailable through current connected tooling. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | later | Q6 work resumes after durable generated output is stable. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | later | Continue the five-model verification stages after #366. |
-| #432 Use released declarative CAD verification in model verification | blocked | 21 procedural verifiers remain; broader migration waits for the five-model/generated-output proof. |
-| #391 Extract reusable CAD verification library from Forge | blocked | Close only after remaining procedural verification has migrated through #432. |
+| #485 Record the verified Forge CI baseline and parked findings | now | Documentation-only consolidation of already proven evidence; merge before continuing #366. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Main CI-development path after #485: prove main -> build -> gh-pages with one model first. |
+| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Measured and parked; runtime/image diagnosis is preserved in the baseline report and docker.cad.solidcraft#4. |
+| #481 Remove stale Forge development branches | blocked | Branch rule is merged; physical deletion of stale refs remains unavailable through current connected tooling. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | later | Q6 work resumes after the durable generated-output path is stable. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | later | Continue five-model verification stages after #366. |
+| #432 Use released declarative CAD verification in model verification | blocked | Eleven models are declarative; 21 retain legacy `verify_model.py`. Broader migration waits for the five-model/generated-output proof. |
+| #391 Extract reusable CAD verification library from Forge | blocked | Close only after remaining procedural model verification has migrated through #432. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by measured #484/runtime-repository work. |
 | #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
@@ -81,9 +86,11 @@ main
 
 ## Branch hygiene
 
-Development branches should exist only while their issue is actively worked on.
-Generated `build` and `gh-pages` are exceptions.
+A development branch exists only while its issue is actively being worked on.
+After merge, closure or parking/blocking, remove the branch. Open issues remain
+recorded in the issue tracker and this plan; they do not need dormant branches.
+Generated `build` and `gh-pages` branches are exceptions.
 
 Immediate chain:
 
-`#487 -> #485 -> #366 main/build/gh-pages`.
+`#485 -> #366 main/build/gh-pages -> #430/#378 -> #432`.
