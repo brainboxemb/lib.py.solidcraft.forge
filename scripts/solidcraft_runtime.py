@@ -32,15 +32,15 @@ ABSENT_MARKERS = (
 
 REQUIRED_CONFIG_FIELDS = {
     "python_image",
-    "cad_verification_version",
-    "cad_verification_commit",
     "cadcraft_version",
     "cadcraft_sha256",
     "pythonscad_version",
     "pybosl2_commit",
     "cadquery_version",
     "build123d_version",
+    "pillow_spec",
     "trimesh_spec",
+    "scipy_spec",
     "matplotlib_spec",
 }
 

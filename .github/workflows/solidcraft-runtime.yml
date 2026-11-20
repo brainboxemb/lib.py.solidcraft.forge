@@ -55,15 +55,15 @@ jobs:
           build-args: |
             PYTHON_IMAGE=${{ steps.metadata.outputs.python_image }}
             SOLIDCRAFT_VERSION=${{ steps.metadata.outputs.solidcraft_version }}
-            CAD_VERIFICATION_VERSION=${{ steps.metadata.outputs.cad_verification_version }}
-            CAD_VERIFICATION_COMMIT=${{ steps.metadata.outputs.cad_verification_commit }}
             CADCRAFT_VERSION=${{ steps.metadata.outputs.cadcraft_version }}
             CADCRAFT_SHA256=${{ steps.metadata.outputs.cadcraft_sha256 }}
             PYTHONSCAD_VERSION=${{ steps.metadata.outputs.pythonscad_version }}
             PYBOSL2_COMMIT=${{ steps.metadata.outputs.pybosl2_commit }}
             CADQUERY_VERSION=${{ steps.metadata.outputs.cadquery_version }}
             BUILD123D_VERSION=${{ steps.metadata.outputs.build123d_version }}
+            PILLOW_SPEC=${{ steps.metadata.outputs.pillow_spec }}
             TRIMESH_SPEC=${{ steps.metadata.outputs.trimesh_spec }}
+            SCIPY_SPEC=${{ steps.metadata.outputs.scipy_spec }}
             MATPLOTLIB_SPEC=${{ steps.metadata.outputs.matplotlib_spec }}
 
       - name: Require published runtime image

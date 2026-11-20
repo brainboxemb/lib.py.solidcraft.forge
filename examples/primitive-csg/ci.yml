@@ -3,6 +3,7 @@ id: primitive-csg
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/primitive-csg/scpf/**
   - examples/primitive-csg/model.yml

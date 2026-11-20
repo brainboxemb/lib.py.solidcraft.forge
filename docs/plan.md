@@ -8,42 +8,43 @@ detail and history; this plan states what is current and what follows.
 
 ## Current goal
 
-Complete #461: standardize declarative model verification on
-`verification/verify.py`.
+Complete #438: remove the released verification-library code itself from the
+immutable SolidCraft runtime while keeping repeated verification efficient.
 
-The distinction is literal:
+The runtime remains the shared CAD execution environment and may preinstall
+stable/heavy Python dependencies used by nearly every verification run.
+`lib.py.cad.verfication` itself remains a separately released CAD-CI input.
 
-- `test_*.py` tests the software implementation;
-- `verification/verify.py` declares what must be true about the produced CAD
-  model.
-
-The file contains model-specific verification data only. Released
-`lib.py.cad.verfication` owns how that data is checked against SolidCraft.
+The exact verification wheel is built once per affected CAD-CI graph and reused
+by all model/reference verification items.
 
 ## Execution order
 
-1. Complete #461:
-   - rename simple-box `verification/definition.py` to
-     `verification/verify.py`;
-   - update the declarative launcher and boundary tests;
-   - update AGENTS/requirements/design;
-   - do not change verification behavior.
-2. Complete #438: remove the released verification-library code itself from
-   the runtime while keeping stable/heavy dependencies preinstalled.
-3. Rebase #460 on that corrected main.
-4. Migrate exactly the ten #460 models using `verification/verify.py`.
-5. Continue #432 through reviewable batches.
-6. Add/release missing generic verification semantics in
+1. Complete #438:
+   - remove verification-library version/commit from the runtime definition;
+   - remove verification-library installation/version assertion from Docker;
+   - explicitly retain compatible Pillow/trimesh/scipy runtime dependencies;
+   - build the exact released verification-library wheel once as a reusable
+     CAD-CI item;
+   - make all model/reference verification depend on and mount that wheel;
+   - prove the runtime image ID no longer depends on the verification release;
+   - preserve manual-only, cache-free, directly pullable runtime publication.
+2. Manually publish the new immutable runtime image.
+3. Update `cad-ci.yml` to that exact image and prove the complete affected
+   graph.
+4. Rebase #460 on the corrected main.
+5. Migrate exactly the ten #460 models using `verification/verify.py`.
+6. Continue #432 through later reviewable batches.
+7. Add/release missing generic verification semantics in
    `lib.py.cad.verfication` before models that need them.
-7. Resume #430, then #378 and #366.
+8. Resume #430, then #378 and #366.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #461 Use verification/verify.py for model verification definitions | now | Naming prerequisite before expanding the declarative model migration. |
-| #438 Remove verification-library code from the SolidCraft runtime | next | Required runtime/package boundary: library code separate, stable dependencies may stay preinstalled. |
-| #460 Migrate first ten model verifiers to declarative SolidCraft verification | blocked | Resume after both #461 and #438 are merged. |
+| #438 Remove verification-library code from the SolidCraft runtime | now | Correct runtime/package boundary before further model migration. |
+| #460 Migrate first ten model verifiers to declarative SolidCraft verification | blocked | Resume only after #438 is merged. |
 | #432 Use released declarative CAD verification in model verification | blocked | Umbrella migration; proceeds through #460 and later batches. |
 | #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after model-verification ownership is stable. |
 | #391 Extract reusable CAD verification library from Forge | blocked | Close after remaining shared checker code leaves Forge through staged #432 migration. |
@@ -67,4 +68,4 @@ The file contains model-specific verification data only. Released
 | #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
 
 Immediate chain:
-`#461 -> #438 -> #460 -> later #432 batches -> #430 -> #378 -> #366`.
+`#438 -> manual runtime publication -> #460 -> later #432 batches -> #430 -> #378 -> #366`.

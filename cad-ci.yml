@@ -2,10 +2,11 @@
 schema: 1
 
 variables:
-  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/lib.py.solidcraft.forge/solidcraft-runtime:runtime-49cdb04d98d6d818dd3726640e7ee1b6973068edece43e5dc14dd870426e32cd"
+  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/lib.py.solidcraft.forge/solidcraft-runtime:runtime-290817a88be96b003892052113b960c661cd764a1c12f92c4b3b5c5d13d76fe1"
   SOLIDCRAFT_VERSION: "0.42.0"
 
 items:
   - scpf
+  - verification/library
   - examples/*
   - verification/references

@@ -62,39 +62,41 @@ expected data.
 
 ## Runtime package composition
 
-The immutable runtime is deliberately a reusable execution environment, not
-only a CAD-engine binary image.
-
-It may contain exact released application libraries and stable dependencies
-that are required by nearly every verification run. In particular:
+The immutable runtime is a reusable CAD execution environment:
 
 ```text
 SolidCraft runtime image
   SolidCraft
   reference CAD tooling
-  released lib.py.cad.verfication
   stable shared Python dependencies
+    Pillow
+    trimesh
+    scipy
+    other tool-owned dependencies as required
 ```
 
-`lib.py.cad.verfication` is still developed and released independently. The
-runtime consumes that release as a build input through
-`docker/solidcraft_runtime/runtime.json`.
+Application libraries are separate inputs:
 
-This gives two useful properties at the same time:
+```text
+CAD-CI verification
+  exact built Forge wheel
+  exact released lib.py.cad.verfication wheel
+  model-specific verification data
+  -> immutable SolidCraft runtime
+```
 
-1. ownership remains clean: reusable CAD verification behavior is implemented
-   and tested in the verification-library repository;
-2. execution remains efficient: model checks reuse one prebuilt image instead
-   of installing the verification package and its common dependencies on every
-   invocation.
+The verification-library release does not participate in the runtime image
+hash. A verification release can therefore be consumed without rebuilding the
+CAD runtime.
 
-The runtime image hash therefore changes when the pinned verification-library
-release changes. That is intentional and makes the exact verification code part
-of the reproducible execution environment.
+For efficiency, CAD-CI builds the exact released verification wheel once and
+reuses its output for all affected model/reference items. The wheel is mounted
+read-only into the runtime and added to `PYTHONPATH`; its stable dependencies
+are already present in the image.
 
-The exact built Forge wheel remains separate because Forge itself is the code
-being qualified. The runtime must not substitute a preinstalled Forge package
-for that built wheel.
+The exact built Forge wheel also remains separate because Forge itself is the
+code being qualified. The runtime must not substitute a preinstalled Forge
+package for that built wheel.
 
 
 ## Manual runtime lifecycle

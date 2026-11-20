@@ -3,6 +3,7 @@ id: eight-corner-brackets
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/eight-corner-brackets/scpf/**
   - examples/eight-corner-brackets/model.yml

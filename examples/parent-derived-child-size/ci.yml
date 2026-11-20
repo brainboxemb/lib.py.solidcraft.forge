@@ -3,6 +3,7 @@ id: parent-derived-child-size
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/parent-derived-child-size/scpf/**
   - examples/parent-derived-child-size/model.yml

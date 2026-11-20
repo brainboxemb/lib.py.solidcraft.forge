@@ -3,6 +3,7 @@ id: sheet-fold
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/sheet-fold/scpf/**
   - examples/sheet-fold/model.yml

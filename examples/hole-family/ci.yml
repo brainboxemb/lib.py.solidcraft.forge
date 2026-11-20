@@ -3,6 +3,7 @@ id: hole-family
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/hole-family/scpf/**
   - examples/hole-family/model.yml

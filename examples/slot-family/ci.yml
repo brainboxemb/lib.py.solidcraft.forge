@@ -3,6 +3,7 @@ id: slot-family
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/slot-family/scpf/**
   - examples/slot-family/model.yml

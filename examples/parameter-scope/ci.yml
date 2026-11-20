@@ -3,6 +3,7 @@ id: parameter-scope
 kind: model
 needs:
   - forge-tool
+  - verification-library
 watch:
   - examples/parameter-scope/scpf/**
   - examples/parameter-scope/model.yml
