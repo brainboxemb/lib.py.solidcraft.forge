@@ -10,7 +10,7 @@ from scpf.version import TESTED_SOLIDCRAFT_VERSION
 ROOT = Path(__file__).resolve().parents[2]
 CAD_CI = ROOT / "cad-ci.yml"
 WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
-TOOL_COMMIT = "f357b70599e5b0a6cf39a25de6a70e43a04e85b1"
+TOOL_COMMIT = "8d4c990cb22b794e268d361f09bc2757d15e1c94"
 
 
 def configured_variable(name: str) -> str:
