@@ -1,3 +1,5 @@
+> Migration/background record. Current work ordering is in [../plan.md](../plan.md).
+
 # Generated output and Pages
 
 Status: **migration in progress**
