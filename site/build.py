@@ -358,42 +358,6 @@ def page(title, body, *, stylesheet, home, cheatsheet):
     )
 
 
-def build_scope_from_environment():
-    """Return the technical evidence scope for this site build.
-
-    Presentation-only builds reuse the last qualified main output. A workflow
-    that actually produces new PR technical evidence must set
-    SCPF_BUILD_SCOPE=pr/<number> explicitly.
-    """
-    return os.environ.get("SCPF_BUILD_SCOPE", "main").strip("/") or "main"
-
-
-def build_blob_url(scope, relative=""):
-    relative = str(relative).lstrip("/")
-    base = f"{LIBRARY_URL}/blob/{ACTIVE_BUILD_COMMIT}/{scope}"
-    return f"{base}/{relative}" if relative else base
-
-
-def build_raw_url(scope, relative=""):
-    relative = str(relative).lstrip("/")
-    base = (
-        "https://raw.githubusercontent.com/brainboxemb/"
-        f"lib.py.solidcraft.forge/{ACTIVE_BUILD_COMMIT}/{scope}"
-    )
-    return f"{base}/{relative}" if relative else base
-
-
-def evidence_scope(build_manifest_data, slug, implementation, fallback):
-    record = (
-        ((build_manifest_data.get("cases") or {}).get(slug) or {})
-        .get("implementations", {})
-        .get(implementation)
-    )
-    if record and record.get("build_scope"):
-        return record["build_scope"]
-    return fallback
-
-
 def text(path):
     return path.read_text(encoding="utf-8")
 
@@ -431,25 +395,9 @@ def build(
     qualified Forge/API commit that produced native/reference evidence.
     They are normally equal; site-only rebuilds may reuse older evidence.
     """
-    global ACTIVE_BUILD_COMMIT
-    evidence_sha = evidence_sha or sha
-    build_scope = build_scope or build_scope_from_environment()
-    ACTIVE_BUILD_COMMIT = build_commit or os.environ.get("SCPF_BUILD_COMMIT", "build")
-    build_output_url = build_blob_url(build_scope)
-    build_manifest_data = {}
-    if build_manifest is not None:
-        build_manifest_data = json.loads(
-            Path(build_manifest).read_text(encoding="utf-8")
-        )
-        evidence_sha = (
-            build_manifest_data.get("source_commit")
-            or evidence_sha
-        )
-
-    verified = False
-    metadata = {}
-    forge_version = scpf_version()
-    qualified_at = "attached by stable Pages from durable build/main"
+    # #497 consumes build/main through a new explicit evidence loader.
+    # Legacy evidence arguments remain accepted until that cut-over so callers
+    # do not break while source architecture is cleaned up.
 
     out.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / "site" / "style.css", out / "style.css")
