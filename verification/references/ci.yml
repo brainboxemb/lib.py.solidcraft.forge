@@ -2,11 +2,6 @@
 id: reference-verification
 kind: verification
 watch:
-  - examples/anchor-topology-mutation/verification/reference_geometry.json
-  - examples/anchor-topology-mutation/pythonscad/**
-  - examples/anchor-topology-mutation/pybosl2/**
-  - examples/anchor-topology-mutation/cadquery/**
-  - examples/anchor-topology-mutation/build123d/**
   - examples/four-corner-l/verification/reference_geometry.json
   - examples/four-corner-l/pythonscad/**
   - examples/four-corner-l/pybosl2/**
@@ -25,11 +20,6 @@ strategy:
 steps:
   - id: verify_references
     inputs:
-      - examples/anchor-topology-mutation/verification/reference_geometry.json
-      - examples/anchor-topology-mutation/pythonscad/**
-      - examples/anchor-topology-mutation/pybosl2/**
-      - examples/anchor-topology-mutation/cadquery/**
-      - examples/anchor-topology-mutation/build123d/**
       - examples/four-corner-l/verification/reference_geometry.json
       - examples/four-corner-l/pythonscad/**
       - examples/four-corner-l/pybosl2/**
@@ -47,6 +37,6 @@ steps:
       - python
       - ../../scripts/verification_evidence.py
       - verify_references
-      - anchor-topology-mutation,four-corner-l,xz-anchor
+      - four-corner-l,xz-anchor
     outputs:
       - references
