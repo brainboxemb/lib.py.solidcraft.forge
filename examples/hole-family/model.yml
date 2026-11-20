@@ -8,3 +8,17 @@ stages:
   - Create one bottom-anchored native Box plate
   - Add simple, counterbore and countersink Hole features
   - Add one modeled M6 threaded Hole feature
+concepts:
+  - Hole
+  - CounterboreHole
+  - CountersinkHole
+  - ThreadedHole
+  - native feature history
+verification:
+  summary: >
+    Verifies the four supported native Hole-family intents on one plate without
+    introducing helper sketches.
+  proves:
+    - The plate remains one body with the expected outer envelope.
+    - Native history contains exactly four HoleFeature entries.
+    - The model contains no sketch objects for these direct native hole features.
