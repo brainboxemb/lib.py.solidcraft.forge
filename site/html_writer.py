@@ -106,6 +106,18 @@ def saved_design(value):
     return f"<h3>Saved design</h3><p>{escape(value)}</p>"
 
 
+def reference_notes(items):
+    """Render preserved reference-note pairs without changing their text."""
+    return "".join(
+        "<li><strong>"
+        + escape(name)
+        + "</strong> — "
+        + escape(note)
+        + "</li>"
+        for name, note in items
+    )
+
+
 def cheatsheet_link(slug, known_slugs):
     if slug not in known_slugs:
         return ""
