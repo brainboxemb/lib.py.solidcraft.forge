@@ -1,28 +1,4 @@
 # SolidCraft model verification for parametric-offset.
 id: parametric-offset
-process: false
-kind: model
-needs:
-  - forge-package
-  - model-verification-batch
-watch:
-  - examples/parametric-offset/scpf/**
-  - examples/parametric-offset/model.yml
-  - examples/parametric-offset/verification/**
-  - scripts/forge_example.py
-  - scripts/model_verify_declarative.py
-strategy:
-  reuse: true
-steps:
-  - id: model_verify
-    inputs:
-      - examples/parametric-offset/scpf/**
-      - examples/parametric-offset/model.yml
-      - examples/parametric-offset/verification/**
-      - scripts/forge_example.py
-      - scripts/model_verify_declarative.py
-      - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verification_batch.py, materialize]
-    outputs:
-      - solidcraft.json
-      - model_verify
+template: forge-model-declarative
+process: true

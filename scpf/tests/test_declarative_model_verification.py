@@ -1,4 +1,4 @@
-"""Guard the staged declarative model-verification boundary."""
+"""Guard the complete declarative model-verification boundary."""
 
 from __future__ import annotations
 
@@ -64,6 +64,15 @@ MIGRATED_MODELS = (
     *BATCH_ONE_MODELS,
     *BATCH_TWO_MODELS,
     "sketch-pattern-mirror",
+)
+
+ACTIVATED_FINAL_SIX = (
+    "assembly-owned-anchor",
+    "corner-anchor",
+    "eight-corner-brackets",
+    "parametric-anchor",
+    "parametric-attach",
+    "parametric-offset",
 )
 
 FORBIDDEN_VERIFY_IMPLEMENTATION = (
@@ -152,6 +161,38 @@ class DeclarativeModelVerificationBoundaryTests(unittest.TestCase):
             list(ROOT.glob("examples/*/verification/verify_model.py")),
             [],
         )
+
+    def test_all_qualification_models_are_processed_with_references(self):
+        """All 32 declarative cases are active with four reference children."""
+
+        for slug in MIGRATED_MODELS:
+            with self.subTest(slug=slug):
+                ci = (
+                    ROOT / "examples" / slug / "ci.yml"
+                ).read_text(encoding="utf-8")
+                self.assertIn("process: true", ci)
+
+                for engine in (
+                    "build123d",
+                    "cadquery",
+                    "pybosl2",
+                    "pythonscad",
+                ):
+                    child = ROOT / "examples" / slug / engine / "ci.yml"
+                    self.assertTrue(
+                        child.is_file(),
+                        f"missing reference child: {child}",
+                    )
+
+    def test_final_six_use_standard_model_template(self):
+        """The six newly activated cases use the standard declarative template."""
+
+        for slug in ACTIVATED_FINAL_SIX:
+            with self.subTest(slug=slug):
+                ci = (
+                    ROOT / "examples" / slug / "ci.yml"
+                ).read_text(encoding="utf-8")
+                self.assertIn("template: forge-model-declarative", ci)
 
     def test_batch_reuses_runtime_but_materializes_per_model(self):
         text = BATCH.read_text(encoding="utf-8")
