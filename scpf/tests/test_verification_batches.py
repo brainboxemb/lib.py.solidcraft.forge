@@ -52,6 +52,13 @@ class VerificationBatchContractTests(unittest.TestCase):
         self.assertIn("for row in rows:", text)
         self.assertIn("materialize_case", text)
 
+    def test_reference_batch_runs_cadcraft_in_same_container(self):
+        text = REFERENCE_BATCH.read_text(encoding="utf-8")
+        self.assertEqual(text.count('"docker",\n            "run"'), 1)
+        self.assertIn("/workspace/scripts/build_diagrams.py", text)
+        self.assertIn("/output/diagrams", text)
+        self.assertIn("materialize_diagrams", text)
+
     def test_reference_batch_materializes_only_current_child(self):
         text = REFERENCE_BATCH.read_text(encoding="utf-8")
         self.assertIn("reference_identity()", text)
