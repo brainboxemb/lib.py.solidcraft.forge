@@ -396,7 +396,7 @@ Forge owns:
 - conversion from measured SolidCraft body bounds to the deterministic
   SolidCraft snapshot camera;
 - the `solidcraft-cli snapshot` invocation;
-- approved model-local baseline PNGs;
+- approved model-local baseline images or approved encoded baseline payloads;
 - model-local expected geometry;
 - the fact that visual verification is required for that model.
 
@@ -415,11 +415,17 @@ A visual-enabled model stores policy below its own verification directory:
 examples/<model>/verification/
   visual.json
   baselines/
-    <view>.png
+    <view>.png | <view>.json
 ```
 
 `visual.json` contains data only. It must not contain Python callbacks or a
 second implementation of generic image/projection logic.
+
+An approved encoded baseline payload may use the released verification-library
+baseline schema (`encoding`, `width`, `height`, `data`) plus provenance fields.
+Forge must delegate payload decoding to released `decode_baseline()`; it must
+not copy base64/zlib/image decoding logic. A migrated historical payload is
+preserved byte-for-byte in its encoded `data` field.
 
 The historical render contract remains:
 

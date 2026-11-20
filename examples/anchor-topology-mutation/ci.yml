@@ -1,6 +1,6 @@
 # SolidCraft model verification for anchor-topology-mutation.
 id: anchor-topology-mutation
-process: false
+process: true
 kind: model
 needs:
   - forge-package
@@ -12,6 +12,7 @@ watch:
   - scripts/forge_example.py
   - scripts/model_contract_test.py
   - scripts/model_verify_declarative.py
+  - scripts/model_visual.py
 strategy:
   reuse: true
 steps:
@@ -30,6 +31,7 @@ steps:
       - examples/anchor-topology-mutation/tests/**
       - scripts/forge_example.py
       - scripts/model_verify_declarative.py
+      - scripts/model_visual.py
       - scpf/scpf/version.py
     run: [python, ../../scripts/model_verify_declarative.py]
     outputs:

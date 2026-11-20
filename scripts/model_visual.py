@@ -79,8 +79,16 @@ def load_visual_policy(path: Path) -> dict[str, Any]:
         if not isinstance(row, dict):
             raise ValueError(f"visual view must be an object: {name}")
         baseline = row.get("baseline")
-        if not isinstance(baseline, str) or not baseline.strip():
-            raise ValueError(f"visual view requires a baseline: {name}")
+        baseline_payload = row.get("baseline_payload")
+        has_baseline = isinstance(baseline, str) and bool(baseline.strip())
+        has_payload = (
+            isinstance(baseline_payload, str)
+            and bool(baseline_payload.strip())
+        )
+        if has_baseline == has_payload:
+            raise ValueError(
+                f"visual view requires exactly one baseline source: {name}"
+            )
 
     render = value.get("render")
     if not isinstance(render, dict):
@@ -254,6 +262,38 @@ def _snapshot(
         raise RuntimeError(f"SolidCraft snapshot is missing or empty: {output_path}")
 
 
+
+def _baseline_source(
+    policy_path: Path,
+    view_policy: Mapping[str, Any],
+    view_root: Path,
+) -> tuple[Path, str]:
+    """Return one approved baseline image, decoding payloads through the library."""
+
+    baseline = view_policy.get("baseline")
+    if isinstance(baseline, str) and baseline.strip():
+        return policy_path.parent / baseline, baseline
+
+    payload_reference = view_policy["baseline_payload"]
+    payload_path = policy_path.parent / payload_reference
+    payload = json.loads(payload_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or payload.get("approval") != "approved":
+        raise ValueError(
+            f"encoded baseline must have approved provenance: {payload_path}"
+        )
+
+    from cad_verification import decode_baseline
+
+    image = decode_baseline(payload)
+    materialized = view_root / "approved-baseline.png"
+    image.save(
+        materialized,
+        format="PNG",
+        optimize=False,
+        compress_level=9,
+    )
+    return materialized, payload_reference
+
 def _view_status(evidence: Mapping[str, Any]) -> str:
     """Return the required-view status from library visual evidence."""
 
@@ -320,7 +360,11 @@ def run_visual_verification(
             height=render["height"],
         )
 
-        baseline_path = policy_path.parent / view_policy["baseline"]
+        baseline_path, baseline_reference = _baseline_source(
+            policy_path,
+            view_policy,
+            view_root,
+        )
         diff_path = view_root / "diff.png"
         goal_path = view_root / "goal.png"
         overlay_path = view_root / "overlay.png"
@@ -360,7 +404,7 @@ def run_visual_verification(
             "view": view_name,
             "status": status,
             "camera": _reference(camera_path, output_dir),
-            "baseline": view_policy["baseline"],
+            "baseline": baseline_reference,
             "evidence": evidence,
         }
         views.append(row)

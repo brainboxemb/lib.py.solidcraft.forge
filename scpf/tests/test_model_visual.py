@@ -12,6 +12,12 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts" / "model_visual.py"
 POLICY = ROOT / "examples" / "simple-box" / "verification" / "visual.json"
+STAGED_MODELS = (
+    "anchor-topology-mutation",
+    "attach-angle",
+    "four-corner-l",
+    "xz-anchor",
+)
 
 
 def load_visual_module():
@@ -104,11 +110,54 @@ class ModelVisualTests(unittest.TestCase):
             self.assertTrue(baseline.is_file(), baseline)
             self.assertGreater(baseline.stat().st_size, 0)
 
+    def test_staged_models_use_approved_encoded_baselines(self):
+        expected_box_counts = {
+            "anchor-topology-mutation": 2,
+            "attach-angle": 2,
+            "four-corner-l": 9,
+            "xz-anchor": 3,
+        }
+        for slug in STAGED_MODELS:
+            with self.subTest(slug=slug):
+                policy_path = (
+                    ROOT / "examples" / slug / "verification" / "visual.json"
+                )
+                policy = self.visual.load_visual_policy(policy_path)
+                self.assertEqual(
+                    tuple(policy["views"]),
+                    ("front", "right", "iso"),
+                )
+                self.assertEqual(
+                    len(policy["expected_boxes"]),
+                    expected_box_counts[slug],
+                )
+                self.assertEqual(
+                    policy["baseline_provenance"]["approval"],
+                    "approved",
+                )
+                for view in policy["views"].values():
+                    self.assertNotIn("baseline", view)
+                    payload_path = policy_path.parent / view["baseline_payload"]
+                    payload = json.loads(
+                        payload_path.read_text(encoding="utf-8")
+                    )
+                    self.assertEqual(payload["approval"], "approved")
+                    self.assertEqual(payload["encoding"], "zlib")
+                    self.assertEqual(payload["width"], 96)
+                    self.assertEqual(payload["height"], 72)
+                    self.assertTrue(payload["data"])
+
+                ci_text = (
+                    ROOT / "examples" / slug / "ci.yml"
+                ).read_text(encoding="utf-8")
+                self.assertIn("process: true", ci_text)
+
     def test_adapter_delegates_generic_visual_mechanics_to_library(self):
         text = SCRIPT.read_text(encoding="utf-8")
 
         self.assertIn("verify_visual_view", text)
         self.assertIn("compose_semantic_result", text)
+        self.assertIn("decode_baseline", text)
         self.assertIn('"solidcraft-cli"', text)
         self.assertIn('"snapshot"', text)
 
@@ -121,6 +170,9 @@ class ModelVisualTests(unittest.TestCase):
             "make_goal_image",
             "make_overlay_image",
             "ImageDraw",
+            "b64decode",
+            "import zlib",
+            "zlib.decompress",
         ):
             self.assertNotIn(forbidden, text)
 
