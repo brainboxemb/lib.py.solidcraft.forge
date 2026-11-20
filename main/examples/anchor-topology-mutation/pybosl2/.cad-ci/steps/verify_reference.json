@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "b0c50d5c5f119b0178886fd298a3009c4a9d5669ccb55ae5be16d4e3b5cf8d9d",
-  "duration_seconds": 1.833,
+  "bundle_sha256": "bfe4ffca2e466cbc4057028be8c9d3c51d745e136b8a0be63113dfb26766f41a",
+  "duration_seconds": 2.153,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T17:19:40.210Z",
+  "finished_at": "2026-11-20T19:08:19.806Z",
   "item": "examples-anchor-topology-mutation-pybosl2",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,15 +14,15 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "a6217fa29bcbb57c8126cdd861cfc4f517c37e87b0b42e6dd8c20bcffb8b58b6"
+      "sha256": "924c6a2c113a5f5ca29c33e86e3424ceac4a9015bbe51153ac8de6bd0505230c"
     }
   },
-  "run_finished_at": "2026-11-20T17:20:29.699Z",
-  "run_started_at": "2026-11-20T17:18:14.714Z",
+  "run_finished_at": "2026-11-20T19:09:09.367Z",
+  "run_started_at": "2026-11-20T19:06:36.386Z",
   "schema": 3,
-  "started_at": "2026-11-20T17:19:38.377Z",
+  "started_at": "2026-11-20T19:08:17.654Z",
   "status": "pass",
   "step": "verify_reference",
-  "target_spec_digest": "1dbf79b4bcac1957b71229eec8151ba80028715cc4f0675a9b22297fb661eb09",
+  "target_spec_digest": "ddc2d1b510e07851580eec9bc2ecec893cb7df1f43b47765ddcb5851b553e86d",
   "timeout_seconds": null
 }
