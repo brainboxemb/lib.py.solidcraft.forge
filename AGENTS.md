@@ -104,7 +104,18 @@ tagline
 description
 parameters
 stages
+concepts
+verification:
+  summary
+  proves
+  saved_design   # optional
+notes            # optional
 ```
+
+`model.yml` is the authoritative human-facing example/page metadata source.
+Exact verification values remain in `verification/verify.py`; actual current
+results come from durable `build/main`. Do not add a central Python example
+page catalog.
 
 Native-model expectations and mutation definitions live as model-specific data
 in the model verification definition.
@@ -181,7 +192,11 @@ sections are removed after their corresponding change is merged.
 
 ## Generated output and Pages
 
-Build and Pages publication are currently being migrated in issue #366.
+Build and Pages publication are currently being migrated through #548, #497 and #366.
+
+Site Python code may discover/load/validate/render data, but complete
+hand-authored pages and guide prose belong in external templates/content, not
+Python string literals.
 
 The existing `build` and `gh-pages` branches are generated output from the
 earlier publication system. Current development status is determined from source
