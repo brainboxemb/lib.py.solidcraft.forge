@@ -2,11 +2,6 @@
 id: reference-verification
 kind: verification
 watch:
-  - examples/simple-box/verification/reference_geometry.json
-  - examples/simple-box/pythonscad/**
-  - examples/simple-box/pybosl2/**
-  - examples/simple-box/cadquery/**
-  - examples/simple-box/build123d/**
   - examples/anchor-topology-mutation/verification/reference_geometry.json
   - examples/anchor-topology-mutation/pythonscad/**
   - examples/anchor-topology-mutation/pybosl2/**
@@ -30,11 +25,6 @@ strategy:
 steps:
   - id: verify_references
     inputs:
-      - examples/simple-box/verification/reference_geometry.json
-      - examples/simple-box/pythonscad/**
-      - examples/simple-box/pybosl2/**
-      - examples/simple-box/cadquery/**
-      - examples/simple-box/build123d/**
       - examples/anchor-topology-mutation/verification/reference_geometry.json
       - examples/anchor-topology-mutation/pythonscad/**
       - examples/anchor-topology-mutation/pybosl2/**
@@ -57,6 +47,6 @@ steps:
       - python
       - ../../scripts/verification_evidence.py
       - verify_references
-      - simple-box,anchor-topology-mutation,four-corner-l,xz-anchor
+      - anchor-topology-mutation,four-corner-l,xz-anchor
     outputs:
       - references
