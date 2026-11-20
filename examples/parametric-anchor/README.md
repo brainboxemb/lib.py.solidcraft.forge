@@ -30,6 +30,14 @@ The attached block stays on the parent's right face.
 
 Change base_width from 40 to 80 mm in the saved design; the block follows the moved RIGHT face.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+The two body sizes and positions show the initial face-relative placement. The saved SolidCraft model is then changed to confirm that the same anchor is still used.
+
 ## Reference notes
 
 - **BOSL2** — BOSL2 cardinal anchors similarly express a meaningful side of the parent instead of an absolute coordinate.
