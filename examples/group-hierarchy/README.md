@@ -28,6 +28,14 @@ Two 10 x 2 x 20 mm panels remain nested under PanelGroup and one 35 x 10 x 40 mm
 
 No saved-design mutation in this fixture; it isolates persisted native grouping and hierarchy.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+The body sizes describe the visible parts. The saved SolidCraft model is checked separately to confirm the expected group and BOM structure.
+
 ## Reference notes
 
 - **SolidCraft** — Native components form a tree; top-level BOM inspection exposes direct children while flat BOM inspection expands subassemblies.
