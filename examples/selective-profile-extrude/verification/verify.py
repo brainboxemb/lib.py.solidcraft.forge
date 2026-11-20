@@ -34,12 +34,17 @@ TIMELINE = (
 )
 
 
-def center_x(radius: float, positions_sum: float) -> float:
-    """Return the historical expected X center for the selected cuts."""
+BASE_REMOVED_VOLUME = math.pi * 4.0**2 * 5.0
+BASE_VOLUME = 120.0 * 60.0 * 5.0 - 3.0 * BASE_REMOVED_VOLUME
+BASE_CENTER_X = (
+    -(BASE_REMOVED_VOLUME * (-30.0 - 10.0 + 30.0)) / BASE_VOLUME
+)
 
-    removed_volume = math.pi * radius**2 * 5.0
-    volume = 120.0 * 60.0 * 5.0 - 3.0 * removed_volume
-    return -(removed_volume * positions_sum) / volume
+MUTATED_REMOVED_VOLUME = math.pi * 5.0**2 * 5.0
+MUTATED_VOLUME = 120.0 * 60.0 * 5.0 - 3.0 * MUTATED_REMOVED_VOLUME
+MUTATED_CENTER_X = (
+    -(MUTATED_REMOVED_VOLUME * (-30.0 - 6.0 + 42.0)) / MUTATED_VOLUME
+)
 
 
 VERIFICATION = SolidCraftVerification(
@@ -58,7 +63,7 @@ VERIFICATION = SolidCraftVerification(
                 volume_tolerance=0.05,
                 face_type_counts={"cylinder": 3},
                 center_of_mass=(
-                    center_x(4.0, -30.0 - 10.0 + 30.0),
+                    BASE_CENTER_X,
                     None,
                     None,
                 ),
@@ -91,7 +96,7 @@ VERIFICATION = SolidCraftVerification(
                         volume_tolerance=0.05,
                         face_type_counts={"cylinder": 3},
                         center_of_mass=(
-                            center_x(5.0, -30.0 - 6.0 + 42.0),
+                            MUTATED_CENTER_X,
                             None,
                             None,
                         ),
