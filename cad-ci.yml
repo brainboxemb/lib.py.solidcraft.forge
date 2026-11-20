@@ -43,9 +43,7 @@ templates:
             - tests/**
           repo:
             - scripts/forge_example.py
-            - scripts/model_verify_declarative.py
-            - scripts/model_visual.py
-            - scpf/scpf/version.py
+            - scripts/model_verification_batch.py
         run: [python, ../../scripts/model_verification_batch.py, materialize]
         outputs:
           - solidcraft.json
