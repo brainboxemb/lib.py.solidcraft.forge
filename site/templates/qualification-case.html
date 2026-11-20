@@ -1,0 +1,29 @@
+<main class="wrap">
+  <div class="crumb"><a href="../">← Qualification</a> / ${title}</div>
+  <section class="hero small">
+    <p class="eyebrow">${section}</p>
+    <h1>${title}</h1>
+    <p class="guide-lead">${verification_summary}</p>
+  </section>
+  <section class="panel">
+    <h2>Verification intent</h2>
+    <ul>${verification_proves}</ul>
+    ${saved_design}
+  </section>
+  <section class="panel">
+    <h2>Sources of truth</h2>
+    <p>
+      Human example context is stored in this example's <code>model.yml</code>.
+      Exact expected values and tolerances are defined by
+      <code>verification/verify.py</code>.
+    </p>
+    <p>
+      <a href="../../examples/${slug}/">Open the example →</a>
+      · <a href="${verification_url}">Open verification/verify.py →</a>
+    </p>
+  </section>
+  <section class="notice">
+    Current PASS/FAIL, measured values and reference evidence are attached from
+    the accepted durable <code>build/main</code> baseline by stable Pages.
+  </section>
+</main>
