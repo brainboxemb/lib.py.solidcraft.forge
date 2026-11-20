@@ -65,16 +65,23 @@ class CiRuntimeContractTests(unittest.TestCase):
             f"reusable-ci.yml@{TOOL_COMMIT}",
             text,
         )
+        self.assertIn("cad_ci_pr:", text)
+        self.assertIn("cad_ci_main:", text)
         self.assertIn("upload_build: true", text)
         self.assertIn("build_artifact_name: forge-cad-ci-build", text)
+        self.assertIn("build_artifact_name: forge-cad-ci-main-build", text)
+        self.assertIn("full_run: true", text)
         self.assertIn("publish_simple_box_pr:", text)
+        self.assertIn("publish_main_build:", text)
         self.assertIn("contents: write", text)
         self.assertIn("actions/download-artifact@v4", text)
         self.assertIn("candidate-build/examples/simple-box/.cad-ci/item.json", text)
         self.assertIn("cad-ci build prepare-pr", text)
         self.assertIn("--items simple-box", text)
+        self.assertIn("cad-ci build prepare-main", text)
         self.assertIn("cad-ci publish build", text)
         self.assertIn("--scope pr", text)
+        self.assertIn("--scope main", text)
         self.assertIn("--source-ref \"$SOURCE_REF\"", text)
         self.assertIn("--expected-source \"$SOURCE_SHA\"", text)
         self.assertIn(
