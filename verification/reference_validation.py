@@ -10,6 +10,7 @@ import runpy
 import subprocess
 import sys
 import traceback
+import time
 from typing import Any
 
 from cad_verification import (
@@ -235,14 +236,14 @@ def write_failure(
     target = output / slug / implementation
     target.mkdir(parents=True, exist_ok=True)
     error = str(exc)
+    try:
+        source = str(source_path(slug, implementation).relative_to(ROOT))
+    except Exception:
+        source = None
     result = {
         "implementation": implementation,
         "status": "fail",
-        "source": str(
-            source_path(slug, implementation).relative_to(ROOT)
-        )
-        if source_path(slug, implementation).is_file()
-        else None,
+        "source": source,
         "error": error,
     }
     (target / "verification.json").write_text(
@@ -317,6 +318,7 @@ def verify_batch(
     failed = False
 
     for implementation in implementations:
+        implementation_started = time.perf_counter()
         build123d_errors: dict[str, str | None] | None = None
         if implementation == "build123d":
             try:
@@ -345,6 +347,12 @@ def verify_batch(
                     ).strip(),
                 )
             by_slug[slug].append(result)
+
+        print(
+            "REFERENCE BATCH TIMING "
+            f"{implementation}_s={time.perf_counter() - implementation_started:.3f}",
+            flush=True,
+        )
 
     models = []
     for slug in slugs:
