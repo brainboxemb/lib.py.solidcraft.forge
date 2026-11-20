@@ -47,46 +47,38 @@ performance follow-up, but it no longer blocks verification-chain migration.
 
 ## Current goal
 
-Continue #378 by applying the proven simple-box visual path to exactly four
-remaining staged proof models:
+Continue #378 with F10: restore the existing versioned CADCraft verification
+diagrams as one independently selectable CAD-CI evidence item.
 
-- `anchor-topology-mutation`;
-- `attach-angle`;
-- `four-corner-l`;
-- `xz-anchor`.
-
-Together with `simple-box`, this restores the five-model proof set. No other
-catalog model is enabled in this change.
+The six historical diagram sources are reused byte-identically. CADCraft stays
+pinned to version 0.20.1 and its historical archive SHA-256.
 
 ## Required proof
 
-- each of the four models owns visual policy, approved baseline provenance and
-  expected-shape data under its own `verification/` directory;
-- historical approved regression pixels are preserved exactly as model-local
-  encoded baseline payloads and decoded by released
-  `lib.py.cad.verification`;
-- front/right/iso views produce actual, camera, diff, goal and overlay evidence;
-- `four-corner-l` preserves the historical L-arm visual decomposition rather
-  than reducing expected shape to outer body bounds;
-- the common Forge adapter contains no generic image comparison/projection
-  implementation;
-- exactly these four items change from `process: false` to `process: true`;
-- the five-model staged set is green before any broader catalog expansion.
+- six versioned `.cadcraft.json` sources live under
+  `verification/diagrams/sources/`;
+- source files remain the evidence authority and declare CADCraft 0.20.1;
+- one `ci/verification-diagrams` item is selected only by diagram source,
+  renderer or diagram-test changes;
+- the renderer downloads only the exact pinned CADCraft 0.20.1 x86_64 archive
+  and verifies its SHA-256 before execution;
+- every source renders a non-empty SVG and editable DXF;
+- output retains a copy of each source plus tool/version/hash provenance;
+- tests prove the fixed six-source set and pin;
+- no model or reference CAD is rerun by the diagram renderer itself.
 
 ## Execution order
 
-1. #378 — enable and prove visual evidence for the remaining four staged models.
-2. #378 — continue the next explicit verification stages/summary from the
-   five-model proof set.
-3. #366 / #497 — continue durable output and Pages after verification is stable.
-4. #484 — continue runtime/image-distribution optimization independently using
-   the retained timing evidence.
+1. #378 — F10 build the six versioned CADCraft diagrams.
+2. #378 — F11 compose semantic verification summary from existing evidence.
+3. #366 / #497 — continue durable output and Pages after F11 is green.
+4. #484 — continue runtime/image-distribution optimization independently.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #378 Use explicit Forge verification stages instead of integration/native gates | now | Simple-box visual proof is complete; apply the proven path to the remaining four staged proof models only. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | now | F7-F9 are green for the five-model staged set; continue with F10 versioned CADCraft diagrams. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later, non-blocking | CAD-CI/model work is small; remaining latency is dominated by highly variable GHCR image acquisition. Preserve measurements and optimize runtime distribution separately. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Main/Pages continuation waits for PR performance path. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Depends on stable durable generated output. |
@@ -112,4 +104,4 @@ catalog model is enabled in this change.
 
 Immediate chain:
 
-`#378 five-model staged proof -> next #378 verification stage -> #366/#497 durable output; #484 continues independently`.
+`#378 F10 diagrams -> #378 F11 semantic summary -> #366/#497 durable output; #484 continues independently`.
