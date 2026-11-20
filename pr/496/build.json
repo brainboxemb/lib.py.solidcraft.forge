@@ -1,0 +1,80 @@
+{
+  "items": {
+    "ci/forge-release": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "ff111949a1d54d98aa2270eb7cd9ee1ba50487699ee22ef94c2d235cf97ec367",
+      "final_step": "tool_verify",
+      "final_target_spec_digest": "a5af56b6a5c2270bb0ad3cb7f72bb3d17de8cab7d7d1dbceb4b1ba117c058f64",
+      "item_id": "forge-release",
+      "source_commit": "f7d9de242cd2aa4dc2df0fe27d48eb28639fe74e"
+    },
+    "ci/forge-tests": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
+      "final_step": "tool_test",
+      "final_target_spec_digest": "6a920830e28c302981b3391a00b2acbda81f942bb3e9e43169c71de80469fa43",
+      "item_id": "forge-tests",
+      "source_commit": "f7d9de242cd2aa4dc2df0fe27d48eb28639fe74e"
+    },
+    "examples/anchor-topology-mutation": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "38522a11dfb8bfedb460a847acf58ddb6fef7a62a139efc3a40fd4e1c92bda88",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "921bc65674cdf93d38f86d8c3f70b0d4b2c5d0ddc488732978145d8fff7bd249",
+      "item_id": "anchor-topology-mutation",
+      "source_commit": "f7d9de242cd2aa4dc2df0fe27d48eb28639fe74e"
+    },
+    "examples/attach-angle": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "ee771257dd698120b3a020bb75bff27fd59ddedb397f24737f2064fe936fafc5",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "53649a1c73b8b8cea7b6895f820e80bb098a64ae4a3468db309fabb102a4ddaf",
+      "item_id": "attach-angle",
+      "source_commit": "f7d9de242cd2aa4dc2df0fe27d48eb28639fe74e"
+    },
+    "examples/four-corner-l": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "7d579f82284e3be2120a00e3a2e63464ed8f961a77ca0d24997046b3be88a551",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "94879e280ce4439dce754976af463ed6d2e42757ced1c0a98b3bc9c7a95f18f2",
+      "item_id": "four-corner-l",
+      "source_commit": "f7d9de242cd2aa4dc2df0fe27d48eb28639fe74e"
+    },
+    "examples/simple-box": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "f314c8c334ab925cd1f55270d788c63f3c4f1fb2513c967973f8cd17e7b94983",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "f71bb2b59fb7ab3c5f7c624c0ee0a7d8693616f9ddf88458f2173e97c83b94f2",
+      "item_id": "simple-box",
+      "source_commit": "f7d9de242cd2aa4dc2df0fe27d48eb28639fe74e"
+    },
+    "examples/xz-anchor": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "165d982689c6a9d24d03fb3bbf814b3b6d595e38a77b8030702ff8212a815388",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "fc3aae6ed47a4f2e188342cdcac952ad0d40cc77f2d879e93dbbaccf45925e80",
+      "item_id": "xz-anchor",
+      "source_commit": "f7d9de242cd2aa4dc2df0fe27d48eb28639fe74e"
+    },
+    "scpf": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "54c7b32a76f0ba3e6fa9cb3afe9d7de712976fb97cfed720bbdcf89daa0696e1",
+      "final_step": "tool_build",
+      "final_target_spec_digest": "35eb742d2b61f69169fd103fc2c4676979c29d7436a302215fcb106a939cfddc",
+      "item_id": "forge-package",
+      "source_commit": "f7d9de242cd2aa4dc2df0fe27d48eb28639fe74e"
+    }
+  },
+  "pull_request": 496,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "f7d9de242cd2aa4dc2df0fe27d48eb28639fe74e"
+}
