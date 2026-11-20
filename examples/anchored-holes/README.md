@@ -28,6 +28,14 @@ One plate with two through holes at the requested Y spacing, one source cut and 
 
 No saved-design mutation in this fixture; geometry and feature placement are measured at geometry.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+The holes do not change the outer plate bounds. Volume and 3D hole-wall probes are required.
+
 ## Reference notes
 
 - **OpenSCAD** — Comparable geometry normally uses difference() and repeated cylinders. This case instead qualifies one semantic TOP-face source cut plus native SolidCraft pattern history; native solid.hole itself is qualified separately by hole-family.
