@@ -1,7 +1,7 @@
 # Forge requirements
 
-This document records stable repository requirements. Detailed API behavior is
-documented in the subject-specific Forge documentation.
+This document records stable repository requirements. Cross-object API behavior is documented in `docs/api.md`; exact public
+signatures/defaults remain implementation/docstring-owned.
 
 ## CI ownership
 

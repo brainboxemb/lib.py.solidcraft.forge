@@ -1,7 +1,8 @@
 # Forge design
 
-This document summarizes repository-level responsibility boundaries. Detailed
-test and verification design remains under `docs/design/`.
+This document summarizes repository-level responsibility boundaries. Historical/narrow test and verification design records are preserved under
+`docs/background/design/`. Current repository-wide rules live here and in
+`requirements.md`.
 
 ## Main execution path
 
