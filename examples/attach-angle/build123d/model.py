@@ -1,4 +1,4 @@
-"""build123d reference: a top-mounted arm clocked 90 degrees in XY."""
+"""build123d attach-angle reference: a top-mounted arm clocked 90 degrees in XY."""
 from build123d import Align, Box, BuildPart, Locations, Rot
 
 bottom = (Align.CENTER, Align.CENTER, Align.MIN)
