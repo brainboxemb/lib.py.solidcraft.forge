@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Build a *library* API site from self-contained, regression-tested SCPF samples.
+"""Build Forge documentation from self-describing examples and API sources.
 
-The complete mechanical CAD catalog belongs to 2026-011-02.cad.solidcraft.
-This site deliberately contains only tiny fixtures and the SCPF cheatsheet.
+Human example intent comes from local model.yml files. Exact verification
+contracts remain in verification/verify.py. Stable Pages attaches accepted
+build/main evidence separately.
 """
 import argparse
 import html
 import json
-import os
 from pathlib import Path
 import re
 import shutil
@@ -40,7 +40,6 @@ from api_reference import (
 )
 
 LIBRARY_URL = "https://github.com/brainboxemb/lib.py.solidcraft.forge"
-ACTIVE_BUILD_COMMIT = "build"
 CAD_SITE = "https://brainboxemb.github.io/2026-011-02.cad.solidcraft/"
 
 CHEATSHEET = [
@@ -389,11 +388,10 @@ def build(
     build_manifest=None,
     build_commit=None,
 ):
-    """Compile the public site and attach verified qualification evidence.
+    """Compile the source-driven site.
 
-    sha is the current site/source commit. evidence_sha is the already
-    qualified Forge/API commit that produced native/reference evidence.
-    They are normally equal; site-only rebuilds may reuse older evidence.
+    Legacy evidence arguments remain accepted during the #548 -> #497
+    transition. #497 replaces them with explicit durable build/main loading.
     """
     # #497 consumes build/main through a new explicit evidence loader.
     # Legacy evidence arguments remain accepted until that cut-over so callers
