@@ -35,74 +35,56 @@ Qualification catalog from 32 current-looking cases to 5. Do not do that.
 
 ## Current goal
 
-Complete #537: migrate the first post-proof Qualification batch of ten existing
-cases to the released declarative verification path.
+Complete #484 by removing per-case CAD runtime startup from verification while
+preserving the existing per-case CAD-CI items and durable evidence paths.
 
-The runtime/package boundary is already proven by #538:
+#537 is complete and merged. Its ten-case proof exposed the runtime regression:
+the correct 10-model/40-reference selection took about 3m28 because each
+reference child started a fresh container/runtime.
 
-- docker.cad.solidcraft v0.3.1 contains no cad_verification package;
-- cad-verification-package supplies released lib.py.cad.verification 0.12.0 at
-  exact commit 1254eca6681faaff62b9605fbb5a25178ab71f9a;
-- model/reference consumers receive that wheel through normal CAD-CI needs
-  edges.
+A controlled build123d experiment using the exact released
+`cad-reference:v0.3.1` image measured:
 
-Batch 1 contains exactly:
+- ten separate runtime starts: 37.686 s;
+- one shared runtime for the same ten cases: 3.535 s;
+- speedup: 10.66x.
 
-1. anchored-holes;
-2. hole-family;
-3. sheet-fold;
-4. top-sketch-after-chamfer;
-5. parameter-scope;
-6. parent-derived-child-size;
-7. components;
-8. repeated-parent-attachments;
-9. assembly-decorator;
-10. group-hierarchy.
+The required execution rule is now explicit: CAD-CI selects logical items, but
+Forge verification performs expensive CAD work in shared batches and then
+materializes each case's existing result/evidence separately.
 
-Migration preserves each existing procedural VerificationCheck contract. Shared
-helper functions in verify_model.py are not requirements unless a listed check
-uses them.
+## Required proof for #484
 
-Saved-design mutation remains model-specific:
-
-- required: parameter-scope, parent-derived-child-size,
-  repeated-parent-attachments;
-- not required: the other seven batch cases.
-
-## Required proof for #537
-
-- all ten cases use data-only verification/verify.py;
-- no verification/verify_model.py remains for those ten;
-- existing expected geometry/parameters/timeline/sketch/inspection semantics are
-  preserved without promoting incidental SolidCraft fields into policy;
-- all ten model items use the proven declarative model template/path;
-- all ten have four independent nested reference child items;
-- the batch selects only these ten cases plus true dependencies, not the
-  remaining catalog;
-- every model/reference result is PASS;
-- durable build/main gains current evidence for exactly this batch;
-- selection and timing are recorded before the next batch;
-- Pages remains unchanged.
+- one SolidCraft runtime processes the current declarative model batch;
+- one reference runtime processes the current reference batch;
+- build123d is imported once for its complete case list;
+- CadQuery, PythonSCAD and pyBOSL2 process their complete lists in the shared
+  reference process;
+- CADCraft processes the complete diagram list without fail-fast behavior;
+- a failing case does not prevent later cases in the same batch from running;
+- existing per-model and per-reference output/evidence paths remain unchanged;
+- no generic scheduling/batching is added to lib.py.cad.ci;
+- the current ten-case workload is remeasured before further migration.
 
 ## Execution order
 
-1. Read and map all ten current procedural contracts.
-2. Replace each with the smallest equivalent declarative definition.
-3. Add four reference child configs per case and enable normal processing.
-4. Run one PR proof for the complete ten-case batch.
-5. Correct only demonstrated contract/mapping errors; do not add broad policy.
-6. Merge and prove durable main output for the batch.
-7. Record selection/runtime and define the next approximately ten-case batch.
-8. Continue remaining catalog batches before #497 Pages.
+1. Add Forge-owned model/reference batch items as dependencies of the existing
+   per-case verification items.
+2. Make the batch runners continue through all cases and report failures after
+   the complete list.
+3. Keep per-case items lightweight: copy/materialize only their own batch result.
+4. Keep CADCraft as one diagram batch and collect all diagram failures.
+5. Run the representative ten-case verification workload and record timing.
+6. Continue the remaining Qualification migration only after the batch proof is
+   green and materially faster.
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #537 Migrate first post-proof Qualification batch to declarative verification | now | Runtime/wheel boundary is proven; migrate exactly the first ten current Qualification cases while preserving procedural semantics. |
-| #432 Use released declarative CAD verification in model verification | now | Parent migration issue; execute through ~10-case batch issues beginning with #537. |
+| #432 Use released declarative CAD verification in model verification | blocked | #537 is merged; continue the remaining model batches only after #484 removes the demonstrated runtime-start regression. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Keep current 32-case site unchanged until current durable evidence again covers the public Qualification catalog. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Durable build storage is already generic; final Pages lifecycle follows #497. |
-| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later, non-blocking | Broad 34-target run showed cold image acquisition plus broad selection; keep performance work independent from verification correctness. |
+| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | now | The 10-case proof is functionally correct but ~3m28; build123d experiment proves 10.66x runtime-reuse gain. Batch all expensive verification runtimes before further migration. |
 | #391 Extract reusable CAD verification library from Forge | effectively complete but still open | Generic verification ownership is already external; remaining procedural consumer migration is #432. |
 | #481 Remove stale Forge development branches | blocked | Current connected tooling cannot safely delete the stale refs. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by the runtime repository/current #484 measurements. |
@@ -124,4 +106,4 @@ Saved-design mutation remains model-specific:
 
 Immediate chain:
 
-`#537 first 10-case batch -> remaining ~10-case batches -> #497 stable 32-case Pages -> #366 final Pages lifecycle`.
+`#484 verification batching -> remaining ~10-case batches -> #497 stable 32-case Pages -> #366 final Pages lifecycle`.
