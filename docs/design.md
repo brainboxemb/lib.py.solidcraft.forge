@@ -309,3 +309,36 @@ branch while preserving sibling `pr/` scopes.
 This bootstrap does not establish the final steady-state main workflow. After
 the baseline exists, #366 replaces the full-run bootstrap with incremental
 candidate selection plus generic `update-main`.
+
+## Steady-state build publication
+
+Once the generic main baseline exists, the bootstrap full-run path is removed.
+
+```text
+PR event
+  -> cad_ci_pr (incremental)
+  -> artifact exists?
+     -> prepare-pr --base PR_BASE --head PR_HEAD
+     -> publish build --scope pr
+
+main push
+  -> cad_ci_main (incremental)
+  -> artifact exists?
+     -> build fetch -> generated-build/
+     -> update-main
+          --main generated-build/main
+          --base BEFORE
+          --head HEAD
+     -> publish build --scope main
+```
+
+The published item set is derived twice by the same released planner semantics:
+once during execution and once when preparing durable output. Forge does not
+maintain a parallel selected-item list.
+
+For main updates, stored item rows that are not selected are copied forward
+unchanged by the generic build-store. This preserves accepted durable output
+without requiring a full model/reference rerun.
+
+The publication jobs retain source freshness checks and generated-branch race
+retry from `tool.cad.ci` / `lib.py.cad.ci`.

@@ -11,49 +11,61 @@ current and what follows.
 
 Forge uses externally accepted `tool.cad.ci` v0.12.3 at exact commit
 `ad7099b4712af13067c1c42ad50e89bf6a8306dd`, with released
-`lib.py.cad.ci` 0.7.1 underneath it.
+`lib.py.cad.ci` 0.7.1.
 
-#489 proved sparse PR durable-build publication for `simple-box`.
+The durable build migration has now proven:
 
-The generated `build` branch now has a current generic PR scope, while
-`build/main` still contains the retired Forge-owned publication format.
+- sparse PR publication through #489;
+- a complete generic `build/main` bootstrap through #493.
 
-The generic tool can now prepare a complete main candidate from exactly the
-current `process: true` item set.
+The authoritative `build/main` is generic build-store schema 1 and contains
+exactly the current processed item set. Existing PR scopes are preserved.
+
+The remaining temporary behavior is:
+
+- PR publication is hard-coded to `simple-box`;
+- main pushes use `full_run: true` and replace the complete main scope.
 
 ## Current goal
 
-Complete #493 as the stable-main bootstrap:
+Complete #495 and move durable build publication to steady-state affected-item
+updates.
+
+PRs:
 
 ```text
-push main
-  -> full processed CAD-CI run
-  -> complete accepted build artifact
-  -> cad-ci build prepare-main
-  -> cad-ci publish build --scope main
-  -> authoritative generic build/main
+incremental CAD-CI
+  -> prepare-pr --base/--head
+  -> publish sparse PR scope
 ```
 
-PR behavior remains incremental and keeps the already proven sparse PR path.
+Main:
+
+```text
+incremental CAD-CI
+  -> fetch current build branch
+  -> update-main --base/--head
+  -> publish updated main scope
+```
+
+No publication happens when the reusable run produces no build artifact.
 
 ## Execution order
 
-1. #493 — replace retired `build/main` with one generic complete baseline.
-2. #366 — switch future main publications from bootstrap/full replacement to
-   partial `update-main`.
-3. Extend durable publication to all migrated active items as needed.
-4. Cut Pages publication over to `cad-ci publish pages`.
-5. Remove superseded Forge-owned publication code.
-6. Resume #430/#378 verification-feature work.
-7. Resume #432 broader declarative model migration after generated output is
+1. #495 — switch PR and main durable build publication to affected-item updates.
+2. #366 — cut Pages over to `cad-ci publish pages`.
+3. Add generic PR build/Page cleanup for closed PR scopes.
+4. Remove superseded Forge-owned publication code.
+5. Resume #430/#378 verification-feature work.
+6. Resume #432 broader declarative model migration after generated output is
    stable.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #493 Bootstrap the authoritative generic build/main baseline | now | Direct #366 step. Replace the incompatible retired main scope atomically from a complete processed run. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | PR scope is proven; partial stable-main updates and Pages follow the bootstrap. |
+| #495 Switch durable build publication to affected-item PR and main updates | now | Replace bootstrap/simple-box-specific publication with generic steady-state selection and partial main updates. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Build PR/main is nearly complete; Pages follows #495. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Measured and parked; runtime/image follow-up remains separate. |
 | #481 Remove stale Forge development branches | blocked | Branch rule is merged; physical deletion of stale refs remains unavailable through current connected tooling. |
 | #430 Prove visual render, regression and expected-shape evidence with simple-box | later | Q6 resumes after generated output is stable. |
@@ -79,4 +91,4 @@ PR behavior remains incremental and keeps the already proven sparse PR path.
 
 Immediate chain:
 
-`#493 build/main bootstrap -> #366 partial main -> gh-pages`.
+`#495 affected build updates -> #366 gh-pages`.
