@@ -8,7 +8,7 @@ watch:
   - examples/parametric-anchor/model.yml
   - examples/parametric-anchor/verification/**
   - scripts/forge_example.py
-  - scripts/model_verify.py
+  - scripts/model_verify_declarative.py
 strategy:
   reuse: true
 steps:
@@ -18,9 +18,9 @@ steps:
       - examples/parametric-anchor/model.yml
       - examples/parametric-anchor/verification/**
       - scripts/forge_example.py
-      - scripts/model_verify.py
+      - scripts/model_verify_declarative.py
       - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verify.py]
+    run: [python, ../../scripts/model_verify_declarative.py]
     outputs:
       - solidcraft.json
       - model_verify

@@ -8,7 +8,7 @@ watch:
   - examples/assembly-owned-anchor/model.yml
   - examples/assembly-owned-anchor/verification/**
   - scripts/forge_example.py
-  - scripts/model_verify.py
+  - scripts/model_verify_declarative.py
 strategy:
   reuse: true
 steps:
@@ -18,9 +18,9 @@ steps:
       - examples/assembly-owned-anchor/model.yml
       - examples/assembly-owned-anchor/verification/**
       - scripts/forge_example.py
-      - scripts/model_verify.py
+      - scripts/model_verify_declarative.py
       - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verify.py]
+    run: [python, ../../scripts/model_verify_declarative.py]
     outputs:
       - solidcraft.json
       - model_verify
