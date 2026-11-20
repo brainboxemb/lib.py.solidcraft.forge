@@ -1,0 +1,21 @@
+{
+  "items": {
+    "examples/simple-box": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "f79970bd20d2c8fb0fdca520d9a5c42ead858c4fd3ebf991c2710a88a45abc3d",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "549a2152fbab18ff672009bdc48122fa55dc466409bc294561db63c2713a56a0",
+      "item_id": "simple-box",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "9f0a4e22dfd4f4a7046e136d23f76d0abe111b52"
+    }
+  },
+  "pull_request": 523,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "9f0a4e22dfd4f4a7046e136d23f76d0abe111b52"
+}
