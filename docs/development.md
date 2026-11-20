@@ -133,3 +133,30 @@ For active repository work:
 
 See [release.md](release.md). Package version changes are deliberate release
 preparation, not routine development bookkeeping.
+
+
+## Example documentation sources
+
+Each `examples/<slug>/` directory owns the material needed to explain that
+example.
+
+- `model.yml` contains only the generic page/model metadata fields
+  `section`, `title`, `tagline`, `description`, `parameters` and
+  `stages`;
+- `README.md` contains the human engineering explanation for the example,
+  including goal, Forge API/model, SolidCraft lowering/result, saved-design
+  explanation, geometry sufficiency rationale and reference notes;
+- `scpf/model.py` is the implementation shown/executed;
+- `verification/verify.py` is the exact machine-readable verification
+  contract;
+- reference implementation directories are executable independent comparisons;
+- accepted current PASS/FAIL and measurement evidence comes from
+  `build/main`.
+
+Do not add example descriptions to a central Python registry. During source
+migrations, preserve existing README engineering statements rather than
+summarizing or reinterpreting them. Do not duplicate
+verification bounds/volumes/tolerances into prose merely to render a page.
+
+Site layout belongs in external templates/static assets. Prose-heavy site
+content must not be embedded as complete HTML pages in Python modules.

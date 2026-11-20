@@ -732,3 +732,99 @@ The heavy reference batch executes the renderer using `cadcraft-cli` from the
 released runtime, processes the full source list, records each result and
 reports accumulated failures only after all sources were attempted. The diagram
 item then materializes only the already-produced diagram evidence.
+
+
+## Example documentation provenance
+
+The example directory is the ownership boundary for human model/test
+documentation. During #548, the last canonical legacy case records are moved
+into the corresponding example directories without rewriting their content.
+
+The local documentation preserves the former case fields as readable sections:
+goal, Forge API, Forge model, SolidCraft lowering/result, saved-design test and
+reference notes. It also preserves the former per-case geometry sufficiency
+rationale explaining whether bounds alone prove the intended geometry. These
+texts are copied verbatim; provenance identifies the historical source commit.
+
+This local documentation is explanatory only. `verification/verify.py`
+remains the executable verification contract, and `model.yml` remains generic
+model/page metadata.
+
+## Example and Pages source flow
+
+The stable site source boundary is:
+
+```text
+examples/<slug>/model.yml
+  generic title/description/parameters/stages
+            |
+examples/<slug>/README.md
+  preserved human engineering explanation
+            |
+examples/<slug>/verification/verify.py
+  machine expected verification contract
+            |
+build/main/examples/<slug>/
+  accepted current evidence/status/artifacts
+            |
+            v
+site loader/view-model
+            |
+external templates + static assets
+            |
+            v
+generated Pages
+```
+
+The generator discovers the 32 example directories. There is no central
+`EXAMPLES` catalog duplicating their local metadata or documentation.
+
+The example metadata loader validates the agreed six-field `model.yml`
+schema. A separate documentation loader reads the local `README.md` and
+preserves its engineering statements without inference. Numeric truth is not
+parsed back out of prose; the renderer uses `verification/verify.py` and
+durable evidence where technical details are required.
+
+Site layout uses external templates under `site/templates/`. Shared browser
+behavior uses external files under `site/static/`. Task-oriented guide prose
+moves from Python modules to external content under `site/content/`.
+
+Python retains only:
+- source discovery;
+- schema validation;
+- API introspection;
+- evidence resolution;
+- view-model composition;
+- template rendering.
+
+HTML rendering is an explicit layer. `site/build.py` and source/evidence
+loaders do not assemble markup. External templates own page and reusable
+fragment structure by default. If dynamic markup is materially clearer in
+Python, it is implemented only in an explicitly named HTML-rendering module;
+that module behaves as a renderer and receives normalized/escaped view data.
+
+Legacy `qualification.*` imports are removed rather than recreated. Their
+historical presentation semantics may be used as a visual compatibility
+reference, but they are not a source-code dependency.
+
+
+### Documentation-only CI path
+
+The selection boundary for example documentation is:
+
+```text
+examples/<slug>/model.yml
+examples/<slug>/README.md
+        |
+        v
+ci/site-source
+  -> metadata schema test
+  -> source-only site generation test
+```
+
+It has no dependency on either CAD runtime batch.
+
+`model.yml` and `README.md` are deliberately absent from
+`forge-model-declarative` and `model-verification-batch` execution inputs. This
+prevents presentation/documentation edits from invalidating native model
+evidence.

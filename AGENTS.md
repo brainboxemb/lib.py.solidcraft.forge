@@ -84,6 +84,7 @@ A declaratively migrated model may contain:
 examples/<model>/
   ci.yml
   model.yml
+  README.md
   scpf/
     model.py
   verification/
@@ -95,7 +96,7 @@ Older models may temporarily retain `verification/verify_model.py` until their
 individual migration PR. Do not add new shared verification mechanics to those
 files.
 
-Presentation metadata in `model.yml` uses:
+Presentation metadata in `model.yml` uses only:
 
 ```text
 section
@@ -105,6 +106,16 @@ description
 parameters
 stages
 ```
+
+`model.yml` is the generic model/page metadata source. The example
+`README.md` owns human engineering explanation such as the goal, Forge API
+and model, SolidCraft lowering/result, saved-design explanation, geometry
+sufficiency rationale and reference notes. Do not infer or summarize those
+statements during source migrations.
+
+Exact verification values remain in `verification/verify.py`; actual current
+results come from durable `build/main`. Do not add a central Python example
+page catalog.
 
 Native-model expectations and mutation definitions live as model-specific data
 in the model verification definition.
@@ -181,7 +192,11 @@ sections are removed after their corresponding change is merged.
 
 ## Generated output and Pages
 
-Build and Pages publication are currently being migrated in issue #366.
+Build and Pages publication are currently being migrated through #548, #497 and #366.
+
+Site Python code may discover/load/validate/render data, but complete
+hand-authored pages and guide prose belong in external templates/content, not
+Python string literals.
 
 The existing `build` and `gh-pages` branches are generated output from the
 earlier publication system. Current development status is determined from source

@@ -578,3 +578,92 @@ CAD-CI continues to own logical selection, dependencies, SCons state, caching
 and durable publication. Forge owns only the batch runtime invocation and the
 mapping from batch results back to existing per-case outputs. No generic worker
 pool or batch scheduler is added to lib.py.cad.ci.
+
+
+## Example documentation preservation
+
+The #548 migration is a source relocation, not a rewrite.
+
+The last canonical pre-removal case documentation from
+`qualification/cases.py` must be preserved verbatim per owning example. The
+migration may change headings/formatting and file location, but it must not
+summarize, reinterpret or silently omit the existing engineering statements.
+
+The last canonical per-case geometry sufficiency rationale from
+`qualification/geometry_contracts.py` must also be preserved verbatim. In
+particular, the explanation of why outer bounds are or are not sufficient is
+human engineering documentation, not a value to reconstruct later from machine
+checks.
+
+`model.yml` keeps only the agreed generic page metadata fields:
+`section`, `title`, `tagline`, `description`, `parameters`, and
+`stages`. It is not a second verification contract.
+
+Machine expectations, tolerances and saved-design checks remain solely in
+`verification/verify.py`.
+
+## Example-owned presentation metadata
+
+Every current Forge Qualification example is self-describing for generated
+documentation.
+
+`examples/<slug>/model.yml` is the authoritative source for human-facing
+example metadata. The required schema contains:
+
+- `section`;
+- `title`;
+- `tagline`;
+- `description`;
+- `parameters`;
+- non-empty `stages`.
+
+Verification explanation and historical engineering rationale live in the
+example documentation, not in additional `model.yml` verification fields.
+
+These fields describe the example for navigation/presentation. They must not
+become a second machine verification contract. Exact expected geometry, parameters, tolerances and saved-design
+expectations remain in `verification/verify.py`.
+
+Generated Pages obtain actual status, measurements and evidence links from the
+accepted durable `build/main` item output. `model.yml` must never claim a
+current PASS/FAIL result.
+
+The site generator discovers examples from the filesystem and their local
+metadata. It must not maintain a central model-name/page-content registry.
+
+## Site source separation
+
+HTML generation must be structurally separated from site data/orchestration.
+
+- complete page layout belongs in external templates;
+- reusable dynamic fragments should normally use external templates;
+- when Python-generated markup is justified, it must live only in an explicitly
+  named HTML-rendering module rather than in `site/build.py`, loaders or
+  evidence code;
+- prose-heavy guide content belongs in external Markdown or template content;
+- CSS and browser JavaScript belong in static files;
+- generated API facts continue to come from the public implementation/docstrings;
+- example page metadata comes from local `model.yml`;
+- preserved engineering explanation comes from local `README.md`;
+- executable model facts come from source/verification files and durable evidence.
+
+Source/evidence/orchestration modules may load, validate and normalize data,
+construct view-models and write generated output. They must not mix that work
+with page markup. HTML belongs to templates or to the dedicated HTML-rendering
+module; guide chapters and model-specific SVG galleries remain external data.
+
+The current site must not depend on retired `qualification.*` source modules.
+The 32 current `examples/` directories and durable `build/main` are the
+catalog/evidence sources.
+
+
+### Presentation metadata selection boundary
+
+`model.yml` is presentation/documentation metadata. Changing only
+`examples/<slug>/model.yml` must not select or invalidate model compilation,
+SolidCraft verification or independent CAD reference verification.
+
+The lightweight site-source item owns `model.yml` and `README.md` validation
+and generated documentation checks. CAD verification inputs are the model source,
+verification contract, model-specific command/test data and shared runtime
+helpers only.

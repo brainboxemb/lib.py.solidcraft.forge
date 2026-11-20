@@ -1,0 +1,43 @@
+<main class="wrap">
+  <div class="crumb"><a href="../">← Qualification</a> / ${title}</div>
+  <section class="hero small">
+    <p class="eyebrow">${section}</p>
+    <h1>${title}</h1>
+    <p class="guide-lead">${documentation_goal}</p>
+  </section>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>${forge_api}</code></p>
+    <h2>Forge model</h2>
+    <p>${forge_model}</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>${lowering}</p>
+    <h2>SolidCraft result</h2>
+    <p>${solidcraft_result}</p>
+    <h2>Saved-design test</h2>
+    <p>${saved_design_test}</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> ${bounds_sufficient}</p>
+    <p>${geometry_reason}</p>
+    <h2>Reference notes</h2>
+    <ul>${reference_notes}</ul>
+  </section>
+  <section class="panel">
+    <h2>Sources of truth</h2>
+    <p>
+      General model/page metadata is stored in <code>model.yml</code>.
+      Preserved engineering explanation is stored in <code>README.md</code>.
+      Exact expected values and tolerances are defined by
+      <code>verification/verify.py</code>.
+    </p>
+    <p>
+      <a href="../../examples/${slug}/">Open the example →</a>
+      · <a href="${verification_url}">Open verification/verify.py →</a>
+    </p>
+  </section>
+  <section class="notice">
+    Current PASS/FAIL, measured values, CADCraft diagrams and reference evidence
+    are attached from the accepted durable <code>build/main</code> baseline by
+    stable Pages.
+  </section>
+</main>

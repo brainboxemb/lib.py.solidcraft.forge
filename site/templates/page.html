@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>${title} · SCPF Python library</title>
+  <link rel="stylesheet" href="${stylesheet}">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="${home}">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="${home}search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="${home}">Examples</a>
+      <a href="${home}guide/">API Guide</a>
+      <a href="${home}reference/">API Reference</a>
+      <a href="${home}qualification/">Qualification</a>
+      <a href="${cheatsheet}">Cheatsheet</a>
+      <a href="${library_url}">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and qualification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+${body}
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="${cad_site}">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="${home}static/copy.js"></script>
+<script src="${home}static/search.js"></script>
+</body>
+</html>

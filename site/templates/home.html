@@ -1,0 +1,25 @@
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">lib.py.solidcraft.forge / Python Forge</p>
+    <h1>SCPF examples &amp; API documentation</h1>
+    <p class="meta">Tested SolidCraft version: ${solidcraft_version}</p>
+    <p>
+      The examples below are the complete current Forge qualification catalog.
+      Each example directory owns its explanation, source, verification contract
+      and independent reference implementations.
+    </p>
+    <div class="actions">
+      <a class="button primary" href="guide/">Read the API Guide →</a>
+      <a class="button" href="reference/">API Reference →</a>
+      <a class="button" href="qualification/">Qualification →</a>
+      <a class="button" href="cheatsheet/">Quick cheatsheet →</a>
+      <a class="button" href="${cad_site}">See real CAD models →</a>
+    </div>
+  </section>
+  <section class="section-heading">
+    <h2>Qualification examples</h2>
+    <p>All ${example_count} examples are discovered from their local <code>model.yml</code>.</p>
+  </section>
+  <div class="cards">${cards}</div>
+  <p class="source-stamp">Library source commit: <code>${source_sha}</code></p>
+</main>
