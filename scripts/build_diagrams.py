@@ -238,14 +238,29 @@ def main() -> int:
     output.mkdir(parents=True)
 
     binary, cli_version = ensure_cadcraft()
-    diagrams = [
-        render_source(binary, source_path, output)
-        for source_path in sources
-    ]
+    diagrams = []
+    failed = False
+    for source_path in sources:
+        try:
+            row = render_source(binary, source_path, output)
+            row["status"] = "pass"
+        except Exception as exc:  # keep later diagrams observable
+            failed = True
+            row = {
+                "name": source_path.name.removesuffix(".cadcraft.json"),
+                "status": "fail",
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+            print(
+                f"CADCraft diagram failed: {source_path.name}: {exc}",
+                flush=True,
+            )
+        diagrams.append(row)
 
     provenance = {
         "schema": "forge-verification-diagrams",
         "schema_version": 1,
+        "status": "fail" if failed else "pass",
         "cadcraft_version": CADCRAFT_VERSION,
         "cadcraft_cli_version": cli_version,
         "archive": CADCRAFT_ARCHIVE,
@@ -258,12 +273,13 @@ def main() -> int:
         encoding="utf-8",
     )
 
+    passed = sum(row.get("status") == "pass" for row in diagrams)
     print(
-        f"diagram verification: {len(diagrams)} rendered "
+        f"diagram verification: {passed}/{len(diagrams)} passed "
         f"with CADCraft {CADCRAFT_VERSION}",
         flush=True,
     )
-    return 0
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
