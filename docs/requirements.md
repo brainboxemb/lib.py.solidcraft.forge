@@ -68,20 +68,30 @@ The package keeps its own tested SolidCraft compatibility guard. CI must verify
 that its declared `SOLIDCRAFT_VERSION` agrees with the package compatibility
 contract.
 
-## Shared runtime efficiency
+## Verification package dependency
 
 Library ownership and runtime packaging are separate concerns.
 
-The external runtime may preinstall exact released libraries used by nearly
-every verification run, including `lib.py.cad.verfication`, together with
-stable heavy dependencies.
+The released CAD runtime images must not embed `lib.py.cad.verification`.
+Forge supplies the exact released verification package through the CAD-CI
+dependency graph.
 
-Preinstallation:
+Requirements:
 
-- is an execution-efficiency choice;
-- does not transfer code ownership to the runtime repository;
-- must not cause Forge to copy or modify verification-library implementation;
-- must not require Forge to duplicate those runtime dependency pins.
+- one `cad-verification-package` item prepares exactly one wheel from the
+  pinned released verification source;
+- the wheel is built/prepared once per selected graph, not once per model;
+- model verification depends on both `forge-package` and
+  `cad-verification-package`;
+- reference verification depends on `cad-verification-package`;
+- both runtime containers mount the dependency wheel read-only and add it to
+  `PYTHONPATH`;
+- changing the verification-library pin must not require a Docker runtime
+  release;
+- changing model-local `verification/verify.py` must not require either a
+  package or runtime release;
+- Forge owns only the dependency pin and transport, never verification-library
+  implementation.
 
 ## Declarative model verification
 
@@ -103,10 +113,11 @@ The shared Forge launcher owns only the producer boundary required before
 verification:
 
 1. build/locate the exact Forge wheel;
-2. compile/replay the Forge model into the initial native SolidCraft `.sc`
+2. locate the exact released verification dependency wheel;
+3. compile/replay the Forge model into the initial native SolidCraft `.sc`
    model;
-3. load the model-local `verification/verify.py`;
-4. call released `run_solidcraft_verification()`.
+4. load the model-local `verification/verify.py`;
+5. call released `run_solidcraft_verification()`.
 
 Shared SolidCraft evaluation, mutation, inspection, schema interpretation,
 comparison and report construction are responsibilities of released
@@ -144,7 +155,8 @@ separate CAD-CI items.
   wheel and runs the reusable Forge unit suite.
 - `forge-release` depends on `forge-package`, uses that exact dependency
   wheel and runs the fixed release-verification example set.
-- model verification items depend on `forge-package` only.
+- model verification items depend on `forge-package` and
+  `cad-verification-package` only.
 
 A model verification must not require `forge-tests` or `forge-release` to
 complete before its own model check can execute.
