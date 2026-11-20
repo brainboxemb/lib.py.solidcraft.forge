@@ -8,87 +8,65 @@ detail and history; this plan states what is current and what follows.
 
 ## Current goal
 
-Complete #446: remove GitHub Actions cache storage from the SolidCraft runtime
-build.
+Complete #452: adopt released `tool.cad.ci` 0.10.0 at exact commit
+`c60bf64a393dff33440d22e9e9347cbbaba71c4b`.
 
-Runtime publication is manual-only through `workflow_dispatch`. Runtime reuse
-must come from the exact immutable GHCR image, not from Buildx `type=gha`
-cache state.
+#449 and #446 are already merged: runtime publication is manual-only and the
+runtime build no longer uses GitHub Actions cache storage.
 
-After #446, continue the runtime/package-boundary correction in #438.
-
-The verification library remains independently designed, tested and released,
-but is intentionally preinstalled in the shared runtime image because every
-model verification uses it. This avoids reinstalling the same released package
-for every model check.
-
-Release 0.10.0 provides:
-
-- generic comparison/assertion/reporting mechanics;
-- the SolidCraft verification adapter;
-- declarative `SolidCraftVerification`;
-- baseline, saved-design and inspection execution;
-- partial timeline contracts that do not force generated SolidCraft names into
-  model-specific expectations.
+The released CAD-CI workflow performs generic GHCR authentication before
+consumer commands run. Forge retains only `packages: read`; Forge scripts do
+not own Docker credentials or registry login behavior.
 
 ## Execution order
 
-1. Complete #446:
-   - remove Buildx `type=gha` cache import/export;
-   - do not use `actions/cache`;
-   - keep immutable GHCR image lookup as the only runtime reuse mechanism;
-   - add a regression test for this boundary.
-2. Complete #438:
-   - pin verification-library 0.10.0 exact commit in
-     `docker/solidcraft_runtime/runtime.json`;
-   - use the already-published immutable runtime image produced from that
-     definition;
-   - update root `cad-ci.yml` to that exact image;
-   - prove normal Forge CI against it.
-3. Complete #440 with **simple-box only**:
-   - keep only model-specific expectation/mutation data in the model;
-   - keep Forge compilation/replay in a shared Forge producer path;
-   - let released `run_solidcraft_verification()` own the actual verification;
-   - remove simple-box's procedural `verify_model.py`;
-   - change no other model verifier in that proof PR.
-4. Continue umbrella issue #432 only after #440 is green, using small reviewable
-   model batches.
-5. Resolve verification-library #44/#45 before migrating models that need
-   partial parameter/sketch contracts. Do not work around those gaps in Forge.
-6. Resume #430 visual verification after the model-verification boundary is
-   proven.
-7. Complete #378 diagrams and final verification summary.
-8. Complete #366 only after #378 verification output is complete.
-9. Run the final ownership audit and close/rewrite obsolete historical issues.
+1. Complete #452:
+   - update the reusable-workflow pin from tool 0.9.0 to exact 0.10.0;
+   - update the matching regression-test pin;
+   - prove normal Forge CAD-CI authenticates to GHCR and can pull the
+     configured immutable runtime.
+2. Complete #444:
+   - merge the directly-pullable runtime publication fix already proven on its
+     branch;
+   - keep publication manual-only and cache-free.
+3. Complete #438:
+   - remove `lib.py.cad.verfication` itself from the runtime image;
+   - keep stable heavy dependencies preinstalled for efficiency;
+   - supply the exact released verification wheel separately.
+4. Complete #440 with **simple-box only**.
+5. Continue #432 in small reviewable model batches.
+6. Resume #430, finish #378, then #366.
+7. Run the final ownership audit.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #446 Remove GitHub Actions cache from SolidCraft runtime build | now | Remove Buildx `type=gha` / `actions/cache`; reuse only the exact immutable GHCR image. |
-| #438 Update Forge verification runtime to lib.py.cad.verfication 0.10.0 | next | Runtime-only prerequisite. The released verification library stays preinstalled in the shared runtime for efficiency. |
-| #440 Prove declarative SolidCraft verification with simple-box | next | First consumer proof after #438. Exactly one model; establishes the final launcher/definition shape. |
-| #432 Use released declarative CAD verification in model verification | blocked | Umbrella migration. Continue only after #440 proves the one-model path. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after the model-verification ownership path is stable. |
-| #391 Extract reusable CAD verification library from Forge | blocked | Reusable library functionality is released through 0.10.0. Close only after remaining shared checker code is removed from Forge. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | now | Migration umbrella; current path is #438, #440, then staged #432 migration. |
+| #452 Adopt tool.cad.ci 0.10.0 for authenticated GHCR pulls | now | Released tool/tag and external acceptance are proven; Forge needs only the exact workflow pin and matching regression test. |
+| #444 Keep published immutable SolidCraft runtime image available after merge | blocked | Publication fix is proven; final Forge acceptance needs #452 authentication first. |
+| #438 Remove verification-library code from the SolidCraft runtime | blocked | Correct architecture; resume after #452/#444 establish a reliable runtime path. |
+| #440 Prove declarative SolidCraft verification with simple-box | blocked | Exactly one model after runtime/package prerequisites. |
+| #432 Use released declarative CAD verification in model verification | blocked | Continue only after #440 proves the final one-model structure. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after model-verification ownership is stable. |
+| #391 Extract reusable CAD verification library from Forge | blocked | Close after remaining shared checker code leaves Forge. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | now | Umbrella migration; current blockers are runtime authentication/publication/package boundaries. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Starts after #378 verification output is complete. |
-| #357 Fix Sketch.add() default handling for native Slot profiles | later | Forge API defect independent of current verification work. |
-| #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | CLI quality work, not a blocker for current verification work. |
-| #355 Support current SolidCraft parametric Slot API in Forge | later | Product/API work after current migration. |
-| #354 Support standalone sketch extrusions as boolean operands | later | Product/API work after current migration. |
+| #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
+| #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Independent CLI quality work. |
+| #355 Support current SolidCraft parametric Slot API in Forge | later | Product/API work. |
+| #354 Support standalone sketch extrusions as boolean operands | later | Product/API work. |
 | #349 Coverage: expose the remaining SolidCraft SOLID › CREATE features in Forge | later | Feature-coverage backlog. |
 | #347 Patterns should accept any applied Shape feature, not only Sketch.extrude | later | Forge feature backlog. |
-| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture; reassess after #378/#366. |
-| #335 Use build123d Sheet Metal for the sheet-fold qualification reference | later | Reference-quality improvement, not required for ownership migration. |
+| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture. |
+| #335 Use build123d Sheet Metal for the sheet-fold qualification reference | later | Reference-quality improvement. |
 | #325 Research: determine root cause of HUB75 AnchorFrame regression | later | Independent model/API investigation. |
-| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Predates the current reusable runtime/CAD-CI design; reassess after the current migration. |
+| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Predates current runtime/CAD-CI design. |
 | #175 Change 0005: qualify HUB75-like AnchorFrame orientation against known-good Placement poses | later | Domain verification backlog. |
 | #82 Reconsider automatic hiding of the SolidCraft Joints folder | later | Independent product behavior. |
 | #81 Support inline AnchorFrame references for rotated occurrences | later | Forge API backlog. |
 | #9 SCPF: first-class Sketch objects, constraints and face workplanes | later | Major Forge feature backlog. |
-| #8 Add generic hollow primitives: Tube, RectTube and OvalTube | later | Forge feature backlog. |
+| #8 Add generic hollow primitives: Tube, RectTube and OvalTube | later | Major Forge feature backlog. |
 | #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
 
 Immediate chain:
-`#446 -> #438 -> #440 simple-box -> #432 batches -> #430 -> diagrams -> summary -> #366 -> final ownership audit`.
+`#452 -> #444 -> #438 -> #440 simple-box -> #432 batches -> #430 -> #378 -> #366`.
