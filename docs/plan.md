@@ -49,17 +49,19 @@ performance follow-up, but it no longer blocks verification-chain migration.
 
 Continue #378 with F11: compose semantic verification summaries from already-produced evidence without adding a second verification engine or rerunning CAD inside the summary code.
 
-Released `lib.py.cad.verification` already owns generic semantic status composition through `SemanticCheck`, `compose_semantic_result()` and `compose_item_results()`. Forge owns only the semantic check names, required/optional policy, model-to-evidence mapping and the thin summary consumer.
+Released `lib.py.cad.verification` already owns generic semantic status composition through `SemanticCheck`, `compose_semantic_result()` and `compose_item_results()`. Forge owns only the mapping from current evidence back to the existing qualification-result semantics. F11 preserves the existing public schema/presentation instead of introducing a new report model.
 
 ## Required proof
 
 - Forge defines the F11 semantic policy before implementation in `docs/requirements.md` and `docs/design.md`;
 - the summary code executes no Forge compilation, SolidCraft, reference CAD or image comparison;
-- model summaries use the semantic checks `native_model`, `geometry`, `saved_design`, `visual` and `reference`;
+- per-case qualification results preserve the existing visible checks `integration`, `native_model`, `geometry`, `saved_design` and `visual`;
+- independent reference evidence remains a separate qualification evidence layer and is not added as a new visible Pages status block;
 - `saved_design` is `not-required` when a model has no saved-design mutation;
 - required failed/missing/review/blocked evidence remains distinguishable;
 - evidence references are preserved;
-- the staged aggregate contains each of the five active proof models exactly once;
+- the staged aggregate contains each of the five active proof cases exactly once;
+- the produced per-case result remains compatible in meaning with the existing schema-5 `qualification-result.json` consumed by Pages;
 - CAD-CI fan-in selection must not accidentally turn an incremental model change into a cold rerun of every sibling model/reference item.
 
 ## Execution order
