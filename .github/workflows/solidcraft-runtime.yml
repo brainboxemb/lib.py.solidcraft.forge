@@ -64,8 +64,6 @@ jobs:
             BUILD123D_VERSION=${{ steps.metadata.outputs.build123d_version }}
             TRIMESH_SPEC=${{ steps.metadata.outputs.trimesh_spec }}
             MATPLOTLIB_SPEC=${{ steps.metadata.outputs.matplotlib_spec }}
-          cache-from: type=gha,scope=solidcraft-runtime
-          cache-to: type=gha,mode=max,scope=solidcraft-runtime
 
       - name: Require published runtime image
         run: |

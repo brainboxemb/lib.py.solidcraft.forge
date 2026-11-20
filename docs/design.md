@@ -118,3 +118,18 @@ separate source change
 
 There is no automatic `push` or `pull_request` trigger on the runtime
 publication workflow.
+
+
+## Runtime build reuse
+
+Runtime reuse is explicit and image-based:
+
+```text
+runtime inputs -> exact image reference -> GHCR exists?
+                                      yes -> reuse image
+                                       no -> manual build/publish
+```
+
+The runtime workflow does not import or export Buildx layers through GitHub
+Actions cache and does not use `actions/cache`. The immutable GHCR image is
+the reusable object.
