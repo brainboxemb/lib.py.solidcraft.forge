@@ -145,7 +145,7 @@ example.
   `stages`;
 - `README.md` contains the human engineering explanation for the example,
   including goal, Forge API/model, SolidCraft lowering/result, saved-design
-  explanation and reference notes;
+  explanation, geometry sufficiency rationale and reference notes;
 - `scpf/model.py` is the implementation shown/executed;
 - `verification/verify.py` is the exact machine-readable verification
   contract;
