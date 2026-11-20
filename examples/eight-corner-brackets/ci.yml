@@ -1,28 +1,4 @@
 # SolidCraft model verification for eight-corner-brackets.
 id: eight-corner-brackets
-process: false
-kind: model
-needs:
-  - forge-package
-  - model-verification-batch
-watch:
-  - examples/eight-corner-brackets/scpf/**
-  - examples/eight-corner-brackets/model.yml
-  - examples/eight-corner-brackets/verification/**
-  - scripts/forge_example.py
-  - scripts/model_verify_declarative.py
-strategy:
-  reuse: true
-steps:
-  - id: model_verify
-    inputs:
-      - examples/eight-corner-brackets/scpf/**
-      - examples/eight-corner-brackets/model.yml
-      - examples/eight-corner-brackets/verification/**
-      - scripts/forge_example.py
-      - scripts/model_verify_declarative.py
-      - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verification_batch.py, materialize]
-    outputs:
-      - solidcraft.json
-      - model_verify
+template: forge-model-declarative
+process: true
