@@ -70,6 +70,12 @@ class CiRuntimeContractTests(unittest.TestCase):
         self.assertEqual(expected, TESTED_SOLIDCRAFT_VERSION)
         self.assertEqual(expected, metadata["solidcraft_version"])
 
+    def test_runtime_workflow_disables_provenance_index(self):
+        """Publish one directly pullable single-platform runtime image."""
+
+        text = RUNTIME_WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("provenance: false", text)
+
     def test_runtime_workflow_does_not_use_github_cache(self):
         """Use the immutable GHCR image instead of GitHub cache state."""
 
