@@ -28,6 +28,14 @@ SolidCraft 0.42 builds one chamfered plate with one centered through hole. The T
 
 No saved-design mutation in this fixture; it isolates stable face lookup after topology-changing native features.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+The outer bounds do not prove the four corner chamfers or the through hole. Volume, cylindrical-wall probes and native timeline/sketch checks are required.
+
 ## Reference notes
 
 - **PythonSCAD** — Independent CSG reference cuts the four corner wedges before subtracting the central through hole.
