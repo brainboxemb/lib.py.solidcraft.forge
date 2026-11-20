@@ -23,6 +23,7 @@ _SECTION_ORDER = (
     "How Forge builds it in SolidCraft",
     "SolidCraft result",
     "Saved-design test",
+    "Geometry evidence",
     "Reference notes",
 )
 
@@ -42,6 +43,8 @@ class ExampleDocumentation:
     lowering: str
     solidcraft_result: str
     saved_design_test: str
+    bounds_sufficient: bool
+    geometry_reason: str
     reference_notes: tuple[tuple[str, str], ...]
 
 
@@ -105,6 +108,35 @@ def load_example_documentation(example_root: Path) -> ExampleDocumentation:
             + ", ".join(missing)
         )
 
+    geometry = sections["Geometry evidence"]
+    if "Geometry-rationale provenance:" not in geometry:
+        raise ValueError(
+            f"{slug}: README.md needs geometry-rationale provenance"
+        )
+    sufficient = re.search(
+        r"^\*\*Bounds sufficient:\*\* \x60(true|false)\x60$",
+        geometry,
+        re.MULTILINE,
+    )
+    if not sufficient:
+        raise ValueError(f"{slug}: README.md needs preserved bounds sufficiency")
+    geometry_reason = re.sub(
+        r"^> Geometry-rationale provenance:.*$",
+        "",
+        geometry,
+        count=1,
+        flags=re.MULTILINE,
+    )
+    geometry_reason = re.sub(
+        r"^\*\*Bounds sufficient:\*\* \x60(?:true|false)\x60$",
+        "",
+        geometry_reason,
+        count=1,
+        flags=re.MULTILINE,
+    ).strip()
+    if not geometry_reason:
+        raise ValueError(f"{slug}: README.md needs preserved geometry rationale")
+
     references = tuple(_REFERENCE.findall(sections["Reference notes"]))
     if not references:
         raise ValueError(f"{slug}: README.md needs preserved reference notes")
@@ -126,6 +158,8 @@ def load_example_documentation(example_root: Path) -> ExampleDocumentation:
         lowering=sections["How Forge builds it in SolidCraft"],
         solidcraft_result=sections["SolidCraft result"],
         saved_design_test=sections["Saved-design test"],
+        bounds_sufficient=sufficient.group(1) == "true",
+        geometry_reason=geometry_reason,
         reference_notes=references,
     )
 
