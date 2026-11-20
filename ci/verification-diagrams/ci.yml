@@ -1,0 +1,17 @@
+# Render versioned CADCraft verification/documentation diagrams.
+id: verification-diagrams
+process: true
+kind: verification
+watch:
+  - verification/diagrams/sources/**
+  - scripts/build_diagrams.py
+strategy:
+  reuse: true
+steps:
+  - id: build_diagrams
+    inputs:
+      - verification/diagrams/sources/**
+      - scripts/build_diagrams.py
+    run: [python, ../../scripts/build_diagrams.py]
+    outputs:
+      - diagrams
