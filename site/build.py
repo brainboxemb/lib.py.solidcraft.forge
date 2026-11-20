@@ -1152,13 +1152,12 @@ def build(
             boxes.append(f"""<article class="reference" id="{escape(anchor)}"><h3><code>{escape(title)}</code></h3>
 <p>{escape(description)}</p><pre><code>{escape(snippet)}</code></pre>{ref}</article>""")
         sections.append(f'<section><h2>{escape(heading)}</h2><div class="reference-grid">{"".join(boxes)}</div></section>')
-    cheat = f"""<main class="wrap"><div class="crumb"><a href="../">← Library</a> / Cheatsheet</div>
-<section class="hero small"><p class="eyebrow">SCPF reference</p><h1>Cheatsheet</h1><p>SolidCraft version: <strong>{TESTED_SOLIDCRAFT_VERSION} tested</strong>; older versions are refused and newer versions trigger a compatibility warning.</p>
-<p>Common SCPF syntax alongside tiny examples that CI compiles. For explanations, examples and limitations, read the
-<a href="../guide/">full API Guide</a>.</p></section>
-<div class="notice"><strong>What is verified?</strong> The linked examples and API unit tests run in GitHub Actions.
-Cheatsheet fragments describe API calls; a fragment alone is not a complete runnable model.</div>
-{"".join(sections)}</main>"""
+    cheat = render_template(
+        "cheatsheet.html",
+        solidcraft_version=escape(TESTED_SOLIDCRAFT_VERSION),
+        sections="".join(sections),
+    )
+
     (out / "cheatsheet").mkdir(exist_ok=True)
     (out / "cheatsheet" / "index.html").write_text(
         page("Cheatsheet", cheat, stylesheet="../style.css", home="../", cheatsheet="./"),
