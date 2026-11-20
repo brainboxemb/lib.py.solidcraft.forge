@@ -1,0 +1,294 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                40.0,
+                4.0
+              ],
+              "actual_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                40.0,
+                4.0
+              ],
+              "expected_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 1,1 at z=0.5",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 1,1 at z=2",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  2.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 1,1 at z=3.5",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  3.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 2,1 at z=0.5",
+                "pass": true,
+                "point": [
+                  24.0,
+                  0.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 2,1 at z=2",
+                "pass": true,
+                "point": [
+                  24.0,
+                  0.0,
+                  2.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 2,1 at z=3.5",
+                "pass": true,
+                "point": [
+                  24.0,
+                  0.0,
+                  3.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 3,1 at z=0.5",
+                "pass": true,
+                "point": [
+                  48.0,
+                  0.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 3,1 at z=2",
+                "pass": true,
+                "point": [
+                  48.0,
+                  0.0,
+                  2.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 3,1 at z=3.5",
+                "pass": true,
+                "point": [
+                  48.0,
+                  0.0,
+                  3.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 1,2 at z=0.5",
+                "pass": true,
+                "point": [
+                  0.0,
+                  28.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 1,2 at z=2",
+                "pass": true,
+                "point": [
+                  0.0,
+                  28.0,
+                  2.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 1,2 at z=3.5",
+                "pass": true,
+                "point": [
+                  0.0,
+                  28.0,
+                  3.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 2,2 at z=0.5",
+                "pass": true,
+                "point": [
+                  24.0,
+                  28.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 2,2 at z=2",
+                "pass": true,
+                "point": [
+                  24.0,
+                  28.0,
+                  2.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 2,2 at z=3.5",
+                "pass": true,
+                "point": [
+                  24.0,
+                  28.0,
+                  3.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 3,2 at z=0.5",
+                "pass": true,
+                "point": [
+                  48.0,
+                  28.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 3,2 at z=2",
+                "pass": true,
+                "point": [
+                  48.0,
+                  28.0,
+                  2.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.0,
+                "delta_mm": 0.0,
+                "expected_mm": 3.0,
+                "label": "slot 3,2 at z=3.5",
+                "pass": true,
+                "point": [
+                  48.0,
+                  28.0,
+                  3.5
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 36325.19192752413,
+              "delta_mm3": 43.775940699524654,
+              "expected_mm3": 36281.415986824606,
+              "pass": true,
+              "tolerance_mm3": 50.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/rectangular-pattern/pythonscad/model.py",
+          "status": "pass",
+          "stl": "rectangular-pattern/pythonscad/model.stl"
+        }
+      ],
+      "model": "rectangular-pattern",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "d056a55a93bc1e32b47dbed8feed3a58459a91ec",
+  "status": "pass"
+}

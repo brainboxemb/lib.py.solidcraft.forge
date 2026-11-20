@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "6edae53fed2e0a11781b5c96a991cc00b77f28c89e841f0135a9848782824109",
+  "duration_seconds": 0.122,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:56:25.365Z",
+  "item": "examples-circular-feature-pattern-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "beea5e241ed37e0eb7ee18564099e4b0d2e7646eaeca594197e53c6778ed231f"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:56:35.455Z",
+  "run_started_at": "2026-11-20T20:54:33.799Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:56:25.298Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "c3cad58a41ce9dfb86cbcd2e8b29d60c1c1fdb582a610f80c3a4c99edef7da6b",
+  "timeout_seconds": null
+}

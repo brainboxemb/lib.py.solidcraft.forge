@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "41d6901efe9300c1b0fd9af1fb00c6c3ef3ac6198be331efb12261fa6fff250d",
+  "duration_seconds": 0.122,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:56:33.288Z",
+  "item": "examples-slot-family-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "bdca269405ebea15fb2b2d3994af33a1a01c8b2cac48a37bf30fe7f4f2e2f8b9"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:56:35.455Z",
+  "run_started_at": "2026-11-20T20:54:33.799Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:56:33.221Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "ccbdf5cd3534bc83fdad024c504c308e1a0e82c23c03840c4866fe59b1c49615",
+  "timeout_seconds": null
+}

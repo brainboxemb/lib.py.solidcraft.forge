@@ -22,7 +22,27 @@
     },
     {
       "error": null,
+      "model": "bracket",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "circle-negative-extrude",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "circular-feature-pattern",
+      "status": "pass"
+    },
+    {
+      "error": null,
       "model": "components",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "eight-flightcase-corners",
       "status": "pass"
     },
     {
@@ -52,7 +72,32 @@
     },
     {
       "error": null,
+      "model": "primitive-csg",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "rectangular-pattern",
+      "status": "pass"
+    },
+    {
+      "error": null,
       "model": "repeated-parent-attachments",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "round-top-sketch",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "rounded-rectangle-sketch",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "selective-profile-extrude",
       "status": "pass"
     },
     {
@@ -67,6 +112,11 @@
     },
     {
       "error": null,
+      "model": "slot-family",
+      "status": "pass"
+    },
+    {
+      "error": null,
       "model": "top-sketch-after-chamfer",
       "status": "pass"
     },
@@ -77,6 +127,6 @@
     }
   ],
   "schema": 1,
-  "source_sha": "996dec1af857bd9613897742bddfb667180d05aa",
+  "source_sha": "d056a55a93bc1e32b47dbed8feed3a58459a91ec",
   "status": "pass"
 }

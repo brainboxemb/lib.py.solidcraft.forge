@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "8c26ec60bc905e3ef6ac13652c5ab8a1b2246d7b35eae0aa87093b60e9f9c503",
+  "duration_seconds": 0.123,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:56:32.141Z",
+  "item": "examples-selective-profile-extrude-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "52ad34d39915136587e69fb124f97756e160167eca5bf875deaf42937dd7a778"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:56:35.455Z",
+  "run_started_at": "2026-11-20T20:54:33.799Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:56:32.072Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "8f243a98459c2b7c5051efbb9ec4699c1cbb4b1d3ac1c68b2fe27e2fef49bdaf",
+  "timeout_seconds": null
+}

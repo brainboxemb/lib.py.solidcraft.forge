@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "139d13598d05206c2b6ed55308dc28510cbeebccca9d7ea7f441554864947ebc",
+  "duration_seconds": 0.125,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:56:31.377Z",
+  "item": "examples-rounded-rectangle-sketch-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "60dab1cc1b24f5fb9a2f455201d930cebad8b74402a063a31e05974d557e4a7d"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:56:35.455Z",
+  "run_started_at": "2026-11-20T20:54:33.799Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:56:31.308Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "2e4f809a915d68b94af568b2f9eb173e57f73e90ac6a47ae3e664532692e5398",
+  "timeout_seconds": null
+}

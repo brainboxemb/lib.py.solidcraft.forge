@@ -1,0 +1,281 @@
+{
+  "geometry": {
+    "bounds": {
+      "actual_max": [
+        50.0,
+        50.0,
+        6.0
+      ],
+      "actual_min": [
+        -50.0,
+        -50.0,
+        0.0
+      ],
+      "expected_max": [
+        50.0,
+        50.0,
+        6.0
+      ],
+      "expected_min": [
+        -50.0,
+        -50.0,
+        0.0
+      ],
+      "max_delta_mm": 0.0,
+      "pass": true,
+      "tolerance_mm": 0.5
+    },
+    "surface_distance_probes": [
+      {
+        "actual_mm": 3.9987554727937202,
+        "delta_mm": 0.0012445272062797663,
+        "expected_mm": 4.0,
+        "label": "hole 1 at z=0.5",
+        "pass": true,
+        "point": [
+          30.0,
+          0.0,
+          0.5
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.998755472793719,
+        "delta_mm": 0.0012445272062810986,
+        "expected_mm": 4.0,
+        "label": "hole 1 at z=3",
+        "pass": true,
+        "point": [
+          30.0,
+          0.0,
+          3.0
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.9987554727937202,
+        "delta_mm": 0.0012445272062797663,
+        "expected_mm": 4.0,
+        "label": "hole 1 at z=5.5",
+        "pass": true,
+        "point": [
+          30.0,
+          0.0,
+          5.5
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.9987558785330797,
+        "delta_mm": 0.0012441214669203227,
+        "expected_mm": 4.0,
+        "label": "hole 2 at z=0.5",
+        "pass": true,
+        "point": [
+          15.000000000000004,
+          25.980762113533157,
+          0.5
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.998755878533081,
+        "delta_mm": 0.0012441214669189904,
+        "expected_mm": 4.0,
+        "label": "hole 2 at z=3",
+        "pass": true,
+        "point": [
+          15.000000000000004,
+          25.980762113533157,
+          3.0
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.998755878533081,
+        "delta_mm": 0.0012441214669189904,
+        "expected_mm": 4.0,
+        "label": "hole 2 at z=5.5",
+        "pass": true,
+        "point": [
+          15.000000000000004,
+          25.980762113533157,
+          5.5
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.9987558785330695,
+        "delta_mm": 0.0012441214669305367,
+        "expected_mm": 4.0,
+        "label": "hole 3 at z=0.5",
+        "pass": true,
+        "point": [
+          -14.999999999999993,
+          25.98076211353316,
+          0.5
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.9987558785330712,
+        "delta_mm": 0.0012441214669287604,
+        "expected_mm": 4.0,
+        "label": "hole 3 at z=3",
+        "pass": true,
+        "point": [
+          -14.999999999999993,
+          25.98076211353316,
+          3.0
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.9987558785330695,
+        "delta_mm": 0.0012441214669305367,
+        "expected_mm": 4.0,
+        "label": "hole 3 at z=5.5",
+        "pass": true,
+        "point": [
+          -14.999999999999993,
+          25.98076211353316,
+          5.5
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.99875547279372,
+        "delta_mm": 0.0012445272062802104,
+        "expected_mm": 4.0,
+        "label": "hole 4 at z=0.5",
+        "pass": true,
+        "point": [
+          -30.0,
+          3.67394039744206e-15,
+          0.5
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.9987554727937185,
+        "delta_mm": 0.0012445272062815427,
+        "expected_mm": 4.0,
+        "label": "hole 4 at z=3",
+        "pass": true,
+        "point": [
+          -30.0,
+          3.67394039744206e-15,
+          3.0
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.9987554727937202,
+        "delta_mm": 0.0012445272062797663,
+        "expected_mm": 4.0,
+        "label": "hole 4 at z=5.5",
+        "pass": true,
+        "point": [
+          -30.0,
+          3.67394039744206e-15,
+          5.5
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.99875587853309,
+        "delta_mm": 0.0012441214669101086,
+        "expected_mm": 4.0,
+        "label": "hole 5 at z=0.5",
+        "pass": true,
+        "point": [
+          -15.000000000000014,
+          -25.980762113533153,
+          0.5
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.9987558785330912,
+        "delta_mm": 0.0012441214669087763,
+        "expected_mm": 4.0,
+        "label": "hole 5 at z=3",
+        "pass": true,
+        "point": [
+          -15.000000000000014,
+          -25.980762113533153,
+          3.0
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.9987558785330912,
+        "delta_mm": 0.0012441214669087763,
+        "expected_mm": 4.0,
+        "label": "hole 5 at z=5.5",
+        "pass": true,
+        "point": [
+          -15.000000000000014,
+          -25.980762113533153,
+          5.5
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.9987558785330797,
+        "delta_mm": 0.0012441214669203227,
+        "expected_mm": 4.0,
+        "label": "hole 6 at z=0.5",
+        "pass": true,
+        "point": [
+          15.000000000000004,
+          -25.980762113533157,
+          0.5
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.998755878533081,
+        "delta_mm": 0.0012441214669189904,
+        "expected_mm": 4.0,
+        "label": "hole 6 at z=3",
+        "pass": true,
+        "point": [
+          15.000000000000004,
+          -25.980762113533157,
+          3.0
+        ],
+        "tolerance_mm": 0.3
+      },
+      {
+        "actual_mm": 3.998755878533081,
+        "delta_mm": 0.0012441214669189904,
+        "expected_mm": 4.0,
+        "label": "hole 6 at z=5.5",
+        "pass": true,
+        "point": [
+          15.000000000000004,
+          -25.980762113533157,
+          5.5
+        ],
+        "tolerance_mm": 0.3
+      }
+    ],
+    "volume": {
+      "actual_mm3": 58191.192471469556,
+      "delta_mm3": 0.7498399372780113,
+      "expected_mm3": 58190.44263153228,
+      "pass": true,
+      "tolerance_mm3": 80.0
+    },
+    "watertight": {
+      "actual": true,
+      "expected": true,
+      "pass": true
+    }
+  },
+  "implementation": "build123d",
+  "source": "examples/circular-feature-pattern/build123d/model.py",
+  "status": "pass",
+  "stl": "circular-feature-pattern/build123d/model.stl"
+}

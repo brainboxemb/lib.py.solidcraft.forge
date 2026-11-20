@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "12c9c749b8f016f2f67393978ea2732a1090cae6ea982603c32759a8d88be201",
-  "duration_seconds": 0.078,
+  "bundle_sha256": "dca7bdb576f411e0692d22882f5195871a3234caf6933b4f3c21234c2dd1c03d",
+  "duration_seconds": 0.124,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T20:34:51.299Z",
+  "finished_at": "2026-11-20T20:56:23.955Z",
   "item": "examples-attach-angle-pythonscad",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,13 +14,13 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "ba44d984688e598aae6839730218097beb95d9a6f85e58cd57422172e9e75364"
+      "sha256": "a256fd352e919e3ddabb3cc9d0631d9a1aa86b62157a51884aab28228467068e"
     }
   },
-  "run_finished_at": "2026-11-20T20:34:55.293Z",
-  "run_started_at": "2026-11-20T20:33:04.662Z",
+  "run_finished_at": "2026-11-20T20:56:35.455Z",
+  "run_started_at": "2026-11-20T20:54:33.799Z",
   "schema": 3,
-  "started_at": "2026-11-20T20:34:51.247Z",
+  "started_at": "2026-11-20T20:56:23.885Z",
   "status": "pass",
   "step": "verify_reference",
   "target_spec_digest": "c73902ea92354cdce8040d2fb6ef8a8eb8ed5f595091ecdc8950fa36a74d3be6",

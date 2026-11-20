@@ -1,0 +1,342 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "7b1af1036c7e66329180a507d0902407ebf7e4be4211012ff475239cb745b221",
+          "size": 2482
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "SelectiveProfileExtrude",
+                "max": [
+                  60.0,
+                  30.0,
+                  5.000000000000001
+                ],
+                "min": [
+                  -60.0,
+                  -30.0,
+                  -7.274332117816709e-32
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  60.0,
+                  30.0,
+                  5.0
+                ],
+                "min": [
+                  -60.0,
+                  -30.0,
+                  0.0
+                ]
+              },
+              "max_delta": 8.881784197001252e-16
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "center_of_mass": {
+              "components": {
+                "x": {
+                  "actual": 0.07130661232547605,
+                  "delta": 5.053397977849983e-11,
+                  "expected": 0.07130661227494207,
+                  "kind": "scalar",
+                  "label": "sole body center of mass x",
+                  "pass": true,
+                  "tolerance": 0.001
+                }
+              }
+            },
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 3
+              },
+              "expected": {
+                "cylinder": 3
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 35246.017763124604,
+              "delta": 1.384614733979106e-08,
+              "expected": 35246.01776313845,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.05
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "hole_diameter": 8.0,
+            "hole_pitch": 20.0
+          },
+          "expected": {
+            "hole_diameter": 8.0,
+            "hole_pitch": 20.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "name": "Selected holes",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "Selected holes",
+              "status": "solved"
+            },
+            "label": "Selected holes sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Selected holes",
+              "type": "Sketch"
+            },
+            {
+              "name": "Selected holes",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Selected holes",
+              "type": "Sketch"
+            },
+            {
+              "name": "Selected holes",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/pattern_mutated/model.sc",
+          "sha256": "740088b2262b5790d5771f14e74c9e2085aff00ae44fd82acbe1b5dd47ed976e",
+          "size": 11308
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/pattern_mutated/measurements.json",
+          "sha256": "c8da27c15e8b935d2be8a79fbf92a93b6dc1231106a057f4154bedca16132f73",
+          "size": 2475
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "SelectiveProfileExtrude",
+                "max": [
+                  60.0,
+                  30.0,
+                  5.0
+                ],
+                "min": [
+                  -60.0,
+                  -30.0,
+                  -7.27433211781671e-32
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  60.0,
+                  30.0,
+                  5.0
+                ],
+                "min": [
+                  -60.0,
+                  -30.0,
+                  0.0
+                ]
+              },
+              "max_delta": 7.27433211781671e-32
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "center_of_mass": {
+              "components": {
+                "x": {
+                  "actual": -0.06766415111200456,
+                  "delta": 5.0831422404584714e-12,
+                  "expected": -0.0676641511170877,
+                  "kind": "scalar",
+                  "label": "sole body center of mass x",
+                  "pass": true,
+                  "tolerance": 0.001
+                }
+              }
+            },
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 3
+              },
+              "expected": {
+                "cylinder": 3
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 34821.90275490493,
+              "delta": 1.0986695997416973e-09,
+              "expected": 34821.90275490383,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.05
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "hole_diameter": 10.0,
+            "hole_pitch": 24.0
+          },
+          "expected": {
+            "hole_diameter": 10.0,
+            "hole_pitch": 24.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "name": "Selected holes",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "Selected holes",
+              "status": "solved"
+            },
+            "label": "Selected holes sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Selected holes",
+              "type": "Sketch"
+            },
+            {
+              "name": "Selected holes",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Selected holes",
+              "type": "Sketch"
+            },
+            {
+              "name": "Selected holes",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "saved_design_pattern_mutated",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/selective-profile-extrude/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "selective-profile-extrude"
+}

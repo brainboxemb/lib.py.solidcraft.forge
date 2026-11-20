@@ -26,9 +26,33 @@
     },
     {
       "compile_error": null,
+      "input": "/output/models/bracket/solidcraft.json",
+      "output": "/output/models/bracket/model_verify",
+      "slug": "bracket"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/circle-negative-extrude/solidcraft.json",
+      "output": "/output/models/circle-negative-extrude/model_verify",
+      "slug": "circle-negative-extrude"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/circular-feature-pattern/solidcraft.json",
+      "output": "/output/models/circular-feature-pattern/model_verify",
+      "slug": "circular-feature-pattern"
+    },
+    {
+      "compile_error": null,
       "input": "/output/models/components/solidcraft.json",
       "output": "/output/models/components/model_verify",
       "slug": "components"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/eight-flightcase-corners/solidcraft.json",
+      "output": "/output/models/eight-flightcase-corners/model_verify",
+      "slug": "eight-flightcase-corners"
     },
     {
       "compile_error": null,
@@ -62,9 +86,39 @@
     },
     {
       "compile_error": null,
+      "input": "/output/models/primitive-csg/solidcraft.json",
+      "output": "/output/models/primitive-csg/model_verify",
+      "slug": "primitive-csg"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/rectangular-pattern/solidcraft.json",
+      "output": "/output/models/rectangular-pattern/model_verify",
+      "slug": "rectangular-pattern"
+    },
+    {
+      "compile_error": null,
       "input": "/output/models/repeated-parent-attachments/solidcraft.json",
       "output": "/output/models/repeated-parent-attachments/model_verify",
       "slug": "repeated-parent-attachments"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/round-top-sketch/solidcraft.json",
+      "output": "/output/models/round-top-sketch/model_verify",
+      "slug": "round-top-sketch"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/rounded-rectangle-sketch/solidcraft.json",
+      "output": "/output/models/rounded-rectangle-sketch/model_verify",
+      "slug": "rounded-rectangle-sketch"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/selective-profile-extrude/solidcraft.json",
+      "output": "/output/models/selective-profile-extrude/model_verify",
+      "slug": "selective-profile-extrude"
     },
     {
       "compile_error": null,
@@ -80,6 +134,12 @@
     },
     {
       "compile_error": null,
+      "input": "/output/models/slot-family/solidcraft.json",
+      "output": "/output/models/slot-family/model_verify",
+      "slug": "slot-family"
+    },
+    {
+      "compile_error": null,
       "input": "/output/models/top-sketch-after-chamfer/solidcraft.json",
       "output": "/output/models/top-sketch-after-chamfer/model_verify",
       "slug": "top-sketch-after-chamfer"
@@ -92,5 +152,5 @@
     }
   ],
   "schema": 1,
-  "source_sha": "996dec1af857bd9613897742bddfb667180d05aa"
+  "source_sha": "d056a55a93bc1e32b47dbed8feed3a58459a91ec"
 }
