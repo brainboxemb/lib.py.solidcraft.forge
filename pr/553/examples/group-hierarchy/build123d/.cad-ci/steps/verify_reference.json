@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "7a972a61f610f1c5d6fb61d22a718c891fb02be5327776f6577f41b7aade0efc",
+  "duration_seconds": 0.078,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:17:50.218Z",
+  "item": "examples-group-hierarchy-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "c543fe8d5059431d27864512cc9c1867b0867aa47b19be715e675d2b23191e2b"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:17:56.968Z",
+  "run_started_at": "2026-11-20T22:15:57.499Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:17:50.176Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "686d2887c317a87df675b8c0b0ad511a4d8977497b4f03ee1f0d542d94dcb83c",
+  "timeout_seconds": null
+}

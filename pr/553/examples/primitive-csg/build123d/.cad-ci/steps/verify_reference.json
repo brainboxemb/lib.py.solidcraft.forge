@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "e02bc096f4e936c5ecf3068c1fc7b47459c1ee8ddb2806bbb3174ec5681ef231",
+  "duration_seconds": 0.079,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:17:52.566Z",
+  "item": "examples-primitive-csg-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "1c1baac5e220477adecca56cf5d6f5ae4a12225667d12717271c23e7cf483cc4"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:17:56.968Z",
+  "run_started_at": "2026-11-20T22:15:57.499Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:17:52.525Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "51f6a6356eccb406e6727298ed1b703b31f76636c6a911c5c664b666025295e2",
+  "timeout_seconds": null
+}

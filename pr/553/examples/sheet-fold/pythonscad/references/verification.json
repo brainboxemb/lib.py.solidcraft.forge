@@ -1,0 +1,86 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                21.643805511295795,
+                20.0,
+                21.643805511295795
+              ],
+              "actual_min": [
+                -40.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                21.64380551,
+                20.0,
+                21.64380551
+              ],
+              "expected_min": [
+                -40.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 1.295795470923622e-09,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 2.8531695488854605,
+                "delta_mm": 0.14683045111453952,
+                "expected_mm": 3.0,
+                "label": "fixed-flat hole at z=0.5",
+                "pass": true,
+                "point": [
+                  -20.0,
+                  0.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 2.8531695488854605,
+                "delta_mm": 0.14683045111453952,
+                "expected_mm": 3.0,
+                "label": "fixed-flat hole at z=1.5",
+                "pass": true,
+                "point": [
+                  -20.0,
+                  0.0,
+                  1.5
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 6346.9479478587855,
+              "delta_mm3": 3.4966156234013397,
+              "expected_mm3": 6343.451332235384,
+              "pass": true,
+              "tolerance_mm3": 5.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/sheet-fold/pythonscad/model.py",
+          "status": "pass",
+          "stl": "sheet-fold/pythonscad/model.stl"
+        }
+      ],
+      "model": "sheet-fold",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "77c6515a09c014d5520fb9c559c686f2b266f7cf",
+  "status": "pass"
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "948fb3bd7396719bf58e0177c0beb3250325568ea0494682b63b429b247581e2",
+  "duration_seconds": 0.077,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:17:47.188Z",
+  "item": "examples-assembly-owned-anchor-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "39bdc035b77fbf2e82e9dbf2799ad3c988fd17f4878e8b900aa79182794abd72"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:17:56.968Z",
+  "run_started_at": "2026-11-20T22:15:57.499Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:17:47.148Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "bd38ce2f3a6a1863eddee071ab04d0855d8b9bd02c62bd898bc3dfc2915789db",
+  "timeout_seconds": null
+}

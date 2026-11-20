@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "47e0226db92402759166ad59ab955b96e4fc16b5a3ee40dc33568116d525dbf3",
+  "duration_seconds": 0.079,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:17:53.618Z",
+  "item": "examples-round-top-sketch-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "b9995ffd88826e104daabe5c34776eb10bdcb8efae78e9359e8717f0f4a14063"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:17:56.968Z",
+  "run_started_at": "2026-11-20T22:15:57.499Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:17:53.577Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "6be9cafafdc0da4652ebd73c562728fc8768713945c5a3e89bd9b96d3bb60967",
+  "timeout_seconds": null
+}

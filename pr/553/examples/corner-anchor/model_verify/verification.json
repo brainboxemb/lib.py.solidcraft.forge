@@ -1,0 +1,268 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "4864a4c7367a6d47b55c808f60ca425ce9d2447e0ad31bd8ae9b7ad496340b74",
+          "size": 2468
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Base",
+                "max": [
+                  20.0,
+                  15.0,
+                  20.0
+                ],
+                "min": [
+                  -20.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  20.0,
+                  15.0,
+                  20.0
+                ],
+                "min": [
+                  -20.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Marker",
+                "max": [
+                  20.0,
+                  -15.0,
+                  20.0
+                ],
+                "min": [
+                  10.0,
+                  -25.0,
+                  10.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  20.0,
+                  -15.0,
+                  20.0
+                ],
+                "min": [
+                  10.0,
+                  -25.0,
+                  10.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "body_name": "Marker",
+            "bounds": {
+              "actual_max": [
+                20.0,
+                -15.0,
+                20.0
+              ],
+              "actual_min": [
+                10.0,
+                -25.0,
+                10.0
+              ],
+              "deltas": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                -15.0,
+                20.0
+              ],
+              "expected_min": [
+                10.0,
+                -25.0,
+                10.0
+              ],
+              "kind": "bounds",
+              "label": "Marker bounds",
+              "max_delta": 0.0,
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "name_prefix": "Marker"
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/size_80x40/model.sc",
+          "sha256": "479e603a1a7154b5223790e6d940857af77afff491bb66a0efc56166f94458ee",
+          "size": 6451
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/size_80x40/measurements.json",
+          "sha256": "7d0eb2d2f19b9ed4d6cc01ff65b7485fa1bcdbe1ac5b15f23f5c15d685a0268c",
+          "size": 2499
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Base",
+                "max": [
+                  40.0,
+                  15.0,
+                  40.0
+                ],
+                "min": [
+                  -40.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  15.0,
+                  40.0
+                ],
+                "min": [
+                  -40.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Marker",
+                "max": [
+                  40.0,
+                  -15.0,
+                  40.0
+                ],
+                "min": [
+                  30.0,
+                  -25.0,
+                  30.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  -15.0,
+                  40.0
+                ],
+                "min": [
+                  30.0,
+                  -25.0,
+                  30.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "body_name": "Marker",
+            "bounds": {
+              "actual_max": [
+                40.0,
+                -15.0,
+                40.0
+              ],
+              "actual_min": [
+                30.0,
+                -25.0,
+                30.0
+              ],
+              "deltas": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "expected_max": [
+                40.0,
+                -15.0,
+                40.0
+              ],
+              "expected_min": [
+                30.0,
+                -25.0,
+                30.0
+              ],
+              "kind": "bounds",
+              "label": "Marker bounds",
+              "max_delta": 0.0,
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "name_prefix": "Marker"
+          }
+        ]
+      },
+      "id": "saved_design_size_80x40",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/corner-anchor/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "corner-anchor"
+}

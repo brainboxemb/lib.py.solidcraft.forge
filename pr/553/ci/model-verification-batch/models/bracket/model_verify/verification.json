@@ -1,0 +1,86 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "5b91da052f3d550544cdd6643adcb4bcfd66058a13d913c3435fc144d837ecbb",
+          "size": 2125
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Bracket",
+                "max": [
+                  40.0,
+                  12.0,
+                  0.0
+                ],
+                "min": [
+                  0.0,
+                  -12.0,
+                  -40.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  12.0,
+                  0.0
+                ],
+                "min": [
+                  0.0,
+                  -12.0,
+                  -40.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "selector": "sole",
+            "volume": {
+              "actual": 19584.0,
+              "delta": 0.0,
+              "expected": 19584.0,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 1.0
+            }
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/bracket/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "bracket"
+}

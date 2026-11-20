@@ -1,0 +1,42 @@
+{
+  "commands": [
+    {
+      "command": "sketch.edit",
+      "params": {
+        "sketch": 4
+      }
+    },
+    {
+      "command": "sketch.mirror",
+      "params": {
+        "entities": [
+          "l7",
+          "a5",
+          "l8",
+          "a6",
+          "l9",
+          "a7",
+          "l10",
+          "a8"
+        ],
+        "line": "x"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "operation": "cut",
+        "targets": [
+          "SketchPatternMirror"
+        ],
+        "name": "Clamp slots",
+        "through_all": true,
+        "direction": "negative"
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "a1b846cc29e566342803fd8446ad5d1b8ae7610873e8e2ad3ee8f1b74cfaec80",
+  "duration_seconds": 0.081,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:17:54.272Z",
+  "item": "examples-selective-profile-extrude-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "89ef80adf890263762402c72141f84703ab06331ce6a603b95e9e15472057c84"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:17:56.968Z",
+  "run_started_at": "2026-11-20T22:15:57.499Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:17:54.230Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "bd654866a27fd83100af58d4b212df52035e3b91f9978b08a7091724f51659ae",
+  "timeout_seconds": null
+}

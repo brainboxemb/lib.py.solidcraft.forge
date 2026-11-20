@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "0e118037bf301a67a541a9e1c0dc1bbfd58b091781780adcdfb86d03def0e879",
+  "duration_seconds": 0.076,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:17:52.808Z",
+  "item": "examples-primitive-csg-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "2a20fd3a8d1b201f2c548956b515d32c0a4121faf27a5f7c86dff49b7801d130"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:17:56.968Z",
+  "run_started_at": "2026-11-20T22:15:57.499Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:17:52.769Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "b49de0f25c42ab80828f3f149e2c24cc23ba87b1801fa17e270e2d95d93582d7",
+  "timeout_seconds": null
+}

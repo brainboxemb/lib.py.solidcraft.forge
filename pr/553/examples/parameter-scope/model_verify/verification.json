@@ -1,0 +1,384 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "aed2adfcc37a2529b4dcfb6a5cbb5e9258b0938706c50f187edd3c8157adaac7",
+          "size": 5295
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 5,
+          "expected_count": 5,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Panel",
+                "max": [
+                  20.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  -20.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  20.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  -20.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Panel_2",
+                "max": [
+                  130.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  70.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  130.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  70.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Panel_3",
+                "max": [
+                  260.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  180.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  260.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  180.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Panel_3 (Panel 3:2)",
+                "max": [
+                  380.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  300.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  380.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  300.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Panel_4",
+                "max": [
+                  480.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  440.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  480.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  440.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "d1_Panel_width": 40.0,
+            "d2_Panel_2_width": 60.0,
+            "shared_width": 80.0
+          },
+          "expected": {
+            "d1_Panel_width": 40.0,
+            "d2_Panel_2_width": 60.0,
+            "shared_width": 80.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/shared_width_100/model.sc",
+          "sha256": "0724ea8480e917430222a340df9df9eff966862a95d69adbba58a0676d3d8603",
+          "size": 9401
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/shared_width_100/measurements.json",
+          "sha256": "2188bff44190c885ffccd25ab6a3cbe9304b126b3754cca34b70cb4c7c7eb06c",
+          "size": 5380
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 5,
+          "expected_count": 5,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Panel",
+                "max": [
+                  20.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  -20.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  20.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  -20.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Panel_2",
+                "max": [
+                  130.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  70.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  130.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  70.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Panel_3",
+                "max": [
+                  270.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  170.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  270.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  170.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Panel_3 (Panel 3:2)",
+                "max": [
+                  390.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  290.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  390.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  290.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Panel_4",
+                "max": [
+                  485.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  435.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  485.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  435.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "shared_width": 100.0
+          },
+          "expected": {
+            "shared_width": 100.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_shared_width_100",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/parameter-scope/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "parameter-scope"
+}
