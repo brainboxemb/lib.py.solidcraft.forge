@@ -8,6 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 LAUNCHER = ROOT / "scripts" / "model_verify_declarative.py"
+BATCH = ROOT / "scripts" / "model_verification_batch.py"
 
 BATCH_ONE_MODELS = (
     "anchored-holes",
@@ -75,12 +76,12 @@ class DeclarativeModelVerificationBoundaryTests(unittest.TestCase):
                 if "template: forge-model-declarative" in ci:
                     root_ci = (ROOT / "cad-ci.yml").read_text(encoding="utf-8")
                     self.assertIn(
-                        "scripts/model_verify_declarative.py",
+                        "scripts/model_verification_batch.py",
                         root_ci,
                     )
                     self.assertNotIn("scripts/model_verify.py", root_ci)
                 else:
-                    self.assertIn("scripts/model_verify_declarative.py", ci)
+                    self.assertIn("scripts/model_verification_batch.py", ci)
                     self.assertNotIn("scripts/model_verify.py", ci)
 
                 text = (verification / "verify.py").read_text(
@@ -121,6 +122,15 @@ class DeclarativeModelVerificationBoundaryTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertIn("scripts/model_verify.py", ci)
         self.assertNotIn("scripts/model_verify_declarative.py", ci)
+
+    def test_batch_reuses_runtime_but_materializes_per_model(self):
+        text = BATCH.read_text(encoding="utf-8")
+        self.assertIn("processed_declarative_slugs", text)
+        self.assertIn("dependency_output_root", text)
+        self.assertIn('"docker"', text)
+        self.assertIn('"run"', text)
+        self.assertIn("for row in rows:", text)
+        self.assertIn("materialize_case", text)
 
     def test_shared_launcher_only_produces_and_hands_off(self):
         """Forge launcher may replay Forge output but not check SolidCraft data."""
