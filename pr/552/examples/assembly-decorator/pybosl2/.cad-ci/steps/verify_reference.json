@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "65f5559d1155a8e07de8f7f5858e267a61e372ea643254efbf29dafec23437ee",
+  "duration_seconds": 0.113,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:15:26.067Z",
+  "item": "examples-assembly-decorator-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "63f2e478e23b07576d4cd7269bc988a006c0853a1e38db23528bff634ad1c14e"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:15:40.687Z",
+  "run_started_at": "2026-11-20T22:13:19.155Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:15:26.008Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "330aba8db256538d3ebfcd994f804aa8e69c6b565df2c6b1f5d8738339deccb7",
+  "timeout_seconds": null
+}

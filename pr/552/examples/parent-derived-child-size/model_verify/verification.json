@@ -1,0 +1,216 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "3c44d4300792cee09be10ad19cff4509f6c517c1bb4ec78280cf2f13520b6852",
+          "size": 2486
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "ParentBlock",
+                "max": [
+                  60.0,
+                  40.0,
+                  10.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  60.0,
+                  40.0,
+                  10.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "DerivedChild",
+                "max": [
+                  30.0,
+                  20.0,
+                  26.0
+                ],
+                "min": [
+                  -30.0,
+                  -20.0,
+                  20.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  30.0,
+                  20.0,
+                  26.0
+                ],
+                "min": [
+                  -30.0,
+                  -20.0,
+                  20.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "base_depth": 80.0,
+            "base_width": 120.0
+          },
+          "expected": {
+            "base_depth": 80.0,
+            "base_width": 120.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/size_160x120/model.sc",
+          "sha256": "ceda821b4302ba82035ea4fb740d95f304d57c550de1d3d566dee509a2000c60",
+          "size": 6122
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/size_160x120/measurements.json",
+          "sha256": "4a52b35c15b0251c897b5a9edb08e298f698af9b787193230c5405d0b9504c45",
+          "size": 2544
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "ParentBlock",
+                "max": [
+                  80.0,
+                  60.0,
+                  10.0
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  80.0,
+                  60.0,
+                  10.0
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "DerivedChild",
+                "max": [
+                  40.0,
+                  30.0,
+                  26.0
+                ],
+                "min": [
+                  -40.0,
+                  -30.0,
+                  20.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  30.0,
+                  26.0
+                ],
+                "min": [
+                  -40.0,
+                  -30.0,
+                  20.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "base_depth": 120.0,
+            "base_width": 160.0
+          },
+          "expected": {
+            "base_depth": 120.0,
+            "base_width": 160.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_size_160x120",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/parent-derived-child-size/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "parent-derived-child-size"
+}

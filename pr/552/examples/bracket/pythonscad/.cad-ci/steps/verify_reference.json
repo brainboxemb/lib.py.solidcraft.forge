@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "f1d241f368886e5f3a0d9c2d47fe220e89cf10dfaaa9cbf8a77759c7a19de38b",
+  "duration_seconds": 0.116,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:15:27.601Z",
+  "item": "examples-bracket-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "e395c1c533eae147d24249882af73e39989c49a9388b5ea0cd09f9cb3562841c"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:15:40.687Z",
+  "run_started_at": "2026-11-20T22:13:19.155Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:15:27.540Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "f1d7129b0ab532dc10c7623a7eeb8f64aff5b729801004b5a5b882994e98eb20",
+  "timeout_seconds": null
+}

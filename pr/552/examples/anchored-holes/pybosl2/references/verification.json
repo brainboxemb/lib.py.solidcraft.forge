@@ -1,0 +1,138 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                100.0,
+                60.0,
+                10.0
+              ],
+              "actual_min": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "expected_max": [
+                100.0,
+                60.0,
+                10.0
+              ],
+              "expected_min": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 3.8837661726277553,
+                "delta_mm": 0.11623382737224475,
+                "expected_mm": 4.0,
+                "label": "front hole at z=1",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837661726277553,
+                "delta_mm": 0.11623382737224475,
+                "expected_mm": 4.0,
+                "label": "front hole at z=5",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837661726277553,
+                "delta_mm": 0.11623382737224475,
+                "expected_mm": 4.0,
+                "label": "front hole at z=9",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837661743164062,
+                "delta_mm": 0.11623382568359375,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=1",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837661743164062,
+                "delta_mm": 0.11623382568359375,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=5",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837661743164062,
+                "delta_mm": 0.11623382568359375,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=9",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 59033.37579852197,
+              "delta_mm3": 38.68544767070125,
+              "expected_mm3": 58994.69035085127,
+              "pass": true,
+              "tolerance_mm3": 55.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/anchored-holes/pybosl2/model.py",
+          "status": "pass",
+          "stl": "anchored-holes/pybosl2/model.stl"
+        }
+      ],
+      "model": "anchored-holes",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "ee655e291b66fb65e2b626a988553ec8f755bc3c",
+  "status": "pass"
+}

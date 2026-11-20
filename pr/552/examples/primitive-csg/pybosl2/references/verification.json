@@ -1,0 +1,105 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                25.0,
+                19.890438079833984,
+                20.0
+              ],
+              "actual_min": [
+                -19.591798782348633,
+                -19.890438079833984,
+                0.0
+              ],
+              "expected_max": [
+                25.0,
+                20.0,
+                20.0
+              ],
+              "expected_min": [
+                -19.595917942265423,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 0.10956192016601562,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 5.750170081732606,
+                "delta_mm": 0.10769429453644275,
+                "expected_mm": 5.857864376269049,
+                "label": "surviving sphere interior",
+                "pass": true,
+                "point": [
+                  -10.0,
+                  0.0,
+                  10.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 2.8837673664093018,
+                "delta_mm": 0.11623263359069824,
+                "expected_mm": 3.0,
+                "label": "cylindrical bore",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 2.0,
+                "delta_mm": 0.0,
+                "expected_mm": 2.0,
+                "label": "clip plane at x=25",
+                "pass": true,
+                "point": [
+                  27.0,
+                  10.0,
+                  10.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 1.0,
+                "delta_mm": 0.0,
+                "expected_mm": 1.0,
+                "label": "unioned box extension",
+                "pass": true,
+                "point": [
+                  23.0,
+                  14.0,
+                  10.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/primitive-csg/pybosl2/model.py",
+          "status": "pass",
+          "stl": "primitive-csg/pybosl2/model.stl"
+        }
+      ],
+      "model": "primitive-csg",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "ee655e291b66fb65e2b626a988553ec8f755bc3c",
+  "status": "pass"
+}

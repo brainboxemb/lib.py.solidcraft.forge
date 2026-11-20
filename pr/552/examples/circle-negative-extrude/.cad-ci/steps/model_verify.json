@@ -1,0 +1,33 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "cbb617ab6e2d6047bf1679c08557086ed93688c583c9bd55c8f7702c423857b2",
+  "duration_seconds": 0.149,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:15:13.392Z",
+  "item": "circle-negative-extrude",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "model_verify": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "08eca38f5326abfd081265d788b84b89ad6e99fbe8d5750c2f4db685b2df4165"
+    },
+    "solidcraft.json": {
+      "kind": "file",
+      "mode": 420,
+      "sha256": "3490f2c1034b5cef87f4dfcebdca23d72b560ff17bd88a30baba3d4c2849f5b1"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:15:40.687Z",
+  "run_started_at": "2026-11-20T22:13:19.155Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:15:13.333Z",
+  "status": "pass",
+  "step": "model_verify",
+  "target_spec_digest": "432702a130aa89511ef9f30b17971ea72ff864a0af7d63582e123894b6d92736",
+  "timeout_seconds": null
+}

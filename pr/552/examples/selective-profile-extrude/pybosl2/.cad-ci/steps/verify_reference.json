@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "655e7c9b39bd3392ed2090a43fdddada94059e1bb888340a769e1dff759ea77a",
+  "duration_seconds": 0.114,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:15:36.950Z",
+  "item": "examples-selective-profile-extrude-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "aceb1c438c92f7ad3373b73359b23adf310bff05833e13bb5118f548eb2da20a"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:15:40.687Z",
+  "run_started_at": "2026-11-20T22:13:19.155Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:15:36.889Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "c6e917016d0e610b60f59bee222e5a0a1aac68471eb12e574d18aaa3f2be370f",
+  "timeout_seconds": null
+}

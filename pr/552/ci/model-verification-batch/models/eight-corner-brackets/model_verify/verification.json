@@ -1,0 +1,604 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "a2973c540c3e9b72355717f6d351c84e2a757dc42f108bee49524e4f311942d8",
+          "size": 8801
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 9,
+          "expected": 9,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 9,
+          "expected_count": 9,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "FrameBlock",
+                "max": [
+                  60.0,
+                  40.0,
+                  60.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  60.0,
+                  40.0,
+                  60.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile",
+                "max": [
+                  -32.0,
+                  -12.0,
+                  16.0
+                ],
+                "min": [
+                  -64.0,
+                  -44.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -32.0,
+                  -12.0,
+                  16.0
+                ],
+                "min": [
+                  -64.0,
+                  -44.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:2)",
+                "max": [
+                  -32.0,
+                  -12.0,
+                  60.0
+                ],
+                "min": [
+                  -64.0,
+                  -44.0,
+                  44.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -32.0,
+                  -12.0,
+                  60.0
+                ],
+                "min": [
+                  -64.0,
+                  -44.0,
+                  44.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:3)",
+                "max": [
+                  64.0,
+                  -12.0,
+                  16.0
+                ],
+                "min": [
+                  32.0,
+                  -44.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  64.0,
+                  -12.0,
+                  16.0
+                ],
+                "min": [
+                  32.0,
+                  -44.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:4)",
+                "max": [
+                  64.0,
+                  -12.0,
+                  60.0
+                ],
+                "min": [
+                  32.0,
+                  -44.0,
+                  44.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  64.0,
+                  -12.0,
+                  60.0
+                ],
+                "min": [
+                  32.0,
+                  -44.0,
+                  44.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:5)",
+                "max": [
+                  64.0,
+                  44.0,
+                  16.0
+                ],
+                "min": [
+                  32.0,
+                  12.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  64.0,
+                  44.0,
+                  16.0
+                ],
+                "min": [
+                  32.0,
+                  12.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:6)",
+                "max": [
+                  64.0,
+                  44.0,
+                  60.0
+                ],
+                "min": [
+                  32.0,
+                  12.0,
+                  44.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  64.0,
+                  44.0,
+                  60.0
+                ],
+                "min": [
+                  32.0,
+                  12.0,
+                  44.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:7)",
+                "max": [
+                  -32.0,
+                  44.0,
+                  16.0
+                ],
+                "min": [
+                  -64.0,
+                  12.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -32.0,
+                  44.0,
+                  16.0
+                ],
+                "min": [
+                  -64.0,
+                  12.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:8)",
+                "max": [
+                  -32.0,
+                  44.0,
+                  60.0
+                ],
+                "min": [
+                  -64.0,
+                  12.0,
+                  44.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -32.0,
+                  44.0,
+                  60.0
+                ],
+                "min": [
+                  -64.0,
+                  12.0,
+                  44.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/size_160x120x90/model.sc",
+          "sha256": "dd44cc76847f475a5d5446d208aad4e48f8ce3051ae2cf257995666af84badfa",
+          "size": 13987
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/size_160x120x90/measurements.json",
+          "sha256": "fb466f7e41ec4752d528f4c9a9eb8c6b270a5ff4aa9a8c09ce0fbd424afe7e6b",
+          "size": 8798
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 9,
+          "expected": 9,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 9,
+          "expected_count": 9,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "FrameBlock",
+                "max": [
+                  80.0,
+                  60.0,
+                  90.0
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  80.0,
+                  60.0,
+                  90.0
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile",
+                "max": [
+                  -52.0,
+                  -32.0,
+                  16.0
+                ],
+                "min": [
+                  -84.0,
+                  -64.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -52.0,
+                  -32.0,
+                  16.0
+                ],
+                "min": [
+                  -84.0,
+                  -64.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:2)",
+                "max": [
+                  -52.0,
+                  -32.0,
+                  90.0
+                ],
+                "min": [
+                  -84.0,
+                  -64.0,
+                  74.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -52.0,
+                  -32.0,
+                  90.0
+                ],
+                "min": [
+                  -84.0,
+                  -64.0,
+                  74.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:3)",
+                "max": [
+                  84.0,
+                  -32.0,
+                  16.0
+                ],
+                "min": [
+                  52.0,
+                  -64.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  84.0,
+                  -32.0,
+                  16.0
+                ],
+                "min": [
+                  52.0,
+                  -64.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:4)",
+                "max": [
+                  84.0,
+                  -32.0,
+                  90.0
+                ],
+                "min": [
+                  52.0,
+                  -64.0,
+                  74.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  84.0,
+                  -32.0,
+                  90.0
+                ],
+                "min": [
+                  52.0,
+                  -64.0,
+                  74.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:5)",
+                "max": [
+                  84.0,
+                  64.0,
+                  16.0
+                ],
+                "min": [
+                  52.0,
+                  32.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  84.0,
+                  64.0,
+                  16.0
+                ],
+                "min": [
+                  52.0,
+                  32.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:6)",
+                "max": [
+                  84.0,
+                  64.0,
+                  90.0
+                ],
+                "min": [
+                  52.0,
+                  32.0,
+                  74.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  84.0,
+                  64.0,
+                  90.0
+                ],
+                "min": [
+                  52.0,
+                  32.0,
+                  74.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:7)",
+                "max": [
+                  -52.0,
+                  64.0,
+                  16.0
+                ],
+                "min": [
+                  -84.0,
+                  32.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -52.0,
+                  64.0,
+                  16.0
+                ],
+                "min": [
+                  -84.0,
+                  32.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:8)",
+                "max": [
+                  -52.0,
+                  64.0,
+                  90.0
+                ],
+                "min": [
+                  -84.0,
+                  32.0,
+                  74.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -52.0,
+                  64.0,
+                  90.0
+                ],
+                "min": [
+                  -84.0,
+                  32.0,
+                  74.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "saved_design_size_160x120x90",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/eight-corner-brackets/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "eight-corner-brackets"
+}

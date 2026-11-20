@@ -1,0 +1,51 @@
+[
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "Base",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Base"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Base"
+    ],
+    "feature": 3,
+    "ms": 2.291343,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 4,
+    "grounded": false,
+    "name": "Arm",
+    "occurrence": 5,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Base",
+      "Arm"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Arm"
+    ],
+    "feature": 6,
+    "ms": 1.532889,
+    "name": "Box2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "73fbe752173bd52412bbbfa5e5d937eeb58a2218c976b35f41f5f59baf1341d0",
+  "duration_seconds": 0.115,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:15:33.755Z",
+  "item": "examples-parametric-offset-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "f538837995051b3c8d108d68f5bb4cfa7a862193abdbd88941caae6b2a73776d"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:15:40.687Z",
+  "run_started_at": "2026-11-20T22:13:19.155Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:15:33.696Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "6b98b98847fde2294d4e0d37461ffebac6bea0aa76ca161ad715ae9815cbe06f",
+  "timeout_seconds": null
+}

@@ -1,0 +1,88 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "8cbbc15d65a7623b2dbf3398752ccfb61469de9a0872dd6cb4270e4d0134e07e",
+          "size": 2716
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "HoleFamily",
+                "max": [
+                  60.0,
+                  20.0,
+                  12.000000000000009
+                ],
+                "min": [
+                  -60.0,
+                  -20.0,
+                  -1.7763568394002635e-15
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  60.0,
+                  20.0,
+                  12.0
+                ],
+                "min": [
+                  -60.0,
+                  -20.0,
+                  0.0
+                ]
+              },
+              "max_delta": 8.881784197001252e-15
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "sketch_count": {
+          "actual": 0,
+          "expected": 0,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "timeline_type_counts": {
+          "actual": {
+            "HoleFeature": 4
+          },
+          "expected": {
+            "HoleFeature": 4
+          },
+          "label": "SolidCraft timeline type counts",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/hole-family/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "hole-family"
+}
