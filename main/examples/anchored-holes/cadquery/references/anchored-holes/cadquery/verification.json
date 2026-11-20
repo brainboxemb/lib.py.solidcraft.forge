@@ -119,6 +119,11 @@
     }
   },
   "implementation": "cadquery",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/anchored-holes/cadquery/model.py",
   "status": "pass",
   "stl": "anchored-holes/cadquery/model.stl"

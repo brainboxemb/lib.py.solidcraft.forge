@@ -158,6 +158,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/selective-profile-extrude/pythonscad/model.py",
   "status": "pass",
   "stl": "selective-profile-extrude/pythonscad/model.stl"

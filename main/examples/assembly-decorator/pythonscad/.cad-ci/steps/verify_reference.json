@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "cb8943402513a08f27e96ff08957ed827cf386bc3c917bb9fc81ed93e398a545",
-  "duration_seconds": 0.088,
+  "bundle_sha256": "4c4e7a83ba2856330a9c7322f2347e5635f1195abdabf55d4a354782c0012dc7",
+  "duration_seconds": 0.125,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T22:20:19.833Z",
+  "finished_at": "2026-11-20T22:58:55.375Z",
   "item": "examples-assembly-decorator-pythonscad",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,15 +14,15 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "44d077338fc8067b36b032038d62b25ceee545dc343e4e7d06b526e32e75fdfb"
+      "sha256": "65b10f5f52dfc4a45b72e3c5a70f0198c5ff79e1e15f80a90dc1033743248531"
     }
   },
-  "run_finished_at": "2026-11-20T22:20:30.877Z",
-  "run_started_at": "2026-11-20T22:18:50.653Z",
+  "run_finished_at": "2026-11-20T22:59:10.937Z",
+  "run_started_at": "2026-11-20T22:56:39.478Z",
   "schema": 3,
-  "started_at": "2026-11-20T22:20:19.786Z",
+  "started_at": "2026-11-20T22:58:55.326Z",
   "status": "pass",
   "step": "verify_reference",
-  "target_spec_digest": "f8072e784ffe306e843df8efb5cf985701441baa5a1dda9a46d8267a112e538c",
+  "target_spec_digest": "bc969ee6938f5049d7d841bb9b872aeee4065c8825372e79e1a232bf7b4fb560",
   "timeout_seconds": null
 }

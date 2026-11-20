@@ -236,6 +236,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/slot-family/pythonscad/model.py",
   "status": "pass",
   "stl": "slot-family/pythonscad/model.stl"

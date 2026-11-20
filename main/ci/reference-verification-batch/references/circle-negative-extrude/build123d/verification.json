@@ -54,6 +54,11 @@
     }
   },
   "implementation": "build123d",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/circle-negative-extrude/build123d/model.py",
   "status": "pass",
   "stl": "circle-negative-extrude/build123d/model.stl"

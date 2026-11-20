@@ -119,6 +119,11 @@
     }
   },
   "implementation": "build123d",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/anchored-holes/build123d/model.py",
   "status": "pass",
   "stl": "anchored-holes/build123d/model.stl"

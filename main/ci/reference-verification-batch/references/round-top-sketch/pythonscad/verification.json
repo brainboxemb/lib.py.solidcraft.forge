@@ -67,6 +67,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/round-top-sketch/pythonscad/model.py",
   "status": "pass",
   "stl": "round-top-sketch/pythonscad/model.stl"

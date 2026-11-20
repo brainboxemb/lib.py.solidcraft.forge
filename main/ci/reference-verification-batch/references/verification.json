@@ -31,6 +31,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/anchor-topology-mutation/pythonscad/model.py",
           "status": "pass",
           "stl": "anchor-topology-mutation/pythonscad/model.stl"
@@ -64,6 +69,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/anchor-topology-mutation/pybosl2/model.py",
           "status": "pass",
           "stl": "anchor-topology-mutation/pybosl2/model.stl"
@@ -97,6 +107,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/anchor-topology-mutation/cadquery/model.py",
           "status": "pass",
           "stl": "anchor-topology-mutation/cadquery/model.stl"
@@ -130,6 +145,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/anchor-topology-mutation/build123d/model.py",
           "status": "pass",
           "stl": "anchor-topology-mutation/build123d/model.stl"
@@ -261,6 +281,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/anchored-holes/pythonscad/model.py",
           "status": "pass",
           "stl": "anchored-holes/pythonscad/model.stl"
@@ -386,6 +411,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/anchored-holes/pybosl2/model.py",
           "status": "pass",
           "stl": "anchored-holes/pybosl2/model.stl"
@@ -511,6 +541,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/anchored-holes/cadquery/model.py",
           "status": "pass",
           "stl": "anchored-holes/cadquery/model.stl"
@@ -636,6 +671,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/anchored-holes/build123d/model.py",
           "status": "pass",
           "stl": "anchored-holes/build123d/model.stl"
@@ -675,6 +715,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/assembly-decorator/pythonscad/model.py",
           "status": "pass",
           "stl": "assembly-decorator/pythonscad/model.stl"
@@ -708,6 +753,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/assembly-decorator/pybosl2/model.py",
           "status": "pass",
           "stl": "assembly-decorator/pybosl2/model.stl"
@@ -741,6 +791,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/assembly-decorator/cadquery/model.py",
           "status": "pass",
           "stl": "assembly-decorator/cadquery/model.stl"
@@ -774,6 +829,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/assembly-decorator/build123d/model.py",
           "status": "pass",
           "stl": "assembly-decorator/build123d/model.stl"
@@ -813,6 +873,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/assembly-owned-anchor/pythonscad/model.py",
           "status": "pass",
           "stl": "assembly-owned-anchor/pythonscad/model.stl"
@@ -846,6 +911,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/assembly-owned-anchor/pybosl2/model.py",
           "status": "pass",
           "stl": "assembly-owned-anchor/pybosl2/model.stl"
@@ -879,6 +949,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/assembly-owned-anchor/cadquery/model.py",
           "status": "pass",
           "stl": "assembly-owned-anchor/cadquery/model.stl"
@@ -912,6 +987,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/assembly-owned-anchor/build123d/model.py",
           "status": "pass",
           "stl": "assembly-owned-anchor/build123d/model.stl"
@@ -951,6 +1031,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/attach-angle/pythonscad/model.py",
           "status": "pass",
           "stl": "attach-angle/pythonscad/model.stl"
@@ -984,6 +1069,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/attach-angle/pybosl2/model.py",
           "status": "pass",
           "stl": "attach-angle/pybosl2/model.stl"
@@ -1017,6 +1107,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/attach-angle/cadquery/model.py",
           "status": "pass",
           "stl": "attach-angle/cadquery/model.stl"
@@ -1050,6 +1145,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/attach-angle/build123d/model.py",
           "status": "pass",
           "stl": "attach-angle/build123d/model.stl"
@@ -1116,6 +1216,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/bracket/pythonscad/model.py",
           "status": "pass",
           "stl": "bracket/pythonscad/model.stl"
@@ -1176,6 +1281,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/bracket/pybosl2/model.py",
           "status": "pass",
           "stl": "bracket/pybosl2/model.stl"
@@ -1236,6 +1346,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/bracket/cadquery/model.py",
           "status": "pass",
           "stl": "bracket/cadquery/model.stl"
@@ -1296,6 +1411,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/bracket/build123d/model.py",
           "status": "pass",
           "stl": "bracket/build123d/model.stl"
@@ -1362,6 +1482,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/circle-negative-extrude/pythonscad/model.py",
           "status": "pass",
           "stl": "circle-negative-extrude/pythonscad/model.stl"
@@ -1422,6 +1547,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/circle-negative-extrude/pybosl2/model.py",
           "status": "pass",
           "stl": "circle-negative-extrude/pybosl2/model.stl"
@@ -1482,6 +1612,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/circle-negative-extrude/cadquery/model.py",
           "status": "pass",
           "stl": "circle-negative-extrude/cadquery/model.stl"
@@ -1542,6 +1677,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/circle-negative-extrude/build123d/model.py",
           "status": "pass",
           "stl": "circle-negative-extrude/build123d/model.stl"
@@ -1829,6 +1969,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/circular-feature-pattern/pythonscad/model.py",
           "status": "pass",
           "stl": "circular-feature-pattern/pythonscad/model.stl"
@@ -2110,6 +2255,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/circular-feature-pattern/pybosl2/model.py",
           "status": "pass",
           "stl": "circular-feature-pattern/pybosl2/model.stl"
@@ -2391,6 +2541,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/circular-feature-pattern/cadquery/model.py",
           "status": "pass",
           "stl": "circular-feature-pattern/cadquery/model.stl"
@@ -2672,6 +2827,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/circular-feature-pattern/build123d/model.py",
           "status": "pass",
           "stl": "circular-feature-pattern/build123d/model.stl"
@@ -2711,6 +2871,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/components/pythonscad/model.py",
           "status": "pass",
           "stl": "components/pythonscad/model.stl"
@@ -2744,6 +2909,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/components/pybosl2/model.py",
           "status": "pass",
           "stl": "components/pybosl2/model.stl"
@@ -2777,6 +2947,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/components/cadquery/model.py",
           "status": "pass",
           "stl": "components/cadquery/model.stl"
@@ -2810,6 +2985,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/components/build123d/model.py",
           "status": "pass",
           "stl": "components/build123d/model.stl"
@@ -2849,6 +3029,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/corner-anchor/pythonscad/model.py",
           "status": "pass",
           "stl": "corner-anchor/pythonscad/model.stl"
@@ -2882,6 +3067,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/corner-anchor/pybosl2/model.py",
           "status": "pass",
           "stl": "corner-anchor/pybosl2/model.stl"
@@ -2915,6 +3105,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/corner-anchor/cadquery/model.py",
           "status": "pass",
           "stl": "corner-anchor/cadquery/model.stl"
@@ -2948,6 +3143,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/corner-anchor/build123d/model.py",
           "status": "pass",
           "stl": "corner-anchor/build123d/model.stl"
@@ -2987,6 +3187,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/eight-corner-brackets/pythonscad/model.py",
           "status": "pass",
           "stl": "eight-corner-brackets/pythonscad/model.stl"
@@ -3020,6 +3225,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/eight-corner-brackets/pybosl2/model.py",
           "status": "pass",
           "stl": "eight-corner-brackets/pybosl2/model.stl"
@@ -3053,6 +3263,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/eight-corner-brackets/cadquery/model.py",
           "status": "pass",
           "stl": "eight-corner-brackets/cadquery/model.stl"
@@ -3086,6 +3301,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/eight-corner-brackets/build123d/model.py",
           "status": "pass",
           "stl": "eight-corner-brackets/build123d/model.stl"
@@ -3125,6 +3345,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/eight-flightcase-corners/pythonscad/model.py",
           "status": "pass",
           "stl": "eight-flightcase-corners/pythonscad/model.stl"
@@ -3158,6 +3383,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/eight-flightcase-corners/pybosl2/model.py",
           "status": "pass",
           "stl": "eight-flightcase-corners/pybosl2/model.stl"
@@ -3191,6 +3421,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/eight-flightcase-corners/cadquery/model.py",
           "status": "pass",
           "stl": "eight-flightcase-corners/cadquery/model.stl"
@@ -3224,6 +3459,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/eight-flightcase-corners/build123d/model.py",
           "status": "pass",
           "stl": "eight-flightcase-corners/build123d/model.stl"
@@ -3263,6 +3503,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/four-corner-l/pythonscad/model.py",
           "status": "pass",
           "stl": "four-corner-l/pythonscad/model.stl"
@@ -3296,6 +3541,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/four-corner-l/pybosl2/model.py",
           "status": "pass",
           "stl": "four-corner-l/pybosl2/model.stl"
@@ -3329,6 +3579,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/four-corner-l/cadquery/model.py",
           "status": "pass",
           "stl": "four-corner-l/cadquery/model.stl"
@@ -3362,6 +3617,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/four-corner-l/build123d/model.py",
           "status": "pass",
           "stl": "four-corner-l/build123d/model.stl"
@@ -3401,6 +3661,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/group-hierarchy/pythonscad/model.py",
           "status": "pass",
           "stl": "group-hierarchy/pythonscad/model.stl"
@@ -3434,6 +3699,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/group-hierarchy/pybosl2/model.py",
           "status": "pass",
           "stl": "group-hierarchy/pybosl2/model.stl"
@@ -3467,6 +3737,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/group-hierarchy/cadquery/model.py",
           "status": "pass",
           "stl": "group-hierarchy/cadquery/model.stl"
@@ -3500,6 +3775,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/group-hierarchy/build123d/model.py",
           "status": "pass",
           "stl": "group-hierarchy/build123d/model.stl"
@@ -3598,6 +3878,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/hole-family/pythonscad/model.py",
           "status": "pass",
           "stl": "hole-family/pythonscad/model.stl"
@@ -3690,6 +3975,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/hole-family/pybosl2/model.py",
           "status": "pass",
           "stl": "hole-family/pybosl2/model.stl"
@@ -3782,6 +4072,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/hole-family/cadquery/model.py",
           "status": "pass",
           "stl": "hole-family/cadquery/model.stl"
@@ -3874,6 +4169,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/hole-family/build123d/model.py",
           "status": "pass",
           "stl": "hole-family/build123d/model.stl"
@@ -3913,6 +4213,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parameter-scope/pythonscad/model.py",
           "status": "pass",
           "stl": "parameter-scope/pythonscad/model.stl"
@@ -3946,6 +4251,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parameter-scope/pybosl2/model.py",
           "status": "pass",
           "stl": "parameter-scope/pybosl2/model.stl"
@@ -3979,6 +4289,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parameter-scope/cadquery/model.py",
           "status": "pass",
           "stl": "parameter-scope/cadquery/model.stl"
@@ -4012,6 +4327,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parameter-scope/build123d/model.py",
           "status": "pass",
           "stl": "parameter-scope/build123d/model.stl"
@@ -4051,6 +4371,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-anchor/pythonscad/model.py",
           "status": "pass",
           "stl": "parametric-anchor/pythonscad/model.stl"
@@ -4084,6 +4409,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-anchor/pybosl2/model.py",
           "status": "pass",
           "stl": "parametric-anchor/pybosl2/model.stl"
@@ -4117,6 +4447,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-anchor/cadquery/model.py",
           "status": "pass",
           "stl": "parametric-anchor/cadquery/model.stl"
@@ -4150,6 +4485,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-anchor/build123d/model.py",
           "status": "pass",
           "stl": "parametric-anchor/build123d/model.stl"
@@ -4189,6 +4529,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-attach/pythonscad/model.py",
           "status": "pass",
           "stl": "parametric-attach/pythonscad/model.stl"
@@ -4222,6 +4567,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-attach/pybosl2/model.py",
           "status": "pass",
           "stl": "parametric-attach/pybosl2/model.stl"
@@ -4255,6 +4605,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-attach/cadquery/model.py",
           "status": "pass",
           "stl": "parametric-attach/cadquery/model.stl"
@@ -4288,6 +4643,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-attach/build123d/model.py",
           "status": "pass",
           "stl": "parametric-attach/build123d/model.stl"
@@ -4327,6 +4687,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-offset/pythonscad/model.py",
           "status": "pass",
           "stl": "parametric-offset/pythonscad/model.stl"
@@ -4360,6 +4725,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-offset/pybosl2/model.py",
           "status": "pass",
           "stl": "parametric-offset/pybosl2/model.stl"
@@ -4393,6 +4763,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-offset/cadquery/model.py",
           "status": "pass",
           "stl": "parametric-offset/cadquery/model.stl"
@@ -4426,6 +4801,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parametric-offset/build123d/model.py",
           "status": "pass",
           "stl": "parametric-offset/build123d/model.stl"
@@ -4465,6 +4845,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parent-derived-child-size/pythonscad/model.py",
           "status": "pass",
           "stl": "parent-derived-child-size/pythonscad/model.stl"
@@ -4498,6 +4883,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parent-derived-child-size/pybosl2/model.py",
           "status": "pass",
           "stl": "parent-derived-child-size/pybosl2/model.stl"
@@ -4531,6 +4921,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parent-derived-child-size/cadquery/model.py",
           "status": "pass",
           "stl": "parent-derived-child-size/cadquery/model.stl"
@@ -4564,6 +4959,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/parent-derived-child-size/build123d/model.py",
           "status": "pass",
           "stl": "parent-derived-child-size/build123d/model.stl"
@@ -4662,6 +5062,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/primitive-csg/pythonscad/model.py",
           "status": "pass",
           "stl": "primitive-csg/pythonscad/model.stl"
@@ -4754,6 +5159,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/primitive-csg/pybosl2/model.py",
           "status": "pass",
           "stl": "primitive-csg/pybosl2/model.stl"
@@ -4846,6 +5256,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/primitive-csg/cadquery/model.py",
           "status": "pass",
           "stl": "primitive-csg/cadquery/model.stl"
@@ -4938,6 +5353,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/primitive-csg/build123d/model.py",
           "status": "pass",
           "stl": "primitive-csg/build123d/model.stl"
@@ -5225,6 +5645,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/rectangular-pattern/pythonscad/model.py",
           "status": "pass",
           "stl": "rectangular-pattern/pythonscad/model.stl"
@@ -5506,6 +5931,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/rectangular-pattern/pybosl2/model.py",
           "status": "pass",
           "stl": "rectangular-pattern/pybosl2/model.stl"
@@ -5787,6 +6217,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/rectangular-pattern/cadquery/model.py",
           "status": "pass",
           "stl": "rectangular-pattern/cadquery/model.stl"
@@ -6068,6 +6503,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/rectangular-pattern/build123d/model.py",
           "status": "pass",
           "stl": "rectangular-pattern/build123d/model.stl"
@@ -6107,6 +6547,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/repeated-parent-attachments/pythonscad/model.py",
           "status": "pass",
           "stl": "repeated-parent-attachments/pythonscad/model.stl"
@@ -6140,6 +6585,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/repeated-parent-attachments/pybosl2/model.py",
           "status": "pass",
           "stl": "repeated-parent-attachments/pybosl2/model.stl"
@@ -6173,6 +6623,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/repeated-parent-attachments/cadquery/model.py",
           "status": "pass",
           "stl": "repeated-parent-attachments/cadquery/model.stl"
@@ -6206,6 +6661,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/repeated-parent-attachments/build123d/model.py",
           "status": "pass",
           "stl": "repeated-parent-attachments/build123d/model.stl"
@@ -6285,6 +6745,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/round-top-sketch/pythonscad/model.py",
           "status": "pass",
           "stl": "round-top-sketch/pythonscad/model.stl"
@@ -6358,6 +6823,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/round-top-sketch/pybosl2/model.py",
           "status": "pass",
           "stl": "round-top-sketch/pybosl2/model.stl"
@@ -6431,6 +6901,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/round-top-sketch/cadquery/model.py",
           "status": "pass",
           "stl": "round-top-sketch/cadquery/model.stl"
@@ -6504,6 +6979,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/round-top-sketch/build123d/model.py",
           "status": "pass",
           "stl": "round-top-sketch/build123d/model.stl"
@@ -6570,6 +7050,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/rounded-rectangle-sketch/pythonscad/model.py",
           "status": "pass",
           "stl": "rounded-rectangle-sketch/pythonscad/model.stl"
@@ -6630,6 +7115,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/rounded-rectangle-sketch/pybosl2/model.py",
           "status": "pass",
           "stl": "rounded-rectangle-sketch/pybosl2/model.stl"
@@ -6690,6 +7180,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/rounded-rectangle-sketch/cadquery/model.py",
           "status": "pass",
           "stl": "rounded-rectangle-sketch/cadquery/model.stl"
@@ -6750,6 +7245,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/rounded-rectangle-sketch/build123d/model.py",
           "status": "pass",
           "stl": "rounded-rectangle-sketch/build123d/model.stl"
@@ -6920,6 +7420,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/selective-profile-extrude/pythonscad/model.py",
           "status": "pass",
           "stl": "selective-profile-extrude/pythonscad/model.stl"
@@ -7084,6 +7589,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/selective-profile-extrude/pybosl2/model.py",
           "status": "pass",
           "stl": "selective-profile-extrude/pybosl2/model.stl"
@@ -7248,6 +7758,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/selective-profile-extrude/cadquery/model.py",
           "status": "pass",
           "stl": "selective-profile-extrude/cadquery/model.stl"
@@ -7412,6 +7927,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/selective-profile-extrude/build123d/model.py",
           "status": "pass",
           "stl": "selective-profile-extrude/build123d/model.stl"
@@ -7491,6 +8011,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/sheet-fold/pythonscad/model.py",
           "status": "pass",
           "stl": "sheet-fold/pythonscad/model.stl"
@@ -7564,6 +8089,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/sheet-fold/pybosl2/model.py",
           "status": "pass",
           "stl": "sheet-fold/pybosl2/model.stl"
@@ -7637,6 +8167,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/sheet-fold/cadquery/model.py",
           "status": "pass",
           "stl": "sheet-fold/cadquery/model.stl"
@@ -7710,6 +8245,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/sheet-fold/build123d/model.py",
           "status": "pass",
           "stl": "sheet-fold/build123d/model.stl"
@@ -7754,6 +8294,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/simple-box/pythonscad/model.py",
           "status": "pass",
           "stl": "simple-box/pythonscad/model.stl"
@@ -7792,6 +8337,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/simple-box/pybosl2/model.py",
           "status": "pass",
           "stl": "simple-box/pybosl2/model.stl"
@@ -7830,6 +8380,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/simple-box/cadquery/model.py",
           "status": "pass",
           "stl": "simple-box/cadquery/model.stl"
@@ -7868,6 +8423,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/simple-box/build123d/model.py",
           "status": "pass",
           "stl": "simple-box/build123d/model.stl"
@@ -8545,6 +9105,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/sketch-pattern-mirror/pythonscad/model.py",
           "status": "pass",
           "stl": "sketch-pattern-mirror/pythonscad/model.stl"
@@ -9216,6 +9781,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/sketch-pattern-mirror/pybosl2/model.py",
           "status": "pass",
           "stl": "sketch-pattern-mirror/pybosl2/model.stl"
@@ -9887,6 +10457,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/sketch-pattern-mirror/cadquery/model.py",
           "status": "pass",
           "stl": "sketch-pattern-mirror/cadquery/model.stl"
@@ -10558,6 +11133,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/sketch-pattern-mirror/build123d/model.py",
           "status": "pass",
           "stl": "sketch-pattern-mirror/build123d/model.stl"
@@ -10806,6 +11386,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/slot-family/pythonscad/model.py",
           "status": "pass",
           "stl": "slot-family/pythonscad/model.stl"
@@ -11048,6 +11633,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/slot-family/pybosl2/model.py",
           "status": "pass",
           "stl": "slot-family/pybosl2/model.stl"
@@ -11290,6 +11880,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/slot-family/cadquery/model.py",
           "status": "pass",
           "stl": "slot-family/cadquery/model.stl"
@@ -11532,6 +12127,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/slot-family/build123d/model.py",
           "status": "pass",
           "stl": "slot-family/build123d/model.stl"
@@ -11624,6 +12224,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/top-sketch-after-chamfer/pythonscad/model.py",
           "status": "pass",
           "stl": "top-sketch-after-chamfer/pythonscad/model.stl"
@@ -11710,6 +12315,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/top-sketch-after-chamfer/pybosl2/model.py",
           "status": "pass",
           "stl": "top-sketch-after-chamfer/pybosl2/model.stl"
@@ -11796,6 +12406,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/top-sketch-after-chamfer/cadquery/model.py",
           "status": "pass",
           "stl": "top-sketch-after-chamfer/cadquery/model.stl"
@@ -11882,6 +12497,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/top-sketch-after-chamfer/build123d/model.py",
           "status": "pass",
           "stl": "top-sketch-after-chamfer/build123d/model.stl"
@@ -11921,6 +12541,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/xz-anchor/pythonscad/model.py",
           "status": "pass",
           "stl": "xz-anchor/pythonscad/model.stl"
@@ -11954,6 +12579,11 @@
             }
           },
           "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/xz-anchor/pybosl2/model.py",
           "status": "pass",
           "stl": "xz-anchor/pybosl2/model.stl"
@@ -11987,6 +12617,11 @@
             }
           },
           "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/xz-anchor/cadquery/model.py",
           "status": "pass",
           "stl": "xz-anchor/cadquery/model.stl"
@@ -12020,6 +12655,11 @@
             }
           },
           "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/xz-anchor/build123d/model.py",
           "status": "pass",
           "stl": "xz-anchor/build123d/model.stl"
@@ -12030,6 +12670,6 @@
     }
   ],
   "schema": 1,
-  "source_sha": "21c10dea1b7a274e132615d3e032e1d67f6555cd",
+  "source_sha": "4956349b595c9eb47337da72124d3ba9dee2dc46",
   "status": "pass"
 }

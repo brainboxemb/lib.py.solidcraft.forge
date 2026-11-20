@@ -27,6 +27,11 @@
     }
   },
   "implementation": "build123d",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/parametric-offset/build123d/model.py",
   "status": "pass",
   "stl": "parametric-offset/build123d/model.stl"

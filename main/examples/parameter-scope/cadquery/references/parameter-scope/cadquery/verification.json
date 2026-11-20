@@ -27,6 +27,11 @@
     }
   },
   "implementation": "cadquery",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/parameter-scope/cadquery/model.py",
   "status": "pass",
   "stl": "parameter-scope/cadquery/model.stl"

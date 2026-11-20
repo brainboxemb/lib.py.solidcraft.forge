@@ -54,6 +54,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/rounded-rectangle-sketch/pythonscad/model.py",
   "status": "pass",
   "stl": "rounded-rectangle-sketch/pythonscad/model.stl"

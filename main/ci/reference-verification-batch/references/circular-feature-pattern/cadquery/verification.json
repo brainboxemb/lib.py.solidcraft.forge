@@ -275,6 +275,11 @@
     }
   },
   "implementation": "cadquery",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/circular-feature-pattern/cadquery/model.py",
   "status": "pass",
   "stl": "circular-feature-pattern/cadquery/model.stl"

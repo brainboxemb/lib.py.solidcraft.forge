@@ -86,6 +86,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/primitive-csg/pythonscad/model.py",
   "status": "pass",
   "stl": "primitive-csg/pythonscad/model.stl"

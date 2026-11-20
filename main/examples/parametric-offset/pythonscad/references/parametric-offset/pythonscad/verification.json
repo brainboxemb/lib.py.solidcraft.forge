@@ -27,6 +27,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/parametric-offset/pythonscad/model.py",
   "status": "pass",
   "stl": "parametric-offset/pythonscad/model.stl"

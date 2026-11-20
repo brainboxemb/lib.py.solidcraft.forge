@@ -27,6 +27,11 @@
     }
   },
   "implementation": "cadquery",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/parametric-anchor/cadquery/model.py",
   "status": "pass",
   "stl": "parametric-anchor/cadquery/model.stl"

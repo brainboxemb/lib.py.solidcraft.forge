@@ -27,6 +27,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/parameter-scope/pythonscad/model.py",
   "status": "pass",
   "stl": "parameter-scope/pythonscad/model.stl"

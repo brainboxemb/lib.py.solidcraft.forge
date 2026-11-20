@@ -27,6 +27,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/eight-corner-brackets/pythonscad/model.py",
   "status": "pass",
   "stl": "eight-corner-brackets/pythonscad/model.stl"

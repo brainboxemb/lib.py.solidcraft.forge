@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "88d17351ebcb805a04fdb47113f488e7135b93e6c14820d4fb34d0e96af4cd07",
-  "duration_seconds": 1.944,
+  "bundle_sha256": "665f183d12048a27715e64132f75baadb4a4aee2bb96f8c03444faac2dd8c7dd",
+  "duration_seconds": 2.617,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T22:19:05.421Z",
+  "finished_at": "2026-11-20T22:56:55.446Z",
   "item": "cad-verification-package",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,18 +14,18 @@
     "dist": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "a78a0fedbaead4f952e494396fc8d3c88ebf91133d5437c37c9350d3ad9989b3"
+      "sha256": "ed8cf66212511f81b703d21c2dda8fe8686afde35b336fcc41a7287d26dc1484"
     },
     "provenance.json": {
       "kind": "file",
       "mode": 420,
-      "sha256": "5e808ade6dd894538dd18b4e18be8a1454c9d2c71aa49dec759a41aea6bc37c8"
+      "sha256": "8862e91b5730708cd0ceaa30862ad472b97f0e047edf198621928d6345f98927"
     }
   },
-  "run_finished_at": "2026-11-20T22:20:30.877Z",
-  "run_started_at": "2026-11-20T22:18:50.653Z",
+  "run_finished_at": "2026-11-20T22:59:10.937Z",
+  "run_started_at": "2026-11-20T22:56:39.478Z",
   "schema": 3,
-  "started_at": "2026-11-20T22:19:03.477Z",
+  "started_at": "2026-11-20T22:56:52.829Z",
   "status": "pass",
   "step": "package_build",
   "target_spec_digest": "1305250aee23696581470eb57b460e2c4d548e9bc517be0899ee233c397f0bd7",

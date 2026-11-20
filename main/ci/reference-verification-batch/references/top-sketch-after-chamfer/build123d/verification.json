@@ -80,6 +80,11 @@
     }
   },
   "implementation": "build123d",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/top-sketch-after-chamfer/build123d/model.py",
   "status": "pass",
   "stl": "top-sketch-after-chamfer/build123d/model.stl"

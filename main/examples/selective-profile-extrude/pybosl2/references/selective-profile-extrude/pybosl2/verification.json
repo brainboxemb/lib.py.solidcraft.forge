@@ -158,6 +158,11 @@
     }
   },
   "implementation": "pybosl2",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/selective-profile-extrude/pybosl2/model.py",
   "status": "pass",
   "stl": "selective-profile-extrude/pybosl2/model.stl"

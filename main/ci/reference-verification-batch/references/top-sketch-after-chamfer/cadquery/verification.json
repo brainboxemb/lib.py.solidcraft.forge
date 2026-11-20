@@ -80,6 +80,11 @@
     }
   },
   "implementation": "cadquery",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/top-sketch-after-chamfer/cadquery/model.py",
   "status": "pass",
   "stl": "top-sketch-after-chamfer/cadquery/model.stl"

@@ -665,6 +665,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/sketch-pattern-mirror/pythonscad/model.py",
   "status": "pass",
   "stl": "sketch-pattern-mirror/pythonscad/model.stl"

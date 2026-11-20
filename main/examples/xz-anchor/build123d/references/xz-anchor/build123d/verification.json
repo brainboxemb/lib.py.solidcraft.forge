@@ -27,6 +27,11 @@
     }
   },
   "implementation": "build123d",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/xz-anchor/build123d/model.py",
   "status": "pass",
   "stl": "xz-anchor/build123d/model.stl"

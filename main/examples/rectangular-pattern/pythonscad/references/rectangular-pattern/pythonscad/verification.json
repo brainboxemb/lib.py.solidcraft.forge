@@ -275,6 +275,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/rectangular-pattern/pythonscad/model.py",
   "status": "pass",
   "stl": "rectangular-pattern/pythonscad/model.stl"

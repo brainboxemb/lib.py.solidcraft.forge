@@ -27,6 +27,11 @@
     }
   },
   "implementation": "build123d",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/parameter-scope/build123d/model.py",
   "status": "pass",
   "stl": "parameter-scope/build123d/model.stl"

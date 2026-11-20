@@ -27,6 +27,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/parametric-anchor/pythonscad/model.py",
   "status": "pass",
   "stl": "parametric-anchor/pythonscad/model.stl"

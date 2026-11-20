@@ -27,6 +27,11 @@
     }
   },
   "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/group-hierarchy/pythonscad/model.py",
   "status": "pass",
   "stl": "group-hierarchy/pythonscad/model.stl"

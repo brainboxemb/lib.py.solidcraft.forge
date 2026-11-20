@@ -71,6 +71,11 @@
             }
           },
           "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
           "source": "examples/sheet-fold/pythonscad/model.py",
           "status": "pass",
           "stl": "sheet-fold/pythonscad/model.stl"
@@ -81,6 +86,6 @@
     }
   ],
   "schema": 1,
-  "source_sha": "21c10dea1b7a274e132615d3e032e1d67f6555cd",
+  "source_sha": "4956349b595c9eb47337da72124d3ba9dee2dc46",
   "status": "pass"
 }

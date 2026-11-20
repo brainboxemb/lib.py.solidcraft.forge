@@ -86,6 +86,11 @@
     }
   },
   "implementation": "build123d",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/hole-family/build123d/model.py",
   "status": "pass",
   "stl": "hole-family/build123d/model.stl"

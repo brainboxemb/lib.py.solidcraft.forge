@@ -236,6 +236,11 @@
     }
   },
   "implementation": "build123d",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/slot-family/build123d/model.py",
   "status": "pass",
   "stl": "slot-family/build123d/model.stl"

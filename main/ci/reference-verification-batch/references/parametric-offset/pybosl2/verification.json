@@ -27,6 +27,11 @@
     }
   },
   "implementation": "pybosl2",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/parametric-offset/pybosl2/model.py",
   "status": "pass",
   "stl": "parametric-offset/pybosl2/model.stl"

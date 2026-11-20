@@ -32,6 +32,11 @@
     }
   },
   "implementation": "cadquery",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/simple-box/cadquery/model.py",
   "status": "pass",
   "stl": "simple-box/cadquery/model.stl"

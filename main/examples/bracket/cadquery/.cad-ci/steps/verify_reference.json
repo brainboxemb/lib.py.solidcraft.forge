@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "1315a448927e202d59f4ae125ace29e2a134328ff447b76c2c6774d6e0cc1ac0",
-  "duration_seconds": 0.088,
+  "bundle_sha256": "17d94acf7f9575af6480a68d41039da0ccc3bc2bad2b4396fbbc8ef541d1cf5e",
+  "duration_seconds": 0.125,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T22:20:20.741Z",
+  "finished_at": "2026-11-20T22:58:56.662Z",
   "item": "examples-bracket-cadquery",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,15 +14,15 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "c2387b87584a67c78b3cd9637e28a193145c618eecbc230b5f9bdc7309a7fc5f"
+      "sha256": "5f26af90c3c5119e16335d3ae25cc388352506ed120da40bedb3ec8322355015"
     }
   },
-  "run_finished_at": "2026-11-20T22:20:30.877Z",
-  "run_started_at": "2026-11-20T22:18:50.653Z",
+  "run_finished_at": "2026-11-20T22:59:10.937Z",
+  "run_started_at": "2026-11-20T22:56:39.478Z",
   "schema": 3,
-  "started_at": "2026-11-20T22:20:20.695Z",
+  "started_at": "2026-11-20T22:58:56.613Z",
   "status": "pass",
   "step": "verify_reference",
-  "target_spec_digest": "9e675cebf182a6384a773b6e514fd438d43ff986f9c22fd722cf6a66cbfdc9b3",
+  "target_spec_digest": "6e43df9621bebb2cfb57c8de0aedf328a29a4122a08bb558e7cbc9d09e2713fc",
   "timeout_seconds": null
 }

@@ -54,6 +54,11 @@
     }
   },
   "implementation": "cadquery",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/rounded-rectangle-sketch/cadquery/model.py",
   "status": "pass",
   "stl": "rounded-rectangle-sketch/cadquery/model.stl"

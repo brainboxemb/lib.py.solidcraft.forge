@@ -86,6 +86,11 @@
     }
   },
   "implementation": "cadquery",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/hole-family/cadquery/model.py",
   "status": "pass",
   "stl": "hole-family/cadquery/model.stl"

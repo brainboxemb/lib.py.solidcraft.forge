@@ -67,6 +67,11 @@
     }
   },
   "implementation": "pybosl2",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/round-top-sketch/pybosl2/model.py",
   "status": "pass",
   "stl": "round-top-sketch/pybosl2/model.stl"

@@ -27,6 +27,11 @@
     }
   },
   "implementation": "pybosl2",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
   "source": "examples/components/pybosl2/model.py",
   "status": "pass",
   "stl": "components/pybosl2/model.stl"
