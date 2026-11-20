@@ -15,7 +15,6 @@ templates:
     watch:
       item:
         - scpf/**
-        - model.yml
         - verification/**
         - tests/**
       repo:
@@ -40,8 +39,7 @@ templates:
         inputs:
           item:
             - scpf/**
-            - model.yml
-            - verification/**
+                - verification/**
             - tests/**
           repo:
             - scripts/forge_example.py
