@@ -10,7 +10,7 @@
       "outputs": [
         "tool_verify"
       ],
-      "source_commit": "e8ba2f754d5e82210f87c07ac31a32b83161f65f"
+      "source_commit": "39dc2da229cab1c0429f7739780c3651e403f21a"
     },
     "ci/forge-tests": {
       "engine": "scons",
@@ -20,12 +20,12 @@
       "final_target_spec_digest": "890dd08bb173b9fdfb38114fba9fac5ce87f4001813009956748f5125bcb62ea",
       "item_id": "forge-tests",
       "outputs": [],
-      "source_commit": "e8ba2f754d5e82210f87c07ac31a32b83161f65f"
+      "source_commit": "39dc2da229cab1c0429f7739780c3651e403f21a"
     },
     "examples/simple-box": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "fa35c2c544096be5023bf497dfab2ded0bb864962cee6f7bee55974521b48c8c",
+      "final_bundle_sha256": "b753ce40e635ca0b52702d00a1c3f37ff5bfe1a183a1205322048bfcbb0620eb",
       "final_step": "model_verify",
       "final_target_spec_digest": "ea00a3873ac214193514ef255a1ca286176dd756878bee4fd1ce7bf8662f6359",
       "item_id": "simple-box",
@@ -33,23 +33,23 @@
         "model_verify",
         "solidcraft.json"
       ],
-      "source_commit": "e8ba2f754d5e82210f87c07ac31a32b83161f65f"
+      "source_commit": "39dc2da229cab1c0429f7739780c3651e403f21a"
     },
     "scpf": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "4b9baa555e808f4039f8876de34819cdb3659149aea42c2a8978266b39cd70c8",
+      "final_bundle_sha256": "6c4302e84c879b64b098da7d62a75df2015374834271a9b4fb78de35aedb14a0",
       "final_step": "tool_build",
       "final_target_spec_digest": "9a08a8e5e2041e0dc4a3afe918a41ffc813cca694f619ad5e55c1960916c09bb",
       "item_id": "forge-package",
       "outputs": [
         "dist"
       ],
-      "source_commit": "e8ba2f754d5e82210f87c07ac31a32b83161f65f"
+      "source_commit": "39dc2da229cab1c0429f7739780c3651e403f21a"
     }
   },
   "pull_request": 515,
   "schema": 1,
   "scope": "pr",
-  "source_commit": "e8ba2f754d5e82210f87c07ac31a32b83161f65f"
+  "source_commit": "39dc2da229cab1c0429f7739780c3651e403f21a"
 }
