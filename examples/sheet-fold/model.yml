@@ -8,3 +8,17 @@ stages:
   - Create the flat rectangular Blank sketch
   - Create native sheet material and cut the Ø6 hole while flat
   - Fold the sheet 90 degrees and preserve the developed flat pattern
+concepts:
+  - sheet metal
+  - Sketch.sheet_metal
+  - Hole
+  - Shape.fold
+  - flat-pattern inspection
+verification:
+  summary: >
+    Verifies a native sheet-metal workflow from flat blank through hole cutting
+    and folding, including the recoverable developed flat pattern.
+  proves:
+    - The formed part remains one closed sheet-metal body with the expected envelope and volume.
+    - Native history contains the blank sketch, base flange, hole and fold features.
+    - Flat-pattern inspection recovers the original blank, hole, bend angle, bend radius and sheet rule.
