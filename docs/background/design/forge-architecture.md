@@ -8,7 +8,7 @@ audit. It is deliberately stricter than "the current generated commands happen
 to work".
 
 The public modelling contract remains
-[`docs/05-cad-api-design.md`](../05-cad-api-design.md). This document defines
+[`docs/05-cad-api-design.md`](../../api.md). This document defines
 the compiler architecture required to implement that contract reliably.
 
 ## 1. Core principle
