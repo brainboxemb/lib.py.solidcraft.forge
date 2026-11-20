@@ -21,7 +21,9 @@ templates:
       repo:
         - scripts/forge_example.py
         - scripts/model_contract_test.py
+        - scripts/model_verify_declarative.py
         - scripts/model_verification_batch.py
+        - scripts/model_visual.py
     strategy:
       reuse: true
     steps:
@@ -58,6 +60,7 @@ templates:
         - model.py
         - ../verification/reference_geometry.json
       repo:
+        - verification/reference_validation.py
         - scripts/forge_example.py
         - scripts/reference_verification_batch.py
     strategy:
