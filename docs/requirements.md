@@ -459,3 +459,30 @@ The historical projection convention remains:
 SolidCraft and the verification library share yaw direction. The equivalent
 verification-library orthographic camera uses the negated SolidCraft pitch and
 a half-height distance equal to `0.4 * SolidCraft distance`.
+
+
+## Versioned verification diagrams
+
+Forge retains the historical CADCraft verification/documentation diagrams as
+versioned source evidence.
+
+Requirements:
+
+- diagram sources live below `verification/diagrams/sources/`;
+- the required source set contains the historical joint/corner-bracket diagrams;
+- every source declares the exact supported CADCraft version;
+- the renderer is a separate CAD-CI item and must not execute Forge models,
+  SolidCraft models or independent reference CAD;
+- CADCraft 0.20.1 x86_64 is downloaded only from the pinned release URL and its
+  archive SHA-256 is verified before extraction;
+- each source renders a non-empty SVG and DXF;
+- the item output retains the original source JSON, rendered artifacts and one
+  provenance manifest containing tool version, archive checksum and artifact
+  hashes;
+- source/tool pin changes invalidate the diagram item through normal CAD-CI
+  inputs;
+- normal model changes do not select the diagram item.
+
+Forge owns these diagram sources and CADCraft-specific invocation. This work
+does not belong in lib.py.cad.verification because it is documentation/evidence
+generation, not generic model comparison.
