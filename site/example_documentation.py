@@ -93,12 +93,12 @@ def load_example_documentation(example_root: Path) -> ExampleDocumentation:
         title = h1.group(1)
 
     group = re.search(
-        r"^\*\*Legacy group:\*\* \x60(.+?)\x60$",
+        r"^(?:- )?\*\*(?:Legacy group|Group):\*\* \x60(.+?)\x60$",
         source,
         re.MULTILINE,
     )
     if not group:
-        raise ValueError(f"{slug}: README.md needs preserved legacy group")
+        raise ValueError(f"{slug}: README.md needs group metadata")
 
     sections = _section_map(source)
     missing = [name for name in _SECTION_ORDER if name not in sections]

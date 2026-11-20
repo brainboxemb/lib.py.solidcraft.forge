@@ -14,72 +14,51 @@ durable.
 - all 32 examples use data-only `verification/verify.py`;
 - all 32 are `process: true`;
 - all 32 have four independent reference child items;
-- main commit `b4f601173d4a5ffddb7b0e2321b9d9174cce5c30` is green;
+- #548 is complete on main commit `21c10dea1b7a274e132615d3e032e1d67f6555cd`;
+- the corresponding main CAD-CI run and durable `build/main` publication are
+  green;
 - durable `build/main` contains 32/32 current `model_verify` outputs;
-- #432 and #546 are complete.
+- example/page source ownership is now local to `model.yml`, `README.md`,
+  `verification/verify.py` and external site templates.
 
-The remaining stable-Pages source code is still legacy. In particular:
-
-- `site/build.py` contains hard-coded example/page metadata, SVG and full HTML;
-- `site/guides.py` contains complete guide pages as Python strings;
-- site code still references retired `qualification.*` modules that are no
-  longer present on current main;
-- local `examples/<slug>/model.yml` metadata is not yet the authoritative
-  page-content source.
+One source-quality defect remains before stable Pages cut-over:
+`examples/bracket/README.md` still contains stale prose for an older bracket
+implementation above the current Minimal L-profile documentation.
 
 The current public Pages state remains preserved on
 `backup/gh-pages-before-f11-2026-11-20`.
 
 ## Current goal
 
-Complete #548: make each example directory self-describing for Pages and remove
-hand-authored webpage content from Python.
+Complete #554: make the bracket README describe only the current Minimal
+L-profile while preserving the canonical engineering statements migrated by
+#548.
 
-## Required proof for #548
+## Required proof for #554
 
-- all 32 `model.yml` files keep the agreed generic presentation schema:
-  `section`, `title`, `tagline`, `description`, `parameters`, `stages`;
-- legacy case documentation is migrated verbatim from the last canonical
-  `qualification/cases.py` source into each example directory, with provenance;
-- the per-case geometry sufficiency rationale (`bounds_reason`) is migrated
-  verbatim from the last canonical `qualification/geometry_contracts.py`;
-- no verification prose or geometry rationale is newly inferred or summarized
-  during that migration;
-- exact numeric verification contracts remain only in `verification/verify.py`;
-- current PASS/FAIL and measured evidence remain sourced only from durable
-  `build/main`;
-- example pages need no central Python example registry;
-- page layout lives in external templates;
-- guide prose lives outside Python;
-- `site/build.py` contains orchestration/view-model code, not page markup;
-- page and reusable-fragment structure normally lives under `site/templates/`;
-- any Python-generated HTML is confined to an explicitly named HTML-rendering
-  module, so rendering logic is structurally separate from source/evidence logic;
-- no site code imports retired `qualification.*`;
-- tests reject missing/malformed example metadata and hard-coded legacy page
-  sources.
+- no stale claim remains about fillets, mounting holes or the older bracket
+  implementation;
+- title, parameters and stages agree with the current `model.yml`;
+- Goal / Forge API / Forge model / lowering / SolidCraft result / saved-design
+  text / geometry rationale / reference notes remain unchanged from the
+  canonical pre-removal qualification sources;
+- model geometry and verification behavior do not change;
+- site-source tests remain green.
 
 ## Execution order
 
-1. Preserve and validate the agreed example `model.yml` presentation schema.
-2. Restore the last canonical case documentation and migrate it verbatim into
-   the owning example directories.
-3. Move base/example page layout and static scripts out of Python.
-4. Move guide page prose out of `site/guides.py`.
-5. Replace the central `EXAMPLES` / `SCHEMATICS` catalogs with discovered
-   example metadata and durable evidence.
-6. Remove retired `qualification.*` site imports and update site tests.
-7. Prove source/site generation independent of retired qualification files.
-8. Continue #497 using the cleaned source structure and complete
-   `build/main` baseline.
-9. Finish generic Pages publication/lifecycle in #366.
+1. Fix #554 as a source-content correction only.
+2. Re-read the plan after merge.
+3. Continue #497: generate stable Pages from current source + durable
+   `build/main`, preserving content parity and durable evidence links.
+4. Finish generic Pages publication/lifecycle in #366.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #548 Move example Pages content out of Python and into example metadata/templates | now | Required source cleanup before stable Pages; fixes the current legacy/hard-coded site architecture. |
-| #497 Publish stable Pages from the generic build/main baseline | blocked | Complete #548 first; then generate stable Pages from current source + 32-case build/main. |
+| #554 Fix stale pre-migration content in bracket example README | now | Current bracket README contradicts the active Minimal L-profile model; fix source content before Pages consumes it. |
+| #497 Publish stable Pages from the generic build/main baseline | blocked | #548 is complete; wait only for #554 source correction, then generate stable Pages from current source + 32-case build/main. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Final generic Pages publication lifecycle follows #497. |
 | #391 Extract reusable CAD verification library from Forge | effectively complete but still open | Generic verification ownership and consumer migration are complete; cleanup/close separately. |
 | #481 Remove stale Forge development branches | blocked | Current connected tooling cannot safely delete stale refs. |
@@ -102,4 +81,4 @@ hand-authored webpage content from Python.
 
 Immediate chain:
 
-`#548 example/site sources -> #497 stable Pages -> #366 final Pages lifecycle`.
+`#554 bracket README correction -> #497 stable Pages -> #366 final Pages lifecycle`.
