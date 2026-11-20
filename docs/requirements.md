@@ -192,3 +192,27 @@ can be explained from:
 3. the resulting structured item/step evidence.
 
 Performance tuning is not part of this reliability requirement.
+
+## Model command-contract coverage
+
+The staged model-verification path preserves the former Q1/Q2 ownership split
+without retaining the old qualification runner.
+
+- Q1 is reusable Forge API/compiler evidence and is covered by the normal
+  `forge-tests` unit suite.
+- Q2 is model-owned command-contract evidence under
+  `examples/<model>/tests/`.
+- Every processed declarative model verification item must run its own
+  command-contract tests against the exact `forge-package` wheel before
+  native SolidCraft replay.
+- A Q2 failure fails that model item before native verification starts.
+- `verification/verify.py` remains data-only and does not contain Q1/Q2 test
+  code.
+- The fixed `forge-release` example set is release verification and is not a
+  substitute for Q2 coverage of every processed model item.
+- A processed model item's CAD-CI watch/step inputs must include its
+  `examples/<model>/tests/**` files so changing the contract test invalidates
+  and reruns that model verification.
+
+This restores command-contract coverage without reintroducing the historical
+qualification orchestration.
