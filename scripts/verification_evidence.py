@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run shared Forge verification evidence in the released SolidCraft runtime."""
+"""Run Forge reference evidence in the released reference runtime."""
 
 from __future__ import annotations
 
@@ -24,11 +24,11 @@ def output_dir() -> Path:
 
 
 def runtime_image() -> str:
-    """Return the immutable released SolidCraft runtime image."""
+    """Return the immutable released reference runtime image."""
 
-    value = os.environ.get("FORGE_RUNTIME_IMAGE", "").strip()
+    value = os.environ.get("REFERENCE_RUNTIME_IMAGE", "").strip()
     if not value:
-        raise RuntimeError("FORGE_RUNTIME_IMAGE is required")
+        raise RuntimeError("REFERENCE_RUNTIME_IMAGE is required")
     return value
 
 
