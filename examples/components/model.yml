@@ -8,3 +8,15 @@ stages:
   - Create one reusable Block component
   - Copy the same definition with a 40 mm X placement
   - Return both occurrences as one assembly
+concepts:
+  - reusable component
+  - occurrence copy
+  - Placement
+  - assembly
+verification:
+  summary: >
+    Verifies that one reusable component definition can produce multiple native
+    occurrences without duplicating the component definition itself.
+  proves:
+    - Two Block bodies are present.
+    - Their envelopes match the original and translated occurrence placements.
