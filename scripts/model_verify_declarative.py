@@ -2,8 +2,9 @@
 """Produce one Forge native model and delegate its checks to the library.
 
 This is the staged declarative model-verification launcher. Host-side execution
-compiles the selected Forge model with the exact built Forge wheel and starts
-the released SolidCraft runtime. Inside that runtime the launcher performs only
+consumes only the `forge-package` CAD-CI dependency, compiles the selected
+Forge model with that exact built wheel and starts the released SolidCraft
+runtime. Inside that runtime the launcher performs only
 the Forge-owned producer step: replay the compiled command document into the
 initial native SolidCraft model. All checks, mutations and evidence are then
 owned by released lib.py.cad.verfication.
