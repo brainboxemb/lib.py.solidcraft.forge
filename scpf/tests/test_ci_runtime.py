@@ -68,6 +68,8 @@ class CiRuntimeContractTests(unittest.TestCase):
         for label in (
             "compile_commands_s=",
             "image_pull_s=",
+            "container_start_s=",
+            "python_bootstrap_s=",
             "cad_verification_import_s=",
             "definition_load_s=",
             "native_model_s=",
