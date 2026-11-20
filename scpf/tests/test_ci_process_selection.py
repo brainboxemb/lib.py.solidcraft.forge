@@ -33,6 +33,7 @@ EXPECTED_PROCESSED = {
     "rounded-rectangle-sketch",
     "selective-profile-extrude",
     "slot-family",
+    "sketch-pattern-mirror",
     "xz-anchor",
 }
 
