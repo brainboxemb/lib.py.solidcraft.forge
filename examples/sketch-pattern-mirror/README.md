@@ -30,6 +30,14 @@ SolidCraft saves one Dog holes Sketch and one Clamp slots Sketch with associativ
 
 Change hole_diameter 8->10 mm, hole_pitch 25->30 mm and slot_pitch 50->30 mm in the saved .sc design. Without rerunning Python all existing pattern and mirror copies must follow the changed seed and spacing. Pattern counts remain native editable parameters, but SolidCraft 0.42 mirrors a fixed selected entity set and does not automatically adopt new entities added later by an upstream count change.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+The Circle and Slot cuts do not change the plate envelope. Volume, 3D wall probes and saved-design mutation are required to prove the associative sketch pattern/mirror result.
+
 ## Reference notes
 
 - **SolidCraft** — The native saved design is the source of truth for the associative sketch pattern/mirror relationships and their saved-design mutation.
