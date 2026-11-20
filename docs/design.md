@@ -777,9 +777,11 @@ Python retains only:
 - view-model composition;
 - template rendering.
 
-Python site modules do not contain HTML markup strings. Dynamic rows, links,
-tables and navigation are rendered through reusable external templates; Python
-supplies only escaped values and collections.
+HTML rendering is an explicit layer. `site/build.py` and source/evidence
+loaders do not assemble markup. External templates own page and reusable
+fragment structure by default. If dynamic markup is materially clearer in
+Python, it is implemented only in an explicitly named HTML-rendering module;
+that module behaves as a renderer and receives normalized/escaped view data.
 
 Legacy `qualification.*` imports are removed rather than recreated. Their
 historical presentation semantics may be used as a visual compatibility
