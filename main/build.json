@@ -7,7 +7,7 @@
       "final_step": "tool_verify",
       "final_target_spec_digest": "a5af56b6a5c2270bb0ad3cb7f72bb3d17de8cab7d7d1dbceb4b1ba117c058f64",
       "item_id": "forge-release",
-      "source_commit": "fdff22f42753e99cc1e8205c420c42309bf85843"
+      "source_commit": "356e911dc0bee7c58f76862b47d5814f042c2294"
     },
     "ci/forge-tests": {
       "engine": "scons",
@@ -16,61 +16,61 @@
       "final_step": "tool_test",
       "final_target_spec_digest": "6a920830e28c302981b3391a00b2acbda81f942bb3e9e43169c71de80469fa43",
       "item_id": "forge-tests",
-      "source_commit": "fdff22f42753e99cc1e8205c420c42309bf85843"
+      "source_commit": "356e911dc0bee7c58f76862b47d5814f042c2294"
     },
     "examples/anchor-topology-mutation": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "3fb42144795f667ab6621e007238a25c1ebe687ffd448a971a0dcfffc109002f",
+      "final_bundle_sha256": "23cb2725c94505a28e5aaf93a26cbd9a23f0e92c760d54549143b53d0ec53a19",
       "final_step": "model_verify",
       "final_target_spec_digest": "921bc65674cdf93d38f86d8c3f70b0d4b2c5d0ddc488732978145d8fff7bd249",
       "item_id": "anchor-topology-mutation",
-      "source_commit": "fdff22f42753e99cc1e8205c420c42309bf85843"
+      "source_commit": "356e911dc0bee7c58f76862b47d5814f042c2294"
     },
     "examples/attach-angle": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "3c1e124e47d385ace8cd659188c8ca345ced68ee0c401d122a9590514a97ce8d",
+      "final_bundle_sha256": "c2c5580761036fa0576d8817c42e635bde478b5a77f094b274c9b0191dc082e0",
       "final_step": "model_verify",
       "final_target_spec_digest": "53649a1c73b8b8cea7b6895f820e80bb098a64ae4a3468db309fabb102a4ddaf",
       "item_id": "attach-angle",
-      "source_commit": "fdff22f42753e99cc1e8205c420c42309bf85843"
+      "source_commit": "356e911dc0bee7c58f76862b47d5814f042c2294"
     },
     "examples/four-corner-l": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "b39b212ec79c152412d44ecf2eb68e6d08a60cee9f46d9ebb51288eb01f3b815",
+      "final_bundle_sha256": "ace1d7edaa591ffcd08a6dfddce398e322029c046f2edc66b78cbe0857378e25",
       "final_step": "model_verify",
       "final_target_spec_digest": "94879e280ce4439dce754976af463ed6d2e42757ced1c0a98b3bc9c7a95f18f2",
       "item_id": "four-corner-l",
-      "source_commit": "fdff22f42753e99cc1e8205c420c42309bf85843"
+      "source_commit": "356e911dc0bee7c58f76862b47d5814f042c2294"
     },
     "examples/simple-box": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "70d5402dada260a77f0d462591b9fe63faecea2639ea56087300db8d74fd1282",
+      "final_bundle_sha256": "22f29c89fd4c20b319858402d3ec7c71d3d8270407ec3cc6759703e740a6c202",
       "final_step": "model_verify",
       "final_target_spec_digest": "f71bb2b59fb7ab3c5f7c624c0ee0a7d8693616f9ddf88458f2173e97c83b94f2",
       "item_id": "simple-box",
-      "source_commit": "fdff22f42753e99cc1e8205c420c42309bf85843"
+      "source_commit": "356e911dc0bee7c58f76862b47d5814f042c2294"
     },
     "examples/xz-anchor": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "800107a8a98e92c7a163a23bcbaab689ad79e78b4ab6edb43c8abcbfb2956a2b",
+      "final_bundle_sha256": "a2b248dae61509ceed8276cf1cbaa92e6ae869d0aea6704bd22944a1031f884c",
       "final_step": "model_verify",
       "final_target_spec_digest": "fc3aae6ed47a4f2e188342cdcac952ad0d40cc77f2d879e93dbbaccf45925e80",
       "item_id": "xz-anchor",
-      "source_commit": "fdff22f42753e99cc1e8205c420c42309bf85843"
+      "source_commit": "356e911dc0bee7c58f76862b47d5814f042c2294"
     },
     "scpf": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "eb8512c35e87bdbf65fcb1e61ea684472f28aa03d68b8b8a1488b9d511a7b8d9",
+      "final_bundle_sha256": "39cd9d4fbffd1d6ac51699beb0159a2e876730d1098d6ec984e53f5a48908276",
       "final_step": "tool_build",
       "final_target_spec_digest": "35eb742d2b61f69169fd103fc2c4676979c29d7436a302215fcb106a939cfddc",
       "item_id": "forge-package",
-      "source_commit": "fdff22f42753e99cc1e8205c420c42309bf85843"
+      "source_commit": "356e911dc0bee7c58f76862b47d5814f042c2294"
     },
     "verification/references": {
       "engine": "scons",
@@ -84,5 +84,5 @@
   },
   "schema": 1,
   "scope": "main",
-  "source_commit": "fdff22f42753e99cc1e8205c420c42309bf85843"
+  "source_commit": "356e911dc0bee7c58f76862b47d5814f042c2294"
 }
