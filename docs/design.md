@@ -143,11 +143,11 @@ Forge item ci.yml
 Forge contains no helper that interprets `process`, no duplicate changed-path
 selection and no second execution policy.
 
-During the current staged proof, the `scpf` item remains active. `simple-box`
-participates only as the representative pipeline/example fixture. The actual
-staged verification models are `anchor-topology-mutation`, `attach-angle`,
-`four-corner-l` and `xz-anchor`. All other historical model items remain present
-but are excluded with `process: false`. Reference items remain independently selectable where
+During the current staged proof, the `scpf` item remains active and exactly
+five model-verification items participate: `simple-box`,
+`anchor-topology-mutation`, `attach-angle`, `four-corner-l` and
+`xz-anchor`. All other historical model items remain present but are excluded
+with `process: false`. Reference items remain independently selectable where
 their own changed paths/dependencies require them.
 
 
@@ -204,7 +204,7 @@ examples/<model>/ci.yml
 Forge owns only the declarative repository configuration. It does not reproduce
 the planner in Forge code or tests.
 
-The active execution proof contains the four staged verification models plus the `simple-box` infrastructure fixture. Independent
+The active model proof set contains the five staged models. Independent
 reference items remain independently selected by released CAD-CI; model and
 reference execution are not collapsed into one consumer-owned scheduler.
 
@@ -527,16 +527,15 @@ The Forge visual adapter asks released `decode_baseline()` to materialize the
 payload for `verify_visual_view()`. Forge does not implement zlib/base64/Pillow
 decoding.
 
-### Staged verification proof
+### Five-model staged proof
 
-The active #378 verification set contains:
+The active #378 proof set contains only:
 
+- simple-box (already proven);
 - anchor-topology-mutation;
 - attach-angle;
 - four-corner-l;
 - xz-anchor.
-
-`simple-box` remains a separate representative pipeline/example fixture. Its evidence proves the mechanics but is not a verification result to present as a verified project/model.
 
 All use front/right/iso regression views. The first three added models use their
 model body expectations as expected boxes. `four-corner-l` retains the
@@ -664,7 +663,8 @@ status composition remains in `lib.py.cad.verification`.
 
 ### Aggregate
 
-The staged verification aggregate contains exactly the four verification model IDs once each and preserves deterministic model order. `simple-box` is excluded from this aggregate.
+The staged aggregate contains exactly the five active model IDs once each and
+preserves deterministic model order.
 
 The summary output contains:
 
@@ -674,7 +674,8 @@ The summary output contains:
 
 ### CI selection boundary
 
-Do not implement F11 as a normal cold fan-in item with all staged verification models and all reference items in `needs`.
+Do not implement F11 as a normal cold fan-in item with all five models and all
+reference items in `needs`.
 
 Released CAD-CI correctly makes every direct prerequisite current before a
 consumer runs. On a fresh hosted runner, requesting such a summary would
