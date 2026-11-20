@@ -580,6 +580,22 @@ mapping from batch results back to existing per-case outputs. No generic worker
 pool or batch scheduler is added to lib.py.cad.ci.
 
 
+## Example documentation preservation
+
+The #548 migration is a source relocation, not a rewrite.
+
+The last canonical pre-removal case documentation from
+`qualification/cases.py` must be preserved verbatim per owning example. The
+migration may change headings/formatting and file location, but it must not
+summarize, reinterpret or silently omit the existing engineering statements.
+
+`model.yml` keeps only the agreed generic page metadata fields:
+`section`, `title`, `tagline`, `description`, `parameters`, and
+`stages`. It is not a second verification contract.
+
+Machine expectations, tolerances and saved-design checks remain solely in
+`verification/verify.py`.
+
 ## Example-owned presentation metadata
 
 Every current Forge Qualification example is self-describing for generated
@@ -593,13 +609,10 @@ example metadata. The required schema contains:
 - `tagline`;
 - `description`;
 - `parameters`;
-- non-empty `stages`;
-- non-empty `concepts`;
-- `verification.summary`;
-- non-empty `verification.proves`.
+- non-empty `stages`.
 
-`verification.saved_design` and `notes` are optional human-facing
-explanations.
+Verification explanation and historical engineering rationale live in the
+example documentation, not in additional `model.yml` verification fields.
 
 These fields explain intent. They must not become a second machine verification
 contract. Exact expected geometry, parameters, tolerances and saved-design
