@@ -788,6 +788,144 @@
           "geometry": {
             "bounds": {
               "actual_max": [
+                75.0,
+                15.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                75.0,
+                15.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/assembly-owned-anchor/pythonscad/model.py",
+          "status": "pass",
+          "stl": "assembly-owned-anchor/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                75.0,
+                15.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                75.0,
+                15.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/assembly-owned-anchor/pybosl2/model.py",
+          "status": "pass",
+          "stl": "assembly-owned-anchor/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                75.0,
+                15.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                75.0,
+                15.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/assembly-owned-anchor/cadquery/model.py",
+          "status": "pass",
+          "stl": "assembly-owned-anchor/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                75.0,
+                15.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                75.0,
+                15.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/assembly-owned-anchor/build123d/model.py",
+          "status": "pass",
+          "stl": "assembly-owned-anchor/build123d/model.stl"
+        }
+      ],
+      "model": "assembly-owned-anchor",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
                 30.0,
                 30.0,
                 16.0
@@ -2686,6 +2824,282 @@
           "geometry": {
             "bounds": {
               "actual_max": [
+                20.0,
+                15.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/corner-anchor/pythonscad/model.py",
+          "status": "pass",
+          "stl": "corner-anchor/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/corner-anchor/pybosl2/model.py",
+          "status": "pass",
+          "stl": "corner-anchor/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/corner-anchor/cadquery/model.py",
+          "status": "pass",
+          "stl": "corner-anchor/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/corner-anchor/build123d/model.py",
+          "status": "pass",
+          "stl": "corner-anchor/build123d/model.stl"
+        }
+      ],
+      "model": "corner-anchor",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "actual_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "expected_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "expected_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/eight-corner-brackets/pythonscad/model.py",
+          "status": "pass",
+          "stl": "eight-corner-brackets/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "actual_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "expected_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "expected_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/eight-corner-brackets/pybosl2/model.py",
+          "status": "pass",
+          "stl": "eight-corner-brackets/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "actual_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "expected_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "expected_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/eight-corner-brackets/cadquery/model.py",
+          "status": "pass",
+          "stl": "eight-corner-brackets/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "actual_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "expected_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "expected_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/eight-corner-brackets/build123d/model.py",
+          "status": "pass",
+          "stl": "eight-corner-brackets/build123d/model.stl"
+        }
+      ],
+      "model": "eight-corner-brackets",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
                 64.0,
                 44.0,
                 64.0
@@ -3604,6 +4018,420 @@
         }
       ],
       "model": "parameter-scope",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/parametric-anchor/pythonscad/model.py",
+          "status": "pass",
+          "stl": "parametric-anchor/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/parametric-anchor/pybosl2/model.py",
+          "status": "pass",
+          "stl": "parametric-anchor/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/parametric-anchor/cadquery/model.py",
+          "status": "pass",
+          "stl": "parametric-anchor/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/parametric-anchor/build123d/model.py",
+          "status": "pass",
+          "stl": "parametric-anchor/build123d/model.stl"
+        }
+      ],
+      "model": "parametric-anchor",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                50.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/parametric-attach/pythonscad/model.py",
+          "status": "pass",
+          "stl": "parametric-attach/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                50.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/parametric-attach/pybosl2/model.py",
+          "status": "pass",
+          "stl": "parametric-attach/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                50.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/parametric-attach/cadquery/model.py",
+          "status": "pass",
+          "stl": "parametric-attach/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                50.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/parametric-attach/build123d/model.py",
+          "status": "pass",
+          "stl": "parametric-attach/build123d/model.stl"
+        }
+      ],
+      "model": "parametric-attach",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                25.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                25.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/parametric-offset/pythonscad/model.py",
+          "status": "pass",
+          "stl": "parametric-offset/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                25.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                25.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/parametric-offset/pybosl2/model.py",
+          "status": "pass",
+          "stl": "parametric-offset/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                25.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                25.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/parametric-offset/cadquery/model.py",
+          "status": "pass",
+          "stl": "parametric-offset/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                25.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                25.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/parametric-offset/build123d/model.py",
+          "status": "pass",
+          "stl": "parametric-offset/build123d/model.stl"
+        }
+      ],
+      "model": "parametric-offset",
       "status": "pass"
     },
     {
@@ -11202,6 +12030,6 @@
     }
   ],
   "schema": 1,
-  "source_sha": "363108c4676120ed57454abc3973bdaaf0a3a845",
+  "source_sha": "21c10dea1b7a274e132615d3e032e1d67f6555cd",
   "status": "pass"
 }

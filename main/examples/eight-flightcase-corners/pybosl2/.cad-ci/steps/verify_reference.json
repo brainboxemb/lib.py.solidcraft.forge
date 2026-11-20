@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "9f43a68915c1caa082bd35cec256090714e84ab3467e38264b9b0f0dee081231",
-  "duration_seconds": 0.128,
+  "bundle_sha256": "3f3dab3986d4f5ad22cac2b14c29ac7e56670c7b8400bb9cae11fb4a0bf46bd7",
+  "duration_seconds": 0.088,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T21:08:38.083Z",
+  "finished_at": "2026-11-20T22:20:23.035Z",
   "item": "examples-eight-flightcase-corners-pybosl2",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,13 +14,13 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "596fa93778effc2238148e465687238ef7857434ef0f24f635a484f748747b1c"
+      "sha256": "67029a09c0f1720b4bf365bcecdca406bd1512d15a9077dba9c719ab4eac9479"
     }
   },
-  "run_finished_at": "2026-11-20T21:08:48.117Z",
-  "run_started_at": "2026-11-20T21:06:39.072Z",
+  "run_finished_at": "2026-11-20T22:20:30.877Z",
+  "run_started_at": "2026-11-20T22:18:50.653Z",
   "schema": 3,
-  "started_at": "2026-11-20T21:08:38.016Z",
+  "started_at": "2026-11-20T22:20:22.988Z",
   "status": "pass",
   "step": "verify_reference",
   "target_spec_digest": "c1786ed46bd534b03dc392606b70db981aefa1b91def8a2a59fce3ad925cf591",

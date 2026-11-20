@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "370a15e39a55823aed6e932708c36395904669f54ee0048ed926794b38b6d71b",
-  "duration_seconds": 0.131,
+  "bundle_sha256": "bd4f5002e1e9f0b6025aedbb548cea0d4551d41e1bfcbfadb5d7a54b5a62821b",
+  "duration_seconds": 0.086,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T21:08:42.737Z",
+  "finished_at": "2026-11-20T22:20:27.255Z",
   "item": "examples-round-top-sketch-cadquery",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,13 +14,13 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "4cd1617a1d2d4e54023e56df158012596be7a252ba3e1b94b67640d5222809c7"
+      "sha256": "2f2439cbdcb19b7e121d3e01fb3529b5fd90bf789d72a8e751843c7241f24cd3"
     }
   },
-  "run_finished_at": "2026-11-20T21:08:48.117Z",
-  "run_started_at": "2026-11-20T21:06:39.072Z",
+  "run_finished_at": "2026-11-20T22:20:30.877Z",
+  "run_started_at": "2026-11-20T22:18:50.653Z",
   "schema": 3,
-  "started_at": "2026-11-20T21:08:42.668Z",
+  "started_at": "2026-11-20T22:20:27.209Z",
   "status": "pass",
   "step": "verify_reference",
   "target_spec_digest": "6be9cafafdc0da4652ebd73c562728fc8768713945c5a3e89bd9b96d3bb60967",

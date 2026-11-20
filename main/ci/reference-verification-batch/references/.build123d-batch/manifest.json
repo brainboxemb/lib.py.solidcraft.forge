@@ -16,6 +16,11 @@
       "target": "/output/references/assembly-decorator/build123d/model.stl"
     },
     {
+      "slug": "assembly-owned-anchor",
+      "source": "/workspace/examples/assembly-owned-anchor/build123d/model.py",
+      "target": "/output/references/assembly-owned-anchor/build123d/model.stl"
+    },
+    {
       "slug": "attach-angle",
       "source": "/workspace/examples/attach-angle/build123d/model.py",
       "target": "/output/references/attach-angle/build123d/model.stl"
@@ -41,6 +46,16 @@
       "target": "/output/references/components/build123d/model.stl"
     },
     {
+      "slug": "corner-anchor",
+      "source": "/workspace/examples/corner-anchor/build123d/model.py",
+      "target": "/output/references/corner-anchor/build123d/model.stl"
+    },
+    {
+      "slug": "eight-corner-brackets",
+      "source": "/workspace/examples/eight-corner-brackets/build123d/model.py",
+      "target": "/output/references/eight-corner-brackets/build123d/model.stl"
+    },
+    {
       "slug": "eight-flightcase-corners",
       "source": "/workspace/examples/eight-flightcase-corners/build123d/model.py",
       "target": "/output/references/eight-flightcase-corners/build123d/model.stl"
@@ -64,6 +79,21 @@
       "slug": "parameter-scope",
       "source": "/workspace/examples/parameter-scope/build123d/model.py",
       "target": "/output/references/parameter-scope/build123d/model.stl"
+    },
+    {
+      "slug": "parametric-anchor",
+      "source": "/workspace/examples/parametric-anchor/build123d/model.py",
+      "target": "/output/references/parametric-anchor/build123d/model.stl"
+    },
+    {
+      "slug": "parametric-attach",
+      "source": "/workspace/examples/parametric-attach/build123d/model.py",
+      "target": "/output/references/parametric-attach/build123d/model.stl"
+    },
+    {
+      "slug": "parametric-offset",
+      "source": "/workspace/examples/parametric-offset/build123d/model.py",
+      "target": "/output/references/parametric-offset/build123d/model.stl"
     },
     {
       "slug": "parent-derived-child-size",

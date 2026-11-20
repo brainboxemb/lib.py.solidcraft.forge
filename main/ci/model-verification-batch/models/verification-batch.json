@@ -17,6 +17,11 @@
     },
     {
       "error": null,
+      "model": "assembly-owned-anchor",
+      "status": "pass"
+    },
+    {
+      "error": null,
       "model": "attach-angle",
       "status": "pass"
     },
@@ -42,6 +47,16 @@
     },
     {
       "error": null,
+      "model": "corner-anchor",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "eight-corner-brackets",
+      "status": "pass"
+    },
+    {
+      "error": null,
       "model": "eight-flightcase-corners",
       "status": "pass"
     },
@@ -63,6 +78,21 @@
     {
       "error": null,
       "model": "parameter-scope",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "parametric-anchor",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "parametric-attach",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "parametric-offset",
       "status": "pass"
     },
     {
@@ -132,6 +162,6 @@
     }
   ],
   "schema": 1,
-  "source_sha": "363108c4676120ed57454abc3973bdaaf0a3a845",
+  "source_sha": "21c10dea1b7a274e132615d3e032e1d67f6555cd",
   "status": "pass"
 }

@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "1c95c665a9cdde770bbcf55f2b5e2b696be3e00ab17892ab7ceac11654d2edaa",
-  "duration_seconds": 0.127,
+  "bundle_sha256": "4eb8a78d028ed351a9c86a0ebd9292774ea6fda231d23e66858ad295c6ad1d1f",
+  "duration_seconds": 0.088,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T21:08:34.477Z",
+  "finished_at": "2026-11-20T22:20:19.470Z",
   "item": "examples-anchored-holes-pythonscad",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,13 +14,13 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "5c7d1baaf7522aa5b50060344619052252ac1146f8277cf00231560dfa3293ab"
+      "sha256": "3c0631e5f6ad69ed0bf0baa9f649ed5d1a00e88f1b078837e3d15aa763ab7d67"
     }
   },
-  "run_finished_at": "2026-11-20T21:08:48.117Z",
-  "run_started_at": "2026-11-20T21:06:39.072Z",
+  "run_finished_at": "2026-11-20T22:20:30.877Z",
+  "run_started_at": "2026-11-20T22:18:50.653Z",
   "schema": 3,
-  "started_at": "2026-11-20T21:08:34.411Z",
+  "started_at": "2026-11-20T22:20:19.423Z",
   "status": "pass",
   "step": "verify_reference",
   "target_spec_digest": "d2301277cf01985b58f7b95ee05c0f93637712be4388ce8ab18b7d44e933f21e",

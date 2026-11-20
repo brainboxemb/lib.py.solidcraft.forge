@@ -20,6 +20,12 @@
     },
     {
       "compile_error": null,
+      "input": "/output/models/assembly-owned-anchor/solidcraft.json",
+      "output": "/output/models/assembly-owned-anchor/model_verify",
+      "slug": "assembly-owned-anchor"
+    },
+    {
+      "compile_error": null,
       "input": "/output/models/attach-angle/solidcraft.json",
       "output": "/output/models/attach-angle/model_verify",
       "slug": "attach-angle"
@@ -50,6 +56,18 @@
     },
     {
       "compile_error": null,
+      "input": "/output/models/corner-anchor/solidcraft.json",
+      "output": "/output/models/corner-anchor/model_verify",
+      "slug": "corner-anchor"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/eight-corner-brackets/solidcraft.json",
+      "output": "/output/models/eight-corner-brackets/model_verify",
+      "slug": "eight-corner-brackets"
+    },
+    {
+      "compile_error": null,
       "input": "/output/models/eight-flightcase-corners/solidcraft.json",
       "output": "/output/models/eight-flightcase-corners/model_verify",
       "slug": "eight-flightcase-corners"
@@ -77,6 +95,24 @@
       "input": "/output/models/parameter-scope/solidcraft.json",
       "output": "/output/models/parameter-scope/model_verify",
       "slug": "parameter-scope"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/parametric-anchor/solidcraft.json",
+      "output": "/output/models/parametric-anchor/model_verify",
+      "slug": "parametric-anchor"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/parametric-attach/solidcraft.json",
+      "output": "/output/models/parametric-attach/model_verify",
+      "slug": "parametric-attach"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/parametric-offset/solidcraft.json",
+      "output": "/output/models/parametric-offset/model_verify",
+      "slug": "parametric-offset"
     },
     {
       "compile_error": null,
@@ -158,5 +194,5 @@
     }
   ],
   "schema": 1,
-  "source_sha": "363108c4676120ed57454abc3973bdaaf0a3a845"
+  "source_sha": "21c10dea1b7a274e132615d3e032e1d67f6555cd"
 }
