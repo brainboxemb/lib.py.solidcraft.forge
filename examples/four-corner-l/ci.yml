@@ -7,7 +7,6 @@ needs:
   - model-verification-batch
 watch:
   - examples/four-corner-l/scpf/**
-  - examples/four-corner-l/model.yml
   - examples/four-corner-l/verification/**
   - examples/four-corner-l/tests/**
   - scripts/forge_example.py
@@ -28,8 +27,7 @@ steps:
   - id: model_verify
     inputs:
       - examples/four-corner-l/scpf/**
-      - examples/four-corner-l/model.yml
-      - examples/four-corner-l/verification/**
+          - examples/four-corner-l/verification/**
       - examples/four-corner-l/tests/**
       - scripts/forge_example.py
       - scripts/model_verification_batch.py
