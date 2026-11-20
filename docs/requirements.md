@@ -589,6 +589,12 @@ The last canonical pre-removal case documentation from
 migration may change headings/formatting and file location, but it must not
 summarize, reinterpret or silently omit the existing engineering statements.
 
+The last canonical per-case geometry sufficiency rationale from
+`qualification/geometry_contracts.py` must also be preserved verbatim. In
+particular, the explanation of why outer bounds are or are not sufficient is
+human engineering documentation, not a value to reconstruct later from machine
+checks.
+
 `model.yml` keeps only the agreed generic page metadata fields:
 `section`, `title`, `tagline`, `description`, `parameters`, and
 `stages`. It is not a second verification contract.
