@@ -301,3 +301,58 @@ For main pushes:
 
 Forge must not calculate or merge item sets itself. Base/head selection,
 build-store validation and publication remain released CAD-CI responsibilities.
+
+
+## Isolated reference items
+
+Independent reference implementations for an active model are CAD-CI items in
+their own source directories.
+
+For a migrated model:
+
+```text
+examples/<model>/
+  verification/reference_geometry.json
+  build123d/
+    ci.yml
+    model.py
+  cadquery/
+    ci.yml
+    model.py
+  pythonscad/
+    ci.yml
+    model.py
+  pybosl2/
+    ci.yml
+    model.py
+```
+
+Requirements:
+
+- each reference implementation is independently selectable from Git changes;
+- the directory containing the child `ci.yml` is its item root;
+- child configuration uses released item-root and parent-relative path
+  semantics; it must not repeat the full model repository path;
+- a child source change selects that child only unless an explicit shared input
+  also changed;
+- the model-local `verification/reference_geometry.json` is a shared input of
+  all four reference children, so changing it selects all four;
+- reference children do not depend on the Forge model item merely to inherit
+  selection state;
+- model-specific geometry expectations remain only in the model-local contract;
+- shared Forge scripts may derive model/reference identity from generic
+  `CAD_CI_ITEM_PATH` context, but must not contain a model-name registry;
+- released `lib.py.cad.verfication` remains the owner of generic geometry
+  validation behavior.
+
+During staged migration, a temporary aggregate reference item may cover active
+models whose references have not yet been split. That aggregate:
+
+- must exclude every model already migrated to isolated reference children;
+- must not process `process: false` model references;
+- is transitional and is removed when the active proof set is fully migrated;
+- must not cause a child-only change in a migrated model to trigger
+  all-catalog reference verification.
+
+Forge must not add a second Git-diff selector or cache/fingerprint mechanism.
+The exact released CAD-CI planner owns affected-item selection.
