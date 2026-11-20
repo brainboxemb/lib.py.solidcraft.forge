@@ -143,11 +143,12 @@ Forge item ci.yml
 Forge contains no helper that interprets `process`, no duplicate changed-path
 selection and no second execution policy.
 
-During the current one-model proof, the `scpf` item remains active and only
-`simple-box` participates as a model-verification item. All other historical
-model items remain present but are excluded with `process: false`. Reference
-items remain independently selectable where their own changed
-paths/dependencies require them.
+During the current staged proof, the `scpf` item remains active and exactly
+five model-verification items participate: `simple-box`,
+`anchor-topology-mutation`, `attach-angle`, `four-corner-l` and
+`xz-anchor`. All other historical model items remain present but are excluded
+with `process: false`. Reference items remain independently selectable where
+their own changed paths/dependencies require them.
 
 
 ## Forge package CI item graph
@@ -203,10 +204,9 @@ examples/<model>/ci.yml
 Forge owns only the declarative repository configuration. It does not reproduce
 the planner in Forge code or tests.
 
-The active model proof set contains only `simple-box`. Independent reference
-items are not part of the model runtime measurement and remain independently
-selected by released CAD-CI. A run that also contains reference verification is
-therefore not a simple-box-only runtime measurement.
+The active model proof set contains the five staged models. Independent
+reference items remain independently selected by released CAD-CI; model and
+reference execution are not collapsed into one consumer-owned scheduler.
 
 Run interpretation uses structured CAD-CI evidence, not buffered console order.
 Consumer output may be emitted late or grouped by SCons, so console timestamps
@@ -529,7 +529,7 @@ decoding.
 
 ### Five-model staged proof
 
-The next #378 step enables only:
+The active #378 proof set contains only:
 
 - simple-box (already proven);
 - anchor-topology-mutation;
@@ -542,7 +542,7 @@ model body expectations as expected boxes. `four-corner-l` retains the
 historical arm-level expected-shape decomposition so a mirrored/rotated L corner
 cannot pass merely because its outer bounding box is unchanged.
 
-No other model becomes `process: true` in this step.
+No other model is `process: true` during this staged proof.
 
 
 ## F10 diagram evidence flow
@@ -576,3 +576,113 @@ The tool pin is deliberately local to the renderer:
 The item does not depend on forge-package. Diagram evidence is therefore
 independent of Forge wheel/model verification and does not lengthen ordinary
 model PRs.
+
+
+## F11 semantic summary flow
+
+F11 is an execution-free Forge consumer over already-produced evidence.
+
+The semantic input model is:
+
+```text
+resolved evidence tree
+  examples/<model>/.cad-ci/steps/model_verify.json
+  examples/<model>/model_verify/verification.json
+  examples/<model>/model_verify/visual.json
+  reference verification.json files
+       |
+       v
+Forge summary adapter
+  -> SemanticCheck(native_model)
+  -> SemanticCheck(geometry)
+  -> SemanticCheck(saved_design)
+  -> SemanticCheck(visual)
+  -> SemanticCheck(reference)
+       |
+       v
+released cad_verification.compose_semantic_result()
+       |
+       v
+released cad_verification.compose_item_results()
+```
+
+The Forge adapter knows only the Forge evidence layout and semantic policy. It
+does not replay CAD, parse raw SolidCraft result JSON, compare geometry, compare
+pixels or execute reference engines.
+
+### Native model
+
+`native_model` is derived from the existing CAD-CI
+`.cad-ci/steps/model_verify.json` result for that model. A successful
+`model_verify` step proves that the Forge producer/replay/verification action
+completed and its declared output bundle exists.
+
+The summary does not infer native success from the mere presence of
+`model.sc`.
+
+### Geometry and saved design
+
+`model_verify/verification.json` is the released verification-library report.
+
+The check with id `baseline` supplies the model's `geometry` semantic state.
+Its complete report row is retained as evidence.
+
+Every report check whose id starts with `saved_design_` contributes to
+`saved_design`:
+
+- no matching checks -> `not-required`;
+- all matching checks pass -> `pass`;
+- otherwise the semantic state follows the strongest non-passing evidence.
+
+The summary does not inspect SolidCraft measurement JSON or duplicate numeric,
+body, parameter or timeline comparison logic.
+
+### Visual
+
+`model_verify/visual.json` already contains the composed released-library
+visual semantic result. F11 preserves that result/evidence and maps its overall
+status to the model-level `visual` check.
+
+It does not reopen images or rerun visual comparison.
+
+### References
+
+Reference evidence currently has two storage shapes during migration:
+
+1. isolated reference child items for `simple-box`,
+   `anchor-topology-mutation` and `attach-angle`;
+2. the transitional `verification/references` aggregate for
+   `four-corner-l` and `xz-anchor`.
+
+F11 normalizes those storage shapes into one model-level `reference` semantic
+check. A model passes reference verification only when PythonSCAD, pyBOSL2,
+CadQuery and build123d are each present exactly once and each reports pass.
+
+The storage-shape normalization is Forge migration policy. Generic semantic
+status composition remains in `lib.py.cad.verification`.
+
+### Aggregate
+
+The staged aggregate contains exactly the five active model IDs once each and
+preserves deterministic model order.
+
+The summary output contains:
+
+- one semantic result per model;
+- one aggregate semantic result;
+- evidence paths identifying every consumed source.
+
+### CI selection boundary
+
+Do not implement F11 as a normal cold fan-in item with all five models and all
+reference items in `needs`.
+
+Released CAD-CI correctly makes every direct prerequisite current before a
+consumer runs. On a fresh hosted runner, requesting such a summary would
+therefore rebuild every sibling producer even when only one model changed.
+
+F11 instead keeps summary composition independent from producer execution: its
+input is an already resolved evidence tree. Unit/contract tests use fixture
+trees, and the staged integration proof uses already accepted build evidence.
+The later #366/#497 publication work decides when and where that resolved tree
+is materialized for durable summaries.
