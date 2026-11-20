@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "118ce2221e134d3405c665fb9ca73df39d5e2ba32c432f79930af6dae98e229c",
+  "duration_seconds": 1.924,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T13:37:48.801Z",
+  "item": "examples-attach-angle-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "3a8d03b8fc69355d096fe1b7225636ff68e4681d51391fc7fe597a33c445e7b5"
+    }
+  },
+  "run_finished_at": "2026-11-20T13:38:09.931Z",
+  "run_started_at": "2026-11-20T13:36:45.329Z",
+  "schema": 3,
+  "started_at": "2026-11-20T13:37:46.877Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "82945a5f090537a3396e421e6cb500611f6b7981e949994585391abef6f5db19",
+  "timeout_seconds": null
+}
