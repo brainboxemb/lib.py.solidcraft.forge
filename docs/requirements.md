@@ -165,13 +165,13 @@ selection, scheduling, caching or parallel-execution policy.
 Forge CI must run only against an exact externally accepted `tool.cad.ci` /
 `lib.py.cad.ci` release pair.
 
-During the current one-model proof:
+During the current staged five-model proof:
 
-- `simple-box` is the only model verification item with `process: true`;
+- exactly `simple-box`, `anchor-topology-mutation`, `attach-angle`,
+  `four-corner-l` and `xz-anchor` have model verification enabled;
 - every other historical model item remains explicit `process: false`;
 - independent reference items remain separately selected by normal released
   CAD-CI changed-path/dependency semantics;
-- reference execution is not part of the simple-box model runtime measurement;
 - Forge must not add a second planner or consumer-side changed-path engine to
   enforce this staging.
 
@@ -189,8 +189,8 @@ item's `.cad-ci` namespace must be sufficient to determine:
 Console text is diagnostic only and must not be the sole source used to decide
 what CI actually executed.
 
-The one-model proof is considered reliable only when representative
-`simple-box` changes can be explained from:
+The staged proof is considered reliable only when representative active-model
+changes can be explained from:
 
 1. the repository configuration;
 2. the released CAD-CI selected graph;
@@ -486,3 +486,53 @@ Requirements:
 Forge owns these diagram sources and CADCraft-specific invocation. This work
 does not belong in lib.py.cad.verification because it is documentation/evidence
 generation, not generic model comparison.
+
+
+## Semantic verification summary
+
+F11 restores the semantic qualification result already used by the public
+Qualification pages. It must not introduce a new public report vocabulary or a
+new sixth visible qualification level.
+
+For each case the public semantic checks remain:
+
+- `integration`;
+- `native_model`;
+- `geometry`;
+- `saved_design`;
+- `visual`.
+
+This is the existing schema-5 `qualification-result.json` meaning. The current
+Pages presentation and status labels remain the compatibility target.
+
+Independent PythonSCAD, pyBOSL2, CadQuery and build123d results remain separate
+reference evidence. Their presence and success are qualification prerequisites,
+but F11 must not add a new visible `reference` row to the public case status
+summary merely because storage/CI is being migrated.
+
+Forge composes the result only from already-produced CAD-CI, model-verification,
+visual and reference evidence. The summary layer must not compile Forge models,
+start SolidCraft, execute reference CAD, render/compare images, mutate designs,
+or implement a second CAD-CI selector.
+
+Released `lib.py.cad.verification` owns generic semantic status precedence and
+composition. Forge owns only the mapping from Forge evidence to the existing
+qualification fields.
+
+`saved_design` is `not-required` when no saved-design check exists.
+
+Missing/failed/error/review/blocked evidence must remain distinguishable.
+Evidence references must be preserved.
+
+The staged proof covers exactly:
+
+- `simple-box`;
+- `anchor-topology-mutation`;
+- `attach-angle`;
+- `four-corner-l`;
+- `xz-anchor`.
+
+F11 code operates on a resolved evidence tree and is independent from producer
+execution. Wiring a durable resolved tree into the collector belongs to
+#366/#497, so F11 must not create a cold CAD-CI fan-in that rebuilds every
+producer.

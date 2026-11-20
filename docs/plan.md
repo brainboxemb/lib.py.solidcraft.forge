@@ -25,7 +25,7 @@ Released/accepted CAD-CI stack for the next measurement:
 - `ghcr.io/brainboxemb/cad-solidcraft:v0.2.0`;
 - `ghcr.io/brainboxemb/cad-reference:v0.2.0`.
 
-`simple-box` is the first completed visual proof. The next staged step restores the remaining four proof models only; the rest of the catalog remains `process: false`.
+F7-F10 are complete for the staged five-model proof set: `simple-box`, `anchor-topology-mutation`, `attach-angle`, `four-corner-l` and `xz-anchor`. The rest of the model catalog remains `process: false` while F11 summary composition is completed.
 
 Repeated clean one-file measurements show that the remaining PR latency is
 dominated by external SolidCraft runtime acquisition rather than CAD-CI or model
@@ -47,43 +47,42 @@ performance follow-up, but it no longer blocks verification-chain migration.
 
 ## Current goal
 
-Complete #528 before continuing verification work: make the versioned SolidCraft
-reference snapshots and the SolidCraft-version upgrade procedure part of the
-current Forge documentation instead of hiding the active procedure under
-`docs/background/`.
+Continue #378 with F11: compose semantic verification summaries from already-produced evidence without adding a second verification engine or rerunning CAD inside the summary code.
 
-F10 diagram evidence is already complete on merged PR #527. After #528, resume
-#378 with F11 semantic verification-summary composition from existing evidence.
+Released `lib.py.cad.verification` already owns generic semantic status composition through `SemanticCheck`, `compose_semantic_result()` and `compose_item_results()`. Forge owns only the mapping from current evidence back to the existing qualification-result semantics. F11 preserves the existing public schema/presentation instead of introducing a new report model.
 
 ## Required proof
 
-- the current SolidCraft reference tree is discoverable from primary repository
-  documentation;
-- previously qualified SolidCraft version evidence remains immutable;
-- targeting a new SolidCraft release explicitly requires a sibling version
-  directory with exact upstream provenance before compatibility work starts;
-- stale references inside the current 0.42.0 source note are corrected rather
-  than promoted unchanged;
-- no runtime, CI or compatibility behavior changes in #528.
+- Forge defines the F11 semantic policy before implementation in `docs/requirements.md` and `docs/design.md`;
+- the summary code executes no Forge compilation, SolidCraft, reference CAD or image comparison;
+- per-case qualification results preserve the existing visible checks `integration`, `native_model`, `geometry`, `saved_design` and `visual`;
+- independent reference evidence remains a separate qualification evidence layer and is not added as a new visible Pages status block;
+- `saved_design` is `not-required` when a model has no saved-design mutation;
+- required failed/missing/review/blocked evidence remains distinguishable;
+- evidence references are preserved;
+- the staged aggregate contains each of the five active proof cases exactly once;
+- the produced per-case result remains compatible in meaning with the existing schema-5 `qualification-result.json` consumed by Pages;
+- CAD-CI fan-in selection must not accidentally turn an incremental model change into a cold rerun of every sibling model/reference item.
 
 ## Execution order
 
-1. #528 — promote/document the versioned SolidCraft reference and upgrade procedure.
-2. #378 — F11 compose semantic verification summary from existing evidence.
-3. #366 / #497 — continue durable output and Pages after F11 is green.
-4. #484 — continue runtime/image-distribution optimization independently.
+1. #378 — define F11 evidence inputs, semantic mapping and CAD-CI selection behavior.
+2. #378 — implement/test the thin summary consumer against existing evidence.
+3. #378 — run the staged five-model F11 proof.
+4. #366 / #497 — continue durable output and Pages after F11 is green.
+5. #432 — resume broader declarative model migration after the five-model proof chain is complete.
+6. #484 — continue runtime/image-distribution optimization independently.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #528 Promote versioned SolidCraft reference snapshots to current documentation | now | Active documentation correction before F11; the upgrade rule is current procedure and must not live only in background material. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | next | F7-F10 are green for the five-model staged set; continue with F11 semantic summary after #528. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | now | F7-F10 are green for the staged five-model set; define and prove F11 semantic summary without re-running sibling CAD work. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later, non-blocking | CAD-CI/model work is small; remaining latency is dominated by highly variable GHCR image acquisition. Preserve measurements and optimize runtime distribution separately. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Main/Pages continuation waits for PR performance path. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Continue after #378 F11 is green so durable presentation consumes the completed verification evidence model. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Depends on stable durable generated output. |
-| #432 Use released declarative CAD verification in model verification | blocked | Broader model migration waits for simple-box stability. |
-| #391 Extract reusable CAD verification library from Forge | blocked | Complete only after procedural verification migration. |
+| #432 Use released declarative CAD verification in model verification | blocked | Broader model migration waits for completion of the staged five-model verification chain through F11. |
+| #391 Extract reusable CAD verification library from Forge | effectively complete but still open | The reusable library exists and owns generic geometry, visual, SolidCraft and semantic verification; remaining procedural model migration is tracked by #432 rather than requiring more extraction architecture. |
 | #481 Remove stale Forge development branches | blocked | Current connected tooling cannot delete the stale refs. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by runtime v0.2.0 and current #484 measurements. |
 | #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture. |
@@ -104,4 +103,4 @@ F10 diagram evidence is already complete on merged PR #527. After #528, resume
 
 Immediate chain:
 
-`#528 SolidCraft version-reference docs -> #378 F11 semantic summary -> #366/#497 durable output; #484 continues independently`.
+`#378 F11 semantic summary -> #366/#497 durable output -> #432 broader model migration; #484 continues independently`.

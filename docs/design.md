@@ -143,11 +143,12 @@ Forge item ci.yml
 Forge contains no helper that interprets `process`, no duplicate changed-path
 selection and no second execution policy.
 
-During the current one-model proof, the `scpf` item remains active and only
-`simple-box` participates as a model-verification item. All other historical
-model items remain present but are excluded with `process: false`. Reference
-items remain independently selectable where their own changed
-paths/dependencies require them.
+During the current staged proof, the `scpf` item remains active and exactly
+five model-verification items participate: `simple-box`,
+`anchor-topology-mutation`, `attach-angle`, `four-corner-l` and
+`xz-anchor`. All other historical model items remain present but are excluded
+with `process: false`. Reference items remain independently selectable where
+their own changed paths/dependencies require them.
 
 
 ## Forge package CI item graph
@@ -203,10 +204,9 @@ examples/<model>/ci.yml
 Forge owns only the declarative repository configuration. It does not reproduce
 the planner in Forge code or tests.
 
-The active model proof set contains only `simple-box`. Independent reference
-items are not part of the model runtime measurement and remain independently
-selected by released CAD-CI. A run that also contains reference verification is
-therefore not a simple-box-only runtime measurement.
+The active model proof set contains the five staged models. Independent
+reference items remain independently selected by released CAD-CI; model and
+reference execution are not collapsed into one consumer-owned scheduler.
 
 Run interpretation uses structured CAD-CI evidence, not buffered console order.
 Consumer output may be emitted late or grouped by SCons, so console timestamps
@@ -529,7 +529,7 @@ decoding.
 
 ### Five-model staged proof
 
-The next #378 step enables only:
+The active #378 proof set contains only:
 
 - simple-box (already proven);
 - anchor-topology-mutation;
@@ -542,7 +542,7 @@ model body expectations as expected boxes. `four-corner-l` retains the
 historical arm-level expected-shape decomposition so a mirrored/rotated L corner
 cannot pass merely because its outer bounding box is unchanged.
 
-No other model becomes `process: true` in this step.
+No other model is `process: true` during this staged proof.
 
 
 ## F10 diagram evidence flow
@@ -557,7 +557,7 @@ verification/diagrams/sources/*.cadcraft.json
         -> ensure exact CADCraft 0.20.1 binary
         -> verify archive SHA-256
         -> replay each source command list
-        -> render SVG + save DXF
+        -> render SVG (DXF may remain as historical/internal CADCraft evidence)
         -> copy source JSON into output
         -> write provenance.json
 ```
@@ -576,3 +576,86 @@ The tool pin is deliberately local to the renderer:
 The item does not depend on forge-package. Diagram evidence is therefore
 independent of Forge wheel/model verification and does not lengthen ordinary
 model PRs.
+
+
+## F11 semantic summary flow
+
+F11 is an execution-free adapter from the new distributed evidence layout back
+to the existing public qualification semantics.
+
+```text
+resolved evidence tree
+  examples/<case>/.cad-ci/steps/contract_test.json
+  examples/<case>/.cad-ci/steps/model_verify.json
+  examples/<case>/solidcraft.json
+  examples/<case>/model_verify/verification.json
+  examples/<case>/model_verify/visual.json
+  reference verification.json files
+       |
+       v
+Forge qualification-summary adapter
+       |
+       +--> released cad_verification semantic composition
+       |
+       v
+schema-5-compatible qualification case meaning
+  integration
+  native_model
+  geometry
+  saved_design
+  visual
+```
+
+The old Qualification pages are the presentation compatibility target. F11
+does not invent another public status level.
+
+### Integration
+
+The existing `integration` meaning is restored from the model-owned
+`contract_test` CAD-CI step plus the generated non-empty `solidcraft.json`
+command document. The command count remains evidence as before.
+
+### Native model
+
+`native_model` represents successful production of the editable native model,
+not the correctness of its geometry. The adapter uses the model-verification
+step/evidence and native artifacts only; geometry remains a separate check.
+
+### Geometry and saved design
+
+`model_verify/verification.json` is the released verification-library report.
+Its `baseline` check supplies `geometry`. Checks whose IDs start with
+`saved_design_` supply `saved_design`; no such checks means
+`not-required`.
+
+Generic status precedence is delegated to released
+`lib.py.cad.verification`.
+
+### Visual
+
+`model_verify/visual.json` already contains released-library semantic visual
+evidence. F11 maps it back to the existing public `visual` check and preserves
+the regression/expected-shape detail needed by Pages. It never reopens images
+or reruns comparison.
+
+### References
+
+Independent reference results stay separate evidence, matching the current
+Qualification site. F11 verifies that the expected reference evidence is
+present/acceptable for qualification, but does not add a new visible
+`reference` status row to the public case result.
+
+### Aggregate and Pages boundary
+
+The staged proof contains the five current proof cases exactly once.
+
+Do not implement F11 as a cold CAD-CI fan-in with every producer in `needs`.
+On a fresh runner that would rebuild all producers. The collector consumes a
+resolved evidence tree. F11 proves the adapter and result semantics; #366/#497
+own durable evidence-tree materialization and Pages wiring.
+
+The snapshot branch
+`backup/gh-pages-before-f11-2026-11-20` is the presentation regression
+reference. The migration must preserve the current Examples/Qualification
+split, qualification cases, visible status semantics and main evidence
+presentation unless a separately justified change is made.
