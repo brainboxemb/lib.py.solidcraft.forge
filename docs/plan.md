@@ -47,29 +47,28 @@ performance follow-up, but it no longer blocks verification-chain migration.
 
 ## Current goal
 
-Continue #378 with F10: restore the existing versioned CADCraft verification
-diagrams as one independently selectable CAD-CI evidence item.
+Complete #528 before continuing verification work: make the versioned SolidCraft
+reference snapshots and the SolidCraft-version upgrade procedure part of the
+current Forge documentation instead of hiding the active procedure under
+`docs/background/`.
 
-The six historical diagram sources are reused byte-identically. CADCraft stays
-pinned to version 0.20.1 and its historical archive SHA-256.
+F10 diagram evidence is already complete on merged PR #527. After #528, resume
+#378 with F11 semantic verification-summary composition from existing evidence.
 
 ## Required proof
 
-- six versioned `.cadcraft.json` sources live under
-  `verification/diagrams/sources/`;
-- source files remain the evidence authority and declare CADCraft 0.20.1;
-- one `ci/verification-diagrams` item is selected only by diagram source,
-  renderer or diagram-test changes;
-- the renderer downloads only the exact pinned CADCraft 0.20.1 x86_64 archive
-  and verifies its SHA-256 before execution;
-- every source renders a non-empty SVG and editable DXF;
-- output retains a copy of each source plus tool/version/hash provenance;
-- tests prove the fixed six-source set and pin;
-- no model or reference CAD is rerun by the diagram renderer itself.
+- the current SolidCraft reference tree is discoverable from primary repository
+  documentation;
+- previously qualified SolidCraft version evidence remains immutable;
+- targeting a new SolidCraft release explicitly requires a sibling version
+  directory with exact upstream provenance before compatibility work starts;
+- stale references inside the current 0.42.0 source note are corrected rather
+  than promoted unchanged;
+- no runtime, CI or compatibility behavior changes in #528.
 
 ## Execution order
 
-1. #378 — F10 build the six versioned CADCraft diagrams.
+1. #528 — promote/document the versioned SolidCraft reference and upgrade procedure.
 2. #378 — F11 compose semantic verification summary from existing evidence.
 3. #366 / #497 — continue durable output and Pages after F11 is green.
 4. #484 — continue runtime/image-distribution optimization independently.
@@ -78,7 +77,8 @@ pinned to version 0.20.1 and its historical archive SHA-256.
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #378 Use explicit Forge verification stages instead of integration/native gates | now | F7-F9 are green for the five-model staged set; continue with F10 versioned CADCraft diagrams. |
+| #528 Promote versioned SolidCraft reference snapshots to current documentation | now | Active documentation correction before F11; the upgrade rule is current procedure and must not live only in background material. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | next | F7-F10 are green for the five-model staged set; continue with F11 semantic summary after #528. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later, non-blocking | CAD-CI/model work is small; remaining latency is dominated by highly variable GHCR image acquisition. Preserve measurements and optimize runtime distribution separately. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Main/Pages continuation waits for PR performance path. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Depends on stable durable generated output. |
@@ -104,4 +104,4 @@ pinned to version 0.20.1 and its historical archive SHA-256.
 
 Immediate chain:
 
-`#378 F10 diagrams -> #378 F11 semantic summary -> #366/#497 durable output; #484 continues independently`.
+`#528 SolidCraft version-reference docs -> #378 F11 semantic summary -> #366/#497 durable output; #484 continues independently`.
