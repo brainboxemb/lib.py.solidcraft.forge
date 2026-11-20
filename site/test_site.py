@@ -124,6 +124,10 @@ class SiteSourceTests(unittest.TestCase):
                 "cube([40,30,10]) is the constructive-geometry baseline",
                 simple_page,
             )
+            self.assertIn(
+                "Its body size fully describes the visible geometry",
+                simple_page,
+            )
 
             home = (out / "index.html").read_text(encoding="utf-8")
             self.assertIn("static/copy.js", home)
