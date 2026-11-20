@@ -1,7 +1,3 @@
-# SolidCraft model verification and reference-child defaults for attach-angle.
+# SolidCraft model verification for attach-angle.
 template: forge-model-declarative
 process: true
-
-children:
-  template: forge-reference
-  process: true
