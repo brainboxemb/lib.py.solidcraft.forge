@@ -1,0 +1,18 @@
+{
+  "items": {
+    "ci/forge-tests": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
+      "final_step": "tool_test",
+      "final_target_spec_digest": "d20574ec04e070eec6cd4ed6c4fad0176c72fe905eeff62f0d4766f1803afb45",
+      "item_id": "forge-tests",
+      "outputs": [],
+      "source_commit": "d70e635a48f7022e6eb9734c3a5e4a33ce54515c"
+    }
+  },
+  "pull_request": 530,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "d70e635a48f7022e6eb9734c3a5e4a33ce54515c"
+}
