@@ -122,3 +122,35 @@ After publication:
 
 Build provenance/attestation is disabled for this runtime image when it would
 change the registry representation in a way that breaks normal pullability.
+
+
+## Declarative model verification
+
+A migrated Forge model owns only model-specific verification data.
+
+For SolidCraft-backed model verification:
+
+- the model may define a `SolidCraftVerification` value in
+  `verification/definition.py`;
+- body counts, expected bounds, parameter values, timeline expectations,
+  mutation command paths and other model-specific expected values remain with
+  the model;
+- the definition contains data only and must not contain checker callbacks;
+- the model must not parse SolidCraft result JSON, invoke SolidCraft
+  verification commands, construct verification checks or write
+  `verification.json`.
+
+The shared Forge launcher owns only the producer boundary required before
+verification:
+
+1. build/locate the exact Forge wheel;
+2. compile/replay the Forge model into the initial native SolidCraft `.sc`
+   model;
+3. load the model-local verification definition;
+4. call released `run_solidcraft_verification()`.
+
+Shared SolidCraft evaluation, mutation, inspection, schema interpretation,
+comparison and report construction are responsibilities of released
+`lib.py.cad.verfication`.
+
+Model migrations are proven one model at a time before catalog expansion.

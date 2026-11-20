@@ -41,7 +41,13 @@ tool_build -> tool_test -> tool_verify
 example set. It is not a stage that every model item must run.
 
 Migrated model items use `model_verify`. That step compiles the model with the
-exact built Forge wheel and verifies the resulting model in SolidCraft.
+exact built Forge wheel, produces the initial native SolidCraft model and then
+delegates model verification to released `lib.py.cad.verfication`.
+
+A declaratively migrated model keeps only model-specific verification data in
+`verification/definition.py`; it does not own a procedural verification CLI.
+During staged migration it uses `scripts/model_verify_declarative.py`; older
+models retain `scripts/model_verify.py` until their own migration change.
 
 All 32 historical model items have native `model_verify` coverage and
 model-local independent-reference geometry contracts. The shared reference item
@@ -50,7 +56,7 @@ Issue #378 now continues with visual, diagram and summary verification.
 
 ## Model ownership
 
-A migrated model may contain:
+A declaratively migrated model may contain:
 
 ```text
 examples/<model>/
@@ -59,8 +65,13 @@ examples/<model>/
   scpf/
     model.py
   verification/
-    verify_model.py
+    definition.py
+    <model-specific command/data files>
 ```
+
+Older models may temporarily retain `verification/verify_model.py` until their
+individual migration PR. Do not add new shared verification mechanics to those
+files.
 
 Presentation metadata in `model.yml` uses:
 
@@ -73,7 +84,8 @@ parameters
 stages
 ```
 
-Native-model expectations and mutations live in the model verification code.
+Native-model expectations and mutation definitions live as model-specific data
+in the model verification definition.
 Example-owned command-contract tests remain under `examples/<example>/tests/`
 where they are used by Forge release verification or other focused tests.
 

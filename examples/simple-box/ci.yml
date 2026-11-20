@@ -8,7 +8,7 @@ watch:
   - examples/simple-box/model.yml
   - examples/simple-box/verification/**
   - scripts/forge_example.py
-  - scripts/model_verify.py
+  - scripts/model_verify_declarative.py
   - scripts/solidcraft_runtime.py
   - docker/solidcraft_runtime/**
 strategy:
@@ -20,11 +20,11 @@ steps:
       - examples/simple-box/model.yml
       - examples/simple-box/verification/**
       - scripts/forge_example.py
-      - scripts/model_verify.py
+      - scripts/model_verify_declarative.py
       - scripts/solidcraft_runtime.py
       - docker/solidcraft_runtime/**
       - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verify.py]
+    run: [python, ../../scripts/model_verify_declarative.py]
     outputs:
       - solidcraft.json
       - model_verify
