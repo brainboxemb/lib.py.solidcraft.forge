@@ -1,0 +1,204 @@
+[
+  {
+    "display_value": 40.0,
+    "name": "parent_height",
+    "unit": "mm",
+    "value": 40.0
+  },
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "Parent",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Parent"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Parent"
+    ],
+    "feature": 3,
+    "ms": 2.416674,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 1,
+    "occurrence": 4
+  },
+  {
+    "component": 5,
+    "grounded": false,
+    "name": "Marker",
+    "occurrence": 6,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Parent",
+      "Marker"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Marker"
+    ],
+    "feature": 7,
+    "ms": 1.194858,
+    "name": "Box2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 5,
+    "occurrence": 8
+  },
+  {
+    "occurrence": 6,
+    "pending": false,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        40.0,
+        1.0
+      ]
+    ]
+  },
+  {
+    "occurrence": 8,
+    "pending": false,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        60.0,
+        0.0,
+        40.0,
+        1.0
+      ]
+    ]
+  },
+  {
+    "conflicts": [],
+    "dof": [
+      {
+        "dof": 0,
+        "occurrence": 0
+      },
+      {
+        "dof": 0,
+        "occurrence": 2
+      },
+      {
+        "dof": 6,
+        "occurrence": 4
+      },
+      {
+        "dof": 0,
+        "occurrence": 6
+      },
+      {
+        "dof": 6,
+        "occurrence": 8
+      }
+    ],
+    "errors": [],
+    "fixed": [
+      0,
+      2
+    ],
+    "joint": 9,
+    "name": "Attach Marker occurrence 1 to Parent occurrence 1"
+  },
+  {
+    "conflicts": [],
+    "dof": [
+      {
+        "dof": 0,
+        "occurrence": 0
+      },
+      {
+        "dof": 0,
+        "occurrence": 2
+      },
+      {
+        "dof": 6,
+        "occurrence": 4
+      },
+      {
+        "dof": 0,
+        "occurrence": 6
+      },
+      {
+        "dof": 6,
+        "occurrence": 8
+      }
+    ],
+    "errors": [],
+    "fixed": [
+      0,
+      2
+    ],
+    "joint": 10,
+    "name": "Attach Marker occurrence 2 to Parent occurrence 2"
+  },
+  {
+    "changed": 2,
+    "visibility": {
+      "hidden_bodies": [],
+      "hidden_joints": [
+        9,
+        10
+      ],
+      "hidden_occurrences": [],
+      "hidden_origin": [],
+      "hidden_sketches": [],
+      "shown_sketches": []
+    },
+    "visible": false
+  }
+]

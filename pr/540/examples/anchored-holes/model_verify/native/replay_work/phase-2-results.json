@@ -1,0 +1,66 @@
+[
+  {
+    "attachment": "exact_face",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Hole",
+    "projected": null,
+    "sketch": 3
+  },
+  {
+    "constraints": [],
+    "created": {
+      "constraints": [],
+      "curves": [
+        "c1"
+      ],
+      "dimensions": [],
+      "points": [
+        "p1"
+      ]
+    },
+    "curves": [
+      "c1"
+    ],
+    "sketch": {
+      "dof": 1,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 1,
+    "sketch": 3
+  },
+  {
+    "bodies": [
+      "AnchoredHoles"
+    ],
+    "changed_bodies": [
+      "AnchoredHoles"
+    ],
+    "created_bodies": [],
+    "feature": 4,
+    "ms": 10.847946,
+    "name": "Hole",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "AnchoredHoles"
+    ],
+    "changed_bodies": [
+      "AnchoredHoles"
+    ],
+    "created_bodies": [],
+    "feature": 5,
+    "ms": 13.578058,
+    "name": "RectangularPattern1",
+    "removed_bodies": [],
+    "warning": null
+  }
+]
