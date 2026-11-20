@@ -958,261 +958,30 @@ def _render_native_results(native_case, solidcraft_version):
     )
 
 
-COPY_SCRIPT = r"""(() => {
-  const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
-  const doneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
-
-  async function copyText(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-    const helper = document.createElement('textarea');
-    helper.value = text;
-    helper.setAttribute('readonly', '');
-    helper.style.position = 'fixed';
-    helper.style.opacity = '0';
-    document.body.appendChild(helper);
-    helper.select();
-    document.execCommand('copy');
-    helper.remove();
-  }
-
-  document.querySelectorAll('pre > code').forEach((code) => {
-    const pre = code.parentElement;
-    if (!pre || pre.parentElement?.classList.contains('code-block')) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'code-block';
-    pre.parentNode.insertBefore(wrapper, pre);
-    wrapper.appendChild(pre);
-
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'code-copy';
-    button.title = 'Copy code';
-    button.setAttribute('aria-label', 'Copy code');
-    button.innerHTML = copyIcon;
-    wrapper.appendChild(button);
-
-    button.addEventListener('click', async () => {
-      try {
-        await copyText(code.textContent);
-        button.innerHTML = doneIcon;
-        button.classList.add('copied');
-        button.title = 'Copied';
-        button.setAttribute('aria-label', 'Copied');
-        window.setTimeout(() => {
-          button.innerHTML = copyIcon;
-          button.classList.remove('copied');
-          button.title = 'Copy code';
-          button.setAttribute('aria-label', 'Copy code');
-        }, 1400);
-      } catch (_error) {
-        button.title = 'Copy failed';
-        button.setAttribute('aria-label', 'Copy failed');
-      }
-    });
-  });
-})();
-"""
 
 
 
-SEARCH_SCRIPT = r"""
-(() => {
-  const root = document.querySelector('.site-search');
-  if (!root) return;
 
-  const input = root.querySelector('.site-search-input');
-  const results = root.querySelector('.site-search-results');
-  const indexUrl = root.dataset.searchIndex;
-  let indexPromise = null;
-  let visible = [];
 
-  const normal = (value) => String(value || '')
-    .toLowerCase()
-    .replace(/[_.:/-]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const raw = (value) => String(value || '').toLowerCase().trim();
-
-  function loadIndex() {
-    if (!indexPromise) {
-      indexPromise = fetch(indexUrl)
-        .then((response) => {
-          if (!response.ok) throw new Error('Search index unavailable');
-          return response.json();
-        })
-        .then((data) => data.entries || []);
-    }
-    return indexPromise;
-  }
-
-  function score(entry, query) {
-    const qRaw = raw(query);
-    const q = normal(query);
-    if (!q) return -1;
-
-    const titleRaw = raw(entry.title);
-    const title = normal(entry.title);
-    const aliases = entry.aliases || [];
-    const aliasRaw = aliases.map(raw);
-    const aliasText = normal(aliases.join(' '));
-    const haystack = normal([
-      entry.title,
-      entry.summary,
-      entry.keywords,
-      aliases.join(' '),
-    ].join(' '));
-
-    if (titleRaw === qRaw) return 1000;
-    if (aliasRaw.includes(qRaw)) return 920;
-    if (title.startsWith(q)) return 820;
-    if (aliasText.startsWith(q)) return 760;
-    if (title.includes(q)) return 680;
-    if (aliasText.includes(q)) return 620;
-    if (haystack.includes(q)) return 500;
-
-    const words = q.split(' ').filter(Boolean);
-    if (words.length && words.every((word) => haystack.includes(word))) {
-      return 380 + words.length * 10;
-    }
-    return -1;
-  }
-
-  function closeResults() {
-    results.hidden = true;
-    results.replaceChildren();
-    input.setAttribute('aria-expanded', 'false');
-    visible = [];
-  }
-
-  function render(entries, query) {
-    const ranked = entries
-      .map((entry, order) => ({entry, order, score: score(entry, query)}))
-      .filter((row) => row.score >= 0)
-      .sort((a, b) => b.score - a.score || a.order - b.order)
-      .slice(0, 10);
-
-    results.replaceChildren();
-    visible = ranked.map((row) => row.entry);
-    if (!ranked.length) {
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'No documentation found.';
-      results.appendChild(empty);
-    } else {
-      const indexBase = new URL('.', new URL(indexUrl, document.baseURI));
-      ranked.forEach(({entry}) => {
-        const link = document.createElement('a');
-        link.className = 'site-search-result';
-        link.href = new URL(entry.url, indexBase).href;
-
-        const heading = document.createElement('span');
-        heading.className = 'site-search-result-title';
-        heading.textContent = entry.title;
-
-        const kind = document.createElement('span');
-        kind.className = 'site-search-result-kind';
-        kind.textContent = entry.kind;
-
-        const summary = document.createElement('span');
-        summary.className = 'site-search-result-summary';
-        summary.textContent = entry.summary;
-
-        link.append(heading, kind, summary);
-        results.appendChild(link);
-      });
-    }
-    results.hidden = false;
-    input.setAttribute('aria-expanded', 'true');
-  }
-
-  async function search() {
-    const query = input.value.trim();
-    if (!query) {
-      closeResults();
-      return;
-    }
-    try {
-      render(await loadIndex(), query);
-    } catch (_error) {
-      results.replaceChildren();
-      const empty = document.createElement('p');
-      empty.className = 'site-search-empty';
-      empty.textContent = 'Search is unavailable.';
-      results.appendChild(empty);
-      results.hidden = false;
-      input.setAttribute('aria-expanded', 'true');
-    }
-  }
-
-  input.addEventListener('input', search);
-  input.addEventListener('focus', () => {
-    if (input.value.trim()) search();
-  });
-  input.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      closeResults();
-      input.blur();
-    } else if (event.key === 'Enter' && visible.length) {
-      event.preventDefault();
-      results.querySelector('.site-search-result')?.click();
-    }
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!root.contains(event.target)) closeResults();
-  });
-
-  document.addEventListener('keydown', (event) => {
-    const target = event.target;
-    const typing = target instanceof HTMLInputElement
-      || target instanceof HTMLTextAreaElement
-      || target instanceof HTMLSelectElement
-      || target?.isContentEditable;
-    const shortcut = (event.ctrlKey || event.metaKey)
-      && event.key.toLowerCase() === 'k';
-    const slash = event.key === '/' && !typing && !event.ctrlKey
-      && !event.metaKey && !event.altKey;
-    if (shortcut || slash) {
-      event.preventDefault();
-      input.focus();
-      input.select();
-    }
-  });
-})();
-"""
 
 
 def page(title, body, *, stylesheet, home, cheatsheet):
-    return f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>{escape(title)} · SCPF Python library</title>
-<link rel="stylesheet" href="{escape(stylesheet)}"></head>
-<body><header class="top"><div class="wrap nav">
-<a class="brand" href="{escape(home)}">SCPF <span>Python library</span></a>
-<div class="site-search" data-search-index="{escape(home)}search-index.json">
-<label class="sr-only" for="site-search-input">Search SCPF documentation</label>
-<input id="site-search-input" class="site-search-input" type="search" autocomplete="off" spellcheck="false"
-       placeholder="Search API…" aria-label="Search SCPF documentation"
-       aria-expanded="false" aria-controls="site-search-results">
-<span class="site-search-shortcut" aria-hidden="true">/</span>
-<div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
-</div>
-<nav aria-label="Main"><a href="{escape(home)}">Examples</a><a href="{escape(home)}guide/">API Guide</a><a href="{escape(home)}reference/">API Reference</a><a href="{escape(home)}qualification/">Qualification</a><a href="{escape(cheatsheet)}">Cheatsheet</a>\n<a href="{LIBRARY_URL}">Source</a></nav></div></header>
-<div class="development-banner" role="status"><div class="wrap">
-<strong>Development version.</strong> Forge is under active development and testing. APIs, behaviour, coverage and qualification results may be incomplete or change without notice; published PASS results are not a support guarantee or production-readiness claim.
-</div></div>
-{body}
-<footer><div class="wrap"><strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
-<a href="{CAD_SITE}">Full SolidCraft CAD projects →</a></div></footer>
-<script>{COPY_SCRIPT}</script>
-<script>{SEARCH_SCRIPT}</script>
-</body></html>"""
+    """Render the shared site shell from an external template."""
+
+    template = Template(
+        (ROOT / "site" / "templates" / "page.html").read_text(
+            encoding="utf-8"
+        )
+    )
+    return template.substitute(
+        title=escape(title),
+        body=body,
+        stylesheet=escape(stylesheet),
+        home=escape(home),
+        cheatsheet=escape(cheatsheet),
+        library_url=escape(LIBRARY_URL),
+        cad_site=escape(CAD_SITE),
+    )
 
 
 def build_scope_from_environment():
@@ -1332,6 +1101,11 @@ def build(
 
     out.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / "site" / "style.css", out / "style.css")
+    shutil.copytree(
+        ROOT / "site" / "static",
+        out / "static",
+        dirs_exist_ok=True,
+    )
     (out / "search-index.json").write_text(
         json.dumps(build_search_index(), indent=2) + "\n",
         encoding="utf-8",
