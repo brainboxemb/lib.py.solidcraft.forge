@@ -186,7 +186,10 @@ class QualificationSummaryTests(unittest.TestCase):
         for implementation in summary.REFERENCE_IMPLEMENTATIONS:
             self.write_json(
                 root,
-                f"reference-output/references/{slug}/{implementation}/verification.json",
+                (
+                    f"examples/{slug}/{implementation}/references/"
+                    f"{slug}/{implementation}/verification.json"
+                ),
                 {"implementation": implementation, "status": "pass"},
             )
         return case
@@ -226,7 +229,9 @@ class QualificationSummaryTests(unittest.TestCase):
             self.make_case(root)
             target = (
                 root
-                / "reference-output"
+                / "examples"
+                / "simple-box"
+                / "cadquery"
                 / "references"
                 / "simple-box"
                 / "cadquery"
@@ -241,7 +246,7 @@ class QualificationSummaryTests(unittest.TestCase):
         self.assertNotIn("reference", result["checks"])
         self.assertEqual(gate["status"], "fail")
 
-    def test_missing_visual_is_incomplete(self):
+    def test_missing_visual_is_not_required_in_current_contract(self):
         with tempfile.TemporaryDirectory() as tmp, patch.object(
             summary, "_semantic_api", fake_api
         ):
@@ -249,9 +254,33 @@ class QualificationSummaryTests(unittest.TestCase):
             case = self.make_case(root)
             (case / "model_verify" / "visual.json").unlink()
             result, gate = summary.compose_case(root, "simple-box")
-        self.assertEqual(result["status"], "incomplete")
-        self.assertEqual(result["checks"]["visual"]["status"], "missing")
-        self.assertEqual(gate["status"], "incomplete")
+        self.assertEqual(result["status"], "pass")
+        self.assertEqual(result["checks"]["visual"]["status"], "not-required")
+        self.assertFalse(result["checks"]["visual"]["required"])
+        self.assertEqual(gate["status"], "pass")
+
+    def test_batch_reference_duplicates_are_ignored(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(
+            summary, "_semantic_api", fake_api
+        ):
+            root = Path(tmp)
+            self.make_case(root)
+            for implementation in summary.REFERENCE_IMPLEMENTATIONS:
+                self.write_json(
+                    root,
+                    (
+                        "ci/reference-verification-batch/references/"
+                        f"simple-box/{implementation}/verification.json"
+                    ),
+                    {
+                        "implementation": implementation,
+                        "status": "fail",
+                    },
+                )
+            result, gate = summary.compose_case(root, "simple-box")
+
+        self.assertEqual(result["status"], "pass")
+        self.assertEqual(gate["status"], "pass")
 
     def test_inconsistent_visual_pass_becomes_incomplete(self):
         with tempfile.TemporaryDirectory() as tmp, patch.object(

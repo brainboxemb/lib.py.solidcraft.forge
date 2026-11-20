@@ -1,0 +1,19 @@
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>${implementation} · ${status}</h4>
+    <p class="source-stamp">Accepted source <code>${accepted_source_commit}</code></p>
+    <p>${source_link}</p>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>${geometry_json}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="${preview_url}" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="${preview_url}" alt="${implementation} current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · ${artifact_links}</figcaption>
+    </figure>
+  </div>
+</section>

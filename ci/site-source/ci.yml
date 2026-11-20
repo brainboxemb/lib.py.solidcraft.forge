@@ -9,6 +9,10 @@ watch:
 strategy:
   reuse: true
 steps:
+  - id: test_build_evidence
+    inputs:
+      - site/**
+    run: [python, ../../site/test_build_evidence.py]
   - id: test_example_metadata
     inputs:
       - site/**

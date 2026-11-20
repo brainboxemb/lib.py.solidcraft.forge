@@ -520,3 +520,275 @@ def reference_group_content(spec):
         + "</section>"
         + "".join(member_sections)
     )
+
+
+_STATUS_CLASS = {
+    "pass": "pass",
+    "fail": "fail",
+    "error": "fail",
+    "review": "review",
+    "blocked": "blocked",
+    "incomplete": "incomplete",
+    "missing": "incomplete",
+    "not-required": "not-run",
+    "skipped": "not-run",
+}
+
+
+def qualification_status_badge(status, label=None):
+    """Render one public qualification status badge."""
+    value = str(status or "missing").lower()
+    css = _STATUS_CLASS.get(value, "incomplete")
+    visible = label or value.replace("-", " ").upper()
+    return (
+        f'<span class="qualification-status {css}">'
+        f'{escape(visible)}</span>'
+    )
+
+
+def qualification_status_line(summary):
+    """Render current public check statuses without recomputing semantics."""
+    checks = summary.get("checks") or {}
+    labels = (
+        ("integration", "Integration"),
+        ("native_model", "Native model"),
+        ("geometry", "Geometry"),
+        ("saved_design", "Saved design"),
+        ("visual", "Visual"),
+    )
+    parts = []
+    for key, label in labels:
+        row = checks.get(key) or {}
+        status = row.get("status", "missing")
+        if status == "not-required":
+            text = f"{label} N/R"
+        else:
+            text = f"{label} {str(status).upper()}"
+        parts.append(escape(text))
+    return (
+        '<div class="qualification-status-line">'
+        + qualification_status_badge(summary.get("status"))
+        + '<span class="qualification-levels">'
+        + " · ".join(parts)
+        + "</span></div>"
+    )
+
+
+def _evidence_table(headers, rows):
+    """Render a small exact-value evidence table."""
+    if not rows:
+        return '<p class="meta">No rows.</p>'
+    head = "".join(f"<th>{escape(value)}</th>" for value in headers)
+    body = []
+    for row in rows:
+        body.append(
+            "<tr>"
+            + "".join(f"<td>{escape(value)}</td>" for value in row)
+            + "</tr>"
+        )
+    return (
+        '<div class="qualification-table-scroll"><table class="api-table">'
+        f"<thead><tr>{head}</tr></thead><tbody>"
+        + "".join(body)
+        + "</tbody></table></div>"
+    )
+
+
+def _evidence_link(url, label):
+    if not url:
+        return ""
+    return (
+        f'<a href="{escape(url)}" target="_blank" rel="noopener">'
+        f"{escape(label)}</a>"
+    )
+
+
+def qualification_current_evidence(view, title):
+    """Render one stable qualification evidence block from normalized view data."""
+    parameters = _evidence_table(
+        ("Parameter", "Value", "Unit", "Expression"),
+        tuple(
+            (
+                row.get("name"),
+                row.get("value"),
+                row.get("unit"),
+                row.get("expression"),
+            )
+            for row in view["parameters"]
+        ),
+    )
+    bodies = _evidence_table(
+        ("Body", "Minimum", "Maximum", "Volume mm³", "Faces", "Edges", "Closed"),
+        tuple(
+            (
+                row.get("name"),
+                row.get("minimum"),
+                row.get("maximum"),
+                row.get("volume_mm3"),
+                row.get("faces"),
+                row.get("edges"),
+                row.get("closed"),
+            )
+            for row in view["bodies"]
+        ),
+    )
+
+    check_fragments = []
+    for row in view["verification_checks"]:
+        reason = (
+            f"<p>{escape(row['reason'])}</p>"
+            if row.get("reason")
+            else ""
+        )
+        check_fragments.append(
+            render_template(
+                "qualification-check.html",
+                check_id=escape(row.get("id")),
+                status=qualification_status_badge(row.get("status")),
+                reason=reason,
+                evidence_json=escape(row.get("evidence_json")),
+            )
+        )
+
+    saved = ""
+    if view["saved_designs"]:
+        details = []
+        for row in view["saved_designs"]:
+            details.append(
+                '<details class="qualification-detail-block">'
+                f'<summary>{escape(row["name"])}</summary>'
+                f'<p>{_evidence_link(row["measurements_url"], "Open durable measurements")}</p>'
+                f'<pre><code>{escape(row["measurements_json"])}</code></pre>'
+                "</details>"
+            )
+        saved = "<h3>Saved-design results</h3>" + "".join(details)
+
+    reference_fragments = []
+    for row in view["references"]:
+        source_link = _evidence_link(row.get("source_url"), "Open reference source")
+        artifact_links = " · ".join(
+            value
+            for value in (
+                _evidence_link(row.get("stl_url"), "STL"),
+                _evidence_link(row.get("verification_url"), "verification JSON"),
+                _evidence_link(row.get("preview_metadata_url"), "preview metadata"),
+            )
+            if value
+        )
+        reference_fragments.append(
+            render_template(
+                "qualification-reference-row.html",
+                implementation=escape(row["implementation"]),
+                status=qualification_status_badge(row.get("status")),
+                accepted_source_commit=escape(row["accepted_source_commit"]),
+                source_link=source_link,
+                geometry_json=escape(row["geometry_json"]),
+                preview_url=escape(row["preview_url"]),
+                artifact_links=artifact_links,
+            )
+        )
+
+    visual_rows = []
+    for row in view["visual_views"]:
+        image_fragments = []
+        for label, key in (
+            ("Actual", "actual_url"),
+            ("Goal", "goal_url"),
+            ("Overlay", "overlay_url"),
+            ("Diff", "diff_url"),
+        ):
+            url = row.get(key)
+            if not url:
+                continue
+            image_fragments.append(
+                render_template(
+                    "qualification-visual-image.html",
+                    url=escape(url),
+                    view=escape(row.get("view")),
+                    label=escape(label),
+                )
+            )
+        visual_rows.append(
+            render_template(
+                "qualification-visual-view.html",
+                view=escape(row.get("view")),
+                status=qualification_status_badge(row.get("status")),
+                baseline_status=escape(row.get("baseline_status")),
+                expected_shape_status=escape(row.get("expected_shape_status")),
+                images="".join(image_fragments),
+                regression_json=escape(row.get("regression_json")),
+            )
+        )
+
+    if visual_rows:
+        visual_section = render_template(
+            "qualification-visual-section.html",
+            views="".join(visual_rows),
+        )
+    else:
+        visual_section = render_template(
+            "qualification-visual-not-required.html"
+        )
+
+    raw_links = " · ".join(
+        (
+            _evidence_link(view["commands_url"], "commands"),
+            _evidence_link(view["verification_url"], "verification"),
+            _evidence_link(view["measurements_url"], "measurements"),
+            _evidence_link(view["native_model_url"], "native .sc"),
+            _evidence_link(view["native_step_url"], "STEP"),
+            _evidence_link(view["native_results_url"], "native results"),
+            _evidence_link(view["preview_metadata_url"], "preview metadata"),
+        )
+    )
+
+    return render_template(
+        "qualification-current.html",
+        status_line=qualification_status_line(view),
+        preview_url=escape(view["preview_url"]),
+        title=escape(title),
+        site_source_commit=escape(view["site_source_commit"]),
+        accepted_source_commit=escape(view["accepted_source_commit"]),
+        build_commit=escape(view["build_commit"]),
+        parameters=parameters,
+        bodies=bodies,
+        verification_checks="".join(check_fragments),
+        saved_designs=saved,
+        raw_links=raw_links,
+        visual_section=visual_section,
+        references="".join(reference_fragments),
+    )
+
+
+def qualification_diagrams(rows):
+    """Render current durable CADCraft diagrams."""
+    diagrams = []
+    for row in rows:
+        diagrams.append(
+            render_template(
+                "qualification-diagram.html",
+                svg_url=escape(row["svg_url"]),
+                title=escape(row["title"]),
+                cadcraft_version=escape(row.get("cadcraft_version")),
+                svg_evidence_url=escape(row["svg_evidence_url"]),
+            )
+        )
+    if not diagrams:
+        return ""
+    return render_template(
+        "qualification-diagrams.html",
+        diagrams="".join(diagrams),
+    )
+
+
+def qualification_card(info, view, case_url):
+    """Render one stable qualification catalog card."""
+    return render_template(
+        "qualification-card.html",
+        case_url=escape(case_url),
+        preview_url=escape(view["preview_url"]),
+        title=escape(info.title),
+        section=escape(info.section),
+        status_line=qualification_status_line(view),
+        description=escape(info.description),
+    )

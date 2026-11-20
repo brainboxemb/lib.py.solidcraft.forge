@@ -1,0 +1,29 @@
+<section class="panel qualification-current">
+  <h2>Current durable verification</h2>
+  ${status_line}
+  <figure class="qualification-case-preview">
+    <a href="${preview_url}" class="qualification-image-link" target="_blank" rel="noopener">
+      <img src="${preview_url}" alt="${title} current durable preview" loading="lazy">
+    </a>
+    <figcaption>Current deterministic presentation preview from durable build evidence. This preview is presentation output, not an extra verification check.</figcaption>
+  </figure>
+  <p class="source-stamp">
+    Site source <code>${site_source_commit}</code> · accepted model evidence source
+    <code>${accepted_source_commit}</code> · durable build <code>${build_commit}</code>
+  </p>
+  <h3>Editable parameters</h3>
+  ${parameters}
+  <h3>Measured native bodies</h3>
+  ${bodies}
+  <h3>Verification checks</h3>
+  ${verification_checks}
+  ${saved_designs}
+  <h3>Durable raw evidence</h3>
+  <p class="evidence-links">${raw_links}</p>
+</section>
+${visual_section}
+<section class="panel">
+  <h2>Independent references</h2>
+  <p>Each reference is a separately selected durable CAD-CI child item. Geometry status comes from its current verification JSON; the image is a deterministic presentation render of that verified STL.</p>
+  <div class="qualification-reference-list">${references}</div>
+</section>

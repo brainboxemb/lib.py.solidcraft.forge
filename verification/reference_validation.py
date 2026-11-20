@@ -20,6 +20,8 @@ from cad_verification import (
     validate_mesh_geometry,
 )
 
+from verification.reference_preview import render_reference_preview
+
 
 ROOT = Path(__file__).resolve().parents[1]
 IMPLEMENTATIONS = ("pythonscad", "pybosl2", "cadquery", "build123d")
@@ -193,8 +195,8 @@ def verify_exported(
     slug: str,
     implementation: str,
     output: Path,
-) -> dict[str, Any]:
-    """Verify an already-exported reference STL and write case evidence."""
+) -> tuple[dict[str, Any], bool]:
+    """Verify one exported STL and attach separate presentation evidence."""
 
     target = output / slug / implementation
     stl = target / "model.stl"
@@ -218,11 +220,33 @@ def verify_exported(
         "stl": str(stl.relative_to(output)),
         "geometry": evidence,
     }
+
+    presentation_failed = False
+    try:
+        render_reference_preview(
+            stl,
+            target / "presentation",
+            source_reference="model.stl",
+        )
+        result["presentation"] = {
+            "status": "pass",
+            "preview": "presentation/preview-iso.png",
+            "metadata": "presentation/preview.json",
+        }
+    except Exception as exc:
+        presentation_failed = True
+        result["presentation"] = {
+            "status": "fail",
+            "error": "".join(
+                traceback.format_exception_only(type(exc), exc)
+            ).strip(),
+        }
+
     (target / "verification.json").write_text(
         json.dumps(result, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    return result
+    return result, presentation_failed
 
 
 def write_failure(
@@ -257,8 +281,8 @@ def verify_one(
     slug: str,
     implementation: str,
     output: Path,
-) -> dict[str, Any]:
-    """Export and verify one reference implementation."""
+) -> tuple[dict[str, Any], bool]:
+    """Export, verify and render one reference implementation."""
 
     target = output / slug / implementation
     target.mkdir(parents=True, exist_ok=True)
@@ -333,9 +357,18 @@ def verify_batch(
                     error = build123d_errors.get(slug)
                     if error:
                         raise RuntimeError(error)
-                    result = verify_exported(slug, implementation, output)
+                    result, presentation_failed = verify_exported(
+                        slug,
+                        implementation,
+                        output,
+                    )
                 else:
-                    result = verify_one(slug, implementation, output)
+                    result, presentation_failed = verify_one(
+                        slug,
+                        implementation,
+                        output,
+                    )
+                failed = failed or presentation_failed
             except Exception as exc:  # continue through the complete batch
                 failed = True
                 result = write_failure(
@@ -362,7 +395,12 @@ def verify_batch(
                 "model": slug,
                 "status": (
                     "pass"
-                    if rows and all(row["status"] == "pass" for row in rows)
+                    if rows
+                    and all(
+                        row["status"] == "pass"
+                        and row.get("presentation", {}).get("status") == "pass"
+                        for row in rows
+                    )
                     else "fail"
                 ),
                 "implementations": rows,

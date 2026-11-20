@@ -4,14 +4,11 @@
     <p class="eyebrow">Current qualification catalog</p>
     <h1>Qualification</h1>
     <p>
-      These are the same ${example_count} examples discovered from
-      <code>examples/*/model.yml</code>. Human intent is local to each example;
-      exact expected values live in <code>verification/verify.py</code>.
+      These ${example_count} examples combine local engineering documentation
+      with accepted durable CAD-CI evidence.
     </p>
   </section>
-  <section class="notice">
-    Stable PASS/FAIL and measured evidence are attached from the accepted
-    durable <code>build/main</code> baseline by the Pages publication step.
-  </section>
-  <div class="cards">${cards}</div>
+  ${evidence_note}
+  <div class="cards qualification-grid">${cards}</div>
+  ${diagrams}
 </main>

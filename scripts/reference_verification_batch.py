@@ -83,7 +83,16 @@ def processed_reference_slugs() -> tuple[str, ...]:
 
 
 def run_inside_runtime(cases: str, commit: str) -> int:
-    """Run references and CADCraft diagrams, collecting both results."""
+    """Run preview tests, references and CADCraft diagrams in one runtime."""
+
+    preview_tests = subprocess.run(
+        [
+            "python",
+            "/workspace/verification/tests/test_reference_preview.py",
+        ],
+        cwd="/workspace",
+        check=False,
+    )
 
     reference = subprocess.run(
         [
@@ -113,7 +122,15 @@ def run_inside_runtime(cases: str, commit: str) -> int:
         check=False,
     )
 
-    return 0 if reference.returncode == 0 and diagrams.returncode == 0 else 1
+    return (
+        0
+        if (
+            preview_tests.returncode == 0
+            and reference.returncode == 0
+            and diagrams.returncode == 0
+        )
+        else 1
+    )
 
 
 def run_batch() -> int:
@@ -254,14 +271,26 @@ def materialize_case() -> int:
             f"missing batch report row for {slug}/{implementation}"
         )
 
+    presentation_status = implementation_row.get(
+        "presentation",
+        {},
+    ).get("status")
+    child_status = (
+        "pass"
+        if (
+            implementation_row.get("status") == "pass"
+            and presentation_status == "pass"
+        )
+        else "fail"
+    )
     child_report = {
         "schema": report.get("schema", 1),
         "source_sha": report.get("source_sha"),
-        "status": implementation_row.get("status", "fail"),
+        "status": child_status,
         "models": [
             {
                 "model": slug,
-                "status": implementation_row.get("status", "fail"),
+                "status": child_status,
                 "implementations": [implementation_row],
             }
         ],
@@ -272,7 +301,7 @@ def materialize_case() -> int:
         encoding="utf-8",
     )
 
-    return 0 if implementation_row.get("status") == "pass" else 1
+    return 0 if child_status == "pass" else 1
 
 
 def materialize_diagrams() -> int:

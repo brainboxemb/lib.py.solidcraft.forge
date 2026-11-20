@@ -6,7 +6,9 @@ import importlib.util
 import json
 import math
 from pathlib import Path
+import tempfile
 import unittest
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -151,6 +153,92 @@ class ModelVisualTests(unittest.TestCase):
                     ROOT / "examples" / slug / "ci.yml"
                 ).read_text(encoding="utf-8")
                 self.assertIn("process: true", ci_text)
+
+    def test_presentation_preview_reuses_current_iso_render(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp)
+            model = output / "native" / "model.sc"
+            model.parent.mkdir(parents=True)
+            model.write_text("model", encoding="utf-8")
+            measurements = output / "baseline" / "measurements.json"
+            measurements.parent.mkdir(parents=True)
+            measurements.write_text(
+                json.dumps(self.measurements),
+                encoding="utf-8",
+            )
+            iso = output / "visual" / "iso" / "actual.png"
+            iso.parent.mkdir(parents=True)
+            iso.write_bytes(b"current-visual")
+
+            with mock.patch.object(self.visual, "_snapshot") as snapshot:
+                metadata = self.visual.write_presentation_preview(
+                    model,
+                    measurements,
+                    output,
+                )
+
+            snapshot.assert_not_called()
+            preview = output / "presentation" / "preview-iso.png"
+            self.assertEqual(preview.read_bytes(), b"current-visual")
+            self.assertEqual(metadata["renderer"], "reused-visual")
+            self.assertEqual(metadata["source"], "visual/iso/actual.png")
+            self.assertEqual(metadata["width"], 720)
+            self.assertEqual(metadata["height"], 540)
+            stored = json.loads(
+                (output / "presentation" / "preview.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(stored, metadata)
+
+    def test_presentation_preview_snapshots_when_visual_iso_is_absent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp)
+            model = output / "native" / "model.sc"
+            model.parent.mkdir(parents=True)
+            model.write_text("model", encoding="utf-8")
+            measurements = output / "baseline" / "measurements.json"
+            measurements.parent.mkdir(parents=True)
+            measurements.write_text(
+                json.dumps(self.measurements),
+                encoding="utf-8",
+            )
+
+            def fake_snapshot(
+                model_path,
+                output_path,
+                camera,
+                *,
+                width,
+                height,
+            ):
+                self.assertEqual(Path(model_path), model.resolve())
+                self.assertEqual(width, 720)
+                self.assertEqual(height, 540)
+                self.assertAlmostEqual(camera["yaw"], -math.pi / 4.0)
+                self.assertAlmostEqual(camera["pitch"], math.radians(32.0))
+                Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+                Path(output_path).write_bytes(b"snapshot")
+
+            with mock.patch.object(
+                self.visual,
+                "_snapshot",
+                side_effect=fake_snapshot,
+            ) as snapshot:
+                metadata = self.visual.write_presentation_preview(
+                    model,
+                    measurements,
+                    output,
+                )
+
+            snapshot.assert_called_once()
+            self.assertEqual(
+                (output / "presentation" / "preview-iso.png").read_bytes(),
+                b"snapshot",
+            )
+            self.assertEqual(metadata["renderer"], "solidcraft-snapshot")
+            self.assertEqual(metadata["source"], "native/model.sc")
+            self.assertEqual(metadata["camera"]["target"], [0.0, 0.0, 5.0])
 
     def test_adapter_delegates_generic_visual_mechanics_to_library(self):
         text = SCRIPT.read_text(encoding="utf-8")

@@ -160,6 +160,7 @@ def run_inside_runtime(
         flush=True,
     )
 
+    measurements = output_dir.resolve() / "baseline" / "measurements.json"
     visual_report = None
     visual_policy = path.parent / "visual.json"
     if visual_policy.is_file():
@@ -168,7 +169,7 @@ def run_inside_runtime(
         visual_started = time.perf_counter()
         visual_report = run_visual_verification(
             model,
-            output_dir.resolve() / "baseline" / "measurements.json",
+            measurements,
             visual_policy,
             output_dir.resolve(),
         )
@@ -177,6 +178,20 @@ def run_inside_runtime(
             f"visual_verification_s={time.perf_counter() - visual_started:.3f}",
             flush=True,
         )
+
+    from model_visual import write_presentation_preview
+
+    preview_started = time.perf_counter()
+    write_presentation_preview(
+        model,
+        measurements,
+        output_dir.resolve(),
+    )
+    print(
+        "FORGE TIMING "
+        f"presentation_preview_s={time.perf_counter() - preview_started:.3f}",
+        flush=True,
+    )
 
     print(
         "FORGE TIMING "
