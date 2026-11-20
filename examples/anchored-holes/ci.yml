@@ -3,7 +3,7 @@ id: anchored-holes
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/anchored-holes/scpf/**
   - examples/anchored-holes/model.yml
