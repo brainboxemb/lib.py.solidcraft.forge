@@ -3,68 +3,58 @@
 This file is the current source of truth for unfinished work in
 `lib.py.solidcraft.forge`.
 
-Permanent requirements/design belong in the normal documentation. Issues keep
-detail and history; this plan states what is current and what follows.
+Permanent requirements/design/API/release contracts belong in the primary
+documents in `docs/`. Issues keep detail and history; this plan states what is
+current and what follows.
 
 ## Current goal
 
-Complete #470: adopt the exact released `tool.cad.ci 0.11.0` stack and use
-released item-level `process` participation to run a controlled five-model
-verification proof.
+Complete #473: reorganize Forge documentation so the primary documents are
+obvious and current.
 
-The prerequisite chain is complete and externally accepted:
+Primary documents:
 
-- `lib.py.cad.ci` v0.6.0 at
-  `dac8c5b5e1147a401730fda31f9bf9de2278c4ee`;
-- `tool.cad.ci` v0.11.0 at
-  `96d4c9d6076b7452933c048ace65cf2b0a159d64`;
-- `tool.cad.ci.test` main is green against that exact released stack.
+- `docs/api.md`
+- `docs/design.md`
+- `docs/plan.md`
+- `docs/requirements.md`
+- `docs/release.md`
 
-Forge must consume this behavior, not reimplement it.
+Secondary documentation:
 
-## Five-model proof set
+- `docs/manual/` — current task-oriented usage/developer guidance;
+- `docs/background/` — historical design records, audits, change records,
+  research, migration notes and vendor/reference background;
+- `docs/agent/` — generated/machine-oriented information.
 
-Exactly these model verification items remain processed:
-
-- simple-box;
-- anchor-topology-mutation;
-- attach-angle;
-- four-corner-l;
-- xz-anchor.
-
-Every other model verification item is explicitly non-processed for this phase.
-
-The Forge `scpf` item remains processed. Shared/reference work remains
-processed where required by the existing graph.
+The existing `docs/05-cad-api-design.md` is not current enough to rename
+unchanged. It must be reconciled with the current exported API and implemented
+change records before becoming `docs/api.md`.
 
 ## Execution order
 
-1. Pin Forge's reusable workflow to exact `tool.cad.ci` commit
-   `96d4c9d6076b7452933c048ace65cf2b0a159d64`.
-2. Add only declarative item participation state:
-   - the five proof models stay `process: true`;
-   - every other model verification item becomes `process: false`;
-   - do not add Forge-local selection code.
-3. Prove the resulting Forge CAD-CI graph is green with the `scpf` tool/library
-   checks still active.
-4. After #470 is green, continue the five-model vertical chain:
-   - #432 declarative verification ownership;
-   - #430 visual verification;
-   - #378 remaining verification stages;
-   - #366 durable output/publication.
-5. Only after the complete five-model chain is stable, enable remaining model
-   verification items one at a time.
-6. Run the final ownership/publication audit after the full catalog is enabled.
+1. Update the API contract to current Forge behavior, including signed Sketch
+   extrusion, native Slot constructors, circular feature patterns and the
+   explicit native Hole family.
+2. Rename the release-process document to `docs/release.md` and make its
+   current-state wording match the active CI/publication architecture.
+3. Move current task-oriented documents to `docs/manual/`.
+4. Move historical/narrow design, change, migration and vendor material to
+   `docs/background/` while preserving history.
+5. Update README, AGENTS and all internal Markdown references.
+6. Verify no active references point at the old numbered/root paths.
+7. Make no Forge API/compiler/verification/CI behavior changes in this issue.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #470 Adopt tool.cad.ci 0.11.0 and run five-model process proof | now | Current implementation step; released prerequisite is satisfied. |
-| #432 Use released declarative CAD verification in model verification | next | Umbrella verification-ownership work continues on the five processed models after #470. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Continue after the five-model process graph is established. |
+| #473 Reorganize Forge documentation around primary docs, manual and background | now | Current documentation-maintenance task. |
+| #472 Make model verification depend only on the Forge package build | next | Resume after documentation maintenance; no new CAD-CI feature appears necessary. |
+| #432 Use released declarative CAD verification in model verification | next | Continue the five-model verification migration after #472. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Resume after the dependency/runtime structure is corrected. |
 | #391 Extract reusable CAD verification library from Forge | blocked | Close only after remaining shared checker ownership has left Forge through #432. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | next | Umbrella migration; continue through the five-model vertical chain after #470. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | next | Umbrella migration after #472/#432. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Publication follows the remaining five-model verification stages. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
 | #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Independent CLI quality work. |
@@ -85,4 +75,4 @@ processed where required by the existing graph.
 
 Immediate chain:
 
-`#470 -> five-model #432/#430/#378 -> #366 -> enable remaining models one by one`.
+`#473 -> #472 -> five-model #432/#430/#378 -> #366`.
