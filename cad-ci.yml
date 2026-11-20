@@ -2,8 +2,8 @@
 schema: 1
 
 variables:
-  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.3.1"
-  REFERENCE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-reference:v0.3.1"
+  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.3.2"
+  REFERENCE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-reference:v0.3.2"
   SOLIDCRAFT_VERSION: "0.42.0"
 
 templates:
@@ -87,6 +87,7 @@ templates:
         - model.py
         - ../verification/reference_geometry.json
       repo:
+        - verification/build123d_export.py
         - scripts/forge_example.py
         - scripts/reference_verification_batch.py
     strategy:
