@@ -28,6 +28,14 @@ One stepped cylindrical body spans Z=0..26 mm. Disc and Hub remain two solved na
 
 No saved-design mutation; this fixture isolates support-face lookup on a non-rectangular feature body.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+The outer bounds alone do not prove the two circular radii. Volume, radial surface probes and native Sketch history are required.
+
 ## Reference notes
 
 - **SolidCraft** — Native geometry proves the face-attached Hub Sketch builds on the circular Disc and stays solved.
