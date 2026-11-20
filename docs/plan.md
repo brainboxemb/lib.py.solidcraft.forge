@@ -26,8 +26,13 @@ Secondary documentation:
 
 ## Current status
 
-The package-dependency split from #472 and the reusable chat handoff from #476
-are merged.
+Forge now uses the externally accepted CAD-CI stack:
+
+- `tool.cad.ci` v0.12.1 at exact commit
+  `0e7d8a876d95484a4c8870356f3b0ca67e5e493b`;
+- released `lib.py.cad.ci` 0.7.1 underneath it.
+
+The adoption run is green.
 
 The staged proof currently keeps exactly five model verification items active:
 
@@ -37,62 +42,65 @@ The staged proof currently keeps exactly five model verification items active:
 - `four-corner-l`
 - `xz-anchor`
 
-All five already use the declarative CAD-verification path.
+All five use the declarative CAD-verification path.
 
-The current Forge workflow still pins `tool.cad.ci` v0.11.0, which carries
-`lib.py.cad.ci` 0.6.0. The externally accepted current stack is
-`tool.cad.ci` v0.12.1 with `lib.py.cad.ci` 0.7.1.
+A normal CAD-CI run for the v0.12.1 adoption selected eight targets:
 
-The current five-model run also executes the repository-wide reference target
-with `all` models, so its roughly 156 second runtime is not a five-model timing
-measurement. Historical evidence shows the old full 32-model reference
-verification alone cost roughly two minutes.
+- `forge-package`
+- `forge-tests`
+- `forge-release`
+- the five active model verification targets
 
-Performance optimization is deliberately parked until the selected graph and
-its evidence are trustworthy. The immediate problem is CI correctness and
-explainability, not proving that Docker or SolidCraft is slow.
+and did not select `reference-verification`.
+
+Therefore the earlier roughly 156 second run must not be treated as a generic
+five-model baseline: that particular change also selected repository-wide
+reference verification.
+
+Performance optimization remains deliberately parked. The current task is to
+make selection, verification coverage and evidence trustworthy and explainable.
 
 ## Current goal
 
-First complete #481 and remove stale development branches so repository state is readable again.
+Complete #478 before further verification feature work.
 
-Then complete #479: move Forge to exact released `tool.cad.ci` v0.12.1.
+Prove:
 
-Then complete #478 before any further model-verification feature work:
+1. which CAD-CI items are selected for representative change classes and why;
+2. which model set every selected item actually processes;
+3. that the five-model staged proof remains exactly five model verifications;
+4. when repository-wide reference verification is intentionally selected;
+5. that structured CAD-CI evidence is present and sufficient to explain each
+   run;
+6. which historical Q1-Q6 checks are already represented by the new path and
+   which remain intentionally missing pending #430/#378.
 
-- prove exactly which CAD-CI items are selected and why;
-- prove which models each selected item processes;
-- remove unintended all-catalog work from the five-model proof where necessary;
-- produce trustworthy per-item/per-model timing evidence;
-- compare the new verification coverage with the historical Q1-Q6 coverage;
-- record Docker/container/SolidCraft process counts as evidence, without
-  optimizing them unless measurement shows a real problem.
+Do not optimize Docker/SolidCraft process lifecycle unless reliable evidence
+later demonstrates a separate problem.
 
 ## Execution order
 
-1. #481: remove stale inactive development branches; keep only active work plus generated branches.
-2. #479: pin exact accepted CAD-CI v0.12.1 and prove Forge CI on that stack.
-3. #478: establish a correct, explainable selected graph and trustworthy
-   evidence/timing baseline.
-4. Correct staged selection if the five-model proof performs unrelated
-   all-catalog work.
-5. Park runtime/process optimization unless the reliable baseline proves it is
-   needed.
-6. Resume #430 only after #478 is proven.
-7. Continue the remaining five-model #378 verification stages.
-8. Complete #366 durable build/Pages publication.
-9. Only then resume #432 for broader catalog migration.
+1. #478: prove selection, scope and structured evidence on the accepted CAD-CI
+   stack.
+2. Correct Forge selection/configuration only where the proof shows unintended
+   work or missing evidence.
+3. Record the exact remaining functional gap relative to historical Q1-Q6.
+4. Resume #430 only after the CI baseline is trustworthy.
+5. Continue the remaining five-model #378 verification stages.
+6. Complete #366 durable build/Pages publication.
+7. Only then resume #432 for the remaining 21 procedural model verifiers and
+   broader catalog activation.
+8. Treat performance optimization as a separate measured change only if needed.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #481 Remove stale Forge development branches | now | Repository hygiene: remove inactive branches from closed/superseded work and blocked issues; only create a branch when work actually starts. |
-| #479 Update Forge to the externally accepted tool.cad.ci 0.12.1 stack | next | Prerequisite for trustworthy timing evidence and #478. |
-| #478 Make the SolidCraft CI execution lifecycle measurable and reliable | blocked | Starts immediately after #479; first prove selection, coverage and evidence. Performance optimization is parked unless reliable measurements justify it. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Feature work paused until #478 establishes a controlled execution lifecycle. |
+| #478 Make the SolidCraft CI execution lifecycle measurable and reliable | now | Active CI-stabilization task: prove selection, scope, evidence and functional correspondence before more feature work. |
+| #481 Remove stale Forge development branches | blocked | Plan/branch rule is merged; physical deletion of stale refs remains, but current connected tooling cannot delete refs. This does not block CI stabilization. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | blocked | Feature work waits for #478. |
 | #378 Use explicit Forge verification stages instead of integration/native gates | blocked | Parent migration resumes after #478, still limited to the five proof models. |
-| #432 Use released declarative CAD verification in model verification | blocked | Five proof models are already declarative; broader catalog migration waits for the full five-model proof/publication path. |
+| #432 Use released declarative CAD verification in model verification | blocked | Eleven models are declarative; 21 still have legacy `verify_model.py`. Broader migration waits for a stable five-model proof. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Publication follows stable verification execution. |
 | #391 Extract reusable CAD verification library from Forge | blocked | Close only after remaining procedural catalog verification has migrated through later #432 work. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
@@ -104,7 +112,7 @@ Then complete #478 before any further model-verification feature work:
 | #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture. |
 | #335 Use build123d Sheet Metal for the sheet-fold qualification reference | later | Reference-quality improvement. |
 | #325 Research: determine root cause of HUB75 AnchorFrame regression | later | Independent model/API investigation. |
-| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded in form by the released runtime; any remaining performance problem is handled from measured #478 evidence. |
+| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Do not revive without reliable #478 evidence showing a current performance problem. |
 | #175 Change 0005: qualify HUB75-like AnchorFrame orientation against known-good Placement poses | later | Domain verification backlog. |
 | #82 Reconsider automatic hiding of the SolidCraft Joints folder | later | Independent product behavior. |
 | #81 Support inline AnchorFrame references for rotated occurrences | later | Forge API backlog. |
@@ -121,4 +129,4 @@ Generated `build` and `gh-pages` branches are exceptions.
 
 Immediate chain:
 
-`#481 -> #479 -> #478 -> #430/#378 five-model proof -> #366 -> resume #432`.
+`#478 -> #430/#378 five-model proof -> #366 -> resume #432`.
