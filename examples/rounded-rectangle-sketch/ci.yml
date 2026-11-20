@@ -3,7 +3,7 @@ id: rounded-rectangle-sketch
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/rounded-rectangle-sketch/scpf/**
   - examples/rounded-rectangle-sketch/model.yml
