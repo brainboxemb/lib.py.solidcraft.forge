@@ -30,6 +30,14 @@ Left and right markers attach to their respective front-top corners with mirrore
 
 Change board width/height from 40x20 to 80x40 mm; both markers follow their own corners.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+The board and marker positions describe the visible XZ placement. After resizing the saved model, the markers must still use the same selected anchors.
+
 ## Reference notes
 
 - **OpenSCAD** — The profile/extrusion resembles polygon()+linear_extrude(), but Forge retains native SolidCraft parameters and attachment topology.
