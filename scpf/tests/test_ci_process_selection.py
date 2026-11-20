@@ -1,4 +1,4 @@
-"""Guard the staged Forge model-processing declaration."""
+"""Guard full Qualification model processing."""
 
 from pathlib import Path
 import re
@@ -10,15 +10,21 @@ EXAMPLES = ROOT / "examples"
 
 EXPECTED_PROCESSED = {
     "anchor-topology-mutation",
+    "assembly-owned-anchor",
     "anchored-holes",
     "assembly-decorator",
     "attach-angle",
+    "corner-anchor",
+    "eight-corner-brackets",
     "components",
     "four-corner-l",
     "group-hierarchy",
     "hole-family",
     "parameter-scope",
     "parent-derived-child-size",
+    "parametric-anchor",
+    "parametric-attach",
+    "parametric-offset",
     "repeated-parent-attachments",
     "sheet-fold",
     "simple-box",
@@ -39,9 +45,9 @@ EXPECTED_PROCESSED = {
 
 
 class CiProcessSelectionContractTests(unittest.TestCase):
-    """Keep the explicitly migrated Qualification set visible to CAD-CI."""
+    """Keep the complete Qualification catalog visible to CAD-CI."""
 
-    def test_only_staged_proof_models_are_processed(self):
+    def test_all_qualification_models_are_processed(self):
         """Declare process state for all 32 historical Qualification items."""
 
         configured = {}
@@ -59,9 +65,13 @@ class CiProcessSelectionContractTests(unittest.TestCase):
             configured[ci_path.parent.name] = match.group(1) == "true"
 
         self.assertEqual(len(configured), 32)
+        self.assertEqual(len(EXPECTED_PROCESSED), 32)
         self.assertEqual(
             {slug for slug, enabled in configured.items() if enabled},
             EXPECTED_PROCESSED,
+        )
+        self.assertFalse(
+            {slug for slug, enabled in configured.items() if not enabled},
         )
 
 
