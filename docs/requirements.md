@@ -548,3 +548,29 @@ F11 code operates on a resolved evidence tree and is independent from producer
 execution. Wiring a durable resolved tree into the collector belongs to
 #366/#497, so F11 must not create a cold CAD-CI fan-in that rebuilds every
 producer.
+
+
+## Verification runtime batching
+
+Logical verification items remain independently selectable and retain their own
+durable output/evidence paths. Expensive CAD runtimes are not required to match
+those logical item boundaries.
+
+Forge verification therefore batches expensive runtime work:
+
+- one SolidCraft runtime processes the current declarative model list;
+- one reference runtime processes the current independent-reference list;
+- build123d uses one isolated interpreter/import for its complete case list;
+- CadQuery, PythonSCAD and pyBOSL2 process their complete lists in the shared
+  reference process;
+- CADCraft processes the complete diagram source list as one verification batch.
+
+Per-case verification state remains isolated. Each model/reference has its own
+input, output directory and structured result. A failure in one case must not
+prevent later cases in the same batch from running. After the complete list is
+processed, the batch returns failure when one or more cases failed.
+
+CAD-CI continues to own logical selection, dependencies, SCons state, caching
+and durable publication. Forge owns only the batch runtime invocation and the
+mapping from batch results back to existing per-case outputs. No generic worker
+pool or batch scheduler is added to lib.py.cad.ci.
