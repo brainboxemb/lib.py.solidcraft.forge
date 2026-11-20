@@ -629,3 +629,15 @@ complete hand-authored pages, guide chapters or model-specific SVG galleries.
 The current site must not depend on retired `qualification.*` source modules.
 The 32 current `examples/` directories and durable `build/main` are the
 catalog/evidence sources.
+
+
+### Presentation metadata selection boundary
+
+`model.yml` is presentation/documentation metadata. Changing only
+`examples/<slug>/model.yml` must not select or invalidate model compilation,
+SolidCraft verification or independent CAD reference verification.
+
+The lightweight site-source item owns `model.yml` validation and generated
+documentation checks. CAD verification inputs are the model source,
+verification contract, model-specific command/test data and shared runtime
+helpers only.
