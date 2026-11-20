@@ -109,8 +109,9 @@ stages
 
 `model.yml` is the generic model/page metadata source. The example
 `README.md` owns human engineering explanation such as the goal, Forge API
-and model, SolidCraft lowering/result, saved-design explanation and reference
-notes. Do not infer or summarize those statements during source migrations.
+and model, SolidCraft lowering/result, saved-design explanation, geometry
+sufficiency rationale and reference notes. Do not infer or summarize those
+statements during source migrations.
 
 Exact verification values remain in `verification/verify.py`; actual current
 results come from durable `build/main`. Do not add a central Python example
