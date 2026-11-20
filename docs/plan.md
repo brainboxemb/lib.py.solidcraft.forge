@@ -37,8 +37,11 @@ hand-authored webpage content from Python.
 
 ## Required proof for #548
 
-- all 32 `model.yml` files expose one validated presentation schema including
-  concepts and a human verification explanation;
+- all 32 `model.yml` files keep the agreed generic presentation schema:
+  `section`, `title`, `tagline`, `description`, `parameters`, `stages`;
+- legacy case documentation is migrated verbatim from the last canonical
+  `qualification/cases.py` source into each example directory, with provenance;
+- no verification prose is newly inferred or summarized during that migration;
 - exact numeric verification contracts remain only in `verification/verify.py`;
 - current PASS/FAIL and measured evidence remain sourced only from durable
   `build/main`;
@@ -55,8 +58,9 @@ hand-authored webpage content from Python.
 
 ## Execution order
 
-1. Define and validate the example `model.yml` presentation schema.
-2. Add the missing concepts/verification explanation to all 32 examples.
+1. Preserve and validate the agreed example `model.yml` presentation schema.
+2. Restore the last canonical case documentation and migrate it verbatim into
+   the owning example directories.
 3. Move base/example page layout and static scripts out of Python.
 4. Move guide page prose out of `site/guides.py`.
 5. Replace the central `EXAMPLES` / `SCHEMATICS` catalogs with discovered
