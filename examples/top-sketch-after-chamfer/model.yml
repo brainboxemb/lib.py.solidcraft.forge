@@ -8,3 +8,17 @@ stages:
   - Create the bottom-anchored Box plate
   - Chamfer the four vertical edges
   - Resolve the resulting TOP face and cut the attached hole sketch through all
+concepts:
+  - Shape.chamfer
+  - face-attached Sketch
+  - Anchor.TOP
+  - through-all cut
+  - topology after feature change
+verification:
+  summary: >
+    Verifies that a TOP-face sketch can still resolve the intended planar face
+    after a chamfer changes the body's edge topology.
+  proves:
+    - The chamfered plate and through hole remain one body with the expected envelope and volume.
+    - The Top hole sketch remains solved and contributes one cylindrical cut surface.
+    - Native history preserves Box, chamfer, attached sketch and through cut in order.
