@@ -8,3 +8,17 @@ stages:
   - Create the rectangular base sketch and extrude the plate
   - Attach one Hole sketch to the TOP face and cut through the plate
   - Repeat the source cut with one native rectangular feature pattern
+concepts:
+  - Sketch
+  - face-relative placement
+  - Anchor.TOP
+  - through-all cut
+  - rectangular feature pattern
+verification:
+  summary: >
+    Verifies one native plate body with a face-attached source cut that is
+    repeated by editable rectangular feature history.
+  proves:
+    - The final plate keeps the expected outer envelope and material volume.
+    - Exactly two cylindrical hole surfaces are present.
+    - Native history contains the base sketch, source cut and rectangular pattern in order.
