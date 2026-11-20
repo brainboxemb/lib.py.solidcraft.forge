@@ -1,27 +1,4 @@
 # SolidCraft model verification for circular-feature-pattern.
 id: circular-feature-pattern
-process: false
-kind: model
-needs:
-  - forge-package
-watch:
-  - examples/circular-feature-pattern/scpf/**
-  - examples/circular-feature-pattern/model.yml
-  - examples/circular-feature-pattern/verification/**
-  - scripts/forge_example.py
-  - scripts/model_verify.py
-strategy:
-  reuse: true
-steps:
-  - id: model_verify
-    inputs:
-      - examples/circular-feature-pattern/scpf/**
-      - examples/circular-feature-pattern/model.yml
-      - examples/circular-feature-pattern/verification/**
-      - scripts/forge_example.py
-      - scripts/model_verify.py
-      - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verify.py]
-    outputs:
-      - solidcraft.json
-      - model_verify
+template: forge-model-declarative
+process: true

@@ -1,27 +1,4 @@
 # SolidCraft model verification for selective-profile-extrude.
 id: selective-profile-extrude
-process: false
-kind: model
-needs:
-  - forge-package
-watch:
-  - examples/selective-profile-extrude/scpf/**
-  - examples/selective-profile-extrude/model.yml
-  - examples/selective-profile-extrude/verification/**
-  - scripts/forge_example.py
-  - scripts/model_verify.py
-strategy:
-  reuse: true
-steps:
-  - id: model_verify
-    inputs:
-      - examples/selective-profile-extrude/scpf/**
-      - examples/selective-profile-extrude/model.yml
-      - examples/selective-profile-extrude/verification/**
-      - scripts/forge_example.py
-      - scripts/model_verify.py
-      - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verify.py]
-    outputs:
-      - solidcraft.json
-      - model_verify
+template: forge-model-declarative
+process: true

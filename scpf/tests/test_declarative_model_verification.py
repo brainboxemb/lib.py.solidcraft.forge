@@ -29,6 +29,26 @@ BATCH_ONE_SAVED_DESIGN_MODELS = {
     "repeated-parent-attachments",
 }
 
+BATCH_TWO_MODELS = (
+    "bracket",
+    "circle-negative-extrude",
+    "circular-feature-pattern",
+    "eight-flightcase-corners",
+    "primitive-csg",
+    "rectangular-pattern",
+    "round-top-sketch",
+    "rounded-rectangle-sketch",
+    "selective-profile-extrude",
+    "slot-family",
+)
+
+BATCH_TWO_SAVED_DESIGN_MODELS = {
+    "circular-feature-pattern",
+    "eight-flightcase-corners",
+    "rectangular-pattern",
+    "selective-profile-extrude",
+}
+
 MIGRATED_MODELS = (
     "simple-box",
     "anchor-topology-mutation",
@@ -42,9 +62,10 @@ MIGRATED_MODELS = (
     "parametric-offset",
     "xz-anchor",
     *BATCH_ONE_MODELS,
+    *BATCH_TWO_MODELS,
 )
 
-LEGACY_MODEL = "bracket"
+LEGACY_MODEL = "sketch-pattern-mirror"
 
 FORBIDDEN_VERIFY_IMPLEMENTATION = (
     "argparse",
@@ -102,6 +123,20 @@ class DeclarativeModelVerificationBoundaryTests(unittest.TestCase):
                 self.assertEqual(
                     has_saved_design,
                     slug in BATCH_ONE_SAVED_DESIGN_MODELS,
+                )
+
+    def test_batch_two_saved_design_contract_is_model_specific(self):
+        """Only the four historical batch-two mutation cases keep mutations."""
+
+        for slug in BATCH_TWO_MODELS:
+            with self.subTest(slug=slug):
+                text = (
+                    ROOT / "examples" / slug / "verification" / "verify.py"
+                ).read_text(encoding="utf-8")
+                has_saved_design = "SolidCraftSavedDesign(" in text
+                self.assertEqual(
+                    has_saved_design,
+                    slug in BATCH_TWO_SAVED_DESIGN_MODELS,
                 )
 
     def test_simple_box_keeps_its_model_specific_mutation(self):
