@@ -107,3 +107,20 @@ comparison and report construction are responsibilities of released
 
 Model migrations are proven in reviewable batches after the representative
 simple-box proof.
+
+
+## Staged model participation
+
+Forge may declare released CAD-CI item participation with the generic
+`process` field.
+
+- Forge does not parse, plan or execute `process` semantics itself.
+- `tool.cad.ci` / `lib.py.cad.ci` remain the sole owners of those semantics.
+- `scpf` tool/library build and tests must remain processed during staged model
+  verification.
+- A staged proof may explicitly mark selected model verification items
+  `process: true` and other model verification items `process: false`.
+- Shared/reference items remain processed where the current dependency graph
+  requires them.
+- Changing staged participation must not alter model verification ownership or
+  verification-library boundaries.
