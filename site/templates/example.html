@@ -13,18 +13,28 @@
   </figure>
   <div class="twocol">
     <section class="panel">
-      <h2>What this example demonstrates</h2>
-      <div class="tags">${concept_tags}</div>
-      <h3>Model stages</h3>
+      <h2>Model stages</h2>
       <ol>${stages}</ol>
     </section>
     <section class="panel">
-      <h2>What verification proves</h2>
-      <p>${verification_summary}</p>
-      <ul>${verification_proves}</ul>
-      ${saved_design}
+      <h2>Goal</h2>
+      <p>${documentation_goal}</p>
     </section>
   </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>${forge_api}</code></p>
+    <h2>Forge model</h2>
+    <p>${forge_model}</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>${lowering}</p>
+    <h2>SolidCraft result</h2>
+    <p>${solidcraft_result}</p>
+    <h2>Saved-design test</h2>
+    <p>${saved_design_test}</p>
+    <h2>Reference notes</h2>
+    <ul>${reference_notes}</ul>
+  </section>
   <div class="twocol">
     <section class="panel">
       <h2>Python source</h2>
@@ -38,8 +48,9 @@
     </section>
   </div>
   <section class="notice">
-    Exact expected geometry and tolerances live in
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
     <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
-    are supplied by the accepted durable build, not by this page metadata.
+    are supplied by the accepted durable build.
   </section>
 </main>
