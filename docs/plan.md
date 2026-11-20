@@ -27,30 +27,30 @@ Released/accepted CAD-CI stack for the next measurement:
 
 Only `simple-box` is active as a model-verification item.
 
-The clean one-file measurement on tool.cad.ci 0.14.0 was PR #520 / run
-44766489422:
+Repeated clean one-file measurements show that the remaining PR latency is
+dominated by external SolidCraft runtime acquisition rather than CAD-CI or model
+work:
 
-- end-to-end workflow: 41 s;
-- one real PR job: 38 s;
-- exact graph: forge-package, simple-box contract_test, simple-box model_verify;
-- image pull: 7.515 s;
-- container start to entry shell: 8.079 s;
-- actual in-runtime work: 0.564 s;
-- publication: about 2.5 s.
+| tool.cad.ci | run | end-to-end | image pull | container start | in-runtime |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 0.14.0 | 44766489422 | 41 s | 7.515 s | 8.079 s | 0.564 s |
+| 0.14.1 | 44768874847 | 46 s | 13.307 s | 7.480 s | 0.747 s |
+| 0.14.1 | 44769675996 | 80 s | 54.123 s | 3.365 s | 0.855 s |
 
-Measured fixed bootstrap before CAD-CI included about 3.7 s full caller checkout,
-3.1 s external dependency install and 1.8 s docker/login-action.
+Every run selected exactly forge-package + simple-box contract/model verification.
+No Forge unit/release/reference work participated.
 
-tool.cad.ci 0.14.1 specifically removes/reduces those fixed bootstrap costs by
-using shallow head + exact base fetch, direct Docker CLI GHCR login and a
-lighter external dependency install.
+The non-image-download path is roughly in the 26-33 s engineering range. The
+<=30 s end-to-end target is therefore not reliable yet because cold GHCR image
+acquisition is highly variable. #484 remains open as a runtime/distribution
+performance follow-up, but it no longer blocks verification-chain migration.
 
 ## Current goal
 
-Continue #484 by adopting exact tool.cad.ci 0.14.1 for PRs and repeating the
-same one-file simple-box measurement against the <=30 second target.
+Resume the functional verification chain with #430 / #378 on simple-box while
+preserving the current measured performance evidence.
 
-No model verification semantics may change for this measurement.
+No verification semantics may be weakened for performance.
 
 ## Required proof
 
@@ -64,21 +64,19 @@ No model verification semantics may change for this measurement.
 
 ## Execution order
 
-1. Adopt exact tool.cad.ci 0.14.1 PR pin.
-2. Merge after Forge CI is green.
-3. Create the same one-line model.yml measurement PR.
-4. Record end-to-end result against <=30 s.
-5. If still above target, continue #484 with the measured SolidCraft runtime
-   critical path.
-6. Only after the performance path is stable resume #430/#378 and main/Pages.
+1. #430 — complete simple-box visual render/regression/expected-shape proof.
+2. #378 — continue explicit verification stages from the proven simple-box path.
+3. #366 / #497 — continue durable output and Pages after verification is stable.
+4. #484 — continue runtime/image-distribution optimization independently from
+   the functional chain, using the retained timing evidence.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | now | 41 s single-runner baseline is proven; adopt accepted 0.14.1 bootstrap optimization and remeasure before changing runtime. |
-| #430 Prove visual render, regression and expected-shape evidence with simple-box | next | Continue after PR timing reaches/stabilizes near target. |
-| #378 Use explicit Forge verification stages instead of integration/native gates | next | Continue through simple-box after performance stabilization. |
+| #430 Prove visual render, regression and expected-shape evidence with simple-box | now | Next functional proof; keep generic visual mechanics in released lib.py.cad.verification. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | next | Continue from the proven simple-box visual path. |
+| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later, non-blocking | CAD-CI/model work is small; remaining latency is dominated by highly variable GHCR image acquisition. Preserve measurements and optimize runtime distribution separately. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Main/Pages continuation waits for PR performance path. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Depends on stable durable generated output. |
 | #432 Use released declarative CAD verification in model verification | blocked | Broader model migration waits for simple-box stability. |
@@ -103,4 +101,4 @@ No model verification semantics may change for this measurement.
 
 Immediate chain:
 
-`0.14.1 PR pin -> simple-box timing -> remaining #484 bottleneck`.
+`#430 simple-box visual proof -> #378 staged verification -> #366/#497 durable output; #484 continues independently`.
