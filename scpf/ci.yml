@@ -2,7 +2,6 @@
 id: forge-package
 kind: tool
 watch:
-  - .github/workflows/scpf.yml
   - scpf/scpf/**
   - scpf/pyproject.toml
   - scripts/tool_ci.py
