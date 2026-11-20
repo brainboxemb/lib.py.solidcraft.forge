@@ -3,7 +3,7 @@ id: parametric-anchor
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/parametric-anchor/scpf/**
   - examples/parametric-anchor/model.yml
