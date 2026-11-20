@@ -10,7 +10,7 @@
       "outputs": [
         "tool_verify"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "3aed83cc28e057821e4ec1fa84dfb281e43dc419"
     },
     "ci/forge-tests": {
       "engine": "scons",
@@ -160,7 +160,7 @@
     "examples/simple-box": {
       "engine": "scons",
       "engine_schema": 1,
-      "final_bundle_sha256": "3f7c56ba91dd8bd43c9eacaed72df5062cde9d96190740dcaba3552bd80b0cad",
+      "final_bundle_sha256": "4a3539f74aac1d5e5e5b6ee3736903000833db9ac167d1c96e02824c67008944",
       "final_step": "model_verify",
       "final_target_spec_digest": "549a2152fbab18ff672009bdc48122fa55dc466409bc294561db63c2713a56a0",
       "item_id": "simple-box",
@@ -168,7 +168,7 @@
         "model_verify",
         "solidcraft.json"
       ],
-      "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+      "source_commit": "3aed83cc28e057821e4ec1fa84dfb281e43dc419"
     },
     "examples/simple-box/build123d": {
       "engine": "scons",
@@ -258,5 +258,5 @@
   },
   "schema": 1,
   "scope": "main",
-  "source_commit": "7caf525a8ed555b5dd98351d4642915461ea37cc"
+  "source_commit": "3aed83cc28e057821e4ec1fa84dfb281e43dc419"
 }
