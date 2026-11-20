@@ -28,9 +28,9 @@ Secondary documentation:
   research, migration notes and vendor/reference background;
 - `docs/agent/` — generated/machine-oriented information.
 
-The existing `docs/05-cad-api-design.md` is not current enough to rename
-unchanged. It must be reconciled with the current exported API and implemented
-change records before becoming `docs/api.md`.
+The former numbered API-design document was not current enough to preserve
+unchanged. Its current cross-object contract is being reconciled with the
+exported API and implemented change records in `docs/api.md`.
 
 ## Execution order
 
