@@ -1,5 +1,6 @@
 # SolidCraft model verification for corner-anchor.
 id: corner-anchor
+process: false
 kind: model
 needs:
   - forge-tool

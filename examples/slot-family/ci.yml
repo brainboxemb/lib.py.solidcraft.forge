@@ -1,5 +1,6 @@
 # SolidCraft model verification for slot-family.
 id: slot-family
+process: false
 kind: model
 needs:
   - forge-tool

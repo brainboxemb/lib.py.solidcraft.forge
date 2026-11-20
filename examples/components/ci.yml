@@ -1,5 +1,6 @@
 # SolidCraft model verification for components.
 id: components
+process: false
 kind: model
 needs:
   - forge-tool

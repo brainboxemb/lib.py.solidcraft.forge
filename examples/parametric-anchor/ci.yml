@@ -1,5 +1,6 @@
 # SolidCraft model verification for parametric-anchor.
 id: parametric-anchor
+process: false
 kind: model
 needs:
   - forge-tool

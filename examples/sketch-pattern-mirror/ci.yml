@@ -1,5 +1,6 @@
 # SolidCraft model verification for sketch-pattern-mirror.
 id: sketch-pattern-mirror
+process: false
 kind: model
 needs:
   - forge-tool

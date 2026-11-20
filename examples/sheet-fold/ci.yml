@@ -1,5 +1,6 @@
 # SolidCraft model verification for sheet-fold.
 id: sheet-fold
+process: false
 kind: model
 needs:
   - forge-tool

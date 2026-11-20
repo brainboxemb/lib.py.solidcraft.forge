@@ -1,5 +1,6 @@
 # SolidCraft model verification for the first migrated historical model.
 id: simple-box
+process: true
 kind: model
 needs:
   - forge-tool

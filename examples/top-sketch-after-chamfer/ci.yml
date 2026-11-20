@@ -1,5 +1,6 @@
 # SolidCraft model verification for top-sketch-after-chamfer.
 id: top-sketch-after-chamfer
+process: false
 kind: model
 needs:
   - forge-tool
