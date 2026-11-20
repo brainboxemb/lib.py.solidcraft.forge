@@ -10,7 +10,7 @@ import sys
 
 from forge_example import (
     compile_commands,
-    one_built_wheel,
+    dependency_wheel,
     run_contract_tests,
     write_commands,
 )
@@ -93,7 +93,7 @@ def main() -> int:
     """Run the complete Forge release-verification example set."""
 
     output = output_root()
-    package = one_built_wheel(output / "dist")
+    package = dependency_wheel("forge-package")
     destination = output / "tool_verify"
 
     for slug in PASSING_EXAMPLES:
