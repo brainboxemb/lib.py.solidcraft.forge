@@ -23,58 +23,58 @@ The remaining reference-verification configuration is still too coarse:
 
 ## Current goal
 
-Complete #498 as the first real-consumer proof of isolated nested reference
-items.
+Complete #505 by migrating `simple-box` from the temporary aggregate to four
+independent nested reference items.
 
-The streamed logging stack is now accepted and proven on Forge. PR #500 can
-resume without a logging blocker.
+The attach-angle pilot is complete. The generic stack and nested-item behavior
+are already proven; this change only applies that accepted structure to the next
+active model.
 
-Only `attach-angle` is migrated in this issue:
+Target structure:
 
 ```text
-examples/attach-angle/
-  ci.yml
+examples/simple-box/
   build123d/ci.yml
   cadquery/ci.yml
   pythonscad/ci.yml
   pybosl2/ci.yml
 ```
 
-The four reference implementations become independent CAD-CI items.
+The temporary aggregate must stop watching and executing `simple-box` in the
+same change, leaving only:
 
-The existing aggregate reference item remains temporarily only for the other
-four active model items, so the pilot creates no coverage gap and does not
-duplicate attach-angle work.
+- `anchor-topology-mutation`;
+- `four-corner-l`;
+- `xz-anchor`.
 
 ## Required proof
 
-- A build123d-only source change selects the attach-angle build123d child only.
-- The other three attach-angle reference children are not executed.
-- A shared attach-angle reference contract change selects all four children.
-- The attach-angle model item remains green.
-- Reference expectations remain model-local.
-- The temporary aggregate covers only the remaining active model set.
-- Inactive process:false model references are not pulled into the run.
-- Durable affected-item publication remains green.
+- all four simple-box reference children are represented independently;
+- build123d uses `forge-reference-build123d`;
+- cadquery, pythonscad and pybosl2 use `forge-reference`;
+- reference expectations remain model-local;
+- the temporary aggregate covers only the remaining three active models;
+- inactive `process: false` references remain excluded;
+- selected execution and durable affected-item publication remain green.
 
 ## Execution order
 
-1. #498 — resume the attach-angle isolated reference-item pilot.
-2. Migrate each remaining active model reference set in separate reviewable
-   changes, removing it from the temporary aggregate at the same time.
-3. Remove the temporary aggregate when the fifth active model is migrated.
-4. #497 / #366 — resume stable Pages publication from the generic build/main
+1. #505 — migrate simple-box reference children.
+2. Migrate `anchor-topology-mutation` references in a separate issue/PR.
+3. Migrate `four-corner-l` references in a separate issue/PR.
+4. Migrate `xz-anchor` references in a separate issue/PR and remove the
+   temporary aggregate.
+5. #497 / #366 — resume stable Pages publication from the generic build/main
    baseline.
-5. Resume #430/#378 verification-feature work.
-6. Resume #432 broader declarative model migration after generated output is
+6. Resume #430/#378 verification-feature work.
+7. Resume #432 broader declarative model migration after generated output is
    stable.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #503 Update Forge plan after CAD-CI logging adoption | effectively complete but still open | This plan update records the completed logging adoption; close after merge. |
-| #498 Pilot isolated reference items with attach-angle | now | Logging is proven; resume the child-only selection/publication proof in PR #500. |
+| #505 Migrate simple-box references to isolated CAD-CI items | now | Next active-model migration after the completed attach-angle pilot. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Resume after the reference-item pilot proves the corrected CI structure. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Durable affected build updates are in place; Pages remains. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Performance work stays separate from selection/reference structure. |
@@ -102,4 +102,4 @@ duplicate attach-angle work.
 
 Immediate chain:
 
-`#498 attach-angle pilot -> remaining active reference sets -> #497/#366 Pages`.
+`#505 simple-box -> anchor-topology-mutation -> four-corner-l -> xz-anchor -> #497/#366 Pages`.
