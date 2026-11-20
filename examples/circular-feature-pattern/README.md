@@ -30,6 +30,14 @@ SolidCraft saves one plate with six through holes and one native CircularPattern
 
 Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+The six bolt holes do not change the plate envelope. Volume, cylindrical-wall probes and native pattern-history checks are required.
+
 ## Reference notes
 
 - **SolidCraft** — Native integration through saved-design checks prove one saved CircularPatternFeature and count mutation. The four comparison libraries independently prove the baseline six-hole geometry.
