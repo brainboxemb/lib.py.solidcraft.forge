@@ -8,3 +8,17 @@ stages:
   - Create and union the Sphere and translated Box
   - Subtract the centered X-axis Cylinder bore
   - Intersect the result with the clipping Box
+concepts:
+  - Sphere
+  - Box
+  - Cylinder
+  - Boolean union
+  - Boolean cut
+  - Boolean intersect
+verification:
+  summary: >
+    Verifies direct native primitives, transforms and Boolean CSG independently
+    of sketch/feature-history workflows.
+  proves:
+    - The final Boolean result is one body with the expected envelope.
+    - The result retains both spherical and cylindrical surface types from the primitive operations.
