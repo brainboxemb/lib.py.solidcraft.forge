@@ -8,95 +8,108 @@ documents in `docs/`. Issues keep detail and history.
 
 ## Current status
 
-The staged F1-F11 verification migration is complete. PR #530 restored the
-existing schema-5 qualification semantics from distributed evidence without
-reintroducing the retired qualification runner.
+The staged F1-F11 verification proof is complete.
 
-All five staged qualification cases now use independent nested reference items:
+- the five staged qualification cases use declarative model verification;
+- each staged case has four independent nested reference items;
+- durable `build/main` uses the generic CAD-CI build-store and contains only
+  current configured items;
+- released/accepted `tool.cad.ci 0.14.2` owns durable removed-item cleanup;
+- workflow YAML is test-owned rather than a Forge-package input, so
+  workflow-only changes no longer fan out through every model consumer.
 
-- `simple-box`;
-- `anchor-topology-mutation`;
-- `attach-angle`;
-- `four-corner-l`;
-- `xz-anchor`.
-
-The transitional `verification/references` source item has been removed.
-However, the previous CAD-CI release preserved its old row/owned bytes in the
-durable `build/main` baseline.
-
-That generic durable-store gap is fixed and externally accepted in:
-
-- `lib.py.cad.ci 0.8.4` at
-  `4e033fd17e911b3feb92b1a34433b884ca788ab6`;
-- `tool.cad.ci 0.14.2` at
-  `4c1016d594368146fb9c16602f01c158e85d9afb`.
-
-The current public Pages state remains preserved exactly on
+The current public Pages state is preserved exactly on
 `backup/gh-pages-before-f11-2026-11-20` at
-`127adb3900cdc9ca6194edb1102ea7d505316295` for later presentation comparison.
+`127adb3900cdc9ca6194edb1102ea7d505316295`.
+
+A Pages compatibility audit found:
+
+- the preserved public Qualification site contains 32 case pages, all PASS;
+- current source still contains the same 32 `examples/<case>/model.yml`
+  presentation records;
+- current durable `build/main` contains current qualification evidence for
+  only the five staged cases.
+
+Cutting Pages over now from `build/main` would therefore shrink the public
+Qualification catalog from 32 current-looking cases to 5. Do not do that.
 
 ## Current goal
 
-Complete #534 by adopting exact accepted tool.cad.ci 0.14.2 and proving the
-stale `verification/references` durable item is removed from `build/main`.
+Resume #432 and rebuild current durable evidence for the remaining Qualification
+catalog in reviewable batches of approximately 10 cases.
 
-In the same change, correct two real test-selection ownership errors:
+The first batch follows the existing public Qualification order rather than a
+new arbitrary ordering:
 
-- `scpf/tests/test_qualification_summary.py` imports
-  `scripts/qualification_summary.py`, so that script belongs in the existing
-  `forge-tests` watch/input set;
-- `scpf/tests/test_ci_runtime.py` reads `.github/workflows/scpf.yml`, so the
-  workflow belongs in `forge-tests` watch/input rather than `forge-package`.
+1. `anchored-holes`;
+2. `hole-family`;
+3. `sheet-fold`;
+4. `top-sketch-after-chamfer`;
+5. `parameter-scope`;
+6. `parent-derived-child-size`;
+7. `components`;
+8. `repeated-parent-attachments`;
+9. `assembly-decorator`;
+10. `group-hierarchy`.
 
-The latter matters for incrementality: treating workflow YAML as package source
-marks `forge-package` affected and fans out to every model that consumes the
-package. A workflow-only change must test the workflow contract, not invalidate
-model qualification.
+All ten still use procedural `verification/verify_model.py` today.
 
-This migration may still execute the package/model dependency chain once because
-`scpf/ci.yml` itself changes to correct the ownership rule. Future workflow
-changes must remain limited to the tool/test scope.
+Do not implement Forge-local verification workarounds. The first-batch audit
+identified reusable SolidCraft semantics that must land in
+`lib.py.cad.verification` first:
 
-## Required proof
+- #44 partial parameter expectations;
+- #45 partial sketch expectations;
+- #51 declarative count expectations;
+- #52 multiple bodies sharing one name prefix;
+- #53 projected/tolerant inspection expectations.
 
-- every Forge CAD-CI workflow/publication pin uses exact accepted tool 0.14.2;
-- `forge-tests` watches and hashes both `scripts/qualification_summary.py` and
-  `.github/workflows/scpf.yml`;
-- `forge-package` no longer watches workflow YAML;
-- the existing workflow-contract test expects exact tool 0.14.2;
-- no reference child items are selected by this migration;
-- after this one ownership correction, future workflow-only changes stay in the
-  tool/test scope instead of fanning out through `forge-package`;
-- Forge tests stay green;
-- after merge, normal main durable publication removes
-  `verification/references` from `build/main/build.json` and its owned tree;
-- all current model/reference child rows remain present;
-- no Forge-local durable-store cleanup logic is added.
+These library changes should be merged separately but released together as the
+next verification-library release once the complete first-batch prerequisite
+set is green.
+
+## Required proof for each ~10-case Forge batch
+
+- every migrated case replaces procedural `verify_model.py` with data-only
+  declarative `verify.py`;
+- existing model contract semantics are preserved; incidental SolidCraft fields
+  are not promoted into new expectations;
+- every case gets the same four independent reference child items as the staged
+  proof cases;
+- migrated cases become normal processed CAD-CI items;
+- no inactive/unrelated case is accidentally selected;
+- durable `build/main` gains current model/reference evidence for the batch;
+- selection and runtime are measured before starting the next batch;
+- a batch that unexpectedly selects the whole remaining catalog is treated as a
+  selection defect, not normal build time.
 
 ## Execution order
 
-1. #534 — adopt tool.cad.ci 0.14.2 and clean the stale durable aggregate.
-2. #497 — rebuild stable Pages from current source + authoritative
-   `build/main`, preserving the existing site in broad outline.
-3. #366 — finish remaining Pages preview/cleanup/cut-over lifecycle after stable
-   Pages is proven.
-4. #432 — resume broader declarative model migration in batches of
-   approximately 10 models, checking selection/runtime after each batch.
-5. #484 — continue runtime/image-distribution optimization independently.
+1. Complete lib.py.cad.verification #44, #45, #51, #52 and #53.
+2. Release that prerequisite set once and update the immutable SolidCraft
+   runtime only if the runtime owns the verification-library pin.
+3. Migrate the first ten cases above under #432 and measure selection/runtime.
+4. Migrate the next approximately ten remaining cases.
+5. Migrate the final remaining catalog cases.
+6. #497 — rebuild stable Pages from current source + complete authoritative
+   `build/main`, comparing against
+   `backup/gh-pages-before-f11-2026-11-20`.
+7. #366 — finish remaining Pages preview/cleanup/cut-over lifecycle.
+8. Continue independent Forge API/product backlog.
+9. #484 runtime/image-distribution optimization may continue independently.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #534 Adopt tool.cad.ci 0.14.2 and remove stale durable reference aggregate | now | Exact generic fix is released and externally accepted; Forge only needs thin adoption plus the missing qualification-summary test dependency. |
-| #497 Publish stable Pages from the generic build/main baseline | blocked | Unblocks once #534 proves build/main contains only current configured items. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Durable build publication is already generic; finish preview/cleanup/cut-over after #497 stable Pages proof. |
-| #432 Use released declarative CAD verification in model verification | blocked | Resume after Pages is stable; migrate the remaining catalog in batches of about 10 rather than one model per PR. |
-| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later, non-blocking | Broad 34-target run measured ~2m15 CAD graph largely due to intentionally broad selection plus cold image pulls; optimize runtime distribution separately from correctness. |
-| #391 Extract reusable CAD verification library from Forge | effectively complete but still open | Generic geometry, visual, SolidCraft and semantic verification already live in the reusable library; remaining consumer migration is tracked by #432. |
-| #481 Remove stale Forge development branches | blocked | Current connected tooling cannot delete the stale refs safely. |
+| #432 Use released declarative CAD verification in model verification | now | Resume in ~10-case batches; first batch is blocked only on verification-library #44/#45/#51/#52/#53. |
+| #497 Publish stable Pages from the generic build/main baseline | blocked | Keep current 32-case site unchanged until current durable evidence again covers the public Qualification catalog. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Durable build storage is already generic; final Pages lifecycle follows #497. |
+| #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later, non-blocking | Broad 34-target run showed cold image acquisition plus broad selection; keep performance work independent from verification correctness. |
+| #391 Extract reusable CAD verification library from Forge | effectively complete but still open | Generic verification ownership is already external; remaining procedural consumer migration is #432. |
+| #481 Remove stale Forge development branches | blocked | Current connected tooling cannot safely delete the stale refs. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by the runtime repository/current #484 measurements. |
-| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to the superseded qualification architecture. |
+| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
 | #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Independent CLI quality work. |
 | #355 Support current SolidCraft parametric Slot API in Forge | later | Independent product/API work. |
@@ -114,4 +127,4 @@ changes must remain limited to the tool/test scope.
 
 Immediate chain:
 
-`#534 tool adoption/cleanup -> #497 stable Pages -> #366 final Pages lifecycle -> #432 ~10-model batches; #484 continues independently`.
+`verification lib #44/#45/#51/#52/#53 -> Forge #432 ~10-case batches -> #497 stable 32-case Pages -> #366 final Pages lifecycle`.
