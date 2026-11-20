@@ -732,3 +732,51 @@ The heavy reference batch executes the renderer using `cadcraft-cli` from the
 released runtime, processes the full source list, records each result and
 reports accumulated failures only after all sources were attempted. The diagram
 item then materializes only the already-produced diagram evidence.
+
+
+## Example and Pages source flow
+
+The stable site source boundary is:
+
+```text
+examples/<slug>/model.yml
+  human title/description/concepts/test explanation
+            |
+examples/<slug>/verification/verify.py
+  machine expected verification contract
+            |
+build/main/examples/<slug>/
+  accepted current evidence/status/artifacts
+            |
+            v
+site loader/view-model
+            |
+external templates + static assets
+            |
+            v
+generated Pages
+```
+
+The generator discovers the 32 example directories. There is no central
+`EXAMPLES` catalog duplicating their titles/descriptions/concepts.
+
+The example metadata loader validates one stable schema before rendering.
+Verification prose is deliberately qualitative. Numeric truth is not parsed
+back out of prose; the renderer uses the declarative verification definition
+and durable evidence where technical details are required.
+
+Site layout uses external templates under `site/templates/`. Shared browser
+behavior uses external files under `site/static/`. Task-oriented guide prose
+moves from Python modules to external content under `site/content/`.
+
+Python retains only:
+- source discovery;
+- schema validation;
+- API introspection;
+- evidence resolution;
+- view-model composition;
+- template rendering.
+
+Legacy `qualification.*` imports are removed rather than recreated. Their
+historical presentation semantics may be used as a visual compatibility
+reference, but they are not a source-code dependency.
