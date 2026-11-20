@@ -18,6 +18,8 @@ The active CI structure is defined by:
 - `.github/workflows/scpf.yml`
 - `cad-ci.yml`
 - `scpf/ci.yml`
+- `ci/forge-tests/ci.yml`
+- `ci/forge-release/ci.yml`
 - migrated `examples/<model>/ci.yml` files
 - `scripts/tool_ci.py`
 - `scripts/tool_verify.py`
@@ -32,18 +34,30 @@ During staged model verification, Forge may declare item-level `process` state i
 
 ## Current verification steps
 
-The Forge tool item runs:
+Forge package CI is split into independent items:
 
 ```text
-tool_build -> tool_test -> tool_verify
+forge-package
+  -> forge-tests
+  -> forge-release
+  -> selected model verification items
 ```
 
-`tool_verify` is Forge release verification using the fixed representative
-example set. It is not a stage that every model item must run.
+The arrows mean package-artifact dependency, not one serial release chain.
+
+- `forge-package` builds the exact SCPF wheel once.
+- `forge-tests` installs that wheel and runs the reusable Forge unit suite.
+- `forge-release` release-verifies that wheel with the fixed representative
+  examples.
+- each model item depends only on `forge-package` and compiles/verifies with
+  that exact wheel.
+
+Model verification must not depend on `forge-tests` or `forge-release`.
+Those are independent checks.
 
 Migrated model items use `model_verify`. That step compiles the model with the
 exact built Forge wheel, produces the initial native SolidCraft model and then
-delegates model verification to released `lib.py.cad.verfication`.
+delegates verification to released `lib.py.cad.verfication`.
 
 A declaratively migrated model keeps only model-specific verification data in
 `verification/verify.py`; it does not own a procedural verification CLI.
@@ -53,7 +67,7 @@ models retain `scripts/model_verify.py` until their own migration change.
 All 32 historical model items have native `model_verify` coverage and
 model-local independent-reference geometry contracts. The shared reference item
 runs PythonSCAD, pyBOSL2, CadQuery and build123d for the complete catalog.
-Issue #378 now continues with visual, diagram and summary verification.
+Issue #378 continues with visual, diagram and summary verification.
 
 ## Model ownership
 
