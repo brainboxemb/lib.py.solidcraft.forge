@@ -4,6 +4,7 @@ process: false
 kind: model
 needs:
   - forge-package
+  - cad-verification-package
 watch:
   - examples/eight-corner-brackets/scpf/**
   - examples/eight-corner-brackets/model.yml
