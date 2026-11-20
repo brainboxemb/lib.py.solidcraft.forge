@@ -3,7 +3,7 @@ id: round-top-sketch
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/round-top-sketch/scpf/**
   - examples/round-top-sketch/model.yml

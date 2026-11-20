@@ -3,7 +3,7 @@ id: selective-profile-extrude
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/selective-profile-extrude/scpf/**
   - examples/selective-profile-extrude/model.yml

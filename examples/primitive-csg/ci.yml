@@ -3,7 +3,7 @@ id: primitive-csg
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/primitive-csg/scpf/**
   - examples/primitive-csg/model.yml

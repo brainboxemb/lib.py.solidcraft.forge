@@ -3,7 +3,7 @@ id: parametric-attach
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/parametric-attach/scpf/**
   - examples/parametric-attach/model.yml

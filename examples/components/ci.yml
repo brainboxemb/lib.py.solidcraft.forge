@@ -3,7 +3,7 @@ id: components
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/components/scpf/**
   - examples/components/model.yml

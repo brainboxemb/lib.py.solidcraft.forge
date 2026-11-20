@@ -31,7 +31,7 @@ def one_built_wheel(dist: Path) -> Path:
     return wheels[0].resolve()
 
 
-def dependency_wheel(name: str = "forge-tool") -> Path:
+def dependency_wheel(name: str = "forge-package") -> Path:
     """Return the built wheel exposed by one CAD-CI dependency item."""
 
     raw = os.environ.get("CAD_CI_DEPENDENCIES_JSON", "").strip()

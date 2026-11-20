@@ -3,7 +3,7 @@ id: parameter-scope
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/parameter-scope/scpf/**
   - examples/parameter-scope/model.yml

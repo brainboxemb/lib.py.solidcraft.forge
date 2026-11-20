@@ -1,0 +1,22 @@
+# Run the Forge unit-test suite against the exact built package.
+id: forge-tests
+kind: tool
+needs:
+  - forge-package
+watch:
+  - scpf/scpf/**
+  - scpf/tests/**
+  - scpf/pyproject.toml
+  - scripts/tool_ci.py
+  - scripts/forge_example.py
+strategy:
+  reuse: true
+steps:
+  - id: tool_test
+    inputs:
+      - scpf/scpf/**
+      - scpf/tests/**
+      - scpf/pyproject.toml
+      - scripts/tool_ci.py
+      - scripts/forge_example.py
+    run: [python, ../../scripts/tool_ci.py, tool_test]

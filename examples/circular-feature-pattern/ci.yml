@@ -3,7 +3,7 @@ id: circular-feature-pattern
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/circular-feature-pattern/scpf/**
   - examples/circular-feature-pattern/model.yml

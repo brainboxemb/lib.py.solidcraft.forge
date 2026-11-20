@@ -3,7 +3,7 @@ id: attach-angle
 process: true
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/attach-angle/scpf/**
   - examples/attach-angle/model.yml

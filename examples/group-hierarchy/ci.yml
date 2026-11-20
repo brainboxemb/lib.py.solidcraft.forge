@@ -3,7 +3,7 @@ id: group-hierarchy
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/group-hierarchy/scpf/**
   - examples/group-hierarchy/model.yml

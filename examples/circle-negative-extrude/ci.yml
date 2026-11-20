@@ -3,7 +3,7 @@ id: circle-negative-extrude
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/circle-negative-extrude/scpf/**
   - examples/circle-negative-extrude/model.yml

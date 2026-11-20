@@ -7,5 +7,6 @@ variables:
 
 items:
   - scpf
+  - ci/*
   - examples/*
   - verification/references

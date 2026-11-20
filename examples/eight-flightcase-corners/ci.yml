@@ -3,7 +3,7 @@ id: eight-flightcase-corners
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/eight-flightcase-corners/scpf/**
   - examples/eight-flightcase-corners/model.yml

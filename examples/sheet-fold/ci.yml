@@ -3,7 +3,7 @@ id: sheet-fold
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/sheet-fold/scpf/**
   - examples/sheet-fold/model.yml

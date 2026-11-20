@@ -3,7 +3,7 @@ id: assembly-owned-anchor
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/assembly-owned-anchor/scpf/**
   - examples/assembly-owned-anchor/model.yml

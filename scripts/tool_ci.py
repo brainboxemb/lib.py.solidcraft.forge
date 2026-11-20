@@ -9,6 +9,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+from forge_example import dependency_wheel
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -66,7 +68,7 @@ def tool_test() -> None:
             "install",
             "--force-reinstall",
             "--no-deps",
-            str(built_wheel()),
+            str(dependency_wheel("forge-package")),
         ],
         cwd=ROOT,
         check=True,

@@ -3,7 +3,7 @@ id: eight-corner-brackets
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/eight-corner-brackets/scpf/**
   - examples/eight-corner-brackets/model.yml
