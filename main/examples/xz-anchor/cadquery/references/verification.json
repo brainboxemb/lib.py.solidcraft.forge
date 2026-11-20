@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/xz-anchor/cadquery/model.py",
+          "status": "pass",
+          "stl": "xz-anchor/cadquery/model.stl"
+        }
+      ],
+      "model": "xz-anchor",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "5cf458462b82f1d1968c3fabae8dc1948060d95a",
+  "status": "pass"
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "4b8848a6c6762cb61083b1ebd5fc4b901ea70c3f145f53e9e752c685fb7c9bfb",
+  "duration_seconds": 4.695,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T17:20:22.341Z",
+  "item": "examples-xz-anchor-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "1cea82285db76b1155fbceabf490a3dc0bb624bd9c9178d5710f7f6c1ad1cc5f"
+    }
+  },
+  "run_finished_at": "2026-11-20T17:20:29.699Z",
+  "run_started_at": "2026-11-20T17:18:14.714Z",
+  "schema": 3,
+  "started_at": "2026-11-20T17:20:17.646Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "e86d8734eecdba88870eec90f2e1d1acce3166564506500f6284242e27df7361",
+  "timeout_seconds": null
+}
