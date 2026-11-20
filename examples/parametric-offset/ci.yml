@@ -3,7 +3,7 @@ id: parametric-offset
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/parametric-offset/scpf/**
   - examples/parametric-offset/model.yml
