@@ -1,0 +1,33 @@
+{
+  "items": {
+    "ci/forge-release": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "ff111949a1d54d98aa2270eb7cd9ee1ba50487699ee22ef94c2d235cf97ec367",
+      "final_step": "tool_verify",
+      "final_target_spec_digest": "d474813193dd5bafaad1d8209e92fd500a420b66801c3d288e70913992ade90a",
+      "item_id": "forge-release",
+      "outputs": [
+        "tool_verify"
+      ],
+      "source_commit": "548b6a3e21a08c1d48cab9fd035258d262de2638"
+    },
+    "examples/simple-box": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "12fb5d2c8f85ba77c4f7f2b3d6a6c3b2acde22227758ddcfeb3d7b88b67720fc",
+      "final_step": "model_verify",
+      "final_target_spec_digest": "549a2152fbab18ff672009bdc48122fa55dc466409bc294561db63c2713a56a0",
+      "item_id": "simple-box",
+      "outputs": [
+        "model_verify",
+        "solidcraft.json"
+      ],
+      "source_commit": "548b6a3e21a08c1d48cab9fd035258d262de2638"
+    }
+  },
+  "pull_request": 517,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "548b6a3e21a08c1d48cab9fd035258d262de2638"
+}
