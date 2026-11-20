@@ -95,3 +95,14 @@ The operator sequence is:
 2. manually run the SolidCraft runtime workflow;
 3. verify the published immutable image;
 4. explicitly update the CI runtime reference.
+
+
+## GitHub Actions cache
+
+Forge runtime publication must not use GitHub Actions cache storage.
+
+- Do not use `actions/cache`.
+- Do not use Buildx `cache-from: type=gha` or `cache-to: type=gha`.
+- Runtime reuse is based on the exact immutable GHCR image reference.
+- A local directory named `.cache` is not GitHub cache storage unless it is
+  persisted through a cache action/service.

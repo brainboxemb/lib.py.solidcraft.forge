@@ -70,6 +70,15 @@ class CiRuntimeContractTests(unittest.TestCase):
         self.assertEqual(expected, TESTED_SOLIDCRAFT_VERSION)
         self.assertEqual(expected, metadata["solidcraft_version"])
 
+    def test_runtime_workflow_does_not_use_github_cache(self):
+        """Use the immutable GHCR image instead of GitHub cache state."""
+
+        text = RUNTIME_WORKFLOW.read_text(encoding="utf-8")
+        self.assertNotIn("actions/cache", text)
+        self.assertNotIn("type=gha", text)
+        self.assertNotIn("cache-from:", text)
+        self.assertNotIn("cache-to:", text)
+
     def test_runtime_publication_is_manual_only(self):
         """Never build or publish a runtime because source files changed."""
 

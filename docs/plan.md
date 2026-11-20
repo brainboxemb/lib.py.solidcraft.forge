@@ -8,13 +8,14 @@ detail and history; this plan states what is current and what follows.
 
 ## Current goal
 
-Complete #449: make SolidCraft runtime publication manual-only.
+Complete #446: remove GitHub Actions cache storage from the SolidCraft runtime
+build.
 
-Changing the runtime definition must not automatically build or publish an
-image. Runtime publication is an explicit operator action through
-`workflow_dispatch`.
+Runtime publication is manual-only through `workflow_dispatch`. Runtime reuse
+must come from the exact immutable GHCR image, not from Buildx `type=gha`
+cache state.
 
-After #449, continue the runtime/package-boundary correction in #438.
+After #446, continue the runtime/package-boundary correction in #438.
 
 The verification library remains independently designed, tested and released,
 but is intentionally preinstalled in the shared runtime image because every
@@ -32,9 +33,10 @@ Release 0.10.0 provides:
 
 ## Execution order
 
-1. Complete #449:
-   - remove automatic push/pull-request triggers from the runtime workflow;
-   - keep only manual `workflow_dispatch`;
+1. Complete #446:
+   - remove Buildx `type=gha` cache import/export;
+   - do not use `actions/cache`;
+   - keep immutable GHCR image lookup as the only runtime reuse mechanism;
    - add a regression test for this boundary.
 2. Complete #438:
    - pin verification-library 0.10.0 exact commit in
@@ -63,8 +65,7 @@ Release 0.10.0 provides:
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #449 Make SolidCraft runtime publication manual-only | now | Runtime publication must only run through explicit workflow_dispatch; repository changes must not build/publish images automatically. |
-| #446 Remove GitHub Actions cache from SolidCraft runtime build | now | Remove GitHub Actions cache transport from runtime builds. |
+| #446 Remove GitHub Actions cache from SolidCraft runtime build | now | Remove Buildx `type=gha` / `actions/cache`; reuse only the exact immutable GHCR image. |
 | #438 Update Forge verification runtime to lib.py.cad.verfication 0.10.0 | next | Runtime-only prerequisite. The released verification library stays preinstalled in the shared runtime for efficiency. |
 | #440 Prove declarative SolidCraft verification with simple-box | next | First consumer proof after #438. Exactly one model; establishes the final launcher/definition shape. |
 | #432 Use released declarative CAD verification in model verification | blocked | Umbrella migration. Continue only after #440 proves the one-model path. |
@@ -90,4 +91,4 @@ Release 0.10.0 provides:
 | #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
 
 Immediate chain:
-`#449 -> #446 -> #438 -> #440 simple-box -> #432 batches -> #430 -> diagrams -> summary -> #366 -> final ownership audit`.
+`#446 -> #438 -> #440 simple-box -> #432 batches -> #430 -> diagrams -> summary -> #366 -> final ownership audit`.
