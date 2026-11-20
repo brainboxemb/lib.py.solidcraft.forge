@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/xz-anchor/pythonscad/model.py",
+          "status": "pass",
+          "stl": "xz-anchor/pythonscad/model.stl"
+        }
+      ],
+      "model": "xz-anchor",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "84f5770f9eca6e727f5c47fc2599e85cf4785aa9",
+  "status": "pass"
+}

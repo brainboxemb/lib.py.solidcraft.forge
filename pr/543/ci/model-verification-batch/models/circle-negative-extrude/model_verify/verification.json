@@ -1,0 +1,120 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "370882e9998f9ddcdd182739b4642e3386eee82c049a1f089405e9dae4949a87",
+          "size": 2219
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "NegativeCircleExtrude",
+                "max": [
+                  10.0,
+                  10.0,
+                  0.0
+                ],
+                "min": [
+                  -10.0,
+                  -10.0,
+                  -30.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  10.0,
+                  10.0,
+                  0.0
+                ],
+                "min": [
+                  -10.0,
+                  -10.0,
+                  -30.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 1
+              },
+              "expected": {
+                "cylinder": 1
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 9424.77796074068,
+              "delta": 2.8700014809146523e-08,
+              "expected": 9424.77796076938,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.5
+            }
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Profile",
+              "type": "Sketch"
+            },
+            {
+              "name": "Extrude1",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Profile",
+              "type": "Sketch"
+            },
+            {
+              "name": "Extrude1",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/circle-negative-extrude/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "circle-negative-extrude"
+}

@@ -1,0 +1,33 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "d988e6f25ad321e9a9a5f100bed3398f37b5bf205051716fce53854554b97676",
+  "duration_seconds": 0.159,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:53:12.811Z",
+  "item": "anchored-holes",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "model_verify": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "da1910f0ffc6fcdf4ed50061fbcfb7c7b83d0007f34049194afefdbb4e0c9119"
+    },
+    "solidcraft.json": {
+      "kind": "file",
+      "mode": 420,
+      "sha256": "13a95b9b771d1330a9253210429999584e03bc85470e6aefb6b2addea1b3472c"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:53:37.373Z",
+  "run_started_at": "2026-11-20T20:51:19.518Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:53:12.748Z",
+  "status": "pass",
+  "step": "model_verify",
+  "target_spec_digest": "6e1b4fb89bf01f032ece5066b4a904c59d1e30f7acc656b27028edd1a434e79b",
+  "timeout_seconds": null
+}

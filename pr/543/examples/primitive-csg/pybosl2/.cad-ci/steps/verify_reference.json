@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "e170bfb3a465e01425f4add185b18dad0b36f4defe96350632fd6cc1b157a87b",
+  "duration_seconds": 0.119,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T20:53:31.452Z",
+  "item": "examples-primitive-csg-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "10effeb27ccb4546ffa40cb7a4cb926a9c2d2272bd86804696aaf0ad24d33737"
+    }
+  },
+  "run_finished_at": "2026-11-20T20:53:37.373Z",
+  "run_started_at": "2026-11-20T20:51:19.518Z",
+  "schema": 3,
+  "started_at": "2026-11-20T20:53:31.391Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "f50ba788438ec7f223b72715dc3331e76fc050142d9b077659515cd019928515",
+  "timeout_seconds": null
+}

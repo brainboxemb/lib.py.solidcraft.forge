@@ -1,0 +1,186 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "2db4f4b1a1492453b05c5ff38fa217cefd1f9467e08bc6d75d45ac016980ac4f",
+          "size": 1727
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "SimpleBox",
+                "max": [
+                  20.0,
+                  15.0,
+                  10.0
+                ],
+                "min": [
+                  -20.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  20.0,
+                  15.0,
+                  10.0
+                ],
+                "min": [
+                  -20.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 1e-06,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "height": 10.0,
+            "length": 40.0,
+            "width": 30.0
+          },
+          "expected": {
+            "height": 10.0,
+            "length": 40.0,
+            "width": 30.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "timeline": {
+          "actual": [
+            {
+              "error": null,
+              "type": "BoxFeature",
+              "warning": null
+            }
+          ],
+          "expected": [
+            {
+              "error": null,
+              "type": "BoxFeature",
+              "warning": null
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/length_50/model.sc",
+          "sha256": "2756ad80660c523782195e4f99eb83d12c131dbb630afea60abb21b2b573cc92",
+          "size": 4107
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/length_50/measurements.json",
+          "sha256": "50b61912ebdc8eb4b69973b3ac9b9ee864ac075cb8dc03f49adc75e6500921e7",
+          "size": 1681
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "SimpleBox",
+                "max": [
+                  25.0,
+                  15.0,
+                  10.0
+                ],
+                "min": [
+                  -25.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  25.0,
+                  15.0,
+                  10.0
+                ],
+                "min": [
+                  -25.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 1e-06,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "height": 10.0,
+            "length": 50.0,
+            "width": 30.0
+          },
+          "expected": {
+            "height": 10.0,
+            "length": 50.0,
+            "width": 30.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_length_50",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/simple-box/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "simple-box"
+}

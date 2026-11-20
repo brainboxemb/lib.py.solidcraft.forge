@@ -1,0 +1,77 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "bd668be0d22d3498e3ab52635a5757b378c2c8a3197fe15442726bb4d70f03c0",
+  "variables": {},
+  "commands": [
+    {
+      "index": 0,
+      "command": "solid.sphere",
+      "resolved_params": {
+        "radius": 20,
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "operation": "new",
+        "body_name": "PrimitiveCsg"
+      }
+    },
+    {
+      "index": 1,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 30,
+        "width": 30,
+        "height": 20,
+        "operation": "join",
+        "center": [
+          18.0,
+          0.0,
+          10.0
+        ],
+        "targets": [
+          "PrimitiveCsg"
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "command": "solid.cylinder",
+      "resolved_params": {
+        "height": 60,
+        "diameter": 8,
+        "base": [
+          -30.0,
+          0,
+          0
+        ],
+        "axis": "X",
+        "operation": "cut",
+        "targets": [
+          "PrimitiveCsg"
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 50,
+        "width": 50,
+        "height": 30,
+        "operation": "intersect",
+        "center": [
+          0.0,
+          0.0,
+          15.0
+        ],
+        "targets": [
+          "PrimitiveCsg"
+        ]
+      }
+    }
+  ],
+  "completed": 4
+}

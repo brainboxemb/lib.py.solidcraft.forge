@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/components/cadquery/model.py",
+          "status": "pass",
+          "stl": "components/cadquery/model.stl"
+        }
+      ],
+      "model": "components",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "84f5770f9eca6e727f5c47fc2599e85cf4785aa9",
+  "status": "pass"
+}
