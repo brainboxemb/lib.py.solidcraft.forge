@@ -3,7 +3,7 @@ id: repeated-parent-attachments
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/repeated-parent-attachments/scpf/**
   - examples/repeated-parent-attachments/model.yml
