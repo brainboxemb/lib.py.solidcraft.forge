@@ -734,6 +734,22 @@ reports accumulated failures only after all sources were attempted. The diagram
 item then materializes only the already-produced diagram evidence.
 
 
+## Example documentation provenance
+
+The example directory is the ownership boundary for human model/test
+documentation. During #548, the last canonical legacy case records are moved
+into the corresponding example directories without rewriting their content.
+
+The local documentation preserves the former case fields as readable sections:
+goal, Forge API, Forge model, SolidCraft lowering/result, saved-design test and
+reference notes. It also preserves the former per-case geometry sufficiency
+rationale explaining whether bounds alone prove the intended geometry. These
+texts are copied verbatim; provenance identifies the historical source commit.
+
+This local documentation is explanatory only. `verification/verify.py`
+remains the executable verification contract, and `model.yml` remains generic
+model/page metadata.
+
 ## Example and Pages source flow
 
 The stable site source boundary is:
