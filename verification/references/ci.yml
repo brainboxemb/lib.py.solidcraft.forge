@@ -25,7 +25,7 @@ strategy:
 steps:
   - id: verify_references
     inputs:
-                          - examples/anchor-topology-mutation/verification/reference_geometry.json
+      - examples/anchor-topology-mutation/verification/reference_geometry.json
       - examples/anchor-topology-mutation/pythonscad/**
       - examples/anchor-topology-mutation/pybosl2/**
       - examples/anchor-topology-mutation/cadquery/**
