@@ -47,6 +47,8 @@ class ExampleMetadataTests(unittest.TestCase):
                 self.assertTrue(row.lowering)
                 self.assertTrue(row.solidcraft_result)
                 self.assertTrue(row.saved_design_test)
+                self.assertIsInstance(row.bounds_sufficient, bool)
+                self.assertTrue(row.geometry_reason)
                 self.assertGreaterEqual(len(row.reference_notes), 1)
 
     def test_model_yml_keeps_only_agreed_generic_fields(self):
