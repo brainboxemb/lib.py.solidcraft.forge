@@ -98,6 +98,14 @@ A clean 40 mm L profile with 12 mm arms and 24 mm symmetric extrusion width.
 
 Not yet an attachment mutation case. This component is intentionally the geometry baseline for upcoming multi-orientation anchor tests.
 
+### Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+A filled box can share the L-profile envelope. L-profile volume and a probe in the missing corner are required.
+
 ### Reference notes
 
 - **OpenSCAD** — Equivalent baseline is a 2D L polygon followed by linear_extrude(center=true).
