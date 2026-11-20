@@ -274,3 +274,38 @@ is a later #366 step after the sparse PR path is proven.
 The job runs only for same-repository pull requests, requires
 `contents: write` only on that publication job, and never executes for fork
 pull requests. Verification itself keeps read-only source permissions.
+
+## Stable main bootstrap flow
+
+During the bootstrap, pull requests and main pushes intentionally use different
+execution scopes:
+
+```text
+pull_request
+  -> incremental reusable CAD-CI
+  -> optional sparse PR publication
+
+push main
+  -> reusable CAD-CI full_run=true
+  -> complete artifact for process:true items
+  -> prepare-main
+  -> publish build --scope main
+```
+
+The workflow splits PR and main reusable jobs so a PR does not pay for the
+bootstrap full run.
+
+The main publication job:
+
+1. checks out the exact main source commit;
+2. installs the exact accepted `tool.cad.ci` revision;
+3. downloads the complete verified build artifact;
+4. runs `cad-ci build prepare-main`;
+5. runs `cad-ci publish build --scope main` with source-freshness checking.
+
+Generic publication replaces the `main/` directory on the generated build
+branch while preserving sibling `pr/` scopes.
+
+This bootstrap does not establish the final steady-state main workflow. After
+the baseline exists, #366 replaces the full-run bootstrap with incremental
+candidate selection plus generic `update-main`.
