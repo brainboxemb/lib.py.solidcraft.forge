@@ -3,7 +3,7 @@ id: assembly-decorator
 process: false
 kind: model
 needs:
-  - forge-tool
+  - forge-package
 watch:
   - examples/assembly-decorator/scpf/**
   - examples/assembly-decorator/model.yml
