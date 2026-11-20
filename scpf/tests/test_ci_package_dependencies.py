@@ -67,6 +67,7 @@ class CiPackageDependencyContractTests(unittest.TestCase):
             "    kind: model\n"
             "    needs:\n"
             "      - forge-package\n"
+            "      - cad-verification-package\n"
         )
         self.assertIn(model_template, root_ci)
 
@@ -75,6 +76,11 @@ class CiPackageDependencyContractTests(unittest.TestCase):
                 text = path.read_text(encoding="utf-8")
                 if "template: forge-model-declarative" in text:
                     self.assertEqual(needs(text), set())
+                elif "scripts/model_verify_declarative.py" in text:
+                    self.assertEqual(
+                        needs(text),
+                        {"forge-package", "cad-verification-package"},
+                    )
                 else:
                     self.assertEqual(needs(text), {"forge-package"})
                 self.assertNotIn("forge-tool", text)
@@ -97,10 +103,9 @@ class CiPackageDependencyContractTests(unittest.TestCase):
 
         self.assertIn('dependency_wheel("forge-package")', tool_ci)
         self.assertIn('dependency_wheel("forge-package")', tool_verify)
-        self.assertIn(
-            'def dependency_wheel(name: str = "forge-package")',
-            forge_example,
-        )
+        self.assertIn("def dependency_wheel(", forge_example)
+        self.assertIn('name: str = "forge-package"', forge_example)
+        self.assertIn('pattern: str = "scpf-*.whl"', forge_example)
 
 
 if __name__ == "__main__":
