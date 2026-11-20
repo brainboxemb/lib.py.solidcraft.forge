@@ -15,7 +15,7 @@ RUNTIME_SCRIPT = ROOT / "scripts" / "solidcraft_runtime.py"
 WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
 RUNTIME_WORKFLOW = ROOT / ".github" / "workflows" / "solidcraft-runtime.yml"
 REPOSITORY = "brainboxemb/lib.py.solidcraft.forge"
-TOOL_COMMIT = "c2db9e6b6553052df12d2498e9436ba7be056fe6"
+TOOL_COMMIT = "c60bf64a393dff33440d22e9e9347cbbaba71c4b"
 
 
 def configured_variable(name: str) -> str:
