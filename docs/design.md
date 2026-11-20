@@ -740,7 +740,10 @@ The stable site source boundary is:
 
 ```text
 examples/<slug>/model.yml
-  human title/description/concepts/test explanation
+  generic title/description/parameters/stages
+            |
+examples/<slug>/README.md
+  preserved human engineering explanation
             |
 examples/<slug>/verification/verify.py
   machine expected verification contract
@@ -758,12 +761,13 @@ generated Pages
 ```
 
 The generator discovers the 32 example directories. There is no central
-`EXAMPLES` catalog duplicating their titles/descriptions/concepts.
+`EXAMPLES` catalog duplicating their local metadata or documentation.
 
-The example metadata loader validates one stable schema before rendering.
-Verification prose is deliberately qualitative. Numeric truth is not parsed
-back out of prose; the renderer uses the declarative verification definition
-and durable evidence where technical details are required.
+The example metadata loader validates the agreed six-field `model.yml`
+schema. A separate documentation loader reads the local `README.md` and
+preserves its engineering statements without inference. Numeric truth is not
+parsed back out of prose; the renderer uses `verification/verify.py` and
+durable evidence where technical details are required.
 
 Site layout uses external templates under `site/templates/`. Shared browser
 behavior uses external files under `site/static/`. Task-oriented guide prose
@@ -794,6 +798,7 @@ The selection boundary for example documentation is:
 
 ```text
 examples/<slug>/model.yml
+examples/<slug>/README.md
         |
         v
 ci/site-source
@@ -803,7 +808,7 @@ ci/site-source
 
 It has no dependency on either CAD runtime batch.
 
-`model.yml` is deliberately absent from `forge-model-declarative` and
-`model-verification-batch` execution inputs. This prevents title,
-description, concept or verification-explanation edits from invalidating native
-model evidence.
+`model.yml` and `README.md` are deliberately absent from
+`forge-model-declarative` and `model-verification-batch` execution inputs. This
+prevents presentation/documentation edits from invalidating native model
+evidence.
