@@ -1,13 +1,13 @@
 <article class="card">
-  <a href="examples/${slug}/" class="card-image" aria-label="View ${title}">
-    <img src="examples/${slug}/${preview_path}" alt="${title} preview" loading="lazy">
+  <a href="${example_url}" class="card-image" aria-label="View ${title}">
+    <img src="${example_url}${preview_path}" alt="${title} preview" loading="lazy">
   </a>
   <div class="card-content">
     <p class="eyebrow">${section}</p>
-    <h2><a href="examples/${slug}/">${title}</a></h2>
+    <h2><a href="${example_url}">${title}</a></h2>
     <p>${description}</p>
     <div class="tags">${concept_tags}</div>
     <p class="meta">${command_summary}</p>
-    <a class="button" href="examples/${slug}/">View example and verification intent →</a>
+    <a class="button" href="${example_url}">View example and verification intent →</a>
   </div>
 </article>
