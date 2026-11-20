@@ -67,6 +67,24 @@ class CiRuntimeContractTests(unittest.TestCase):
         )
         self.assertIn("upload_build: true", text)
         self.assertIn("build_artifact_name: forge-cad-ci-build", text)
+        self.assertIn("publish_simple_box_pr:", text)
+        self.assertIn("contents: write", text)
+        self.assertIn("actions/download-artifact@v4", text)
+        self.assertIn("candidate-build/examples/simple-box/.cad-ci/item.json", text)
+        self.assertIn("cad-ci build prepare-pr", text)
+        self.assertIn("--items simple-box", text)
+        self.assertIn("cad-ci publish build", text)
+        self.assertIn("--scope pr", text)
+        self.assertIn("--source-ref \"$SOURCE_REF\"", text)
+        self.assertIn("--expected-source \"$SOURCE_SHA\"", text)
+        self.assertIn(
+            "github.event.pull_request.head.repo.full_name == github.repository",
+            text,
+        )
+        self.assertIn(
+            f"ref: {TOOL_COMMIT}",
+            text,
+        )
         self.assertNotIn("runtime_check:", text)
         self.assertNotIn("environment_json:", text)
         self.assertNotIn("solidcraft_runtime.py", text)
