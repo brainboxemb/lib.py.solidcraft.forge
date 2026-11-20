@@ -8,13 +8,19 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 EXAMPLES = ROOT / "examples"
 
-EXPECTED_PROCESSED = {"simple-box"}
+EXPECTED_PROCESSED = {
+    "anchor-topology-mutation",
+    "attach-angle",
+    "four-corner-l",
+    "simple-box",
+    "xz-anchor",
+}
 
 
 class CiProcessSelectionContractTests(unittest.TestCase):
-    """Keep the one-model proof explicit without reimplementing CAD-CI."""
+    """Keep the five-model staged proof explicit without reimplementing CAD-CI."""
 
-    def test_only_simple_box_is_processed(self):
+    def test_only_staged_proof_models_are_processed(self):
         """Declare process state for all 32 historical model items."""
 
         configured = {}
