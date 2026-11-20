@@ -127,7 +127,9 @@ stages
 ```
 
 Technical assertions and mutation logic are executable verification code rather
-than presentation metadata.
+than presentation metadata. Human engineering explanation belongs beside the
+example in `examples/<slug>/README.md`; source migrations preserve that
+documentation rather than reconstructing it from verification data.
 
 ## Release status
 

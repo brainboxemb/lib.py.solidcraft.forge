@@ -7,7 +7,6 @@ needs:
   - model-verification-batch
 watch:
   - examples/xz-anchor/scpf/**
-  - examples/xz-anchor/model.yml
   - examples/xz-anchor/verification/**
   - examples/xz-anchor/tests/**
   - scripts/forge_example.py
@@ -28,7 +27,6 @@ steps:
   - id: model_verify
     inputs:
       - examples/xz-anchor/scpf/**
-      - examples/xz-anchor/model.yml
       - examples/xz-anchor/verification/**
       - examples/xz-anchor/tests/**
       - scripts/forge_example.py
