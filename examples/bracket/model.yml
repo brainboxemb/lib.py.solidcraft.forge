@@ -8,3 +8,15 @@ stages:
   - Create the L-shaped XZ polygon
   - Finish the explicit Profile sketch
   - Extrude the profile symmetrically through 24 mm
+concepts:
+  - Sketch
+  - XZ plane
+  - Polygon2D
+  - symmetric extrude
+verification:
+  summary: >
+    Verifies the minimal L-profile geometry independently of holes, fillets or
+    other secondary features.
+  proves:
+    - The symmetric XZ extrusion produces one body with the expected envelope.
+    - The native body volume matches the intended L-profile extrusion.
