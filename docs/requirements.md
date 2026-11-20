@@ -198,7 +198,20 @@ The one-model proof is considered reliable only when representative
 
 For #484, performance interpretation must additionally separate immutable
 SolidCraft image acquisition from subsequent container/process/model work.
-Verification semantics must not be weakened to improve timing.
+
+The Forge-owned model launcher may emit diagnostic duration lines for:
+
+- Forge command compilation;
+- immutable image pull;
+- total container/process execution;
+- in-runtime verification-library import;
+- native model production;
+- released SolidCraft verification;
+- total in-runtime work.
+
+These durations are diagnostics only. They must not affect selection, execution,
+pass/fail decisions or structured CAD-CI evidence. Verification semantics must
+not be weakened to improve timing.
 
 ## Model command-contract coverage
 
