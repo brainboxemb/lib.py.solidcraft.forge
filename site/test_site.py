@@ -16,7 +16,7 @@ SITE = ROOT / "site"
 
 
 class SiteSourceTests(unittest.TestCase):
-    def test_python_contains_no_retired_page_catalog_or_complete_pages(self):
+    def test_site_orchestrator_keeps_html_in_explicit_render_layer(self):
         build = (SITE / "build.py").read_text(encoding="utf-8")
         guides = (SITE / "guides.py").read_text(encoding="utf-8")
 
@@ -30,14 +30,23 @@ class SiteSourceTests(unittest.TestCase):
         ):
             self.assertNotIn(token, build)
 
-        self.assertNotIn("<!doctype html", build.lower())
-        self.assertNotIn('"""<main', build)
-        self.assertNotIn("Complete generated lookup", build)
-        self.assertNotIn("Forge API design contract", build)
+        for markup in (
+            "<!doctype html",
+            "<main",
+            "<section",
+            "<article",
+            "<table",
+            "<li",
+            "<a ",
+        ):
+            self.assertNotIn(markup, build.lower())
+        self.assertIn("from html_writer import", build)
         self.assertNotIn("GUIDES = [", guides)
         self.assertNotIn("<h2", guides)
 
+        self.assertTrue((SITE / "html_writer.py").is_file())
         self.assertTrue((SITE / "templates" / "page.html").is_file())
+        self.assertTrue((SITE / "templates" / "guide-overview.html").is_file())
         self.assertTrue((SITE / "templates" / "example.html").is_file())
         self.assertTrue((SITE / "templates" / "home.html").is_file())
         self.assertTrue((SITE / "templates" / "api-design-contract.html").is_file())
