@@ -543,3 +543,36 @@ historical arm-level expected-shape decomposition so a mirrored/rotated L corner
 cannot pass merely because its outer bounding box is unchanged.
 
 No other model becomes `process: true` in this step.
+
+
+## F10 diagram evidence flow
+
+F10 is one independent CAD-CI item discovered through the existing `ci/*`
+root pattern:
+
+```text
+verification/diagrams/sources/*.cadcraft.json
+  -> ci/verification-diagrams
+     -> scripts/build_diagrams.py
+        -> ensure exact CADCraft 0.20.1 binary
+        -> verify archive SHA-256
+        -> replay each source command list
+        -> render SVG + save DXF
+        -> copy source JSON into output
+        -> write provenance.json
+```
+
+The historical sources are restored byte-identically from the last green
+qualification. They remain data; the renderer contains no hard-coded geometry
+for an individual diagram.
+
+The tool pin is deliberately local to the renderer:
+
+- CADCraft version: 0.20.1;
+- architecture: x86_64;
+- archive SHA-256:
+  `57b6f1b41b4f3c542a82f103202ed1a779440e5ff8d25c08ef66abda1a8cb1b9`.
+
+The item does not depend on forge-package. Diagram evidence is therefore
+independent of Forge wheel/model verification and does not lengthen ordinary
+model PRs.
