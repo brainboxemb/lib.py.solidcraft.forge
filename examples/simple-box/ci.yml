@@ -4,7 +4,7 @@ process: true
 kind: model
 needs:
   - forge-package
-  - cad-verification-package
+  - model-verification-batch
 watch:
   - examples/simple-box/scpf/**
   - examples/simple-box/model.yml
@@ -12,8 +12,7 @@ watch:
   - examples/simple-box/tests/**
   - scripts/forge_example.py
   - scripts/model_contract_test.py
-  - scripts/model_verify_declarative.py
-  - scripts/model_visual.py
+  - scripts/model_verification_batch.py
 strategy:
   reuse: true
 steps:
@@ -31,10 +30,8 @@ steps:
       - examples/simple-box/verification/**
       - examples/simple-box/tests/**
       - scripts/forge_example.py
-      - scripts/model_verify_declarative.py
-      - scripts/model_visual.py
-      - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verify_declarative.py]
+      - scripts/model_verification_batch.py
+    run: [python, ../../scripts/model_verification_batch.py, materialize]
     outputs:
       - solidcraft.json
       - model_verify
