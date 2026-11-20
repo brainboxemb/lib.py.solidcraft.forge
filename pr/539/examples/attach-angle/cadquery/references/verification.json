@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "actual_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "expected_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "expected_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/attach-angle/cadquery/model.py",
+          "status": "pass",
+          "stl": "attach-angle/cadquery/model.stl"
+        }
+      ],
+      "model": "attach-angle",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "d757cb8b6d577427c5a8c91dd51784b965002919",
+  "status": "pass"
+}

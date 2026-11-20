@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "b4068943fa0f70ecbc2d5624df6044ad40fb83be1a97162728dac0c621f868d9",
+  "duration_seconds": 1.757,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T19:05:32.739Z",
+  "item": "examples-xz-anchor-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "1db1451f6a4c4d3a04826bdde2491e2658139a69d83076303f917ce13f11827e"
+    }
+  },
+  "run_finished_at": "2026-11-20T19:05:32.915Z",
+  "run_started_at": "2026-11-20T19:03:09.166Z",
+  "schema": 3,
+  "started_at": "2026-11-20T19:05:30.984Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "473a4816a43ee6458715e8bd63f4a82afabb395968cbed62ab470000ee53da15",
+  "timeout_seconds": null
+}
