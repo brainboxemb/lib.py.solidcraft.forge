@@ -1,0 +1,68 @@
+{
+  "items": {
+    "examples/four-corner-l/build123d": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "069f89d3e79cb2f613ae72a1b7c055f999c873d6157a3709532eccddb00bdde3",
+      "final_step": "verify_reference",
+      "final_target_spec_digest": "098407fc3e98338fda97b7e4dcd83c46c1544fae4f86fefefabd87c22cbae8ac",
+      "item_id": "examples-four-corner-l-build123d",
+      "outputs": [
+        "references"
+      ],
+      "source_commit": "3ede9e687038eae5f9926b956bbf5a178206bae1"
+    },
+    "examples/four-corner-l/cadquery": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "1a9f8be22a35be83ca871fa211d5b9d51e8d6bcbd55af21fd1e99780008b38f9",
+      "final_step": "verify_reference",
+      "final_target_spec_digest": "836c24069ab80d1dca7e9c859b6cf336a05cd2d6ca09ed07a7cb1346a94006b0",
+      "item_id": "examples-four-corner-l-cadquery",
+      "outputs": [
+        "references"
+      ],
+      "source_commit": "3ede9e687038eae5f9926b956bbf5a178206bae1"
+    },
+    "examples/four-corner-l/pybosl2": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "52e8fb08e8fc2662358519279cfd858c5847b7fef85b289b4395ec7c7004d5ff",
+      "final_step": "verify_reference",
+      "final_target_spec_digest": "ca22ca72c8a7d2b4f5b09b7d7d261de9d6bc96bc3b845380541082929d38780c",
+      "item_id": "examples-four-corner-l-pybosl2",
+      "outputs": [
+        "references"
+      ],
+      "source_commit": "3ede9e687038eae5f9926b956bbf5a178206bae1"
+    },
+    "examples/four-corner-l/pythonscad": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "0ba24a06fdac08eaadcbaa0b94a89294a2f72b79cde41a19198976f3b9dd3a8e",
+      "final_step": "verify_reference",
+      "final_target_spec_digest": "8f57b42b188fd504e35e5f49e4dea2db9f4cebc8551fa92bd1687f9f46902cc5",
+      "item_id": "examples-four-corner-l-pythonscad",
+      "outputs": [
+        "references"
+      ],
+      "source_commit": "3ede9e687038eae5f9926b956bbf5a178206bae1"
+    },
+    "verification/references": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "9228bb3a1fba954fb4b9e1e1ac5d1866a5124f79e497718a7233ee0910bbfd18",
+      "final_step": "verify_references",
+      "final_target_spec_digest": "4bce0055236f6f16b13c20b332f9030268be4f157a9f37e2a5dc73c6fe5127bf",
+      "item_id": "reference-verification",
+      "outputs": [
+        "references"
+      ],
+      "source_commit": "3ede9e687038eae5f9926b956bbf5a178206bae1"
+    }
+  },
+  "pull_request": 512,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "3ede9e687038eae5f9926b956bbf5a178206bae1"
+}
