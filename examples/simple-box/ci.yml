@@ -4,6 +4,7 @@ process: true
 kind: model
 needs:
   - forge-package
+  - cad-verification-package
 watch:
   - examples/simple-box/scpf/**
   - examples/simple-box/model.yml
