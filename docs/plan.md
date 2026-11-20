@@ -10,12 +10,12 @@ documents in `docs/`. Issues keep detail and history.
 
 Forge is migrating this pilot to the current externally accepted generic stack:
 
-- `lib.py.cad.ci` 0.8.2;
-- `tool.cad.ci` 0.13.2 commit
-  `8d4c990cb22b794e268d361f09bc2757d15e1c94`;
+- `lib.py.cad.ci` 0.8.3;
+- `tool.cad.ci` 0.13.3 commit
+  `bbdd473638d64e01acab69722092b2a12f99b84d`;
 - `tool.cad.ci.test` acceptance is green for fresh cacheless Git-diff
-  selection, nested item paths, parent-relative shared inputs and nested
-  durable parent/child publication.
+  selection, nested item paths, parent-relative shared inputs, nested durable
+  parent/child publication and streamed concise execution logging.
 
 Forge durable build publication already uses affected-item PR/main updates.
 The remaining reference-verification configuration is still too coarse:
@@ -23,8 +23,10 @@ The remaining reference-verification configuration is still too coarse:
 
 ## Current goal
 
-Complete #498 as the first real-consumer proof of isolated nested reference
-items.
+Complete #501 by adopting the externally accepted streamed logging stack and
+proving the resulting output on a real Forge CAD-CI run.
+
+PR #500 / #498 stays blocked until this consumer proof is green.
 
 Only `attach-angle` is migrated in this issue:
 
@@ -45,7 +47,10 @@ duplicate attach-angle work.
 
 ## Required proof
 
-- Forge pins exact accepted tool.cad.ci 0.13.2.
+- Forge pins exact accepted tool.cad.ci 0.13.3.
+- Real Forge logs show concise `CAD CI run: <item>:<step>` action lines.
+- Real Forge logs do not show `_execute_bundle(` or long SCons source-list dumps.
+- Consumer command output is visible while the run is active.
 - A build123d-only source change selects the attach-angle build123d child only.
 - The other three attach-angle reference children are not executed.
 - A shared attach-angle reference contract change selects all four children.
@@ -57,21 +62,23 @@ duplicate attach-angle work.
 
 ## Execution order
 
-1. #498 — attach-angle isolated reference-item pilot.
-2. Migrate each remaining active model reference set in separate reviewable
+1. #501 — adopt tool.cad.ci 0.13.3 and prove real Forge logging.
+2. #498 — resume the attach-angle isolated reference-item pilot.
+3. Migrate each remaining active model reference set in separate reviewable
    changes, removing it from the temporary aggregate at the same time.
-3. Remove the temporary aggregate when the fifth active model is migrated.
-4. #497 / #366 — resume stable Pages publication from the generic build/main
+4. Remove the temporary aggregate when the fifth active model is migrated.
+5. #497 / #366 — resume stable Pages publication from the generic build/main
    baseline.
-5. Resume #430/#378 verification-feature work.
-6. Resume #432 broader declarative model migration after generated output is
+6. Resume #430/#378 verification-feature work.
+7. Resume #432 broader declarative model migration after generated output is
    stable.
 
 ## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #498 Pilot isolated reference items with attach-angle | now | First Forge consumer proof of the externally accepted nested Git-diff design. |
+| #501 Adopt tool.cad.ci 0.13.3 streamed execution logging | now | Externally accepted generic logging must be proven on a real Forge run before other Forge CI work resumes. |
+| #498 Pilot isolated reference items with attach-angle | blocked | Structural pilot is ready, but PR #500 waits for the accepted logging stack to be adopted and proven first. |
 | #497 Publish stable Pages from the generic build/main baseline | blocked | Resume after the reference-item pilot proves the corrected CI structure. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | next | Durable affected build updates are in place; Pages remains. |
 | #484 Reduce cold SolidCraft runtime overhead without changing model verification semantics | later | Performance work stays separate from selection/reference structure. |
@@ -99,4 +106,4 @@ duplicate attach-angle work.
 
 Immediate chain:
 
-`#498 attach-angle pilot -> remaining active reference sets -> #497/#366 Pages`.
+`#501 logging adoption -> #498 attach-angle pilot -> remaining active reference sets -> #497/#366 Pages`.
