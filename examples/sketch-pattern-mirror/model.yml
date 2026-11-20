@@ -8,3 +8,22 @@ stages:
   - Create the plate and Dog holes sketch
   - Pattern and mirror the Circle seed before one cut
   - Pattern and mirror the Slot seed before one cut
+concepts:
+  - Sketch.rectangular_pattern
+  - Sketch.mirror
+  - Circle2D
+  - SlotCenterToCenter2D
+  - saved-design relation
+verification:
+  summary: >
+    Verifies associative sketch patterns and mirrors for holes and clamp slots
+    without expanding repeated geometry into independent Python copies.
+  proves:
+    - Both named sketches remain solved and the plate volume matches the repeated cuts.
+    - Pattern counts and spacing remain editable parameters.
+    - Native history contains the two sketches and their through cuts in the intended order.
+    - A saved-design edit measurably changes the resulting layout rather than leaving stale geometry.
+  saved_design: >
+    The saved design changes hole diameter/pitch and slot pitch, verifies the
+    rebuilt volume and parameters, and requires the body's X center of mass to
+    change from the baseline by more than the configured threshold.
