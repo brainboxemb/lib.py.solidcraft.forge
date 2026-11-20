@@ -133,3 +133,25 @@ runtime inputs -> exact image reference -> GHCR exists?
 The runtime workflow does not import or export Buildx layers through GitHub
 Actions cache and does not use `actions/cache`. The immutable GHCR image is
 the reusable object.
+
+
+## Runtime image publication format
+
+The SolidCraft runtime is a single Linux/amd64 execution image.
+
+Buildx publishes the immutable tag with `provenance: false` so the tag points
+at a directly pullable image manifest instead of an image/attestation index.
+
+Runtime availability means both:
+
+1. the exact tag is present in GHCR;
+2. a normal `docker pull` of that exact reference succeeds.
+
+The runtime helper applies that same definition before and after publication.
+A top-level manifest whose child image manifest is unavailable is therefore
+treated as not usable and may be rebuilt by the explicit manual runtime
+workflow.
+
+This changes publication representation only. It does not change runtime
+contents, the manual-only publication policy, or the decision to preinstall the
+exact released verification library.
