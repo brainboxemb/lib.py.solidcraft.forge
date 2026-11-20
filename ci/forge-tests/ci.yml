@@ -4,6 +4,7 @@ kind: tool
 needs:
   - forge-package
 watch:
+  - .github/workflows/scpf.yml
   - scpf/scpf/**
   - scpf/tests/**
   - scpf/pyproject.toml
@@ -15,6 +16,7 @@ strategy:
 steps:
   - id: tool_test
     inputs:
+      - .github/workflows/scpf.yml
       - scpf/scpf/**
       - scpf/tests/**
       - scpf/pyproject.toml
