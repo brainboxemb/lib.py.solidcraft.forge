@@ -27,7 +27,7 @@ steps:
   - id: model_verify
     inputs:
       - examples/anchor-topology-mutation/scpf/**
-          - examples/anchor-topology-mutation/verification/**
+      - examples/anchor-topology-mutation/verification/**
       - examples/anchor-topology-mutation/tests/**
       - scripts/forge_example.py
       - scripts/model_verification_batch.py
