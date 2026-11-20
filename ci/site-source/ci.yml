@@ -5,6 +5,7 @@ kind: test
 watch:
   - site/**
   - examples/*/model.yml
+  - examples/*/README.md
 strategy:
   reuse: true
 steps:
@@ -12,6 +13,7 @@ steps:
     inputs:
       - site/**
       - examples/*/model.yml
+      - examples/*/README.md
       - examples/*/verification/verify.py
       - examples/*/scpf/model.py
     run: [python, ../../site/test_example_metadata.py]
@@ -19,6 +21,7 @@ steps:
     inputs:
       - site/**
       - examples/*/model.yml
+      - examples/*/README.md
       - examples/*/verification/verify.py
       - examples/*/scpf/**
     run: [python, ../../site/test_site.py]
