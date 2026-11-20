@@ -245,3 +245,30 @@ alternative verification path.
 The first proof is intentionally limited to same-repository pull requests where
 the workflow token can write the generated `build` branch. Fork PRs must not
 gain write publication privileges.
+
+## Stable build main bootstrap
+
+The retired Forge-owned `build/main` format is not an input to the current
+generic build store.
+
+The first authoritative generic main baseline is created from a complete
+accepted run of the current processed item set:
+
+- PR verification remains incremental;
+- the bootstrap main push runs all `process: true` items;
+- staged `process: false` items do not participate and do not require output;
+- the reusable CAD-CI artifact is the only candidate-output source;
+- `cad-ci build prepare-main` validates and packages the complete processed
+  candidate;
+- `cad-ci publish build --scope main` replaces only the generated
+  `build/main` scope;
+- existing `build/pr/*` scopes are preserved;
+- the retired main manifest is neither parsed nor translated;
+- every stored item keeps its public `.cad-ci` evidence.
+
+Only the publication job receives `contents: write`. Verification jobs remain
+read-only consumers of source/packages.
+
+The bootstrap full run is transitional. Once a valid generic main baseline
+exists, future #366 work must use partial main updates rather than requiring a
+full run for every main change.
