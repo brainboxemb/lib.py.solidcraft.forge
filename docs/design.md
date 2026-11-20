@@ -342,3 +342,66 @@ without requiring a full model/reference rerun.
 
 The publication jobs retain source freshness checks and generated-branch race
 retry from `tool.cad.ci` / `lib.py.cad.ci`.
+
+
+## Nested reference-item migration
+
+Reference implementations are migrated from one catalog-wide command to
+directory-owned CAD-CI items.
+
+For the first pilot:
+
+```text
+examples/attach-angle/
+  ci.yml
+  verification/reference_geometry.json
+  build123d/ci.yml
+  cadquery/ci.yml
+  pythonscad/ci.yml
+  pybosl2/ci.yml
+```
+
+Root `cad-ci.yml` owns reusable Forge-specific templates. Templates contain
+generic execution structure only; model names and expected geometry do not live
+in them.
+
+The model `ci.yml` may provide descendant defaults such as the common
+reference template and effective `process` state. A child may replace the
+template when one implementation needs an extra implementation-specific helper.
+
+The effective flow for a child source change is:
+
+```text
+Git base/head
+  -> released CAD-CI watch matching
+  -> one reference child selected
+  -> one child SCons target graph
+  -> Forge reference launcher
+  -> released runtime
+  -> existing reference implementation
+  -> released geometry validation
+  -> child-owned build output/evidence
+```
+
+The shared parent geometry contract participates in every reference child's
+watch/input set. A contract change therefore selects all four children through
+normal released CAD-CI path matching.
+
+### Transitional aggregate
+
+The old `verification/references` item is not removed until reference coverage
+for the active proof set is preserved.
+
+During the attach-angle pilot it becomes a compatibility aggregate for only:
+
+- simple-box;
+- anchor-topology-mutation;
+- four-corner-l;
+- xz-anchor.
+
+It no longer watches or executes attach-angle references. Each later active
+model migration removes that model from the aggregate in the same change. The
+aggregate disappears after the last active model is split.
+
+This is a migration bridge only. It is not a second planner and it must never
+expand back to inactive/all-catalog verification.
