@@ -672,3 +672,60 @@ The snapshot branch
 reference. The migration must preserve the current Examples/Qualification
 split, qualification cases, visible status semantics and main evidence
 presentation unless a separately justified change is made.
+
+
+## Verification batch execution
+
+The performance boundary is a Forge-owned producer dependency, not a new
+CAD-CI execution mode.
+
+The model path is:
+
+```text
+selected examples/<case> item
+        |
+        v
+ci/model-verification-batch
+  -> compile current declarative model list
+  -> pull SolidCraft runtime once
+  -> start one container
+  -> for each model:
+       own input/output directory
+       produce native model
+       run released verification
+       collect pass/fail
+  -> batch result tree
+        |
+        v
+selected examples/<case>/model_verify
+  -> copy only that case result into the existing item output
+```
+
+The independent-reference path is equivalent:
+
+```text
+selected examples/<case>/<engine> item
+        |
+        v
+ci/reference-verification-batch
+  -> pull reference runtime once
+  -> start one container
+  -> one Python process handles PythonSCAD/pyBOSL2/CadQuery lists
+  -> one isolated build123d interpreter handles the complete build123d list
+  -> collect every case result before returning failure
+        |
+        v
+selected reference child
+  -> copy only its own result into the existing item output
+```
+
+Batch inputs include the case membership/configuration files and all source
+files consumed by the batch. This prevents a selected child from observing a
+stale batch result.
+
+The batch output is an internal Forge verification dependency. Existing
+per-case CAD-CI items remain the durable/public ownership boundary.
+
+CADCraft already has one diagram CAD-CI item. Its renderer initializes/acquires
+the pinned tool once, processes the full source list, records each result and
+reports accumulated failures only after all sources were attempted.
