@@ -158,13 +158,41 @@ def run_inside_runtime(
         f"solidcraft_verification_s={time.perf_counter() - verification_started:.3f}",
         flush=True,
     )
+
+    visual_report = None
+    visual_policy = path.parent / "visual.json"
+    if visual_policy.is_file():
+        from model_visual import run_visual_verification
+
+        visual_started = time.perf_counter()
+        visual_report = run_visual_verification(
+            model,
+            output_dir.resolve() / "baseline" / "measurements.json",
+            visual_policy,
+            output_dir.resolve(),
+        )
+        print(
+            "FORGE TIMING "
+            f"visual_verification_s={time.perf_counter() - visual_started:.3f}",
+            flush=True,
+        )
+
     print(
         "FORGE TIMING "
         f"inside_runtime_total_s={time.perf_counter() - inside_started:.3f}",
         flush=True,
     )
     print(f"{slug} model verification: {report['status']}", flush=True)
-    return 0 if report["status"] == "pass" else 1
+    if visual_report is not None:
+        print(
+            f"{slug} visual verification: {visual_report['status']}",
+            flush=True,
+        )
+
+    passed = report["status"] == "pass"
+    if visual_report is not None:
+        passed = passed and visual_report["status"] == "pass"
+    return 0 if passed else 1
 
 
 def run_host() -> int:
