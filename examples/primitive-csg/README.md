@@ -28,6 +28,14 @@ SolidCraft accepts the complete CSG command path, produces one valid clipped bod
 
 No saved-design mutation in this case; it isolates primitive CSG lowering. Parametric edits are covered by dedicated saved-design cases.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+Many different Boolean results can share this envelope. Surface probes must prove the surviving sphere, bore, clipped box and unioned extension.
+
 ## Reference notes
 
 - **OpenSCAD** — Closest to ordinary union()/difference()/intersection() with translate()/rotate() around primitives.
