@@ -28,6 +28,14 @@ The result is one joined body: an 80 x 60 x 5 mm base plate with a centered 40 x
 
 No saved-design mutation in this fixture; it isolates explicit rounded-rectangle sketch geometry and native join extrusion.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `false`
+
+A sharp rectangular pad can share the same envelope. Rounded-pad volume and a corner-distance probe are required.
+
 ## Reference notes
 
 - **SolidCraft** — Native rounded sketch rectangles preserve true arc geometry and remain inspectable in the saved sketch.
