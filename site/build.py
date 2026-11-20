@@ -6,15 +6,17 @@ This site deliberately contains only tiny fixtures and the SCPF cheatsheet.
 """
 import argparse
 import html
-from importlib.metadata import version as package_version
 import json
 import os
 from pathlib import Path
 import re
 import shutil
+import sys
+import tomllib
 from string import Template
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scpf"))
 
 from scpf.runner import run_script
 from scpf.version import TESTED_SOLIDCRAFT_VERSION
@@ -404,9 +406,12 @@ def render_template(name, **values):
 
 
 def scpf_version():
-    """Return the installed Forge package version used by this site build."""
+    """Return the Forge package version declared by this source tree."""
 
-    return package_version("scpf")
+    data = tomllib.loads(
+        (ROOT / "scpf" / "pyproject.toml").read_text(encoding="utf-8")
+    )
+    return data["project"]["version"]
 
 
 def build(
