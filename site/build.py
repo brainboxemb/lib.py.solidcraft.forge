@@ -311,6 +311,7 @@ def _example_search_entries():
                 documentation[row.slug].lowering,
                 documentation[row.slug].solidcraft_result,
                 documentation[row.slug].saved_design_test,
+                documentation[row.slug].geometry_reason,
                 *(
                     note
                     for _name, note
@@ -486,6 +487,10 @@ def build(
             lowering=escape(documentation.lowering),
             solidcraft_result=escape(documentation.solidcraft_result),
             saved_design_test=escape(documentation.saved_design_test),
+            bounds_sufficient=escape(
+                "yes" if documentation.bounds_sufficient else "no"
+            ),
+            geometry_reason=escape(documentation.geometry_reason),
             reference_notes=reference_notes_html,
             source=escape(source),
             source_url=escape(source_url),
@@ -656,6 +661,10 @@ def build(
             lowering=escape(documentation.lowering),
             solidcraft_result=escape(documentation.solidcraft_result),
             saved_design_test=escape(documentation.saved_design_test),
+            bounds_sufficient=escape(
+                "yes" if documentation.bounds_sufficient else "no"
+            ),
+            geometry_reason=escape(documentation.geometry_reason),
             reference_notes=reference_notes_html,
             verification_url=escape(verification_url),
         )
