@@ -614,8 +614,8 @@ example metadata. The required schema contains:
 Verification explanation and historical engineering rationale live in the
 example documentation, not in additional `model.yml` verification fields.
 
-These fields explain intent. They must not become a second machine verification
-contract. Exact expected geometry, parameters, tolerances and saved-design
+These fields describe the example for navigation/presentation. They must not
+become a second machine verification contract. Exact expected geometry, parameters, tolerances and saved-design
 expectations remain in `verification/verify.py`.
 
 Generated Pages obtain actual status, measurements and evidence links from the
@@ -637,7 +637,9 @@ HTML generation must be structurally separated from site data/orchestration.
 - prose-heavy guide content belongs in external Markdown or template content;
 - CSS and browser JavaScript belong in static files;
 - generated API facts continue to come from the public implementation/docstrings;
-- example facts come from local `model.yml`, source files and durable evidence.
+- example page metadata comes from local `model.yml`;
+- preserved engineering explanation comes from local `README.md`;
+- executable model facts come from source/verification files and durable evidence.
 
 Source/evidence/orchestration modules may load, validate and normalize data,
 construct view-models and write generated output. They must not mix that work
@@ -655,7 +657,7 @@ catalog/evidence sources.
 `examples/<slug>/model.yml` must not select or invalidate model compilation,
 SolidCraft verification or independent CAD reference verification.
 
-The lightweight site-source item owns `model.yml` validation and generated
-documentation checks. CAD verification inputs are the model source,
+The lightweight site-source item owns `model.yml` and `README.md` validation
+and generated documentation checks. CAD verification inputs are the model source,
 verification contract, model-specific command/test data and shared runtime
 helpers only.
