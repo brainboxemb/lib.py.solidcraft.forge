@@ -65,6 +65,8 @@ class CiRuntimeContractTests(unittest.TestCase):
             f"reusable-ci.yml@{TOOL_COMMIT}",
             text,
         )
+        self.assertIn("upload_build: true", text)
+        self.assertIn("build_artifact_name: forge-cad-ci-build", text)
         self.assertNotIn("runtime_check:", text)
         self.assertNotIn("environment_json:", text)
         self.assertNotIn("solidcraft_runtime.py", text)
