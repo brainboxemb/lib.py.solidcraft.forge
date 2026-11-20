@@ -45,9 +45,10 @@ hand-authored webpage content from Python.
 - example pages need no central Python example registry;
 - page layout lives in external templates;
 - guide prose lives outside Python;
-- `site/build.py` contains orchestration/view-model code and no HTML markup;
-- all HTML structure, including reusable fragments for dynamic API/guide rows,
-  lives under `site/templates/`;
+- `site/build.py` contains orchestration/view-model code, not page markup;
+- page and reusable-fragment structure normally lives under `site/templates/`;
+- any Python-generated HTML is confined to an explicitly named HTML-rendering
+  module, so rendering logic is structurally separate from source/evidence logic;
 - no site code imports retired `qualification.*`;
 - tests reject missing/malformed example metadata and hard-coded legacy page
   sources.
