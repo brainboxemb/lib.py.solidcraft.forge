@@ -19,7 +19,7 @@ _REQUIRED_TEXT = (
     "description",
     "parameters",
 )
-_REQUIRED_LISTS = ("stages", "concepts")
+_REQUIRED_LISTS = ("stages",)
 
 
 @dataclass(frozen=True)
@@ -33,11 +33,6 @@ class ExampleMetadata:
     description: str
     parameters: str
     stages: tuple[str, ...]
-    concepts: tuple[str, ...]
-    verification_summary: str
-    verification_proves: tuple[str, ...]
-    verification_saved_design: str | None = None
-    notes: tuple[str, ...] = ()
 
 
 def _text(value: Any, label: str) -> str:
@@ -73,42 +68,19 @@ def load_example_metadata(path: Path) -> ExampleMetadata:
         for key in _REQUIRED_LISTS
     }
 
-    verification = data.get("verification")
-    if not isinstance(verification, dict):
-        raise ValueError(f"{slug}.verification must be a mapping")
-    summary = _text(
-        verification.get("summary"),
-        f"{slug}.verification.summary",
-    )
-    proves = _text_list(
-        verification.get("proves"),
-        f"{slug}.verification.proves",
-    )
-    saved_design = verification.get("saved_design")
-    if saved_design is not None:
-        saved_design = _text(
-            saved_design,
-            f"{slug}.verification.saved_design",
-        )
 
-    notes_value = data.get("notes", [])
-    if notes_value is None:
-        notes_value = []
-    if not isinstance(notes_value, list):
-        raise ValueError(f"{slug}.notes must be a list when present")
-    notes = tuple(
-        _text(item, f"{slug}.notes[{index}]")
-        for index, item in enumerate(notes_value)
-    )
+    allowed = set(_REQUIRED_TEXT) | set(_REQUIRED_LISTS)
+    unexpected = sorted(set(data) - allowed)
+    if unexpected:
+        raise ValueError(
+            f"{slug}.model.yml contains unsupported fields: "
+            + ", ".join(unexpected)
+        )
 
     return ExampleMetadata(
         slug=slug,
         **values,
         **lists,
-        verification_summary=summary,
-        verification_proves=proves,
-        verification_saved_design=saved_design,
-        notes=notes,
     )
 
 
