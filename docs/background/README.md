@@ -6,7 +6,6 @@ primary current contract.
 
 - `changes/` — numbered implementation/change records;
 - `design/` — audits, architecture deep-dives, remediation and qualification records;
-- `vendor/` — versioned SolidCraft research/reference notes;
 - `ci-baseline-2026-11-20.md` — verified CI timing/coverage baseline and parked findings before durable build/Pages migration;
 - `microcad-inspiration.md` — external design inspiration;
 - `documentation-architecture.md` — earlier documentation-architecture record;

@@ -49,9 +49,10 @@ Keep the `docs/` root deliberately small:
 - [requirements.md](requirements.md) — stable repository requirements;
 - [release.md](release.md) — package/release rules.
 
-Current task-oriented detail goes under `docs/manual/`. Historical design
-records, numbered changes, audits, migration notes and external/vendor research
-go under `docs/background/`.
+Current task-oriented detail goes under `docs/manual/`. Current version-pinned
+external engineering references go under `docs/reference/`. Historical design
+records, numbered changes, audits, migration notes and superseded research go
+under `docs/background/`.
 
 Do not create a second handwritten agent API manual. The generated
 `docs/agent/forge-api.json` is derived from the public implementation and
@@ -69,6 +70,28 @@ The site generator reads the primary API contract and generated implementation
 metadata. Public API changes therefore require implementation/docstring updates,
 the cross-object contract when relevant, tests, and regeneration of agent/site
 output where required.
+
+## Updating the SolidCraft target
+
+Forge keeps current version-pinned SolidCraft engineering references under
+`docs/reference/solidcraft/<version>/`. These references are part of the
+active development inputs for compiler compatibility work, not background
+history.
+
+When Forge intentionally targets a newer SolidCraft release:
+
+1. do not modify or replace an already qualified version directory;
+2. add a new sibling `docs/reference/solidcraft/<new-version>/` directory;
+3. record the exact upstream release and commit in its `SOURCE.md`;
+4. capture the relevant command/reference material and known contract gaps for
+   that exact version before changing Forge compatibility code;
+5. update `scpf/scpf/version.py::TESTED_SOLIDCRAFT_VERSION` and the matching
+   Forge CI/runtime expectation only as part of the deliberate compatibility
+   change;
+6. qualify the new target before treating it as the current supported version.
+
+The index and current version notes are in
+[reference/solidcraft/README.md](reference/solidcraft/README.md).
 
 ## Testing ownership
 
