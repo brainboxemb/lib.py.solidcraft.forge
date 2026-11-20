@@ -165,10 +165,11 @@ selection, scheduling, caching or parallel-execution policy.
 Forge CI must run only against an exact externally accepted `tool.cad.ci` /
 `lib.py.cad.ci` release pair.
 
-During the current staged five-model proof:
+During the current staged proof:
 
-- exactly `simple-box`, `anchor-topology-mutation`, `attach-angle`,
-  `four-corner-l` and `xz-anchor` have model verification enabled;
+- `simple-box` remains enabled only as the representative pipeline/example fixture;
+- the staged verification models are `anchor-topology-mutation`, `attach-angle`,
+  `four-corner-l` and `xz-anchor`;
 - every other historical model item remains explicit `process: false`;
 - independent reference items remain separately selected by normal released
   CAD-CI changed-path/dependency semantics;
@@ -524,13 +525,14 @@ Missing required evidence maps to `missing`; explicit failed evidence maps to
 present. The summary must not convert an incomplete result into pass merely
 because no producer was executed.
 
-The staged aggregate contains exactly these five model IDs once each:
+The staged verification aggregate contains exactly these four model IDs once each:
 
-- `simple-box`;
 - `anchor-topology-mutation`;
 - `attach-angle`;
 - `four-corner-l`;
 - `xz-anchor`.
+
+`simple-box` is deliberately excluded from the verification aggregate. Its current verification scaffolding is representative infrastructure proof for the pipeline/example and must not make it appear as a verified project/model.
 
 Summary composition must be executable against a resolved tree of existing
 evidence. It must not require declaring all model/reference producers as direct
