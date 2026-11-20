@@ -11,6 +11,7 @@ templates:
     kind: model
     needs:
       - forge-package
+      - cad-verification-package
     watch:
       item:
         - scpf/**
@@ -53,6 +54,8 @@ templates:
 
   forge-reference:
     kind: verification
+    needs:
+      - cad-verification-package
     watch:
       item:
         - model.py
@@ -77,6 +80,8 @@ templates:
 
   forge-reference-build123d:
     kind: verification
+    needs:
+      - cad-verification-package
     watch:
       item:
         - model.py
