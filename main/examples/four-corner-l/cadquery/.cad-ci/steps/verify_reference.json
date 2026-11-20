@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "7d714149c68f5f67f76a5f4b1b0ffffb11b6f6d953295d72dc8512d58e12baa8",
+  "duration_seconds": 3.504,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T17:13:53.033Z",
+  "item": "examples-four-corner-l-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "9a0e3c6bc4e6b00f387aa49e8b38583184db234894e50906cc690d52d357300c"
+    }
+  },
+  "run_finished_at": "2026-11-20T17:14:03.601Z",
+  "run_started_at": "2026-11-20T17:13:14.392Z",
+  "schema": 3,
+  "started_at": "2026-11-20T17:13:49.529Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "5fccc9ed2eadc9340033dd7e160fea301e4dd3fe953f9df0bbb6e1affca45351",
+  "timeout_seconds": null
+}
