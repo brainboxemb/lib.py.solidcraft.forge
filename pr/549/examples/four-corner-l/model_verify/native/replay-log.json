@@ -1,0 +1,282 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "70ab9ef5772f8295d6610e3b3b770201fb8a7c1b42fabf17dff17e5fae23d21b",
+  "variables": {
+    "$frameblock": 2,
+    "$lprofile_occurrence_1": 6,
+    "$lprofile_occurrence_2": 9,
+    "$lprofile_occurrence_3": 10,
+    "$lprofile_occurrence_4": 11
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "frame_width",
+        "expression": "120",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "frame_depth",
+        "expression": "80",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "frame_height",
+        "expression": "60",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 3,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "FrameBlock",
+        "grounded": true
+      },
+      "bindings": {
+        "$frameblock": 2
+      }
+    },
+    {
+      "index": 4,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": "frame_width",
+        "width": "frame_depth",
+        "height": "frame_height",
+        "corner": [
+          "-frame_width / 2",
+          "-frame_depth / 2",
+          0
+        ],
+        "body_name": "FrameBlock"
+      }
+    },
+    {
+      "index": 5,
+      "command": "solid.fillet",
+      "resolved_params": {
+        "edges": [
+          [
+            -60.0,
+            -40.0,
+            30.0
+          ],
+          [
+            60.0,
+            -40.0,
+            30.0
+          ],
+          [
+            60.0,
+            40.0,
+            30.0
+          ],
+          [
+            -60.0,
+            40.0,
+            30.0
+          ]
+        ],
+        "radius": 8,
+        "body": "FrameBlock"
+      }
+    },
+    {
+      "index": 6,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 7,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "LProfile",
+        "grounded": false
+      },
+      "bindings": {
+        "$lprofile_occurrence_1": 6
+      }
+    },
+    {
+      "index": 8,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": "XY",
+        "name": "Profile"
+      }
+    },
+    {
+      "index": 9,
+      "command": "sketch.line",
+      "resolved_params": {
+        "points": [
+          [
+            0,
+            0
+          ],
+          [
+            28.0,
+            0
+          ],
+          [
+            28.0,
+            -4.0
+          ],
+          [
+            -4.0,
+            -4.0
+          ],
+          [
+            -4.0,
+            28.0
+          ],
+          [
+            0,
+            28.0
+          ]
+        ],
+        "closed": true,
+        "ids": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f"
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 11,
+      "command": "solid.extrude",
+      "resolved_params": {
+        "distance": 16.0,
+        "direction": "positive",
+        "body_name": "LProfile"
+      }
+    },
+    {
+      "index": 12,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 13,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "LProfile"
+      },
+      "bindings": {
+        "$lprofile_occurrence_2": 9
+      }
+    },
+    {
+      "index": 14,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "LProfile"
+      },
+      "bindings": {
+        "$lprofile_occurrence_3": 10
+      }
+    },
+    {
+      "index": 15,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "LProfile"
+      },
+      "bindings": {
+        "$lprofile_occurrence_4": 11
+      }
+    },
+    {
+      "index": 16,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 6,
+        "translate": [
+          "-(frame_width / 2)",
+          "-(frame_depth / 2)",
+          "(frame_height - 16 mm) / 2"
+        ]
+      }
+    },
+    {
+      "index": 17,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 9,
+        "translate": [
+          "frame_width / 2",
+          "-(frame_depth / 2)",
+          "(frame_height - 16 mm) / 2"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "90 deg"
+      }
+    },
+    {
+      "index": 18,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 10,
+        "translate": [
+          "frame_width / 2",
+          "frame_depth / 2",
+          "(frame_height - 16 mm) / 2"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "180 deg"
+      }
+    },
+    {
+      "index": 19,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 11,
+        "translate": [
+          "-(frame_width / 2)",
+          "frame_depth / 2",
+          "(frame_height - 16 mm) / 2"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "270 deg"
+      }
+    }
+  ],
+  "completed": 20
+}

@@ -1,0 +1,99 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                35.0,
+                10.0
+              ],
+              "actual_min": [
+                -50.0,
+                -35.0,
+                0.0
+              ],
+              "expected_max": [
+                50.0,
+                35.0,
+                10.0
+              ],
+              "expected_min": [
+                -50.0,
+                -35.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 5.9981349073137995,
+                "delta_mm": 0.001865092686200498,
+                "expected_mm": 6.0,
+                "label": "center hole at z=1",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 5.9981349073137995,
+                "delta_mm": 0.001865092686200498,
+                "expected_mm": 6.0,
+                "label": "center hole at z=5",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 5.9981349073137995,
+                "delta_mm": 0.001865092686200498,
+                "expected_mm": 6.0,
+                "label": "center hole at z=9",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 67589.495314068,
+              "delta_mm3": 0.46866936032893136,
+              "expected_mm3": 67589.02664470767,
+              "pass": true,
+              "tolerance_mm3": 45.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/top-sketch-after-chamfer/build123d/model.py",
+          "status": "pass",
+          "stl": "top-sketch-after-chamfer/build123d/model.stl"
+        }
+      ],
+      "model": "top-sketch-after-chamfer",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "3d44504d5206b714dc4e8c6c59f71663e04ac41d",
+  "status": "pass"
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "bcdd34a0e07a363d1c0309dd28a78ba6477d02d4fff39de47a87c8ca78c05ed8",
+  "duration_seconds": 0.089,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:02:45.546Z",
+  "item": "examples-circle-negative-extrude-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "0b3531fe2216a6494ee20e1cfa7fe59400123cfb989dade67ec827c2541436f7"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:02:55.681Z",
+  "run_started_at": "2026-11-20T22:01:03.086Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:02:45.498Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "95402ed8afa8f631018a04e205d835467da41c2d7c0dc1afb5f080a7e387dc41",
+  "timeout_seconds": null
+}

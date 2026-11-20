@@ -1,0 +1,150 @@
+[
+  {
+    "display_value": 120.0,
+    "name": "frame_width",
+    "unit": "mm",
+    "value": 120.0
+  },
+  {
+    "display_value": 80.0,
+    "name": "frame_depth",
+    "unit": "mm",
+    "value": 80.0
+  },
+  {
+    "display_value": 60.0,
+    "name": "frame_height",
+    "unit": "mm",
+    "value": 60.0
+  },
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "FrameBlock",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "FrameBlock"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "FrameBlock"
+    ],
+    "feature": 3,
+    "ms": 2.303299,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "FrameBlock"
+    ],
+    "changed_bodies": [
+      "FrameBlock"
+    ],
+    "created_bodies": [],
+    "feature": 4,
+    "ms": 36.835608,
+    "name": "Fillet1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 5,
+    "grounded": false,
+    "name": "LProfile",
+    "occurrence": 6,
+    "parent": 0
+  },
+  {
+    "attachment": "fixed",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Profile",
+    "projected": null,
+    "sketch": 7
+  },
+  {
+    "constraints": [
+      "k1"
+    ],
+    "created": {
+      "constraints": [
+        "k1"
+      ],
+      "curves": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+      ],
+      "dimensions": [],
+      "points": [
+        "a.start",
+        "a.end",
+        "b.end",
+        "c.end",
+        "d.end",
+        "e.end"
+      ]
+    },
+    "curves": [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f"
+    ],
+    "sketch": {
+      "dof": 10,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 1,
+    "sketch": 7
+  },
+  {
+    "bodies": [
+      "FrameBlock",
+      "LProfile"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "LProfile"
+    ],
+    "feature": 8,
+    "ms": 1.895337,
+    "name": "Extrude1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 5,
+    "occurrence": 9
+  },
+  {
+    "component": 5,
+    "occurrence": 10
+  },
+  {
+    "component": 5,
+    "occurrence": 11
+  }
+]

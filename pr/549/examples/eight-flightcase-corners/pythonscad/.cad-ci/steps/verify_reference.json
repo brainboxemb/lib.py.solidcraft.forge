@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "d1ec4ab42bb06341ab164471ebe85baafc4a3e9a1b8c0fddf0c26ea13700f8ef",
+  "duration_seconds": 0.089,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:02:47.585Z",
+  "item": "examples-eight-flightcase-corners-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "651d6c99ad749a422ba53ea9d0a50003e5824b4bb4520d71c9bfb267a38cc76e"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:02:55.681Z",
+  "run_started_at": "2026-11-20T22:01:03.086Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:02:47.536Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "6c961ad0117e53563cf64e76ae3629c32b8fe6879606a5f2fcddfd43aa181ec0",
+  "timeout_seconds": null
+}

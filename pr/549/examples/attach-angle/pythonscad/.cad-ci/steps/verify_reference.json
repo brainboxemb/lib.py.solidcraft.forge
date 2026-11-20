@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "388f88f03fb1f000f6fde5c42b3eed8c364f096f0669d0b73042bc365f12aa41",
+  "duration_seconds": 0.088,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:02:44.990Z",
+  "item": "examples-attach-angle-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "81f65a833cc0a4992915f314f7585882ed4143796758da2c2bfa50d880a8859f"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:02:55.681Z",
+  "run_started_at": "2026-11-20T22:01:03.086Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:02:44.942Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "c73902ea92354cdce8040d2fb6ef8a8eb8ed5f595091ecdc8950fa36a74d3be6",
+  "timeout_seconds": null
+}

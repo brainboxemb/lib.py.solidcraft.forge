@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "9fbbe879e9404a55e81a36d2af616d3e60304d3971bedf345d5e2ca61f7ddaf3",
+  "duration_seconds": 0.089,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:02:43.881Z",
+  "item": "examples-anchored-holes-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "b30970bfd65e1170389ad0d86638deb71d279246285ec1fb996a6674c955f0d4"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:02:55.681Z",
+  "run_started_at": "2026-11-20T22:01:03.086Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:02:43.832Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "d2301277cf01985b58f7b95ee05c0f93637712be4388ce8ab18b7d44e933f21e",
+  "timeout_seconds": null
+}

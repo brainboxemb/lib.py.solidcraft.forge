@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "f535763d77aaacb0d12e325472740055a76090db9484d7bb9a4cab8e8f032ab2",
+  "duration_seconds": 0.09,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:02:53.570Z",
+  "item": "examples-simple-box-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "a8d38ea62cc1db56fe35ed26e429ee03730b89f000f7843f0c68bcc729a1fb92"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:02:55.681Z",
+  "run_started_at": "2026-11-20T22:01:03.086Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:02:53.521Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "4429d5c4ab47834a4fff0c4f8e9cade2acd88770556d20ee37a41be2b0570edd",
+  "timeout_seconds": null
+}

@@ -1,0 +1,148 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "8f4f7197bd269601297c5bba302d631d571efd5fc41831e4d99390b923d4bfb1",
+          "size": 2154
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "TopSketchAfterChamfer",
+                "max": [
+                  50.0,
+                  35.00000000000001,
+                  10.0
+                ],
+                "min": [
+                  -50.0,
+                  -35.0,
+                  -3.9619130284537425e-32
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  50.0,
+                  35.0,
+                  10.0
+                ],
+                "min": [
+                  -50.0,
+                  -35.0,
+                  0.0
+                ]
+              },
+              "max_delta": 7.105427357601002e-15
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 1
+              },
+              "expected": {
+                "cylinder": 1
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 67589.02664469673,
+              "delta": 1.0943040251731873e-08,
+              "expected": 67589.02664470767,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.5
+            }
+          }
+        ],
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "name": "Top hole",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "Top hole",
+              "status": "solved"
+            },
+            "label": "Top hole sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "type": "BoxFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            },
+            {
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "expected": [
+            {
+              "type": "BoxFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            },
+            {
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/top-sketch-after-chamfer/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "top-sketch-after-chamfer"
+}

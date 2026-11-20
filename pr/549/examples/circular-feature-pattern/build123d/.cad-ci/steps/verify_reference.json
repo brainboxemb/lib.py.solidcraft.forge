@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "1166f23a93c7a13597acca8b896c44a64c254bf33910187f49fbbef516b1e306",
+  "duration_seconds": 0.09,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:02:45.824Z",
+  "item": "examples-circular-feature-pattern-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "9da30137d632b6fd8540560179e5dd11fa435ae9eb1798529f927c91a52c2ed6"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:02:55.681Z",
+  "run_started_at": "2026-11-20T22:01:03.086Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:02:45.775Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "0d6c589fd1ae2873f91f68e145152b6587069f07dc16a2d4c4ad45d2c65bba9f",
+  "timeout_seconds": null
+}

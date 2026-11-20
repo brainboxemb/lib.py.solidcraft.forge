@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "2c076ac03b37be6af002fc972841af42ba4b5c885ce9e94f734fe73422000c66",
+  "duration_seconds": 0.089,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:02:44.808Z",
+  "item": "examples-attach-angle-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "0f9d3db0f61a36e27d9f6746b9d995f56fc3a7e59767bee6c1c7e582acd0a771"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:02:55.681Z",
+  "run_started_at": "2026-11-20T22:01:03.086Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:02:44.760Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "a2c968e8d20bd01161219df5176016b4237ebdf78b223f15bc255ddfb572d773",
+  "timeout_seconds": null
+}

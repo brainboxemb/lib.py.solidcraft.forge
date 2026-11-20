@@ -1,0 +1,33 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "4c6bff8a84764ecb522c378d6624353059810ee1d6b4037df6705270420168ff",
+  "duration_seconds": 0.116,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:02:37.118Z",
+  "item": "hole-family",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "model_verify": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "370dff232f24fd7c63315ea7ef8864f0faafdec7719a99a3abc2dbdfae8abf98"
+    },
+    "solidcraft.json": {
+      "kind": "file",
+      "mode": 420,
+      "sha256": "c9c839f6576a38982b454454c57e5a34ae2c507b11e845d34183c4fac2c4e54a"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:02:55.681Z",
+  "run_started_at": "2026-11-20T22:01:03.086Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:02:37.070Z",
+  "status": "pass",
+  "step": "model_verify",
+  "target_spec_digest": "1262fe8c6e55c5d9421e60f24929e5b58e7a948e829008f57711bb443aec11a6",
+  "timeout_seconds": null
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "b32792ebe7ae3026d7b6c61088b26ad775393d8c76866e967db4aec47c86710a",
+  "duration_seconds": 0.092,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:02:52.353Z",
+  "item": "examples-rounded-rectangle-sketch-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "bc2b05ea45bc604478455ba0799c548a3cd27f66db34a4f13b8827343d46a7a7"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:02:55.681Z",
+  "run_started_at": "2026-11-20T22:01:03.086Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:02:52.304Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "3d146df41359b55d647df308aa8ff45531521e482b47e765c2705be498d4b589",
+  "timeout_seconds": null
+}

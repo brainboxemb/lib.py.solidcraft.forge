@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/parametric-anchor/pythonscad/model.py",
+          "status": "pass",
+          "stl": "parametric-anchor/pythonscad/model.stl"
+        }
+      ],
+      "model": "parametric-anchor",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "3d44504d5206b714dc4e8c6c59f71663e04ac41d",
+  "status": "pass"
+}

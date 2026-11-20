@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "8f3425ae6030920dd510d169ed75ccc5622e23f4ca92f1bab32d3a254fa97f76",
+  "duration_seconds": 0.09,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:02:48.418Z",
+  "item": "examples-hole-family-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "519e3c6d7ec83b0e2260040f194a192a8d98942f0426fa1ab83857a03188b50d"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:02:55.681Z",
+  "run_started_at": "2026-11-20T22:01:03.086Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:02:48.369Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "a84b9b24e3be6cf753d0c1b951f7fedbe5545587fcb8d2f52579ec16174a5d66",
+  "timeout_seconds": null
+}

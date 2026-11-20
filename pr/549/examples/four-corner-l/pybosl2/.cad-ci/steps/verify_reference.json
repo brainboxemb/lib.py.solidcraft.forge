@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "854ae777736284d007e7d98327c53d620d34f421561a302e519cb4545046e71f",
+  "duration_seconds": 0.09,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:02:47.863Z",
+  "item": "examples-four-corner-l-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "93d807712d9842ec62d70e57200d0f26a30ea79b886451f3d898446e7bec3e2a"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:02:55.681Z",
+  "run_started_at": "2026-11-20T22:01:03.086Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:02:47.815Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "1992345cd669cee6ce82be873ab4d9073f518ea96d49d259e49f32683ceae5e2",
+  "timeout_seconds": null
+}

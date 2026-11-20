@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "actual_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "expected_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/anchor-topology-mutation/build123d/model.py",
+          "status": "pass",
+          "stl": "anchor-topology-mutation/build123d/model.stl"
+        }
+      ],
+      "model": "anchor-topology-mutation",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "3d44504d5206b714dc4e8c6c59f71663e04ac41d",
+  "status": "pass"
+}

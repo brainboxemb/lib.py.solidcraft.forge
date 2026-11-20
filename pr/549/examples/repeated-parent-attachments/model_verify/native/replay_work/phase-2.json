@@ -1,0 +1,79 @@
+{
+  "commands": [
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 6,
+        "translate": [
+          0,
+          0,
+          "parent_height"
+        ]
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 8,
+        "translate": [
+          60,
+          0,
+          "parent_height"
+        ]
+      }
+    },
+    {
+      "command": "joint.create",
+      "params": {
+        "type": "rigid",
+        "name": "Attach Marker occurrence 1 to Parent occurrence 1",
+        "a": {
+          "face": [
+            0.0,
+            0.0,
+            40.0
+          ],
+          "occurrence": 2
+        },
+        "b": {
+          "face": [
+            0.0,
+            0.0,
+            40.0
+          ],
+          "occurrence": 6
+        }
+      }
+    },
+    {
+      "command": "joint.create",
+      "params": {
+        "type": "rigid",
+        "name": "Attach Marker occurrence 2 to Parent occurrence 2",
+        "a": {
+          "face": [
+            60.0,
+            0.0,
+            40.0
+          ],
+          "occurrence": 4
+        },
+        "b": {
+          "face": [
+            60.0,
+            0.0,
+            40.0
+          ],
+          "occurrence": 8
+        }
+      }
+    },
+    {
+      "command": "browser.visibility",
+      "params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ]
+}

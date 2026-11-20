@@ -1,0 +1,86 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                49.984458923339844,
+                26.0
+              ],
+              "actual_min": [
+                -50.0,
+                -49.984458923339844,
+                0.0
+              ],
+              "expected_max": [
+                50.0,
+                50.0,
+                26.0
+              ],
+              "expected_min": [
+                -50.0,
+                -50.0,
+                0.0
+              ],
+              "max_delta_mm": 0.01554107666015625,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 5.0,
+                "delta_mm": 0.0,
+                "expected_mm": 5.0,
+                "label": "disc radial outside",
+                "pass": true,
+                "point": [
+                  55.0,
+                  0.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.35
+              },
+              {
+                "actual_mm": 8.0,
+                "delta_mm": 0.0,
+                "expected_mm": 8.0,
+                "label": "hub radial inside step",
+                "pass": true,
+                "point": [
+                  30.0,
+                  0.0,
+                  18.0
+                ],
+                "tolerance_mm": 0.35
+              }
+            ],
+            "volume": {
+              "actual_mm3": 102825.68269765028,
+              "delta_mm3": 42.627151493914425,
+              "expected_mm3": 102868.30984914419,
+              "pass": true,
+              "tolerance_mm3": 800.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/round-top-sketch/cadquery/model.py",
+          "status": "pass",
+          "stl": "round-top-sketch/cadquery/model.stl"
+        }
+      ],
+      "model": "round-top-sketch",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "3d44504d5206b714dc4e8c6c59f71663e04ac41d",
+  "status": "pass"
+}
