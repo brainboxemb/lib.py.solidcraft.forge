@@ -272,3 +272,32 @@ read-only consumers of source/packages.
 The bootstrap full run is transitional. Once a valid generic main baseline
 exists, future #366 work must use partial main updates rather than requiring a
 full run for every main change.
+
+## Steady-state durable build updates
+
+After the generic `build/main` baseline exists, normal durable publication is
+incremental.
+
+For pull requests:
+
+- the normal reusable CAD-CI run remains changed-path selected;
+- `cad-ci build prepare-pr --base/--head` derives the sparse durable scope from
+  the same released planner semantics;
+- the PR scope contains all affected processed top-level items, not a
+  Forge-hard-coded model name;
+- unrelated item output is absent.
+
+For main pushes:
+
+- the reusable CAD-CI run remains changed-path selected and must not use
+  `full_run: true`;
+- if no materialized build artifact exists, durable publication is skipped;
+- otherwise the publication job fetches the current generated `build` branch;
+- `cad-ci build update-main --base/--head` starts from the current
+  `build/main` baseline and replaces only affected processed item paths;
+- unchanged item output and manifest rows remain preserved;
+- `cad-ci publish build --scope main` publishes the updated main scope while
+  preserving all PR scopes.
+
+Forge must not calculate or merge item sets itself. Base/head selection,
+build-store validation and publication remain released CAD-CI responsibilities.
