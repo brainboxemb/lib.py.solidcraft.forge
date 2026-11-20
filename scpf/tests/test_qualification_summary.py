@@ -253,6 +253,21 @@ class QualificationSummaryTests(unittest.TestCase):
         self.assertEqual(result["checks"]["visual"]["status"], "missing")
         self.assertEqual(gate["status"], "incomplete")
 
+    def test_inconsistent_visual_pass_becomes_incomplete(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(
+            summary, "_semantic_api", fake_api
+        ):
+            root = Path(tmp)
+            case = self.make_case(root)
+            path = case / "model_verify" / "visual.json"
+            report = json.loads(path.read_text(encoding="utf-8"))
+            report["views"][0]["evidence"]["baseline_status"] = "missing"
+            path.write_text(json.dumps(report), encoding="utf-8")
+            result, gate = summary.compose_case(root, "simple-box")
+        self.assertEqual(result["checks"]["visual"]["status"], "missing")
+        self.assertEqual(result["status"], "incomplete")
+        self.assertEqual(gate["status"], "incomplete")
+
     def test_native_artifacts_keep_native_separate_from_geometry_failure(self):
         with tempfile.TemporaryDirectory() as tmp, patch.object(
             summary, "_semantic_api", fake_api
