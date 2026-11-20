@@ -8,3 +8,19 @@ stages:
   - Create two occurrences of one Parent definition
   - Attach one Marker to the TOP face of each Parent occurrence
   - Keep both attachment graphs dependent on the shared parent_height
+concepts:
+  - repeated parent occurrence
+  - component attachment
+  - shared parameter
+  - multiple relationship graphs
+verification:
+  summary: >
+    Verifies two occurrences of one parent definition, each with its own attached
+    child, while both relationship graphs depend on one shared parent height.
+  proves:
+    - Two parent bodies and two marker bodies occupy the expected baseline envelopes.
+    - Both markers remain attached to the TOP face of their corresponding parent occurrence.
+    - Editing the shared height updates both parents and both attached markers together.
+  saved_design: >
+    The saved design increases the shared parent height and verifies both
+    disconnected attachment graphs after the rebuild.
