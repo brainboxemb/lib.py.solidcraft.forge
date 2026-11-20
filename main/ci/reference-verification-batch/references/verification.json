@@ -1,0 +1,3073 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "actual_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "expected_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/anchor-topology-mutation/pythonscad/model.py",
+          "status": "pass",
+          "stl": "anchor-topology-mutation/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "actual_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "expected_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/anchor-topology-mutation/pybosl2/model.py",
+          "status": "pass",
+          "stl": "anchor-topology-mutation/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "actual_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "expected_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/anchor-topology-mutation/cadquery/model.py",
+          "status": "pass",
+          "stl": "anchor-topology-mutation/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "actual_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "expected_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/anchor-topology-mutation/build123d/model.py",
+          "status": "pass",
+          "stl": "anchor-topology-mutation/build123d/model.stl"
+        }
+      ],
+      "model": "anchor-topology-mutation",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                100.0,
+                60.0,
+                10.0
+              ],
+              "actual_min": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "expected_max": [
+                100.0,
+                60.0,
+                10.0
+              ],
+              "expected_min": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 3.8837672697042076,
+                "delta_mm": 0.1162327302957924,
+                "expected_mm": 4.0,
+                "label": "front hole at z=1",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837672697042054,
+                "delta_mm": 0.11623273029579462,
+                "expected_mm": 4.0,
+                "label": "front hole at z=5",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837672697042045,
+                "delta_mm": 0.1162327302957955,
+                "expected_mm": 4.0,
+                "label": "front hole at z=9",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837672697042027,
+                "delta_mm": 0.11623273029579728,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=1",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837672697042027,
+                "delta_mm": 0.11623273029579728,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=5",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837672697042027,
+                "delta_mm": 0.11623273029579728,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=9",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 59033.375802148956,
+              "delta_mm3": 38.685451297686086,
+              "expected_mm3": 58994.69035085127,
+              "pass": true,
+              "tolerance_mm3": 55.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/anchored-holes/pythonscad/model.py",
+          "status": "pass",
+          "stl": "anchored-holes/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                100.0,
+                60.0,
+                10.0
+              ],
+              "actual_min": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "expected_max": [
+                100.0,
+                60.0,
+                10.0
+              ],
+              "expected_min": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 3.8837661726277553,
+                "delta_mm": 0.11623382737224475,
+                "expected_mm": 4.0,
+                "label": "front hole at z=1",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837661726277553,
+                "delta_mm": 0.11623382737224475,
+                "expected_mm": 4.0,
+                "label": "front hole at z=5",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837661726277553,
+                "delta_mm": 0.11623382737224475,
+                "expected_mm": 4.0,
+                "label": "front hole at z=9",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837661743164062,
+                "delta_mm": 0.11623382568359375,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=1",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837661743164062,
+                "delta_mm": 0.11623382568359375,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=5",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837661743164062,
+                "delta_mm": 0.11623382568359375,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=9",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 59033.37579852197,
+              "delta_mm3": 38.68544767070125,
+              "expected_mm3": 58994.69035085127,
+              "pass": true,
+              "tolerance_mm3": 55.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/anchored-holes/pybosl2/model.py",
+          "status": "pass",
+          "stl": "anchored-holes/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                100.0,
+                60.0,
+                10.0
+              ],
+              "actual_min": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "expected_max": [
+                100.0,
+                60.0,
+                10.0
+              ],
+              "expected_min": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 3.9987555098489307,
+                "delta_mm": 0.0012444901510693107,
+                "expected_mm": 4.0,
+                "label": "front hole at z=1",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.9987555098489307,
+                "delta_mm": 0.0012444901510693107,
+                "expected_mm": 4.0,
+                "label": "front hole at z=5",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.9987555098489307,
+                "delta_mm": 0.0012444901510693107,
+                "expected_mm": 4.0,
+                "label": "front hole at z=9",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.9987553319714304,
+                "delta_mm": 0.0012446680285695955,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=1",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.9987553319714304,
+                "delta_mm": 0.0012446680285695955,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=5",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.9987553319714304,
+                "delta_mm": 0.0012446680285695955,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=9",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 58995.10696812817,
+              "delta_mm3": 0.41661727690370753,
+              "expected_mm3": 58994.69035085127,
+              "pass": true,
+              "tolerance_mm3": 55.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/anchored-holes/cadquery/model.py",
+          "status": "pass",
+          "stl": "anchored-holes/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                100.0,
+                60.0,
+                10.0
+              ],
+              "actual_min": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "expected_max": [
+                100.0,
+                60.0,
+                10.0
+              ],
+              "expected_min": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 3.9987555098489307,
+                "delta_mm": 0.0012444901510693107,
+                "expected_mm": 4.0,
+                "label": "front hole at z=1",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.9987555098489307,
+                "delta_mm": 0.0012444901510693107,
+                "expected_mm": 4.0,
+                "label": "front hole at z=5",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.9987555098489307,
+                "delta_mm": 0.0012444901510693107,
+                "expected_mm": 4.0,
+                "label": "front hole at z=9",
+                "pass": true,
+                "point": [
+                  50.0,
+                  10.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.9987553319714304,
+                "delta_mm": 0.0012446680285695955,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=1",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.9987553319714304,
+                "delta_mm": 0.0012446680285695955,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=5",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.9987553319714304,
+                "delta_mm": 0.0012446680285695955,
+                "expected_mm": 4.0,
+                "label": "rear hole at z=9",
+                "pass": true,
+                "point": [
+                  50.0,
+                  50.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 58995.10696812817,
+              "delta_mm3": 0.41661727690370753,
+              "expected_mm3": 58994.69035085127,
+              "pass": true,
+              "tolerance_mm3": 55.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/anchored-holes/build123d/model.py",
+          "status": "pass",
+          "stl": "anchored-holes/build123d/model.stl"
+        }
+      ],
+      "model": "anchored-holes",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                5.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -5.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                5.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -5.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/assembly-decorator/pythonscad/model.py",
+          "status": "pass",
+          "stl": "assembly-decorator/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                5.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -5.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                5.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -5.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/assembly-decorator/pybosl2/model.py",
+          "status": "pass",
+          "stl": "assembly-decorator/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                5.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -5.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                5.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -5.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/assembly-decorator/cadquery/model.py",
+          "status": "pass",
+          "stl": "assembly-decorator/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                5.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -5.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                5.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -5.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/assembly-decorator/build123d/model.py",
+          "status": "pass",
+          "stl": "assembly-decorator/build123d/model.stl"
+        }
+      ],
+      "model": "assembly-decorator",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "actual_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "expected_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "expected_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/attach-angle/pythonscad/model.py",
+          "status": "pass",
+          "stl": "attach-angle/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "actual_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "expected_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "expected_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/attach-angle/pybosl2/model.py",
+          "status": "pass",
+          "stl": "attach-angle/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "actual_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "expected_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "expected_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/attach-angle/cadquery/model.py",
+          "status": "pass",
+          "stl": "attach-angle/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "actual_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "expected_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "expected_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/attach-angle/build123d/model.py",
+          "status": "pass",
+          "stl": "attach-angle/build123d/model.stl"
+        }
+      ],
+      "model": "attach-angle",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/components/pythonscad/model.py",
+          "status": "pass",
+          "stl": "components/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/components/pybosl2/model.py",
+          "status": "pass",
+          "stl": "components/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/components/cadquery/model.py",
+          "status": "pass",
+          "stl": "components/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/components/build123d/model.py",
+          "status": "pass",
+          "stl": "components/build123d/model.stl"
+        }
+      ],
+      "model": "components",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "actual_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "expected_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "expected_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/four-corner-l/pythonscad/model.py",
+          "status": "pass",
+          "stl": "four-corner-l/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "actual_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "expected_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "expected_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/four-corner-l/pybosl2/model.py",
+          "status": "pass",
+          "stl": "four-corner-l/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "actual_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "expected_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "expected_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/four-corner-l/cadquery/model.py",
+          "status": "pass",
+          "stl": "four-corner-l/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "actual_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "expected_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "expected_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/four-corner-l/build123d/model.py",
+          "status": "pass",
+          "stl": "four-corner-l/build123d/model.stl"
+        }
+      ],
+      "model": "four-corner-l",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                17.5,
+                25.0,
+                40.0
+              ],
+              "actual_min": [
+                -17.5,
+                -1.0,
+                0.0
+              ],
+              "expected_max": [
+                17.5,
+                25.0,
+                40.0
+              ],
+              "expected_min": [
+                -17.5,
+                -1.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/group-hierarchy/pythonscad/model.py",
+          "status": "pass",
+          "stl": "group-hierarchy/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                17.5,
+                25.0,
+                40.0
+              ],
+              "actual_min": [
+                -17.5,
+                -1.0,
+                0.0
+              ],
+              "expected_max": [
+                17.5,
+                25.0,
+                40.0
+              ],
+              "expected_min": [
+                -17.5,
+                -1.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/group-hierarchy/pybosl2/model.py",
+          "status": "pass",
+          "stl": "group-hierarchy/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                17.5,
+                25.0,
+                40.0
+              ],
+              "actual_min": [
+                -17.5,
+                -1.0,
+                0.0
+              ],
+              "expected_max": [
+                17.5,
+                25.0,
+                40.0
+              ],
+              "expected_min": [
+                -17.5,
+                -1.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/group-hierarchy/cadquery/model.py",
+          "status": "pass",
+          "stl": "group-hierarchy/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                17.5,
+                25.0,
+                40.0
+              ],
+              "actual_min": [
+                -17.5,
+                -1.0,
+                0.0
+              ],
+              "expected_max": [
+                17.5,
+                25.0,
+                40.0
+              ],
+              "expected_min": [
+                -17.5,
+                -1.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/group-hierarchy/build123d/model.py",
+          "status": "pass",
+          "stl": "group-hierarchy/build123d/model.stl"
+        }
+      ],
+      "model": "group-hierarchy",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                20.0,
+                12.0
+              ],
+              "actual_min": [
+                -60.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                20.0,
+                12.0
+              ],
+              "expected_min": [
+                -60.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 2.8531695488854605,
+                "delta_mm": 0.14683045111453952,
+                "expected_mm": 3.0,
+                "label": "simple bore center",
+                "pass": true,
+                "point": [
+                  -45.0,
+                  0.0,
+                  6.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 1.4795419551040827,
+                "delta_mm": 0.020458044895917293,
+                "expected_mm": 1.5,
+                "label": "counterbore recess wall",
+                "pass": true,
+                "point": [
+                  -10.5,
+                  0.0,
+                  10.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 0.7022351120349158,
+                "delta_mm": 0.004871667965084203,
+                "expected_mm": 0.70710678,
+                "label": "countersink 90 degree cone",
+                "pass": true,
+                "point": [
+                  18.5,
+                  0.0,
+                  10.5
+                ],
+                "tolerance_mm": 0.35
+              },
+              {
+                "actual_mm": 2.3096988312782147,
+                "delta_mm": 0.19030116872178526,
+                "expected_mm": 2.5,
+                "label": "M6 tap-drill core",
+                "pass": true,
+                "point": [
+                  45.0,
+                  0.0,
+                  6.0
+                ],
+                "tolerance_mm": 0.35
+              }
+            ],
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/hole-family/pythonscad/model.py",
+          "status": "pass",
+          "stl": "hole-family/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                20.0,
+                12.0
+              ],
+              "actual_min": [
+                -60.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                20.0,
+                12.0
+              ],
+              "expected_min": [
+                -60.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 2.8531694412231445,
+                "delta_mm": 0.14683055877685547,
+                "expected_mm": 3.0,
+                "label": "simple bore center",
+                "pass": true,
+                "point": [
+                  -45.0,
+                  0.0,
+                  6.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 1.4795420058611062,
+                "delta_mm": 0.02045799413889382,
+                "expected_mm": 1.5,
+                "label": "counterbore recess wall",
+                "pass": true,
+                "point": [
+                  -10.5,
+                  0.0,
+                  10.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 0.7022351242457235,
+                "delta_mm": 0.004871655754276505,
+                "expected_mm": 0.70710678,
+                "label": "countersink 90 degree cone",
+                "pass": true,
+                "point": [
+                  18.5,
+                  0.0,
+                  10.5
+                ],
+                "tolerance_mm": 0.35
+              },
+              {
+                "actual_mm": 2.309699195937973,
+                "delta_mm": 0.19030080406202687,
+                "expected_mm": 2.5,
+                "label": "M6 tap-drill core",
+                "pass": true,
+                "point": [
+                  45.0,
+                  0.0,
+                  6.0
+                ],
+                "tolerance_mm": 0.35
+              }
+            ],
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/hole-family/pybosl2/model.py",
+          "status": "pass",
+          "stl": "hole-family/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                20.0,
+                12.0
+              ],
+              "actual_min": [
+                -60.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                20.0,
+                12.0
+              ],
+              "expected_min": [
+                -60.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 2.9990662664750465,
+                "delta_mm": 0.0009337335249535172,
+                "expected_mm": 3.0,
+                "label": "simple bore center",
+                "pass": true,
+                "point": [
+                  -45.0,
+                  0.0,
+                  6.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 1.4995337462148943,
+                "delta_mm": 0.0004662537851056747,
+                "expected_mm": 1.5,
+                "label": "counterbore recess wall",
+                "pass": true,
+                "point": [
+                  -10.5,
+                  0.0,
+                  10.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 0.703588398682677,
+                "delta_mm": 0.0035183813173230716,
+                "expected_mm": 0.70710678,
+                "label": "countersink 90 degree cone",
+                "pass": true,
+                "point": [
+                  18.5,
+                  0.0,
+                  10.5
+                ],
+                "tolerance_mm": 0.35
+              },
+              {
+                "actual_mm": 2.499221614622642,
+                "delta_mm": 0.0007783853773579708,
+                "expected_mm": 2.5,
+                "label": "M6 tap-drill core",
+                "pass": true,
+                "point": [
+                  45.0,
+                  0.0,
+                  6.0
+                ],
+                "tolerance_mm": 0.35
+              }
+            ],
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/hole-family/cadquery/model.py",
+          "status": "pass",
+          "stl": "hole-family/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                20.0,
+                12.0
+              ],
+              "actual_min": [
+                -60.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                20.0,
+                12.0
+              ],
+              "expected_min": [
+                -60.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 2.9990662664750465,
+                "delta_mm": 0.0009337335249535172,
+                "expected_mm": 3.0,
+                "label": "simple bore center",
+                "pass": true,
+                "point": [
+                  -45.0,
+                  0.0,
+                  6.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 1.4995337462148945,
+                "delta_mm": 0.0004662537851054527,
+                "expected_mm": 1.5,
+                "label": "counterbore recess wall",
+                "pass": true,
+                "point": [
+                  -10.5,
+                  0.0,
+                  10.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 0.703588398682677,
+                "delta_mm": 0.0035183813173230716,
+                "expected_mm": 0.70710678,
+                "label": "countersink 90 degree cone",
+                "pass": true,
+                "point": [
+                  18.5,
+                  0.0,
+                  10.5
+                ],
+                "tolerance_mm": 0.35
+              },
+              {
+                "actual_mm": 2.499221614622642,
+                "delta_mm": 0.0007783853773579708,
+                "expected_mm": 2.5,
+                "label": "M6 tap-drill core",
+                "pass": true,
+                "point": [
+                  45.0,
+                  0.0,
+                  6.0
+                ],
+                "tolerance_mm": 0.35
+              }
+            ],
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/hole-family/build123d/model.py",
+          "status": "pass",
+          "stl": "hole-family/build123d/model.stl"
+        }
+      ],
+      "model": "hole-family",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                480.0,
+                10.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                480.0,
+                10.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/parameter-scope/pythonscad/model.py",
+          "status": "pass",
+          "stl": "parameter-scope/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                480.0,
+                10.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                480.0,
+                10.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/parameter-scope/pybosl2/model.py",
+          "status": "pass",
+          "stl": "parameter-scope/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                480.0,
+                10.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                480.0,
+                10.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/parameter-scope/cadquery/model.py",
+          "status": "pass",
+          "stl": "parameter-scope/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                480.0,
+                10.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                480.0,
+                10.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/parameter-scope/build123d/model.py",
+          "status": "pass",
+          "stl": "parameter-scope/build123d/model.stl"
+        }
+      ],
+      "model": "parameter-scope",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                40.0,
+                26.0
+              ],
+              "actual_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                40.0,
+                26.0
+              ],
+              "expected_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/parent-derived-child-size/pythonscad/model.py",
+          "status": "pass",
+          "stl": "parent-derived-child-size/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                40.0,
+                26.0
+              ],
+              "actual_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                40.0,
+                26.0
+              ],
+              "expected_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/parent-derived-child-size/pybosl2/model.py",
+          "status": "pass",
+          "stl": "parent-derived-child-size/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                40.0,
+                26.0
+              ],
+              "actual_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                40.0,
+                26.0
+              ],
+              "expected_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/parent-derived-child-size/cadquery/model.py",
+          "status": "pass",
+          "stl": "parent-derived-child-size/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                40.0,
+                26.0
+              ],
+              "actual_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                40.0,
+                26.0
+              ],
+              "expected_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/parent-derived-child-size/build123d/model.py",
+          "status": "pass",
+          "stl": "parent-derived-child-size/build123d/model.stl"
+        }
+      ],
+      "model": "parent-derived-child-size",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                70.0,
+                10.0,
+                50.0
+              ],
+              "actual_min": [
+                -10.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                70.0,
+                10.0,
+                50.0
+              ],
+              "expected_min": [
+                -10.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/repeated-parent-attachments/pythonscad/model.py",
+          "status": "pass",
+          "stl": "repeated-parent-attachments/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                70.0,
+                10.0,
+                50.0
+              ],
+              "actual_min": [
+                -10.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                70.0,
+                10.0,
+                50.0
+              ],
+              "expected_min": [
+                -10.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/repeated-parent-attachments/pybosl2/model.py",
+          "status": "pass",
+          "stl": "repeated-parent-attachments/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                70.0,
+                10.0,
+                50.0
+              ],
+              "actual_min": [
+                -10.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                70.0,
+                10.0,
+                50.0
+              ],
+              "expected_min": [
+                -10.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/repeated-parent-attachments/cadquery/model.py",
+          "status": "pass",
+          "stl": "repeated-parent-attachments/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                70.0,
+                10.0,
+                50.0
+              ],
+              "actual_min": [
+                -10.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                70.0,
+                10.0,
+                50.0
+              ],
+              "expected_min": [
+                -10.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/repeated-parent-attachments/build123d/model.py",
+          "status": "pass",
+          "stl": "repeated-parent-attachments/build123d/model.stl"
+        }
+      ],
+      "model": "repeated-parent-attachments",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                21.643805511295795,
+                20.0,
+                21.643805511295795
+              ],
+              "actual_min": [
+                -40.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                21.64380551,
+                20.0,
+                21.64380551
+              ],
+              "expected_min": [
+                -40.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 1.295795470923622e-09,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 2.8531695488854605,
+                "delta_mm": 0.14683045111453952,
+                "expected_mm": 3.0,
+                "label": "fixed-flat hole at z=0.5",
+                "pass": true,
+                "point": [
+                  -20.0,
+                  0.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 2.8531695488854605,
+                "delta_mm": 0.14683045111453952,
+                "expected_mm": 3.0,
+                "label": "fixed-flat hole at z=1.5",
+                "pass": true,
+                "point": [
+                  -20.0,
+                  0.0,
+                  1.5
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 6346.9479478587855,
+              "delta_mm3": 3.4966156234013397,
+              "expected_mm3": 6343.451332235384,
+              "pass": true,
+              "tolerance_mm3": 5.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/sheet-fold/pythonscad/model.py",
+          "status": "pass",
+          "stl": "sheet-fold/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                21.64380645751953,
+                20.0,
+                21.64380645751953
+              ],
+              "actual_min": [
+                -40.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                21.64380551,
+                20.0,
+                21.64380551
+              ],
+              "expected_min": [
+                -40.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 9.475195312802498e-07,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 2.8531694412231445,
+                "delta_mm": 0.14683055877685547,
+                "expected_mm": 3.0,
+                "label": "fixed-flat hole at z=0.5",
+                "pass": true,
+                "point": [
+                  -20.0,
+                  0.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 2.8531694412231445,
+                "delta_mm": 0.14683055877685547,
+                "expected_mm": 3.0,
+                "label": "fixed-flat hole at z=1.5",
+                "pass": true,
+                "point": [
+                  -20.0,
+                  0.0,
+                  1.5
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 6346.948027095469,
+              "delta_mm3": 3.496694860084972,
+              "expected_mm3": 6343.451332235384,
+              "pass": true,
+              "tolerance_mm3": 5.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/sheet-fold/pybosl2/model.py",
+          "status": "pass",
+          "stl": "sheet-fold/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                21.64380645751953,
+                20.0,
+                21.64380645751953
+              ],
+              "actual_min": [
+                -40.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                21.64380551,
+                20.0,
+                21.64380551
+              ],
+              "expected_min": [
+                -40.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 9.475195312802498e-07,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 2.9990669924042215,
+                "delta_mm": 0.0009330075957785233,
+                "expected_mm": 3.0,
+                "label": "fixed-flat hole at z=0.5",
+                "pass": true,
+                "point": [
+                  -20.0,
+                  0.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 2.9990669924042215,
+                "delta_mm": 0.0009330075957785233,
+                "expected_mm": 3.0,
+                "label": "fixed-flat hole at z=1.5",
+                "pass": true,
+                "point": [
+                  -20.0,
+                  0.0,
+                  1.5
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 6343.323471787434,
+              "delta_mm3": 0.12786044795029738,
+              "expected_mm3": 6343.451332235384,
+              "pass": true,
+              "tolerance_mm3": 5.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/sheet-fold/cadquery/model.py",
+          "status": "pass",
+          "stl": "sheet-fold/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                21.64380645751953,
+                20.0,
+                21.64380645751953
+              ],
+              "actual_min": [
+                -40.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                21.64380551,
+                20.0,
+                21.64380551
+              ],
+              "expected_min": [
+                -40.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 9.475195312802498e-07,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 2.9990669924042215,
+                "delta_mm": 0.0009330075957785233,
+                "expected_mm": 3.0,
+                "label": "fixed-flat hole at z=0.5",
+                "pass": true,
+                "point": [
+                  -20.0,
+                  0.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 2.9990669924042215,
+                "delta_mm": 0.0009330075957785233,
+                "expected_mm": 3.0,
+                "label": "fixed-flat hole at z=1.5",
+                "pass": true,
+                "point": [
+                  -20.0,
+                  0.0,
+                  1.5
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 6343.323471787434,
+              "delta_mm3": 0.12786044795029738,
+              "expected_mm3": 6343.451332235384,
+              "pass": true,
+              "tolerance_mm3": 5.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/sheet-fold/build123d/model.py",
+          "status": "pass",
+          "stl": "sheet-fold/build123d/model.stl"
+        }
+      ],
+      "model": "sheet-fold",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.25
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/simple-box/pythonscad/model.py",
+          "status": "pass",
+          "stl": "simple-box/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.25
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/simple-box/pybosl2/model.py",
+          "status": "pass",
+          "stl": "simple-box/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.25
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/simple-box/cadquery/model.py",
+          "status": "pass",
+          "stl": "simple-box/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.25
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/simple-box/build123d/model.py",
+          "status": "pass",
+          "stl": "simple-box/build123d/model.stl"
+        }
+      ],
+      "model": "simple-box",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                35.0,
+                10.0
+              ],
+              "actual_min": [
+                -50.0,
+                -35.0,
+                0.0
+              ],
+              "expected_max": [
+                50.0,
+                35.0,
+                10.0
+              ],
+              "expected_min": [
+                -50.0,
+                -35.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 5.9181678204163335,
+                "delta_mm": 0.08183217958366651,
+                "expected_mm": 6.0,
+                "label": "center hole at z=1",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 5.9181678204163335,
+                "delta_mm": 0.08183217958366651,
+                "expected_mm": 6.0,
+                "label": "center hole at z=5",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 5.9181678204163335,
+                "delta_mm": 0.08183217958366651,
+                "expected_mm": 6.0,
+                "label": "center hole at z=9",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 67609.52781531999,
+              "delta_mm3": 20.501170612318674,
+              "expected_mm3": 67589.02664470767,
+              "pass": true,
+              "tolerance_mm3": 45.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/top-sketch-after-chamfer/pythonscad/model.py",
+          "status": "pass",
+          "stl": "top-sketch-after-chamfer/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                35.0,
+                10.0
+              ],
+              "actual_min": [
+                -50.0,
+                -35.0,
+                0.0
+              ],
+              "expected_max": [
+                50.0,
+                35.0,
+                10.0
+              ],
+              "expected_min": [
+                -50.0,
+                -35.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 5.918167591094971,
+                "delta_mm": 0.0818324089050293,
+                "expected_mm": 6.0,
+                "label": "center hole at z=1",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 5.918167591094971,
+                "delta_mm": 0.0818324089050293,
+                "expected_mm": 6.0,
+                "label": "center hole at z=5",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 5.918167591094971,
+                "delta_mm": 0.0818324089050293,
+                "expected_mm": 6.0,
+                "label": "center hole at z=9",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 67609.52783847242,
+              "delta_mm3": 20.501193764750496,
+              "expected_mm3": 67589.02664470767,
+              "pass": true,
+              "tolerance_mm3": 45.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/top-sketch-after-chamfer/pybosl2/model.py",
+          "status": "pass",
+          "stl": "top-sketch-after-chamfer/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                35.0,
+                10.0
+              ],
+              "actual_min": [
+                -50.0,
+                -35.0,
+                0.0
+              ],
+              "expected_max": [
+                50.0,
+                35.0,
+                10.0
+              ],
+              "expected_min": [
+                -50.0,
+                -35.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 5.9981349073137995,
+                "delta_mm": 0.001865092686200498,
+                "expected_mm": 6.0,
+                "label": "center hole at z=1",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 5.9981349073137995,
+                "delta_mm": 0.001865092686200498,
+                "expected_mm": 6.0,
+                "label": "center hole at z=5",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 5.9981349073137995,
+                "delta_mm": 0.001865092686200498,
+                "expected_mm": 6.0,
+                "label": "center hole at z=9",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 67589.49531406802,
+              "delta_mm3": 0.4686693603434833,
+              "expected_mm3": 67589.02664470767,
+              "pass": true,
+              "tolerance_mm3": 45.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/top-sketch-after-chamfer/cadquery/model.py",
+          "status": "pass",
+          "stl": "top-sketch-after-chamfer/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                35.0,
+                10.0
+              ],
+              "actual_min": [
+                -50.0,
+                -35.0,
+                0.0
+              ],
+              "expected_max": [
+                50.0,
+                35.0,
+                10.0
+              ],
+              "expected_min": [
+                -50.0,
+                -35.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 5.9981349073137995,
+                "delta_mm": 0.001865092686200498,
+                "expected_mm": 6.0,
+                "label": "center hole at z=1",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  1.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 5.9981349073137995,
+                "delta_mm": 0.001865092686200498,
+                "expected_mm": 6.0,
+                "label": "center hole at z=5",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 5.9981349073137995,
+                "delta_mm": 0.001865092686200498,
+                "expected_mm": 6.0,
+                "label": "center hole at z=9",
+                "pass": true,
+                "point": [
+                  0.0,
+                  0.0,
+                  9.0
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 67589.495314068,
+              "delta_mm3": 0.46866936032893136,
+              "expected_mm3": 67589.02664470767,
+              "pass": true,
+              "tolerance_mm3": 45.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/top-sketch-after-chamfer/build123d/model.py",
+          "status": "pass",
+          "stl": "top-sketch-after-chamfer/build123d/model.stl"
+        }
+      ],
+      "model": "top-sketch-after-chamfer",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/xz-anchor/pythonscad/model.py",
+          "status": "pass",
+          "stl": "xz-anchor/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/xz-anchor/pybosl2/model.py",
+          "status": "pass",
+          "stl": "xz-anchor/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "source": "examples/xz-anchor/cadquery/model.py",
+          "status": "pass",
+          "stl": "xz-anchor/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                12.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -10.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/xz-anchor/build123d/model.py",
+          "status": "pass",
+          "stl": "xz-anchor/build123d/model.stl"
+        }
+      ],
+      "model": "xz-anchor",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "996dec1af857bd9613897742bddfb667180d05aa",
+  "status": "pass"
+}

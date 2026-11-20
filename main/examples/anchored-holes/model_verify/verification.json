@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "61aaa10c1fdbe0ae64ea2202a8c7cefded68482c28bcbc776c26c291d0a4a7ab",
-          "size": 3125
+          "sha256": "14e68aa9a737f627abc200214a403b10a16f789741134732b110e9b12032f598",
+          "size": 3154
         }
       ],
       "error": null,
@@ -143,7 +143,7 @@
       "status": "pass"
     }
   ],
-  "input": "/output/model_verify/native/model.sc",
+  "input": "/output/models/anchored-holes/model_verify/native/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,

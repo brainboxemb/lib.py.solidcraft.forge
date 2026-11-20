@@ -5,7 +5,7 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "1cf80257b33f05fc78161abf0577bf185871a187323cd258cdb261cf9638904e",
+          "sha256": "fc83bde2564f3718467077f1365a2682cf7440a2663fce100e5e18b31a3dc2df",
           "size": 2471
         }
       ],
@@ -137,14 +137,14 @@
         {
           "kind": "file",
           "path": "saved_designs/size_80x40/model.sc",
-          "sha256": "42fd0a984ab51d7f410a02e3689a69cad22989b4ba4448f73fec0b20117889a5",
-          "size": 6408
+          "sha256": "b9a9392bbdd8a0d28bf59bf835cb25973e70743cf1e739b2e726a42ebc99f367",
+          "size": 6405
         },
         {
           "kind": "file",
           "path": "saved_designs/size_80x40/measurements.json",
-          "sha256": "cc5083fc195c72f847781bfcdc268aa022efa82c96fa21341ce81a56402f594e",
-          "size": 2482
+          "sha256": "d859739cbe8d189ceb449756814c4cb31951d4f141d541ee1ca74fdb30ab2a16",
+          "size": 2492
         }
       ],
       "error": null,
@@ -277,7 +277,7 @@
       "status": "pass"
     }
   ],
-  "input": "/output/model_verify/native/model.sc",
+  "input": "/output/models/anchor-topology-mutation/model_verify/native/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,

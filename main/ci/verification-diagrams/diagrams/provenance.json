@@ -1,6 +1,4 @@
 {
-  "archive": "cadcraft-0.20.1-linux-x86_64.tar.gz",
-  "archive_sha256": "57b6f1b41b4f3c542a82f103202ed1a779440e5ff8d25c08ef66abda1a8cb1b9",
   "cadcraft_cli_version": "cadcraft-cli 0.20.1 (7526dc62c14e71b3c8d46e73bbf1fa29ef506af1)",
   "cadcraft_version": "0.20.1",
   "diagrams": [
@@ -11,6 +9,7 @@
       "name": "corner-bracket-depth",
       "source": "sources/corner-bracket-depth.cadcraft.json",
       "source_sha256": "13af8ddcc814c336a51d8f46bd042adef0ba2c74595c48dcf6de0777c4086e56",
+      "status": "pass",
       "svg": "rendered/corner-bracket-depth.svg",
       "svg_sha256": "745939ed1b8c2f13079c5b8a88f9a8abe336d25383dcb7812fdfd70e6c1618e6",
       "title": "Front and rear outside L-bracket rows - depth view (contact shown)"
@@ -22,6 +21,7 @@
       "name": "corner-bracket-front-corners",
       "source": "sources/corner-bracket-front-corners.cadcraft.json",
       "source_sha256": "0b963b443e6d79550590cfbe96c9b7b3f2f84e1e8f303a227e0e968a5372cf95",
+      "status": "pass",
       "svg": "rendered/corner-bracket-front-corners.svg",
       "svg_sha256": "7751750a237be38f3206af51ac5bff4045e9aa4f01693295eb60b4f4252adfb6",
       "title": "Four front corner topology frames"
@@ -33,6 +33,7 @@
       "name": "corner-bracket-goal",
       "source": "sources/corner-bracket-goal.cadcraft.json",
       "source_sha256": "b88020b9798e68d72e3394954360984a545ba1244016ade9c4d6c2c1d84a1c19",
+      "status": "pass",
       "svg": "rendered/corner-bracket-goal.svg",
       "svg_sha256": "c26b8f6f15f3a43f21a14d68fd803c51e2ef0b80999a5d5e402c728227a3dba0",
       "title": "Four outside brackets - front view"
@@ -44,6 +45,7 @@
       "name": "corner-bracket-local-axes",
       "source": "sources/corner-bracket-local-axes.cadcraft.json",
       "source_sha256": "f9af6e117389f011870cd580fbb81dd82fe15b5fe7c9f14d233735f33fe62915",
+      "status": "pass",
       "svg": "rendered/corner-bracket-local-axes.svg",
       "svg_sha256": "05c8a8c08b658dc4a82b2b7c52fec3f3a4e04b1e38ceedabda0320e038ffdb6f",
       "title": "Corner bracket local axes and child joint frames"
@@ -55,6 +57,7 @@
       "name": "solidcraft-joint-anatomy",
       "source": "sources/solidcraft-joint-anatomy.cadcraft.json",
       "source_sha256": "2ec8dbc068423156aa2023d9034773ae7c42d078374743fbf6054c81f35a40e5",
+      "status": "pass",
       "svg": "rendered/solidcraft-joint-anatomy.svg",
       "svg_sha256": "d29675f8b286d761712df8cbeef78a4a5ce66b18052766a8bed7009d94068cf3",
       "title": "SolidCraft joint origins A and B"
@@ -66,6 +69,7 @@
       "name": "solidcraft-joint-references",
       "source": "sources/solidcraft-joint-references.cadcraft.json",
       "source_sha256": "22f9014384b6bffabd1f4fbb0666ce144190b72e30003c8db6959b476d6fc184",
+      "status": "pass",
       "svg": "rendered/solidcraft-joint-references.svg",
       "svg_sha256": "4a3f010efa0288106a7dcd30714a223e0221a09b9567204d97b9c044e27d23f7",
       "title": "Topology-backed parent and explicit child joint origin"
@@ -73,5 +77,6 @@
   ],
   "schema": "forge-verification-diagrams",
   "schema_version": 1,
-  "source_count": 6
+  "source_count": 6,
+  "status": "pass"
 }

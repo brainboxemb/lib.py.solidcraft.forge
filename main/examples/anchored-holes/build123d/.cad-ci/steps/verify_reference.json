@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "fe0e5cf34b23f5eaf3fd3104ba7b1fae5b3a58085835fe9bc6d342e490377354",
-  "duration_seconds": 44.296,
+  "bundle_sha256": "88c6cfca3dd5b3ea75b5c3a428bb23541e8b3a8b75e31fd8d0b082be142900a5",
+  "duration_seconds": 0.082,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T19:21:32.960Z",
+  "finished_at": "2026-11-20T20:34:50.408Z",
   "item": "examples-anchored-holes-build123d",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,15 +14,15 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "255778b06b42c1e9e489c6e02bad802462f68ec19bb9ec1dc6eadb21658f0f92"
+      "sha256": "625d2bf099b474e679adaa2e4583b14f8abef412acc0c1c98aefccadfae9c055"
     }
   },
-  "run_finished_at": "2026-11-20T19:23:41.155Z",
-  "run_started_at": "2026-11-20T19:20:00.356Z",
+  "run_finished_at": "2026-11-20T20:34:55.293Z",
+  "run_started_at": "2026-11-20T20:33:04.662Z",
   "schema": 3,
-  "started_at": "2026-11-20T19:20:48.665Z",
+  "started_at": "2026-11-20T20:34:50.353Z",
   "status": "pass",
   "step": "verify_reference",
-  "target_spec_digest": "f56979d77ccc1d3ced2a90770271425f685977ad52f916fd7ced527ce5c29bb9",
+  "target_spec_digest": "fa3c0d71366b6c563be25f1fb5224c376e8c4e3bbade5b8fa48066009b40e287",
   "timeout_seconds": null
 }

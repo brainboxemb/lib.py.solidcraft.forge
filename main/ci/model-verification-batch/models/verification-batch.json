@@ -1,0 +1,82 @@
+{
+  "models": [
+    {
+      "error": null,
+      "model": "anchor-topology-mutation",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "anchored-holes",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "assembly-decorator",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "attach-angle",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "components",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "four-corner-l",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "group-hierarchy",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "hole-family",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "parameter-scope",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "parent-derived-child-size",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "repeated-parent-attachments",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "sheet-fold",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "simple-box",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "top-sketch-after-chamfer",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "xz-anchor",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "996dec1af857bd9613897742bddfb667180d05aa",
+  "status": "pass"
+}

@@ -1,0 +1,146 @@
+[
+  {
+    "display_value": 40.0,
+    "name": "board_width",
+    "unit": "mm",
+    "value": 40.0
+  },
+  {
+    "display_value": 20.0,
+    "name": "board_height",
+    "unit": "mm",
+    "value": 20.0
+  },
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "Board",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "attachment": "fixed",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Profile",
+    "projected": null,
+    "sketch": 3
+  },
+  {
+    "constraints": [],
+    "created": {
+      "constraints": [],
+      "curves": [
+        "lower_left",
+        "lower_right",
+        "upper_right",
+        "upper_left"
+      ],
+      "dimensions": [],
+      "points": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ]
+    },
+    "curves": [
+      "lower_left",
+      "lower_right",
+      "upper_right",
+      "upper_left"
+    ],
+    "sketch": {
+      "dof": 0,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 1,
+    "sketch": 3
+  },
+  {
+    "bodies": [
+      "Board"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Board"
+    ],
+    "feature": 4,
+    "ms": 2.863886,
+    "name": "Extrude1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "appearance": null,
+    "density_g_cm3": 0.55,
+    "name": "test board",
+    "user": true
+  },
+  {
+    "bodies": [
+      "Board"
+    ],
+    "material": "test board"
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 5,
+    "grounded": false,
+    "name": "RightMarker",
+    "occurrence": 6,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Board",
+      "RightMarker"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "RightMarker"
+    ],
+    "feature": 7,
+    "ms": 1.333304,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 8,
+    "grounded": false,
+    "name": "LeftMarker",
+    "occurrence": 9,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Board",
+      "RightMarker",
+      "LeftMarker"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "LeftMarker"
+    ],
+    "feature": 10,
+    "ms": 1.279002,
+    "name": "Box2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  }
+]

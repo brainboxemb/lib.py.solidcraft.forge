@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "f79dc3dc354f5bbf2c65065e020cf0345bd338402011c2d7e9f0daaeecf9d4d8",
-          "size": 2171
+          "sha256": "7882d6110cee283fa9c11802b0d402264ae62ac52212e592c5761c95d3fa9e42",
+          "size": 2181
         }
       ],
       "error": null,
@@ -133,7 +133,7 @@
       "status": "pass"
     }
   ],
-  "input": "/output/model_verify/native/model.sc",
+  "input": "/output/models/attach-angle/model_verify/native/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,

@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "a3624e0fb170edcb8d737bd456741dceaf0ec63ee9f454fba127a10d10173a9d",
-          "size": 3358
+          "sha256": "29e985f454596e2ac23c6a1c00fc89008b7092a8da38aa1bba14b7ae99a6e5fc",
+          "size": 3351
         }
       ],
       "error": null,
@@ -374,7 +374,7 @@
       "status": "pass"
     }
   ],
-  "input": "/output/model_verify/native/model.sc",
+  "input": "/output/models/sheet-fold/model_verify/native/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,

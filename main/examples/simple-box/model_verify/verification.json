@@ -5,7 +5,7 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "902f69cdd702b9996685317ff74807c348cd8d6f8822564d1413d7bf115179e9",
+          "sha256": "54f8fb68509583ca659bf6f41ddebe0a730f5faf95b01edd13a460a3931b528e",
           "size": 1717
         }
       ],
@@ -99,14 +99,14 @@
         {
           "kind": "file",
           "path": "saved_designs/length_50/model.sc",
-          "sha256": "807eeec458b285727df780257655c4fb0c669bda271f002d832f2d7c93891b95",
-          "size": 4110
+          "sha256": "598ab81155a0bc9b972bff05482e4c473b50545693ba892ce515c56cc7d41a2f",
+          "size": 4107
         },
         {
           "kind": "file",
           "path": "saved_designs/length_50/measurements.json",
-          "sha256": "c14b491f37ca0d43da65894b0b39fc1053defeb7f6151c72fefe498899bad4da",
-          "size": 1679
+          "sha256": "10cac24980d58f6d80446f2d74770b3ad14011b438db44ac4670314a32c2fc45",
+          "size": 1681
         }
       ],
       "error": null,
@@ -177,7 +177,7 @@
       "status": "pass"
     }
   ],
-  "input": "/output/model_verify/native/model.sc",
+  "input": "/output/models/simple-box/model_verify/native/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,

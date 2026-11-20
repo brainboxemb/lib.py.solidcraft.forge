@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "b0382fb88e4165a7b0a45d3d9805b1220dbe3ec320026a008fb6baadddbf0899",
-  "duration_seconds": 2.153,
+  "bundle_sha256": "25fc376c6cbecbba4d109aec9a1f76bffda0456657c925a38becb4396d3d9721",
+  "duration_seconds": 0.076,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T19:22:32.658Z",
+  "finished_at": "2026-11-20T20:34:52.525Z",
   "item": "examples-hole-family-pybosl2",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,15 +14,15 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "a809d828547f5737c72a3d4fe9b116e37474c4257e46b55bd783cb690c7415fa"
+      "sha256": "d2a273a307cb1fa4e60b73400d9766643db52dc7fa1e84cbab6247dcb3e121d9"
     }
   },
-  "run_finished_at": "2026-11-20T19:23:41.155Z",
-  "run_started_at": "2026-11-20T19:20:00.356Z",
+  "run_finished_at": "2026-11-20T20:34:55.293Z",
+  "run_started_at": "2026-11-20T20:33:04.662Z",
   "schema": 3,
-  "started_at": "2026-11-20T19:22:30.505Z",
+  "started_at": "2026-11-20T20:34:52.474Z",
   "status": "pass",
   "step": "verify_reference",
-  "target_spec_digest": "7ebf692b818862d159f787707cc72f39a54ca5de4886bc9e33fdedf32069fcd8",
+  "target_spec_digest": "a003a5ccbf626d39c8c03a80a3a9e08a11e056fbaa8ed01ff2f5c36d1c00cfe8",
   "timeout_seconds": null
 }

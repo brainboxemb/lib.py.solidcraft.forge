@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "32623c69ddb82c36d434f3f31888b37dd8d4128fddc8b2ca13c94f62c5dd1932",
-          "size": 5722
+          "sha256": "8181972e8aee07a91512c44cfadf7f1144e26fc576957bb0eb1e1a101fc274f6",
+          "size": 5720
         }
       ],
       "error": null,
@@ -218,14 +218,14 @@
         {
           "kind": "file",
           "path": "saved_designs/size_160x120/model.sc",
-          "sha256": "495271bcd767cf5256192ad4ea7e0c3133c505e4cac6fc8d54ab0d0c56bdbf8a",
-          "size": 13875
+          "sha256": "97afb0d6db3e6b03255bbd455320e5d68b050809270290b507b616e1c7f94daf",
+          "size": 13878
         },
         {
           "kind": "file",
           "path": "saved_designs/size_160x120/measurements.json",
-          "sha256": "af64e491af27ed7cf888c9605bfce01e91d83def95d04bf02bf8fe8fe663d9fa",
-          "size": 5723
+          "sha256": "f404da6f9a211777d8094e9679be3dd38bfee8b490ca41a5add1aba0c17cdb11",
+          "size": 5712
         }
       ],
       "error": null,
@@ -392,7 +392,7 @@
       "status": "pass"
     }
   ],
-  "input": "/output/model_verify/native/model.sc",
+  "input": "/output/models/four-corner-l/model_verify/native/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,

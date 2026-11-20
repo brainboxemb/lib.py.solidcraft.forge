@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "9727a7a65ae2bfe87b9d38fabd3e3eb95be90d646830f6a99af9a47697ce7cbf",
-          "size": 3788
+          "sha256": "9ad79a6bbd5e90a1ba8ff66374175c8548f3e87a806eb6285ff74639dfd25cc9",
+          "size": 3798
         }
       ],
       "error": null,
@@ -248,14 +248,14 @@
         {
           "kind": "file",
           "path": "saved_designs/height_60/model.sc",
-          "sha256": "d8641a5eff38f7dc96ceafb58b8dd12ad952b1b1fd2166e0dd86fbb1229eaf08",
-          "size": 6354
+          "sha256": "0676e1d858a32cf127d60a312e0d05e5d7dbbd648a95921ba6e08668183b268d",
+          "size": 6358
         },
         {
           "kind": "file",
           "path": "saved_designs/height_60/measurements.json",
-          "sha256": "9fecd39d0d061b689c82c62713611be9eb4995926fe4169a5cc21b46b6d399fc",
-          "size": 3771
+          "sha256": "4cc2db8b2908db68e79cdb5af4a651c11f8b646ca20a06a3c6d7c61241f59b6d",
+          "size": 3781
         }
       ],
       "error": null,
@@ -487,7 +487,7 @@
       "status": "pass"
     }
   ],
-  "input": "/output/model_verify/native/model.sc",
+  "input": "/output/models/repeated-parent-attachments/model_verify/native/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,

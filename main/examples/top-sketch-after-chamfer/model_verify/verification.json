@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "83940c49d212e8c5d907a10c6c1f6f27b36a32081904d8e39a0eebe8f7200aba",
-          "size": 2152
+          "sha256": "ec4816b817adf8d2d6af023c21e00bb0af0c75a0d4fbc65026e51be8b8bb078e",
+          "size": 2143
         }
       ],
       "error": null,
@@ -139,7 +139,7 @@
       "status": "pass"
     }
   ],
-  "input": "/output/model_verify/native/model.sc",
+  "input": "/output/models/top-sketch-after-chamfer/model_verify/native/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,

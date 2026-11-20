@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "42bf52c03344b16fbc4aec5abc956fabbc29a4665551a816e13c7eddc939eecd",
-          "size": 2842
+          "sha256": "1be81dd217289ac44963dcf04b3dc539bc1a0a84af634331af92ca68f1c5d0da",
+          "size": 2852
         }
       ],
       "error": null,
@@ -391,7 +391,7 @@
       "status": "pass"
     }
   ],
-  "input": "/output/model_verify/native/model.sc",
+  "input": "/output/models/group-hierarchy/model_verify/native/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,

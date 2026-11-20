@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "acaf8a2f6923fa739a9969826662566f9d50feab4c13363ffc956086663f7355",
-          "size": 1931
+          "sha256": "e38672e0e7ad6f90c0c5b6896d2f99cdc4f212b024e868721bd5874a92465a44",
+          "size": 1921
         }
       ],
       "error": null,
@@ -92,7 +92,7 @@
       "status": "pass"
     }
   ],
-  "input": "/output/model_verify/native/model.sc",
+  "input": "/output/models/assembly-decorator/model_verify/native/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,
