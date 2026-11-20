@@ -179,3 +179,34 @@ implementation changes.
 
 SCons execution order/parallelism remains generic CAD-CI behavior; this Forge
 change only makes the dependency graph semantically correct.
+
+## Staged CI selection and evidence
+
+The staged proof separates repository participation, Git selection and build
+execution:
+
+```text
+examples/<model>/ci.yml
+  -> process participation
+  -> released CAD-CI changed-path/dependency selection
+  -> SCons target graph
+  -> consumer action
+  -> build/<item>/.cad-ci evidence
+```
+
+Forge owns only the declarative repository configuration. It does not reproduce
+the planner in Forge code or tests.
+
+The five active model items form one bounded proof set. The independent
+`reference-verification` item is not part of that set and remains independently
+selected by released CAD-CI. A run that includes reference verification is
+therefore not automatically a five-model runtime measurement.
+
+Run interpretation uses structured CAD-CI evidence, not buffered console order.
+Consumer output may be emitted late or grouped by SCons, so console timestamps
+are not a reliable per-action timing source.
+
+During CI stabilization, evidence must be inspectable after a representative
+run. If the reusable workflow does not retain the generated `.cad-ci` evidence,
+the retention mechanism must be added at the workflow/tool boundary rather than
+by adding a Forge-local execution tracker.
