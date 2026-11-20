@@ -32,8 +32,8 @@ class SiteSourceTests(unittest.TestCase):
 
         self.assertNotIn("<!doctype html", build.lower())
         self.assertNotIn('"""<main', build)
-        self.assertNotIn('<section class="hero small">', build)
-        self.assertNotIn('<article class="reference"', build)
+        self.assertNotIn("Complete generated lookup", build)
+        self.assertNotIn("Forge API design contract", build)
         self.assertNotIn("GUIDES = [", guides)
         self.assertNotIn("<h2", guides)
 
