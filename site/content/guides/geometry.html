@@ -1,0 +1,124 @@
+<h2 id="solids">Start with a solid</h2>
+<p><code>Box</code>, <code>Cylinder</code> and <code>Sphere</code> are centred
+on their geometric CENTER by default. Use <code>anchor=...</code> when a face,
+axial end or tangent datum should lie at the origin. For Cylinder the anchor is
+resolved after choosing <code>Axis.X</code>, <code>Axis.Y</code> or
+<code>Axis.Z</code>; for example LEFT/RIGHT are the axial ends of an X-axis
+cylinder and BOTTOM/TOP are the axial ends of a Z-axis cylinder.</p>
+<pre class="code-block"><code>from scpf import (
+    BOTTOM, FRONT, LEFT, RIGHT,
+    Axis, Box, Cylinder, Sphere,
+)
+
+plate = Box(80, 50, 8)
+board = Box(80, 50, 12).at(
+    0, 0, 0,
+    anchor=FRONT + BOTTOM,
+).fillet(
+    4,
+    edges=[BOTTOM + LEFT, BOTTOM + RIGHT],
+)
+pin = Cylinder(d=8, h=20, axis=Axis.Z).at(
+    10, 10, 8,
+    anchor=BOTTOM,
+)
+side_pin = Cylinder(d=8, h=20, axis=Axis.X).at(-10, 0, 0)
+ball = Sphere(12)
+
+body = Sphere(20) &amp; Box(30, 30, 30)
+centered_bore = Cylinder(d=8, h=30, axis=Axis.X).at(body)</code></pre>
+<p><code>at(x, y, z)</code> places CENTER at those coordinates unless another
+<code>anchor=...</code> is supplied. Passing another Shape instead uses
+shape-relative CENTER-to-CENTER placement. Forge derives the native Box corner,
+Cylinder base or Sphere center from the selected datum; callers do not add
+manual half-size corrections.</p>
+<h2 id="profiles">Draw a 2D profile, then extrude it</h2>
+<p>A <code>Rectangle2D</code> is a planar profile rather than a 3D body. 2D geometry is authored inside an explicit <code>Sketch</code> scope. <code>Polygon2D</code> can be created on the XY, XZ or YZ plane.</p>
+<pre class="code-block"><code>from scpf import Sketch, Rectangle2D, Polygon2D
+
+with Sketch(plane=&quot;XY&quot;) as plate_sketch:
+    Rectangle2D(80, 50)
+plate = plate_sketch.extrude(8)
+
+with Sketch(plane=&quot;XZ&quot;) as side_sketch:
+    Polygon2D(
+        [(0, 0), (40, 0), (40, 8), (8, 8), (8, 30), (0, 30)],
+        plane=&quot;XZ&quot;,
+        world=True,
+    )
+side = side_sketch.extrude(10)
+
+# Signed distance chooses the side of the sketch plane.
+backward = plate_sketch.extrude(-8)
+centered = plate_sketch.extrude(8, sym=True)</code></pre>
+<p>A sketch plane affects where its axes go; changing the camera does not rotate its geometry. Leave the <code>with Sketch(...)</code> scope, then call <code>sketch.extrude(...)</code> to create 3D material. A positive distance follows the sketch-plane normal, a negative distance goes the other way, and <code>sym=True</code> divides a positive distance equally over both sides. Direct <code>Rectangle2D(...).extrude(...)</code> syntax is intentionally not supported.</p>
+<h2 id="profile-selection">Select profiles when extruding a Sketch</h2>
+<p>By default <code>Sketch.extrude()</code> uses every closed profile in the
+Sketch. Use <code>profiles=[(x, y), ...]</code> when only some closed regions
+should be extruded or cut. The points are fixed coordinates in the Sketch
+itself; users do not need SolidCraft profile indices or curve ids.</p>
+<pre class="code-block"><code>from scpf import Anchor, Axis, Box, Circle2D, Depth, Sketch
+
+board = Box(120, 80, 5, anchor=Anchor.BOTTOM)
+with Sketch(name=&quot;Selected holes&quot;, on=board, parent=Anchor.TOP) as holes:
+    seed = holes.add(Circle2D(d=8), offset=(-30, 0))
+    holes.rectangular_pattern(
+        seed,
+        count=4,
+        spacing=20,
+        direction=Axis.X,
+    )
+
+board = board - holes.extrude(
+    Depth.THROUGH_ALL,
+    profiles=[(-30, 0), (-10, 0), (30, 0)],
+    exact_regions=True,
+)</code></pre>
+<p>SolidCraft 0.42 stores a successful point selection using the curves around
+the selected profile where possible. That lets the selection follow the profile
+when the saved design recomputes. <code>exact_regions=True</code> asks
+SolidCraft to use exactly the region containing each point. Profile points must
+be fixed finite numbers; Forge Parameters and expressions are not accepted in
+this field.</p>
+<h2 id="pattern-mirror">Repeat and mirror profiles inside one Sketch</h2>
+<p><code>Sketch.rectangular_pattern()</code> makes a native SolidCraft sketch pattern from a profile that already belongs to the Sketch. <code>Sketch.mirror()</code> mirrors a profile, a pattern result or an earlier mirror result. Both methods return a Sketch result that can be passed to another supported Sketch operation.</p>
+<pre class="code-block"><code>from scpf import Anchor, Axis, Box, Circle2D, Depth, Sketch
+
+board = Box(200, 120, 8)
+with Sketch(name=&quot;Dog holes&quot;, on=board, parent=Anchor.TOP) as holes:
+    seed = holes.add(Circle2D(d=8), offset=(-40, 20))
+    row = holes.rectangular_pattern(
+        seed,
+        count=4,
+        spacing=25,
+        direction=Axis.X,
+    )
+    holes.mirror(row, axis=Axis.X)
+
+board = board - holes.extrude(Depth.THROUGH_ALL)</code></pre>
+<p>The same operations work with native Slot profiles. A pattern or mirror result can be used as the source of the next operation.</p>
+<pre class="code-block"><code>from scpf import Anchor, Axis, Sketch, SlotCenterToCenter2D
+
+with Sketch(name=&quot;Clamp slots&quot;, on=board, parent=Anchor.TOP) as slots:
+    seed = SlotCenterToCenter2D((20, 20), (40, 20), 8)
+    arm = slots.rectangular_pattern(
+        seed,
+        count=2,
+        spacing=50,
+        direction=Axis.X,
+    )
+    opposite = slots.mirror(arm, axis=Axis.Y)
+    slots.mirror(arm, axis=Axis.X)
+    slots.mirror(opposite, axis=Axis.X)</code></pre>
+<p><code>count</code>, <code>count2</code>, <code>spacing</code> and <code>spacing2</code> may use suitable model Parameters, so those values remain editable in the saved SolidCraft design. Current native qualification covers attached <code>Sketch(on=...)</code> use. Pattern directions support <code>Axis.X</code>, <code>Axis.Y</code> or a fixed 2D vector. Mirrors currently support the Sketch X or Y origin axis. Per-instance pattern suppression is not supported.</p>
+<p>SolidCraft 0.42 stores the curves selected when a mirror is created. If a pattern later creates extra curves after its count changes, those new curves are not added to that existing mirror automatically.</p>
+<h2 id="boolean">Add, subtract and intersect</h2>
+<pre class="code-block"><code>body = Box(50, 50, 20)
+tool = Cylinder(d=12, h=22).at(0, 0, 0)
+joined = body + tool       # union, where supported
+cut = body - tool          # difference, where supported
+shared = body &amp; tool       # intersection, where supported</code></pre>
+<p>The supported compiler path depends on the operands. Native feature
+history and CSG trees are not interchangeable for every operation.
+For manufacturing features such as holes, prefer the native
+<a href="../features/">feature operations</a>.</p>
