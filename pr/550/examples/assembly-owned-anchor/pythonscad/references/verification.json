@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                75.0,
+                15.0,
+                20.0
+              ],
+              "actual_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "expected_max": [
+                75.0,
+                15.0,
+                20.0
+              ],
+              "expected_min": [
+                -20.0,
+                -25.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pythonscad",
+          "source": "examples/assembly-owned-anchor/pythonscad/model.py",
+          "status": "pass",
+          "stl": "assembly-owned-anchor/pythonscad/model.stl"
+        }
+      ],
+      "model": "assembly-owned-anchor",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "4a5c912345b8d2c7930d62039ec7331b72dcd269",
+  "status": "pass"
+}

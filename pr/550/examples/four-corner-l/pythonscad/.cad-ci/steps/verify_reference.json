@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "1f44984bc811a2add28c0b45e0b6198a7b8994c726634c9255ad2cba61e3e0c1",
+  "duration_seconds": 0.088,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:11:31.631Z",
+  "item": "examples-four-corner-l-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "793957bbba49bfd4d06e9d8a0bc82ee7db1d1049d823f987beeb768024a4031b"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:11:39.272Z",
+  "run_started_at": "2026-11-20T22:09:29.454Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:11:31.584Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "1efb676a1ae0c209dbb017a96facfd9c5d8403cec686c71139d96244ed5ef307",
+  "timeout_seconds": null
+}

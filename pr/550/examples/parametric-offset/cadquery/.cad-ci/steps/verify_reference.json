@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "2bae4e713957cf85684c9ea6c7d44f700413ae1bfdbc98fe23760a24d1afd3a4",
+  "duration_seconds": 0.091,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:11:33.675Z",
+  "item": "examples-parametric-offset-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "e32bce4e49d1f2e1a103494a67a9874bfbea17daf5bc7e0a7525576d0c7dc5a7"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:11:39.272Z",
+  "run_started_at": "2026-11-20T22:09:29.454Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:11:33.627Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "9a305b31e6bcc6f06cb9ae0507fb355b406ecd689f54aab0e7beb10473aa014b",
+  "timeout_seconds": null
+}

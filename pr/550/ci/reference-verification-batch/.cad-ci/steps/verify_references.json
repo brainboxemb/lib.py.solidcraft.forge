@@ -1,0 +1,33 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "5c8399e7e5c998620439e54a333970ab53be3218b40dd477dc6574f875f0196e",
+  "duration_seconds": 58.333,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:11:14.863Z",
+  "item": "reference-verification-batch",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "diagrams": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "01c6efa2a606e37e54a809576e86f718c4c1dbdce8545cd09f4cb7981a518a7e"
+    },
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "02fb225c8538010d3b528cc4affcd78ae95cab791d92f0aa09703233bd42adc8"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:11:39.272Z",
+  "run_started_at": "2026-11-20T22:09:29.454Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:10:16.531Z",
+  "status": "pass",
+  "step": "verify_references",
+  "target_spec_digest": "1a33c884f5ddf560ba69db1a5fe457170261c366852a5d78036f5ad75b766456",
+  "timeout_seconds": null
+}

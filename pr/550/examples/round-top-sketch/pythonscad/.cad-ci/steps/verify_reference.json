@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "b21b616544aed7832acc4a0675d7c9c74b74c97195e3a3c3051f034e227800d3",
+  "duration_seconds": 0.089,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:11:35.718Z",
+  "item": "examples-round-top-sketch-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "f4d0219bf22d94795245997182102d9a20b823cd1f4081e5925a36921e676477"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:11:39.272Z",
+  "run_started_at": "2026-11-20T22:09:29.454Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:11:35.671Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "923f7539547b44ce9efed3d7314acfcf4fe468cd04f1bebae84c12166bf289c5",
+  "timeout_seconds": null
+}

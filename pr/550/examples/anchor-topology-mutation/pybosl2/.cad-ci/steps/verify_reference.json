@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "60431ab69992614b5c5c939672e9bc145cfaaa865aea8a3d217f66edba54f48e",
+  "duration_seconds": 0.089,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:11:27.124Z",
+  "item": "examples-anchor-topology-mutation-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "d417a64218f9fde56e8b2fc83d2b2be034dd0e028faa0eb1be6cbc4344ee588c"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:11:39.272Z",
+  "run_started_at": "2026-11-20T22:09:29.454Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:11:27.076Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "b530aaf56af47b28fbd375174b351ce50580b80e312410872f71a33b99da7885",
+  "timeout_seconds": null
+}

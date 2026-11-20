@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "dd64bca0492df50ec64459a55af01488bc20987c18a2e90a47ae4caf7fd6a51f",
+  "duration_seconds": 0.089,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:11:33.102Z",
+  "item": "examples-parametric-anchor-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "a9bd91f488ce5a4fca61eeb1870f0b476415b8f5b3189df3000afdeb1b6604d3"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:11:39.272Z",
+  "run_started_at": "2026-11-20T22:09:29.454Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:11:33.055Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "6a47f81f7a0cc90937b89803c858e610e064409114291153cd5231bb1d0bf4d5",
+  "timeout_seconds": null
+}

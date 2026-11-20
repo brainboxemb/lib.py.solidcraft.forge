@@ -1,0 +1,30 @@
+{
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": {
+          "face": [
+            -64.22205101855957,
+            -24.222051018559572,
+            5.0
+          ],
+          "body": "SketchPatternMirror",
+          "index": 0
+        },
+        "project_edges": false,
+        "name": "Dog holes"
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          -60.0,
+          -45.0
+        ],
+        "diameter": "hole_diameter"
+      }
+    }
+  ]
+}

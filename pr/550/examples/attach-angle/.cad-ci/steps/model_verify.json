@@ -1,0 +1,33 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "818d348b975ae0ab35b391c16af8a9b40704eacd21f352a98f0423c0504d1b3a",
+  "duration_seconds": 0.117,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-20T22:11:17.250Z",
+  "item": "attach-angle",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "model_verify": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "24cbf2ff86b3a1035fcd5d7907909a1bd7755f8b5cb91413070d423ab027d33a"
+    },
+    "solidcraft.json": {
+      "kind": "file",
+      "mode": 420,
+      "sha256": "681cf6306b86e152ea4a26c0d26c0a5f619195c84727f77fa50944b4cba6562e"
+    }
+  },
+  "run_finished_at": "2026-11-20T22:11:39.272Z",
+  "run_started_at": "2026-11-20T22:09:29.454Z",
+  "schema": 3,
+  "started_at": "2026-11-20T22:11:17.202Z",
+  "status": "pass",
+  "step": "model_verify",
+  "target_spec_digest": "6d45cbe815bd3c7c8d354071cebcfdd719771132f5d9fcf2950483f3cd98c27e",
+  "timeout_seconds": null
+}

@@ -1,0 +1,24 @@
+{
+  "commands": [
+    {
+      "command": "sketch.edit",
+      "params": {
+        "sketch": 2
+      }
+    },
+    {
+      "command": "sketch.pattern.rectangular",
+      "params": {
+        "entities": [
+          "c1"
+        ],
+        "count": "hole_columns",
+        "spacing": "hole_pitch",
+        "dir": [
+          1.0,
+          0.0
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "actual_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "expected_max": [
+                30.0,
+                30.0,
+                16.0
+              ],
+              "expected_min": [
+                -30.0,
+                -30.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/attach-angle/build123d/model.py",
+          "status": "pass",
+          "stl": "attach-angle/build123d/model.stl"
+        }
+      ],
+      "model": "attach-angle",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "4a5c912345b8d2c7930d62039ec7331b72dcd269",
+  "status": "pass"
+}

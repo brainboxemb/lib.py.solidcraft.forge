@@ -1,0 +1,179 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "width",
+        "expression": "160",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "depth",
+        "expression": "120",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "thickness",
+        "expression": "5",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "width",
+        "width": "depth",
+        "height": "thickness",
+        "corner": [
+          "-width / 2",
+          "-depth / 2",
+          0
+        ],
+        "body_name": "SlotFamily"
+      }
+    },
+    {
+      "command": "model.faces",
+      "params": {
+        "body": "SlotFamily"
+      },
+      "bind": {
+        "$face_point_1": {
+          "field": "faces",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          },
+          "max": "area",
+          "select": "point"
+        },
+        "$face_index_1": {
+          "field": "faces",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          },
+          "max": "area",
+          "select": "index"
+        }
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": {
+          "face": "$face_point_1",
+          "body": "SlotFamily",
+          "index": "$face_index_1"
+        },
+        "project_edges": false,
+        "name": "Slot family"
+      }
+    },
+    {
+      "command": "sketch.slot.center_to_center",
+      "params": {
+        "p0": [
+          -60.0,
+          -35.0
+        ],
+        "p1": [
+          -40.0,
+          -35.0
+        ],
+        "width": 8.0
+      }
+    },
+    {
+      "command": "sketch.slot.overall",
+      "params": {
+        "p0": [
+          -10.0,
+          -35.0
+        ],
+        "p1": [
+          20.0,
+          -35.0
+        ],
+        "width": 8.0
+      }
+    },
+    {
+      "command": "sketch.slot.center_point",
+      "params": {
+        "center": [
+          55.0,
+          -35.0
+        ],
+        "end": [
+          65.0,
+          -35.0
+        ],
+        "width": 8.0
+      }
+    },
+    {
+      "command": "sketch.slot.arc_three_point",
+      "params": {
+        "start": [
+          -50.0,
+          25.0
+        ],
+        "through": [
+          -35.0,
+          38.0
+        ],
+        "end": [
+          -20.0,
+          25.0
+        ],
+        "width": 8.0
+      }
+    },
+    {
+      "command": "sketch.slot.arc_center",
+      "params": {
+        "center": [
+          40.0,
+          25.0
+        ],
+        "start": [
+          52.0,
+          25.0
+        ],
+        "width": 8.0,
+        "sweep": 120
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "operation": "cut",
+        "targets": [
+          "SlotFamily"
+        ],
+        "name": "Slot family",
+        "through_all": true,
+        "direction": "negative"
+      }
+    }
+  ]
+}
