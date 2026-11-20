@@ -20,6 +20,7 @@ The active CI structure is defined by:
 - `scpf/ci.yml`
 - `ci/forge-tests/ci.yml`
 - `ci/forge-release/ci.yml`
+- `ci/cad-verification-package/ci.yml`
 - migrated `examples/<model>/ci.yml` files
 - `scripts/tool_ci.py`
 - `scripts/tool_verify.py`
