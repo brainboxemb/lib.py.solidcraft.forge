@@ -16,6 +16,7 @@ Primary documents:
 
 - `docs/api.md`
 - `docs/design.md`
+- `docs/development.md`
 - `docs/plan.md`
 - `docs/requirements.md`
 - `docs/release.md`
@@ -36,14 +37,17 @@ change records before becoming `docs/api.md`.
 1. Update the API contract to current Forge behavior, including signed Sketch
    extrusion, native Slot constructors, circular feature patterns and the
    explicit native Hole family.
-2. Rename the release-process document to `docs/release.md` and make its
+2. Create `docs/development.md` as the primary guide for working on Forge
+   itself: local setup, repository layout, tests, CI, documentation and
+   release-preparation workflow.
+3. Rename the release-process document to `docs/release.md` and make its
    current-state wording match the active CI/publication architecture.
-3. Move current task-oriented documents to `docs/manual/`.
-4. Move historical/narrow design, change, migration and vendor material to
+4. Move current task-oriented user/developer detail pages to `docs/manual/`.
+5. Move historical/narrow design, change, migration and vendor material to
    `docs/background/` while preserving history.
-5. Update README, AGENTS and all internal Markdown references.
-6. Verify no active references point at the old numbered/root paths.
-7. Make no Forge API/compiler/verification/CI behavior changes in this issue.
+6. Update README, AGENTS and all internal Markdown references.
+7. Verify no active references point at the old numbered/root paths.
+8. Make no Forge API/compiler/verification/CI behavior changes in this issue.
 
 ## Open issue assessment — 2026-11-20
 
