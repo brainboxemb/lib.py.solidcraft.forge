@@ -27,6 +27,7 @@ from html_writer import (
     escape,
     guide_chapter_content,
     guide_overview_content,
+    guide_sections,
     guide_shell,
     list_items,
     page,
@@ -240,12 +241,6 @@ def _api_search_entries():
     return entries
 
 
-_GUIDE_HEADING = re.compile(
-    r'<h([23])\s+id="([^"]+)">(.*?)</h\1>',
-    re.IGNORECASE | re.DOTALL,
-)
-
-
 def _guide_search_entries():
     entries = []
     for chapter in GUIDES:
@@ -258,21 +253,13 @@ def _guide_search_entries():
             aliases=(chapter["slug"],),
             keywords=(plain_text(body),),
         ))
-        headings = list(_GUIDE_HEADING.finditer(body))
-        for index, match in enumerate(headings):
-            next_start = (
-                headings[index + 1].start()
-                if index + 1 < len(headings)
-                else len(body)
-            )
-            heading = plain_text(match.group(3))
-            section = plain_text(body[match.end():next_start])
+        for anchor, heading, section in guide_sections(body):
             entries.append(_search_entry(
                 heading,
                 "API Guide",
-                f"guide/{chapter['slug']}/#{match.group(2)}",
+                f"guide/{chapter['slug']}/#{anchor}",
                 chapter["title"],
-                aliases=(match.group(2),),
+                aliases=(anchor,),
                 keywords=(chapter["summary"], section),
             ))
     return entries
