@@ -7,7 +7,6 @@ needs:
   - model-verification-batch
 watch:
   - examples/simple-box/scpf/**
-  - examples/simple-box/model.yml
   - examples/simple-box/verification/**
   - examples/simple-box/tests/**
   - scripts/forge_example.py
@@ -28,8 +27,7 @@ steps:
   - id: model_verify
     inputs:
       - examples/simple-box/scpf/**
-      - examples/simple-box/model.yml
-      - examples/simple-box/verification/**
+          - examples/simple-box/verification/**
       - examples/simple-box/tests/**
       - scripts/forge_example.py
       - scripts/model_verification_batch.py
