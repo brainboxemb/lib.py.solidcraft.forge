@@ -27,6 +27,7 @@ ABSENT_MARKERS = (
     "manifest unknown",
     "no such manifest",
     "manifest_unknown",
+    "not found",
 )
 
 REQUIRED_CONFIG_FIELDS = {
@@ -106,35 +107,65 @@ def metadata(repository: str) -> dict[str, str]:
     return values
 
 
-def image_exists(reference: str) -> bool:
-    """Return False only when the registry explicitly reports absence."""
+def _docker_result(
+    args: list[str],
+    *,
+    fallback: str,
+) -> tuple[bool, str]:
+    """Run one Docker registry check and return success plus literal message."""
 
     completed = subprocess.run(
-        ["docker", "manifest", "inspect", reference],
+        args,
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         check=False,
     )
-    if completed.returncode == 0:
-        return True
-
     message = (
         completed.stderr.strip()
         or completed.stdout.strip()
-        or "docker manifest inspect failed"
+        or fallback
     )
+    return completed.returncode == 0, message
+
+
+def _explicitly_absent(message: str) -> bool:
+    """Return whether Docker proved the requested registry object is absent."""
+
     normalized = message.lower()
-    if any(marker in normalized for marker in ABSENT_MARKERS):
+    return any(marker in normalized for marker in ABSENT_MARKERS)
+
+
+def image_exists(reference: str) -> bool:
+    """Return True only when the registry tag exists and Docker can pull it."""
+
+    present, message = _docker_result(
+        ["docker", "manifest", "inspect", reference],
+        fallback="docker manifest inspect failed",
+    )
+    if not present:
+        if _explicitly_absent(message):
+            return False
+        raise ImageLookupError(
+            f"could not inspect container image {reference}: {message}"
+        )
+
+    pullable, message = _docker_result(
+        ["docker", "pull", reference],
+        fallback="docker pull failed",
+    )
+    if pullable:
+        return True
+    if _explicitly_absent(message):
         return False
 
     raise ImageLookupError(
-        f"could not inspect container image {reference}: {message}"
+        f"could not pull container image {reference}: {message}"
     )
 
 
 def require_image(reference: str) -> None:
-    """Fail clearly when the immutable runtime image has not been published."""
+    """Fail unless the immutable runtime exists and is directly pullable."""
 
     if image_exists(reference):
         print(f"present: {reference}")

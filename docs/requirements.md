@@ -106,3 +106,19 @@ Forge runtime publication must not use GitHub Actions cache storage.
 - Runtime reuse is based on the exact immutable GHCR image reference.
 - A local directory named `.cache` is not GitHub cache storage unless it is
   persisted through a cache action/service.
+
+
+## Runtime image publication
+
+The manually invoked runtime workflow must publish the exact immutable
+single-platform runtime tag in a form that normal Docker clients can consume.
+
+After publication:
+
+- the exact tag must pass the strict registry/presence check;
+- a real `docker pull` of that exact tag must succeed;
+- publication must not leave an OCI index that references a missing child
+  manifest.
+
+Build provenance/attestation is disabled for this runtime image when it would
+change the registry representation in a way that breaks normal pullability.
