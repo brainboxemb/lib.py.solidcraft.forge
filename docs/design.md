@@ -509,3 +509,37 @@ remain model-local and are compared by the released visual API.
 
 Other models are not enabled by this change. The proven path is applied to the
 remaining staged proof models later under #378.
+
+
+### Historical baseline payload migration
+
+After the simple-box PNG proof, the remaining four staged models reuse their
+already-approved historical regression pixels without transcode/reapproval.
+
+Each migrated view stores a model-local JSON payload containing:
+
+- `encoding: zlib`;
+- normalized width/height 96 x 72;
+- the exact historical compressed/base64 pixel payload;
+- approval/source provenance.
+
+The Forge visual adapter asks released `decode_baseline()` to materialize the
+payload for `verify_visual_view()`. Forge does not implement zlib/base64/Pillow
+decoding.
+
+### Five-model staged proof
+
+The next #378 step enables only:
+
+- simple-box (already proven);
+- anchor-topology-mutation;
+- attach-angle;
+- four-corner-l;
+- xz-anchor.
+
+All use front/right/iso regression views. The first three added models use their
+model body expectations as expected boxes. `four-corner-l` retains the
+historical arm-level expected-shape decomposition so a mirrored/rotated L corner
+cannot pass merely because its outer bounding box is unchanged.
+
+No other model becomes `process: true` in this step.
