@@ -8,3 +8,20 @@ stages:
   - Create local and explicitly overridden Panel definitions
   - Reuse one shared parent width across repeated Panels
   - Derive one child width from half of the shared parent parameter
+concepts:
+  - component parameters
+  - shared dependency
+  - explicit override
+  - derived expression
+  - occurrence reuse
+verification:
+  summary: >
+    Verifies that local component parameters, explicit overrides, shared parent
+    dependencies and derived child expressions remain distinct in native output.
+  proves:
+    - All five Panel occurrences have the expected baseline envelopes.
+    - Published local/override/shared parameters retain the intended values.
+    - Editing the shared parent value updates both shared panels and the derived half-width child while unrelated panels stay unchanged.
+  saved_design: >
+    The saved design changes the shared width and verifies both direct consumers
+    plus the derived half-width expression.
