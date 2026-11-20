@@ -133,7 +133,7 @@ CAD-CI cut-over because it no longer matched the active workflow. The current
 Forge workflow does not automatically create a Git tag or GitHub Release.
 
 Build, Pages and release publication migration is tracked in issue #366.
-`docs/10-release-process.md` describes the current state.
+`docs/release.md` describes the current state.
 
 ## Build and Pages status
 
@@ -151,7 +151,7 @@ development status.
 - `docs/05-cad-api-design.md` — cross-object Forge API rules.
 - `docs/06-verification.md` — current verification layers.
 - `docs/09-documentation-architecture.md` — documentation sources of truth.
-- `docs/10-release-process.md` — current release state.
+- `docs/release.md` — current release state.
 - `docs/11-generated-output.md` — generated-output migration boundary.
 - `docs/design/test-architecture.md` — current test ownership.
 - `docs/agent/forge-api.json` — generated machine-readable Forge API index.

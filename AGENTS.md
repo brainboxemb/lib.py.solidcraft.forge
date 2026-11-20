@@ -120,16 +120,16 @@ expected by Forge CI.
 - the fixed release examples — Forge `tool_verify`.
 - `examples/<model>/verification/` — native SolidCraft model checks.
 
-`docs/design/test-architecture.md` contains the detailed test split.
+`docs/background/design/test-architecture.md` contains the detailed test split.
 
 ## Public API documentation
 
 The public API source split is documented in
-`docs/09-documentation-architecture.md`.
+`docs/background/documentation-architecture.md`.
 
 Exact public names, signatures, defaults and enum values come from the Python
 implementation and its docstrings. Cross-object rules are documented in
-`docs/05-cad-api-design.md`.
+`docs/api.md`.
 
 `docs/agent/forge-api.json` is generated from the public API.
 
@@ -155,9 +155,25 @@ Issue #366 tracks publication integration with the current CAD-CI architecture.
 
 ## Historical documents
 
-`docs/changes/` and several older audit/remediation documents under
-`docs/design/` describe earlier development states. Their old terminology is
+`docs/background/changes/` and several older audit/remediation documents under
+`docs/background/design/` describe earlier development states. Their old terminology is
 historical rather than an active CI contract.
+
+## Documentation structure
+
+The primary human documents are:
+
+- `docs/api.md`;
+- `docs/design.md`;
+- `docs/development.md`;
+- `docs/plan.md`;
+- `docs/requirements.md`;
+- `docs/release.md`.
+
+Current task guidance belongs under `docs/manual/`. Historical/narrow design,
+change, audit, migration and vendor/reference records belong under
+`docs/background/`. Generated machine-oriented API data remains under
+`docs/agent/`.
 
 ## Repository plan
 
