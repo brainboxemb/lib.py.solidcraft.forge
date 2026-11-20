@@ -14,7 +14,7 @@ jobs:
     permissions:
       contents: read
       packages: read
-    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-ci.yml@ad7099b4712af13067c1c42ad50e89bf6a8306dd
+    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-ci.yml@f357b70599e5b0a6cf39a25de6a70e43a04e85b1
     with:
       upload_build: true
       build_artifact_name: forge-cad-ci-build
@@ -24,7 +24,7 @@ jobs:
     permissions:
       contents: read
       packages: read
-    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-ci.yml@ad7099b4712af13067c1c42ad50e89bf6a8306dd
+    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-ci.yml@f357b70599e5b0a6cf39a25de6a70e43a04e85b1
     with:
       upload_build: true
       build_artifact_name: forge-cad-ci-main-build
@@ -49,7 +49,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: brainboxemb/tool.cad.ci
-          ref: ad7099b4712af13067c1c42ad50e89bf6a8306dd
+          ref: f357b70599e5b0a6cf39a25de6a70e43a04e85b1
           path: .cad-ci-tool
 
       - name: Set up Python
@@ -115,7 +115,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: brainboxemb/tool.cad.ci
-          ref: ad7099b4712af13067c1c42ad50e89bf6a8306dd
+          ref: f357b70599e5b0a6cf39a25de6a70e43a04e85b1
           path: .cad-ci-tool
 
       - name: Set up Python
