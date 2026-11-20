@@ -216,3 +216,32 @@ without retaining the old qualification runner.
 
 This restores command-contract coverage without reintroducing the historical
 qualification orchestration.
+
+## Durable generated build output
+
+Successful transient verification output becomes durable only through the
+released CAD-CI build-store/publication commands.
+
+For the first migration proof:
+
+- the reusable Forge CAD-CI job remains the only producer of candidate
+  `simple-box` verification output;
+- a downstream publication job may consume the reusable workflow's materialized
+  build artifact but must not rerun model verification;
+- the candidate is validated by `cad-ci build prepare-pr`;
+- the sparse PR candidate contains only the explicitly selected
+  `simple-box` item path;
+- the accepted candidate is published by `cad-ci publish build` below
+  `build/pr/<pull-request>/examples/simple-box/`;
+- the item-local public `.cad-ci` evidence is preserved;
+- existing `build/main` and unrelated PR scopes are preserved;
+- Forge must not implement its own build-store copy, manifest validation,
+  generated-branch race retry or Git publication logic.
+
+Publishing a PR build scope is permitted only after the reusable CAD-CI job
+succeeds. Publication is a consumer of accepted verification output, not an
+alternative verification path.
+
+The first proof is intentionally limited to same-repository pull requests where
+the workflow token can write the generated `build` branch. Fork PRs must not
+gain write publication privileges.
