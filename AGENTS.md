@@ -45,7 +45,7 @@ exact built Forge wheel, produces the initial native SolidCraft model and then
 delegates model verification to released `lib.py.cad.verfication`.
 
 A declaratively migrated model keeps only model-specific verification data in
-`verification/definition.py`; it does not own a procedural verification CLI.
+`verification/verify.py`; it does not own a procedural verification CLI.
 During staged migration it uses `scripts/model_verify_declarative.py`; older
 models retain `scripts/model_verify.py` until their own migration change.
 
@@ -65,7 +65,7 @@ examples/<model>/
   scpf/
     model.py
   verification/
-    definition.py
+    verify.py
     <model-specific command/data files>
 ```
 
