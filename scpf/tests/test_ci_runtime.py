@@ -12,7 +12,7 @@ CAD_CI = ROOT / "cad-ci.yml"
 WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
 MODEL_VERIFY = ROOT / "scripts" / "model_verify_declarative.py"
 REFERENCE_VERIFY = ROOT / "scripts" / "verification_evidence.py"
-PR_TOOL_COMMIT = "5bca68eb109a69e3a05e7711daf394926ee0e7d4"
+PR_TOOL_COMMIT = "18812d38e2390c23fd3c431cfde2ce9367bdfd40"
 MAIN_TOOL_COMMIT = "bbdd473638d64e01acab69722092b2a12f99b84d"
 
 
