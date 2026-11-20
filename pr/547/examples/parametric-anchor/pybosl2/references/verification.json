@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "expected_max": [
+                40.0,
+                15.0,
+                10.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "pybosl2",
+          "source": "examples/parametric-anchor/pybosl2/model.py",
+          "status": "pass",
+          "stl": "parametric-anchor/pybosl2/model.stl"
+        }
+      ],
+      "model": "parametric-anchor",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "660fc7a8728a8d5c5e86e6979c189b9d4d29c122",
+  "status": "pass"
+}

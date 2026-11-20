@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "actual_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "expected_max": [
+                64.0,
+                44.0,
+                60.0
+              ],
+              "expected_min": [
+                -64.0,
+                -44.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "build123d",
+          "source": "examples/eight-corner-brackets/build123d/model.py",
+          "status": "pass",
+          "stl": "eight-corner-brackets/build123d/model.stl"
+        }
+      ],
+      "model": "eight-corner-brackets",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "660fc7a8728a8d5c5e86e6979c189b9d4d29c122",
+  "status": "pass"
+}
