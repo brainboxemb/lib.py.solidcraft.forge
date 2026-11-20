@@ -165,7 +165,7 @@ examples/<model>/scpf/model.py
      -> exact built Forge wheel
      -> compile Forge model to command document
      -> replay command document to initial native model.sc
-     -> load examples/<model>/verification/definition.py
+     -> load examples/<model>/verification/verify.py
      -> run_solidcraft_verification(model.sc, output, VERIFICATION)
         -> baseline evaluation/checks
         -> saved-design mutation/evaluation/checks

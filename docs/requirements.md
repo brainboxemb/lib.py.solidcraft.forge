@@ -131,7 +131,7 @@ A migrated Forge model owns only model-specific verification data.
 For SolidCraft-backed model verification:
 
 - the model may define a `SolidCraftVerification` value in
-  `verification/definition.py`;
+  `verification/verify.py`;
 - body counts, expected bounds, parameter values, timeline expectations,
   mutation command paths and other model-specific expected values remain with
   the model;
