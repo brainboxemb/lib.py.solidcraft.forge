@@ -2,8 +2,8 @@
 schema: 1
 
 variables:
-  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.3.1"
-  REFERENCE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-reference:v0.3.1"
+  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.3.2"
+  REFERENCE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-reference:v0.3.2"
   SOLIDCRAFT_VERSION: "0.42.0"
 
 templates:
@@ -11,7 +11,7 @@ templates:
     kind: model
     needs:
       - forge-package
-      - cad-verification-package
+      - model-verification-batch
     watch:
       item:
         - scpf/**
@@ -22,6 +22,7 @@ templates:
         - scripts/forge_example.py
         - scripts/model_contract_test.py
         - scripts/model_verify_declarative.py
+        - scripts/model_verification_batch.py
         - scripts/model_visual.py
     strategy:
       reuse: true
@@ -44,10 +45,8 @@ templates:
             - tests/**
           repo:
             - scripts/forge_example.py
-            - scripts/model_verify_declarative.py
-            - scripts/model_visual.py
-            - scpf/scpf/version.py
-        run: [python, ../../scripts/model_verify_declarative.py]
+            - scripts/model_verification_batch.py
+        run: [python, ../../scripts/model_verification_batch.py, materialize]
         outputs:
           - solidcraft.json
           - model_verify
@@ -55,7 +54,7 @@ templates:
   forge-reference:
     kind: verification
     needs:
-      - cad-verification-package
+      - reference-verification-batch
     watch:
       item:
         - model.py
@@ -63,7 +62,7 @@ templates:
       repo:
         - verification/reference_validation.py
         - scripts/forge_example.py
-        - scripts/verification_evidence.py
+        - scripts/reference_verification_batch.py
     strategy:
       reuse: true
     steps:
@@ -73,26 +72,24 @@ templates:
             - model.py
             - ../verification/reference_geometry.json
           repo:
-            - verification/reference_validation.py
             - scripts/forge_example.py
-            - scripts/verification_evidence.py
-        run: [python, ../../../scripts/verification_evidence.py, verify_reference]
+            - scripts/reference_verification_batch.py
+        run: [python, ../../../scripts/reference_verification_batch.py, materialize]
         outputs:
           - references
 
   forge-reference-build123d:
     kind: verification
     needs:
-      - cad-verification-package
+      - reference-verification-batch
     watch:
       item:
         - model.py
         - ../verification/reference_geometry.json
       repo:
-        - verification/reference_validation.py
         - verification/build123d_export.py
         - scripts/forge_example.py
-        - scripts/verification_evidence.py
+        - scripts/reference_verification_batch.py
     strategy:
       reuse: true
     steps:
@@ -102,11 +99,9 @@ templates:
             - model.py
             - ../verification/reference_geometry.json
           repo:
-            - verification/reference_validation.py
-            - verification/build123d_export.py
             - scripts/forge_example.py
-            - scripts/verification_evidence.py
-        run: [python, ../../../scripts/verification_evidence.py, verify_reference]
+            - scripts/reference_verification_batch.py
+        run: [python, ../../../scripts/reference_verification_batch.py, materialize]
         outputs:
           - references
 

@@ -11,7 +11,8 @@ ROOT = Path(__file__).resolve().parents[2]
 CAD_CI = ROOT / "cad-ci.yml"
 WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
 MODEL_VERIFY = ROOT / "scripts" / "model_verify_declarative.py"
-REFERENCE_VERIFY = ROOT / "scripts" / "verification_evidence.py"
+MODEL_BATCH = ROOT / "scripts" / "model_verification_batch.py"
+REFERENCE_BATCH = ROOT / "scripts" / "reference_verification_batch.py"
 PR_TOOL_COMMIT = "4c1016d594368146fb9c16602f01c158e85d9afb"
 MAIN_TOOL_COMMIT = "4c1016d594368146fb9c16602f01c158e85d9afb"
 
@@ -50,13 +51,13 @@ class CiRuntimeContractTests(unittest.TestCase):
             solidcraft.rsplit(":", 1)[1],
             reference.rsplit(":", 1)[1],
         )
-        self.assertEqual(solidcraft.rsplit(":", 1)[1], "v0.3.1")
+        self.assertEqual(solidcraft.rsplit(":", 1)[1], "v0.3.2")
 
     def test_runtime_consumers_use_separate_roles(self):
         """Keep model and reference execution on their own released images."""
 
-        model_text = MODEL_VERIFY.read_text(encoding="utf-8")
-        reference_text = REFERENCE_VERIFY.read_text(encoding="utf-8")
+        model_text = MODEL_BATCH.read_text(encoding="utf-8")
+        reference_text = REFERENCE_BATCH.read_text(encoding="utf-8")
         self.assertIn('os.environ.get("FORGE_RUNTIME_IMAGE"', model_text)
         self.assertNotIn("REFERENCE_RUNTIME_IMAGE", model_text)
         self.assertIn('os.environ.get("REFERENCE_RUNTIME_IMAGE"', reference_text)
@@ -80,6 +81,15 @@ class CiRuntimeContractTests(unittest.TestCase):
         ):
             self.assertIn(label, text)
         self.assertIn("time.perf_counter()", text)
+
+    def test_runtime_batches_start_one_container_per_batch(self):
+        model_text = MODEL_BATCH.read_text(encoding="utf-8")
+        reference_text = REFERENCE_BATCH.read_text(encoding="utf-8")
+
+        self.assertEqual(model_text.count('"docker",\n            "run"'), 1)
+        self.assertEqual(reference_text.count('"docker",\n            "run"'), 1)
+        self.assertIn("for row in rows:", model_text)
+        self.assertIn("processed_reference_slugs", reference_text)
 
     def test_solidcraft_version_matches_forge(self):
         """Keep Forge's compatibility declaration explicit."""

@@ -4,7 +4,7 @@ process: true
 kind: model
 needs:
   - forge-package
-  - cad-verification-package
+  - model-verification-batch
 watch:
   - examples/anchor-topology-mutation/scpf/**
   - examples/anchor-topology-mutation/model.yml
@@ -13,6 +13,7 @@ watch:
   - scripts/forge_example.py
   - scripts/model_contract_test.py
   - scripts/model_verify_declarative.py
+  - scripts/model_verification_batch.py
   - scripts/model_visual.py
 strategy:
   reuse: true
@@ -31,10 +32,8 @@ steps:
       - examples/anchor-topology-mutation/verification/**
       - examples/anchor-topology-mutation/tests/**
       - scripts/forge_example.py
-      - scripts/model_verify_declarative.py
-      - scripts/model_visual.py
-      - scpf/scpf/version.py
-    run: [python, ../../scripts/model_verify_declarative.py]
+      - scripts/model_verification_batch.py
+    run: [python, ../../scripts/model_verification_batch.py, materialize]
     outputs:
       - solidcraft.json
       - model_verify

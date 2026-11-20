@@ -3,35 +3,19 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import os
 from pathlib import Path
 import shutil
-import stat
 import subprocess
-import tarfile
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_ROOT = ROOT / "verification" / "diagrams" / "sources"
-
 CADCRAFT_VERSION = "0.20.1"
-CADCRAFT_ARCH = "x86_64"
-CADCRAFT_ARCHIVE_SHA256 = (
-    "57b6f1b41b4f3c542a82f103202ed1a779440e5ff8d25c08ef66abda1a8cb1b9"
-)
-CADCRAFT_ARCHIVE = (
-    f"cadcraft-{CADCRAFT_VERSION}-linux-{CADCRAFT_ARCH}.tar.gz"
-)
-CADCRAFT_URL = (
-    "https://github.com/storytold/cadcraft/releases/download/"
-    f"v{CADCRAFT_VERSION}/{CADCRAFT_ARCHIVE}"
-)
-CADCRAFT_MEMBER = (
-    f"cadcraft-{CADCRAFT_VERSION}-linux-{CADCRAFT_ARCH}/bin/cadcraft-cli"
-)
 
 
 def _sha256(path: Path) -> str:
@@ -44,12 +28,12 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def output_root() -> Path:
-    """Return this CAD-CI item's diagram output directory."""
+def default_output_root() -> Path:
+    """Return the CAD-CI diagram output directory."""
 
     value = os.environ.get("CAD_CI_OUTPUT", "").strip()
     if not value:
-        raise RuntimeError("CAD_CI_OUTPUT is required")
+        raise RuntimeError("CAD_CI_OUTPUT is required when --out is omitted")
     return Path(value).resolve() / "diagrams"
 
 
@@ -99,64 +83,15 @@ def command_arguments(source: dict[str, Any]) -> list[str]:
     return result
 
 
-def ensure_cadcraft() -> tuple[Path, str]:
-    """Return the exact verified CADCraft CLI and its reported version."""
+def cadcraft_cli() -> tuple[Path, str]:
+    """Return CADCraft supplied by the released reference runtime."""
 
-    cache_root = Path(
-        os.environ.get(
-            "CADCRAFT_CACHE_DIR",
-            str(ROOT / ".cache" / "cadcraft"),
+    value = shutil.which("cadcraft-cli")
+    if not value:
+        raise RuntimeError(
+            "cadcraft-cli is required from the released reference runtime"
         )
-    ).resolve()
-    install_root = (
-        cache_root / f"{CADCRAFT_VERSION}-linux-{CADCRAFT_ARCH}"
-    )
-    binary = install_root / "cadcraft-cli"
-
-    if not binary.is_file():
-        install_root.mkdir(parents=True, exist_ok=True)
-        temp_root = Path(
-            os.environ.get("RUNNER_TEMP", str(cache_root / "tmp"))
-        ).resolve()
-        temp_root.mkdir(parents=True, exist_ok=True)
-        archive = temp_root / CADCRAFT_ARCHIVE
-
-        subprocess.run(
-            [
-                "curl",
-                "--proto",
-                "=https",
-                "-fsSL",
-                CADCRAFT_URL,
-                "-o",
-                str(archive),
-            ],
-            check=True,
-        )
-        actual = _sha256(archive)
-        if actual != CADCRAFT_ARCHIVE_SHA256:
-            raise RuntimeError(
-                "CADCraft archive SHA-256 mismatch: "
-                f"expected {CADCRAFT_ARCHIVE_SHA256}, got {actual}"
-            )
-
-        with tarfile.open(archive, "r:gz") as tar:
-            member = tar.getmember(CADCRAFT_MEMBER)
-            source = tar.extractfile(member)
-            if source is None:
-                raise RuntimeError(
-                    f"CADCraft archive is missing {CADCRAFT_MEMBER}"
-                )
-            with binary.open("wb") as target:
-                shutil.copyfileobj(source, target)
-
-        binary.chmod(
-            binary.stat().st_mode
-            | stat.S_IXUSR
-            | stat.S_IXGRP
-            | stat.S_IXOTH
-        )
-
+    binary = Path(value).resolve()
     version = subprocess.check_output(
         [str(binary), "--version"],
         text=True,
@@ -225,31 +160,44 @@ def render_source(
     }
 
 
-def main() -> int:
+def render_all(output: Path) -> int:
     """Render every versioned diagram and write structured provenance."""
 
     sources = sorted(SOURCE_ROOT.glob("*.cadcraft.json"))
     if not sources:
         raise RuntimeError(f"no CADCraft diagram sources found: {SOURCE_ROOT}")
 
-    output = output_root()
+    output = output.resolve()
     if output.exists():
         shutil.rmtree(output)
     output.mkdir(parents=True)
 
-    binary, cli_version = ensure_cadcraft()
-    diagrams = [
-        render_source(binary, source_path, output)
-        for source_path in sources
-    ]
+    binary, cli_version = cadcraft_cli()
+    diagrams = []
+    failed = False
+    for source_path in sources:
+        try:
+            row = render_source(binary, source_path, output)
+            row["status"] = "pass"
+        except Exception as exc:  # keep later diagrams observable
+            failed = True
+            row = {
+                "name": source_path.name.removesuffix(".cadcraft.json"),
+                "status": "fail",
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+            print(
+                f"CADCraft diagram failed: {source_path.name}: {exc}",
+                flush=True,
+            )
+        diagrams.append(row)
 
     provenance = {
         "schema": "forge-verification-diagrams",
         "schema_version": 1,
+        "status": "fail" if failed else "pass",
         "cadcraft_version": CADCRAFT_VERSION,
         "cadcraft_cli_version": cli_version,
-        "archive": CADCRAFT_ARCHIVE,
-        "archive_sha256": CADCRAFT_ARCHIVE_SHA256,
         "source_count": len(diagrams),
         "diagrams": diagrams,
     }
@@ -258,12 +206,22 @@ def main() -> int:
         encoding="utf-8",
     )
 
+    passed = sum(row.get("status") == "pass" for row in diagrams)
     print(
-        f"diagram verification: {len(diagrams)} rendered "
+        f"diagram verification: {passed}/{len(diagrams)} passed "
         f"with CADCraft {CADCRAFT_VERSION}",
         flush=True,
     )
-    return 0
+    return 1 if failed else 0
+
+
+def main() -> int:
+    """Render diagrams using CADCraft from the released reference runtime."""
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", type=Path)
+    args = parser.parse_args()
+    return render_all(args.out or default_output_root())
 
 
 if __name__ == "__main__":

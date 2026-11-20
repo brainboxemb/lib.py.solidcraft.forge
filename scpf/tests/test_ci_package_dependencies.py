@@ -67,7 +67,7 @@ class CiPackageDependencyContractTests(unittest.TestCase):
             "    kind: model\n"
             "    needs:\n"
             "      - forge-package\n"
-            "      - cad-verification-package\n"
+            "      - model-verification-batch\n"
         )
         self.assertIn(model_template, root_ci)
 
@@ -79,13 +79,30 @@ class CiPackageDependencyContractTests(unittest.TestCase):
                 elif "scripts/model_verify_declarative.py" in text:
                     self.assertEqual(
                         needs(text),
-                        {"forge-package", "cad-verification-package"},
+                        {"forge-package", "model-verification-batch"},
                     )
                 else:
                     self.assertEqual(needs(text), {"forge-package"})
                 self.assertNotIn("forge-tool", text)
                 self.assertNotIn("forge-tests", text)
                 self.assertNotIn("forge-release", text)
+
+    def test_verification_batches_own_expensive_dependencies(self):
+        model_batch = (
+            ROOT / "ci" / "model-verification-batch" / "ci.yml"
+        ).read_text(encoding="utf-8")
+        reference_batch = (
+            ROOT / "ci" / "reference-verification-batch" / "ci.yml"
+        ).read_text(encoding="utf-8")
+
+        self.assertEqual(
+            needs(model_batch),
+            {"forge-package", "cad-verification-package"},
+        )
+        self.assertEqual(
+            needs(reference_batch),
+            {"cad-verification-package"},
+        )
 
     def test_root_manifest_discovers_split_checks(self):
         text = (ROOT / "cad-ci.yml").read_text(encoding="utf-8")

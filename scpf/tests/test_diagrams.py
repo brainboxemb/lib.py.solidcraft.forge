@@ -48,17 +48,8 @@ class DiagramEvidenceTests(unittest.TestCase):
                 self.assertTrue(source["title"])
                 self.assertTrue(source["commands"])
 
-    def test_cadcraft_release_is_exactly_pinned(self):
+    def test_diagram_sources_match_runtime_cadcraft_contract(self):
         self.assertEqual(self.diagrams.CADCRAFT_VERSION, "0.20.1")
-        self.assertEqual(self.diagrams.CADCRAFT_ARCH, "x86_64")
-        self.assertEqual(
-            self.diagrams.CADCRAFT_ARCHIVE_SHA256,
-            "57b6f1b41b4f3c542a82f103202ed1a779440e5ff8d25c08ef66abda1a8cb1b9",
-        )
-        self.assertIn(
-            "/releases/download/v0.20.1/",
-            self.diagrams.CADCRAFT_URL,
-        )
 
     def test_command_arguments_preserve_source_commands_as_json(self):
         source = {
@@ -82,10 +73,29 @@ class DiagramEvidenceTests(unittest.TestCase):
         self.assertIn("id: verification-diagrams", text)
         self.assertIn("process: true", text)
         self.assertIn("kind: verification", text)
-        self.assertNotIn("needs:", text)
+        self.assertIn("needs:", text)
+        self.assertIn("- reference-verification-batch", text)
         self.assertIn("scripts/build_diagrams.py", text)
         self.assertIn("verification/diagrams/sources/**", text)
+        self.assertIn("materialize-diagrams", text)
         self.assertIn("- diagrams", text)
+
+    def test_renderer_collects_all_diagram_results_before_failure(self):
+        text = SCRIPT.read_text(encoding="utf-8")
+        self.assertIn("for source_path in sources:", text)
+        self.assertIn("failed = False", text)
+        self.assertIn('row["status"] = "pass"', text)
+        self.assertIn('"status": "fail"', text)
+        self.assertIn("return 1 if failed else 0", text)
+
+    def test_renderer_consumes_runtime_owned_cadcraft(self):
+        text = SCRIPT.read_text(encoding="utf-8")
+        self.assertIn('shutil.which("cadcraft-cli")', text)
+        self.assertNotIn("curl", text)
+        self.assertNotIn("tarfile", text)
+        self.assertNotIn("CADCRAFT_ARCHIVE", text)
+        self.assertNotIn("CADCRAFT_ARCHIVE_SHA256", text)
+        self.assertNotIn("CADCRAFT_URL", text)
 
     def test_renderer_does_not_execute_forge_or_solidcraft(self):
         text = SCRIPT.read_text(encoding="utf-8")

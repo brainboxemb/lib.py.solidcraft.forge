@@ -566,29 +566,29 @@ root pattern:
 ```text
 verification/diagrams/sources/*.cadcraft.json
   -> ci/verification-diagrams
-     -> scripts/build_diagrams.py
-        -> ensure exact CADCraft 0.20.1 binary
-        -> verify archive SHA-256
-        -> replay each source command list
-        -> render SVG (DXF may remain as historical/internal CADCraft evidence)
-        -> copy source JSON into output
-        -> write provenance.json
+     -> reference-verification-batch
+        -> released cad-reference runtime
+        -> scripts/build_diagrams.py
+           -> use cadcraft-cli already supplied by the runtime
+           -> replay each source command list
+           -> render SVG (DXF may remain as historical/internal CADCraft evidence)
+           -> copy source JSON into output
+           -> write provenance.json
+     -> verification-diagrams materializes its diagram output
 ```
 
 The historical sources are restored byte-identically from the last green
 qualification. They remain data; the renderer contains no hard-coded geometry
 for an individual diagram.
 
-The tool pin is deliberately local to the renderer:
+CADCraft 0.20.1 is owned and pinned by the released heavy reference runtime.
+Forge keeps only the source-level `cadcraft_version` contract needed to reject
+diagram sources for an incompatible runtime. Forge does not own the archive URL,
+architecture, checksum, download or installation.
 
-- CADCraft version: 0.20.1;
-- architecture: x86_64;
-- archive SHA-256:
-  `57b6f1b41b4f3c542a82f103202ed1a779440e5ff8d25c08ef66abda1a8cb1b9`.
-
-The item does not depend on forge-package. Diagram evidence is therefore
-independent of Forge wheel/model verification and does not lengthen ordinary
-model PRs.
+The diagram item does not depend on forge-package. Its expensive rendering is a
+dependency output of the shared reference batch; the diagram item itself only
+materializes that result.
 
 
 ## F11 semantic summary flow
@@ -672,3 +672,63 @@ The snapshot branch
 reference. The migration must preserve the current Examples/Qualification
 split, qualification cases, visible status semantics and main evidence
 presentation unless a separately justified change is made.
+
+
+## Verification batch execution
+
+The performance boundary is a Forge-owned producer dependency, not a new
+CAD-CI execution mode.
+
+The model path is:
+
+```text
+selected examples/<case> item
+        |
+        v
+ci/model-verification-batch
+  -> compile current declarative model list
+  -> pull SolidCraft runtime once
+  -> start one container
+  -> for each model:
+       own input/output directory
+       produce native model
+       run released verification
+       collect pass/fail
+  -> batch result tree
+        |
+        v
+selected examples/<case>/model_verify
+  -> copy only that case result into the existing item output
+```
+
+The independent-reference path is equivalent:
+
+```text
+selected examples/<case>/<engine> item
+        |
+        v
+ci/reference-verification-batch
+  -> pull reference runtime once
+  -> start one container
+  -> one Python process handles PythonSCAD/pyBOSL2/CadQuery lists
+  -> one isolated build123d interpreter handles the complete build123d list
+  -> CADCraft renders the complete diagram list in the same container
+  -> collect reference and diagram results before returning failure
+        |
+        v
+selected reference child
+  -> copy only its own result into the existing item output
+```
+
+Batch inputs include the case membership/configuration files and all source
+files consumed by the batch. This prevents a selected child from observing a
+stale batch result.
+
+The batch output is an internal Forge verification dependency. Existing
+per-case CAD-CI items remain the durable/public ownership boundary.
+
+CADCraft retains one diagram CAD-CI item as its durable ownership boundary.
+The heavy reference batch executes the renderer using `cadcraft-cli` from the
+released runtime, processes the full source list, records each result and
+reports accumulated failures only after all sources were attempted. The diagram
+item then materializes only the already-produced diagram evidence.

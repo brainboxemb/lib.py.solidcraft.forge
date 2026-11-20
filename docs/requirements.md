@@ -483,10 +483,12 @@ Requirements:
 - diagram sources live below `verification/diagrams/sources/`;
 - the required source set contains the historical joint/corner-bracket diagrams;
 - every source declares the exact supported CADCraft version;
-- the renderer is a separate CAD-CI item and must not execute Forge models,
-  SolidCraft models or independent reference CAD;
-- CADCraft 0.20.1 x86_64 is downloaded only from the pinned release URL and its
-  archive SHA-256 is verified before extraction;
+- the diagram result remains a separate CAD-CI item and must not execute Forge
+  or SolidCraft models;
+- CADCraft is supplied by the immutable released `cad-reference` runtime;
+- Forge must not download, cache, checksum or install the CADCraft executable;
+- diagram rendering shares the heavy reference container with independent
+  reference CAD when the reference batch is active;
 - each source renders a non-empty SVG and DXF;
 - the item output retains the original source JSON, rendered artifacts and one
   provenance manifest containing tool version, archive checksum and artifact
@@ -495,9 +497,10 @@ Requirements:
   inputs;
 - normal model changes do not select the diagram item.
 
-Forge owns these diagram sources and CADCraft-specific invocation. This work
-does not belong in lib.py.cad.verification because it is documentation/evidence
-generation, not generic model comparison.
+Forge owns these diagram sources and CADCraft command invocation. The CADCraft
+binary/version/archive lifecycle belongs to `docker.cad.solidcraft`. This work
+does not belong in lib.py.cad.verification because it is
+documentation/evidence generation, not generic model comparison.
 
 
 ## Semantic verification summary
@@ -548,3 +551,30 @@ F11 code operates on a resolved evidence tree and is independent from producer
 execution. Wiring a durable resolved tree into the collector belongs to
 #366/#497, so F11 must not create a cold CAD-CI fan-in that rebuilds every
 producer.
+
+
+## Verification runtime batching
+
+Logical verification items remain independently selectable and retain their own
+durable output/evidence paths. Expensive CAD runtimes are not required to match
+those logical item boundaries.
+
+Forge verification therefore batches expensive runtime work:
+
+- one SolidCraft runtime processes the current declarative model list;
+- one reference runtime processes the current independent-reference list;
+- build123d uses one isolated interpreter/import for its complete case list;
+- CadQuery, PythonSCAD and pyBOSL2 process their complete lists in the shared
+  reference process;
+- CADCraft processes the complete diagram source list inside the same heavy
+  reference runtime batch.
+
+Per-case verification state remains isolated. Each model/reference has its own
+input, output directory and structured result. A failure in one case must not
+prevent later cases in the same batch from running. After the complete list is
+processed, the batch returns failure when one or more cases failed.
+
+CAD-CI continues to own logical selection, dependencies, SCons state, caching
+and durable publication. Forge owns only the batch runtime invocation and the
+mapping from batch results back to existing per-case outputs. No generic worker
+pool or batch scheduler is added to lib.py.cad.ci.

@@ -9,6 +9,8 @@ from pathlib import Path
 import runpy
 import subprocess
 import sys
+import traceback
+import time
 from typing import Any
 
 from cad_verification import (
@@ -74,7 +76,7 @@ def load_reference(path: Path):
 
 
 def export_build123d(source: Path, target: Path) -> None:
-    """Export build123d using its isolated runtime interpreter."""
+    """Export one build123d source using its isolated runtime interpreter."""
 
     python = os.environ.get("BUILD123D_PYTHON", sys.executable)
     helper = ROOT / "verification" / "build123d_export.py"
@@ -91,6 +93,66 @@ def export_build123d(source: Path, target: Path) -> None:
             f"build123d export failed with status "
             f"{completed.returncode}: {detail}"
         )
+
+
+def export_build123d_batch(
+    slugs: tuple[str, ...],
+    output: Path,
+) -> dict[str, str | None]:
+    """Export all build123d cases in one isolated interpreter/import."""
+
+    python = os.environ.get("BUILD123D_PYTHON", sys.executable)
+    helper = ROOT / "verification" / "build123d_export.py"
+    work = output / ".build123d-batch"
+    work.mkdir(parents=True, exist_ok=True)
+    manifest = work / "manifest.json"
+    result = work / "result.json"
+
+    rows = []
+    for slug in slugs:
+        target = output / slug / "build123d" / "model.stl"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        rows.append(
+            {
+                "slug": slug,
+                "source": str(source_path(slug, "build123d")),
+                "target": str(target),
+            }
+        )
+
+    manifest.write_text(
+        json.dumps({"schema": 1, "cases": rows}, indent=2, sort_keys=True)
+        + "\n",
+        encoding="utf-8",
+    )
+    completed = subprocess.run(
+        [
+            python,
+            str(helper),
+            "--batch",
+            str(manifest),
+            "--result",
+            str(result),
+        ],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if not result.is_file():
+        detail = (completed.stderr or completed.stdout).strip()
+        raise RuntimeError(
+            "build123d batch did not produce structured results"
+            + (f": {detail}" if detail else "")
+        )
+
+    payload = json.loads(result.read_text(encoding="utf-8"))
+    errors = {
+        row["slug"]: row.get("error")
+        for row in payload.get("cases", [])
+        if row.get("status") != "pass"
+    }
+    return {slug: errors.get(slug) for slug in slugs}
 
 
 def export_reference(
@@ -127,17 +189,19 @@ def export_reference(
         )
 
 
-def verify_one(
+def verify_exported(
     slug: str,
     implementation: str,
     output: Path,
 ) -> dict[str, Any]:
-    """Export and verify one reference implementation."""
+    """Verify an already-exported reference STL and write case evidence."""
 
     target = output / slug / implementation
-    target.mkdir(parents=True, exist_ok=True)
     stl = target / "model.stl"
-    export_reference(slug, implementation, stl)
+    if not stl.is_file() or stl.stat().st_size == 0:
+        raise RuntimeError(
+            f"{slug}/{implementation}: no non-empty STL was exported"
+        )
     try:
         evidence = validate_mesh_geometry(stl, load_contract(slug))
     except VerificationFailure as exc:
@@ -161,22 +225,45 @@ def verify_one(
     return result
 
 
-def verify_model(
+def write_failure(
     slug: str,
+    implementation: str,
     output: Path,
-    implementations: tuple[str, ...] = IMPLEMENTATIONS,
+    exc: Exception | str,
 ) -> dict[str, Any]:
-    """Verify the selected independent implementations for one model."""
+    """Write structured per-case failure evidence and return it."""
 
-    results = [
-        verify_one(slug, implementation, output)
-        for implementation in implementations
-    ]
-    return {
-        "model": slug,
-        "status": "pass",
-        "implementations": results,
+    target = output / slug / implementation
+    target.mkdir(parents=True, exist_ok=True)
+    error = str(exc)
+    try:
+        source = str(source_path(slug, implementation).relative_to(ROOT))
+    except Exception:
+        source = None
+    result = {
+        "implementation": implementation,
+        "status": "fail",
+        "source": source,
+        "error": error,
     }
+    (target / "verification.json").write_text(
+        json.dumps(result, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return result
+
+
+def verify_one(
+    slug: str,
+    implementation: str,
+    output: Path,
+) -> dict[str, Any]:
+    """Export and verify one reference implementation."""
+
+    target = output / slug / implementation
+    target.mkdir(parents=True, exist_ok=True)
+    export_reference(slug, implementation, target / "model.stl")
+    return verify_exported(slug, implementation, output)
 
 
 def selected_implementations(value: str) -> tuple[str, ...]:
@@ -201,6 +288,89 @@ def selected_implementations(value: str) -> tuple[str, ...]:
     return selected
 
 
+def selected_slugs(value: str) -> tuple[str, ...]:
+    """Parse explicit cases or discover every reference contract."""
+
+    if value.strip().lower() == "all":
+        return tuple(
+            path.parents[1].name
+            for path in sorted(
+                (ROOT / "examples").glob(
+                    "*/verification/reference_geometry.json"
+                )
+            )
+        )
+    return tuple(
+        item for item in value.replace(",", " ").split() if item
+    )
+
+
+def verify_batch(
+    slugs: tuple[str, ...],
+    implementations: tuple[str, ...],
+    output: Path,
+) -> tuple[list[dict[str, Any]], bool]:
+    """Verify all cases, grouping execution by implementation."""
+
+    by_slug: dict[str, list[dict[str, Any]]] = {
+        slug: [] for slug in slugs
+    }
+    failed = False
+
+    for implementation in implementations:
+        implementation_started = time.perf_counter()
+        build123d_errors: dict[str, str | None] | None = None
+        if implementation == "build123d":
+            try:
+                build123d_errors = export_build123d_batch(slugs, output)
+            except Exception as exc:
+                build123d_errors = {slug: str(exc) for slug in slugs}
+
+        for slug in slugs:
+            try:
+                if implementation == "build123d":
+                    assert build123d_errors is not None
+                    error = build123d_errors.get(slug)
+                    if error:
+                        raise RuntimeError(error)
+                    result = verify_exported(slug, implementation, output)
+                else:
+                    result = verify_one(slug, implementation, output)
+            except Exception as exc:  # continue through the complete batch
+                failed = True
+                result = write_failure(
+                    slug,
+                    implementation,
+                    output,
+                    "".join(
+                        traceback.format_exception_only(type(exc), exc)
+                    ).strip(),
+                )
+            by_slug[slug].append(result)
+
+        print(
+            "REFERENCE BATCH TIMING "
+            f"{implementation}_s={time.perf_counter() - implementation_started:.3f}",
+            flush=True,
+        )
+
+    models = []
+    for slug in slugs:
+        rows = by_slug[slug]
+        models.append(
+            {
+                "model": slug,
+                "status": (
+                    "pass"
+                    if rows and all(row["status"] == "pass" for row in rows)
+                    else "fail"
+                ),
+                "implementations": rows,
+            }
+        )
+    return models, failed
+
+
 def main() -> int:
     """Verify explicitly selected model references."""
 
@@ -215,35 +385,17 @@ def main() -> int:
     parser.add_argument("--source-sha", required=True)
     args = parser.parse_args()
 
-    if args.cases.strip().lower() == "all":
-        slugs = tuple(
-            path.parents[1].name
-            for path in sorted(
-                (ROOT / "examples").glob(
-                    "*/verification/reference_geometry.json"
-                )
-            )
-        )
-    else:
-        slugs = tuple(
-            value
-            for value in args.cases.replace(",", " ").split()
-            if value
-        )
+    slugs = selected_slugs(args.cases)
     if not slugs:
         raise RuntimeError("at least one model must be selected")
-
     implementations = selected_implementations(args.implementations)
 
     args.out.mkdir(parents=True, exist_ok=True)
-    models = [
-        verify_model(slug, args.out, implementations)
-        for slug in slugs
-    ]
+    models, failed = verify_batch(slugs, implementations, args.out)
     report = {
         "schema": 1,
         "source_sha": args.source_sha,
-        "status": "pass",
+        "status": "fail" if failed else "pass",
         "models": models,
     }
     (args.out / "verification.json").write_text(
@@ -252,9 +404,12 @@ def main() -> int:
     )
     print(
         "reference verification: "
-        + ", ".join(slug + "=pass" for slug in slugs)
+        + ", ".join(
+            row["model"] + "=" + row["status"] for row in models
+        ),
+        flush=True,
     )
-    return 0
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
