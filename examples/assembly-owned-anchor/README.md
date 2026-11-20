@@ -30,6 +30,14 @@ The marker sits on the base front-top-right corner while an unrelated companion 
 
 Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the marker created through the assembly-owned name must follow the moved corner without rerunning Python.
 
+## Geometry evidence
+
+> Geometry-rationale provenance: copied verbatim from `qualification/geometry_contracts.py` at commit `be40b09e7454a90e87d83768a9e7453c52ba5d76`.
+
+**Bounds sufficient:** `true`
+
+The three body sizes and positions describe the visible assembly. The saved SolidCraft model is checked separately to confirm which assembly owns the anchor and which parts are related.
+
 ## Reference notes
 
 - **BOSL2** — Semantic attachment names belong naturally to the assembly that owns their meaning rather than to a generic reusable component.
