@@ -147,18 +147,20 @@ development status.
 
 ## Documentation map
 
-- `docs/plan.md` — current unfinished repository work only.
-- `docs/05-cad-api-design.md` — cross-object Forge API rules.
-- `docs/06-verification.md` — current verification layers.
-- `docs/09-documentation-architecture.md` — documentation sources of truth.
-- `docs/release.md` — current release state.
-- `docs/11-generated-output.md` — generated-output migration boundary.
-- `docs/design/test-architecture.md` — current test ownership.
-- `docs/agent/forge-api.json` — generated machine-readable Forge API index.
-- `docs/agent/reference-libraries.md` — notes for external comparison libraries.
+Primary repository documents:
 
-`docs/changes/` and older design/audit records are historical records and may
-use terminology from earlier architectures.
+- `docs/api.md` — cross-object Forge API semantics.
+- `docs/design.md` — repository-wide architecture and responsibility boundaries.
+- `docs/development.md` — working on Forge itself.
+- `docs/plan.md` — current unfinished work and issue ordering.
+- `docs/requirements.md` — stable repository requirements.
+- `docs/release.md` — package/release rules.
+
+Secondary documentation:
+
+- `docs/manual/` — current task-oriented guidance.
+- `docs/background/` — historical design, change, research and migration records.
+- `docs/agent/` — generated machine-oriented API information.
 
 ## Companion repositories
 
