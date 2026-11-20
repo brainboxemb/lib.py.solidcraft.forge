@@ -10,6 +10,8 @@ from scpf.version import TESTED_SOLIDCRAFT_VERSION
 ROOT = Path(__file__).resolve().parents[2]
 CAD_CI = ROOT / "cad-ci.yml"
 WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
+MODEL_VERIFY = ROOT / "scripts" / "model_verify_declarative.py"
+REFERENCE_VERIFY = ROOT / "scripts" / "verification_evidence.py"
 TOOL_COMMIT = "bbdd473638d64e01acab69722092b2a12f99b84d"
 
 
@@ -28,16 +30,36 @@ def configured_variable(name: str) -> str:
 
 
 class CiRuntimeContractTests(unittest.TestCase):
-    """Prove Forge consumes one released external CAD runtime."""
+    """Prove Forge consumes the released external runtime roles."""
 
-    def test_runtime_is_external_immutable_release(self):
-        """Use a SemVer release from docker.cad.solidcraft."""
+    def test_runtime_roles_are_external_immutable_releases(self):
+        """Use matching SemVer role releases from docker.cad.solidcraft."""
 
-        reference = configured_variable("FORGE_RUNTIME_IMAGE")
+        solidcraft = configured_variable("FORGE_RUNTIME_IMAGE")
+        reference = configured_variable("REFERENCE_RUNTIME_IMAGE")
         self.assertRegex(
-            reference,
+            solidcraft,
             r"^ghcr\.io/brainboxemb/cad-solidcraft:v\d+\.\d+\.\d+$",
         )
+        self.assertRegex(
+            reference,
+            r"^ghcr\.io/brainboxemb/cad-reference:v\d+\.\d+\.\d+$",
+        )
+        self.assertEqual(
+            solidcraft.rsplit(":", 1)[1],
+            reference.rsplit(":", 1)[1],
+        )
+        self.assertEqual(solidcraft.rsplit(":", 1)[1], "v0.2.0")
+
+    def test_runtime_consumers_use_separate_roles(self):
+        """Keep model and reference execution on their own released images."""
+
+        model_text = MODEL_VERIFY.read_text(encoding="utf-8")
+        reference_text = REFERENCE_VERIFY.read_text(encoding="utf-8")
+        self.assertIn('os.environ.get("FORGE_RUNTIME_IMAGE"', model_text)
+        self.assertNotIn("REFERENCE_RUNTIME_IMAGE", model_text)
+        self.assertIn('os.environ.get("REFERENCE_RUNTIME_IMAGE"', reference_text)
+        self.assertNotIn('os.environ.get("FORGE_RUNTIME_IMAGE"', reference_text)
 
     def test_solidcraft_version_matches_forge(self):
         """Keep Forge's compatibility declaration explicit."""
