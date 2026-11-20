@@ -210,3 +210,25 @@ During CI stabilization, evidence must be inspectable after a representative
 run. If the reusable workflow does not retain the generated `.cad-ci` evidence,
 the retention mechanism must be added at the workflow/tool boundary rather than
 by adding a Forge-local execution tracker.
+
+## Model verification contract-test stage
+
+The declarative model launcher keeps Q2 command-contract verification on the
+host side, before SolidCraft is started:
+
+```text
+forge-package wheel
+  -> run model-owned examples/<model>/tests against that exact wheel
+  -> compile model to solidcraft.json with that exact wheel
+  -> start released SolidCraft runtime
+  -> replay native model
+  -> run released cad-verification model checks
+```
+
+The shared helper `forge_example.run_contract_tests()` owns only the mechanics
+of executing a model's existing unittest files with the exact dependency wheel.
+It does not contain model expectations.
+
+Each active model item watches its own `tests/**` directory. This keeps
+CAD-CI/SCons responsible for invalidation and execution; Forge does not add a
+second freshness mechanism.
