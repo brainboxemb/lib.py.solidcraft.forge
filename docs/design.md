@@ -238,3 +238,39 @@ verification.
 Each active model item watches its own `tests/**` directory. This keeps
 CAD-CI/SCons responsible for invalidation and execution; Forge does not add a
 second freshness mechanism.
+
+## Durable PR build proof
+
+The first generated-output migration uses the existing reusable build artifact
+as the boundary between verification and publication:
+
+```text
+cad_ci reusable job
+  -> materialized build artifact
+     build/examples/simple-box/...
+       |
+       v
+PR publication job
+  -> download artifact
+  -> cad-ci build prepare-pr --items simple-box
+  -> cad-ci publish build --scope pr
+       |
+       v
+generated build branch
+  pr/<number>/examples/simple-box/...
+```
+
+The publication job is intentionally thin. It checks out the Forge source
+revision, installs the exact accepted `tool.cad.ci` revision, downloads the
+artifact produced by the reusable CI job and invokes the generic CLI.
+
+The generic library validates candidate evidence, creates the sparse build
+manifest, preserves unrelated generated-branch scopes, checks publication
+freshness and retries generated-branch races.
+
+The PR proof does not create or update `build/main`. Stable main publication
+is a later #366 step after the sparse PR path is proven.
+
+The job runs only for same-repository pull requests, requires
+`contents: write` only on that publication job, and never executes for fork
+pull requests. Verification itself keeps read-only source permissions.
