@@ -167,6 +167,7 @@ HUB75 uses explicit Placement today.
 
 | Issue | Lane | Workstream | Priority | Next action |
 | --- | --- | --- | --- | --- |
+| #592 Document parallel work policy across dev-cad and dev-ci | direct `main` | repository governance | **P0 now** | Record the cross-lane execution rule in plan/development/handoff; squash-merge the direct-main governance PR. |
 | #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 now** | Delete obsolete source refs against the final keep-set. Generated build cleanup is already complete; do not claim branch deletion without a supported GitHub operation. |
 | #576 Skip expensive CAD-CI and stable-site jobs for docs-only pull requests | `dev-ci` | WS0 | **P1** | Design cheap pre-bootstrap classification without copying the generic item planner. |
 | #366 Make verified output durable, then cut Pages over | `dev-ci` | WS0 | **P1 decision gate** | Durable/generated side is complete; request explicit approval before changing the live Pages source, then verify public/legacy routes. |
@@ -194,6 +195,24 @@ HUB75 uses explicit Placement today.
 Every open issue has one primary lane and disposition. New issues should be
 added to this table when they become active planning inputs; issue history is
 not a substitute for this plan.
+
+## Parallel execution policy
+
+The two development lanes are intentionally independent execution tracks.
+
+- `dev-cad` work and `dev-ci` work may progress in parallel.
+- A running workflow blocks only work that depends on its result; do not idle
+  the other lane merely because one lane is still validating or publishing.
+- Shared dependency releases, owner-repository handoffs and architecture
+  boundaries remain real dependency gates.
+- Promotion to `main` is an explicit synchronization point. Ordinary work
+  inside the two development lanes is not serialized around promotion checks.
+- Repository-wide governance changes that apply equally to both lanes may use
+  a short-lived branch directly against `main`; do not force them into one
+  development lane merely for convenience.
+- Such direct-main governance PRs are still short-lived feature PRs and are
+  **squash-merged**. Only `promote/dev-cad` / `promote/dev-ci` promotion
+  PRs use a normal merge commit.
 
 ## Merge and promotion policy
 
