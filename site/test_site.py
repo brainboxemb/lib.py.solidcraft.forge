@@ -295,7 +295,7 @@ class SiteSourceTests(unittest.TestCase):
         self.assertNotIn("actions/upload-artifact", workflow)
         self.assertNotIn("actions/download-artifact", workflow)
 
-        self.assertIn("branches: [main, dev_cad, dev_ci]", workflow)
+        self.assertIn("branches: [main, dev-cad, dev-ci]", workflow)
         self.assertIn("types: [opened, synchronize, reopened]", workflow)
 
         pr = workflow.split("  cad_ci_pr:", 1)[1].split(
@@ -313,11 +313,11 @@ class SiteSourceTests(unittest.TestCase):
             pr,
         )
         self.assertIn(
-            "github.event.pull_request.head.ref == 'dev_cad'",
+            "github.event.pull_request.head.ref == 'dev-cad'",
             pr,
         )
         self.assertIn(
-            "github.event.pull_request.head.ref == 'dev_ci'",
+            "github.event.pull_request.head.ref == 'dev-ci'",
             pr,
         )
         self.assertNotIn("publish build", pr)
@@ -330,7 +330,7 @@ class SiteSourceTests(unittest.TestCase):
             push,
         )
         self.assertIn("cancel-in-progress: true", push)
-        self.assertIn("dev_cad|dev_ci", push)
+        self.assertIn("dev-cad|dev-ci", push)
         self.assertIn("scope_exists=false", push)
         self.assertIn("full_run=true", push)
         self.assertIn(
@@ -352,8 +352,8 @@ class SiteSourceTests(unittest.TestCase):
         self.assertIn("--scope named --scope-name", push)
         self.assertIn("--build-evidence prepared-scope", push)
         self.assertIn('--build-scope "$SCOPE"', push)
-        self.assertIn("--preserve-subtree dev_cad", push)
-        self.assertIn("--preserve-subtree dev_ci", push)
+        self.assertIn("--preserve-subtree dev-cad", push)
+        self.assertIn("--preserve-subtree dev-ci", push)
         self.assertIn('page_args=(--name "$SCOPE")', push)
         self.assertIn(
             "generated-site/verification/manifest.json",
