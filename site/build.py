@@ -2,8 +2,8 @@
 """Build Forge documentation from self-describing examples and API sources.
 
 Human example intent comes from local model.yml files. Exact verification
-contracts remain in verification/verify.py. Stable Pages attaches accepted
-build/main evidence separately.
+contracts remain in verification/verify.py. Generated sites may attach accepted
+complete build-scope evidence separately.
 """
 import argparse
 import importlib.util
@@ -277,7 +277,7 @@ def scpf_version():
 
 
 def _stable_qualification_summary(stable, slugs):
-    """Compose current public status using the verification wheel in build/main."""
+    """Compose current site status using the verification wheel in one complete scope."""
 
     wheel = str(stable.verification_wheel_path)
     scripts = str(ROOT / "scripts")
@@ -319,15 +319,16 @@ def build(
     out,
     sha,
     *,
-    build_main=None,
+    build_evidence=None,
+    build_scope="main",
     build_commit=None,
 ):
-    """Compile the source-driven site, optionally with stable build evidence."""
+    """Compile the source-driven site, optionally with complete build evidence."""
 
     out = Path(out)
-    if (build_main is None) != (build_commit is None):
+    if (build_evidence is None) != (build_commit is None):
         raise ValueError(
-            "stable Pages requires both build_main and build_commit"
+            "site evidence requires both build_evidence and build_commit"
         )
 
     out.mkdir(parents=True, exist_ok=True)
@@ -362,11 +363,12 @@ def build(
     stable_by_slug = {}
     summary_by_slug = {}
     stable_view_by_slug = {}
-    if build_main is not None:
+    if build_evidence is not None:
         stable = load_stable_build_evidence(
-            Path(build_main),
+            Path(build_evidence),
             build_commit,
             (row.slug for row in example_rows),
+            scope=build_scope,
         )
         stable_by_slug = {row.slug: row for row in stable.examples}
         summary_by_slug = _stable_qualification_summary(
@@ -388,7 +390,7 @@ def build(
                     "schema": 1,
                     "source_commit": sha,
                     "build_commit": stable.build_commit,
-                    "build_scope": "main",
+                    "build_scope": stable.scope,
                     "build_manifest_source_commit": (
                         stable.manifest_source_commit
                     ),
@@ -633,7 +635,7 @@ def build(
     )
 
     # Verification pages are derived from the same local example metadata.
-    # #497 attaches accepted build/main status and measurements.
+    # #497 attaches accepted complete-scope status and measurements.
     verification_root = out / "verification"
     verification_root.mkdir(exist_ok=True)
     verification_manifest = {}
@@ -748,7 +750,9 @@ def build(
             "verification_source": (
                 f"examples/{slug}/verification/verify.py"
             ),
-            "evidence_source": "build/main",
+            "evidence_source": (
+                f"build/{stable.scope}" if stable is not None else "build/main"
+            ),
         }
         if stable is not None:
             verification_manifest[slug].update(
@@ -839,12 +843,12 @@ def build(
         diagram_raw_base = (
             "https://raw.githubusercontent.com/"
             "brainboxemb/lib.py.solidcraft.forge/"
-            f"{stable.build_commit}/main/ci/verification-diagrams/"
+            f"{stable.build_commit}/{stable.scope}/ci/verification-diagrams/"
             "diagrams/rendered"
         )
         diagram_blob_base = (
             "https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/"
-            f"{stable.build_commit}/main/ci/verification-diagrams/"
+            f"{stable.build_commit}/{stable.scope}/ci/verification-diagrams/"
             "diagrams/rendered"
         )
     else:
@@ -915,7 +919,9 @@ def build(
     )
     verification_manifest_data = {
         "library_commit": sha,
-        "evidence_source": "build/main",
+        "evidence_source": (
+            f"build/{stable.scope}" if stable is not None else "build/main"
+        ),
         "build_commit": (
             stable.build_commit if stable is not None else None
         ),
@@ -1008,6 +1014,7 @@ def build(
         encoding="utf-8")
     if stable is not None:
         manifest["build_commit"] = stable.build_commit
+        manifest["build_scope"] = stable.scope
         manifest["build_manifest_source_commit"] = (
             stable.manifest_source_commit
         )
@@ -1022,9 +1029,14 @@ if __name__ == "__main__":
     parser.add_argument("--out", type=Path, default=ROOT / "output" / "site")
     parser.add_argument("--source-sha", required=True)
     parser.add_argument(
-        "--build-main",
+        "--build-evidence",
         type=Path,
-        help="Materialized durable generated-branch main/ scope",
+        help="Materialized durable complete build scope",
+    )
+    parser.add_argument(
+        "--build-scope",
+        default="main",
+        help="Logical complete build scope name (default: main)",
     )
     parser.add_argument(
         "--build-commit",
@@ -1034,7 +1046,8 @@ if __name__ == "__main__":
     build(
         options.out,
         options.source_sha,
-        build_main=options.build_main,
+        build_evidence=options.build_evidence,
+        build_scope=options.build_scope,
         build_commit=options.build_commit,
     )
     print(f"Built independent SCPF library site: {options.out}")
