@@ -187,7 +187,7 @@ HUB75 uses explicit Placement today.
 | Issue | Lane | Workstream | Priority | Next action |
 | --- | --- | --- | --- | --- |
 | #598 Enforce PR merge method through one policy-controlled merge path | `dev-ci` | WS0 | **P0 now** | Merge method, green-check gate and lane restoration are proven. Final gap: merges made with `GITHUB_TOKEN` do not emit a follow-up push workflow, so dispatch Forge integration explicitly for every durable destination ref. |
-| #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 now** | First cleanup removed ancestry-integrated refs. Extend cleanup so a temporary head is also safe when GitHub records it as a merged PR head; open PR heads and truly unique refs remain protected. |
+| #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 now** | Integrated and squash-merged branches are cleaned. Retire remaining `issue/<n>-*` refs only when the owning issue is closed and no open PR uses the branch; report the exact retired SHA for provenance. |
 | #366 Make verified output durable, then cut Pages over | `dev-ci` | WS0 | **P1 decision gate** | Durable/generated side is complete; request explicit approval before changing the live Pages source, then verify public/legacy routes. |
 | #570 Remove CADCraft from Forge verification diagrams | `dev-cad` | WS2 | **P2** | Replace the six explanatory diagram sources with deterministic Forge-owned SVG/static sources; remove its CI/runtime input only after the content path no longer needs it. |
 | #261 Reduce full qualification from minutes to seconds | `dev-ci` | WS0 | **Retire/rewrite → P2** | Original Qualification/image plan is obsolete; retain measured-performance goal and rewrite against current runtime images, batching and SCons execution. |
@@ -260,8 +260,9 @@ The two long-lived development lanes are independent execution tracks.
    policy-controlled merge, explicitly dispatch Forge integration on the
    destination long-lived ref; direct dev-lane promotion dispatches both
    `main` and the restored promoted lane.
-2. [#481, now] Merge squash-aware cleanup, rerun `/cleanup-branches` on #481,
-   then review only the truly unique/unmerged retained refs.
+2. [#481, now] Extend cleanup to closed-issue branches, preserving each retired
+   branch SHA in the cleanup report; rerun and retain only active/open or
+   genuinely non-issue unique refs.
 3. [#366, decision gate] Decide whether to cut the live Pages source over to
    generated `gh-pages`; do not change it without explicit approval.
 4. [dev-cad P1] Fix #357 and #356, then continue the current model blockers

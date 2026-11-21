@@ -216,7 +216,7 @@ jobs:
           sparse-checkout: scripts/merge_policy.py
           sparse-checkout-cone-mode: false
 
-      - name: Delete only integrated temporary branches
+      - name: Delete only retired temporary branches
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
@@ -244,6 +244,7 @@ jobs:
           )
 
           deleted=()
+          retired_closed_issue=()
           open=()
           unmerged=()
 
@@ -266,6 +267,22 @@ jobs:
                 return 0
               fi
             done
+            return 1
+          }
+
+          closed_issue_number() {
+            local candidate="$1"
+            if [[ "$candidate" =~ ^issue/([0-9]+)- ]]; then
+              local number="${BASH_REMATCH[1]}"
+              local state
+              state="$(
+                gh api "repos/$REPOSITORY/issues/$number" --jq '.state'
+              )"
+              if [ "$state" = "closed" ]; then
+                printf '%s' "$number"
+                return 0
+              fi
+            fi
             return 1
           }
 
@@ -297,20 +314,34 @@ jobs:
             cleanup="$(jq -r '.cleanup_head' <<<"$policy")"
             [ "$cleanup" = "true" ] || continue
 
+            source_sha="$(
+              gh api "repos/$REPOSITORY/git/ref/heads/$source_branch" --jq '.object.sha'
+            )"
+
             if is_open_head "$source_branch"; then
-              open+=("$source_branch")
+              open+=("$source_branch @ $source_sha")
               continue
             fi
 
-            if ! is_integrated "$source_branch" && ! is_merged_pr_head "$source_branch"; then
-              unmerged+=("$source_branch")
+            if is_integrated "$source_branch" || is_merged_pr_head "$source_branch"; then
+              gh api -X DELETE \
+                "repos/$REPOSITORY/git/refs/heads/$source_branch" \
+                >/dev/null
+              deleted+=("$source_branch @ $source_sha")
               continue
             fi
 
-            gh api -X DELETE \
-              "repos/$REPOSITORY/git/refs/heads/$source_branch" \
-              >/dev/null
-            deleted+=("$source_branch")
+            if issue_number="$(closed_issue_number "$source_branch")"; then
+              gh api -X DELETE \
+                "repos/$REPOSITORY/git/refs/heads/$source_branch" \
+                >/dev/null
+              retired_closed_issue+=(
+                "$source_branch @ $source_sha (issue #$issue_number closed)"
+              )
+              continue
+            fi
+
+            unmerged+=("$source_branch @ $source_sha")
           done
 
           format_group() {
@@ -329,6 +360,8 @@ jobs:
               echo "Branch cleanup completed by repository policy."
               echo
               format_group "Deleted integrated or squash-merged temporary branches" "${deleted[@]}"
+              echo
+              format_group "Retired unique branches owned by closed issues" "${retired_closed_issue[@]}"
               echo
               format_group "Kept because an open PR still uses the branch" "${open[@]}"
               echo

@@ -60,6 +60,10 @@ class MergePolicyWorkflowTests(unittest.TestCase):
         self.assertIn("pulls?state=closed&per_page=100", text)
         self.assertIn("select(.merged_at != null) | .head.ref", text)
         self.assertIn("is_merged_pr_head", text)
+        self.assertIn("closed_issue_number", text)
+        self.assertIn(r"^issue/([0-9]+)-", text)
+        self.assertIn('repos/$REPOSITORY/issues/$number', text)
+        self.assertIn('[ "$state" = "closed" ]', text)
         self.assertIn("scripts/merge_policy.py", text)
         self.assertIn("--base __cleanup__", text)
         self.assertIn("compare/$encoded...$target", text)
@@ -69,6 +73,11 @@ class MergePolicyWorkflowTests(unittest.TestCase):
             "Deleted integrated or squash-merged temporary branches",
             text,
         )
+        self.assertIn(
+            "Retired unique branches owned by closed issues",
+            text,
+        )
+        self.assertIn("source_branch @ $source_sha", text)
         self.assertIn("Kept because an open PR still uses the branch", text)
         self.assertIn("Kept because unique/unmerged commits remain", text)
         self.assertIn("git/refs/heads/$source_branch", text)
