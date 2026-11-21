@@ -131,14 +131,14 @@ releases and true architecture boundaries remain explicit gates.
 Repository-wide governance/documentation that applies equally to both lanes may
 use a short-lived branch directly against `main`.
 
-Merge policy is explicit:
+Merge policy is explicit and is executed through the repository `/merge`
+workflow rather than a manually selected merge method:
 
-- feature/fix PRs into a dev lane: squash merge;
-- every PR whose base is `main`: squash merge, without exceptions;
-- this includes direct long-lived lane PRs, temporary `promote/*` heads and
-  governance PRs;
-- normal merge commits are allowed only when synchronizing `main` back into a
-  dev lane, never on stable `main`.
+- feature/fix PRs into a dev lane: squash;
+- direct `dev-cad -> main` or `dev-ci -> main`: normal merge;
+- every other PR to `main`, including governance and `promote/*`: squash;
+- merged temporary branches are cleanup-eligible only through the explicit
+  policy allow-list.
 
 ## Change discipline
 

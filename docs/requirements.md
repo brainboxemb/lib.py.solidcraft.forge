@@ -346,7 +346,7 @@ same runner and record that actual scope in provenance and Verification
 metadata. Main output records `main`; development output records its named
 scope.
 
-## Lane concurrency and promotion
+## Lane concurrency, promotion and merge policy
 
 Each long-lived source branch owns an independent concurrency group. A newer
 `dev-cad` run may cancel an older `dev-cad` run but must not cancel
@@ -354,27 +354,34 @@ Each long-lived source branch owns an independent concurrency group. A newer
 
 Short-lived feature/fix branches target one dev lane and are squash-merged.
 
-Promotion uses a temporary head branch created at the accepted long-lived lane
-head:
+Promotion is direct from the accepted long-lived lane:
 
 ```text
-dev-cad -> promote/dev-cad -> main
-dev-ci  -> promote/dev-ci  -> main
+dev-cad -> main
+dev-ci  -> main
 ```
 
-The promotion PR requires complete validation and uses a normal merge commit.
-Do not use the long-lived dev branch itself as the PR head while repository
-automatic head-branch deletion is enabled; the first #572 promotion proved that
-GitHub deletes the direct long-lived head after merge.
+Promotion PRs require complete validation.
 
-After promotion:
+Merge method selection must be machine-controlled:
 
-- GitHub may auto-delete the temporary `promote/*` branch;
-- main publication updates only the stable complete scope/site;
-- both long-lived dev lanes are synchronized to the resulting main head before
-  new work assumes the promoted state;
-- recreating a missing long-lived lane at main must still update incrementally
-  from that lane's durable manifest source rather than forcing a full bootstrap.
+- base `main` + head exactly `dev-cad` or `dev-ci` -> normal merge commit;
+- every other PR -> squash merge.
+
+Repository automation must use the policy-controlled merge workflow rather than
+calling the merge API with a chosen method.
+
+The policy workflow must reject draft, unmergeable or non-green PR heads. After
+a direct lane promotion it must ensure that the promoted long-lived lane exists
+and points at the resulting main merge commit, including while repository
+`delete_branch_on_merge` is still enabled.
+
+Merged source-branch cleanup is allow-list based. Only explicitly temporary
+prefixes may be deleted automatically. `main`, `dev-cad`, `dev-ci`,
+generated branches and backup refs are never cleanup targets.
+
+After promotion the other dev lane incorporates main separately; unpromoted
+work in that lane must never be overwritten.
 
 Generic source-freshness, complete-scope reconciliation and generated-branch
 retry behavior remain CAD-CI responsibilities.
