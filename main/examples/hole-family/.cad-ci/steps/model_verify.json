@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "89f8f5b8af6b02f5919c088402540e438acfe19924ebafc94f06d7d7e1433ec4",
-  "duration_seconds": 0.26,
+  "bundle_sha256": "00b44993696fd6915a19e8ed68694f9d6402822366fb6cc84f3e77d729b0b038",
+  "duration_seconds": 0.539,
   "engine": "scons",
-  "engine_schema": 1,
+  "engine_schema": 2,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-21T10:20:51.088Z",
+  "finished_at": "2026-11-21T13:52:24.553Z",
   "item": "hole-family",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,7 +14,7 @@
     "model_verify": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "e7c76dd3bb64159021bd507756a10a250e36edd67836953c749c9c1ee1f6bd05"
+      "sha256": "0c7a9303a26608e1788d32d3c1f7164cd70bfdd712a7799a0af2239d09d97c74"
     },
     "solidcraft.json": {
       "kind": "file",
@@ -22,12 +22,12 @@
       "sha256": "c9c839f6576a38982b454454c57e5a34ae2c507b11e845d34183c4fac2c4e54a"
     }
   },
-  "run_finished_at": "2026-11-21T10:21:30.971Z",
-  "run_started_at": "2026-11-21T10:18:05.955Z",
+  "run_finished_at": "2026-11-21T13:52:49.953Z",
+  "run_started_at": "2026-11-21T13:50:59.636Z",
   "schema": 3,
-  "started_at": "2026-11-21T10:20:51.028Z",
+  "started_at": "2026-11-21T13:52:24.513Z",
   "status": "pass",
   "step": "model_verify",
-  "target_spec_digest": "0b33980b68a6c688df2bcb62a28ac99076e73902f685a0780657fe7feec9da27",
+  "target_spec_digest": "37b6ec326a3ac33de9cc5dfc02513a2090605fd1a6298c56c1c936eba6578807",
   "timeout_seconds": null
 }
