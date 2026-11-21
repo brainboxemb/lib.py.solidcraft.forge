@@ -110,6 +110,89 @@ class ExampleMetadataTests(unittest.TestCase):
                 priorities = [row.priority for row in section_rows]
                 self.assertEqual(len(priorities), len(set(priorities)))
 
+    def test_every_example_directory_has_one_explicit_current_role(self):
+        import yaml
+
+        exception_roles = {
+            "verification-candidate",
+            "release-verification",
+            "regression-fixture",
+            "legacy-sample",
+        }
+        allowed_role_fields = {
+            "schema",
+            "role",
+            "decision",
+            "owner",
+            "reason",
+            "blocked_by",
+        }
+
+        for root in sorted((ROOT / "examples").iterdir()):
+            if not root.is_dir():
+                continue
+
+            full_verification = all(
+                path.is_file()
+                for path in (
+                    root / "ci.yml",
+                    root / "model.yml",
+                    root / "README.md",
+                    root / "scpf" / "model.py",
+                    root / "verification" / "verify.py",
+                )
+            )
+            role_path = root / "role.yml"
+
+            with self.subTest(slug=root.name):
+                if full_verification:
+                    self.assertFalse(
+                        role_path.exists(),
+                        "full Verification cases do not need a second role file",
+                    )
+                    for implementation in (
+                        "build123d",
+                        "cadquery",
+                        "pybosl2",
+                        "pythonscad",
+                    ):
+                        self.assertTrue(
+                            (root / implementation / "ci.yml").is_file()
+                        )
+                        self.assertTrue(
+                            (root / implementation / "model.py").is_file()
+                        )
+                    continue
+
+                self.assertTrue(
+                    role_path.is_file(),
+                    "non-Verification example directory needs role.yml",
+                )
+                data = yaml.safe_load(role_path.read_text(encoding="utf-8"))
+                self.assertIsInstance(data, dict)
+                self.assertEqual(data.get("schema"), 1)
+                self.assertIn(data.get("role"), exception_roles)
+                self.assertIsInstance(data.get("decision"), str)
+                self.assertTrue(data["decision"].strip())
+                self.assertIsInstance(data.get("owner"), str)
+                self.assertTrue(data["owner"].strip())
+                self.assertIsInstance(data.get("reason"), str)
+                self.assertTrue(data["reason"].strip())
+                self.assertFalse(set(data) - allowed_role_fields)
+
+                if data["role"] == "verification-candidate":
+                    self.assertEqual(data["decision"], "restore-verification")
+                elif data["role"] == "release-verification":
+                    self.assertEqual(data["decision"], "keep-blocked")
+                    self.assertIsInstance(data.get("blocked_by"), str)
+                elif data["role"] == "regression-fixture":
+                    self.assertEqual(data["decision"], "keep")
+                elif data["role"] == "legacy-sample":
+                    self.assertEqual(
+                        data["decision"],
+                        "retire-or-modernize",
+                    )
+
     def test_metadata_never_claims_current_verification_status(self):
         forbidden = {"pass", "fail", "passed", "failed", "status"}
         for row in discover_example_metadata():

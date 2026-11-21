@@ -1,0 +1,9 @@
+schema: 1
+role: release-verification
+decision: keep-blocked
+owner: ci/forge-release/ci.yml
+blocked_by: "#81"
+reason: >
+  Forge release verification intentionally compiles this fixture as an expected
+  rejection. Rotated normal attachment through a named AnchorFrame remains
+  unsupported and must fail clearly.

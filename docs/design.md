@@ -123,14 +123,13 @@ Generated SolidCraft timeline names are not model-owned unless explicitly
 checked. `SolidCraftTimelineExpectation` therefore uses the released partial
 field contract.
 
-During staged migration, older models keep their existing
-`scripts/model_verify.py` + procedural `verify_model.py` path. Each model is
-switched explicitly to `scripts/model_verify_declarative.py` in its own
-migration change. New generic verification behavior must not be implemented in
-Forge.
+All current historical model-verification cases use the declarative
+`verification/verify.py` contract. The shared batch producer invokes
+`scripts/model_verify_declarative.py` inside the released runtime for each
+model. The former procedural `verify_model.py` migration path is historical;
+new generic verification behavior must not be implemented in Forge.
 
-
-## Staged item participation
+## Model item participation
 
 Forge uses released CAD-CI `process` only as declarative repository
 configuration.
@@ -147,12 +146,13 @@ Forge item ci.yml
 Forge contains no helper that interprets `process`, no duplicate changed-path
 selection and no second execution policy.
 
-During the current staged proof, the `scpf` item remains active and exactly
-five model-verification items participate: `simple-box`,
-`anchor-topology-mutation`, `attach-angle`, `four-corner-l` and
-`xz-anchor`. All other historical model items remain present but are excluded
-with `process: false`. Reference items remain independently selectable where
-their own changed paths/dependencies require them.
+The staged proof is complete. All 32 historical model-verification items now
+declare `process: true` and participate in normal CAD-CI selection. Reference
+items remain independently selectable through their own changed paths and
+dependencies.
+
+The former five-model proof set and the activation history of the remaining
+catalog are recorded in `background/example-history.md`.
 
 
 ## Forge package CI item graph
@@ -199,9 +199,9 @@ implementation changes.
 SCons execution order/parallelism remains generic CAD-CI behavior; this Forge
 change only makes the dependency graph semantically correct.
 
-## Staged CI selection and evidence
+## CI selection and evidence
 
-The staged proof separates repository participation, Git selection and build
+The current flow separates repository participation, Git selection and build
 execution:
 
 ```text
@@ -216,9 +216,9 @@ examples/<model>/ci.yml
 Forge owns only the declarative repository configuration. It does not reproduce
 the planner in Forge code or tests.
 
-The active model proof set contains the five staged models. Independent
-reference items remain independently selected by released CAD-CI; model and
-reference execution are not collapsed into one consumer-owned scheduler.
+All 32 historical model-verification items are active. Independent reference
+items remain independently selected by released CAD-CI; model and reference
+execution are not collapsed into one consumer-owned scheduler.
 
 Run interpretation uses structured CAD-CI evidence, not buffered console order.
 Consumer output may be emitted late or grouped by SCons, so console timestamps

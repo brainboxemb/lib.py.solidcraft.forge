@@ -84,34 +84,50 @@ examples and model verification all consume that exact dependency artifact.
 A model does not depend on the unit-test or release-verification item. Its only
 Forge package prerequisite is `forge-package`.
 
-All 32 historical model cases have native `model_verify` coverage. During the
-staged proof, exactly five model items are marked `process: true`; issue #378
-tracks the remaining reference, visual, diagram and summary layers.
+All 32 historical model-verification cases are declarative, active
+(`process: true`) and represented in durable `build/main` evidence. Each case
+also has four independent reference child items. The earlier five-model staged
+proof is historical; its migration lineage and the additional non-catalog
+fixtures under `examples/` are documented in
+`docs/background/example-history.md`.
 
 ## Verification runtime
 
-Forge verification uses one immutable runtime definition:
+Forge consumes immutable runtime images released by
+`brainboxemb/docker.cad.solidcraft`. The current CAD-CI selection is declared
+in root `cad-ci.yml`:
 
 ```text
-docker/
-  solidcraft_runtime/
-    Dockerfile
-    runtime.json
+FORGE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-solidcraft:v0.3.2
+REFERENCE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-reference:v0.3.2
+SOLIDCRAFT_VERSION=0.42.0
 ```
 
-`scripts/solidcraft_runtime.py` resolves and checks the immutable image reference. The runtime pins the released `lib.py.cad.verfication` 0.1.0 commit and verifies the installed package version while building the image. It also contains the versioned reference/visual/diagram toolchain: CADCraft 0.20.1, PythonSCAD 1.1.2, the pinned pyBOSL2 commit, CadQuery 2.8.0 and build123d 0.12.0.
-The normal Forge workflow only requires that image to exist; it never builds or
-publishes it. The separate SolidCraft runtime workflow owns image build/publish
-and can be started explicitly with `workflow_dispatch`.
+Forge does not build those images in normal CI. Model verification consumes the
+released SolidCraft image; independent PythonSCAD/pyBOSL2/CadQuery/build123d
+verification consumes the released reference image.
 
-`scripts/model_verify.py` compiles the selected model and runs its
-`verification/verify_model.py` inside that image.
+The verification library is not baked into the runtime image. Forge supplies
+the exact released `lib.py.cad.verification` wheel as a CAD-CI dependency.
 
-Model-specific dimensions, mutations and expectations stay under
-`examples/<model>/verification/`.
+Current model verification is batched:
 
-The former repository-wide qualification package and qualification Docker image
-are no longer part of the active architecture.
+```text
+examples/*/verification/verify.py
+  -> scripts/model_verification_batch.py
+  -> one SolidCraft runtime process for the selected/current model set
+  -> scripts/model_verify_declarative.py per model inside that runtime
+  -> released lib.py.cad.verification
+```
+
+All 32 historical model-verification cases use declarative `verify.py`
+contracts. Model-specific dimensions, mutations, inspections and expectations
+stay below the owning `examples/<model>/verification/` directory.
+
+The former repository-wide Qualification package, procedural per-model
+`verify_model.py` path and Forge-owned runtime image are not part of the
+current architecture. Their migration history is recorded under
+`docs/background/`.
 
 ## Example metadata
 
@@ -144,13 +160,18 @@ Build, Pages and release publication migration is tracked in issue #366.
 
 ## Build and Pages status
 
-The existing `build` and `gh-pages` branches contain generated output from
-the earlier publication architecture. The current CAD-CI workflow has not yet
-completed its publication cut-over.
+Durable accepted verification output lives on the generated `build` branch;
+`build/main` is the authoritative complete baseline used by stable site
+generation.
 
-Issue #366 tracks migration to the generic `tool.cad.ci` publisher.
-Until then, current source plus current CAD-CI results are authoritative for
-development status.
+#497 completed the stable site migration to current Forge source plus durable
+`build/main` evidence. Current replacement output is published on the
+`gh-pages` branch through the generic CAD-CI publisher.
+
+The public GitHub Pages source is still deliberately pointed at
+`backup/gh-pages-before-f11-2026-11-20` while #558 corrects the remaining
+main/publication workflow overhead. #366 remains the umbrella for the final
+live Pages lifecycle and preview/cleanup work.
 
 ## Documentation map
 

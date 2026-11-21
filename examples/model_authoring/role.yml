@@ -1,0 +1,8 @@
+schema: 1
+role: verification-candidate
+decision: restore-verification
+owner: "#559"
+reason: >
+  Issue #213 explicitly required this abstract authoring fixture to enter
+  qualification, but it never reached the canonical registry or current
+  per-model Verification architecture.

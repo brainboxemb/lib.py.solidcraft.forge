@@ -11,11 +11,12 @@ import sys
 import tempfile
 import unittest
 
-from html_writer import qualification_reference_comparison
-
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
+sys.path.insert(0, str(ROOT / "scpf"))
+
+from html_writer import qualification_reference_comparison
 
 
 class SiteSourceTests(unittest.TestCase):
