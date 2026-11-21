@@ -48,13 +48,15 @@ Werk niet onnodig serieel:
 
 Merge-regel:
 
+- kies de merge-methode niet handmatig; gebruik na #598 alleen de `/merge`
+  policy-workflow;
 - korte feature/fix-PR's naar `dev-cad` of `dev-ci` worden squash-merged;
-- iedere PR met base `main` wordt squash-merged, zonder uitzonderingen;
-- dit geldt dus ook voor directe `dev-cad` / `dev-ci` PR's en tijdelijke
-  `promote/dev-cad` / `promote/dev-ci` heads;
-- governance-PR's rechtstreeks naar `main` worden eveneens squash-merged;
-- normale mergecommits zijn alleen toegestaan bij het synchroniseren van
-  `main` terug naar een dev-lane, nooit op `main`.
+- exact `dev-cad -> main` en `dev-ci -> main` krijgen een normale
+  mergecommit;
+- alle andere PR's naar `main`, waaronder governance en `promote/*`, worden
+  squash-merged;
+- tijdelijke merged branches worden alleen via de expliciete cleanup-allow-list
+  verwijderd; permanente/generated/backup refs nooit.
 
 Repositorygrenzen:
 
