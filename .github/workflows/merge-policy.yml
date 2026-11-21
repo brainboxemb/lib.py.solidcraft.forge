@@ -159,3 +159,131 @@ jobs:
             "repos/$REPOSITORY/issues/$PR_NUMBER/comments" \
             -f body="Merged by repository policy: `$HEAD_REF -> $BASE_REF` using **$METHOD** at `$MERGE_SHA`. Branch lifecycle: $CLEANUP_RESULT." \
             >/dev/null
+
+
+  cleanup:
+    if: >-
+      github.event.comment.body == '/cleanup-branches' &&
+      github.actor == github.repository_owner &&
+      github.event.issue.number == 481
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+      issues: write
+    steps:
+      - name: Checkout merge policy
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          sparse-checkout: scripts/merge_policy.py
+          sparse-checkout-cone-mode: false
+
+      - name: Delete only integrated temporary branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+
+          mapfile -t OPEN_HEADS < <(
+            gh pr list \
+              --repo "$REPOSITORY" \
+              --state open \
+              --limit 100 \
+              --json headRefName \
+              --jq '.[].headRefName'
+          )
+          mapfile -t BRANCHES < <(
+            gh api --paginate \
+              "repos/$REPOSITORY/branches?per_page=100" \
+              --jq '.[].name'
+          )
+
+          deleted=()
+          open=()
+          unmerged=()
+
+          is_open_head() {
+            local candidate="$1"
+            local item
+            for item in "${OPEN_HEADS[@]}"; do
+              if [ "$item" = "$candidate" ]; then
+                return 0
+              fi
+            done
+            return 1
+          }
+
+          is_integrated() {
+            local candidate="$1"
+            local encoded
+            encoded="$(jq -rn --arg value "$candidate" '$value|@uri')"
+            local target
+            for target in main dev-cad dev-ci; do
+              local status
+              status="$(
+                gh api \
+                  "repos/$REPOSITORY/compare/$encoded...$target" \
+                  --jq '.status'
+              )"
+              if [ "$status" = "ahead" ] || [ "$status" = "identical" ]; then
+                return 0
+              fi
+            done
+            return 1
+          }
+
+          for source_branch in "${BRANCHES[@]}"; do
+            policy="$(
+              python scripts/merge_policy.py \
+                --base __cleanup__ \
+                --head "$source_branch"
+            )"
+            cleanup="$(jq -r '.cleanup_head' <<<"$policy")"
+            [ "$cleanup" = "true" ] || continue
+
+            if is_open_head "$source_branch"; then
+              open+=("$source_branch")
+              continue
+            fi
+
+            if ! is_integrated "$source_branch"; then
+              unmerged+=("$source_branch")
+              continue
+            fi
+
+            gh api -X DELETE \
+              "repos/$REPOSITORY/git/refs/heads/$source_branch" \
+              >/dev/null
+            deleted+=("$source_branch")
+          done
+
+          format_group() {
+            local title="$1"
+            shift
+            if [ "$#" -eq 0 ]; then
+              printf '%s: none\n' "$title"
+              return
+            fi
+            printf '%s:\n' "$title"
+            printf -- '- `%s`\n' "$@"
+          }
+
+          summary="$(
+            {
+              echo "Branch cleanup completed by repository policy."
+              echo
+              format_group "Deleted integrated temporary branches" "${deleted[@]}"
+              echo
+              format_group "Kept because an open PR still uses the branch" "${open[@]}"
+              echo
+              format_group "Kept because unique/unmerged commits remain" "${unmerged[@]}"
+            }
+          )"
+
+          gh api -X POST \
+            "repos/$REPOSITORY/issues/$ISSUE_NUMBER/comments" \
+            -f body="$summary" \
+            >/dev/null
