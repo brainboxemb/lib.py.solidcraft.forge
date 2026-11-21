@@ -65,15 +65,23 @@ jobs:
           CHECKS_JSON="$(
             gh api \
               -H "Accept: application/vnd.github+json" \
-              "repos/$REPOSITORY/commits/$HEAD_SHA/check-runs?filter=latest&per_page=100"
+              "repos/$REPOSITORY/commits/$HEAD_SHA/check-runs?per_page=100"
           )"
-          CHECK_COUNT="$(jq -r '.total_count' <<<"$CHECKS_JSON")"
+          LATEST_CHECKS="$(
+            jq -c '
+              [.check_runs[]]
+              | sort_by(.name, (.started_at // ""), .id)
+              | group_by(.name)
+              | map(last)
+            ' <<<"$LATEST_CHECKS"
+          )"
+          CHECK_COUNT="$(jq -r 'length' <<<"$LATEST_CHECKS")"
           [ "$CHECK_COUNT" -gt 0 ] || refuse "no completed PR checks exist on the current head"
 
           BAD_CHECKS="$(
             jq -r '
               [
-                .check_runs[]
+                .[]
                 | select(
                     .status != "completed"
                     or (
@@ -155,9 +163,13 @@ jobs:
             fi
           fi
 
+          COMMENT_BODY="$(
+            printf 'Merged by repository policy: `%s -> %s` using **%s** at `%s`. Branch lifecycle: %s.' \
+              "$HEAD_REF" "$BASE_REF" "$METHOD" "$MERGE_SHA" "$CLEANUP_RESULT"
+          )"
           gh api -X POST \
             "repos/$REPOSITORY/issues/$PR_NUMBER/comments" \
-            -f body="Merged by repository policy: `$HEAD_REF -> $BASE_REF` using **$METHOD** at `$MERGE_SHA`. Branch lifecycle: $CLEANUP_RESULT." \
+            -f body="$COMMENT_BODY" \
             >/dev/null
 
 
