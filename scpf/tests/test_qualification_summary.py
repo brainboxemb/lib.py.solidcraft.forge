@@ -246,7 +246,7 @@ class QualificationSummaryTests(unittest.TestCase):
         self.assertNotIn("reference", result["checks"])
         self.assertEqual(gate["status"], "fail")
 
-    def test_missing_visual_is_not_required_in_current_contract(self):
+    def test_missing_visual_is_incomplete_and_required(self):
         with tempfile.TemporaryDirectory() as tmp, patch.object(
             summary, "_semantic_api", fake_api
         ):
@@ -254,10 +254,10 @@ class QualificationSummaryTests(unittest.TestCase):
             case = self.make_case(root)
             (case / "model_verify" / "visual.json").unlink()
             result, gate = summary.compose_case(root, "simple-box")
-        self.assertEqual(result["status"], "pass")
-        self.assertEqual(result["checks"]["visual"]["status"], "not-required")
-        self.assertFalse(result["checks"]["visual"]["required"])
-        self.assertEqual(gate["status"], "pass")
+        self.assertEqual(result["status"], "incomplete")
+        self.assertEqual(result["checks"]["visual"]["status"], "missing")
+        self.assertTrue(result["checks"]["visual"]["required"])
+        self.assertEqual(gate["status"], "incomplete")
 
     def test_batch_reference_duplicates_are_ignored(self):
         with tempfile.TemporaryDirectory() as tmp, patch.object(
@@ -280,6 +280,53 @@ class QualificationSummaryTests(unittest.TestCase):
             result, gate = summary.compose_case(root, "simple-box")
 
         self.assertEqual(result["status"], "pass")
+        self.assertEqual(gate["status"], "pass")
+
+    def test_split_visual_roles_compose_independently(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(
+            summary, "_semantic_api", fake_api
+        ):
+            root = Path(tmp)
+            case = self.make_case(root)
+            path = case / "model_verify" / "visual.json"
+            report = json.loads(path.read_text(encoding="utf-8"))
+            report["views"] = [
+                {
+                    "view": "front",
+                    "status": "pass",
+                    "regression_required": True,
+                    "expected_shape_required": False,
+                    "evidence": {
+                        "actual_image": "visual/front/actual.png",
+                        "diff_image": "visual/front/diff.png",
+                        "goal_image": None,
+                        "overlay_image": None,
+                        "baseline_status": "pass",
+                        "expected_shape_status": "missing",
+                    },
+                },
+                {
+                    "view": "top",
+                    "status": "pass",
+                    "regression_required": False,
+                    "expected_shape_required": True,
+                    "evidence": {
+                        "actual_image": "visual/top/actual.png",
+                        "diff_image": None,
+                        "goal_image": "visual/top/goal.png",
+                        "overlay_image": "visual/top/overlay.png",
+                        "baseline_status": "missing",
+                        "expected_shape_status": "pass",
+                    },
+                },
+            ]
+            path.write_text(json.dumps(report), encoding="utf-8")
+            result, gate = summary.compose_case(root, "simple-box")
+
+        visual = result["checks"]["visual"]
+        self.assertEqual(visual["status"], "pass")
+        self.assertEqual(visual["regression_status"], "pass")
+        self.assertEqual(visual["expected_shape_status"], "pass")
         self.assertEqual(gate["status"], "pass")
 
     def test_inconsistent_visual_pass_becomes_incomplete(self):
