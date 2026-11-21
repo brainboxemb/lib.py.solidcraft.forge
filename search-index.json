@@ -3585,6 +3585,17 @@
       "keywords": "Verify one TOP-face source hole cut followed by one native rectangular history pattern. with Sketch(on=plate, parent=Anchor.TOP): Circle2D(...); source_cut = sketch.extrude(Depth.THROUGH_ALL); plate.rectangular_pattern(source_cut, ...) A feature-based plate with one face-attached source hole cut and one native rectangular pattern that creates the second hole. Forge emits one attached Hole sketch/cut and one native solid.pattern.rectangular history feature. No Forge-side repeat helper or expanded duplicate profiles are used. One plate with two through holes at the requested Y spacing, one source cut and one native rectangular pattern feature. No saved-design mutation in this fixture; geometry and feature placement are measured at geometry. The holes do not change the outer plate bounds. Volume and 3D hole-wall probes are required. Comparable geometry normally uses difference() and repeated cylinders. This case instead qualifies one semantic TOP-face source cut plus native SolidCraft pattern history; native solid.hole itself is qualified separately by hole-family."
     },
     {
+      "title": "As-built rigid relationship preserves pose",
+      "kind": "Example",
+      "url": "examples/as-built-attach/",
+      "summary": "Base and Marker keep their already authored occurrence poses while SolidCraft records a native rigid as-built relationship between them.",
+      "aliases": [
+        "A pre-positioned child keeps its authored pose when a rigid as-built relationship is recorded",
+        "components"
+      ],
+      "keywords": "Verify that attach(as_built=True) records a rigid native assembly relationship without re-positioning or re-orienting a child occurrence that already has an authored pose. Marker(placement=Placement(x=50, y=20, z=15, rotation=(Z,90))).attach(base, as_built=True) One Base and one non-square Marker occurrence. The Marker already owns a translation and rotation before the Attachment is added; the as-built relationship carries no parent/child anchor, offset, gap or angle. Forge binds the real Base and Marker occurrence IDs returned by native component creation, applies the complete Marker pose through replay-bound occurrence.move, then emits joint.as_built(type='rigid') using those bound IDs. No predicted Component:N occurrence name and no anchor-origin solve is used. The Base remains centred at Z=0: [-20,-15,-5]..[20,15,5]. The 30x10 Marker remains quarter-turned to a 10x30 footprint at [45,5,11]..[55,35,19] after the native as-built joint is created. Not required: an as-built relationship intentionally captures the current relative pose rather than defining a parameter-driven placement rule. The two disjoint rectangular body envelopes fully describe the baseline pose; command-contract verification separately proves that the native relationship is an as-built rigid joint rather than a repositioning attachment. The native as-built rigid relationship constrains two already-positioned occurrences without solving a new mating position. Independent geometry preserves the translated and rotated Marker pose without using Forge. Independent bottom-anchored geometry verifies the same world-space Marker envelope. Assembly Location independently represents the authored occurrence pose. Independent placed and rotated box geometry verifies the same visible baseline."
+    },
+    {
       "title": "Imported @assembly subassembly",
       "kind": "Example",
       "url": "examples/assembly-decorator/",
@@ -3761,6 +3772,17 @@
       "keywords": "Verify that distance along the attachment normal remains a native editable joint parameter. attach(..., gap=self.gap) Rigid Attachment with a symbolic gap expression; anchor identities are unchanged. The child receives a symbolic seed pose so a floating graph starts at the authored mating position; joint.create(type='rigid', offset='gap') remains the relationship and the gap remains a native expression in both places rather than a flattened number. The child sits 10 mm away from the parent's RIGHT face along the joint normal. Change gap from 10 to 30 mm in the saved .sc design; the child must move another 20 mm without rerunning Python. The two rectangular body bounds describe the baseline gap geometry. Saved joint recompute is proved separately by saved-design. Conceptually similar to an attachment displacement along the local anchor normal rather than a world-axis translate."
     },
     {
+      "title": "Native parametric occurrence Placement",
+      "kind": "Example",
+      "url": "examples/parametric-move/",
+      "summary": "Two Block occurrences share one definition while the second uses the parent offset parameter as an ordinary native occurrence Placement, not an assembly joint.",
+      "aliases": [
+        "A reusable occurrence keeps its X placement as an editable native expression",
+        "components"
+      ],
+      "keywords": "Verify that placing one reusable occurrence with a parent parameter is ordinary CAD placement, not an implicit assembly joint. Block(); Block(placement=Placement(x=self.offset)) Two occurrences share one Block definition. The first remains at the component origin; the second carries an absolute symbolic X Placement. Forge publishes offset, creates one reusable Block definition, binds the real copied occurrence ID, then emits occurrence.move with translate=['offset', 0, 0]. No predicted occurrence name and no joint.create is used for ordinary placement. Two 20 x 20 x 10 mm blocks sit at X=0 and X=40 mm. SolidCraft stores the second occurrence as an expressed move and no assembly joint is required. Change offset from 40 to 70 mm in the saved design; without rerunning Python the second occurrence must move another 30 mm while the first remains fixed. The two centred rectangular body envelopes uniquely describe the baseline and mutated X placements. Saved-design recompute separately proves the symbolic placement remains associative. occurrence.move keeps the length expression as a native expressed move that follows parameter changes. Assembly child Location is an independent occurrence placement concept, separate from assembly constraints. A translate() is placement rather than a mating relationship. Independent translated block geometry verifies the baseline placement. Independent Locations verify the same baseline occurrence positions."
+    },
+    {
       "title": "Editable local offset at an attachment",
       "kind": "Example",
       "url": "examples/parametric-offset/",
@@ -3770,6 +3792,17 @@
         "associativity"
       ],
       "keywords": "Verify the existing local (u,v) attachment-plane offset and make its coordinate semantics explicit. attach(..., offset=(u, v)) Attachment stores two symbolic local planar values; these are not world X/Y/Z coordinates. The computed child seed pose retains the symbolic local offset, then the actual relationship is joint.create(type='planar', values=[u,v,angle]). The seed move is not an additional joint. The marker moves within the selected corner anchor's local attachment plane. Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm. The base and marker sizes and positions show the local offset. The saved SolidCraft model is then changed to confirm that the planar joint updates correctly. Important reference: attach() operates in the local coordinate system at the parent anchor, not blindly in world coordinates. A raw translate([x,y,z]) is world/object transform syntax and therefore is not equivalent to this local joint offset."
+    },
+    {
+      "title": "Symmetric parametric occurrence Placement",
+      "kind": "Example",
+      "url": "examples/parametric-placement-pair/",
+      "summary": "Two occurrences of one Block definition are positioned at the negative and positive halves of one parent spacing parameter.",
+      "aliases": [
+        "Two shared Block occurrences remain symmetric around one editable spacing parameter",
+        "components"
+      ],
+      "keywords": "Verify the WoodFrame-style dependency shape: two occurrences of one reusable definition are placed symmetrically from one parent spacing parameter. left = Block(placement=Placement(x=-half(self.spacing))); right = left.copy(placement=Placement(x=half(self.spacing))) Two occurrences share one Block definition. Their absolute X placements are the negative and positive halves of the same parent parameter. Forge publishes spacing, creates one Block definition, binds both real occurrence IDs, and emits two occurrence.move expressions using -(spacing / 2) and spacing / 2. No predicted occurrence name and no placement joint is used. With spacing=80 mm the two 20 mm blocks are centred at X=-40 and X=+40. Change spacing from 80 to 120 mm in the saved design; without rerunning Python the two centres must move symmetrically to X=-60 and X=+60. The two centred disjoint Block envelopes prove the symmetric baseline and mutation positions. Saved-design recompute proves both native placement expressions remain tied to the same spacing parameter. Both occurrence translations remain parameter-referencing expressed moves in the saved design. Independent Assembly Locations provide a comparison for symmetric occurrence placement without constraints. Symmetric translate(-spacing/2) and translate(spacing/2) express the same visible intent. Independent translated blocks verify the baseline symmetric geometry. Independent Locations verify the two baseline centers."
     },
     {
       "title": "Child dimensions derived from parent parameters",
@@ -3814,6 +3847,17 @@
         "associativity"
       ],
       "keywords": "Verify two disconnected rigid-joint graphs when two occurrences of one shared parent definition each own one attached child. right = left.copy(placement=Placement(x=60)); marker_a = Marker().attach(left, parent=Anchor.TOP, child=Anchor.BOTTOM); marker_b = marker_a.copy().attach(right, parent=Anchor.TOP, child=Anchor.BOTTOM) Two Parent occurrences share one definition and one parent_height dependency. Two Marker occurrences share one definition. Each Marker has exactly one rigid Attachment to a different Parent occurrence. Forge creates one Parent definition plus one translated copy and one Marker definition plus one copy. Each Marker receives its symbolic computed seed Placement through a replay-bound occurrence.move, followed by exactly one authored rigid joint.create to its replay-bound Parent occurrence. No generated placement joint is allowed. Both markers sit on their own parent TOP face. After parent_height changes in the saved design, both disconnected joint graphs must rebuild so both markers follow the changed top faces. Change parent_height from 40 to 60 mm in the saved .sc design; both Parent occurrences become 60 mm tall and both Marker occurrences move from Z=40..50 to Z=60..70 without rerunning Python. Four rectangular body bounds expose both parent heights and both child positions. saved-design mutation separately proves that both disconnected native joint graphs follow the shared parent-height change. This case isolates the 0.42 joint-solver behaviour for two disconnected graphs that share reusable component definitions. Two independent TOP-to-BOTTOM attachments express the same parent/child intent without SolidCraft-specific replay identity."
+    },
+    {
+      "title": "Copied Placement with rotation",
+      "kind": "Example",
+      "url": "examples/rotated-copy-placement/",
+      "summary": "A non-square Panel definition is reused twice with complete absolute Placements so rotation never changes the authored parent-frame translations.",
+      "aliases": [
+        "Two copied Panel occurrences preserve both translation and Z-axis orientation",
+        "components"
+      ],
+      "keywords": "Verify that a copied occurrence combining concrete XYZ and orientation keeps its declared parent-frame position instead of rotating a pre-applied copy translation. left = Panel(placement=Placement(x=-40, rotation=(Z, 90))); right = left.copy(placement=Placement(x=40, rotation=(Z, 90))) Two occurrences share one non-square Panel definition. Each carries one complete absolute Placement with X translation and Z-axis orientation. Forge creates/copies the Panel occurrence at native identity, binds each real occurrence ID, then applies each complete translation and Z=90 degree orientation through occurrence.move. No predicted Component:N name and no pre-rotated copy translation is used. Two rotated 10 x 20 x 4 mm envelopes remain centred at X=-40 and X=+40. No placement joint is created. Not required: this case isolates concrete copy-plus-rotation lowering; parameter-driven occurrence recompute is proved by the dedicated parametric Placement cases. The centred non-square 10 x 20 world envelopes prove that both Panel occurrences are rotated while their X centers remain at the authored -40/+40 positions. Translation and rotation are applied together to each bound occurrence through occurrence.move. Independent geometry proves two 10 x 20 x 4 rotated envelopes at the expected centers. Independent geometry checks the same rotated world envelopes. Independent Assembly Locations apply the same placement and orientation. Independent Rot and Locations reproduce the two placed panels."
     },
     {
       "title": "TOP Sketch on circular body",

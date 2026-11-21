@@ -1,7 +1,7 @@
 {
-  "library_commit": "90f0417443ae6046ee3ee909a31df299ba95bb3e",
+  "library_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
   "evidence_source": "build/main",
-  "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5",
+  "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff",
   "cases": {
     "anchor-topology-mutation": {
       "title": "Explicit topology pick follows parent resize",
@@ -9,8 +9,8 @@
       "verification_source": "examples/anchor-topology-mutation/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "anchored-holes": {
       "title": "Face-relative hole with native pattern",
@@ -18,8 +18,17 @@
       "verification_source": "examples/anchored-holes/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
+    },
+    "as-built-attach": {
+      "title": "As-built rigid relationship preserves pose",
+      "documentation_source": "examples/as-built-attach/README.md",
+      "verification_source": "examples/as-built-attach/verification/verify.py",
+      "evidence_source": "build/main",
+      "status": "pass",
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "assembly-decorator": {
       "title": "Imported @assembly subassembly",
@@ -27,8 +36,8 @@
       "verification_source": "examples/assembly-decorator/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "assembly-owned-anchor": {
       "title": "Assembly-owned named anchor",
@@ -36,8 +45,8 @@
       "verification_source": "examples/assembly-owned-anchor/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "attach-angle": {
       "title": "Native attachment clocking angle",
@@ -45,8 +54,8 @@
       "verification_source": "examples/attach-angle/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "bracket": {
       "title": "Minimal L-profile",
@@ -54,8 +63,8 @@
       "verification_source": "examples/bracket/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "circle-negative-extrude": {
       "title": "Negative circle profile extrusion",
@@ -63,8 +72,8 @@
       "verification_source": "examples/circle-negative-extrude/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "circular-feature-pattern": {
       "title": "Native circular feature pattern",
@@ -72,8 +81,8 @@
       "verification_source": "examples/circular-feature-pattern/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "components": {
       "title": "Reuse one component definition in two placements",
@@ -81,8 +90,8 @@
       "verification_source": "examples/components/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "corner-anchor": {
       "title": "Topology-backed corner anchor",
@@ -90,8 +99,8 @@
       "verification_source": "examples/corner-anchor/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "eight-corner-brackets": {
       "title": "Eight vertical L-profiles: two per side corner",
@@ -99,8 +108,8 @@
       "verification_source": "examples/eight-corner-brackets/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "eight-flightcase-corners": {
       "title": "Eight flightcase corner protectors",
@@ -108,8 +117,8 @@
       "verification_source": "examples/eight-flightcase-corners/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "four-corner-l": {
       "title": "Four centred vertical L-profiles",
@@ -117,8 +126,8 @@
       "verification_source": "examples/four-corner-l/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "group-hierarchy": {
       "title": "Named native group hierarchy",
@@ -126,8 +135,8 @@
       "verification_source": "examples/group-hierarchy/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "hole-family": {
       "title": "Native Hole family",
@@ -135,8 +144,8 @@
       "verification_source": "examples/hole-family/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "parameter-scope": {
       "title": "Explicit component parameters and shared dependencies",
@@ -144,8 +153,8 @@
       "verification_source": "examples/parameter-scope/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "parametric-anchor": {
       "title": "Face anchor follows parent geometry",
@@ -153,8 +162,8 @@
       "verification_source": "examples/parametric-anchor/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "parametric-attach": {
       "title": "Editable distance between attached components",
@@ -162,8 +171,17 @@
       "verification_source": "examples/parametric-attach/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
+    },
+    "parametric-move": {
+      "title": "Native parametric occurrence Placement",
+      "documentation_source": "examples/parametric-move/README.md",
+      "verification_source": "examples/parametric-move/verification/verify.py",
+      "evidence_source": "build/main",
+      "status": "pass",
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "parametric-offset": {
       "title": "Editable local offset at an attachment",
@@ -171,8 +189,17 @@
       "verification_source": "examples/parametric-offset/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
+    },
+    "parametric-placement-pair": {
+      "title": "Symmetric parametric occurrence Placement",
+      "documentation_source": "examples/parametric-placement-pair/README.md",
+      "verification_source": "examples/parametric-placement-pair/verification/verify.py",
+      "evidence_source": "build/main",
+      "status": "pass",
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "parent-derived-child-size": {
       "title": "Child dimensions derived from parent parameters",
@@ -180,8 +207,8 @@
       "verification_source": "examples/parent-derived-child-size/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "primitive-csg": {
       "title": "Primitive CSG",
@@ -189,8 +216,8 @@
       "verification_source": "examples/primitive-csg/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "rectangular-pattern": {
       "title": "Native rectangular feature pattern",
@@ -198,8 +225,8 @@
       "verification_source": "examples/rectangular-pattern/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "repeated-parent-attachments": {
       "title": "Attachments on repeated parent occurrences",
@@ -207,8 +234,17 @@
       "verification_source": "examples/repeated-parent-attachments/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
+    },
+    "rotated-copy-placement": {
+      "title": "Copied Placement with rotation",
+      "documentation_source": "examples/rotated-copy-placement/README.md",
+      "verification_source": "examples/rotated-copy-placement/verification/verify.py",
+      "evidence_source": "build/main",
+      "status": "pass",
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "round-top-sketch": {
       "title": "TOP Sketch on circular body",
@@ -216,8 +252,8 @@
       "verification_source": "examples/round-top-sketch/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "rounded-rectangle-sketch": {
       "title": "Explicit rounded-rectangle sketch pad",
@@ -225,8 +261,8 @@
       "verification_source": "examples/rounded-rectangle-sketch/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "selective-profile-extrude": {
       "title": "Selective Sketch profile extrusion",
@@ -234,8 +270,8 @@
       "verification_source": "examples/selective-profile-extrude/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "sheet-fold": {
       "title": "Flat sheet, through hole and 90\u00b0 fold",
@@ -243,8 +279,8 @@
       "verification_source": "examples/sheet-fold/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "simple-box": {
       "title": "Parameterized Box",
@@ -252,8 +288,8 @@
       "verification_source": "examples/simple-box/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "sketch-pattern-mirror": {
       "title": "Associative sketch pattern and mirror",
@@ -261,8 +297,8 @@
       "verification_source": "examples/sketch-pattern-mirror/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "slot-family": {
       "title": "Native sketch Slot family",
@@ -270,8 +306,8 @@
       "verification_source": "examples/slot-family/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "top-sketch-after-chamfer": {
       "title": "TOP Sketch after chamfer",
@@ -279,8 +315,8 @@
       "verification_source": "examples/top-sketch-after-chamfer/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     },
     "xz-anchor": {
       "title": "Anchors on XZ-profile extrusion",
@@ -288,8 +324,8 @@
       "verification_source": "examples/xz-anchor/verification/verify.py",
       "evidence_source": "build/main",
       "status": "pass",
-      "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
+      "accepted_source_commit": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
+      "build_commit": "7c1bffacbc3369d998a85cac1121672d5110b2ff"
     }
   }
 }
