@@ -36,20 +36,33 @@ The first `main` push through the new workflow is green. It updated only
 `build/main` and stable Pages while preserving the development-subtree keep
 set.
 
-The final lane names are now `dev-cad` and `dev-ci`. Main commit
+The final lane names are `dev-cad` and `dev-ci`. Main commit
 `4c408be0f34b8bec4f694a7873313279f0e67997` contains the hyphenated workflow
-and documentation. The first hyphenated lane bootstrap runs are:
+and documentation.
 
-- `dev-cad`: Actions run `44900066106`;
-- `dev-ci`: Actions run `44900069488`.
+Both branches were created from that exact main head and completed their first
+full bootstrap successfully:
 
-Both branches were created from that exact main head and are currently running
-their required first complete publication. This plan must be updated with final
-build/Page provenance before #578 is promoted to main.
+- `dev-cad`: Actions run `44900066106`, 188-item complete scope;
+- `dev-ci`: Actions run `44900069488`, 188-item complete scope.
+
+Durable state now proves the final naming end to end:
+
+| Source lane | Build manifest | Pages provenance | Source commit |
+| --- | --- | --- | --- |
+| `main` | `scope: main` | stable root, `build_scope: main` | `4c408be0…` |
+| `dev-cad` | `scope: named, name: dev-cad` | `/dev-cad/`, `build_scope: dev-cad` | `4c408be0…` |
+| `dev-ci` | `scope: named, name: dev-ci` | `/dev-ci/`, `build_scope: dev-ci` | `4c408be0…` |
+
+Current Pages build commits are:
+
+- stable root: `ac8be31cfdbe289d456116bf88707aee6f823193`;
+- `dev-cad`: `b98f00092b755005908167563e6d832f199c5e70`;
+- `dev-ci`: `351ce4c60e602f74f7771ab44a3985440d277086`.
 
 The earlier underscore scopes/branches were temporary migration proof only.
-They are obsolete after the hyphenated lanes are proven and belong to #481 /
-generated-state cleanup; they are not part of the permanent keep-set.
+They are obsolete and belong to #481 / generated-state cleanup; they are not
+part of the permanent keep-set.
 
 Two #572 proofs remain before the migration is closed:
 
