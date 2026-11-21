@@ -51,7 +51,7 @@
     <h2>What this example makes</h2>
     <p>The result is one joined body: an 80 x 60 x 5 mm base plate with a centered 40 x 30 x 8 mm rounded pad on top. The Rounded pad sketch has one closed profile made from four straight edges and four corner arcs. SolidCraft 0.42 also adds one construction diagonal between opposite arc centres; that construction line is not part of the profile.</p>
     <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Explicit rounded-rectangle sketch pad expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
-    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/presentation/preview-iso.png" alt="Explicit rounded-rectangle sketch pad native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/presentation/preview-iso.png" alt="Explicit rounded-rectangle sketch pad native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
   </section>
 
   <section class="panel">
@@ -93,7 +93,7 @@ RoundedRectangleSketch()
 </code></pre>
     <h3>API used</h3>
     <p><code>with Sketch(name=&#x27;Rounded pad&#x27;, on=body): add(RoundedRectangle2D(...)); body + sketch.extrude(...)</code></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1966dd374c9c8943893e844d5a7e6aa3aa6dd676/examples/rounded-rectangle-sketch/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/rounded-rectangle-sketch/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
   </section>
 
   <section class="panel">
@@ -107,7 +107,7 @@ RoundedRectangleSketch()
   <div class="qualification-reference-source">
     <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/rounded-rectangle-sketch/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1966dd374c9c8943893e844d5a7e6aa3aa6dd676/examples/rounded-rectangle-sketch/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/rounded-rectangle-sketch/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;PythonSCAD reference for the centered rounded pad qualification intent.
 
 No manual half-width/half-depth placement correction is needed: the 2D profile
@@ -193,10 +193,10 @@ model = base | pad
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/pythonscad/references/rounded-rectangle-sketch/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/pythonscad/references/rounded-rectangle-sketch/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/pythonscad/references/rounded-rectangle-sketch/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/pythonscad/references/rounded-rectangle-sketch/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/pythonscad/references/rounded-rectangle-sketch/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/pythonscad/references/rounded-rectangle-sketch/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/pythonscad/references/rounded-rectangle-sketch/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/pythonscad/references/rounded-rectangle-sketch/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/pythonscad/references/rounded-rectangle-sketch/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/pythonscad/references/rounded-rectangle-sketch/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -204,7 +204,7 @@ model = base | pad
   <div class="qualification-reference-source">
     <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/rounded-rectangle-sketch/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1966dd374c9c8943893e844d5a7e6aa3aa6dd676/examples/rounded-rectangle-sketch/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/rounded-rectangle-sketch/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;pyBOSL2 reference for the centered rounded pad qualification intent.
 
 The rounded 2D rect defaults to Anchor.CENTER, so centering is semantic rather
@@ -291,10 +291,10 @@ model = base | pad
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/pybosl2/references/rounded-rectangle-sketch/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/pybosl2/references/rounded-rectangle-sketch/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/pybosl2/references/rounded-rectangle-sketch/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/pybosl2/references/rounded-rectangle-sketch/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/pybosl2/references/rounded-rectangle-sketch/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/pybosl2/references/rounded-rectangle-sketch/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/pybosl2/references/rounded-rectangle-sketch/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/pybosl2/references/rounded-rectangle-sketch/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/pybosl2/references/rounded-rectangle-sketch/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/pybosl2/references/rounded-rectangle-sketch/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -302,7 +302,7 @@ model = base | pad
   <div class="qualification-reference-source">
     <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/rounded-rectangle-sketch/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1966dd374c9c8943893e844d5a7e6aa3aa6dd676/examples/rounded-rectangle-sketch/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/rounded-rectangle-sketch/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;CadQuery reference for a centered rounded pad on a rectangular base.&quot;&quot;&quot;
 
 import cadquery as cq
@@ -394,10 +394,10 @@ model.add(pad, name=&quot;pad&quot;)
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/cadquery/references/rounded-rectangle-sketch/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/cadquery/references/rounded-rectangle-sketch/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/cadquery/references/rounded-rectangle-sketch/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/cadquery/references/rounded-rectangle-sketch/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/cadquery/references/rounded-rectangle-sketch/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/cadquery/references/rounded-rectangle-sketch/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/cadquery/references/rounded-rectangle-sketch/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/cadquery/references/rounded-rectangle-sketch/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/cadquery/references/rounded-rectangle-sketch/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/cadquery/references/rounded-rectangle-sketch/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -405,7 +405,7 @@ model.add(pad, name=&quot;pad&quot;)
   <div class="qualification-reference-source">
     <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/rounded-rectangle-sketch/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1966dd374c9c8943893e844d5a7e6aa3aa6dd676/examples/rounded-rectangle-sketch/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/rounded-rectangle-sketch/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;build123d reference: a true rounded sketch pad on a rectangular base.&quot;&quot;&quot;
 from build123d import (
     Align,
@@ -489,10 +489,10 @@ with BuildPart() as model:
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/build123d/references/rounded-rectangle-sketch/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/build123d/references/rounded-rectangle-sketch/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/build123d/references/rounded-rectangle-sketch/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/build123d/references/rounded-rectangle-sketch/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/build123d/references/rounded-rectangle-sketch/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/build123d/references/rounded-rectangle-sketch/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/build123d/references/rounded-rectangle-sketch/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/build123d/references/rounded-rectangle-sketch/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/build123d/references/rounded-rectangle-sketch/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/build123d/references/rounded-rectangle-sketch/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -522,26 +522,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -564,14 +564,14 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape not-required</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -594,26 +594,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -636,20 +636,20 @@ with BuildPart() as model:
   <p class="meta">Regression not-required · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/actual.png" alt="top Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/actual.png" alt="top Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/goal.png" alt="top Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/goal.png" alt="top Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/overlay.png" alt="top Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/visual/top/overlay.png" alt="top Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
@@ -817,14 +817,14 @@ with BuildPart() as model:
     <p>A sharp rectangular pad can share the same envelope. Rounded-pad volume and a corner-distance probe are required.</p>
 
     <h3>Raw test files</h3>
-    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d9f9309d1f333f6aab9f69dc18b3f9437b93bc97/dev-ci/examples/rounded-rectangle-sketch/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/d45e77ba1cf45550927ad1e2039cb1bc529ae1bd/dev-ci/examples/rounded-rectangle-sketch/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
 
     <h3>Reference documentation</h3>
     <ul><li><strong>SolidCraft</strong> — Native rounded sketch rectangles preserve true arc geometry and remain inspectable in the saved sketch.</li><li><strong>PythonSCAD</strong> — The explicit Sketch scope keeps 2D profile authoring separate from the subsequent 3D extrusion.</li></ul>
 
     <p class="source-stamp">
-      Site source <code>1966dd374c9c8943893e844d5a7e6aa3aa6dd676</code> · accepted model evidence source
-      <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · durable build <code>d9f9309d1f333f6aab9f69dc18b3f9437b93bc97</code>
+      Site source <code>3ac2a09e0e447a59ded3f1101d44c8ece599a6b1</code> · accepted model evidence source
+      <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · durable build <code>d45e77ba1cf45550927ad1e2039cb1bc529ae1bd</code>
     </p>
   </div>
 </details>
@@ -840,7 +840,7 @@ with BuildPart() as model:
     </p>
     <p>
       <a href="../../examples/rounded-rectangle-sketch/">Open the example →</a>
-      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1966dd374c9c8943893e844d5a7e6aa3aa6dd676/examples/rounded-rectangle-sketch/verification/verify.py">Open verification/verify.py →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/rounded-rectangle-sketch/verification/verify.py">Open verification/verify.py →</a>
     </p>
   </section>
 </main>
