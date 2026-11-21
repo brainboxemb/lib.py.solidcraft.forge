@@ -2,6 +2,6 @@
 
 from pybosl2 import cuboid
 
-left = cuboid([20, 20, 10]).up(5).left(40)
-right = cuboid([20, 20, 10]).up(5).right(40)
+left = cuboid([20, 20, 10]).left(40)
+right = cuboid([20, 20, 10]).right(40)
 model = left | right

@@ -1,0 +1,11 @@
+section: components
+priority: 40
+title: Copied Placement with rotation
+tagline: Two copied Panel occurrences preserve both translation and Z-axis orientation
+description: >
+  A non-square Panel definition is reused twice with complete absolute Placements so rotation never changes the authored parent-frame translations.
+parameters: Panel 20 × 10 × 4 mm; occurrence centers X=-40 mm and X=40 mm; Z rotation 90°
+stages:
+  - Create one reusable Panel definition
+  - Bind both real native occurrence IDs
+  - Apply each full translation and rotation through occurrence.move

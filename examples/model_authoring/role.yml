@@ -1,8 +1,8 @@
 schema: 1
-role: verification-candidate
-decision: restore-verification
-owner: "#559"
+role: regression-fixture
+decision: keep
+owner: scpf/tests/test_model_authoring.py
 reason: >
-  Issue #213 explicitly required this abstract authoring fixture to enter
-  qualification, but it never reached the canonical registry or current
-  per-model Verification architecture.
+  Issue #213 explicitly accepted model_authoring as an intentionally Q1/Q2-only
+  authoring fixture. The current unit suite compiles this exact source and checks
+  its parameter, component, occurrence-copy and material command contract.

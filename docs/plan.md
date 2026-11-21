@@ -8,15 +8,18 @@ documents in `docs/`. Issues keep detail and history.
 
 ## Current status
 
-The historical 32-case model-verification catalog is declarative, active and
-durable.
+The 32-case historical model-verification baseline is declarative, active and
+durable. #559 restores four cases removed during the replay-safety transition
+giving 36 current full Verification cases. `model_authoring` remains outside
+native Verification because #213 explicitly accepted it as Q1/Q2-only.
 
-- all 32 model items declare `process: true`;
-- all 32 use model-local declarative `verification/verify.py`;
-- all 32 have four independent reference child items (128 total);
-- current durable `build/main` contains all 32 model scopes and all 128
-  reference scopes;
-- the current model batch manifest reports `compile_error: null` for all 32;
+- every current model item declares `process: true`;
+- every current model uses local declarative `verification/verify.py`;
+- every current model has four independent reference child items;
+- the four restored historical native cases must pass the same model and
+  reference paths before #559 closes;
+- `model_authoring` must remain directly executed by the ordinary unit suite
+  at its accepted Q1/Q2 boundary;
 - the six current CADCraft diagrams are durable;
 - per-example engineering documentation is local to each verified example
   README and presentation metadata remains local to `model.yml`.
@@ -57,11 +60,10 @@ old five-model staged proof as the current state.
 
 ## Current goal
 
-Complete #559: reconcile every `examples/` directory with an explicit current
-role, using the recorded history rather than assuming the 32-case catalog is the
-complete meaning of `examples/`.
-
-This audit must not silently expand or shrink the Verification catalog.
+Complete #559 by proving the five restored/completed Verification cases through
+the normal CAD-CI model/reference paths, keeping `custom-anchor` as the
+intentional blocked release fixture, keeping both `attached-through-all` and `plate` as explicitly owned focused
+regression fixtures.
 
 ## Required proof for #559
 
@@ -116,11 +118,12 @@ including the remaining live cut-over and later preview/cleanup behavior.
 2. [complete in #560] Give every non-catalog directory an explicit local role.
 3. [complete in #560] Add the source-only structural role guard and correct
    stale primary architecture documentation.
-4. [#559] Restore the five recorded Verification candidates or explicitly
-   supersede them with equivalent current coverage; retire/modernize the legacy
-   sample and remove redundant unowned fixture tests.
-5. Close #559 only when no `verification-candidate` or unresolved
-   `legacy-sample` role remains.
+4. [this change] Restore the four historical native Verification cases, return
+   `model_authoring` to its accepted Q1/Q2-only role, keep `plate` under its
+   actual live-protocol owner and make `attached-through-all` execute from its
+   declared unit-test owner.
+5. [#559] Require the four restored model/reference paths and complete
+   stable-site generation to pass; then close #559.
 6. [#558] Implement any required generic single-runner main/publication support
    in the owning CAD-CI repositories and release/accept it.
 7. [#558] Migrate Forge main publication to that released workflow without

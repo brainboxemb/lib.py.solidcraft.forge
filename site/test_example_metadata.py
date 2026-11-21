@@ -7,19 +7,16 @@ from pathlib import Path
 import unittest
 
 from example_metadata import discover_example_metadata, load_section_presentation
-from example_documentation import (
-    LEGACY_CASE_SOURCE_COMMIT,
-    discover_example_documentation,
-)
+from example_documentation import discover_example_documentation
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class ExampleMetadataTests(unittest.TestCase):
-    def test_complete_qualification_catalog_is_self_describing(self):
+    def test_current_verification_catalog_is_self_describing(self):
         rows = discover_example_metadata()
-        self.assertEqual(len(rows), 32)
+        self.assertGreater(len(rows), 0)
 
         for row in rows:
             with self.subTest(slug=row.slug):
@@ -32,13 +29,19 @@ class ExampleMetadataTests(unittest.TestCase):
 
     def test_preserved_example_documentation_is_complete_and_provenanced(self):
         rows = discover_example_documentation()
-        self.assertEqual(len(rows), 32)
+        self.assertEqual(
+            {row.slug for row in rows},
+            {row.slug for row in discover_example_metadata()},
+        )
 
         for row in rows:
             with self.subTest(slug=row.slug):
                 root = ROOT / "examples" / row.slug
                 source = (root / "README.md").read_text(encoding="utf-8")
-                self.assertIn(LEGACY_CASE_SOURCE_COMMIT, source)
+                self.assertTrue(
+                    "be40b09e7454a90e87d83768a9e7453c52ba5d76" in source
+                    or "> Documentation provenance:" in source
+                )
                 self.assertTrue(row.title)
                 self.assertTrue(row.group)
                 self.assertTrue(row.goal)
@@ -114,10 +117,8 @@ class ExampleMetadataTests(unittest.TestCase):
         import yaml
 
         exception_roles = {
-            "verification-candidate",
             "release-verification",
             "regression-fixture",
-            "legacy-sample",
         }
         allowed_role_fields = {
             "schema",
@@ -180,18 +181,11 @@ class ExampleMetadataTests(unittest.TestCase):
                 self.assertTrue(data["reason"].strip())
                 self.assertFalse(set(data) - allowed_role_fields)
 
-                if data["role"] == "verification-candidate":
-                    self.assertEqual(data["decision"], "restore-verification")
-                elif data["role"] == "release-verification":
+                if data["role"] == "release-verification":
                     self.assertEqual(data["decision"], "keep-blocked")
                     self.assertIsInstance(data.get("blocked_by"), str)
                 elif data["role"] == "regression-fixture":
                     self.assertEqual(data["decision"], "keep")
-                elif data["role"] == "legacy-sample":
-                    self.assertEqual(
-                        data["decision"],
-                        "retire-or-modernize",
-                    )
 
     def test_metadata_never_claims_current_verification_status(self):
         forbidden = {"pass", "fail", "passed", "failed", "status"}

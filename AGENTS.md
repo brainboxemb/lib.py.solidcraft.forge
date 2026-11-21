@@ -31,8 +31,9 @@ The active CI structure is defined by:
 The generic planner/executor is `tool.cad.ci`.
 
 Forge model items declare item-level `process` state in
-`examples/<model>/ci.yml`. All 32 historical model-verification items are now
-active. Forge does not interpret `process`; released `tool.cad.ci` /
+`examples/<model>/ci.yml`. The reconciled catalog contains 36 active model-verification items: the final
+32 historical cases plus four restored historical native cases from #559.
+`model_authoring` remains an explicit Q1/Q2-only regression fixture. Forge does not interpret `process`; released `tool.cad.ci` /
 `lib.py.cad.ci` own its selection and execution semantics.
 
 ## Current verification steps
@@ -70,9 +71,9 @@ delegates verification to released `lib.py.cad.verfication`.
 
 A model keeps only model-specific verification data in
 `verification/verify.py`; it does not own a procedural verification CLI.
-All 32 historical model items use the declarative verification path, have
-native `model_verify` coverage and own model-local independent-reference
-geometry contracts. The shared reference path runs PythonSCAD, pyBOSL2,
+All current model items use the declarative verification path, have native
+`model_verify` coverage and own model-local independent-reference geometry
+contracts. The shared reference path runs PythonSCAD, pyBOSL2,
 CadQuery and build123d for the complete catalog.
 
 The catalog lineage and the additional non-catalog fixtures below `examples/`

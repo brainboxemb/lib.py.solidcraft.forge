@@ -1,7 +1,7 @@
 # Forge example and verification history
 
-This document records how the current Forge example tree and 32-case
-Verification catalog evolved. It exists to make repository history explicit;
+This document records how the Forge example tree evolved from the historical
+32-case Qualification baseline to the current Verification catalog. It exists to make repository history explicit;
 it is not a second executable catalog.
 
 Current behavior is defined by source, per-item CAD-CI configuration and durable
@@ -12,7 +12,7 @@ fixtures exist and which migrations were completed or left unresolved.
 
 `examples/` contains more than one kind of asset.
 
-1. **Verified model cases** — the current 32-case catalog. These have local
+1. **Verified model cases** — the current catalog. These have local
    `model.yml`, `ci.yml`, `README.md`, `verification/verify.py` and four
    independent reference children.
 2. **Forge release-verification fixtures** — a small fixed set used by
@@ -225,7 +225,7 @@ site commit when no technical input for that item changed. That is expected:
 presentation-only changes must reuse accepted technical evidence rather than
 rerun CAD merely to rebuild Pages.
 
-## Directories outside the 32-case catalog
+## Audit findings before #559 reconciliation
 
 ### `as-built-attach`
 
@@ -444,3 +444,59 @@ In particular:
 
 Do not expand the Verification catalog merely because a historical fixture
 exists. The decision must follow current product behavior and current evidence.
+
+
+## 2026-11-21 — #559 reconciliation outcome
+
+The history audit is converted into current repository state rather than left
+as a permanent candidate list.
+
+Restored to full model Verification:
+
+- `as-built-attach`;
+- `parametric-move`;
+- `parametric-placement-pair`;
+- `rotated-copy-placement`.
+
+Those four were real historical Qualification cases. Their removal reason was
+replay-unsafe occurrence addressing; change 0013/#191 later supplied
+replay-bound real occurrence IDs. #559 restores their historical baseline
+geometry, the two historical saved-design mutations, current command-contract
+tests and four independent reference implementations.
+
+Retained at its explicitly accepted non-native boundary:
+
+- `model_authoring`.
+
+#213 requested this abstract authoring fixture, and the issue's accepted result
+states explicitly that it is intentionally Q1/Q2-only. #559 therefore does not
+promote it to native Q3+ Verification. The ordinary unit suite now executes the
+exact fixture source and proves its parameter/component/material command
+contract.
+
+Retained outside full model Verification:
+
+- `custom-anchor` — intentional expected-rejection release fixture, blocked by
+  #81;
+- `attached-through-all` — focused regression fixture; the ordinary
+  `scpf/tests/test_sketch_attachment.py` suite now compiles the exact example
+  source and verifies its through-all direction.
+
+Retained outside full model Verification:
+
+- `plate` — pre-Qualification sample from #7, but the audit discovered that
+  current `scpf/tests/test_live.py` still executes its exact source for atomic
+  live-batch and `--connect --new` protocol behavior. #559 therefore keeps it
+  as an explicit `regression-fixture` and replaces its stale README with its
+  actual current purpose.
+
+After this reconciliation the active full model Verification catalog contains
+36 cases: the final historical 32-case baseline plus four restored historical
+native cases. `model_authoring` remains an explicit Q1/Q2-only regression
+fixture. The site and source tests discover that current set from
+the distributed local contracts; they no longer hard-code 32 as a product
+limit.
+
+The only allowed non-model exception roles are now `release-verification` and
+`regression-fixture`. A future migration candidate or unowned legacy sample
+must be resolved rather than becoming a permanent role.

@@ -1,15 +1,15 @@
 """pyBOSL2 geometry reference for an already positioned marker.
 
-Both boxes use their bottom-face datum so the translated marker occupies
-Z=15..23. Forge's as_built=True additionally records a native SolidCraft
-relationship without re-solving this visible pose.
+Both boxes use their centre datum, matching the current Forge Box default.
+Forge's as_built=True additionally records a native SolidCraft relationship
+without re-solving this visible pose.
 """
 
-from pybosl2 import Anchor, cuboid
+from pybosl2 import cuboid
 
-base = cuboid([40, 30, 10], anchor=Anchor.BOTTOM)
+base = cuboid([40, 30, 10])
 marker = (
-    cuboid([30, 10, 8], anchor=Anchor.BOTTOM)
+    cuboid([30, 10, 8])
     .rotate(90, [0, 0, 1])
     .translate([50, 20, 15])
 )

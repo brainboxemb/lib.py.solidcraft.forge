@@ -84,12 +84,14 @@ examples and model verification all consume that exact dependency artifact.
 A model does not depend on the unit-test or release-verification item. Its only
 Forge package prerequisite is `forge-package`.
 
-All 32 historical model-verification cases are declarative, active
-(`process: true`) and represented in durable `build/main` evidence. Each case
-also has four independent reference child items. The earlier five-model staged
-proof is historical; its migration lineage and the additional non-catalog
-fixtures under `examples/` are documented in
-`docs/background/example-history.md`.
+The proposed reconciled Verification catalog contains 36 declarative active
+model cases: the final 32-case historical Qualification set plus four restored
+historical cases whose replay-safety blocker was later removed. Every full
+model case has four independent reference child items.
+
+`model_authoring` remains outside native Verification by design: #213 accepted
+it explicitly as a Q1/Q2-only authoring fixture. Its full lineage and the other
+non-model fixtures are documented in `docs/background/example-history.md`.
 
 ## Verification runtime
 
