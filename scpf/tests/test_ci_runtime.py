@@ -113,7 +113,7 @@ class CiRuntimeContractTests(unittest.TestCase):
         text = WORKFLOW.read_text(encoding="utf-8")
 
         self.assertIn("types: [opened, synchronize, reopened]", text)
-        self.assertIn("branches: [main, dev_cad, dev_ci]", text)
+        self.assertIn("branches: [main, dev-cad, dev-ci]", text)
 
         self.assertIn("cad_ci_pr:", text)
         pr = text.split("  cad_ci_pr:", 1)[1].split(
@@ -136,11 +136,11 @@ class CiRuntimeContractTests(unittest.TestCase):
             pr,
         )
         self.assertIn(
-            "github.event.pull_request.head.ref == 'dev_cad'",
+            "github.event.pull_request.head.ref == 'dev-cad'",
             pr,
         )
         self.assertIn(
-            "github.event.pull_request.head.ref == 'dev_ci'",
+            "github.event.pull_request.head.ref == 'dev-ci'",
             pr,
         )
         self.assertNotIn("reusable-pr.yml", pr)
@@ -160,7 +160,7 @@ class CiRuntimeContractTests(unittest.TestCase):
         )
         self.assertIn("cancel-in-progress: true", push)
         self.assertIn("contents: write", push)
-        self.assertIn("dev_cad|dev_ci", push)
+        self.assertIn("dev-cad|dev-ci", push)
         self.assertIn("scope_exists=false", push)
         self.assertIn("full_run=true", push)
         self.assertIn("python -m cad_ci_tool build fetch", push)
@@ -172,8 +172,8 @@ class CiRuntimeContractTests(unittest.TestCase):
         self.assertIn("--scope named --scope-name", push)
         self.assertIn("--build-evidence prepared-scope", push)
         self.assertIn('--build-scope "$SCOPE"', push)
-        self.assertIn("--preserve-subtree dev_cad", push)
-        self.assertIn("--preserve-subtree dev_ci", push)
+        self.assertIn("--preserve-subtree dev-cad", push)
+        self.assertIn("--preserve-subtree dev-ci", push)
         self.assertIn('page_args=(--name "$SCOPE")', push)
         self.assertIn('--source-ref "$SOURCE_REF"', push)
         self.assertIn('--expected-source "$SOURCE_SHA"', push)
