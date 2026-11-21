@@ -27,7 +27,7 @@ dev-cad
 dev-ci
 ```
 
-All three currently point to `4c408be0f34b8bec4f694a7873313279f0e67997`.
+`main` and `dev-ci` currently point to `4c408be0f34b8bec4f694a7873313279f0e67997`; `dev-cad` is now ahead at `eb99203c273396fc1b55ff8cabdcd9415ac82536` after the first normal feature merge (#581).
 
 Normal PRs are verification-only. PR #577 proved the new review path: the
 `cad_ci_pr` job passed and the durable push/publication job was skipped.
@@ -64,12 +64,35 @@ The earlier underscore scopes/branches were temporary migration proof only.
 They are obsolete and belong to #481 / generated-state cleanup; they are not
 part of the permanent keep-set.
 
+The first normal feature-lane proof is complete:
+
+- #581 targeted `dev-cad` and changed only `docs/plan.md`;
+- PR run `44900595100` passed `cad_ci_pr` and skipped `cad_ci_push`;
+- #581 was squash-merged to `dev-cad` as
+  `eb99203c273396fc1b55ff8cabdcd9415ac82536`;
+- dev-cad push run `44900683589` completed successfully.
+
+The durable isolation proof after that push is exact:
+
+| Generated object | Before #581 push | After #581 push | Expected |
+| --- | --- | --- | --- |
+| `build/main` tree | `74b223c1e4b09a27e322cdcd9f48661ab7d399b9` | same | preserved |
+| `build/dev-ci` tree | `6438ce9f4a9bed7d674dedf9f407be7ee50d6653` | same | preserved |
+| `gh-pages/dev-ci` tree | `811a7be3ca9703a104f2f3c2c24b3a46fa8c306c` | same | preserved |
+| stable Pages provenance blob | `0c8fd545c20d7133ca398587934189e13eb4be86` | same | preserved |
+| `build/dev-cad` tree | `34444c1fecfb554eea60d5bf827255f670e7eef6` | `76ab2ec9371f711fdc25899bbba297dae55a4db0` | changed |
+| `gh-pages/dev-cad` tree | `c59779fb5455bcc96ad91e903bd194af5e36acf3` | `1095a77a29d76f42c535e8b14dc6c930b848c1ff` | changed |
+
+The temporary underscore Pages subtrees are already absent. Old underscore
+source branches/build scopes and any old `build/pr/*` state remain cleanup
+work.
+
 Two #572 proofs remain before the migration is closed:
 
-1. exercise a real short-lived feature PR into `dev-cad`, then promote
-   `dev-cad -> main` through a normal merge commit and synchronize the lanes;
-2. remove obsolete generated `build/pr/*` state through the released CAD-CI
-   cleanup surface, then perform stale source-branch cleanup under #481.
+1. promote `dev-cad -> main` through a normal merge commit, verify stable
+   publication preserves both dev scopes/previews, then synchronize both lanes;
+2. remove obsolete generated `build/pr/*` and underscore scopes where
+   supported, then perform stale source-branch cleanup under #481.
 
 The live public GitHub Pages source is still intentionally on
 `backup/gh-pages-before-f11-2026-11-20`. Issue #366 owns that separate
@@ -220,15 +243,15 @@ not a substitute for this plan.
 
 ## Immediate execution order
 
-1. [#578, now] Merge this plan through a short-lived PR into `dev-cad`.
-2. Prove the resulting `dev-cad` push is incremental and changes only
-   `build/dev-cad` + `gh-pages/dev-cad`.
-3. Open the first promotion PR `dev-cad -> main`; require full validation and
-   merge with a normal merge commit.
+1. [complete] #581 proved short-lived PR -> `dev-cad` review-only flow.
+2. [complete] The resulting `dev-cad` push changed only its own durable
+   build/Page scope.
+3. [#578/#572, now] Open the first promotion PR `dev-cad -> main`; require
+   full validation and merge with a normal merge commit.
 4. Verify the main push preserves both dev scopes/previews, then synchronize
    `dev-cad` and `dev-ci` to the resulting main head.
-5. [#572] Remove old `build/pr/*` state using released CAD-CI cleanup and
-   close the lane migration.
+5. [#572] Remove old `build/pr/*` and obsolete underscore generated state
+   where supported, then close the lane migration.
 6. [#481] Remove stale source branches against the final keep-set.
 7. Start P1 work in parallel by lane:
    - `dev-ci`: #576;
