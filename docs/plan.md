@@ -19,8 +19,8 @@ dev-cad
 dev-ci
 ```
 
-The most recent fully synchronized three-lane baseline is main merge commit
-`286923c7db25b5f77dce27e0a7c330cfb44ae3c5`. Active work may temporarily
+The current clean fully synchronized three-lane baseline is main commit
+`e0274f5422bf196e057f889ead14d2513a85bf30`. Active work may temporarily
 advance one development lane until its next promotion; use GitHub branch heads
 and durable scope manifests for live commit identity.
 
@@ -57,13 +57,9 @@ dev-cad -> promote/dev-cad -> main
 dev-ci  -> promote/dev-ci  -> main
 ```
 
-Promotion PRs run complete validation. A PR whose base is `main` is
-**squash-merged** unless its head is literally the long-lived `dev-cad` or
-`dev-ci` branch. Only those two direct long-lived-lane PRs may use a normal
-merge commit.
-
-Temporary promotion heads such as `promote/dev-cad` and `promote/dev-ci`
-are therefore squash-merged. Both long-lived lanes are then synchronized to the
+Promotion PRs run complete validation. Every PR whose base is `main` is
+**squash-merged**, including direct long-lived `dev-cad` / `dev-ci` PRs and
+temporary `promote/dev-cad` / `promote/dev-ci` PRs. Both long-lived lanes are then synchronized to the
 resulting main head. Named-lane incremental selection uses the previous durable
 `build/<lane>/build.json.source_commit`, not `github.event.before`.
 
@@ -221,17 +217,16 @@ The two long-lived development lanes are independent execution tracks.
 - Repository-wide governance that applies equally to both lanes may use a
   short-lived branch directly against `main`.
 - Governance-only PRs to `main` are squash-merged.
+- Normal merge commits are permitted only when synchronizing stable `main`
+  back into a development lane; they must never be created on `main`.
 
 ## Merge and promotion policy
 
 - Short-lived feature/fix PRs target `dev-cad` or `dev-ci` and are
   **squash-merged**.
-- Every PR whose base is `main` is **squash-merged by default**.
-- The only exception is a PR whose head is literally the long-lived
-  `dev-cad` or `dev-ci` branch. Those two direct lane-to-main PRs may use a
-  normal merge commit to preserve lane ancestry.
-- Temporary promotion heads such as `promote/dev-cad` and
-  `promote/dev-ci` are not the exception; they are squash-merged.
+- Every PR whose base is `main` is **squash-merged**, without exceptions.
+- This includes direct `dev-cad` / `dev-ci` PRs, temporary
+  `promote/dev-cad` / `promote/dev-ci` PRs and governance PRs.
 - Promotion PRs require complete processed validation.
 - After promotion, synchronize both long-lived dev lanes to the resulting main
   head. Any merge commit needed for that synchronization belongs on the dev
