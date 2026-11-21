@@ -4,6 +4,7 @@ process: true
 kind: test
 watch:
   - site/**
+  - .github/workflows/scpf.yml
   - examples/*/model.yml
   - examples/*/README.md
   - examples/*/role.yml
@@ -14,10 +15,12 @@ steps:
   - id: test_build_evidence
     inputs:
       - site/**
+      - .github/workflows/scpf.yml
     run: [python, ../../site/test_build_evidence.py]
   - id: test_example_metadata
     inputs:
       - site/**
+      - .github/workflows/scpf.yml
       - examples/*/model.yml
       - examples/*/README.md
       - examples/*/role.yml
@@ -28,6 +31,7 @@ steps:
   - id: test_site_source
     inputs:
       - site/**
+      - .github/workflows/scpf.yml
       - examples/*/model.yml
       - examples/*/README.md
       - examples/*/verification/verify.py
