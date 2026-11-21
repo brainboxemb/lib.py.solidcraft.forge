@@ -20,6 +20,7 @@ class MergePolicyWorkflowTests(unittest.TestCase):
         self.assertIn("issues: write", text)
         self.assertIn("checks: read", text)
         self.assertIn("statuses: read", text)
+        self.assertIn("actions: write", text)
         self.assertIn("contents: write", text)
 
         self.assertIn("scripts/merge_policy.py", text)
@@ -34,9 +35,14 @@ class MergePolicyWorkflowTests(unittest.TestCase):
 
         self.assertIn("DIRECT_PROMOTION", text)
         self.assertIn("CLEANUP_HEAD", text)
+        self.assertIn("INTEGRATE_BASE", text)
         self.assertIn("git/refs/heads/$HEAD_REF", text)
         self.assertIn("temporary head deleted", text)
         self.assertIn("long-lived lane recreated at merge commit", text)
+        self.assertIn("actions/workflows/scpf.yml/dispatches", text)
+        self.assertIn('-f ref="$BASE_REF"', text)
+        self.assertIn('-f ref="$HEAD_REF"', text)
+        self.assertIn("Integration dispatched: %s", text)
         self.assertIn("COMMENT_BODY", text)
         self.assertIn(
             "printf 'Merged by repository policy: `%s -> %s`",
