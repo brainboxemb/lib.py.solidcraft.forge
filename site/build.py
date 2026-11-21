@@ -713,6 +713,7 @@ def build(
             "qualification-case.html",
             slug=escape(slug),
             title=escape(info.title),
+            section=escape(section_label),
             status_line=status_line,
             solidcraft_result=escape(documentation.solidcraft_result),
             setup_diagram=setup_diagram,
