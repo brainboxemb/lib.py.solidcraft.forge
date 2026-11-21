@@ -20,7 +20,7 @@ dev-ci
 ```
 
 All three currently point to main merge commit
-`76e44c2803468fc39358c275b7c1ccab44a3a89c`.
+`286923c7db25b5f77dce27e0a7c330cfb44ae3c5`.
 
 The exact accepted generic stack remains:
 
@@ -39,7 +39,7 @@ dev-ci/
 ```
 
 Each scope is a complete 188-item baseline with
-`source_commit = 76e44c2803468fc39358c275b7c1ccab44a3a89c`.
+`source_commit = 286923c7db25b5f77dce27e0a7c330cfb44ae3c5`.
 
 Generated Pages records the matching scope at the stable root, `/dev-cad/`
 and `/dev-ci/`.
@@ -98,8 +98,9 @@ runtime/tooling simplification and operational Pages publication.
 
 Immediate order:
 
-1. #481 stale source-branch cleanup using the final keep-set;
-2. #576 cheap docs-only PR classification;
+1. #481 stale source-branch cleanup using the final keep-set — currently
+   blocked because the connected GitHub tool exposes no branch-delete action;
+2. #576 cheap docs-only PR classification — active now;
 3. make an explicit go/no-go decision for #366 live Pages cut-over;
 4. rewrite the still-useful performance goal from #261 against the current
    released CAD-CI/runtime architecture.
@@ -167,8 +168,8 @@ HUB75 uses explicit Placement today.
 
 | Issue | Lane | Workstream | Priority | Next action |
 | --- | --- | --- | --- | --- |
-| #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 now** | Delete obsolete source refs against the final keep-set. Generated build cleanup is already complete; do not claim branch deletion without a supported GitHub operation. |
-| #576 Skip expensive CAD-CI and stable-site jobs for docs-only pull requests | `dev-ci` | WS0 | **P1** | Design cheap pre-bootstrap classification without copying the generic item planner. |
+| #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 blocked** | Generated build cleanup is complete. Source-ref deletion is blocked because the connected GitHub tool exposes no delete-ref action; do not claim completion until deletion is actually supported. |
+| #576 Skip expensive CAD-CI and stable-site jobs for docs-only pull requests | `dev-ci` | WS0 | **P1 now** | Keep the existing required PR check, cheaply classify changed filenames before CAD-CI bootstrap, and skip the released action only for docs-only PRs into a dev lane. Promotion PRs to main still run complete validation. |
 | #366 Make verified output durable, then cut Pages over | `dev-ci` | WS0 | **P1 decision gate** | Durable/generated side is complete; request explicit approval before changing the live Pages source, then verify public/legacy routes. |
 | #570 Remove CADCraft from Forge verification diagrams | `dev-cad` | WS2 | **P2** | Replace the six explanatory diagram sources with deterministic Forge-owned SVG/static sources; remove its CI/runtime input only after the content path no longer needs it. |
 | #261 Reduce full qualification from minutes to seconds | `dev-ci` | WS0 | **Retire/rewrite → P2** | Original Qualification/image plan is obsolete; retain measured-performance goal and rewrite against current runtime images, batching and SCons execution. |
@@ -215,10 +216,10 @@ not a substitute for this plan.
 
 ## Immediate execution order
 
-1. [#481, now] Remove obsolete source branches against the permanent keep-set
-   when a supported GitHub branch-deletion operation is available.
-2. [#576, next dev-ci] Make docs-only PR validation cheap without copying the
-   generic CAD-CI planner into Forge.
+1. [#481, blocked] Remove obsolete source branches when a supported GitHub
+   branch-deletion operation becomes available.
+2. [#576, now dev-ci] Make docs-only PR validation cheap without copying the
+   generic CAD-CI planner into Forge; preserve full promotion validation.
 3. [dev-cad P1] Fix #357 and #356, then continue the current model blockers
    #355, #354, #567 and #568.
 4. [#574, dev-cad P1] Restore the generic structured Raw test files block on
