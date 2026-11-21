@@ -13,6 +13,7 @@ import json
 
 
 LONG_LIVED_LANES = frozenset({"dev-cad", "dev-ci"})
+DURABLE_SOURCE_REFS = frozenset({"main", *LONG_LIVED_LANES})
 PERMANENT_REFS = frozenset(
     {
         "main",
@@ -40,6 +41,7 @@ class MergePolicy:
     merge_method: str
     direct_lane_promotion: bool
     cleanup_head: bool
+    integrate_base: bool
 
 
 def is_direct_lane_promotion(*, base: str, head: str) -> bool:
@@ -66,6 +68,7 @@ def evaluate(*, base: str, head: str) -> MergePolicy:
         merge_method="merge" if promotion else "squash",
         direct_lane_promotion=promotion,
         cleanup_head=(not promotion and is_cleanup_eligible(head)),
+        integrate_base=base in DURABLE_SOURCE_REFS,
     )
 
 

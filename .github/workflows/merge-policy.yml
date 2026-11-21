@@ -18,6 +18,7 @@ jobs:
       group: merge-policy-${{ github.repository }}-${{ github.event.issue.number }}
       cancel-in-progress: false
     permissions:
+      actions: write
       contents: write
       pull-requests: write
       issues: write
@@ -112,6 +113,7 @@ jobs:
           METHOD="$(jq -r '.merge_method' <<<"$POLICY")"
           DIRECT_PROMOTION="$(jq -r '.direct_lane_promotion' <<<"$POLICY")"
           CLEANUP_HEAD="$(jq -r '.cleanup_head' <<<"$POLICY")"
+          INTEGRATE_BASE="$(jq -r '.integrate_base' <<<"$POLICY")"
 
           if [ "$DIRECT_PROMOTION" = "true" ] && [ "$HEAD_REPO" != "$REPOSITORY" ]; then
             refuse "long-lived lane promotion must originate from this repository"
@@ -123,6 +125,7 @@ jobs:
           echo "merge_method=$METHOD"
           echo "direct_lane_promotion=$DIRECT_PROMOTION"
           echo "cleanup_head=$CLEANUP_HEAD"
+          echo "integrate_base=$INTEGRATE_BASE"
 
           MERGE_JSON="$(
             gh api -X PUT \
@@ -163,9 +166,31 @@ jobs:
             fi
           fi
 
+          DISPATCHED=()
+          if [ "$INTEGRATE_BASE" = "true" ]; then
+            gh api -X POST \
+              "repos/$REPOSITORY/actions/workflows/scpf.yml/dispatches" \
+              -f ref="$BASE_REF" \
+              >/dev/null
+            DISPATCHED+=("$BASE_REF")
+          fi
+          if [ "$DIRECT_PROMOTION" = "true" ]; then
+            gh api -X POST \
+              "repos/$REPOSITORY/actions/workflows/scpf.yml/dispatches" \
+              -f ref="$HEAD_REF" \
+              >/dev/null
+            DISPATCHED+=("$HEAD_REF")
+          fi
+
+          if [ "${#DISPATCHED[@]}" -gt 0 ]; then
+            INTEGRATION_RESULT="$(IFS=', '; echo "${DISPATCHED[*]}")"
+          else
+            INTEGRATION_RESULT="none"
+          fi
+
           COMMENT_BODY="$(
-            printf 'Merged by repository policy: `%s -> %s` using **%s** at `%s`. Branch lifecycle: %s.' \
-              "$HEAD_REF" "$BASE_REF" "$METHOD" "$MERGE_SHA" "$CLEANUP_RESULT"
+            printf 'Merged by repository policy: `%s -> %s` using **%s** at `%s`. Branch lifecycle: %s. Integration dispatched: %s.' \
+              "$HEAD_REF" "$BASE_REF" "$METHOD" "$MERGE_SHA" "$CLEANUP_RESULT" "$INTEGRATION_RESULT"
           )"
           gh api -X POST \
             "repos/$REPOSITORY/issues/$PR_NUMBER/comments" \

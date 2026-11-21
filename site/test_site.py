@@ -296,6 +296,7 @@ class SiteSourceTests(unittest.TestCase):
         self.assertNotIn("actions/download-artifact", workflow)
 
         self.assertIn("branches: [main, dev-cad, dev-ci]", workflow)
+        self.assertIn("workflow_dispatch:", workflow)
         self.assertIn("types: [opened, synchronize, reopened]", workflow)
 
         pr = workflow.split("  cad_ci_pr:", 1)[1].split(
@@ -332,13 +333,17 @@ class SiteSourceTests(unittest.TestCase):
         self.assertNotIn("publish pages", pr)
 
         push = workflow.split("  cad_ci_push:", 1)[1]
+        self.assertIn(
+            "github.event_name == 'push' || github.event_name == 'workflow_dispatch'",
+            push,
+        )
         self.assertEqual(push.count("runs-on: ubuntu-latest"), 1)
         self.assertIn(
             "group: forge-push-${{ github.repository }}-${{ github.ref_name }}",
             push,
         )
         self.assertIn("cancel-in-progress: true", push)
-        self.assertIn("dev-cad|dev-ci", push)
+        self.assertIn("main|dev-cad|dev-ci", push)
         self.assertIn("scope_exists=false", push)
         self.assertIn("full_run=true", push)
         self.assertIn(
@@ -353,6 +358,9 @@ class SiteSourceTests(unittest.TestCase):
             'FETCH_HEAD:$SOURCE_SCOPE/build.json',
             push,
         )
+        self.assertNotIn("EVENT_BEFORE", push)
+        self.assertIn('SOURCE_SHA: ${{ github.sha }}', push)
+        self.assertIn('base_sha=$SOURCE_SHA', push)
         self.assertIn('"source_commit"', push)
         self.assertIn("python -c", push)
         self.assertNotIn('python - "$probe/build.json" <<', push)
