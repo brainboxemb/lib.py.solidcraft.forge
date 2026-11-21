@@ -37,11 +37,13 @@ There is no remaining parity/code repair before that switch. Until approval is
 given, #366 is blocked at the live publication boundary and no Forge-local
 workaround or alternate publication path should be introduced.
 
-While #366 is blocked, the next repository work is the closure review of #391:
-confirm that reusable CAD verification ownership is fully established in
-`lib.py.cad.verification`, that Forge contains no remaining generic
-verification implementation, and close the issue if its acceptance boundary is
-already satisfied.
+#391 is complete. Its closure review confirmed that reusable CAD verification
+mechanics are owned by `lib.py.cad.verification`; Forge retains only
+consumer/model policy, reference execution, presentation and publication
+composition.
+
+While #366 is blocked, the next repository work is #481: remove stale
+development branches after confirming none represent active work.
 
 ## Live cut-over proof
 
@@ -70,18 +72,15 @@ the live site has been switched and verified.
    Qualification redirects.
 4. [#366] Only after successful live verification decide preview/cleanup and
    backup-retention policy.
-5. [#391, now while #366 is blocked] Perform the final reusable-verification
-   ownership/closure review against `lib.py.cad.verification`.
-6. [#481, next] Remove stale development branches after confirming none
-   represent active work.
+5. [#481, now while #366 is blocked] Remove stale development branches after
+   confirming none represent active work.
 
 ## Open issue assessment — 2026-11-21
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Durable build/main, one-runner publication, page parity and legacy compatibility are complete. Only the explicitly approved live Pages-source switch, public verification and later retention/preview decisions remain. |
-| #391 Extract reusable CAD verification library from Forge | now | Architecture and consumer migration appear complete; perform a final owner-repository/Forge boundary review and close if no generic verification remains in Forge. |
-| #481 Remove stale Forge development branches | next | Many stale refs from merged, abandoned or superseded work remain; clean them after the #391 closure review and preserve only active/generated/rollback branches. |
+| #481 Remove stale Forge development branches | now | #391 is closed; clean stale refs from merged, abandoned or superseded work and preserve only active/generated/rollback branches. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by released runtime images, batching and later one-runner timing work. |
 | #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to the superseded Qualification architecture and old reuse strategy. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
@@ -101,4 +100,4 @@ the live site has been switched and verified.
 
 Immediate chain:
 
-`#366 blocked on explicit live approval -> #391 closure review -> #481 branch cleanup`.
+`#366 blocked on explicit live approval -> #481 branch cleanup`.
