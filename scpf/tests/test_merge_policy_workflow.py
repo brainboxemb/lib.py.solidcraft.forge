@@ -34,6 +34,23 @@ class MergePolicyWorkflowTests(unittest.TestCase):
         self.assertIn("temporary head deleted", text)
         self.assertIn("long-lived lane recreated at merge commit", text)
 
+    def test_cleanup_command_is_owner_only_and_keeps_unmerged_branches(self):
+        text = WORKFLOW.read_text(encoding="utf-8")
+
+        self.assertIn("github.event.comment.body == '/cleanup-branches'", text)
+        self.assertIn("github.actor == github.repository_owner", text)
+        self.assertIn("github.event.issue.number == 481", text)
+        self.assertIn("gh pr list", text)
+        self.assertIn("--state open", text)
+        self.assertIn("scripts/merge_policy.py", text)
+        self.assertIn("--base __cleanup__", text)
+        self.assertIn("compare/$encoded...$target", text)
+        self.assertIn('"ahead"', text)
+        self.assertIn('"identical"', text)
+        self.assertIn("Kept because an open PR still uses the branch", text)
+        self.assertIn("Kept because unique/unmerged commits remain", text)
+        self.assertIn("git/refs/heads/$source_branch", text)
+
     def test_workflow_does_not_duplicate_branch_policy_literals(self):
         text = WORKFLOW.read_text(encoding="utf-8")
 
