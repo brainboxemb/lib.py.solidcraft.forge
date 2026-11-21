@@ -1,0 +1,195 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "8b65f03e6e47c2e9c2143f293dd521321da89e0883279bd13ca2cfc6abb8bb6d",
+  "variables": {
+    "$base": 2,
+    "$companion": 5,
+    "$marker": 8
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "base_width",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "base_height",
+        "expression": "20",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "Base",
+        "grounded": true
+      },
+      "bindings": {
+        "$base": 2
+      }
+    },
+    {
+      "index": 3,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": "base_width",
+        "width": 30.0,
+        "height": "base_height",
+        "corner": [
+          "-base_width / 2",
+          -15.0,
+          0
+        ],
+        "body_name": "Base"
+      }
+    },
+    {
+      "index": 4,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 5,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "Companion",
+        "grounded": false
+      },
+      "bindings": {
+        "$companion": 5
+      }
+    },
+    {
+      "index": 6,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 10.0,
+        "width": 10.0,
+        "height": 10.0,
+        "operation": "new",
+        "center": [
+          70.0,
+          0.0,
+          5.0
+        ],
+        "body_name": "Companion"
+      }
+    },
+    {
+      "index": 7,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 8,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "Marker",
+        "grounded": false
+      },
+      "bindings": {
+        "$marker": 8
+      }
+    },
+    {
+      "index": 9,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 10,
+        "width": 10,
+        "height": 10,
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "body_name": "Marker"
+      }
+    },
+    {
+      "index": 10,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 11,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 8,
+        "translate": [
+          "((-(base_width / 2)) + (base_width)) - 5 mm",
+          -20.0,
+          "base_height - 5 mm"
+        ]
+      }
+    },
+    {
+      "index": 12,
+      "command": "joint.create",
+      "resolved_params": {
+        "type": "rigid",
+        "name": "Attach Marker to base",
+        "a": {
+          "edge": [
+            20.0,
+            -15.0,
+            10.0
+          ],
+          "on": [
+            0.0,
+            -15.0,
+            10.0
+          ],
+          "corner": [
+            20.0,
+            -15.0,
+            20.0
+          ],
+          "occurrence": 2
+        },
+        "b": {
+          "point": [
+            20.0,
+            -15.0,
+            20.0
+          ],
+          "z": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "x": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "occurrence": 8
+        }
+      }
+    },
+    {
+      "index": 13,
+      "command": "browser.visibility",
+      "resolved_params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ],
+  "completed": 14
+}

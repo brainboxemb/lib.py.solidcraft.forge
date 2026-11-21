@@ -1,0 +1,38 @@
+{
+  "geometry": {
+    "bounds": {
+      "actual_max": [
+        60.0,
+        40.0,
+        26.0
+      ],
+      "actual_min": [
+        -60.0,
+        -40.0,
+        0.0
+      ],
+      "expected_max": [
+        60.0,
+        40.0,
+        26.0
+      ],
+      "expected_min": [
+        -60.0,
+        -40.0,
+        0.0
+      ],
+      "max_delta_mm": 0.0,
+      "pass": true,
+      "tolerance_mm": 0.5
+    }
+  },
+  "implementation": "build123d",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
+  "source": "examples/parent-derived-child-size/build123d/model.py",
+  "status": "pass",
+  "stl": "parent-derived-child-size/build123d/model.stl"
+}

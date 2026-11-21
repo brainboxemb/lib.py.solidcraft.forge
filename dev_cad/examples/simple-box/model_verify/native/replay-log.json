@@ -1,0 +1,51 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "34db420c4b5f735d6c5c08b05bdf8da0d782b0b02c0ca7ed4c9565d2a52f086a",
+  "variables": {},
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "length",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "width",
+        "expression": "30",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "height",
+        "expression": "10",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 3,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": "length",
+        "width": "width",
+        "height": "height",
+        "corner": [
+          "-length / 2",
+          "-width / 2",
+          0
+        ],
+        "body_name": "SimpleBox"
+      }
+    }
+  ],
+  "completed": 4
+}

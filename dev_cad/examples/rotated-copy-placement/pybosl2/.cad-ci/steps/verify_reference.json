@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "6b60056f1878dbee6f5e99ef85158537dc250c953c2d38dfcbf05e48f6e035ed",
+  "duration_seconds": 0.578,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:29:54.241Z",
+  "item": "examples-rotated-copy-placement-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "36e9ce2dc7bbd90cd00e1472fba7197c8dc47bd10c6f7406f63b1a3dbb8e78de"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:30:17.863Z",
+  "run_started_at": "2026-11-21T11:24:43.854Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:29:54.182Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "46eecca0df047bacb7672cd103390b189af5fc8c6ab4c6210cc11f2e508f0906",
+  "timeout_seconds": null
+}

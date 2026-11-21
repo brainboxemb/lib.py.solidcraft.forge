@@ -1,0 +1,37 @@
+{
+  "commands": [
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 5,
+        "translate": [
+          50,
+          20,
+          15
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "90 deg"
+      }
+    },
+    {
+      "command": "joint.as_built",
+      "params": {
+        "type": "rigid",
+        "name": "Attach Marker to Base",
+        "a": 2,
+        "b": 5
+      }
+    },
+    {
+      "command": "browser.visibility",
+      "params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ]
+}

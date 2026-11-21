@@ -1,0 +1,128 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "width",
+        "expression": "120",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "depth",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "thickness",
+        "expression": "12",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "width",
+        "width": "depth",
+        "height": "thickness",
+        "corner": [
+          "-width / 2",
+          "-depth / 2",
+          0
+        ],
+        "body_name": "HoleFamily"
+      }
+    },
+    {
+      "command": "solid.hole",
+      "params": {
+        "position": [
+          -45,
+          0,
+          "thickness"
+        ],
+        "targets": [
+          "HoleFamily"
+        ],
+        "diameter": 6,
+        "direction": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      }
+    },
+    {
+      "command": "solid.hole",
+      "params": {
+        "position": [
+          -15,
+          0,
+          "thickness"
+        ],
+        "targets": [
+          "HoleFamily"
+        ],
+        "diameter": 6,
+        "direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "type": "counterbore",
+        "cb_diameter": 12,
+        "cb_depth": 4
+      }
+    },
+    {
+      "command": "solid.hole",
+      "params": {
+        "position": [
+          15,
+          0,
+          "thickness"
+        ],
+        "targets": [
+          "HoleFamily"
+        ],
+        "diameter": 6,
+        "direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "type": "countersink",
+        "cs_diameter": 12,
+        "cs_angle": 90
+      }
+    },
+    {
+      "command": "solid.hole",
+      "params": {
+        "position": [
+          45,
+          0,
+          "thickness"
+        ],
+        "targets": [
+          "HoleFamily"
+        ],
+        "diameter": 5,
+        "direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "thread": "M6",
+        "thread_depth": 10,
+        "modeled": true,
+        "ease_out": "short"
+      }
+    }
+  ]
+}

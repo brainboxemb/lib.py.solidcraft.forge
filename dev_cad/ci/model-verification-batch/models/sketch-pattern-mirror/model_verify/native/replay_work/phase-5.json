@@ -1,0 +1,34 @@
+{
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": {
+          "face": [
+            88.76181998219417,
+            21.059427232647987,
+            5.0
+          ],
+          "body": "SketchPatternMirror",
+          "index": 0
+        },
+        "project_edges": false,
+        "name": "Clamp slots"
+      }
+    },
+    {
+      "command": "sketch.slot.center_to_center",
+      "params": {
+        "p0": [
+          20.0,
+          20.0
+        ],
+        "p1": [
+          40.0,
+          20.0
+        ],
+        "width": 8.0
+      }
+    }
+  ]
+}

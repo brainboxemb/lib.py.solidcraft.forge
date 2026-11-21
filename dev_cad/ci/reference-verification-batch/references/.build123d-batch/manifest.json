@@ -1,0 +1,185 @@
+{
+  "cases": [
+    {
+      "slug": "anchor-topology-mutation",
+      "source": "/workspace/examples/anchor-topology-mutation/build123d/model.py",
+      "target": "/output/references/anchor-topology-mutation/build123d/model.stl"
+    },
+    {
+      "slug": "anchored-holes",
+      "source": "/workspace/examples/anchored-holes/build123d/model.py",
+      "target": "/output/references/anchored-holes/build123d/model.stl"
+    },
+    {
+      "slug": "as-built-attach",
+      "source": "/workspace/examples/as-built-attach/build123d/model.py",
+      "target": "/output/references/as-built-attach/build123d/model.stl"
+    },
+    {
+      "slug": "assembly-decorator",
+      "source": "/workspace/examples/assembly-decorator/build123d/model.py",
+      "target": "/output/references/assembly-decorator/build123d/model.stl"
+    },
+    {
+      "slug": "assembly-owned-anchor",
+      "source": "/workspace/examples/assembly-owned-anchor/build123d/model.py",
+      "target": "/output/references/assembly-owned-anchor/build123d/model.stl"
+    },
+    {
+      "slug": "attach-angle",
+      "source": "/workspace/examples/attach-angle/build123d/model.py",
+      "target": "/output/references/attach-angle/build123d/model.stl"
+    },
+    {
+      "slug": "bracket",
+      "source": "/workspace/examples/bracket/build123d/model.py",
+      "target": "/output/references/bracket/build123d/model.stl"
+    },
+    {
+      "slug": "circle-negative-extrude",
+      "source": "/workspace/examples/circle-negative-extrude/build123d/model.py",
+      "target": "/output/references/circle-negative-extrude/build123d/model.stl"
+    },
+    {
+      "slug": "circular-feature-pattern",
+      "source": "/workspace/examples/circular-feature-pattern/build123d/model.py",
+      "target": "/output/references/circular-feature-pattern/build123d/model.stl"
+    },
+    {
+      "slug": "components",
+      "source": "/workspace/examples/components/build123d/model.py",
+      "target": "/output/references/components/build123d/model.stl"
+    },
+    {
+      "slug": "corner-anchor",
+      "source": "/workspace/examples/corner-anchor/build123d/model.py",
+      "target": "/output/references/corner-anchor/build123d/model.stl"
+    },
+    {
+      "slug": "eight-corner-brackets",
+      "source": "/workspace/examples/eight-corner-brackets/build123d/model.py",
+      "target": "/output/references/eight-corner-brackets/build123d/model.stl"
+    },
+    {
+      "slug": "eight-flightcase-corners",
+      "source": "/workspace/examples/eight-flightcase-corners/build123d/model.py",
+      "target": "/output/references/eight-flightcase-corners/build123d/model.stl"
+    },
+    {
+      "slug": "four-corner-l",
+      "source": "/workspace/examples/four-corner-l/build123d/model.py",
+      "target": "/output/references/four-corner-l/build123d/model.stl"
+    },
+    {
+      "slug": "group-hierarchy",
+      "source": "/workspace/examples/group-hierarchy/build123d/model.py",
+      "target": "/output/references/group-hierarchy/build123d/model.stl"
+    },
+    {
+      "slug": "hole-family",
+      "source": "/workspace/examples/hole-family/build123d/model.py",
+      "target": "/output/references/hole-family/build123d/model.stl"
+    },
+    {
+      "slug": "parameter-scope",
+      "source": "/workspace/examples/parameter-scope/build123d/model.py",
+      "target": "/output/references/parameter-scope/build123d/model.stl"
+    },
+    {
+      "slug": "parametric-anchor",
+      "source": "/workspace/examples/parametric-anchor/build123d/model.py",
+      "target": "/output/references/parametric-anchor/build123d/model.stl"
+    },
+    {
+      "slug": "parametric-attach",
+      "source": "/workspace/examples/parametric-attach/build123d/model.py",
+      "target": "/output/references/parametric-attach/build123d/model.stl"
+    },
+    {
+      "slug": "parametric-move",
+      "source": "/workspace/examples/parametric-move/build123d/model.py",
+      "target": "/output/references/parametric-move/build123d/model.stl"
+    },
+    {
+      "slug": "parametric-offset",
+      "source": "/workspace/examples/parametric-offset/build123d/model.py",
+      "target": "/output/references/parametric-offset/build123d/model.stl"
+    },
+    {
+      "slug": "parametric-placement-pair",
+      "source": "/workspace/examples/parametric-placement-pair/build123d/model.py",
+      "target": "/output/references/parametric-placement-pair/build123d/model.stl"
+    },
+    {
+      "slug": "parent-derived-child-size",
+      "source": "/workspace/examples/parent-derived-child-size/build123d/model.py",
+      "target": "/output/references/parent-derived-child-size/build123d/model.stl"
+    },
+    {
+      "slug": "primitive-csg",
+      "source": "/workspace/examples/primitive-csg/build123d/model.py",
+      "target": "/output/references/primitive-csg/build123d/model.stl"
+    },
+    {
+      "slug": "rectangular-pattern",
+      "source": "/workspace/examples/rectangular-pattern/build123d/model.py",
+      "target": "/output/references/rectangular-pattern/build123d/model.stl"
+    },
+    {
+      "slug": "repeated-parent-attachments",
+      "source": "/workspace/examples/repeated-parent-attachments/build123d/model.py",
+      "target": "/output/references/repeated-parent-attachments/build123d/model.stl"
+    },
+    {
+      "slug": "rotated-copy-placement",
+      "source": "/workspace/examples/rotated-copy-placement/build123d/model.py",
+      "target": "/output/references/rotated-copy-placement/build123d/model.stl"
+    },
+    {
+      "slug": "round-top-sketch",
+      "source": "/workspace/examples/round-top-sketch/build123d/model.py",
+      "target": "/output/references/round-top-sketch/build123d/model.stl"
+    },
+    {
+      "slug": "rounded-rectangle-sketch",
+      "source": "/workspace/examples/rounded-rectangle-sketch/build123d/model.py",
+      "target": "/output/references/rounded-rectangle-sketch/build123d/model.stl"
+    },
+    {
+      "slug": "selective-profile-extrude",
+      "source": "/workspace/examples/selective-profile-extrude/build123d/model.py",
+      "target": "/output/references/selective-profile-extrude/build123d/model.stl"
+    },
+    {
+      "slug": "sheet-fold",
+      "source": "/workspace/examples/sheet-fold/build123d/model.py",
+      "target": "/output/references/sheet-fold/build123d/model.stl"
+    },
+    {
+      "slug": "simple-box",
+      "source": "/workspace/examples/simple-box/build123d/model.py",
+      "target": "/output/references/simple-box/build123d/model.stl"
+    },
+    {
+      "slug": "sketch-pattern-mirror",
+      "source": "/workspace/examples/sketch-pattern-mirror/build123d/model.py",
+      "target": "/output/references/sketch-pattern-mirror/build123d/model.stl"
+    },
+    {
+      "slug": "slot-family",
+      "source": "/workspace/examples/slot-family/build123d/model.py",
+      "target": "/output/references/slot-family/build123d/model.stl"
+    },
+    {
+      "slug": "top-sketch-after-chamfer",
+      "source": "/workspace/examples/top-sketch-after-chamfer/build123d/model.py",
+      "target": "/output/references/top-sketch-after-chamfer/build123d/model.stl"
+    },
+    {
+      "slug": "xz-anchor",
+      "source": "/workspace/examples/xz-anchor/build123d/model.py",
+      "target": "/output/references/xz-anchor/build123d/model.stl"
+    }
+  ],
+  "schema": 1
+}

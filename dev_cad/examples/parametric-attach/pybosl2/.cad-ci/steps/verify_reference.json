@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "cc46f5aed7ce7d5e87427448d072ee9dcab59104374719a7f581d292a2337aa8",
+  "duration_seconds": 0.582,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:29:35.222Z",
+  "item": "examples-parametric-attach-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "499b7c19a8431670f8ee2454c016e6aaec6978f3610621e80b7d3fd8cc0299f0"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:30:17.863Z",
+  "run_started_at": "2026-11-21T11:24:43.854Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:29:35.160Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "979accfb0cbab5ecf26b6c39e8d9b77c96d9b6a7936b716fe92d36eaa1f2db2b",
+  "timeout_seconds": null
+}

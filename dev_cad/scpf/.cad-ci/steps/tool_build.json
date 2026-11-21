@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "4177cbe5208350c5eca664548531325573cf625bb41a4930b87163e491c8a0d0",
+  "duration_seconds": 2.96,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:25:12.988Z",
+  "item": "forge-package",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "dist": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "dcaa31cd7b8013843fa1798674c825dbff071058b00c4cded3d484532a16f23e"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:30:17.863Z",
+  "run_started_at": "2026-11-21T11:24:43.854Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:25:10.028Z",
+  "status": "pass",
+  "step": "tool_build",
+  "target_spec_digest": "3e14a8357e93c756489e638ba958390ff521738fccfbca7d395863328694e1c2",
+  "timeout_seconds": null
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "5720c5c42111a36d2c1bf7cea65f392407cd37a4e1a6157a64d4da288766d483",
+  "duration_seconds": 0.657,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:29:16.819Z",
+  "item": "examples-corner-anchor-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "cabf3f0c9de51f30e7dde356f897cb4a28e1727470edddacd0781b96c2d28bc5"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:30:17.863Z",
+  "run_started_at": "2026-11-21T11:24:43.854Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:29:16.759Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "389a9d1d3f4923f2354ebd51bf72e5184b8d119a208a289fb8f01148bccda2ce",
+  "timeout_seconds": null
+}

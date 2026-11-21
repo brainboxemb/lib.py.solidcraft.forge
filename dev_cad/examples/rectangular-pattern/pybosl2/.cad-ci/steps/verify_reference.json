@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "fe85589a05a08d695fb4033aed02411a5e5ee954d088fe6fea3a256fb72f7012",
+  "duration_seconds": 0.593,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:29:49.459Z",
+  "item": "examples-rectangular-pattern-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "e221e99ed25e9a957040f44b39932db2c8aee3ca478b5300546514cfa99db49f"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:30:17.863Z",
+  "run_started_at": "2026-11-21T11:24:43.854Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:29:49.400Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "27623d185d637ba8517e55ac55f2181d516a0d53fa452682b95a15dd393794be",
+  "timeout_seconds": null
+}

@@ -1,0 +1,286 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 2800.0,
+      "bbox": {
+        "max": [
+          20.0,
+          10.0,
+          10.0
+        ],
+        "min": [
+          -20.0,
+          -10.0,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        -2.842170943040401e-16,
+        1.4210854715202004e-16,
+        5.0
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 12,
+      "face_types": {
+        "plane": 6
+      },
+      "faces": 6,
+      "kernel": {
+        "edges": 12,
+        "faces": 6,
+        "shells": 1,
+        "vertices": 8
+      },
+      "mass_g": 10.32,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "Panel",
+      "notes": [],
+      "vertices": 8,
+      "volume_mm3": 8000.0
+    },
+    {
+      "area_mm2": 4000.0,
+      "bbox": {
+        "max": [
+          130.0,
+          10.0,
+          10.0
+        ],
+        "min": [
+          70.0,
+          -10.0,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        100.0,
+        1.4210854715202004e-16,
+        5.0
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 12,
+      "face_types": {
+        "plane": 6
+      },
+      "faces": 6,
+      "kernel": {
+        "edges": 12,
+        "faces": 6,
+        "shells": 1,
+        "vertices": 8
+      },
+      "mass_g": 15.48,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "Panel_2",
+      "notes": [],
+      "vertices": 8,
+      "volume_mm3": 12000.0
+    },
+    {
+      "area_mm2": 5200.0,
+      "bbox": {
+        "max": [
+          260.0,
+          10.0,
+          10.0
+        ],
+        "min": [
+          180.0,
+          -10.0,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        220.0,
+        1.4210854715202004e-16,
+        5.0
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 12,
+      "face_types": {
+        "plane": 6
+      },
+      "faces": 6,
+      "kernel": {
+        "edges": 12,
+        "faces": 6,
+        "shells": 1,
+        "vertices": 8
+      },
+      "mass_g": 20.64,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "Panel_3",
+      "notes": [],
+      "vertices": 8,
+      "volume_mm3": 16000.0
+    },
+    {
+      "area_mm2": 5200.0,
+      "bbox": {
+        "max": [
+          380.0,
+          10.0,
+          10.0
+        ],
+        "min": [
+          300.0,
+          -10.0,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        340.0,
+        1.4210854715202004e-16,
+        5.0
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 12,
+      "face_types": {
+        "plane": 6
+      },
+      "faces": 6,
+      "kernel": {
+        "edges": 12,
+        "faces": 6,
+        "shells": 1,
+        "vertices": 8
+      },
+      "mass_g": 20.64,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "Panel_3 (Panel 3:2)",
+      "notes": [],
+      "vertices": 8,
+      "volume_mm3": 16000.0
+    },
+    {
+      "area_mm2": 2800.0,
+      "bbox": {
+        "max": [
+          480.0,
+          10.0,
+          10.0
+        ],
+        "min": [
+          440.0,
+          -10.0,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        460.0,
+        1.4210854715202004e-16,
+        5.0
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 12,
+      "face_types": {
+        "plane": 6
+      },
+      "faces": 6,
+      "kernel": {
+        "edges": 12,
+        "faces": 6,
+        "shells": 1,
+        "vertices": 8
+      },
+      "mass_g": 10.32,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "Panel_4",
+      "notes": [],
+      "vertices": 8,
+      "volume_mm3": 8000.0
+    }
+  ],
+  "body_count": 5,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "40",
+      "model": false,
+      "name": "d1_Panel_width",
+      "unit": "mm",
+      "value": 40.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "60",
+      "model": false,
+      "name": "d2_Panel_2_width",
+      "unit": "mm",
+      "value": 60.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "80",
+      "model": false,
+      "name": "shared_width",
+      "unit": "mm",
+      "value": 80.0
+    }
+  ],
+  "sketches": [],
+  "timeline": [
+    {
+      "error": null,
+      "id": 3,
+      "ms": 2.4941500000000003,
+      "name": "Box1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 6,
+      "ms": 1.529357,
+      "name": "Box2",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 9,
+      "ms": 2.27472,
+      "name": "Box3",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 13,
+      "ms": 2.2988750000000002,
+      "name": "Box4",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 20000.0,
+    "edges": 60,
+    "faces": 30,
+    "mass_g": 77.4,
+    "open_bodies_skipped": 0,
+    "vertices": 40,
+    "volume_mm3": 60000.0
+  }
+}
