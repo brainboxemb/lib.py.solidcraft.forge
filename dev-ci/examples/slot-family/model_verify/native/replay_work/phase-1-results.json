@@ -1,0 +1,165 @@
+[
+  {
+    "display_value": 160.0,
+    "name": "width",
+    "unit": "mm",
+    "value": 160.0
+  },
+  {
+    "display_value": 120.0,
+    "name": "depth",
+    "unit": "mm",
+    "value": 120.0
+  },
+  {
+    "display_value": 5.0,
+    "name": "thickness",
+    "unit": "mm",
+    "value": 5.0
+  },
+  {
+    "bodies": [
+      "SlotFamily"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "SlotFamily"
+    ],
+    "feature": 1,
+    "ms": 2.274017,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "body": "SlotFamily",
+    "faces": [
+      {
+        "area": 19200.0,
+        "centroid": [
+          0.0,
+          0.0,
+          5.0
+        ],
+        "exact": true,
+        "index": 0,
+        "name": "F1:+z",
+        "plane_normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "point": [
+          -40.0,
+          -20.0,
+          5.0
+        ]
+      },
+      {
+        "area": 800.0,
+        "centroid": [
+          0.0,
+          60.0,
+          2.5000000000000004
+        ],
+        "exact": true,
+        "index": 1,
+        "name": "F1:+y",
+        "plane_normal": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "point": [
+          77.5390529679106,
+          60.0,
+          2.4609470320893916
+        ]
+      },
+      {
+        "area": 600.0,
+        "centroid": [
+          -80.0,
+          0.0,
+          2.5
+        ],
+        "exact": true,
+        "index": 2,
+        "name": "F1:-x",
+        "plane_normal": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          -80.0,
+          57.55206074732156,
+          2.4479392526784305
+        ]
+      },
+      {
+        "area": 800.0,
+        "centroid": [
+          0.0,
+          -60.0,
+          2.5000000000000004
+        ],
+        "exact": true,
+        "index": 3,
+        "name": "F1:-y",
+        "plane_normal": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "point": [
+          -77.5390529679106,
+          -60.0,
+          2.4609470320893916
+        ]
+      },
+      {
+        "area": 600.0,
+        "centroid": [
+          80.0,
+          0.0,
+          2.5
+        ],
+        "exact": true,
+        "index": 4,
+        "name": "F1:+x",
+        "plane_normal": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          80.0,
+          -57.55206074732156,
+          2.4479392526784305
+        ]
+      },
+      {
+        "area": 19200.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "exact": true,
+        "index": 5,
+        "name": "F1:-z",
+        "plane_normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "point": [
+          -40.0,
+          -20.0,
+          0.0
+        ]
+      }
+    ]
+  }
+]

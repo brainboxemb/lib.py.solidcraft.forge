@@ -1,0 +1,110 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "2ac772d9b1f2749720a73deb9e6c6b85f381e98bb319cdf4d0c2065396e9bb44",
+          "size": 1952
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_groups": [
+          {
+            "body_envelopes": {
+              "actual_count": 2,
+              "expected_count": 2,
+              "kind": "body_envelopes",
+              "matched_pairs": [
+                {
+                  "actual": {
+                    "label": "Block",
+                    "max": [
+                      20.0,
+                      15.0,
+                      10.0
+                    ],
+                    "min": [
+                      -20.0,
+                      -15.0,
+                      0.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      20.0,
+                      15.0,
+                      10.0
+                    ],
+                    "min": [
+                      -20.0,
+                      -15.0,
+                      0.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "Block (Block:2)",
+                    "max": [
+                      60.0,
+                      15.0,
+                      10.0
+                    ],
+                    "min": [
+                      20.0,
+                      -15.0,
+                      0.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      60.0,
+                      15.0,
+                      10.0
+                    ],
+                    "min": [
+                      20.0,
+                      -15.0,
+                      0.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                }
+              ],
+              "pass": true,
+              "tolerance": 0.001,
+              "unmatched_actual": [],
+              "unmatched_expected": []
+            },
+            "count": {
+              "actual": 2,
+              "expected": 2,
+              "label": "Block body group count",
+              "pass": true
+            },
+            "matched_names": [
+              "Block",
+              "Block (Block:2)"
+            ],
+            "name_prefix": "Block"
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/components/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "components"
+}

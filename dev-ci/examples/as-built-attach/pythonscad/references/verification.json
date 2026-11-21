@@ -1,0 +1,63 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                55.0,
+                35.0,
+                19.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                -5.0
+              ],
+              "expected_max": [
+                55.0,
+                35.0,
+                19.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 14400.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 14400.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/as-built-attach/pythonscad/model.py",
+          "status": "pass",
+          "stl": "as-built-attach/pythonscad/model.stl"
+        }
+      ],
+      "model": "as-built-attach",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "4c408be0f34b8bec4f694a7873313279f0e67997",
+  "status": "pass"
+}

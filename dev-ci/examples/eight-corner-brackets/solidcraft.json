@@ -1,0 +1,351 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "frame_width",
+        "expression": "120",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "frame_depth",
+        "expression": "80",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "frame_height",
+        "expression": "60",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "FrameBlock",
+        "grounded": true
+      },
+      "bind": {
+        "$frameblock": "occurrence"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "frame_width",
+        "width": "frame_depth",
+        "height": "frame_height",
+        "corner": [
+          "-frame_width / 2",
+          "-frame_depth / 2",
+          0
+        ],
+        "body_name": "FrameBlock"
+      }
+    },
+    {
+      "command": "solid.fillet",
+      "params": {
+        "edges": [
+          [
+            -60.0,
+            -40.0,
+            30.0
+          ],
+          [
+            60.0,
+            -40.0,
+            30.0
+          ],
+          [
+            60.0,
+            40.0,
+            30.0
+          ],
+          [
+            -60.0,
+            40.0,
+            30.0
+          ]
+        ],
+        "radius": 8,
+        "body": "FrameBlock"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "LProfile",
+        "grounded": false
+      },
+      "bind": {
+        "$lprofile_occurrence_1": "occurrence"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "Profile"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            0,
+            0
+          ],
+          [
+            28.0,
+            0
+          ],
+          [
+            28.0,
+            -4.0
+          ],
+          [
+            -4.0,
+            -4.0
+          ],
+          [
+            -4.0,
+            28.0
+          ],
+          [
+            0,
+            28.0
+          ]
+        ],
+        "closed": true,
+        "ids": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f"
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": 16.0,
+        "direction": "positive",
+        "body_name": "LProfile"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "LProfile"
+      },
+      "bind": {
+        "$lprofile_occurrence_2": "occurrence"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "LProfile"
+      },
+      "bind": {
+        "$lprofile_occurrence_3": "occurrence"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "LProfile"
+      },
+      "bind": {
+        "$lprofile_occurrence_4": "occurrence"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "LProfile"
+      },
+      "bind": {
+        "$lprofile_occurrence_5": "occurrence"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "LProfile"
+      },
+      "bind": {
+        "$lprofile_occurrence_6": "occurrence"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "LProfile"
+      },
+      "bind": {
+        "$lprofile_occurrence_7": "occurrence"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "LProfile"
+      },
+      "bind": {
+        "$lprofile_occurrence_8": "occurrence"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$lprofile_occurrence_1",
+        "translate": [
+          "-(frame_width / 2)",
+          "-(frame_depth / 2)",
+          0
+        ]
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$lprofile_occurrence_2",
+        "translate": [
+          "-(frame_width / 2)",
+          "-(frame_depth / 2)",
+          "frame_height - 16 mm"
+        ]
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$lprofile_occurrence_3",
+        "translate": [
+          "frame_width / 2",
+          "-(frame_depth / 2)",
+          0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "90 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$lprofile_occurrence_4",
+        "translate": [
+          "frame_width / 2",
+          "-(frame_depth / 2)",
+          "frame_height - 16 mm"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "90 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$lprofile_occurrence_5",
+        "translate": [
+          "frame_width / 2",
+          "frame_depth / 2",
+          0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "180 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$lprofile_occurrence_6",
+        "translate": [
+          "frame_width / 2",
+          "frame_depth / 2",
+          "frame_height - 16 mm"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "180 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$lprofile_occurrence_7",
+        "translate": [
+          "-(frame_width / 2)",
+          "frame_depth / 2",
+          0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "270 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$lprofile_occurrence_8",
+        "translate": [
+          "-(frame_width / 2)",
+          "frame_depth / 2",
+          "frame_height - 16 mm"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "270 deg"
+      }
+    }
+  ]
+}

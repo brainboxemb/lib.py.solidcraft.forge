@@ -1,0 +1,43 @@
+{
+  "geometry": {
+    "bounds": {
+      "actual_max": [
+        20.0,
+        15.0,
+        10.0
+      ],
+      "actual_min": [
+        -20.0,
+        -15.0,
+        0.0
+      ],
+      "expected_max": [
+        20.0,
+        15.0,
+        10.0
+      ],
+      "expected_min": [
+        -20.0,
+        -15.0,
+        0.0
+      ],
+      "max_delta_mm": 0.0,
+      "pass": true,
+      "tolerance_mm": 0.25
+    },
+    "watertight": {
+      "actual": true,
+      "expected": true,
+      "pass": true
+    }
+  },
+  "implementation": "build123d",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
+  "source": "examples/simple-box/build123d/model.py",
+  "status": "pass",
+  "stl": "simple-box/build123d/model.stl"
+}

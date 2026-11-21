@@ -1,0 +1,181 @@
+{
+  "baseline_provenance": {
+    "approval": "approved",
+    "historical_manifest_solidcraft_version": "0.30.1",
+    "review_source_commit": "5a8c5253db8c75200af286078f59e9699a85d142",
+    "source_commit": "8acad149cdaaef729c2cd6f6929b9c73bf785ec8",
+    "verified_during_solidcraft_0_42_0_qualification": true
+  },
+  "schema": "forge-visual-verification",
+  "schema_version": 1,
+  "semantic": {
+    "checks": [
+      {
+        "evidence": {
+          "baseline": "baselines/front.png",
+          "camera": "visual/front/camera.json",
+          "evidence": {
+            "actual_image": "visual/front/actual.png",
+            "baseline_status": "pass",
+            "diff_image": "visual/front/diff.png",
+            "expected_shape_status": "pass",
+            "goal_image": "visual/front/goal.png",
+            "overlay_image": "visual/front/overlay.png",
+            "regression": {
+              "changed_pixel_fraction": 0.0,
+              "changed_pixel_threshold": 12,
+              "max_changed_fraction": 0.08,
+              "max_mean_difference": 6.0,
+              "mean_absolute_difference": 0.000289,
+              "pass": true
+            }
+          },
+          "expected_shape_required": true,
+          "regression_required": true,
+          "status": "pass",
+          "view": "front"
+        },
+        "name": "front",
+        "reason": null,
+        "required": true,
+        "status": "pass"
+      },
+      {
+        "evidence": {
+          "baseline": "baselines/right.png",
+          "camera": "visual/right/camera.json",
+          "evidence": {
+            "actual_image": "visual/right/actual.png",
+            "baseline_status": "pass",
+            "diff_image": "visual/right/diff.png",
+            "expected_shape_status": "pass",
+            "goal_image": "visual/right/goal.png",
+            "overlay_image": "visual/right/overlay.png",
+            "regression": {
+              "changed_pixel_fraction": 0.0,
+              "changed_pixel_threshold": 12,
+              "max_changed_fraction": 0.08,
+              "max_mean_difference": 6.0,
+              "mean_absolute_difference": 0.0,
+              "pass": true
+            }
+          },
+          "expected_shape_required": true,
+          "regression_required": true,
+          "status": "pass",
+          "view": "right"
+        },
+        "name": "right",
+        "reason": null,
+        "required": true,
+        "status": "pass"
+      },
+      {
+        "evidence": {
+          "baseline": "baselines/iso.png",
+          "camera": "visual/iso/camera.json",
+          "evidence": {
+            "actual_image": "visual/iso/actual.png",
+            "baseline_status": "pass",
+            "diff_image": "visual/iso/diff.png",
+            "expected_shape_status": "pass",
+            "goal_image": "visual/iso/goal.png",
+            "overlay_image": "visual/iso/overlay.png",
+            "regression": {
+              "changed_pixel_fraction": 0.0,
+              "changed_pixel_threshold": 12,
+              "max_changed_fraction": 0.08,
+              "max_mean_difference": 6.0,
+              "mean_absolute_difference": 0.001881,
+              "pass": true
+            }
+          },
+          "expected_shape_required": true,
+          "regression_required": true,
+          "status": "pass",
+          "view": "iso"
+        },
+        "name": "iso",
+        "reason": null,
+        "required": true,
+        "status": "pass"
+      }
+    ],
+    "status": "pass"
+  },
+  "status": "pass",
+  "views": [
+    {
+      "baseline": "baselines/front.png",
+      "camera": "visual/front/camera.json",
+      "evidence": {
+        "actual_image": "visual/front/actual.png",
+        "baseline_status": "pass",
+        "diff_image": "visual/front/diff.png",
+        "expected_shape_status": "pass",
+        "goal_image": "visual/front/goal.png",
+        "overlay_image": "visual/front/overlay.png",
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.000289,
+          "pass": true
+        }
+      },
+      "expected_shape_required": true,
+      "regression_required": true,
+      "status": "pass",
+      "view": "front"
+    },
+    {
+      "baseline": "baselines/right.png",
+      "camera": "visual/right/camera.json",
+      "evidence": {
+        "actual_image": "visual/right/actual.png",
+        "baseline_status": "pass",
+        "diff_image": "visual/right/diff.png",
+        "expected_shape_status": "pass",
+        "goal_image": "visual/right/goal.png",
+        "overlay_image": "visual/right/overlay.png",
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        }
+      },
+      "expected_shape_required": true,
+      "regression_required": true,
+      "status": "pass",
+      "view": "right"
+    },
+    {
+      "baseline": "baselines/iso.png",
+      "camera": "visual/iso/camera.json",
+      "evidence": {
+        "actual_image": "visual/iso/actual.png",
+        "baseline_status": "pass",
+        "diff_image": "visual/iso/diff.png",
+        "expected_shape_status": "pass",
+        "goal_image": "visual/iso/goal.png",
+        "overlay_image": "visual/iso/overlay.png",
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.001881,
+          "pass": true
+        }
+      },
+      "expected_shape_required": true,
+      "regression_required": true,
+      "status": "pass",
+      "view": "iso"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "abfe28817e5f8b459582866d24a67607b04dc13b68454d097fb8ac7108b0c415",
+  "duration_seconds": 0.334,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:41:51.998Z",
+  "item": "examples-bracket-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "fbe66413e73b2f11bcfd79d8c79dd6eed80e87ceb05d77dcb28cfbc7f8c181be"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:42:34.765Z",
+  "run_started_at": "2026-11-21T11:38:38.674Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:41:51.949Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "0b96eb0638546ef31de04f35d8a0292cce1c7ed5f5a5b80b8cd28b6281502bb3",
+  "timeout_seconds": null
+}

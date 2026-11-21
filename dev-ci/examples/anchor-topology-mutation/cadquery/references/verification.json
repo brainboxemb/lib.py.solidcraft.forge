@@ -1,0 +1,51 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "actual_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "expected_max": [
+                20.0,
+                10.0,
+                25.0
+              ],
+              "expected_min": [
+                -25.0,
+                -20.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            }
+          },
+          "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/anchor-topology-mutation/cadquery/model.py",
+          "status": "pass",
+          "stl": "anchor-topology-mutation/cadquery/model.stl"
+        }
+      ],
+      "model": "anchor-topology-mutation",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "4c408be0f34b8bec4f694a7873313279f0e67997",
+  "status": "pass"
+}

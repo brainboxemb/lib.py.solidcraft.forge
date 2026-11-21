@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "40a6685be49c0fe7aa4280058190c65e857a88f3a3d7e64863ab35b74113f90c",
+  "duration_seconds": 0.32,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:42:21.985Z",
+  "item": "examples-round-top-sketch-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "f7fc4457cc00f445c46ed817f08633f2add5c93078e019e40b7532a4d3607565"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:42:34.765Z",
+  "run_started_at": "2026-11-21T11:38:38.674Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:42:21.939Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "28fbe992d02e97fa4be59638ee9f9e1bfbf1ef5d514c70ad594376e608688eda",
+  "timeout_seconds": null
+}

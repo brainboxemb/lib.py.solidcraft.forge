@@ -1,0 +1,38 @@
+{
+  "geometry": {
+    "bounds": {
+      "actual_max": [
+        64.0,
+        44.0,
+        60.0
+      ],
+      "actual_min": [
+        -64.0,
+        -44.0,
+        0.0
+      ],
+      "expected_max": [
+        64.0,
+        44.0,
+        60.0
+      ],
+      "expected_min": [
+        -64.0,
+        -44.0,
+        0.0
+      ],
+      "max_delta_mm": 0.0,
+      "pass": true,
+      "tolerance_mm": 0.5
+    }
+  },
+  "implementation": "pythonscad",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
+  "source": "examples/eight-corner-brackets/pythonscad/model.py",
+  "status": "pass",
+  "stl": "eight-corner-brackets/pythonscad/model.stl"
+}

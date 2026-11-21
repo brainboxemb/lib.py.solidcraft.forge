@@ -1,0 +1,102 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "base_width",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "base_height",
+        "expression": "20",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "Base",
+        "grounded": true
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "base_width",
+        "width": 30.0,
+        "height": "base_height",
+        "corner": [
+          "-base_width / 2",
+          -15.0,
+          0
+        ],
+        "body_name": "Base"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "Companion",
+        "grounded": false
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": 10.0,
+        "width": 10.0,
+        "height": 10.0,
+        "operation": "new",
+        "center": [
+          70.0,
+          0.0,
+          5.0
+        ],
+        "body_name": "Companion"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "Marker",
+        "grounded": false
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": 10,
+        "width": 10,
+        "height": 10,
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "body_name": "Marker"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "a8d29e19a9839a85f7bb4e7f6eed71b00dce3a2a73ccf1ac633d6611f69fa646",
+  "duration_seconds": 0.366,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:41:54.147Z",
+  "item": "examples-circle-negative-extrude-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "b989d662eb568a423ebcf1ec0a6101ee18a353f54bc0157cf9b60d9bd37205db"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:42:34.765Z",
+  "run_started_at": "2026-11-21T11:38:38.674Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:41:54.100Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "497b40c73fbaa01700e6d710411ad7559ace9c302633165d7207bdedfef88872",
+  "timeout_seconds": null
+}

@@ -1,0 +1,186 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "c4182a663f24c6d69f2e81347de50a5e8558507d5d92c6b7f1759e8d051dc978",
+          "size": 2102
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Block",
+                "max": [
+                  -30.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  -50.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -30.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  -50.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Block (Block:2)",
+                "max": [
+                  50.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  30.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  50.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  30.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/spacing_120/model.sc",
+          "sha256": "8ff1f109e86d7045aabdd1879f1718eda6e74c17c3286682989a053042085818",
+          "size": 4232
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/spacing_120/measurements.json",
+          "sha256": "2fa796130aeb83d398079910af02ff04fc188c9301a53d9beba690cfcdf38c0c",
+          "size": 2114
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Block",
+                "max": [
+                  -50.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  -70.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -50.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  -70.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Block (Block:2)",
+                "max": [
+                  70.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  50.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  70.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  50.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "saved_design_spacing_120",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/parametric-placement-pair/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "parametric-placement-pair"
+}
