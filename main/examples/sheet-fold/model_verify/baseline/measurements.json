@@ -15,9 +15,9 @@
         ]
       },
       "center_of_mass": [
-        -2.188055556445608,
-        -3.106204579277264e-10,
-        3.6911178208191373
+        -2.1880555564455832,
+        -3.106204579277266e-10,
+        3.69111782081914
       ],
       "closed": true,
       "density_g_cm3": 1.29,
@@ -33,14 +33,14 @@
         "shells": 1,
         "vertices": 20
       },
-      "mass_g": 8.183052218727113,
+      "mass_g": 8.183052218727108,
       "material": "Default",
       "measured_by": "smlib",
       "name": "SheetFold",
       "notes": [],
       "sheet_metal": true,
       "vertices": 18,
-      "volume_mm3": 6343.451332346599
+      "volume_mm3": 6343.451332346595
     }
   ],
   "body_count": 1,
@@ -124,7 +124,7 @@
     {
       "error": null,
       "id": 1,
-      "ms": 0.233642,
+      "ms": 0.22236799999999998,
       "name": "Blank",
       "rolled_back": false,
       "suppressed": false,
@@ -134,7 +134,7 @@
     {
       "error": null,
       "id": 2,
-      "ms": 1.36757,
+      "ms": 1.7870309999999998,
       "name": "BaseFlange1",
       "rolled_back": false,
       "suppressed": false,
@@ -144,7 +144,7 @@
     {
       "error": null,
       "id": 3,
-      "ms": 25.846754999999998,
+      "ms": 27.524954,
       "name": "Hole1",
       "rolled_back": false,
       "suppressed": false,
@@ -154,7 +154,7 @@
     {
       "error": null,
       "id": 4,
-      "ms": 5.36275,
+      "ms": 7.378997,
       "name": "Fold1",
       "rolled_back": false,
       "suppressed": false,
@@ -166,9 +166,9 @@
     "area_mm2": 6861.150444061311,
     "edges": 30,
     "faces": 15,
-    "mass_g": 8.183052218727113,
+    "mass_g": 8.183052218727108,
     "open_bodies_skipped": 0,
     "vertices": 18,
-    "volume_mm3": 6343.451332346599
+    "volume_mm3": 6343.451332346595
   }
 }

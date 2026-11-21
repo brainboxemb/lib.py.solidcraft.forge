@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "89bc3c90341bd4ea6abe7483b64b005d39e90e8fe08570d5e62ce16f4f83148a",
-  "duration_seconds": 0.17,
+  "bundle_sha256": "02130059e2bdd8453f1272dd12158ae7651a40ea18d698740c970efea9cf3266",
+  "duration_seconds": 0.455,
   "engine": "scons",
-  "engine_schema": 1,
+  "engine_schema": 2,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-21T10:21:28.621Z",
+  "finished_at": "2026-11-21T15:50:49.745Z",
   "item": "examples-top-sketch-after-chamfer-cadquery",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,15 +14,15 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "882eb5134eea2a03750bb404621e1c3b3b10d970ba295311c19d02064e6e36d6"
+      "sha256": "16d55e2fd58dc7288079e57ba812f3fbe18272fd8c03c77dc8e9a594d7edd7fa"
     }
   },
-  "run_finished_at": "2026-11-21T10:21:30.971Z",
-  "run_started_at": "2026-11-21T10:18:05.955Z",
+  "run_finished_at": "2026-11-21T15:50:53.752Z",
+  "run_started_at": "2026-11-21T15:46:03.268Z",
   "schema": 3,
-  "started_at": "2026-11-21T10:21:28.565Z",
+  "started_at": "2026-11-21T15:50:49.694Z",
   "status": "pass",
   "step": "verify_reference",
-  "target_spec_digest": "aa61617fb85fd93d50b414184a645c28fdbc296ddc44a89663ffc2be7880d48f",
+  "target_spec_digest": "c0dc6ec95ad5c17ef936e809cd4335b762eca11912336ddc794ceeee6685b8f1",
   "timeout_seconds": null
 }
