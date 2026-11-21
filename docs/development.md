@@ -117,6 +117,28 @@ CI repositories.
 Before changing CI structure, read the current issues, PRs, branches,
 `AGENTS.md` and [plan.md](plan.md).
 
+## Parallel lane execution
+
+Forge has two independent long-lived development lanes:
+
+- `dev-cad` for Forge API/compiler/model/Verification/site-content work;
+- `dev-ci` for Forge CI/infrastructure/publication work.
+
+Independent work in those lanes should progress in parallel. A running workflow
+blocks only work whose next step depends on that result. Shared dependency
+releases and true architecture boundaries remain explicit gates.
+
+Repository-wide governance/documentation that applies equally to both lanes may
+use a short-lived branch directly against `main`.
+
+Merge policy is explicit:
+
+- feature/fix PRs into a dev lane: squash merge;
+- PRs whose base is `main`: squash merge by default;
+- only a PR whose head is literally the long-lived `dev-cad` or `dev-ci`
+  branch may use a normal merge into `main`;
+- temporary `promote/*` heads and governance PRs to `main` are squash-merged.
+
 ## Change discipline
 
 For active repository work:

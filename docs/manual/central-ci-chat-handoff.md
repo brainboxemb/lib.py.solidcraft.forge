@@ -34,6 +34,28 @@ Voor iedere actieve repo:
 8. Eén logische wijziging = één issue, branch en PR.
 9. Na merge/release het plan opnieuw actualiseren.
 
+Werk niet onnodig serieel:
+
+- `dev-cad` en `dev-ci` zijn onafhankelijke werkstromen en mogen parallel
+  vooruitgaan;
+- wacht alleen op een workflow als de volgende stap werkelijk van die uitslag
+  afhangt;
+- werk ondertussen door in de andere lane wanneer daar onafhankelijk werk ligt;
+- gedeelde dependency-releases en echte architectuurgates blijven
+  synchronisatiepunten;
+- repositorybrede governance mag via een korte branch rechtstreeks naar
+  `main`.
+
+Merge-regel:
+
+- korte feature/fix-PR's naar `dev-cad` of `dev-ci` worden squash-merged;
+- iedere PR met base `main` wordt standaard squash-merged;
+- alleen wanneer de head letterlijk de long-lived branch `dev-cad` of
+  `dev-ci` is, mag een normale merge naar `main` worden gebruikt;
+- tijdelijke heads zoals `promote/dev-cad` en `promote/dev-ci` vallen niet
+  onder die uitzondering en worden dus squash-merged;
+- governance-PR's rechtstreeks naar `main` worden squash-merged.
+
 Repositorygrenzen:
 
 - Generieke CAD-CI-logica hoort in `lib.py.cad.ci`.

@@ -224,6 +224,18 @@ implement a Forge-local planner, build store or generated-branch mutator.
 Short-lived work branches target one dev lane and are squash-merged. Their PRs
 are verification-only and must not publish durable PR build/Page state.
 
+The two development lanes are independent execution tracks. Continue unrelated
+work in the other lane while one lane validates or publishes; a running workflow
+is a gate only for work that depends on its result. Repository-wide governance
+that applies equally to both lanes may use a short-lived branch directly against
+`main`.
+
+Every PR whose base is `main` is squash-merged by default. The only exception
+is a PR whose head is literally the long-lived `dev-cad` or `dev-ci`
+branch; those direct lane-to-main PRs may use a normal merge commit. Temporary
+promotion heads such as `promote/dev-cad` and `promote/dev-ci` are not the
+exception and are squash-merged. Governance PRs to `main` are squash-merged.
+
 Durable accepted output lives on generated `build`:
 
 ```text
@@ -261,10 +273,12 @@ dev-ci  -> promote/dev-ci  -> PR to main
 ```
 
 The temporary promotion branch is created at the current dev-lane head. The PR
-runs complete validation and is merged with a normal merge commit, never
-squash. GitHub may auto-delete the temporary promotion branch after merge; the
-long-lived dev lane remains intact. Then fast-forward/synchronize both dev
-lanes to the resulting main head.
+runs complete validation and is squash-merged because its base is `main` and
+its head is not the long-lived dev lane itself. A direct `dev-cad` or
+`dev-ci` PR to `main` is the only case where a normal merge is allowed.
+GitHub may auto-delete the temporary promotion branch after merge; the
+long-lived dev lane remains intact. Then synchronize both dev lanes to the
+resulting main head.
 
 Do not open a promotion PR directly from the long-lived dev branch while
 automatic head-branch deletion is enabled; the first #572 promotion proved that
