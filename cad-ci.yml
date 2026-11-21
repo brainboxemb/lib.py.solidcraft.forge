@@ -2,9 +2,9 @@
 schema: 1
 
 variables:
-  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.3.2"
-  REFERENCE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-reference:v0.3.2"
-  SOLIDCRAFT_VERSION: "0.42.0"
+  FORGE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-solidcraft:v0.3.3"
+  REFERENCE_RUNTIME_IMAGE: "ghcr.io/brainboxemb/cad-reference:v0.3.3"
+  SOLIDCRAFT_VERSION: "0.43.0"
 
 templates:
   forge-model-declarative:

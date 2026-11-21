@@ -31,9 +31,13 @@ Root `cad-ci.yml` declares the exact immutable released role images Forge
 consumes:
 
 ```text
-FORGE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-solidcraft:v0.2.0
-REFERENCE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-reference:v0.2.0
+FORGE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-solidcraft:vX.Y.Z
+REFERENCE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-reference:vX.Y.Z
 ```
+
+Both roles must use the same immutable runtime release. The exact current
+consumer values live in root `cad-ci.yml`; this requirements document does not
+duplicate the moving release number.
 
 Changing either runtime role is a two-repository operation:
 

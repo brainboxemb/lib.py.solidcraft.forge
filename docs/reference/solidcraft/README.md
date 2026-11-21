@@ -5,10 +5,13 @@ Forge keeps one immutable reference directory per qualified SolidCraft target:
 ```text
 docs/reference/solidcraft/
   0.42.0/
+  0.43.0/
   <future-version>/
 ```
 
-The current qualified reference is [0.42.0](0.42.0/SOURCE.md).
+The current qualified reference is [0.43.0](0.43.0/SOURCE.md).
+The previous [0.42.0](0.42.0/SOURCE.md) snapshot remains immutable historical
+qualification evidence.
 
 ## Adding a new SolidCraft version
 
