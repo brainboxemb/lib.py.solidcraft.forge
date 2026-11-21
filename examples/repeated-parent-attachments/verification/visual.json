@@ -33,7 +33,10 @@
     "historical_manifest_solidcraft_version": "0.30.1",
     "migrated_from": "qualification/visual_baselines.json",
     "migrated_without_reencoding": true,
-    "verified_during_solidcraft_0_42_0_qualification": true
+    "verified_during_solidcraft_0_42_0_qualification": true,
+    "canonicalized_legacy_base64_padding": [
+      "right"
+    ]
   },
   "expected_boxes": [
     {
