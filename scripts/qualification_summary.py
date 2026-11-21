@@ -186,10 +186,10 @@ def _visual_check(case_root: Path) -> dict[str, Any]:
     report = _read_object(case_root / "model_verify" / "visual.json")
     if report is None:
         return {
-            "status": "not-required",
-            "required": False,
-            "regression_status": "not-required",
-            "expected_shape_status": "not-required",
+            "status": "missing",
+            "required": True,
+            "regression_status": "missing",
+            "expected_shape_status": "missing",
             "required_views": [],
             "images": [],
             "evidence": [],
@@ -215,8 +215,18 @@ def _visual_check(case_root: Path) -> dict[str, Any]:
         evidence = row.get("evidence")
         if not isinstance(evidence, dict):
             continue
-        regression.append(_check_status(evidence.get("baseline_status")))
-        expected.append(_check_status(evidence.get("expected_shape_status")))
+
+        regression_required = row.get("regression_required", True)
+        expected_shape_required = row.get("expected_shape_required", True)
+        if regression_required:
+            regression.append(
+                _check_status(evidence.get("baseline_status"))
+            )
+        if expected_shape_required:
+            expected.append(
+                _check_status(evidence.get("expected_shape_status"))
+            )
+
         for key in ("actual_image", "diff_image", "goal_image", "overlay_image"):
             path = evidence.get(key)
             if isinstance(path, str):

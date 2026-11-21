@@ -133,6 +133,67 @@ class StableBuildEvidenceTests(unittest.TestCase):
             {"parameters": {"length": 50}},
         )
 
+        visual_rows = [
+            {
+                "view": "front",
+                "status": "pass",
+                "regression_required": True,
+                "expected_shape_required": False,
+                "evidence": {
+                    "actual_image": "visual/front/actual.png",
+                    "diff_image": "visual/front/diff.png",
+                    "goal_image": None,
+                    "overlay_image": None,
+                    "baseline_status": "pass",
+                    "expected_shape_status": "missing",
+                },
+            },
+            {
+                "view": "top",
+                "status": "pass",
+                "regression_required": False,
+                "expected_shape_required": True,
+                "evidence": {
+                    "actual_image": "visual/top/actual.png",
+                    "diff_image": None,
+                    "goal_image": "visual/top/goal.png",
+                    "overlay_image": "visual/top/overlay.png",
+                    "baseline_status": "missing",
+                    "expected_shape_status": "pass",
+                },
+            },
+            {
+                "view": "iso",
+                "status": "pass",
+                "regression_required": True,
+                "expected_shape_required": True,
+                "evidence": {
+                    "actual_image": "visual/iso/actual.png",
+                    "diff_image": "visual/iso/diff.png",
+                    "goal_image": "visual/iso/goal.png",
+                    "overlay_image": "visual/iso/overlay.png",
+                    "baseline_status": "pass",
+                    "expected_shape_status": "pass",
+                },
+            },
+        ]
+        for row in visual_rows:
+            evidence = row["evidence"]
+            for key in ("actual_image", "diff_image", "goal_image", "overlay_image"):
+                value = evidence.get(key)
+                if value:
+                    write_bytes(model_verify / value, b"png")
+        write_json(
+            model_verify / "visual.json",
+            {
+                "schema": "forge-visual-verification",
+                "schema_version": 1,
+                "status": "pass",
+                "semantic": {"status": "pass", "checks": []},
+                "views": visual_rows,
+            },
+        )
+
         for index, implementation in enumerate(IMPLEMENTATIONS):
             item_root = self.make_item(
                 root,
@@ -170,7 +231,7 @@ class StableBuildEvidenceTests(unittest.TestCase):
             / "ci"
             / "cad-verification-package"
             / "dist"
-            / "brainboxemb_cad_verification_lib-0.14.0-py3-none-any.whl",
+            / "brainboxemb_cad_verification_lib-0.15.0-py3-none-any.whl",
             b"wheel",
         )
         write_json(
@@ -250,6 +311,46 @@ class StableBuildEvidenceTests(unittest.TestCase):
                 [path.name for path in evidence.diagram_paths],
                 ["joint.svg"],
             )
+
+    def test_missing_visual_verification_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.make_complete_tree(root)
+            (
+                root
+                / "examples"
+                / "simple-box"
+                / "model_verify"
+                / "visual.json"
+            ).unlink()
+
+            with self.assertRaisesRegex(
+                ValueError,
+                "visual verification is missing",
+            ):
+                load_stable_build_evidence(
+                    root,
+                    "c" * 40,
+                    ("simple-box",),
+                )
+
+    def test_split_visual_view_roles_are_accepted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.make_complete_tree(root)
+
+            evidence = load_stable_build_evidence(
+                root,
+                "c" * 40,
+                ("simple-box",),
+            )
+
+        visual = evidence.examples[0].visual
+        self.assertIsNotNone(visual)
+        self.assertEqual(
+            [row["view"] for row in visual["views"]],
+            ["front", "top", "iso"],
+        )
 
     def test_reference_item_must_itself_be_accepted(self):
         with tempfile.TemporaryDirectory() as tmp:

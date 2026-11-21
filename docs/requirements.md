@@ -434,7 +434,7 @@ Released `lib.py.cad.verification` owns:
 - one-view `VisualViewEvidence`;
 - generic semantic result composition.
 
-A visual-enabled model stores policy below its own verification directory:
+Every active Verification model stores visual policy below its own verification directory:
 
 ```text
 examples/<model>/verification/
@@ -442,6 +442,14 @@ examples/<model>/verification/
   baselines/
     <view>.png | <view>.json
 ```
+
+All active Verification models require visual verification. A missing
+`visual.json` or missing approved baseline for a required view is incomplete
+verification, not `not-required`.
+
+The required-view set preserves the historical contract. The default remains
+front/right/iso, with model-local overrides where top or another orthographic
+view is required to expose holes, slots, patterns or sheet geometry.
 
 `visual.json` contains data only. It must not contain Python callbacks or a
 second implementation of generic image/projection logic.
@@ -462,6 +470,16 @@ The historical render contract remains:
 
 Approved baselines are versioned model data. A CI render must never replace or
 approve its own baseline.
+
+Approved historical baseline pixels may be migrated into model-local encoded
+baseline payloads without pixel re-encoding or reapproval. The migration must
+retain the exact decoded compressed/image baseline bytes plus source/approval
+provenance. Non-canonical base64 text padding may be normalized when needed by
+the released decoder, provided the decoded bytes remain identical and the
+normalization is recorded in model-local provenance.
+
+The removed central historical baseline manifest is migration evidence only and
+must not become a runtime registry.
 
 For each required view, normal model verification retains:
 
@@ -549,10 +567,14 @@ qualification fields.
 
 `saved_design` is `not-required` when no saved-design check exists.
 
-`visual` is `not-required` when the current durable model item has no
-`model_verify/visual.json`. A presentation preview is never evidence for a
-visual PASS. When `visual.json` exists, its current status and view evidence
-remain required and are composed normally.
+For every active Verification model, `visual` is required and must be
+composed from the current durable `model_verify/visual.json` evidence.
+A missing visual report, missing required view or missing approved baseline is
+incomplete/failing verification according to the existing semantic precedence;
+it must never be converted to `not-required`.
+
+A presentation preview is never evidence for a visual PASS and may not replace
+the required visual-verification evidence.
 
 Independent-reference summary input is read only from the canonical
 `examples/<slug>/<implementation>/` child items. Batch producer copies are not

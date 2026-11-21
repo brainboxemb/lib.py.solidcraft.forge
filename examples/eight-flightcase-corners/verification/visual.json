@@ -1,0 +1,366 @@
+{
+  "schema": 1,
+  "views": {
+    "front": {
+      "baseline_payload": "baselines/front.json"
+    },
+    "right": {
+      "baseline_payload": "baselines/right.json"
+    },
+    "iso": {
+      "baseline_payload": "baselines/iso.json"
+    }
+  },
+  "expected_views": [
+    "iso",
+    "front",
+    "right"
+  ],
+  "render": {
+    "width": 720,
+    "height": 540
+  },
+  "regression": {
+    "width": 96,
+    "height": 72,
+    "changed_pixel_threshold": 12,
+    "max_mean_difference": 6,
+    "max_changed_fraction": 0.08
+  },
+  "baseline_provenance": {
+    "approval": "approved",
+    "source_commit": "594bec62cfae4215e01b5e1046a6a76d0b2749fe",
+    "historical_manifest_solidcraft_version": "0.30.1",
+    "migrated_from": "qualification/visual_baselines.json",
+    "migrated_without_reencoding": true,
+    "verified_during_solidcraft_0_42_0_qualification": true
+  },
+  "expected_boxes": [
+    {
+      "label": "CaseBlock",
+      "minimum": [
+        -60,
+        -40,
+        0
+      ],
+      "maximum": [
+        60,
+        40,
+        60
+      ]
+    },
+    {
+      "label": "FBL bottom plate",
+      "minimum": [
+        -60,
+        -40,
+        -4
+      ],
+      "maximum": [
+        -40,
+        -20,
+        0
+      ]
+    },
+    {
+      "label": "FBL front plate",
+      "minimum": [
+        -60,
+        -44,
+        0
+      ],
+      "maximum": [
+        -40,
+        -40,
+        20
+      ]
+    },
+    {
+      "label": "FBL left plate",
+      "minimum": [
+        -64,
+        -40,
+        0
+      ],
+      "maximum": [
+        -60,
+        -20,
+        20
+      ]
+    },
+    {
+      "label": "FBR bottom plate",
+      "minimum": [
+        40,
+        -40,
+        -4
+      ],
+      "maximum": [
+        60,
+        -20,
+        0
+      ]
+    },
+    {
+      "label": "FBR front plate",
+      "minimum": [
+        40,
+        -44,
+        0
+      ],
+      "maximum": [
+        60,
+        -40,
+        20
+      ]
+    },
+    {
+      "label": "FBR right plate",
+      "minimum": [
+        60,
+        -40,
+        0
+      ],
+      "maximum": [
+        64,
+        -20,
+        20
+      ]
+    },
+    {
+      "label": "RBR bottom plate",
+      "minimum": [
+        40,
+        20,
+        -4
+      ],
+      "maximum": [
+        60,
+        40,
+        0
+      ]
+    },
+    {
+      "label": "RBR rear plate",
+      "minimum": [
+        40,
+        40,
+        0
+      ],
+      "maximum": [
+        60,
+        44,
+        20
+      ]
+    },
+    {
+      "label": "RBR right plate",
+      "minimum": [
+        60,
+        20,
+        0
+      ],
+      "maximum": [
+        64,
+        40,
+        20
+      ]
+    },
+    {
+      "label": "RBL bottom plate",
+      "minimum": [
+        -60,
+        20,
+        -4
+      ],
+      "maximum": [
+        -40,
+        40,
+        0
+      ]
+    },
+    {
+      "label": "RBL rear plate",
+      "minimum": [
+        -60,
+        40,
+        0
+      ],
+      "maximum": [
+        -40,
+        44,
+        20
+      ]
+    },
+    {
+      "label": "RBL left plate",
+      "minimum": [
+        -64,
+        20,
+        0
+      ],
+      "maximum": [
+        -60,
+        40,
+        20
+      ]
+    },
+    {
+      "label": "FTL top plate",
+      "minimum": [
+        -60,
+        -40,
+        60
+      ],
+      "maximum": [
+        -40,
+        -20,
+        64
+      ]
+    },
+    {
+      "label": "FTL front plate",
+      "minimum": [
+        -60,
+        -44,
+        40
+      ],
+      "maximum": [
+        -40,
+        -40,
+        60
+      ]
+    },
+    {
+      "label": "FTL left plate",
+      "minimum": [
+        -64,
+        -40,
+        40
+      ],
+      "maximum": [
+        -60,
+        -20,
+        60
+      ]
+    },
+    {
+      "label": "FTR top plate",
+      "minimum": [
+        40,
+        -40,
+        60
+      ],
+      "maximum": [
+        60,
+        -20,
+        64
+      ]
+    },
+    {
+      "label": "FTR front plate",
+      "minimum": [
+        40,
+        -44,
+        40
+      ],
+      "maximum": [
+        60,
+        -40,
+        60
+      ]
+    },
+    {
+      "label": "FTR right plate",
+      "minimum": [
+        60,
+        -40,
+        40
+      ],
+      "maximum": [
+        64,
+        -20,
+        60
+      ]
+    },
+    {
+      "label": "RTR top plate",
+      "minimum": [
+        40,
+        20,
+        60
+      ],
+      "maximum": [
+        60,
+        40,
+        64
+      ]
+    },
+    {
+      "label": "RTR rear plate",
+      "minimum": [
+        40,
+        40,
+        40
+      ],
+      "maximum": [
+        60,
+        44,
+        60
+      ]
+    },
+    {
+      "label": "RTR right plate",
+      "minimum": [
+        60,
+        20,
+        40
+      ],
+      "maximum": [
+        64,
+        40,
+        60
+      ]
+    },
+    {
+      "label": "RTL top plate",
+      "minimum": [
+        -60,
+        20,
+        60
+      ],
+      "maximum": [
+        -40,
+        40,
+        64
+      ]
+    },
+    {
+      "label": "RTL rear plate",
+      "minimum": [
+        -60,
+        40,
+        40
+      ],
+      "maximum": [
+        -40,
+        44,
+        60
+      ]
+    },
+    {
+      "label": "RTL left plate",
+      "minimum": [
+        -64,
+        20,
+        40
+      ],
+      "maximum": [
+        -60,
+        40,
+        60
+      ]
+    }
+  ],
+  "expected_features": []
+}

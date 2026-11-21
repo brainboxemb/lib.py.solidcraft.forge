@@ -91,6 +91,32 @@ def load_visual_policy(path: Path) -> dict[str, Any]:
                 f"visual view requires exactly one baseline source: {name}"
             )
 
+    expected_views = value.get("expected_views")
+    if expected_views is None:
+        expected_views = list(views)
+    if not isinstance(expected_views, list) or not expected_views:
+        raise ValueError("visual policy requires at least one expected-shape view")
+    normalized_expected_views = []
+    for name in expected_views:
+        if not isinstance(name, str) or name not in VIEWS:
+            raise ValueError(f"unsupported expected-shape view: {name}")
+        if name in normalized_expected_views:
+            raise ValueError(f"duplicate expected-shape view: {name}")
+        normalized_expected_views.append(name)
+    value["expected_views"] = normalized_expected_views
+
+    features = value.get("expected_features", [])
+    if not isinstance(features, list):
+        raise ValueError("expected_features must be a list")
+    for index, feature in enumerate(features):
+        if not isinstance(feature, dict):
+            raise ValueError(f"expected_features[{index}] must be an object")
+        kind = feature.get("type")
+        if kind not in ("through_hole", "through_slot", "through_path_slot"):
+            raise ValueError(
+                f"unsupported expected feature type at index {index}: {kind}"
+            )
+
     render = value.get("render")
     if not isinstance(render, dict):
         raise ValueError("visual policy requires render settings")
@@ -224,6 +250,101 @@ def _expected_boxes(policy: Mapping[str, Any]):
     )
 
 
+def _expected_features(policy: Mapping[str, Any]):
+    """Construct released generic expected features from model-local data."""
+
+    from cad_verification import ThroughHole, ThroughPathSlot, ThroughSlot
+
+    result = []
+    for index, row in enumerate(policy.get("expected_features", [])):
+        kind = row.get("type")
+        label = row.get("label")
+        z = row.get("z")
+        if not isinstance(z, list) or len(z) != 2:
+            raise ValueError(f"expected_features[{index}].z must contain two numbers")
+        z_min = _number(z[0], f"expected_features[{index}].z[0]")
+        z_max = _number(z[1], f"expected_features[{index}].z[1]")
+
+        if kind == "through_hole":
+            center = row.get("center")
+            if not isinstance(center, list) or len(center) != 2:
+                raise ValueError(
+                    f"expected_features[{index}].center must contain two numbers"
+                )
+            result.append(
+                ThroughHole(
+                    center=(
+                        _number(center[0], f"expected_features[{index}].center[0]"),
+                        _number(center[1], f"expected_features[{index}].center[1]"),
+                    ),
+                    diameter=_number(
+                        row.get("diameter"),
+                        f"expected_features[{index}].diameter",
+                    ),
+                    z_min=z_min,
+                    z_max=z_max,
+                    label=label,
+                )
+            )
+            continue
+
+        centerline = row.get("centerline")
+        if not isinstance(centerline, list):
+            raise ValueError(
+                f"expected_features[{index}].centerline must be a list"
+            )
+        points = []
+        for point_index, point in enumerate(centerline):
+            if not isinstance(point, list) or len(point) != 2:
+                raise ValueError(
+                    f"expected_features[{index}].centerline[{point_index}] "
+                    "must contain two numbers"
+                )
+            points.append(
+                (
+                    _number(
+                        point[0],
+                        f"expected_features[{index}].centerline[{point_index}][0]",
+                    ),
+                    _number(
+                        point[1],
+                        f"expected_features[{index}].centerline[{point_index}][1]",
+                    ),
+                )
+            )
+        width = _number(
+            row.get("width"),
+            f"expected_features[{index}].width",
+        )
+        if kind == "through_slot":
+            if len(points) != 2:
+                raise ValueError(
+                    f"expected_features[{index}] straight slot requires two "
+                    "centerline points"
+                )
+            result.append(
+                ThroughSlot(
+                    start=points[0],
+                    end=points[1],
+                    width=width,
+                    z_min=z_min,
+                    z_max=z_max,
+                    label=label,
+                )
+            )
+        else:
+            result.append(
+                ThroughPathSlot(
+                    centerline=tuple(points),
+                    width=width,
+                    z_min=z_min,
+                    z_max=z_max,
+                    label=label,
+                )
+            )
+    return tuple(result)
+
+
 def _reference(path: Path, output_dir: Path) -> str:
     """Return one output-root-relative artifact reference."""
 
@@ -295,14 +416,20 @@ def _baseline_source(
     )
     return materialized, payload_reference
 
-def _view_status(evidence: Mapping[str, Any]) -> str:
-    """Return the required-view status from library visual evidence."""
+def _view_status(
+    evidence: Mapping[str, Any],
+    *,
+    regression_required: bool,
+    expected_shape_required: bool,
+) -> str:
+    """Return status from only the verification roles required for one view."""
 
-    states = {
-        evidence.get("baseline_status"),
-        evidence.get("expected_shape_status"),
-    }
-    for status in ("error", "fail", "missing"):
+    states = []
+    if regression_required:
+        states.append(evidence.get("baseline_status"))
+    if expected_shape_required:
+        states.append(evidence.get("expected_shape_status"))
+    for status in ("error", "fail", "missing", "review"):
         if status in states:
             return status
     return "pass"
@@ -395,12 +522,21 @@ def run_visual_verification(
     render = policy["render"]
     regression = policy["regression"]
     boxes = _expected_boxes(policy)
+    features = _expected_features(policy)
+    regression_views = policy["views"]
+    expected_views = tuple(policy["expected_views"])
+    render_views = tuple(
+        dict.fromkeys((*regression_views.keys(), *expected_views))
+    )
     visual_root = output_dir / "visual"
     visual_root.mkdir(parents=True, exist_ok=True)
 
     checks = []
     views = []
-    for view_name, view_policy in policy["views"].items():
+    for view_name in render_views:
+        view_policy = regression_views.get(view_name)
+        regression_required = view_policy is not None
+        expected_shape_required = view_name in expected_views
         view_root = visual_root / view_name
         view_root.mkdir(parents=True, exist_ok=True)
 
@@ -420,14 +556,36 @@ def run_visual_verification(
             height=render["height"],
         )
 
-        baseline_path, baseline_reference = _baseline_source(
-            policy_path,
-            view_policy,
-            view_root,
-        )
-        diff_path = view_root / "diff.png"
-        goal_path = view_root / "goal.png"
-        overlay_path = view_root / "overlay.png"
+        if regression_required:
+            baseline_path, baseline_reference = _baseline_source(
+                policy_path,
+                view_policy,
+                view_root,
+            )
+            diff_path = view_root / "diff.png"
+            diff_reference = _reference(diff_path, output_dir)
+        else:
+            baseline_path = None
+            baseline_reference = None
+            diff_path = None
+            diff_reference = None
+
+        if expected_shape_required:
+            goal_path = view_root / "goal.png"
+            overlay_path = view_root / "overlay.png"
+            verification_camera = _verification_camera(camera)
+            expected_boxes = boxes
+            expected_features = features
+            goal_reference = _reference(goal_path, output_dir)
+            overlay_reference = _reference(overlay_path, output_dir)
+        else:
+            goal_path = None
+            overlay_path = None
+            verification_camera = None
+            expected_boxes = ()
+            expected_features = ()
+            goal_reference = None
+            overlay_reference = None
 
         try:
             visual = verify_visual_view(
@@ -442,16 +600,21 @@ def run_visual_verification(
                 max_mean_difference=regression["max_mean_difference"],
                 max_changed_fraction=regression["max_changed_fraction"],
                 diff_path=diff_path,
-                diff_reference=_reference(diff_path, output_dir),
-                camera=_verification_camera(camera),
-                boxes=boxes,
+                diff_reference=diff_reference,
+                camera=verification_camera,
+                boxes=expected_boxes,
+                features=expected_features,
                 goal_path=goal_path,
-                goal_reference=_reference(goal_path, output_dir),
+                goal_reference=goal_reference,
                 overlay_path=overlay_path,
-                overlay_reference=_reference(overlay_path, output_dir),
+                overlay_reference=overlay_reference,
             )
             evidence = visual.to_evidence()
-            status = _view_status(evidence)
+            status = _view_status(
+                evidence,
+                regression_required=regression_required,
+                expected_shape_required=expected_shape_required,
+            )
         except VerificationFailure as exc:
             evidence = (
                 dict(exc.evidence)
@@ -463,6 +626,8 @@ def run_visual_verification(
         row = {
             "view": view_name,
             "status": status,
+            "regression_required": regression_required,
+            "expected_shape_required": expected_shape_required,
             "camera": _reference(camera_path, output_dir),
             "baseline": baseline_reference,
             "evidence": evidence,

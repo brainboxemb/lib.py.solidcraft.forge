@@ -1,0 +1,133 @@
+{
+  "schema": 1,
+  "views": {
+    "front": {
+      "baseline_payload": "baselines/front.json"
+    },
+    "right": {
+      "baseline_payload": "baselines/right.json"
+    },
+    "iso": {
+      "baseline_payload": "baselines/iso.json"
+    }
+  },
+  "expected_views": [
+    "top",
+    "front",
+    "iso"
+  ],
+  "render": {
+    "width": 720,
+    "height": 540
+  },
+  "regression": {
+    "width": 96,
+    "height": 72,
+    "changed_pixel_threshold": 12,
+    "max_mean_difference": 6,
+    "max_changed_fraction": 0.08
+  },
+  "baseline_provenance": {
+    "approval": "approved",
+    "source_commit": "b95caa956984d03a05aa2106f73e7091c65788dd",
+    "historical_manifest_solidcraft_version": "0.30.1",
+    "migrated_from": "qualification/visual_baselines.json",
+    "migrated_without_reencoding": true,
+    "verified_during_solidcraft_0_42_0_qualification": true
+  },
+  "expected_boxes": [
+    {
+      "label": "CircularFeaturePattern",
+      "minimum": [
+        -50,
+        -50,
+        0
+      ],
+      "maximum": [
+        50,
+        50,
+        6
+      ]
+    }
+  ],
+  "expected_features": [
+    {
+      "type": "through_hole",
+      "label": "hole 1",
+      "center": [
+        30,
+        0
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        6
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 2",
+      "center": [
+        15.000000000000004,
+        25.980762113533157
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        6
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 3",
+      "center": [
+        -14.999999999999993,
+        25.98076211353316
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        6
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 4",
+      "center": [
+        -30,
+        3.67394039744206e-15
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        6
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 5",
+      "center": [
+        -15.000000000000014,
+        -25.980762113533153
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        6
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 6",
+      "center": [
+        15.000000000000004,
+        -25.980762113533157
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        6
+      ]
+    }
+  ]
+}

@@ -8,112 +8,118 @@ documents in `docs/`. Issues keep detail and history.
 
 ## Current status
 
-The central CAD-CI and generated stable-Pages path is implemented.
+The central CAD-CI, durable `build/main` store and generated `gh-pages`
+publication path are implemented and green.
 
-PR #562 completed #558 and moved Forge main verification, durable build
-publication and stable Pages generation onto one hosted runner through exact
-externally accepted `tool.cad.ci 0.15.0`.
+The first live Pages cut-over exposed presentation regressions. PR #566 and
+PR #569 repaired the generic Verification case-sheet layout, restored all 36
+conceptual setup diagrams and removed the misplaced engineering-diagram gallery
+from the Verification catalog root.
 
-PR #563 restored the special Verification pages, legacy Qualification routes
-and source/reference content needed for cut-over testing. A live source switch
-to generated `gh-pages` was then performed on 2026-11-21. GitHub Pages run
-#818 / `44888168038` deployed `gh-pages`
-`74f087afd3ec3477b014c96a54380241dd8f73ae` successfully.
+A second live cut-over then exposed a deeper verification-semantic regression:
+many current pages report `Visual N/R` even though the preserved Qualification
+site had approved visual verification for those same cases.
 
-Live review exposed a remaining presentation-parity regression on ordinary
-case sheets. For example, `verification/circular-feature-pattern/` no longer
-used the accepted historical information order: the conceptual setup diagram
-and native preview were missing from the overview, the large durable
-verification block appeared before the reference/explanation flow, and the
-engineering explanation was moved to the bottom. The Verification index also
-embedded a six-item joint/corner-bracket engineering gallery that did not
-belong on the catalog overview.
-
-The live Pages source was therefore rolled back to
-`backup/gh-pages-before-f11-2026-11-20`. Pages run #819 /
-`44888467498` completed successfully from backup commit
+The live Pages source has therefore been rolled back again to
+`backup/gh-pages-before-f11-2026-11-20`. GitHub Pages rollback run
+`44890618855` completed successfully from backup commit
 `127adb3900cdc9ca6194edb1102ea7d505316295`.
 
-#366 is reopened and owns the parity repair. The current fix is developed on
-`issue/366-verification-case-parity`.
+Issue #378 is reopened because its F7-F9/F11 full-catalog visual contract was
+never completed:
+
+- 36 active Verification cases exist;
+- all 36 have model-local declarative `verification/verify.py`;
+- all 36 have current `verification/reference_geometry.json`;
+- the preserved legacy visual baseline manifest contains approved baselines for
+  all 36 current cases;
+- only 5/36 current cases have model-local `verification/visual.json`;
+- #430 proved the visual path for the first five models only;
+- #432 completed procedural-to-declarative model verification but did not finish
+  F7-F9 for the remaining catalog;
+- #497 later intentionally mapped absent visual policies to `Visual N/R`.
+  Live review rejects that semantic downgrade.
+
+#366 remains open but is blocked on #378.
 
 ## Current goal
 
-Restore the accepted case-sheet information architecture without reintroducing
-the old Qualification execution model or a second source of verification truth.
+Complete the original #378 visual-verification contract for every active
+Verification model without recreating the retired Qualification runner.
 
-The target presentation order is:
+For all 36 active cases:
 
-1. status and case title;
-2. "What this example makes";
-3. conceptual setup diagram plus native preview;
-4. Forge source and API used;
-5. independent reference source/result comparison;
-6. "How Forge builds it in SolidCraft";
-7. SolidCraft result and visual evidence;
-8. collapsed technical verification detail and provenance.
+1. preserve/migrate the approved model-local visual baseline;
+2. declare the historically required views;
+3. retain current SolidCraft render and camera evidence;
+4. run released `lib.py.cad.verification` image regression;
+5. produce expected-shape goal and overlay evidence from model-local expected
+   geometry;
+6. require visual PASS in semantic verification;
+7. keep presentation previews separate from verification truth.
 
-The conceptual setup diagram must be derived from the declared expected body
-envelopes already present in verification evidence from `verify.py`; do not
-restore the removed central `EXPECTED_VISUAL_BOXES` catalog.
+The existing visual implementation is the architecture. Do not introduce a new
+visual engine or central cross-model baseline registry.
 
-The Verification index remains a grouped case catalog with links to the
-standalone results, coverage and joint-anatomy pages. Joint/corner-bracket
-engineering diagrams belong on `verification/joint-anatomy/`, not as a
-gallery appended to the catalog root.
+Historical baseline pixels may be migrated byte-for-byte into model-local
+encoded baseline payloads, as already proven by the existing four migrated
+payload-based models. Generic decode/image/projection mechanics remain in the
+released verification library.
 
-#391 is complete. Reusable CAD verification mechanics remain owned by
-`lib.py.cad.verification`; Forge retains consumer/model policy, reference
-execution, presentation and publication composition.
+The old central `qualification/geometry_contracts.py` is migration evidence,
+not a source to restore. Required views, expected boxes/features and baseline
+provenance must end up model-local under each
+`examples/<slug>/verification/` directory.
 
-## Cut-over validation state
+## Verification parity audit
 
-Already proven and retained:
+Current hard findings:
 
-- all 36 current Verification cases exist;
-- `verification/results/`, `verification/coverage/` and
-  `verification/joint-anatomy/` are generated;
-- old `qualification/<case>/` and special-page routes have generated
-  compatibility redirects;
-- old and new manifest URLs contain identical current bytes;
-- canonical navigation uses Verification terminology;
-- durable Pages generation and publication from `build/main` are green.
+- legacy approved visual baselines for current cases: 36/36;
+- current `visual.json` policies: 5/36;
+- missing current visual policies: 31;
+- current reference-geometry contracts: 36/36;
+- cases declaring `bounds_sufficient: false`: 18/36;
+- cases retaining explicit surface-distance probes for independent reference
+  geometry: 14/36.
 
-Still required before another live switch:
+The surface-distance probes were primarily reference-mesh verification evidence
+in the old runner and remain present in current `reference_geometry.json`.
+The immediate semantic regression is the missing native visual verification,
+not loss of those reference probes.
 
-- representative case sheets must match the accepted historical information
-  architecture;
-- setup diagrams and primary previews must appear in their original overview
-  role;
-- heavy machine evidence must be secondary/collapsed rather than defining the
-  page layout;
-- the Verification catalog root must not embed the joint engineering gallery;
-- complete PR and main site generation must remain green after the repair.
+Representative failure:
 
-Keep `backup/gh-pages-before-f11-2026-11-20` intact and live until the repaired
-generated site is reviewed again.
+`anchored-holes` currently reports
+`Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R`,
+while the preserved site had required Top/Right/Iso visual verification with
+Actual/Goal/Overlay evidence.
 
 ## Execution order
 
-1. [#366, now] Restore generic Verification case-sheet presentation parity.
-2. [#366] Remove the misplaced engineering-diagram gallery from the catalog
-   root while retaining the standalone joint-anatomy page.
-3. [#366] Generate and inspect representative case pages, especially
-   `circular-feature-pattern`, and run the complete site/CI checks.
-4. [#366] Merge the repair and let main publish a fresh generated
-   `gh-pages`.
-5. [#366] Review the generated branch before switching the live Pages source.
-6. [#366] Repoint live Pages to `gh-pages` only after that review, then verify
-   the public root, representative Verification cases and old Qualification
-   redirects.
-7. [#481, next] Remove stale development branches after #366 is proven live.
+1. [#378, now] Correct requirements/design so every active Verification model
+   requires a model-local visual policy and semantic visual PASS.
+2. [#378] Migrate the 31 missing approved legacy baseline/view policies into
+   model-local verification data without re-encoding approved baseline pixels.
+3. [#378] Restore model-local expected-shape boxes/features and historically
+   required view overrides.
+4. [#378] Run the complete 36-model visual verification path and fix any real
+   render regressions rather than weakening thresholds or silently reapproving
+   baselines.
+5. [#378] Prove the semantic summary requires visual PASS for all 36 active
+   cases and publish a complete durable `build/main` baseline.
+6. [#366, blocked] Regenerate and inspect `gh-pages` from that complete
+   verification baseline.
+7. [#366] Only then retry the live Pages cut-over and verify public routes.
+8. [#481, next] Remove stale development branches after #366 is proven live.
 
 ## Open issue assessment — 2026-11-21
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | now | Live review found a case-sheet presentation-parity regression. Backup Pages is restored; repair the generic Verification layout, review generated gh-pages, then retry the live cut-over. |
-| #481 Remove stale Forge development branches | next | #391 is closed, but branch cleanup waits until the #366 Pages repair is proven live; preserve active/generated/rollback branches meanwhile. |
+| #378 Use explicit Forge verification stages instead of integration/native gates | now | Reopened. F7-F9/F11 were completed only for the five-model proof, not the full catalog. Restore visual verification for all 36 active cases. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Durable publication and page presentation are repaired, but live review exposed missing visual-verification semantics. Backup Pages stays live until #378 is complete. |
+| #481 Remove stale Forge development branches | next | Wait until #378/#366 are proven; preserve active/generated/rollback branches meanwhile. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by released runtime images, batching and later one-runner timing work. |
 | #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to the superseded Qualification architecture and old reuse strategy. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
@@ -126,11 +132,11 @@ generated site is reviewed again.
 | #325 Research: determine root cause of HUB75 AnchorFrame regression | later | Independent model/API investigation. |
 | #175 Change 0005: qualify HUB75-like AnchorFrame orientation against known-good Placement poses | later | Domain verification backlog. |
 | #82 Reconsider automatic hiding of the SolidCraft Joints folder | later | Independent product behavior. |
-| #81 Support inline AnchorFrame references for rotated occurrences | later | Current `custom-anchor` intentionally proves the unsupported case rejects clearly; this issue blocks promotion of that fixture. |
+| #81 Support inline AnchorFrame references for rotated occurrences | later | `custom-anchor` remains the expected-rejection fixture until this capability exists. |
 | #9 SCPF: first-class Sketch objects, constraints and face workplanes | later | Major Forge feature backlog. |
 | #8 Add generic hollow primitives: Tube, RectTube and OvalTube | later | Major Forge feature backlog. |
 | #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
 
 Immediate chain:
 
-`#366 case-page parity repair -> generated-site review -> live cut-over -> #481 branch cleanup`.
+`#378 full-catalog visual verification -> #366 generated-site review/live cut-over -> #481 branch cleanup`.
