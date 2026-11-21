@@ -11,6 +11,11 @@
       "target": "/output/references/anchored-holes/build123d/model.stl"
     },
     {
+      "slug": "as-built-attach",
+      "source": "/workspace/examples/as-built-attach/build123d/model.py",
+      "target": "/output/references/as-built-attach/build123d/model.stl"
+    },
+    {
       "slug": "assembly-decorator",
       "source": "/workspace/examples/assembly-decorator/build123d/model.py",
       "target": "/output/references/assembly-decorator/build123d/model.stl"
@@ -91,9 +96,19 @@
       "target": "/output/references/parametric-attach/build123d/model.stl"
     },
     {
+      "slug": "parametric-move",
+      "source": "/workspace/examples/parametric-move/build123d/model.py",
+      "target": "/output/references/parametric-move/build123d/model.stl"
+    },
+    {
       "slug": "parametric-offset",
       "source": "/workspace/examples/parametric-offset/build123d/model.py",
       "target": "/output/references/parametric-offset/build123d/model.stl"
+    },
+    {
+      "slug": "parametric-placement-pair",
+      "source": "/workspace/examples/parametric-placement-pair/build123d/model.py",
+      "target": "/output/references/parametric-placement-pair/build123d/model.stl"
     },
     {
       "slug": "parent-derived-child-size",
@@ -114,6 +129,11 @@
       "slug": "repeated-parent-attachments",
       "source": "/workspace/examples/repeated-parent-attachments/build123d/model.py",
       "target": "/output/references/repeated-parent-attachments/build123d/model.stl"
+    },
+    {
+      "slug": "rotated-copy-placement",
+      "source": "/workspace/examples/rotated-copy-placement/build123d/model.py",
+      "target": "/output/references/rotated-copy-placement/build123d/model.stl"
     },
     {
       "slug": "round-top-sketch",

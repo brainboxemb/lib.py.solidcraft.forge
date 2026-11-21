@@ -690,6 +690,212 @@
           "geometry": {
             "bounds": {
               "actual_max": [
+                55.0,
+                35.0,
+                19.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                -5.0
+              ],
+              "expected_max": [
+                55.0,
+                35.0,
+                19.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 14400.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 14400.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/as-built-attach/pythonscad/model.py",
+          "status": "pass",
+          "stl": "as-built-attach/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                55.0,
+                35.0,
+                19.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                -5.0
+              ],
+              "expected_max": [
+                55.0,
+                35.0,
+                19.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 14400.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 14400.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/as-built-attach/pybosl2/model.py",
+          "status": "pass",
+          "stl": "as-built-attach/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                55.0,
+                35.0,
+                19.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                -5.0
+              ],
+              "expected_max": [
+                55.0,
+                35.0,
+                19.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 14400.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 14400.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/as-built-attach/cadquery/model.py",
+          "status": "pass",
+          "stl": "as-built-attach/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                55.0,
+                35.0,
+                19.0
+              ],
+              "actual_min": [
+                -20.0,
+                -15.0,
+                -5.0
+              ],
+              "expected_max": [
+                55.0,
+                35.0,
+                19.0
+              ],
+              "expected_min": [
+                -20.0,
+                -15.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 14400.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 14400.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/as-built-attach/build123d/model.py",
+          "status": "pass",
+          "stl": "as-built-attach/build123d/model.stl"
+        }
+      ],
+      "model": "as-built-attach",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
                 20.0,
                 5.0,
                 20.0
@@ -4662,6 +4868,212 @@
           "geometry": {
             "bounds": {
               "actual_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "actual_min": [
+                -10.0,
+                -10.0,
+                -5.0
+              ],
+              "expected_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "expected_min": [
+                -10.0,
+                -10.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 8000.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 8000.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/parametric-move/pythonscad/model.py",
+          "status": "pass",
+          "stl": "parametric-move/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "actual_min": [
+                -10.0,
+                -10.0,
+                -5.0
+              ],
+              "expected_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "expected_min": [
+                -10.0,
+                -10.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 8000.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 8000.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/parametric-move/pybosl2/model.py",
+          "status": "pass",
+          "stl": "parametric-move/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "actual_min": [
+                -10.0,
+                -10.0,
+                -5.0
+              ],
+              "expected_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "expected_min": [
+                -10.0,
+                -10.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 8000.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 8000.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/parametric-move/cadquery/model.py",
+          "status": "pass",
+          "stl": "parametric-move/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "actual_min": [
+                -10.0,
+                -10.0,
+                -5.0
+              ],
+              "expected_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "expected_min": [
+                -10.0,
+                -10.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 8000.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 8000.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/parametric-move/build123d/model.py",
+          "status": "pass",
+          "stl": "parametric-move/build123d/model.stl"
+        }
+      ],
+      "model": "parametric-move",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
                 20.0,
                 15.0,
                 25.0
@@ -4812,6 +5224,212 @@
         }
       ],
       "model": "parametric-offset",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "actual_min": [
+                -50.0,
+                -10.0,
+                -5.0
+              ],
+              "expected_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "expected_min": [
+                -50.0,
+                -10.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 8000.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 8000.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/parametric-placement-pair/pythonscad/model.py",
+          "status": "pass",
+          "stl": "parametric-placement-pair/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "actual_min": [
+                -50.0,
+                -10.0,
+                -5.0
+              ],
+              "expected_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "expected_min": [
+                -50.0,
+                -10.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 8000.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 8000.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/parametric-placement-pair/pybosl2/model.py",
+          "status": "pass",
+          "stl": "parametric-placement-pair/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "actual_min": [
+                -50.0,
+                -10.0,
+                -5.0
+              ],
+              "expected_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "expected_min": [
+                -50.0,
+                -10.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 8000.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 8000.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/parametric-placement-pair/cadquery/model.py",
+          "status": "pass",
+          "stl": "parametric-placement-pair/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "actual_min": [
+                -50.0,
+                -10.0,
+                -5.0
+              ],
+              "expected_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "expected_min": [
+                -50.0,
+                -10.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 8000.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 8000.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/parametric-placement-pair/build123d/model.py",
+          "status": "pass",
+          "stl": "parametric-placement-pair/build123d/model.stl"
+        }
+      ],
+      "model": "parametric-placement-pair",
       "status": "pass"
     },
     {
@@ -6672,6 +7290,212 @@
         }
       ],
       "model": "repeated-parent-attachments",
+      "status": "pass"
+    },
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                45.0,
+                10.0,
+                2.0
+              ],
+              "actual_min": [
+                -45.0,
+                -10.0,
+                -2.0
+              ],
+              "expected_max": [
+                45.0,
+                10.0,
+                2.0
+              ],
+              "expected_min": [
+                -45.0,
+                -10.0,
+                -2.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 1600.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 1600.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pythonscad",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/rotated-copy-placement/pythonscad/model.py",
+          "status": "pass",
+          "stl": "rotated-copy-placement/pythonscad/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                45.0,
+                10.0,
+                2.0
+              ],
+              "actual_min": [
+                -45.0,
+                -10.0,
+                -2.0
+              ],
+              "expected_max": [
+                45.0,
+                10.0,
+                2.0
+              ],
+              "expected_min": [
+                -45.0,
+                -10.0,
+                -2.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 1600.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 1600.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/rotated-copy-placement/pybosl2/model.py",
+          "status": "pass",
+          "stl": "rotated-copy-placement/pybosl2/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                45.0,
+                10.0,
+                2.0
+              ],
+              "actual_min": [
+                -45.0,
+                -10.0,
+                -2.0
+              ],
+              "expected_max": [
+                45.0,
+                10.0,
+                2.0
+              ],
+              "expected_min": [
+                -45.0,
+                -10.0,
+                -2.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 1600.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 1600.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/rotated-copy-placement/cadquery/model.py",
+          "status": "pass",
+          "stl": "rotated-copy-placement/cadquery/model.stl"
+        },
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                45.0,
+                10.0,
+                2.0
+              ],
+              "actual_min": [
+                -45.0,
+                -10.0,
+                -2.0
+              ],
+              "expected_max": [
+                45.0,
+                10.0,
+                2.0
+              ],
+              "expected_min": [
+                -45.0,
+                -10.0,
+                -2.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 1600.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 1600.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/rotated-copy-placement/build123d/model.py",
+          "status": "pass",
+          "stl": "rotated-copy-placement/build123d/model.stl"
+        }
+      ],
+      "model": "rotated-copy-placement",
       "status": "pass"
     },
     {
@@ -12670,6 +13494,6 @@
     }
   ],
   "schema": 1,
-  "source_sha": "4956349b595c9eb47337da72124d3ba9dee2dc46",
+  "source_sha": "45c6213ad6b6c02a230a95f936ca2c65f4c56da2",
   "status": "pass"
 }

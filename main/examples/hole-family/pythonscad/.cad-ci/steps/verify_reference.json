@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "f89c5e226b3b1a1e861d8dcc78951bd8d2da98dcc45f587dc66e780e039367b3",
-  "duration_seconds": 0.122,
+  "bundle_sha256": "f0ed009354e54af93fff94e1bfe2e456a955642c7ab99018ad0bb0f7c335e897",
+  "duration_seconds": 0.167,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T22:59:01.513Z",
+  "finished_at": "2026-11-21T10:21:15.852Z",
   "item": "examples-hole-family-pythonscad",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,13 +14,13 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "d66a1c2846b55ec6f315eebe6c631b9dca3530ac252d3d262992bef72b5f1905"
+      "sha256": "14c552c6b6d79fb0863f98e8376c50fd132f33c1df9ca1d75733a3b87dcd87d4"
     }
   },
-  "run_finished_at": "2026-11-20T22:59:10.937Z",
-  "run_started_at": "2026-11-20T22:56:39.478Z",
+  "run_finished_at": "2026-11-21T10:21:30.971Z",
+  "run_started_at": "2026-11-21T10:18:05.955Z",
   "schema": 3,
-  "started_at": "2026-11-20T22:59:01.464Z",
+  "started_at": "2026-11-21T10:21:15.795Z",
   "status": "pass",
   "step": "verify_reference",
   "target_spec_digest": "f7259c86e7f07c379a074335526b6da820288d33d1f607dc637505f1318ac1b2",

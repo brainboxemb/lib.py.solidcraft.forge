@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "d770747607c9238abbbea82e15a4a6bcc02e5902d336ec3ca85c1214c5695f6a",
-  "duration_seconds": 0.124,
+  "bundle_sha256": "029f76d0505280abf897fd3ff284da81bc6283b1afd836b587e32943ac904099",
+  "duration_seconds": 0.166,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T22:59:05.081Z",
+  "finished_at": "2026-11-21T10:21:22.041Z",
   "item": "examples-rectangular-pattern-pythonscad",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,13 +14,13 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "aa1de78f5549c20d73dc396561ead6533fb6b01c0dce6c5385f094c8bfa15392"
+      "sha256": "4efdc3d22315b3678b1e94f4cf35416fd16955086d15cb6547b38e9a4d8ffbd5"
     }
   },
-  "run_finished_at": "2026-11-20T22:59:10.937Z",
-  "run_started_at": "2026-11-20T22:56:39.478Z",
+  "run_finished_at": "2026-11-21T10:21:30.971Z",
+  "run_started_at": "2026-11-21T10:18:05.955Z",
   "schema": 3,
-  "started_at": "2026-11-20T22:59:05.031Z",
+  "started_at": "2026-11-21T10:21:21.985Z",
   "status": "pass",
   "step": "verify_reference",
   "target_spec_digest": "bc98903625b1a0accb39c196f3bc3bfd5d72aed7d6d576ab2461106450f148ad",

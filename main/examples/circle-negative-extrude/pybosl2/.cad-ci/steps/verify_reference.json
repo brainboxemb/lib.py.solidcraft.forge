@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "7814bcf33e9f9e41eaa0cc064452fb6f4c4988dfe1488df6988ba3eb04977872",
-  "duration_seconds": 0.124,
+  "bundle_sha256": "5b828f4084e576c1b02e2b6773804f9b12d4eedfa852587570d7b5e9e2df9a71",
+  "duration_seconds": 0.167,
   "engine": "scons",
   "engine_schema": 1,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-20T22:58:57.299Z",
+  "finished_at": "2026-11-21T10:21:10.153Z",
   "item": "examples-circle-negative-extrude-pybosl2",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,13 +14,13 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "ae7b890338609ef321e842e5011c53512373aa7f203b5feb1177d89f128cc8dc"
+      "sha256": "9823f58f34f9e718c72e05df9f68833a43a5478aa50ac975f5015113d9dc9a7f"
     }
   },
-  "run_finished_at": "2026-11-20T22:59:10.937Z",
-  "run_started_at": "2026-11-20T22:56:39.478Z",
+  "run_finished_at": "2026-11-21T10:21:30.971Z",
+  "run_started_at": "2026-11-21T10:18:05.955Z",
   "schema": 3,
-  "started_at": "2026-11-20T22:58:57.250Z",
+  "started_at": "2026-11-21T10:21:10.097Z",
   "status": "pass",
   "step": "verify_reference",
   "target_spec_digest": "2a1f7fd63fa9a7956cf8d4d5e29ef2f2b92709aca5390c4078008417ae629a7c",

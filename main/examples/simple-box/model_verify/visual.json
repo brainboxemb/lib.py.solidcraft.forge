@@ -30,6 +30,8 @@
               "pass": true
             }
           },
+          "expected_shape_required": true,
+          "regression_required": true,
           "status": "pass",
           "view": "front"
         },
@@ -58,6 +60,8 @@
               "pass": true
             }
           },
+          "expected_shape_required": true,
+          "regression_required": true,
           "status": "pass",
           "view": "right"
         },
@@ -86,6 +90,8 @@
               "pass": true
             }
           },
+          "expected_shape_required": true,
+          "regression_required": true,
           "status": "pass",
           "view": "iso"
         },
@@ -118,6 +124,8 @@
           "pass": true
         }
       },
+      "expected_shape_required": true,
+      "regression_required": true,
       "status": "pass",
       "view": "front"
     },
@@ -140,6 +148,8 @@
           "pass": true
         }
       },
+      "expected_shape_required": true,
+      "regression_required": true,
       "status": "pass",
       "view": "right"
     },
@@ -162,6 +172,8 @@
           "pass": true
         }
       },
+      "expected_shape_required": true,
+      "regression_required": true,
       "status": "pass",
       "view": "iso"
     }
