@@ -77,6 +77,29 @@ class MergePolicyWorkflowTests(unittest.TestCase):
             "Retired unique branches owned by closed issues",
             text,
         )
+        self.assertIn("OBSOLETE_HISTORY_BACKUPS", text)
+        self.assertIn(
+            "backup/dev-cad-before-clean-history-2026-11-21=286923c7db25b5f77dce27e0a7c330cfb44ae3c5",
+            text,
+        )
+        self.assertIn(
+            "backup/dev-ci-before-clean-history-2026-11-21=ece7f96ca35afe662aaff4f9ea7e27fed8161049",
+            text,
+        )
+        self.assertIn(
+            "backup/main-before-clean-history-2026-11-21=02899ca28457dfb1587bc2bbc3a319cc40a4dfd0",
+            text,
+        )
+        self.assertIn(
+            "backup/main-before-final-clean-history-2026-11-21=95cc876a655f784afc518cdb6a0104159f0620a6",
+            text,
+        )
+        self.assertNotIn(
+            "backup/gh-pages-before-f11-2026-11-20=",
+            text,
+        )
+        self.assertIn("Retired exact clean-history backup refs", text)
+        self.assertIn("Kept because a clean-history backup SHA changed", text)
         self.assertIn("source_branch @ $source_sha", text)
         self.assertIn("Kept because an open PR still uses the branch", text)
         self.assertIn("Kept because unique/unmerged commits remain", text)
