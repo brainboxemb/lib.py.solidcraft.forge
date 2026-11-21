@@ -1,0 +1,168 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "34642eb70b3ab733b2d9cbf834117bf213057b6916dd12b6038c3c4e2895d2dc",
+          "size": 2242
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "RoundTopSketch",
+                "max": [
+                  50.0,
+                  50.0,
+                  26.0
+                ],
+                "min": [
+                  -50.0,
+                  -50.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  50.0,
+                  50.0,
+                  26.0
+                ],
+                "min": [
+                  -50.0,
+                  -50.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 2
+              },
+              "expected": {
+                "cylinder": 2
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 102868.30984842242,
+              "delta": 7.217749953269958e-07,
+              "expected": 102868.30984914419,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.5
+            }
+          }
+        ],
+        "sketch_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "name": "Disc",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "Disc",
+              "status": "solved"
+            },
+            "label": "Disc sketch",
+            "pass": true
+          },
+          {
+            "actual": {
+              "name": "Hub",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "Hub",
+              "status": "solved"
+            },
+            "label": "Hub sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Disc",
+              "type": "Sketch"
+            },
+            {
+              "name": "Extrude1",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "Hub",
+              "type": "Sketch"
+            },
+            {
+              "name": "Hub",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Disc",
+              "type": "Sketch"
+            },
+            {
+              "name": "Extrude1",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "Hub",
+              "type": "Sketch"
+            },
+            {
+              "name": "Hub",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/round-top-sketch/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "round-top-sketch"
+}

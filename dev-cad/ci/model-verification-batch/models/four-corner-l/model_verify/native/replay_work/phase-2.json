@@ -1,0 +1,66 @@
+{
+  "commands": [
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 6,
+        "translate": [
+          "-(frame_width / 2)",
+          "-(frame_depth / 2)",
+          "(frame_height - 16 mm) / 2"
+        ]
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 9,
+        "translate": [
+          "frame_width / 2",
+          "-(frame_depth / 2)",
+          "(frame_height - 16 mm) / 2"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "90 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 10,
+        "translate": [
+          "frame_width / 2",
+          "frame_depth / 2",
+          "(frame_height - 16 mm) / 2"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "180 deg"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 11,
+        "translate": [
+          "-(frame_width / 2)",
+          "frame_depth / 2",
+          "(frame_height - 16 mm) / 2"
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "angle": "270 deg"
+      }
+    }
+  ]
+}

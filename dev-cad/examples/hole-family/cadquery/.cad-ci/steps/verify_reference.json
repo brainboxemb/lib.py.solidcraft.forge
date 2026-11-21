@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "a7afb65b234bfc8ca998d5d822d2b0d0eddd2596cb3cfd5dbff436304df1ae90",
+  "duration_seconds": 0.58,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:43:05.933Z",
+  "item": "examples-hole-family-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "535b4a64d1fbf758a4014cfc0793857a08e8ce9cb8ce0d000052776c473fe7d3"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:43:56.637Z",
+  "run_started_at": "2026-11-21T11:38:36.067Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:43:05.875Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "1241fa69da5d0d40167abe63417328e4e97893fafcea0fe134b52c1fc03ae388",
+  "timeout_seconds": null
+}

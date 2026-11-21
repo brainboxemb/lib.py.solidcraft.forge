@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "4a0b01f39a000917cabda5ca6f04d53498a258d1da8dfe5ffc7c013359286443",
+  "duration_seconds": 0.598,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:42:40.378Z",
+  "item": "examples-assembly-owned-anchor-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "f4f8a018eeb7dc4a8db15c099faa32d67f367ec3ca2d987872d7de552216ac18"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:43:56.637Z",
+  "run_started_at": "2026-11-21T11:38:36.067Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:42:40.319Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "152b94a1fdced5fd34e7ff518c0a885d2b32392a6a76da2426ff52edace33294",
+  "timeout_seconds": null
+}

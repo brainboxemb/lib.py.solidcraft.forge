@@ -1,0 +1,82 @@
+{
+  "cadcraft_cli_version": "cadcraft-cli 0.20.1 (7526dc62c14e71b3c8d46e73bbf1fa29ef506af1)",
+  "cadcraft_version": "0.20.1",
+  "diagrams": [
+    {
+      "command_count": 20,
+      "dxf": "rendered/corner-bracket-depth.dxf",
+      "dxf_sha256": "424f5d0cd2245aa35c4d58284a6f44f5d791b00aa4b61c41c4c757468d4f4ff1",
+      "name": "corner-bracket-depth",
+      "source": "sources/corner-bracket-depth.cadcraft.json",
+      "source_sha256": "13af8ddcc814c336a51d8f46bd042adef0ba2c74595c48dcf6de0777c4086e56",
+      "status": "pass",
+      "svg": "rendered/corner-bracket-depth.svg",
+      "svg_sha256": "745939ed1b8c2f13079c5b8a88f9a8abe336d25383dcb7812fdfd70e6c1618e6",
+      "title": "Front and rear outside L-bracket rows - depth view (contact shown)"
+    },
+    {
+      "command_count": 42,
+      "dxf": "rendered/corner-bracket-front-corners.dxf",
+      "dxf_sha256": "2e224a9c12d3da636f40dc0261adc83bc956f7ee90451034ff0ed8126796a0f6",
+      "name": "corner-bracket-front-corners",
+      "source": "sources/corner-bracket-front-corners.cadcraft.json",
+      "source_sha256": "0b963b443e6d79550590cfbe96c9b7b3f2f84e1e8f303a227e0e968a5372cf95",
+      "status": "pass",
+      "svg": "rendered/corner-bracket-front-corners.svg",
+      "svg_sha256": "7751750a237be38f3206af51ac5bff4045e9aa4f01693295eb60b4f4252adfb6",
+      "title": "Four front corner topology frames"
+    },
+    {
+      "command_count": 20,
+      "dxf": "rendered/corner-bracket-goal.dxf",
+      "dxf_sha256": "642dea303571d7d597f23ebe6afbe4dd99b947930ab31bb390ec85cc67161a0f",
+      "name": "corner-bracket-goal",
+      "source": "sources/corner-bracket-goal.cadcraft.json",
+      "source_sha256": "b88020b9798e68d72e3394954360984a545ba1244016ade9c4d6c2c1d84a1c19",
+      "status": "pass",
+      "svg": "rendered/corner-bracket-goal.svg",
+      "svg_sha256": "c26b8f6f15f3a43f21a14d68fd803c51e2ef0b80999a5d5e402c728227a3dba0",
+      "title": "Four outside brackets - front view"
+    },
+    {
+      "command_count": 35,
+      "dxf": "rendered/corner-bracket-local-axes.dxf",
+      "dxf_sha256": "ecf3d58a5b801140fb5b7f93aa979ddea86139d7769714a212a3d691ebf3b81e",
+      "name": "corner-bracket-local-axes",
+      "source": "sources/corner-bracket-local-axes.cadcraft.json",
+      "source_sha256": "f9af6e117389f011870cd580fbb81dd82fe15b5fe7c9f14d233735f33fe62915",
+      "status": "pass",
+      "svg": "rendered/corner-bracket-local-axes.svg",
+      "svg_sha256": "05c8a8c08b658dc4a82b2b7c52fec3f3a4e04b1e38ceedabda0320e038ffdb6f",
+      "title": "Corner bracket local axes and child joint frames"
+    },
+    {
+      "command_count": 23,
+      "dxf": "rendered/solidcraft-joint-anatomy.dxf",
+      "dxf_sha256": "2c8b755237713fad4c23fcfecc35d3ede433a32d56bb6dafecfd8585d154fd07",
+      "name": "solidcraft-joint-anatomy",
+      "source": "sources/solidcraft-joint-anatomy.cadcraft.json",
+      "source_sha256": "2ec8dbc068423156aa2023d9034773ae7c42d078374743fbf6054c81f35a40e5",
+      "status": "pass",
+      "svg": "rendered/solidcraft-joint-anatomy.svg",
+      "svg_sha256": "d29675f8b286d761712df8cbeef78a4a5ce66b18052766a8bed7009d94068cf3",
+      "title": "SolidCraft joint origins A and B"
+    },
+    {
+      "command_count": 24,
+      "dxf": "rendered/solidcraft-joint-references.dxf",
+      "dxf_sha256": "8b1675acc9e56bd786e76389b4a455988fb6992e1e2028fe80fc946b7c661808",
+      "name": "solidcraft-joint-references",
+      "source": "sources/solidcraft-joint-references.cadcraft.json",
+      "source_sha256": "22f9014384b6bffabd1f4fbb0666ce144190b72e30003c8db6959b476d6fc184",
+      "status": "pass",
+      "svg": "rendered/solidcraft-joint-references.svg",
+      "svg_sha256": "4a3f010efa0288106a7dcd30714a223e0221a09b9567204d97b9c044e27d23f7",
+      "title": "Topology-backed parent and explicit child joint origin"
+    }
+  ],
+  "schema": "forge-verification-diagrams",
+  "schema_version": 1,
+  "source_count": 6,
+  "status": "pass"
+}

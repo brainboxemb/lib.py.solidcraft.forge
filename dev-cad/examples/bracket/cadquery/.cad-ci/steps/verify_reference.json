@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "3037cf5401d5100312e116d986e4b2870a33631604cab625f053d18eacd619f4",
+  "duration_seconds": 0.577,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:42:44.498Z",
+  "item": "examples-bracket-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "456972046cd9fbabf87beaf134f8c5d86f24c47b7344e8e92bc03673e8debd05"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:43:56.637Z",
+  "run_started_at": "2026-11-21T11:38:36.067Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:42:44.439Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "e683652956ca29f6b3bddbe649c90504d975fe8f78bb2ef65584b125442fb0ff",
+  "timeout_seconds": null
+}

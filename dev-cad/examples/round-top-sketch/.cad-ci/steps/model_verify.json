@@ -1,0 +1,33 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "7786524f546c3b1e7bf03628cb121eed27d1f51cad4b0b0376799a2910bbf6c1",
+  "duration_seconds": 0.964,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:42:12.013Z",
+  "item": "round-top-sketch",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "model_verify": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "9002355652af9f75447e2da4c77871de7ee70d6ef809e88dd4917b2f8df5083f"
+    },
+    "solidcraft.json": {
+      "kind": "file",
+      "mode": 420,
+      "sha256": "bca4f7f2989f8357d52e23e4c1c778f7d775c2204c0994ed336190735dc502ff"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:43:56.637Z",
+  "run_started_at": "2026-11-21T11:38:36.067Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:42:11.952Z",
+  "status": "pass",
+  "step": "model_verify",
+  "target_spec_digest": "9faa3835e66765d952f9727c9a0561db31e30af216cdf7d7c4b6f34930cde138",
+  "timeout_seconds": null
+}

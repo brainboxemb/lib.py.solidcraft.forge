@@ -1,0 +1,95 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "79505c7a7d06dc42dad70676c64786d7fac5173a3c0043908401b0cc27f7ed4a",
+          "size": 1925
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Panel",
+                "max": [
+                  -35.0,
+                  10.0,
+                  2.0
+                ],
+                "min": [
+                  -45.0,
+                  -10.0,
+                  -2.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -35.0,
+                  10.0,
+                  2.0
+                ],
+                "min": [
+                  -45.0,
+                  -10.0,
+                  -2.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Panel (Panel:2)",
+                "max": [
+                  45.0,
+                  10.0,
+                  2.0
+                ],
+                "min": [
+                  35.0,
+                  -10.0,
+                  -2.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  45.0,
+                  10.0,
+                  2.0
+                ],
+                "min": [
+                  35.0,
+                  -10.0,
+                  -2.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/rotated-copy-placement/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "rotated-copy-placement"
+}
