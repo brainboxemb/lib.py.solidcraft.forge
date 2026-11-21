@@ -36,7 +36,32 @@
     "verified_during_solidcraft_0_42_0_qualification": true
   },
   "expected_boxes": [
-    {}
+    {
+      "label": "arm X",
+      "minimum": [
+        0,
+        -12,
+        -12
+      ],
+      "maximum": [
+        40,
+        12,
+        0
+      ]
+    },
+    {
+      "label": "arm Z",
+      "minimum": [
+        0,
+        -12,
+        -40
+      ],
+      "maximum": [
+        12,
+        12,
+        0
+      ]
+    }
   ],
   "expected_features": []
 }
