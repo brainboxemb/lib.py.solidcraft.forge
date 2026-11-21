@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "6ebfaa5ee902f613ed1d2ba8d8ff637b7fec9b888d8357d5485f495dcad88874",
-          "size": 3358
+          "sha256": "618a6138d925b66bec68f33a55531eba93110347dd6f2ee3ea87bd7df4cefe79",
+          "size": 3339
         }
       ],
       "error": null,
@@ -73,8 +73,8 @@
               "pass": true
             },
             "volume": {
-              "actual": 6343.451332346599,
-              "delta": 1.1121483112219721e-07,
+              "actual": 6343.451332346595,
+              "delta": 1.1121119314339012e-07,
               "expected": 6343.451332235384,
               "kind": "scalar",
               "label": "sole body volume",
@@ -151,8 +151,8 @@
         {
           "kind": "file",
           "path": "inspections/flat_pattern/results.json",
-          "sha256": "97ada4a164c93559cc979f4e3ca2301038b06c9698b5bdbd0cf507686c356cc5",
-          "size": 11052
+          "sha256": "e0a634cf5c8528238fba2de9d3f371d278f97b7f941cf70a0fa88609ed7464d5",
+          "size": 11048
         }
       ],
       "error": null,

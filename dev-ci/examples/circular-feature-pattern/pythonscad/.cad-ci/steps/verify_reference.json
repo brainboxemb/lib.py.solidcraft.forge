@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "a5c4c75f25af47621d91f01b6895e42e4c9bbbb40ebaa877856ba7b44e474af6",
-  "duration_seconds": 0.341,
+  "bundle_sha256": "a526099367f339759d520e821e69d643c2bed2e4471249337ca661df4fda9950",
+  "duration_seconds": 0.587,
   "engine": "scons",
   "engine_schema": 2,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-21T11:41:56.124Z",
+  "finished_at": "2026-11-21T15:37:16.806Z",
   "item": "examples-circular-feature-pattern-pythonscad",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,15 +14,15 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "e46b455b2185ba0e67bc41093aa19da0e6e9ec720995c78062dd9a278210e951"
+      "sha256": "683438a67f253192df30c47b74f9a5cbc1ac217efa1e76f669f7ce0a4f0a4839"
     }
   },
-  "run_finished_at": "2026-11-21T11:42:34.765Z",
-  "run_started_at": "2026-11-21T11:38:38.674Z",
+  "run_finished_at": "2026-11-21T15:38:22.881Z",
+  "run_started_at": "2026-11-21T15:33:04.086Z",
   "schema": 3,
-  "started_at": "2026-11-21T11:41:56.077Z",
+  "started_at": "2026-11-21T15:37:16.747Z",
   "status": "pass",
   "step": "verify_reference",
-  "target_spec_digest": "1a34d389ab7819381183f00d78e5b214c7aa504261c01c5b5161638454afc5dc",
+  "target_spec_digest": "02212642e9af7118641df19e2cc41b079954eacb39d770d326ca09bc71f15031",
   "timeout_seconds": null
 }

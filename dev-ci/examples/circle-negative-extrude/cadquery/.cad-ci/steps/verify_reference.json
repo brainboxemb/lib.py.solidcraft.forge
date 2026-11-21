@@ -1,12 +1,12 @@
 {
   "action_executed": true,
-  "bundle_sha256": "4f1b1a33f9af8b0bd9086891cf2bc77cefacd2af6854b06fa967c65847c3e109",
-  "duration_seconds": 0.346,
+  "bundle_sha256": "e45bbcef038d51be43a4e303399646fa3b3d2bbbbddd61082e40d2674bdc5e68",
+  "duration_seconds": 0.576,
   "engine": "scons",
   "engine_schema": 2,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-21T11:41:53.776Z",
+  "finished_at": "2026-11-21T15:37:13.246Z",
   "item": "examples-circle-negative-extrude-cadquery",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -14,15 +14,15 @@
     "references": {
       "kind": "directory",
       "mode": 493,
-      "sha256": "8f75d912411260a451e08167dd045198204272bb5e1b267ed040a4b6ee3c6d63"
+      "sha256": "1f0185ca6da1914f6aa4dcbe47e0920b894b7025a127078d34a894f56f0a817e"
     }
   },
-  "run_finished_at": "2026-11-21T11:42:34.765Z",
-  "run_started_at": "2026-11-21T11:38:38.674Z",
+  "run_finished_at": "2026-11-21T15:38:22.881Z",
+  "run_started_at": "2026-11-21T15:33:04.086Z",
   "schema": 3,
-  "started_at": "2026-11-21T11:41:53.726Z",
+  "started_at": "2026-11-21T15:37:13.187Z",
   "status": "pass",
   "step": "verify_reference",
-  "target_spec_digest": "5c2a2fa3549f1b6e64ff0a46f3e34295efde18250c8239d8664350ab592ace7c",
+  "target_spec_digest": "b3fe00c5b049ee1cd6ea8569c3adf8dc4e327211457e04f7763bb66314070647",
   "timeout_seconds": null
 }
