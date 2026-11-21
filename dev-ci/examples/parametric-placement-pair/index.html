@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Symmetric parametric occurrence Placement · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Symmetric parametric occurrence Placement</div>
+  <section class="hero small">
+    <p class="eyebrow">components</p>
+    <h1>Symmetric parametric occurrence Placement</h1>
+    <p class="guide-lead">Two shared Block occurrences remain symmetric around one editable spacing parameter</p>
+    <p>Two occurrences of one Block definition are positioned at the negative and positive halves of one parent spacing parameter.</p>
+    <p class="meta"><span>Two 20 × 20 × 10 mm Blocks; spacing 80 mm</span><span>7 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/parametric-placement-pair/model_verify/presentation/preview-iso.png" alt="Symmetric parametric occurrence Placement: Current deterministic presentation preview from durable build 351ce4c60e60." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build 351ce4c60e60.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create one reusable Block definition</li><li>Create two replay-bound occurrences</li><li>Place them at -spacing/2 and +spacing/2</li><li>Recompute the saved design after changing spacing</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify the WoodFrame-style dependency shape: two occurrences of one reusable definition are placed symmetrically from one parent spacing parameter.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>left = Block(placement=Placement(x=-half(self.spacing))); right = left.copy(placement=Placement(x=half(self.spacing)))</code></p>
+    <h2>Forge model</h2>
+    <p>Two occurrences share one Block definition. Their absolute X placements are the negative and positive halves of the same parent parameter.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge publishes spacing, creates one Block definition, binds both real occurrence IDs, and emits two occurrence.move expressions using -(spacing / 2) and spacing / 2. No predicted occurrence name and no placement joint is used.</p>
+    <h2>SolidCraft result</h2>
+    <p>With spacing=80 mm the two 20 mm blocks are centred at X=-40 and X=+40.</p>
+    <h2>Saved-design test</h2>
+    <p>Change spacing from 80 to 120 mm in the saved design; without rerunning Python the two centres must move symmetrically to X=-60 and X=+60.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The two centred disjoint Block envelopes prove the symmetric baseline and mutation positions. Saved-design recompute proves both native placement expressions remain tied to the same spacing parameter.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — Both occurrence translations remain parameter-referencing expressed moves in the saved design.</li><li><strong>CadQuery</strong> — Independent Assembly Locations provide a comparison for symmetric occurrence placement without constraints.</li><li><strong>PythonSCAD</strong> — Symmetric translate(-spacing/2) and translate(spacing/2) express the same visible intent.</li><li><strong>pyBOSL2</strong> — Independent translated blocks verify the baseline symmetric geometry.</li><li><strong>build123d</strong> — Independent Locations verify the two baseline centers.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Qualification: symmetric parametric occurrence Placement without joints.&quot;&quot;&quot;
+
+
+class Block:
+    def build(self):
+        return Box(20, 20, 10)
+
+
+class ParametricPlacementPair:
+    spacing = 80.0
+
+    def build(self):
+        left = Block(
+            placement=Placement(x=-half(self.spacing))
+        )
+        right = left.copy(
+            placement=Placement(x=half(self.spacing))
+        )
+        return left + right
+
+
+ParametricPlacementPair()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/parametric-placement-pair/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.copy</code></li><li><code>parameters.add</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Model objects and parameters · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap guide-layout"><aside class="guide-sidebar"><h2>API Guide</h2><a href="../">Overview</a><a href="../getting-started/">Getting started</a><a class="active" href="../model-objects/">Model objects and parameters</a><div class="guide-subnav"><a href="#class">A model is a normal Python class</a><a href="#parameter-intent">Parameter intent is visible in the name</a><a href="#shared-parameters">Share one model parameter across child components</a><a href="#shape">Shape versus component occurrence</a><a href="#groups">Groups are actual native parent components</a><a href="#limits">Important boundaries</a></div><a href="../transformations/">Positioning and orientation</a><a href="../assembly-basics/">From one component to an assembly</a><a href="../geometry/">Geometry, sketches and Boolean operations</a><a href="../features/">Features and references</a><a href="../components/">Components and assemblies</a><a href="../verification/">Verification and API boundaries</a></aside><article class="guide-article"><p class="crumb"><a href="../">API Guide</a> / Model objects and parameters</p><h1>Model objects and parameters</h1><p class="guide-lead">What a class, Shape, component and occurrence mean.</p><h2 id="class">A model is a normal Python class</h2>
+<p>Numeric class attributes become editable SolidCraft parameters when SCPF
+compiles a plain model class. <code>build()</code> returns geometry. If a file
+contains exactly one public class with <code>build()</code>, that class is the
+root automatically; no trailing constructor call or launcher file is needed.</p>
+<pre class="code-block"><code>from scpf import Box
+
+class Plate:
+    length = 100.0
+    width = 60.0
+    thickness = 10.0
+
+    def build(self):
+        return Box(self.length, self.width, self.thickness)</code></pre>
+<p>Run that source file directly with
+<code>python -m scpf plate.py --connect</code>. The same rule lets a reusable
+component file serve as its standalone model while assemblies import the exact
+same class. If a file contains several public model classes, SCPF deliberately
+does not guess: finish the script with an explicit call such as
+<code>Assembly()</code> to choose the root.</p>
+<p>An explicit final call is also how you override root parameters for a
+particular run, for example <code>Plate(width=80)</code>. Arithmetic such as
+<code>self.length / 2</code> is preserved symbolically for supported
+expressions; general Python computations are not automatically made
+parametric.</p>
+<h2 id="parameter-intent">Parameter intent is visible in the name</h2>
+<p>SCPF distinguishes three kinds of numeric class attributes. This keeps a
+Python build setting from looking like a native editable CAD parameter.</p>
+<pre class="code-block"><code>class Display:
+    PANEL_COUNT = 5          # fixed constant
+    _panel_pitch = 160.0     # Forge/build-time input
+    opening_width = 844.0    # native model parameter</code></pre>
+<table><thead><tr><th>Name</th><th>Meaning</th><th>SolidCraft parameter</th></tr></thead><tbody>
+<tr><td><code>UPPER_CASE</code></td><td>Fixed constant</td><td>No</td></tr>
+<tr><td><code>_lower_case</code></td><td>Forge/build-time input</td><td>No</td></tr>
+<tr><td><code>lower_case</code></td><td>Editable model parameter</td><td>Yes</td></tr>
+</tbody></table>
+<p>If a public lower-case parameter is consumed only as a concrete Python
+value—for example through <code>pv()</code>—Forge emits a
+<code>ModelParameterWarning</code>. The same warning is emitted when a
+parameter remains native in some geometry but is also flattened into concrete
+occurrence placement. Such a parameter is only partly associative: editing it
+in SolidCraft would update only part of the model. Keep
+<code>Placement</code> coordinates symbolic or rename an intentionally
+build-time input with a leading underscore.</p>
+<h2 id="shared-parameters">Share one model parameter across child components</h2>
+<p>Passing a parent parameter into several component inputs keeps one native
+SolidCraft parameter instead of creating component-specific duplicates.</p>
+<pre class="code-block"><code>bottom = BottomBoard(corner_radius=self.corner_radius)
+roof = RoofBoard(corner_radius=self.corner_radius)
+bracket = Bracket(
+    bracket_width=self.bracket_width,
+    inside_corner_radius=self.corner_radius,
+)</code></pre>
+<p>Here the wooden fillets and bracket inside fillet all depend on the same
+<code>corner_radius</code>. Passing the parent parameter into the child input
+reuses that existing native dependency rather than creating a duplicate child
+parameter.</p>
+<p>Reusable component defaults stay fixed unless they are explicitly
+published with <code>include=</code>. Parent Parameters/Expressions passed into
+child inputs always stay symbolic and reuse the existing parent dependency.</p>
+<pre class="code-block"><code>Bracket = component(
+    CornerBracket,
+    include=(&quot;inside_corner_radius&quot;,),
+)
+
+# Or publish all public defaults explicitly:
+FullyEditableBracket = component(CornerBracket, include=&quot;*&quot;)</code></pre>
+<p>This publication rule is recorded in
+<a href="../../changes/0003-explicit-component-parameter-publication/">change 0003</a>.</p>
+<h2 id="shape">Shape versus component occurrence</h2>
+<p><strong>Shape</strong> describes geometry or a feature expression
+(<code>Box</code>, <code>Hole</code>, an extrusion). A <strong>component
+occurrence</strong> is one placed instance of a shared, editable model definition.
+Do not confuse a new occurrence with a new feature history.</p>
+<pre class="code-block"><code>from scpf import Box, Placement, component
+
+class Block:
+    def build(self):
+        return Box(40, 20, 10)
+
+BlockComponent = component(Block)
+first = BlockComponent(placement=Placement(x=-25))
+second = first.copy(placement=Placement(x=25))
+assembly = first + second</code></pre>
+<p>The two occurrences share the same <code>Block</code> definition.
+<code>Placement</code> is occurrence creation metadata: XYZ is absolute in the
+parent coordinate frame and optional rotation adds orientation. The component
+definition never receives <code>placement</code> as a model parameter.</p>
+<h2 id="groups">Groups are actual native parent components</h2>
+<pre class="code-block"><code>blocks = (first + second).group(&quot;Blocks&quot;)</code></pre>
+<p>Grouping changes the browser hierarchy, not the geometry's orientation.
+At present one shared definition cannot be split among different groups.</p>
+<h2 id="limits">Important boundaries</h2>
+<p>Associative attachment is supported for a limited set of rectangular
+component faces. General mates, arbitrary face queries and rotational
+constraints are not implemented as a complete assembly solver.</p>
+<p><strong>Next:</strong> <a href="../transformations/">Positioning and orientation</a>
+explains how to place geometry and component occurrences, and when
+<code>at()</code>, <code>on()</code> or <code>attach()</code> is the right choice.</p>
+<section class="guide-api-summary"><h2>API on this page</h2><p class="guide-api-intro">These values and signatures are generated from the current Python API. They are shown here so the normal guide flow does not require opening the reference for every detail.</p><div class="guide-api-grid"><article class="guide-api-item"><h3><a href="../../reference/Shape/">Shape</a></h3><p>Store Forge geometry and feature operations before SolidCraft executes them.</p><pre class="guide-api-signature"><code>Shape(kind: str, data: Any) -&gt; None</code></pre><p><strong>Use when:</strong> Shape values are normally returned by constructors such as Box(), Cylinder(), Hole() and Sketch.extrude(), then transformed or combined with the supported Shape methods/operators.</p><p><strong>Current limits:</strong> Shape is only Forge&#x27;s description of the model. SolidCraft owns the final BRep and feature history; users normally do not instantiate Shape(kind, data) directly.</p></article><article class="guide-api-item"><h3><a href="../../reference/parameters-positioning/">Parameters and positioning helpers</a></h3><p>Keep dimensions symbolic and express readable offsets or parent-bound positions.</p><div class="guide-api-group-members"><div class="guide-api-group-member" id="api-Parameter"><h4><code>Parameter</code></h4><pre class="guide-api-signature"><code>Parameter(name: str, value: float) -&gt; None</code></pre><p>Represent one named editable CAD dimension.</p><p><strong>Use when:</strong> Keep a value symbolic so generated SolidCraft commands can retain an editable dependency instead of baking in the current Python number.</p><p><strong>Current limits:</strong> value must be finite. Normal public lower-case model fields are usually promoted to parameters automatically, so explicit Parameter() is mainly useful in lower-level or assembly code.</p><p><a href="../../reference/parameters-positioning/#Parameter">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-Placement"><h4><code>Placement</code></h4><pre class="guide-api-signature"><code>Placement(x: object = 0, y: object = 0, z: object = 0, rotation: tuple[object, object] | None = None) -&gt; None</code></pre><p>Absolute pose of one occurrence in its parent coordinate frame.</p><p><strong>Use when:</strong> Declare the pose of a component occurrence at creation or copy time.</p><p><strong>Current limits:</strong> Placement is occurrence creation state, not a relative move action. Coordinates, rotation axis and angle must evaluate to finite values.</p><p><a href="../../reference/parameters-positioning/#Placement">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-X"><h4><code>X</code></h4><p><code>X = X</code></p><p>Axis token with MIN, CENTER and MAX parent-bound placement selectors.</p><p><strong>Use when:</strong> Public X, Y and Z tokens let feature offsets refer to a parent bound, for example X.MIN + 10 or Y.MAX - 10, without hard-coding the current global coordinate.</p><p><strong>Current limits:</strong> These X/Y/Z tokens are bound selectors, not Axis.X/Y/Z primitive-axis enum values.</p></div><div class="guide-api-group-member" id="api-Y"><h4><code>Y</code></h4><p><code>Y = Y</code></p><p>Axis token with MIN, CENTER and MAX parent-bound placement selectors.</p><p><strong>Use when:</strong> Public X, Y and Z tokens let feature offsets refer to a parent bound, for example X.MIN + 10 or Y.MAX - 10, without hard-coding the current global coordinate.</p><p><strong>Current limits:</strong> These X/Y/Z tokens are bound selectors, not Axis.X/Y/Z primitive-axis enum values.</p></div><div class="guide-api-group-member" id="api-Z"><h4><code>Z</code></h4><p><code>Z = Z</code></p><p>Axis token with MIN, CENTER and MAX parent-bound placement selectors.</p><p><strong>Use when:</strong> Public X, Y and Z tokens let feature offsets refer to a parent bound, for example X.MIN + 10 or Y.MAX - 10, without hard-coding the current global coordinate.</p><p><strong>Current limits:</strong> These X/Y/Z tokens are bound selectors, not Axis.X/Y/Z primitive-axis enum values.</p></div><div class="guide-api-group-member" id="api-up"><h4><code>up</code></h4><pre class="guide-api-signature"><code>up(distance)</code></pre><p>Return a symbolic-safe XYZ offset in the +Z direction.</p><p><strong>Use when:</strong> Express a readable placement offset while preserving Parameter or Expression values.</p><p><strong>Current limits:</strong> This returns an XYZ tuple; it does not create an Anchor relationship.</p><p><a href="../../reference/parameters-positioning/#up">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-down"><h4><code>down</code></h4><pre class="guide-api-signature"><code>down(distance)</code></pre><p>Return a symbolic-safe XYZ offset in the -Z direction.</p><p><strong>Use when:</strong> Express a readable placement offset while preserving Parameter or Expression values.</p><p><strong>Current limits:</strong> This returns an XYZ tuple; it does not create an Anchor relationship.</p><p><a href="../../reference/parameters-positioning/#down">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-left"><h4><code>left</code></h4><pre class="guide-api-signature"><code>left(distance)</code></pre><p>Return a symbolic-safe XYZ offset in the -X direction.</p><p><strong>Use when:</strong> Express a readable placement offset while preserving Parameter or Expression values.</p><p><strong>Current limits:</strong> This returns an XYZ tuple; it does not create an Anchor relationship.</p><p><a href="../../reference/parameters-positioning/#left">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-right"><h4><code>right</code></h4><pre class="guide-api-signature"><code>right(distance)</code></pre><p>Return a symbolic-safe XYZ offset in the +X direction.</p><p><strong>Use when:</strong> Express a readable placement offset while preserving Parameter or Expression values.</p><p><strong>Current limits:</strong> This returns an XYZ tuple; it does not create an Anchor relationship.</p><p><a href="../../reference/parameters-positioning/#right">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-front"><h4><code>front</code></h4><pre class="guide-api-signature"><code>front(distance)</code></pre><p>Return a symbolic-safe XYZ offset in the -Y direction.</p><p><strong>Use when:</strong> Express a readable placement offset while preserving Parameter or Expression values.</p><p><strong>Current limits:</strong> This returns an XYZ tuple; it does not create an Anchor relationship.</p><p><a href="../../reference/parameters-positioning/#front">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-back"><h4><code>back</code></h4><pre class="guide-api-signature"><code>back(distance)</code></pre><p>Return a symbolic-safe XYZ offset in the +Y direction.</p><p><strong>Use when:</strong> Express a readable placement offset while preserving Parameter or Expression values.</p><p><strong>Current limits:</strong> This returns an XYZ tuple; it does not create an Anchor relationship.</p><p><a href="../../reference/parameters-positioning/#back">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-half"><h4><code>half</code></h4><pre class="guide-api-signature"><code>half(value)</code></pre><p>Return half of a numeric or symbolic CAD dimension.</p><p><strong>Use when:</strong> Keep midpoint-style arithmetic readable without converting a symbolic CAD dimension to a concrete Python value.</p><p><strong>Current limits:</strong> Equivalent to value / 2; the input must support that operation.</p><p><a href="../../reference/parameters-positioning/#half">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-midpoint"><h4><code>midpoint</code></h4><pre class="guide-api-signature"><code>midpoint(start, end)</code></pre><p>Return the midpoint between two numeric or symbolic dimensions.</p><p><strong>Use when:</strong> Express a centre position while preserving symbolic CAD dependencies.</p><p><strong>Current limits:</strong> Equivalent to (start + end) / 2; inputs must support symbolic arithmetic.</p><p><a href="../../reference/parameters-positioning/#midpoint">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-pv"><h4><code>pv</code></h4><pre class="guide-api-signature"><code>pv(dim) -&gt; float</code></pre><p>Return the concrete Python value of a symbolic CAD dimension.</p><p><strong>Use when:</strong> Python itself genuinely needs a number for validation or control flow.</p><p><strong>Current limits:</strong> Calling pv() intentionally removes the symbolic dependency at that point. Geometry and placement should normally keep Parameter/Expression objects symbolic so SolidCraft remains editable and associative.</p><p><a href="../../reference/parameters-positioning/#pv">Detailed parameter reference →</a></p></div></div></article></div></section></article></main>
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

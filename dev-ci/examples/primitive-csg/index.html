@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Primitive CSG · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Primitive CSG</div>
+  <section class="hero small">
+    <p class="eyebrow">fundamentals</p>
+    <h1>Primitive CSG</h1>
+    <p class="guide-lead">Direct primitives and Boolean operators form one native CSG result</p>
+    <p>Sphere, Box and X-axis Cylinder primitives are translated and combined with union, subtraction and intersection independently of feature-history modelling.</p>
+    <p class="meta"><span>Sphere R20; 30 mm Box extension; Ø8 X-axis bore; 50 mm clipping Box</span><span>4 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/primitive-csg/model_verify/presentation/preview-iso.png" alt="Primitive CSG: Current deterministic presentation preview from durable build 351ce4c60e60." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build 351ce4c60e60.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create and union the Sphere and translated Box</li><li>Subtract the centered X-axis Cylinder bore</li><li>Intersect the result with the clipping Box</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Qualify direct primitive/CSG modelling independently of feature-history geometry: Sphere and Box union, translated primitives, one native X-axis Cylinder cut and intersection.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>Sphere(); Box(...).move(...); Cylinder(..., axis=Axis.X).at(...); + / - / &amp;</code></p>
+    <h2>Forge model</h2>
+    <p>A Shape CSG tree rooted in Sphere so Forge deliberately selects the direct CSG compiler instead of the feature-history Box compiler.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>solid.sphere(new), solid.box(join), one X-axis solid.cylinder(cut), then solid.box(intersect).</p>
+    <h2>SolidCraft result</h2>
+    <p>SolidCraft accepts the complete CSG command path, produces one valid clipped body and evaluates the native timeline without errors.</p>
+    <h2>Saved-design test</h2>
+    <p>No saved-design mutation in this case; it isolates primitive CSG lowering. Parametric edits are covered by dedicated saved-design cases.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>Many different Boolean results can share this envelope. Surface probes must prove the surviving sphere, bore, clipped box and unioned extension.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>OpenSCAD</strong> — Closest to ordinary union()/difference()/intersection() with translate()/rotate() around primitives.</li><li><strong>PythonSCAD</strong> — Useful comparison for Python objects and operators while Forge still delegates all geometry to SolidCraft.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Core CSG qualification: primitives, transforms and Boolean operations.&quot;&quot;&quot;
+
+
+class PrimitiveCsg:
+    def build(self):
+        body = Sphere(20)
+        body = body + Box(30, 30, 20).move(x=18, z=10)
+
+        # Native principal-axis Cylinder, centered by default.
+        bore = Cylinder(d=8, h=60, axis=Axis.X)
+        body = body - bore
+
+        clip = Box(50, 50, 30).move(z=15)
+        return body &amp; clip
+
+
+PrimitiveCsg()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/primitive-csg/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>solid.sphere</code></li><li><code>solid.box</code></li><li><code>solid.cylinder</code></li><li><code>solid.box</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

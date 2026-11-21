@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Anchors on XZ-profile extrusion · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Anchors on XZ-profile extrusion</div>
+  <section class="hero small">
+    <p class="eyebrow">anchors</p>
+    <h1>Anchors on XZ-profile extrusion</h1>
+    <p class="guide-lead">Standard corner anchors work on an XZ-authored board</p>
+    <p>A Board authored from an XZ polygon and extruded in Y exposes standard corner anchors used by independent left and right Marker components.</p>
+    <p class="meta"><span>Board 40 × 12 × 20 mm; two 10 mm Marker cubes</span><span>21 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/xz-anchor/model_verify/presentation/preview-iso.png" alt="Anchors on XZ-profile extrusion: Current deterministic presentation preview from durable build 351ce4c60e60." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build 351ce4c60e60.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the Board from an XZ profile</li><li>Extrude the profile in Y</li><li>Attach left and right Markers to standard BACK_TOP corners</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify standard corner anchors on geometry authored as an XZ polygon and extruded in Y.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>with Sketch(plane=&#x27;XZ&#x27;): Polygon2D(..., plane=&#x27;XZ&#x27;, world=True); sketch.extrude(...); standard corner Anchors</code></p>
+    <h2>Forge model</h2>
+    <p>Forge recovers rectangular bounds/topology from the XZ profile while preserving symbolic width and height. RightMarker and LeftMarker are separate small test parts so this case tests the board anchors, not copied-occurrence addressing.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Two joint.create commands use the Board corner topology plus explicit RightMarker and LeftMarker occurrence references. No generated Component:N name is required.</p>
+    <h2>SolidCraft result</h2>
+    <p>Left and right markers attach to their respective front-top corners with mirrored spatial results.</p>
+    <h2>Saved-design test</h2>
+    <p>Change board width/height from 40x20 to 80x40 mm; both markers follow their own corners.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The board and marker positions describe the visible XZ placement. After resizing the saved model, the markers must still use the same selected anchors.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>OpenSCAD</strong> — The profile/extrusion resembles polygon()+linear_extrude(), but Forge retains native SolidCraft parameters and attachment topology.</li><li><strong>BOSL2</strong> — Mirrored corner anchors are a useful check that local anchor frames, not a single global direction assumption, control attachment.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>class Board:
+    width = 40.0
+    height = 20.0
+    depth = 12.0
+
+    def build(self):
+        half_width = half(self.width)
+        with Sketch(name=&quot;Profile&quot;, plane=&quot;XZ&quot;) as sketch:
+            Polygon2D(
+                [
+                    (&quot;lower_left&quot;, (-half_width, 0)),
+                    (&quot;lower_right&quot;, (half_width, 0)),
+                    (&quot;upper_right&quot;, (half_width, self.height)),
+                    (&quot;upper_left&quot;, (-half_width, self.height)),
+                ],
+                plane=&quot;XZ&quot;,
+                world=True,
+            )
+        return sketch.extrude(self.depth).with_material(
+            &quot;test board&quot;,
+            density_g_cm3=0.55,
+        )
+
+
+class RightMarker:
+    def build(self):
+        return Box(10, 10, 10)
+
+
+class LeftMarker:
+    def build(self):
+        return Box(10, 10, 10)
+
+
+class XzAnchor:
+    board_width = 40.0
+    board_height = 20.0
+
+    def build(self):
+        board = Board(
+            width=self.board_width,
+            height=self.board_height,
+        )
+        right_marker = RightMarker().attach(
+            board,
+            parent=Anchor.FRONT_TOP_RIGHT,
+            child=Anchor.BACK_TOP_RIGHT,
+        )
+        left_marker = LeftMarker().attach(
+            board,
+            parent=Anchor.FRONT_TOP_LEFT,
+            child=Anchor.BACK_TOP_LEFT,
+        )
+        return board + right_marker + left_marker
+
+
+XzAnchor()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/xz-anchor/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>component.create</code></li><li><code>sketch.create</code></li><li><code>sketch.line</code></li><li><code>sketch.finish</code></li><li><code>solid.extrude</code></li><li><code>material.create</code></li><li><code>material.assign</code></li><li><code>component.activate</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>joint.create</code></li><li><code>joint.create</code></li><li><code>browser.visibility</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

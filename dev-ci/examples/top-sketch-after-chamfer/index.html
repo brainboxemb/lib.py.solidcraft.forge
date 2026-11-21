@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>TOP Sketch after chamfer · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / TOP Sketch after chamfer</div>
+  <section class="hero small">
+    <p class="eyebrow">features</p>
+    <h1>TOP Sketch after chamfer</h1>
+    <p class="guide-lead">Face-attached sketch remains valid after topology-changing chamfer</p>
+    <p>A chamfered plate with a centered through hole whose sketch is attached to the resulting TOP face after the chamfer.</p>
+    <p class="meta"><span>100 × 70 × 10 mm plate; 8 mm corner chamfers; Ø12 through hole</span><span>7 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/top-sketch-after-chamfer/model_verify/presentation/preview-iso.png" alt="TOP Sketch after chamfer: Current deterministic presentation preview from durable build 351ce4c60e60." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build 351ce4c60e60.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the bottom-anchored Box plate</li><li>Chamfer the four vertical edges</li><li>Resolve the resulting TOP face and cut the attached hole sketch through all</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify that a TOP-attached Sketch still selects the resulting planar +Z face after a native chamfer changes the body&#x27;s topology.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>Box(...).chamfer(..., edges=Edges.VERTICAL); with Sketch(on=plate, parent=Anchor.TOP): Circle2D(...); cut through all</code></p>
+    <h2>Forge model</h2>
+    <p>One 100 x 70 x 10 mm plate, four 8 mm plan-view corner chamfers, then one native TOP-attached Sketch containing a centered 12 mm through hole.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge emits solid.chamfer before model.faces. Replay selects the largest +Z planar face by plane_normal and area, tolerating only tiny numeric-vector noise from the native kernel, then passes its point/index to face-attached sketch.create.</p>
+    <h2>SolidCraft result</h2>
+    <p>SolidCraft 0.42 builds one chamfered plate with one centered through hole. The Top hole Sketch remains a solved feature attached to the actual post-chamfer top face.</p>
+    <h2>Saved-design test</h2>
+    <p>No saved-design mutation in this fixture; it isolates stable face lookup after topology-changing native features.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>The outer bounds do not prove the four corner chamfers or the through hole. Volume, cylindrical-wall probes and native timeline/sketch checks are required.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>PythonSCAD</strong> — Independent CSG reference cuts the four corner wedges before subtracting the central through hole.</li><li><strong>CadQuery</strong> — Independent feature reference applies a vertical-edge chamfer before creating the top-face hole.</li><li><strong>build123d</strong> — Independent builder reference applies the same feature order: Box, vertical-edge chamfer, top-face hole.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;TOP-attached Sketch after a native chamfer.
+
+The chamfer intentionally precedes the attached Sketch. This exercises replay
+selection of the resulting planar +Z face through model.faces.
+&quot;&quot;&quot;
+
+
+class TopSketchAfterChamfer:
+    def build(self):
+        plate = Box(100, 70, 10, anchor=Anchor.BOTTOM)
+        plate = plate.chamfer(8, edges=Edges.VERTICAL)
+
+        with Sketch(
+            name=&quot;Top hole&quot;,
+            on=plate,
+            parent=Anchor.TOP,
+        ) as hole:
+            Circle2D(d=12)
+
+        return plate - hole.extrude(Depth.THROUGH_ALL)
+
+
+TopSketchAfterChamfer()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/top-sketch-after-chamfer/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>solid.box</code></li><li><code>solid.chamfer</code></li><li><code>model.faces</code></li><li><code>sketch.create</code></li><li><code>sketch.circle.center</code></li><li><code>sketch.finish</code></li><li><code>solid.extrude</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

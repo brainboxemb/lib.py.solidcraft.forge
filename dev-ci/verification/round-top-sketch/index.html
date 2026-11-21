@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>TOP Sketch on circular body · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../">← Verification</a> / TOP Sketch on circular body</div>
+
+  <section class="hero small">
+    <p class="eyebrow">Forge model example · 1 · Basic geometry</p>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual PASS</span></div>
+    <h1>TOP Sketch on circular body</h1>
+  </section>
+
+  <section class="panel qualification-example-overview">
+    <h2>What this example makes</h2>
+    <p>One stepped cylindrical body spans Z=0..26 mm. Disc and Hub remain two solved native Sketch/Extrude feature pairs and the Hub is attached to the actual top face of the Disc.</p>
+    <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="TOP Sketch on circular body expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/presentation/preview-iso.png" alt="TOP Sketch on circular body native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+  </section>
+
+  <section class="panel">
+    <h2>Forge code</h2>
+    <p>This is the complete Forge source used for this example.</p>
+    <pre><code>&quot;&quot;&quot;Native qualification: TOP-attached Sketch on a circular extrusion.&quot;&quot;&quot;
+
+
+class RoundTopSketch:
+    def build(self):
+        with Sketch(name=&quot;Disc&quot;, plane=&quot;XY&quot;) as disc:
+            Circle2D(d=100)
+        body = disc.extrude(10)
+
+        with Sketch(name=&quot;Hub&quot;, on=body, parent=Anchor.TOP) as hub:
+            Circle2D(d=44)
+
+        return body + hub.extrude(16)
+
+
+RoundTopSketch()
+</code></pre>
+    <h3>API used</h3>
+    <p><code>disc = Sketch(... Circle2D ...).extrude(10); with Sketch(on=disc, parent=Anchor.TOP): Circle2D(d=44); body + hub.extrude(16)</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/round-top-sketch/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+  </section>
+
+  <section class="panel">
+  <h2>Reference code</h2>
+  <p>
+    The same model is written independently with the reference libraries below.
+    This makes it easier to compare modelling style and the resulting shape.
+  </p>
+  <p class="meta">Each source is shown from the current Forge tree beside the accepted durable result for that independent implementation.</p>
+  <div class="qualification-reference-list"><section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/round-top-sketch/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/round-top-sketch/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;PythonSCAD reference for a stepped circular body.&quot;&quot;&quot;
+
+from pythonscad import *
+
+disc = cylinder(d=100, h=10)
+hub = cylinder(d=44, h=16).translate([0, 0, 10])
+model = disc | hub
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      50.0,
+      49.72609476841367,
+      26.0
+    ],
+    &quot;actual_min&quot;: [
+      -50.0,
+      -49.72609476841367,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      50.0,
+      50.0,
+      26.0
+    ],
+    &quot;expected_min&quot;: [
+      -50.0,
+      -50.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.2739052315863333,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 5.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 5.0,
+      &quot;label&quot;: &quot;disc radial outside&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        0.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.35
+    },
+    {
+      &quot;actual_mm&quot;: 8.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 8.0,
+      &quot;label&quot;: &quot;hub radial inside step&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        30.0,
+        0.0,
+        18.0
+      ],
+      &quot;tolerance_mm&quot;: 0.35
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 102117.90606205068,
+    &quot;delta_mm3&quot;: 750.4037870935135,
+    &quot;expected_mm3&quot;: 102868.30984914419,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 800.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/pythonscad/references/round-top-sketch/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/pythonscad/references/round-top-sketch/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/pythonscad/references/round-top-sketch/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/pythonscad/references/round-top-sketch/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/pythonscad/references/round-top-sketch/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/round-top-sketch/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/round-top-sketch/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;pyBOSL2 reference for a stepped circular body.&quot;&quot;&quot;
+
+from pybosl2 import cyl
+
+disc = cyl(diameter=100, height=10).translate([0, 0, 5])
+hub = cyl(diameter=44, height=16).translate([0, 0, 18])
+model = disc | hub
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      50.0,
+      49.72609329223633,
+      26.0
+    ],
+    &quot;actual_min&quot;: [
+      -50.0,
+      -49.72609329223633,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      50.0,
+      50.0,
+      26.0
+    ],
+    &quot;expected_min&quot;: [
+      -50.0,
+      -50.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.2739067077636719,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 5.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 5.0,
+      &quot;label&quot;: &quot;disc radial outside&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        0.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.35
+    },
+    {
+      &quot;actual_mm&quot;: 8.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 8.0,
+      &quot;label&quot;: &quot;hub radial inside step&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        30.0,
+        0.0,
+        18.0
+      ],
+      &quot;tolerance_mm&quot;: 0.35
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 102117.90563271602,
+    &quot;delta_mm3&quot;: 750.4042164281709,
+    &quot;expected_mm3&quot;: 102868.30984914419,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 800.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/pybosl2/references/round-top-sketch/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/pybosl2/references/round-top-sketch/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/pybosl2/references/round-top-sketch/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/pybosl2/references/round-top-sketch/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/pybosl2/references/round-top-sketch/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/round-top-sketch/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/round-top-sketch/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;CadQuery reference for a stepped circular body.&quot;&quot;&quot;
+
+import cadquery as cq
+
+disc = cq.Workplane(&quot;XY&quot;).circle(50).extrude(10)
+hub = cq.Workplane(&quot;XY&quot;).workplane(offset=10).circle(22).extrude(16)
+result = disc.union(hub)
+
+model = cq.Assembly()
+model.add(result, name=&quot;round_top_sketch&quot;)
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      50.0,
+      49.984458923339844,
+      26.0
+    ],
+    &quot;actual_min&quot;: [
+      -50.0,
+      -49.984458923339844,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      50.0,
+      50.0,
+      26.0
+    ],
+    &quot;expected_min&quot;: [
+      -50.0,
+      -50.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.01554107666015625,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 5.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 5.0,
+      &quot;label&quot;: &quot;disc radial outside&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        0.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.35
+    },
+    {
+      &quot;actual_mm&quot;: 8.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 8.0,
+      &quot;label&quot;: &quot;hub radial inside step&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        30.0,
+        0.0,
+        18.0
+      ],
+      &quot;tolerance_mm&quot;: 0.35
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 102825.68269765028,
+    &quot;delta_mm3&quot;: 42.627151493914425,
+    &quot;expected_mm3&quot;: 102868.30984914419,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 800.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/cadquery/references/round-top-sketch/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/cadquery/references/round-top-sketch/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/cadquery/references/round-top-sketch/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/cadquery/references/round-top-sketch/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/cadquery/references/round-top-sketch/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/round-top-sketch/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/round-top-sketch/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;build123d reference for a stepped circular body.&quot;&quot;&quot;
+
+from build123d import Align, BuildPart, Cylinder, Locations
+
+bottom = (Align.CENTER, Align.CENTER, Align.MIN)
+
+with BuildPart() as model:
+    Cylinder(50, 10, align=bottom)
+    with Locations((0, 0, 10)):
+        Cylinder(22, 16, align=bottom)
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      50.0,
+      49.984458923339844,
+      26.0
+    ],
+    &quot;actual_min&quot;: [
+      -50.0,
+      -49.984458923339844,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      50.0,
+      50.0,
+      26.0
+    ],
+    &quot;expected_min&quot;: [
+      -50.0,
+      -50.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.01554107666015625,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 5.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 5.0,
+      &quot;label&quot;: &quot;disc radial outside&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        0.0,
+        5.0
+      ],
+      &quot;tolerance_mm&quot;: 0.35
+    },
+    {
+      &quot;actual_mm&quot;: 8.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 8.0,
+      &quot;label&quot;: &quot;hub radial inside step&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        30.0,
+        0.0,
+        18.0
+      ],
+      &quot;tolerance_mm&quot;: 0.35
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 102825.68269765028,
+    &quot;delta_mm3&quot;: 42.627151493914425,
+    &quot;expected_mm3&quot;: 102868.30984914419,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 800.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/build123d/references/round-top-sketch/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/build123d/references/round-top-sketch/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/build123d/references/round-top-sketch/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/build123d/references/round-top-sketch/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/build123d/references/round-top-sketch/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+</div>
+</section>
+
+
+  <section class="panel">
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge emits the circular base extrusion, model.faces with plane_normal=[0,0,1] and max=area, then a face-attached Hub Sketch and join extrusion. No rectangular base lookup is required.</p>
+  </section>
+
+  <section class="panel qualification-current">
+  <h2>SolidCraft result</h2>
+  <p>
+    Built and measured from the accepted durable SolidCraft evidence.
+    Open the measurement details to inspect body sizes and editable parameters.
+  </p>
+  <details class="qualification-detail-block"><summary><strong>Original model</strong> · 1 bodies</summary><h4>Editable parameters</h4><p class="meta">No rows.</p><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>RoundTopSketch</td><td>[-50.0, -50.0, 0.0]</td><td>[50.0, 50.0, 26.0]</td><td>102868.30984842242</td><td>5</td><td>6</td><td>True</td></tr></tbody></table></div></details>
+  
+</section>
+<section class="panel qualification-visual-check">
+  <h2>Current visual verification</h2>
+  <p>These views exist only where the current model owns a visual verification policy. Actual, goal, overlay and diff are current durable verification evidence.</p>
+  <section class="qualification-view" data-view="front">
+  <h3>front · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.007234,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="right">
+  <h3>right · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/right/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/right/goal.png" alt="right Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/right/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/right/overlay.png" alt="right Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.009259,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="iso">
+  <h3>iso · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.019965,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+
+</section>
+
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual PASS</span></div>
+
+    <h3>Forge model</h3>
+    <p>One Ø100 x 10 mm circular base plus one Ø44 x 16 mm hub joined from the selected top face.</p>
+
+    <h3>Verification checks</h3>
+    <details class="qualification-detail-block">
+  <summary><code>baseline</code> · <span class="qualification-status pass">PASS</span></summary>
+  
+  <pre><code>{
+  &quot;body_count&quot;: {
+    &quot;actual&quot;: 1,
+    &quot;expected&quot;: 1,
+    &quot;label&quot;: &quot;SolidCraft body count&quot;,
+    &quot;pass&quot;: true
+  },
+  &quot;body_envelopes&quot;: {
+    &quot;actual_count&quot;: 1,
+    &quot;expected_count&quot;: 1,
+    &quot;kind&quot;: &quot;body_envelopes&quot;,
+    &quot;matched_pairs&quot;: [
+      {
+        &quot;actual&quot;: {
+          &quot;label&quot;: &quot;RoundTopSketch&quot;,
+          &quot;max&quot;: [
+            50.0,
+            50.0,
+            26.0
+          ],
+          &quot;min&quot;: [
+            -50.0,
+            -50.0,
+            0.0
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;label&quot;: null,
+          &quot;max&quot;: [
+            50.0,
+            50.0,
+            26.0
+          ],
+          &quot;min&quot;: [
+            -50.0,
+            -50.0,
+            0.0
+          ]
+        },
+        &quot;max_delta&quot;: 0.0
+      }
+    ],
+    &quot;pass&quot;: true,
+    &quot;tolerance&quot;: 0.01,
+    &quot;unmatched_actual&quot;: [],
+    &quot;unmatched_expected&quot;: []
+  },
+  &quot;named_bodies&quot;: [
+    {
+      &quot;face_type_counts&quot;: {
+        &quot;actual&quot;: {
+          &quot;cylinder&quot;: 2
+        },
+        &quot;expected&quot;: {
+          &quot;cylinder&quot;: 2
+        },
+        &quot;label&quot;: &quot;sole body face type counts&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;selector&quot;: &quot;sole&quot;,
+      &quot;volume&quot;: {
+        &quot;actual&quot;: 102868.30984842242,
+        &quot;delta&quot;: 7.217749953269958e-07,
+        &quot;expected&quot;: 102868.30984914419,
+        &quot;kind&quot;: &quot;scalar&quot;,
+        &quot;label&quot;: &quot;sole body volume&quot;,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.5
+      }
+    }
+  ],
+  &quot;sketch_count&quot;: {
+    &quot;actual&quot;: 2,
+    &quot;expected&quot;: 2,
+    &quot;label&quot;: &quot;SolidCraft sketch count&quot;,
+    &quot;pass&quot;: true
+  },
+  &quot;sketches&quot;: [
+    {
+      &quot;actual&quot;: {
+        &quot;name&quot;: &quot;Disc&quot;,
+        &quot;status&quot;: &quot;solved&quot;
+      },
+      &quot;expected&quot;: {
+        &quot;name&quot;: &quot;Disc&quot;,
+        &quot;status&quot;: &quot;solved&quot;
+      },
+      &quot;label&quot;: &quot;Disc sketch&quot;,
+      &quot;pass&quot;: true
+    },
+    {
+      &quot;actual&quot;: {
+        &quot;name&quot;: &quot;Hub&quot;,
+        &quot;status&quot;: &quot;solved&quot;
+      },
+      &quot;expected&quot;: {
+        &quot;name&quot;: &quot;Hub&quot;,
+        &quot;status&quot;: &quot;solved&quot;
+      },
+      &quot;label&quot;: &quot;Hub sketch&quot;,
+      &quot;pass&quot;: true
+    }
+  ],
+  &quot;timeline&quot;: {
+    &quot;actual&quot;: [
+      {
+        &quot;name&quot;: &quot;Disc&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Extrude1&quot;,
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Hub&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Hub&quot;,
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;
+      }
+    ],
+    &quot;expected&quot;: [
+      {
+        &quot;name&quot;: &quot;Disc&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Extrude1&quot;,
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Hub&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Hub&quot;,
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;
+      }
+    ],
+    &quot;label&quot;: &quot;SolidCraft timeline&quot;,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+</details>
+
+
+    <h3>Saved-design test</h3>
+    <p>No saved-design mutation; this fixture isolates support-face lookup on a non-rectangular feature body.</p>
+
+    <h3>Geometry evidence</h3>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>The outer bounds alone do not prove the two circular radii. Volume, radial surface probes and native Sketch history are required.</p>
+
+    <h3>Raw test files</h3>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/round-top-sketch/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+
+    <h3>Reference documentation</h3>
+    <ul><li><strong>SolidCraft</strong> — Native geometry proves the face-attached Hub Sketch builds on the circular Disc and stays solved.</li><li><strong>PythonSCAD</strong> — Independent CSG reference proves the stepped-cylinder geometry.</li><li><strong>CadQuery</strong> — Independent union reference proves the same two-radius stepped body.</li><li><strong>build123d</strong> — Independent builder reference proves the same baseline geometry.</li></ul>
+
+    <p class="source-stamp">
+      Site source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · accepted model evidence source
+      <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · durable build <code>351ce4c60e602f74f7771ab44a3985440d277086</code>
+    </p>
+  </div>
+</details>
+
+
+  <section class="panel">
+    <h2>Sources of truth</h2>
+    <p>
+      General model/page metadata is stored in <code>model.yml</code>.
+      Preserved engineering explanation is stored in <code>README.md</code>.
+      Exact expected values and tolerances are defined by
+      <code>verification/verify.py</code>.
+    </p>
+    <p>
+      <a href="../../examples/round-top-sketch/">Open the example →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/round-top-sketch/verification/verify.py">Open verification/verify.py →</a>
+    </p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

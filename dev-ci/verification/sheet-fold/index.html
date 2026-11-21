@@ -1,0 +1,1234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Flat sheet, through hole and 90° fold · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../">← Verification</a> / Flat sheet, through hole and 90° fold</div>
+
+  <section class="hero small">
+    <p class="eyebrow">Forge model example · 2 · Parent/child features and faces</p>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual PASS</span></div>
+    <h1>Flat sheet, through hole and 90° fold</h1>
+  </section>
+
+  <section class="panel qualification-example-overview">
+    <h2>What this example makes</h2>
+    <p>SolidCraft 0.42 keeps one connected sheet-metal body with the Ø6 hole on the fixed flat, one native Fold feature and a flat pattern that recovers the original rectangular blank and cutout.</p>
+    <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Flat sheet, through hole and 90° fold expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/presentation/preview-iso.png" alt="Flat sheet, through hole and 90° fold native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+  </section>
+
+  <section class="panel">
+    <h2>Forge code</h2>
+    <p>This is the complete Forge source used for this example.</p>
+    <pre><code>&quot;&quot;&quot;Native sheet-metal fold fixture used by qualification #305.&quot;&quot;&quot;
+
+
+class SheetFold:
+    width = 80.0
+    depth = 40.0
+    thickness = 2.0
+    bend_radius = 2.0
+    k_factor = 0.5
+    fold_angle = 90.0
+    hole_diameter = 6.0
+
+    def build(self):
+        with Sketch(name=&quot;Blank&quot;, plane=&quot;XY&quot;) as blank:
+            Rectangle2D(self.width, self.depth)
+
+        sheet = blank.sheet_metal(
+            thickness=self.thickness,
+            bend_radius=self.bend_radius,
+            k_factor=self.k_factor,
+            rule_name=&quot;SheetFold Rule&quot;,
+        )
+
+        sheet = sheet + Hole(
+            d=self.hole_diameter,
+            direction=(0, 0, -1),
+        ).at(-20, 0, self.thickness)
+
+        return sheet.fold(
+            line=((20, -20), (20, 20)),
+            angle=self.fold_angle,
+            fixed=(-30, 0, 0),
+        )
+
+
+SheetFold()
+</code></pre>
+    <h3>API used</h3>
+    <p><code>with Sketch(...): Rectangle2D(...); blank.sheet_metal(thickness=..., bend_radius=..., k_factor=...); sheet + Hole(...).at(...); sheet.fold(line=..., angle=..., fixed=...)</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/sheet-fold/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+  </section>
+
+  <section class="panel">
+  <h2>Reference code</h2>
+  <p>
+    The same model is written independently with the reference libraries below.
+    This makes it easier to compare modelling style and the resulting shape.
+  </p>
+  <p class="meta">Each source is shown from the current Forge tree beside the accepted durable result for that independent implementation.</p>
+  <div class="qualification-reference-list"><section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/sheet-fold/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/sheet-fold/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for the qualified 90-degree sheet fold.&quot;&quot;&quot;
+
+from math import cos, pi, sin
+from pythonscad import *
+
+R_INNER = 2.0
+THICKNESS = 2.0
+R_OUTER = R_INNER + THICKNESS
+X_TANGENT = 17.64380551
+Z_TOP = 21.64380551
+CENTER = (X_TANGENT, 4.0)
+SEGMENTS = 32
+
+
+def arc_points(radius, start, end, count=SEGMENTS):
+    return [
+        [
+            CENTER[0] + radius * cos(start + (end - start) * i / count),
+            CENTER[1] + radius * sin(start + (end - start) * i / count),
+        ]
+        for i in range(count + 1)
+    ]
+
+
+outer = arc_points(R_OUTER, -pi / 2, 0)
+inner = list(reversed(arc_points(R_INNER, -pi / 2, 0)))
+
+profile = [
+    [-40.0, 0.0],
+    *outer,
+    [X_TANGENT + R_OUTER, Z_TOP],
+    [X_TANGENT + R_INNER, Z_TOP],
+    *inner,
+    [-40.0, 2.0],
+]
+
+sheet = (
+    polygon(profile)
+    .linear_extrude(height=40)
+    .rotate([90, 0, 0])
+    .translate([0, 20, 0])
+)
+hole = cylinder(d=6, h=4).translate([-20, 0, -1])
+model = sheet - hole
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      21.643805511295795,
+      20.0,
+      21.643805511295795
+    ],
+    &quot;actual_min&quot;: [
+      -40.0,
+      -20.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      21.64380551,
+      20.0,
+      21.64380551
+    ],
+    &quot;expected_min&quot;: [
+      -40.0,
+      -20.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 1.295795470923622e-09,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 2.8531695488854605,
+      &quot;delta_mm&quot;: 0.14683045111453952,
+      &quot;expected_mm&quot;: 3.0,
+      &quot;label&quot;: &quot;fixed-flat hole at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -20.0,
+        0.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 2.8531695488854605,
+      &quot;delta_mm&quot;: 0.14683045111453952,
+      &quot;expected_mm&quot;: 3.0,
+      &quot;label&quot;: &quot;fixed-flat hole at z=1.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -20.0,
+        0.0,
+        1.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 6346.9479478587855,
+    &quot;delta_mm3&quot;: 3.4966156234013397,
+    &quot;expected_mm3&quot;: 6343.451332235384,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 5.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/pythonscad/references/sheet-fold/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/pythonscad/references/sheet-fold/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/pythonscad/references/sheet-fold/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/pythonscad/references/sheet-fold/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/pythonscad/references/sheet-fold/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/sheet-fold/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/sheet-fold/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for the qualified 90-degree sheet fold.&quot;&quot;&quot;
+
+from math import cos, pi, sin
+from pybosl2 import Path2D, cyl
+
+R_INNER = 2.0
+THICKNESS = 2.0
+R_OUTER = R_INNER + THICKNESS
+X_TANGENT = 17.64380551
+Z_TOP = 21.64380551
+CENTER = (X_TANGENT, 4.0)
+SEGMENTS = 32
+
+
+def arc_points(radius, start, end, count=SEGMENTS):
+    return [
+        [
+            CENTER[0] + radius * cos(start + (end - start) * i / count),
+            CENTER[1] + radius * sin(start + (end - start) * i / count),
+        ]
+        for i in range(count + 1)
+    ]
+
+
+outer = arc_points(R_OUTER, -pi / 2, 0)
+inner = list(reversed(arc_points(R_INNER, -pi / 2, 0)))
+
+profile = [
+    [-40.0, 0.0],
+    *outer,
+    [X_TANGENT + R_OUTER, Z_TOP],
+    [X_TANGENT + R_INNER, Z_TOP],
+    *inner,
+    [-40.0, 2.0],
+]
+
+sheet = (
+    Path2D(profile, closed=True)
+    .linear_extrude(height=40)
+    .rotate(90, [1, 0, 0])
+    .translate([0, 20, 0])
+)
+hole = cyl(diameter=6, height=4).translate([-20, 0, 1])
+model = sheet - hole
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      21.64380645751953,
+      20.0,
+      21.64380645751953
+    ],
+    &quot;actual_min&quot;: [
+      -40.0,
+      -20.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      21.64380551,
+      20.0,
+      21.64380551
+    ],
+    &quot;expected_min&quot;: [
+      -40.0,
+      -20.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 9.475195312802498e-07,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 2.8531694412231445,
+      &quot;delta_mm&quot;: 0.14683055877685547,
+      &quot;expected_mm&quot;: 3.0,
+      &quot;label&quot;: &quot;fixed-flat hole at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -20.0,
+        0.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 2.8531694412231445,
+      &quot;delta_mm&quot;: 0.14683055877685547,
+      &quot;expected_mm&quot;: 3.0,
+      &quot;label&quot;: &quot;fixed-flat hole at z=1.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -20.0,
+        0.0,
+        1.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 6346.948027095469,
+    &quot;delta_mm3&quot;: 3.496694860084972,
+    &quot;expected_mm3&quot;: 6343.451332235384,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 5.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/pybosl2/references/sheet-fold/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/pybosl2/references/sheet-fold/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/pybosl2/references/sheet-fold/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/pybosl2/references/sheet-fold/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/pybosl2/references/sheet-fold/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/sheet-fold/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/sheet-fold/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;CadQuery geometry reference for the qualified 90-degree sheet fold.&quot;&quot;&quot;
+
+from math import cos, pi, sin
+import cadquery as cq
+
+R_INNER = 2.0
+THICKNESS = 2.0
+R_OUTER = R_INNER + THICKNESS
+X_TANGENT = 17.64380551
+Z_TOP = 21.64380551
+CENTER = (X_TANGENT, 4.0)
+SEGMENTS = 32
+
+
+def arc_points(radius, start, end, count=SEGMENTS):
+    return [
+        (
+            CENTER[0] + radius * cos(start + (end - start) * i / count),
+            CENTER[1] + radius * sin(start + (end - start) * i / count),
+        )
+        for i in range(count + 1)
+    ]
+
+
+outer = arc_points(R_OUTER, -pi / 2, 0)
+inner = list(reversed(arc_points(R_INNER, -pi / 2, 0)))
+
+profile = [
+    (-40.0, 0.0),
+    *outer,
+    (X_TANGENT + R_OUTER, Z_TOP),
+    (X_TANGENT + R_INNER, Z_TOP),
+    *inner,
+    (-40.0, 2.0),
+]
+
+sheet = (
+    cq.Workplane(&quot;XZ&quot;)
+    .polyline(profile)
+    .close()
+    .extrude(20, both=True)
+)
+hole = (
+    cq.Workplane(&quot;XY&quot;)
+    .center(-20, 0)
+    .circle(3)
+    .extrude(4, both=True)
+)
+result = sheet.cut(hole)
+
+model = cq.Assembly()
+model.add(result, name=&quot;sheet_fold&quot;)
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      21.64380645751953,
+      20.0,
+      21.64380645751953
+    ],
+    &quot;actual_min&quot;: [
+      -40.0,
+      -20.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      21.64380551,
+      20.0,
+      21.64380551
+    ],
+    &quot;expected_min&quot;: [
+      -40.0,
+      -20.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 9.475195312802498e-07,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 2.9990669924042215,
+      &quot;delta_mm&quot;: 0.0009330075957785233,
+      &quot;expected_mm&quot;: 3.0,
+      &quot;label&quot;: &quot;fixed-flat hole at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -20.0,
+        0.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 2.9990669924042215,
+      &quot;delta_mm&quot;: 0.0009330075957785233,
+      &quot;expected_mm&quot;: 3.0,
+      &quot;label&quot;: &quot;fixed-flat hole at z=1.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -20.0,
+        0.0,
+        1.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 6343.323471787434,
+    &quot;delta_mm3&quot;: 0.12786044795029738,
+    &quot;expected_mm3&quot;: 6343.451332235384,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 5.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/cadquery/references/sheet-fold/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/cadquery/references/sheet-fold/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/cadquery/references/sheet-fold/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/cadquery/references/sheet-fold/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/cadquery/references/sheet-fold/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/sheet-fold/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/sheet-fold/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;build123d 0.12 geometry reference for the qualified 90-degree sheet fold.
+
+build123d&#x27;s make_brake_formed helper is not used here because the pinned 0.12
+implementation fails to solidify this small R2 / 2 mm fixture. The reference
+instead builds the exact folded XZ section independently and extrudes it across
+the 40 mm width.
+&quot;&quot;&quot;
+
+from math import cos, pi, sin
+
+from build123d import (
+    Align,
+    BuildPart,
+    BuildSketch,
+    Cylinder,
+    Locations,
+    Mode,
+    Plane,
+    Polygon,
+    extrude,
+)
+
+R_INNER = 2.0
+THICKNESS = 2.0
+R_OUTER = R_INNER + THICKNESS
+X_TANGENT = 17.64380551
+Z_TOP = 21.64380551
+CENTER = (X_TANGENT, 4.0)
+SEGMENTS = 32
+
+
+def arc_points(radius, start, end, count=SEGMENTS):
+    return [
+        (
+            CENTER[0] + radius * cos(start + (end - start) * i / count),
+            CENTER[1] + radius * sin(start + (end - start) * i / count),
+        )
+        for i in range(count + 1)
+    ]
+
+
+outer = arc_points(R_OUTER, -pi / 2, 0)
+inner = list(reversed(arc_points(R_INNER, -pi / 2, 0)))
+profile = [
+    (-40.0, 0.0),
+    *outer,
+    (X_TANGENT + R_OUTER, Z_TOP),
+    (X_TANGENT + R_INNER, Z_TOP),
+    *inner,
+    (-40.0, 2.0),
+]
+
+with BuildPart() as model:
+    with BuildSketch(Plane.XZ):
+        Polygon(*profile)
+    extrude(amount=20, both=True)
+
+    with Locations((-20, 0, -1)):
+        Cylinder(
+            3,
+            4,
+            align=(Align.CENTER, Align.CENTER, Align.MIN),
+            mode=Mode.SUBTRACT,
+        )
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      21.64380645751953,
+      20.0,
+      21.64380645751953
+    ],
+    &quot;actual_min&quot;: [
+      -40.0,
+      -20.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      21.64380551,
+      20.0,
+      21.64380551
+    ],
+    &quot;expected_min&quot;: [
+      -40.0,
+      -20.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 9.475195312802498e-07,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 2.9990669924042215,
+      &quot;delta_mm&quot;: 0.0009330075957785233,
+      &quot;expected_mm&quot;: 3.0,
+      &quot;label&quot;: &quot;fixed-flat hole at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -20.0,
+        0.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 2.9990669924042215,
+      &quot;delta_mm&quot;: 0.0009330075957785233,
+      &quot;expected_mm&quot;: 3.0,
+      &quot;label&quot;: &quot;fixed-flat hole at z=1.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -20.0,
+        0.0,
+        1.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 6343.323471787434,
+    &quot;delta_mm3&quot;: 0.12786044795029738,
+    &quot;expected_mm3&quot;: 6343.451332235384,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 5.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/build123d/references/sheet-fold/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/build123d/references/sheet-fold/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/build123d/references/sheet-fold/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/build123d/references/sheet-fold/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/build123d/references/sheet-fold/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+</div>
+</section>
+
+
+  <section class="panel">
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge emits one sheet.manage_rules, one Blank sketch, one sheet.flange(type=&#x27;base&#x27;), one native solid.hole and one native sheet.fold. No solid.extrude or fused-solid bend approximation is used.</p>
+  </section>
+
+  <section class="panel qualification-current">
+  <h2>SolidCraft result</h2>
+  <p>
+    Built and measured from the accepted durable SolidCraft evidence.
+    Open the measurement details to inspect body sizes and editable parameters.
+  </p>
+  <details class="qualification-detail-block"><summary><strong>Original model</strong> · 1 bodies</summary><h4>Editable parameters</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>width</td><td>80.0</td><td>mm</td><td>80</td></tr><tr><td>depth</td><td>40.0</td><td>mm</td><td>40</td></tr><tr><td>thickness</td><td>2.0</td><td>mm</td><td>2</td></tr><tr><td>bend_radius</td><td>2.0</td><td>mm</td><td>2</td></tr><tr><td>k_factor</td><td>0.5</td><td></td><td>0.5</td></tr><tr><td>hole_diameter</td><td>6.0</td><td>mm</td><td>6</td></tr><tr><td>fold_angle</td><td>1.5707963267948966</td><td>deg</td><td>90</td></tr></tbody></table></div><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>SheetFold</td><td>[-40.0, -20.0, 0.0]</td><td>[21.643805510000004, 20.0, 21.643805509615312]</td><td>6343.451332346599</td><td>15</td><td>30</td><td>True</td></tr></tbody></table></div></details>
+  
+</section>
+<section class="panel qualification-visual-check">
+  <h2>Current visual verification</h2>
+  <p>These views exist only where the current model owns a visual verification policy. Actual, goal, overlay and diff are current durable verification evidence.</p>
+  <section class="qualification-view" data-view="front">
+  <h3>front · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.012876,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="right">
+  <h3>right · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape not-required</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.011574,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="iso">
+  <h3>iso · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.013455,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="top">
+  <h3>top · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression not-required · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/top/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/top/actual.png" alt="top Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/top/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/top/goal.png" alt="top Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/top/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/visual/top/overlay.png" alt="top Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{}</code></pre>
+  </details>
+</section>
+
+</section>
+
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual PASS</span></div>
+
+    <h3>Forge model</h3>
+    <p>One 80 x 40 mm rectangular flat blank with a shared 2 mm sheet rule, one Ø6 through hole in the fixed flat, and one 90 degree fold along the Y direction near the right side.</p>
+
+    <h3>Verification checks</h3>
+    <details class="qualification-detail-block">
+  <summary><code>baseline</code> · <span class="qualification-status pass">PASS</span></summary>
+  
+  <pre><code>{
+  &quot;body_count&quot;: {
+    &quot;actual&quot;: 1,
+    &quot;expected&quot;: 1,
+    &quot;label&quot;: &quot;SolidCraft body count&quot;,
+    &quot;pass&quot;: true
+  },
+  &quot;body_envelopes&quot;: {
+    &quot;actual_count&quot;: 1,
+    &quot;expected_count&quot;: 1,
+    &quot;kind&quot;: &quot;body_envelopes&quot;,
+    &quot;matched_pairs&quot;: [
+      {
+        &quot;actual&quot;: {
+          &quot;label&quot;: &quot;SheetFold&quot;,
+          &quot;max&quot;: [
+            21.643805510000004,
+            20.0,
+            21.643805509615312
+          ],
+          &quot;min&quot;: [
+            -40.0,
+            -20.0,
+            0.0
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;label&quot;: null,
+          &quot;max&quot;: [
+            21.64380551,
+            20.0,
+            21.64380551
+          ],
+          &quot;min&quot;: [
+            -40.0,
+            -20.0,
+            0.0
+          ]
+        },
+        &quot;max_delta&quot;: 3.8468783714051824e-10
+      }
+    ],
+    &quot;pass&quot;: true,
+    &quot;tolerance&quot;: 0.01,
+    &quot;unmatched_actual&quot;: [],
+    &quot;unmatched_expected&quot;: []
+  },
+  &quot;named_bodies&quot;: [
+    {
+      &quot;closed&quot;: {
+        &quot;actual&quot;: true,
+        &quot;expected&quot;: true,
+        &quot;label&quot;: &quot;sole body closed&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;selector&quot;: &quot;sole&quot;,
+      &quot;sheet_metal&quot;: {
+        &quot;actual&quot;: true,
+        &quot;expected&quot;: true,
+        &quot;label&quot;: &quot;sole body sheet_metal&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;volume&quot;: {
+        &quot;actual&quot;: 6343.451332346599,
+        &quot;delta&quot;: 1.1121483112219721e-07,
+        &quot;expected&quot;: 6343.451332235384,
+        &quot;kind&quot;: &quot;scalar&quot;,
+        &quot;label&quot;: &quot;sole body volume&quot;,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.01
+      }
+    }
+  ],
+  &quot;sketches&quot;: [
+    {
+      &quot;actual&quot;: {
+        &quot;curves&quot;: 4,
+        &quot;name&quot;: &quot;Blank&quot;,
+        &quot;profiles&quot;: 1,
+        &quot;status&quot;: &quot;solved&quot;
+      },
+      &quot;expected&quot;: {
+        &quot;curves&quot;: 4,
+        &quot;name&quot;: &quot;Blank&quot;,
+        &quot;profiles&quot;: 1,
+        &quot;status&quot;: &quot;solved&quot;
+      },
+      &quot;label&quot;: &quot;Blank sketch&quot;,
+      &quot;pass&quot;: true
+    }
+  ],
+  &quot;timeline&quot;: {
+    &quot;actual&quot;: [
+      {
+        &quot;name&quot;: &quot;Blank&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;
+      },
+      {
+        &quot;name&quot;: &quot;BaseFlange1&quot;,
+        &quot;type&quot;: &quot;BaseFlangeFeature&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Hole1&quot;,
+        &quot;type&quot;: &quot;HoleFeature&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Fold1&quot;,
+        &quot;type&quot;: &quot;FoldFeature&quot;
+      }
+    ],
+    &quot;expected&quot;: [
+      {
+        &quot;name&quot;: &quot;Blank&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;
+      },
+      {
+        &quot;name&quot;: &quot;BaseFlange1&quot;,
+        &quot;type&quot;: &quot;BaseFlangeFeature&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Hole1&quot;,
+        &quot;type&quot;: &quot;HoleFeature&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Fold1&quot;,
+        &quot;type&quot;: &quot;FoldFeature&quot;
+      }
+    ],
+    &quot;label&quot;: &quot;SolidCraft timeline&quot;,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+</details>
+<details class="qualification-detail-block">
+  <summary><code>inspection_flat_pattern</code> · <span class="qualification-status pass">PASS</span></summary>
+  
+  <pre><code>{
+  &quot;checks&quot;: [
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: 1,
+        &quot;expected&quot;: 1,
+        &quot;label&quot;: &quot;SolidCraft inspection check result_count&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;id&quot;: &quot;result_count&quot;,
+      &quot;path&quot;: []
+    },
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: {
+          &quot;max_difference&quot;: 3.8468783714051824e-10,
+          &quot;value&quot;: [
+            80.00000000038469,
+            40.0,
+            2.0
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;tolerance&quot;: 0.001,
+          &quot;value&quot;: [
+            80.0,
+            40.0,
+            2.0
+          ]
+        },
+        &quot;label&quot;: &quot;SolidCraft inspection check flat_size&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;id&quot;: &quot;flat_size&quot;,
+      &quot;path&quot;: [
+        0,
+        &quot;flat_size_mm&quot;
+      ]
+    },
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: 1,
+        &quot;expected&quot;: 1,
+        &quot;label&quot;: &quot;SolidCraft inspection check cutout_count&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;id&quot;: &quot;cutout_count&quot;,
+      &quot;path&quot;: [
+        0,
+        &quot;cutout_shapes&quot;
+      ]
+    },
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: {
+          &quot;max_difference&quot;: 0.0,
+          &quot;value&quot;: [
+            -20.0,
+            0.0
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;tolerance&quot;: 0.001,
+          &quot;value&quot;: [
+            -20.0,
+            0.0
+          ]
+        },
+        &quot;label&quot;: &quot;SolidCraft inspection check hole_center&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;id&quot;: &quot;hole_center&quot;,
+      &quot;path&quot;: [
+        0,
+        &quot;cutout_shapes&quot;,
+        0,
+        &quot;circle&quot;,
+        &quot;center&quot;
+      ]
+    },
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: 3.0,
+        &quot;delta&quot;: 0.0,
+        &quot;expected&quot;: 3.0,
+        &quot;kind&quot;: &quot;scalar&quot;,
+        &quot;label&quot;: &quot;SolidCraft inspection check hole_radius&quot;,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.001
+      },
+      &quot;id&quot;: &quot;hole_radius&quot;,
+      &quot;path&quot;: [
+        0,
+        &quot;cutout_shapes&quot;,
+        0,
+        &quot;circle&quot;,
+        &quot;radius&quot;
+      ]
+    },
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: 1,
+        &quot;expected&quot;: 1,
+        &quot;label&quot;: &quot;SolidCraft inspection check bend_count&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;id&quot;: &quot;bend_count&quot;,
+      &quot;path&quot;: [
+        0,
+        &quot;bends&quot;
+      ]
+    },
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: 90.0,
+        &quot;delta&quot;: 0.0,
+        &quot;expected&quot;: 90.0,
+        &quot;kind&quot;: &quot;scalar&quot;,
+        &quot;label&quot;: &quot;SolidCraft inspection check bend_angle&quot;,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.001
+      },
+      &quot;id&quot;: &quot;bend_angle&quot;,
+      &quot;path&quot;: [
+        0,
+        &quot;bends&quot;,
+        0,
+        &quot;angle_deg&quot;
+      ]
+    },
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: 2.0,
+        &quot;delta&quot;: 0.0,
+        &quot;expected&quot;: 2.0,
+        &quot;kind&quot;: &quot;scalar&quot;,
+        &quot;label&quot;: &quot;SolidCraft inspection check bend_radius&quot;,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.001
+      },
+      &quot;id&quot;: &quot;bend_radius&quot;,
+      &quot;path&quot;: [
+        0,
+        &quot;bends&quot;,
+        0,
+        &quot;radius&quot;
+      ]
+    },
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: 4.71238898038469,
+        &quot;delta&quot;: 0.0,
+        &quot;expected&quot;: 4.71238898038469,
+        &quot;kind&quot;: &quot;scalar&quot;,
+        &quot;label&quot;: &quot;SolidCraft inspection check bend_allowance&quot;,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.001
+      },
+      &quot;id&quot;: &quot;bend_allowance&quot;,
+      &quot;path&quot;: [
+        0,
+        &quot;bends&quot;,
+        0,
+        &quot;allowance&quot;
+      ]
+    },
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: &quot;SheetFold Rule&quot;,
+        &quot;expected&quot;: &quot;SheetFold Rule&quot;,
+        &quot;label&quot;: &quot;SolidCraft inspection check sheet_rule&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;id&quot;: &quot;sheet_rule&quot;,
+      &quot;path&quot;: [
+        0,
+        &quot;rule&quot;
+      ]
+    },
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: 2.0,
+        &quot;delta&quot;: 0.0,
+        &quot;expected&quot;: 2.0,
+        &quot;kind&quot;: &quot;scalar&quot;,
+        &quot;label&quot;: &quot;SolidCraft inspection check sheet_thickness&quot;,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.001
+      },
+      &quot;id&quot;: &quot;sheet_thickness&quot;,
+      &quot;path&quot;: [
+        0,
+        &quot;thickness&quot;
+      ]
+    },
+    {
+      &quot;comparison&quot;: {
+        &quot;actual&quot;: 0.5,
+        &quot;delta&quot;: 0.0,
+        &quot;expected&quot;: 0.5,
+        &quot;kind&quot;: &quot;scalar&quot;,
+        &quot;label&quot;: &quot;SolidCraft inspection check sheet_k_factor&quot;,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.001
+      },
+      &quot;id&quot;: &quot;sheet_k_factor&quot;,
+      &quot;path&quot;: [
+        0,
+        &quot;k_factor&quot;
+      ]
+    }
+  ]
+}</code></pre>
+</details>
+
+
+    <h3>Saved-design test</h3>
+    <p>No saved-design mutation is required in this first sheet-metal qualification. unit, integration and native geometry checks prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.</p>
+
+    <h3>Geometry evidence</h3>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>The formed bounding box does not prove sheet thickness, the Ø6 cutout or that the upright region came from a native bend. Volume and native sheet history/flat-pattern evidence are required.</p>
+
+    <h3>Raw test files</h3>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/sheet-fold/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+
+    <h3>Reference documentation</h3>
+    <ul><li><strong>build123d</strong> — The pinned build123d 0.12.0 reference uses make_brake_formed for an independent final-geometry comparison. Its newer BuildSheet/bend API is design input only and is not silently substituted into the pinned reference runtime.</li><li><strong>CadQuery</strong> — Independent final geometry is built from flat and bent solid envelopes; CadQuery does not provide the same native sheet-history contract.</li><li><strong>PythonSCAD</strong> — Constructive geometry independently represents the formed envelope and through hole; native sheet rules/history remain SolidCraft-only evidence.</li><li><strong>pyBOSL2</strong> — Constructive geometry independently represents the formed envelope and through hole; native sheet rules/history remain SolidCraft-only evidence.</li></ul>
+
+    <p class="source-stamp">
+      Site source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · accepted model evidence source
+      <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · durable build <code>351ce4c60e602f74f7771ab44a3985440d277086</code>
+    </p>
+  </div>
+</details>
+
+
+  <section class="panel">
+    <h2>Sources of truth</h2>
+    <p>
+      General model/page metadata is stored in <code>model.yml</code>.
+      Preserved engineering explanation is stored in <code>README.md</code>.
+      Exact expected values and tolerances are defined by
+      <code>verification/verify.py</code>.
+    </p>
+    <p>
+      <a href="../../examples/sheet-fold/">Open the example →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/sheet-fold/verification/verify.py">Open verification/verify.py →</a>
+    </p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

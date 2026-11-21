@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Reuse one component definition in two placements · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Reuse one component definition in two placements</div>
+  <section class="hero small">
+    <p class="eyebrow">components</p>
+    <h1>Reuse one component definition in two placements</h1>
+    <p class="guide-lead">Two touching occurrences share one reusable Block definition</p>
+    <p>One Block component definition is instantiated twice with a simple translated copy and no attachment relationship.</p>
+    <p class="meta"><span>Block 40 × 30 × 10 mm; second occurrence translated 40 mm in X</span><span>4 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/351ce4c60e602f74f7771ab44a3985440d277086/dev-ci/examples/components/model_verify/presentation/preview-iso.png" alt="Reuse one component definition in two placements: Current deterministic presentation preview from durable build 351ce4c60e60." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build 351ce4c60e60.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create one reusable Block component</li><li>Copy the same definition with a 40 mm X placement</li><li>Return both occurrences as one assembly</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify that one reusable component definition can have two occurrences with ordinary Placement and no attachment relationship.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>left = Block(); right = left.copy(placement=Placement(x=Block.length))</code></p>
+    <h2>Forge model</h2>
+    <p>Two ModelInstance occurrences share one ModelDefinition. The second occurrence carries only Placement metadata; neither occurrence carries an Attachment.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge creates one Block component definition and one occurrence.copy with translate=[40,0,0]. No joint.create and no later occurrence.move are needed.</p>
+    <h2>SolidCraft result</h2>
+    <p>Two identical blocks touch face-to-face at X=20 while retaining one shared editable component definition.</p>
+    <h2>Saved-design test</h2>
+    <p>No mutation in this base case; parameter-driven Placement is qualified separately.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The two body sizes and positions describe the visible result. The saved SolidCraft model is checked separately to confirm that both occurrences reuse one component definition.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — One component definition may be placed more than once; this case qualifies that basic component/occurrence structure without introducing a joint.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>class Block:
+    length = 40.0
+    width = 30.0
+    height = 10.0
+
+    def build(self):
+        return Box(self.length, self.width, self.height, anchor=Anchor.BOTTOM)
+
+
+class TwoBlocks:
+    def build(self):
+        left = Block()
+        right = left.copy(
+            placement=Placement(x=Block.length),
+        )
+
+        # left/right are ModelInstance occurrences here. Their + operator
+        # creates an Assembly; it is not the Shape + Boolean/feature operator.
+        return left + right
+
+
+TwoBlocks()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/components/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.copy</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>
