@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Eight vertical L-profiles: two per side corner · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Eight vertical L-profiles: two per side corner</div>
+  <section class="hero small">
+    <p class="eyebrow">components</p>
+    <h1>Eight vertical L-profiles: two per side corner</h1>
+    <p class="guide-lead">One reusable L-profile is placed at top and bottom of each frame corner</p>
+    <p>A parametric frame reuses one L-profile component in eight calculated placements, two on every rounded side corner.</p>
+    <p class="meta"><span>Frame 120 × 80 × 60 mm; L-profile arm 28 mm, thickness 4 mm, height 16 mm</span><span>28 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/eight-corner-brackets/model_verify/presentation/preview-iso.png" alt="Eight vertical L-profiles: two per side corner: Current deterministic presentation preview from durable build f0cc4a57fc47." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build f0cc4a57fc47.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the parameterized FrameBlock</li><li>Create one reusable LProfile definition</li><li>Place eight calculated top and bottom corner occurrences</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Place two short vertical angle profiles on each rounded side corner, one at the bottom and one at the top. The assembly calculates all eight poses directly from frame dimensions.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>LProfile.copy(placement=Placement(x=..., y=..., z=..., rotation=(Z, ...)))</code></p>
+    <h2>Forge model</h2>
+    <p>One rounded parametric FrameBlock plus eight occurrences of one neutral LProfile definition. Position and clocking belong to the assembly; there is no Attachment.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id.</p>
+    <h2>SolidCraft result</h2>
+    <p>Each rounded vertical side corner carries exactly two outside angle profiles. On the 60 mm frame they occupy Z=0..16 and Z=44..60.</p>
+    <h2>Saved-design test</h2>
+    <p>Change frame_width/depth/height from 120x80x60 to 160x120x90 mm; all four corner pairs follow the calculated X/Y positions and each upper member moves to Z=74..90.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>This case adds eight placements of the qualified corner-bracket geometry. Per-occurrence bounds and the visual decomposition describe the added placement geometry; native relationships are checked separately.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — component.create/occurrence.copy return real occurrence ids; the replay executor binds those ids before later parametric occurrence.move commands.</li><li><strong>BOSL2</strong> — One neutral component is repeated by assembly-owned placement.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Eight vertical L-profiles: two on each rounded side corner.&quot;&quot;&quot;
+
+
+class FrameBlock:
+    _width = 120.0
+    _depth = 80.0
+    _height = 60.0
+
+    def build(self):
+        return Box(
+            self._width,
+            self._depth,
+            self._height,
+            anchor=Anchor.BOTTOM,
+        ).fillet(8, edges=Edges.VERTICAL)
+
+
+class LProfile:
+    ARM_LENGTH = 28.0
+    THICKNESS = 4.0
+    PROFILE_HEIGHT = 16.0
+
+    def build(self):
+        with Sketch(name=&quot;Profile&quot;, plane=&quot;XY&quot;) as sketch:
+            Polygon2D(
+                [
+                    (0, 0),
+                    (self.ARM_LENGTH, 0),
+                    (self.ARM_LENGTH, -self.THICKNESS),
+                    (-self.THICKNESS, -self.THICKNESS),
+                    (-self.THICKNESS, self.ARM_LENGTH),
+                    (0, self.ARM_LENGTH),
+                ],
+                plane=&quot;XY&quot;,
+            )
+        return sketch.extrude(self.PROFILE_HEIGHT)
+
+
+class EightCornerBrackets:
+    frame_width = 120.0
+    frame_depth = 80.0
+    frame_height = 60.0
+
+    def build(self):
+        frame = FrameBlock(
+            _width=self.frame_width,
+            _depth=self.frame_depth,
+            _height=self.frame_height,
+        )
+        profile = LProfile()
+
+        half_width = half(self.frame_width)
+        half_depth = half(self.frame_depth)
+        top_height = self.frame_height - LProfile.PROFILE_HEIGHT
+
+        def placed(x, y, angle, height):
+            rotation = None if angle == 0 else (Z, angle)
+            return profile.copy(
+                placement=Placement(
+                    x=x,
+                    y=y,
+                    z=height,
+                    rotation=rotation,
+                ),
+            )
+
+        front_left_bottom = placed(-half_width, -half_depth, 0, 0)
+        front_left_top = placed(-half_width, -half_depth, 0, top_height)
+
+        front_right_bottom = placed(half_width, -half_depth, 90, 0)
+        front_right_top = placed(half_width, -half_depth, 90, top_height)
+
+        rear_right_bottom = placed(half_width, half_depth, 180, 0)
+        rear_right_top = placed(half_width, half_depth, 180, top_height)
+
+        rear_left_bottom = placed(-half_width, half_depth, 270, 0)
+        rear_left_top = placed(-half_width, half_depth, 270, top_height)
+
+        return (
+            frame
+            + front_left_bottom + front_left_top
+            + front_right_bottom + front_right_top
+            + rear_right_bottom + rear_right_top
+            + rear_left_bottom + rear_left_top
+        )
+
+
+EightCornerBrackets()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/eight-corner-brackets/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>solid.fillet</code></li><li><code>component.activate</code></li><li><code>component.create</code></li><li><code>sketch.create</code></li><li><code>sketch.line</code></li><li><code>sketch.finish</code></li><li><code>solid.extrude</code></li><li><code>component.activate</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

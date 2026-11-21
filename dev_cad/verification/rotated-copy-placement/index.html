@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Copied Placement with rotation · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../">← Verification</a> / Copied Placement with rotation</div>
+
+  <section class="hero small">
+    <p class="eyebrow">Forge model example · 4 · Components and occurrences</p>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual PASS</span></div>
+    <h1>Copied Placement with rotation</h1>
+  </section>
+
+  <section class="panel qualification-example-overview">
+    <h2>What this example makes</h2>
+    <p>Two rotated 10 x 20 x 4 mm envelopes remain centred at X=-40 and X=+40. No placement joint is created.</p>
+    <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Copied Placement with rotation expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/presentation/preview-iso.png" alt="Copied Placement with rotation native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+  </section>
+
+  <section class="panel">
+    <h2>Forge code</h2>
+    <p>This is the complete Forge source used for this example.</p>
+    <pre><code>&quot;&quot;&quot;Qualification: copied Placement keeps translation when rotation is present.&quot;&quot;&quot;
+
+
+class Panel:
+    def build(self):
+        return Box(20, 10, 4)
+
+
+class RotatedCopyPlacement:
+    def build(self):
+        left = Panel(
+            placement=Placement(
+                x=-40,
+                rotation=(Z, 90),
+            )
+        )
+        right = left.copy(
+            placement=Placement(
+                x=40,
+                rotation=(Z, 90),
+            )
+        )
+        return left + right
+
+
+RotatedCopyPlacement()
+</code></pre>
+    <h3>API used</h3>
+    <p><code>left = Panel(placement=Placement(x=-40, rotation=(Z, 90))); right = left.copy(placement=Placement(x=40, rotation=(Z, 90)))</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rotated-copy-placement/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+  </section>
+
+  <section class="panel">
+  <h2>Reference code</h2>
+  <p>
+    The same model is written independently with the reference libraries below.
+    This makes it easier to compare modelling style and the resulting shape.
+  </p>
+  <p class="meta">Each source is shown from the current Forge tree beside the accepted durable result for that independent implementation.</p>
+  <div class="qualification-reference-list"><section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rotated-copy-placement/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rotated-copy-placement/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for two rotated rectangular panels.&quot;&quot;&quot;
+
+from pythonscad import *
+
+left = cube([10, 20, 4], center=True).left(40)
+right = cube([10, 20, 4], center=True).right(40)
+model = left | right
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      45.0,
+      10.0,
+      2.0
+    ],
+    &quot;actual_min&quot;: [
+      -45.0,
+      -10.0,
+      -2.0
+    ],
+    &quot;expected_max&quot;: [
+      45.0,
+      10.0,
+      2.0
+    ],
+    &quot;expected_min&quot;: [
+      -45.0,
+      -10.0,
+      -2.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 1600.0,
+    &quot;delta_mm3&quot;: 0.0,
+    &quot;expected_mm3&quot;: 1600.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 2.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/pythonscad/references/rotated-copy-placement/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/pythonscad/references/rotated-copy-placement/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/pythonscad/references/rotated-copy-placement/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/pythonscad/references/rotated-copy-placement/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/pythonscad/references/rotated-copy-placement/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rotated-copy-placement/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rotated-copy-placement/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for two rotated rectangular panels.&quot;&quot;&quot;
+
+from pybosl2 import cuboid
+
+left = cuboid([10, 20, 4]).left(40)
+right = cuboid([10, 20, 4]).right(40)
+model = left | right
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      45.0,
+      10.0,
+      2.0
+    ],
+    &quot;actual_min&quot;: [
+      -45.0,
+      -10.0,
+      -2.0
+    ],
+    &quot;expected_max&quot;: [
+      45.0,
+      10.0,
+      2.0
+    ],
+    &quot;expected_min&quot;: [
+      -45.0,
+      -10.0,
+      -2.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 1600.0,
+    &quot;delta_mm3&quot;: 0.0,
+    &quot;expected_mm3&quot;: 1600.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 2.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/pybosl2/references/rotated-copy-placement/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/pybosl2/references/rotated-copy-placement/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/pybosl2/references/rotated-copy-placement/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/pybosl2/references/rotated-copy-placement/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/pybosl2/references/rotated-copy-placement/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rotated-copy-placement/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rotated-copy-placement/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;CadQuery reference for two independently placed rotated panel occurrences.&quot;&quot;&quot;
+
+import cadquery as cq
+
+# The Forge definition is 20 x 10 x 4 and each occurrence is rotated Z+90,
+# giving a centred 10 x 20 x 4 world envelope.
+panel = cq.Solid.makeBox(
+    20,
+    10,
+    4,
+    cq.Vector(-10, -5, -2),
+)
+rotation = cq.Location(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 90)
+
+model = cq.Assembly()
+model.add(panel, name=&quot;left&quot;, loc=cq.Location((-40, 0, 0)) * rotation)
+model.add(panel, name=&quot;right&quot;, loc=cq.Location((40, 0, 0)) * rotation)
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      45.0,
+      10.0,
+      2.0
+    ],
+    &quot;actual_min&quot;: [
+      -45.0,
+      -10.0,
+      -2.0
+    ],
+    &quot;expected_max&quot;: [
+      45.0,
+      10.0,
+      2.0
+    ],
+    &quot;expected_min&quot;: [
+      -45.0,
+      -10.0,
+      -2.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 1600.0,
+    &quot;delta_mm3&quot;: 0.0,
+    &quot;expected_mm3&quot;: 1600.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 2.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/cadquery/references/rotated-copy-placement/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/cadquery/references/rotated-copy-placement/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/cadquery/references/rotated-copy-placement/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/cadquery/references/rotated-copy-placement/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/cadquery/references/rotated-copy-placement/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rotated-copy-placement/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rotated-copy-placement/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;build123d reference: two translated and Z-rotated panel occurrences.&quot;&quot;&quot;
+from build123d import Align, Box, BuildPart, Locations, Rot
+
+center = (Align.CENTER, Align.CENTER, Align.CENTER)
+
+with BuildPart() as model:
+    for x in (-40, 40):
+        with Locations((x, 0, 0)):
+            with Locations(Rot(0, 0, 90)):
+                Box(20, 10, 4, align=center)
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      45.0,
+      10.0,
+      2.0
+    ],
+    &quot;actual_min&quot;: [
+      -45.0,
+      -10.0,
+      -2.0
+    ],
+    &quot;expected_max&quot;: [
+      45.0,
+      10.0,
+      2.0
+    ],
+    &quot;expected_min&quot;: [
+      -45.0,
+      -10.0,
+      -2.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 1600.0,
+    &quot;delta_mm3&quot;: 0.0,
+    &quot;expected_mm3&quot;: 1600.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 2.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/build123d/references/rotated-copy-placement/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/build123d/references/rotated-copy-placement/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/build123d/references/rotated-copy-placement/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/build123d/references/rotated-copy-placement/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/build123d/references/rotated-copy-placement/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+</div>
+</section>
+
+
+  <section class="panel">
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge creates/copies the Panel occurrence at native identity, binds each real occurrence ID, then applies each complete translation and Z=90 degree orientation through occurrence.move. No predicted Component:N name and no pre-rotated copy translation is used.</p>
+  </section>
+
+  <section class="panel qualification-current">
+  <h2>SolidCraft result</h2>
+  <p>
+    Built and measured from the accepted durable SolidCraft evidence.
+    Open the measurement details to inspect body sizes and editable parameters.
+  </p>
+  <details class="qualification-detail-block"><summary><strong>Original model</strong> · 2 bodies</summary><h4>Editable parameters</h4><p class="meta">No rows.</p><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>Panel</td><td>[-45.0, -10.0, -2.0]</td><td>[-35.0, 10.0, 2.0]</td><td>800.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>Panel (Panel:2)</td><td>[35.0, -10.0, -2.0]</td><td>[45.0, 10.0, 2.0]</td><td>800.0</td><td>6</td><td>12</td><td>True</td></tr></tbody></table></div></details>
+  
+</section>
+<section class="panel qualification-visual-check">
+  <h2>Current visual verification</h2>
+  <p>These views exist only where the current model owns a visual verification policy. Actual, goal, overlay and diff are current durable verification evidence.</p>
+  <section class="qualification-view" data-view="front">
+  <h3>front · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.001591,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="right">
+  <h3>right · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/right/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/right/goal.png" alt="right Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/right/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/right/overlay.png" alt="right Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.002025,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="iso">
+  <h3>iso · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.003617,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+
+</section>
+
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual PASS</span></div>
+
+    <h3>Forge model</h3>
+    <p>Two occurrences share one non-square Panel definition. Each carries one complete absolute Placement with X translation and Z-axis orientation.</p>
+
+    <h3>Verification checks</h3>
+    <details class="qualification-detail-block">
+  <summary><code>baseline</code> · <span class="qualification-status pass">PASS</span></summary>
+  
+  <pre><code>{
+  &quot;body_envelopes&quot;: {
+    &quot;actual_count&quot;: 2,
+    &quot;expected_count&quot;: 2,
+    &quot;kind&quot;: &quot;body_envelopes&quot;,
+    &quot;matched_pairs&quot;: [
+      {
+        &quot;actual&quot;: {
+          &quot;label&quot;: &quot;Panel&quot;,
+          &quot;max&quot;: [
+            -35.0,
+            10.0,
+            2.0
+          ],
+          &quot;min&quot;: [
+            -45.0,
+            -10.0,
+            -2.0
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;label&quot;: null,
+          &quot;max&quot;: [
+            -35.0,
+            10.0,
+            2.0
+          ],
+          &quot;min&quot;: [
+            -45.0,
+            -10.0,
+            -2.0
+          ]
+        },
+        &quot;max_delta&quot;: 0.0
+      },
+      {
+        &quot;actual&quot;: {
+          &quot;label&quot;: &quot;Panel (Panel:2)&quot;,
+          &quot;max&quot;: [
+            45.0,
+            10.0,
+            2.0
+          ],
+          &quot;min&quot;: [
+            35.0,
+            -10.0,
+            -2.0
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;label&quot;: null,
+          &quot;max&quot;: [
+            45.0,
+            10.0,
+            2.0
+          ],
+          &quot;min&quot;: [
+            35.0,
+            -10.0,
+            -2.0
+          ]
+        },
+        &quot;max_delta&quot;: 0.0
+      }
+    ],
+    &quot;pass&quot;: true,
+    &quot;tolerance&quot;: 0.001,
+    &quot;unmatched_actual&quot;: [],
+    &quot;unmatched_expected&quot;: []
+  }
+}</code></pre>
+</details>
+
+
+    <h3>Saved-design test</h3>
+    <p>Not required: this case isolates concrete copy-plus-rotation lowering; parameter-driven occurrence recompute is proved by the dedicated parametric Placement cases.</p>
+
+    <h3>Geometry evidence</h3>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The centred non-square 10 x 20 world envelopes prove that both Panel occurrences are rotated while their X centers remain at the authored -40/+40 positions.</p>
+
+    <h3>Raw test files</h3>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rotated-copy-placement/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+
+    <h3>Reference documentation</h3>
+    <ul><li><strong>SolidCraft</strong> — Translation and rotation are applied together to each bound occurrence through occurrence.move.</li><li><strong>PythonSCAD</strong> — Independent geometry proves two 10 x 20 x 4 rotated envelopes at the expected centers.</li><li><strong>pyBOSL2</strong> — Independent geometry checks the same rotated world envelopes.</li><li><strong>CadQuery</strong> — Independent Assembly Locations apply the same placement and orientation.</li><li><strong>build123d</strong> — Independent Rot and Locations reproduce the two placed panels.</li></ul>
+
+    <p class="source-stamp">
+      Site source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · accepted model evidence source
+      <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · durable build <code>f0cc4a57fc4769f37133d668b7a7a3c2a943415d</code>
+    </p>
+  </div>
+</details>
+
+
+  <section class="panel">
+    <h2>Sources of truth</h2>
+    <p>
+      General model/page metadata is stored in <code>model.yml</code>.
+      Preserved engineering explanation is stored in <code>README.md</code>.
+      Exact expected values and tolerances are defined by
+      <code>verification/verify.py</code>.
+    </p>
+    <p>
+      <a href="../../examples/rotated-copy-placement/">Open the example →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rotated-copy-placement/verification/verify.py">Open verification/verify.py →</a>
+    </p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

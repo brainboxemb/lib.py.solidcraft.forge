@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Explicit topology pick follows parent resize · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Explicit topology pick follows parent resize</div>
+  <section class="hero small">
+    <p class="eyebrow">anchors</p>
+    <h1>Explicit topology pick follows parent resize</h1>
+    <p class="guide-lead">A fixed baseline topology pick remains attached to the selected corner</p>
+    <p>An explicit AnchorTopology identifies one baseline edge/face/corner selection and SolidCraft retains that topology when the parent dimensions change.</p>
+    <p class="meta"><span>Board 40 × 20 × 20 mm; Marker 10 mm cube</span><span>11 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/anchor-topology-mutation/model_verify/presentation/preview-iso.png" alt="Explicit topology pick follows parent resize: Current deterministic presentation preview from durable build f0cc4a57fc47." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build f0cc4a57fc47.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the parameterized Board</li><li>Publish one named AnchorTopology selection</li><li>Attach the Marker through the named topology reference</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify the AnchorTopology contract directly: Forge supplies fixed baseline edge/face/corner pick coordinates once, then native SolidCraft must retain that selected topology when the parent dimensions change.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>anchors() -&gt; AnchorTopology(edge=..., on=..., corner=..., z=..., x=...); attach(parent=&#x27;front_top_left_pick&#x27;, child=AnchorFrame())</code></p>
+    <h2>Forge model</h2>
+    <p>One parametric Board, one named topology anchor with deliberately fixed numeric pick points, and one centered Marker attached to that anchor.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>AnchorTopology is inlined into joint.create as edge/on/corner plus optional z/x. No persistent joint.origin and no Forge-side recomputation of the pick coordinates occurs after the saved design is mutated.</p>
+    <h2>SolidCraft result</h2>
+    <p>On the 40x20x20 board the marker is centered on the front-top-left corner selected by the explicit topology pick.</p>
+    <h2>Saved-design test</h2>
+    <p>Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the unchanged native relationship must move the marker to the new front-top-left corner without rerunning Python.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The board and marker positions describe the visible result. After resizing the saved model, the marker must still follow the same selected edge and corner.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — This is a direct test of native topology persistence: the initial pick identifies topology, while later parameter changes move that topology.</li><li><strong>BOSL2</strong> — The higher-level intent is still a semantic attachment point, but this fixture specifically qualifies Forge&#x27;s lower-level explicit topology reference.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Qualification: a fixed AnchorTopology pick follows resized parent topology.&quot;&quot;&quot;
+
+
+class Board:
+    width = 40.0
+    height = 20.0
+    DEPTH = 20.0
+
+    def anchors(self):
+        # Deliberately fixed pick coordinates from the baseline 40x20x20 board.
+        # SolidCraft must retain the selected edge/face/corner after later
+        # parameter changes; Forge does not recompute these points.
+        return {
+            &quot;front_top_left_pick&quot;: AnchorTopology(
+                edge=(-20.0, -10.0, 10.0),
+                on=(0.0, -10.0, 10.0),
+                corner=(-20.0, -10.0, 20.0),
+                z=(0.0, -1.0, 0.0),
+                x=(0.0, 0.0, -1.0),
+            )
+        }
+
+    def build(self):
+        return Box(self.width, self.DEPTH, self.height, anchor=Anchor.BOTTOM)
+
+
+class Marker:
+    SIZE = 10.0
+
+    def build(self):
+        # Keep the marker on one side of its attachment origin. Native
+        # SolidCraft mating then places it fully outside the selected front
+        # face, touching the parent exactly at the topology corner.
+        return Box(self.SIZE, self.SIZE, self.SIZE).move(z=-half(self.SIZE))
+
+
+class AnchorTopologyMutation:
+    base_width = 40.0
+    base_height = 20.0
+
+    def build(self):
+        board = Board(
+            width=self.base_width,
+            height=self.base_height,
+        )
+        marker = Marker().attach(
+            board,
+            parent=&quot;front_top_left_pick&quot;,
+            child=AnchorFrame(),
+        )
+        return board + marker
+
+
+AnchorTopologyMutation()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/anchor-topology-mutation/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.move</code></li><li><code>joint.create</code></li><li><code>browser.visibility</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

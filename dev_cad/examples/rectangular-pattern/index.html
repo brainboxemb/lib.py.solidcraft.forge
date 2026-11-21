@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Native rectangular feature pattern · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Native rectangular feature pattern</div>
+  <section class="hero small">
+    <p class="eyebrow">features</p>
+    <h1>Native rectangular feature pattern</h1>
+    <p class="guide-lead">One Slot cut is repeated by a two-direction native History pattern</p>
+    <p>A plate receives one Slot source cut and SolidCraft repeats that existing feature in a rectangular rows-and-columns pattern.</p>
+    <p class="meta"><span>120 × 80 × 4 mm plate; 3 × 2 Slot pattern; 24 × 28 mm pitch</span><span>11 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/f0cc4a57fc4769f37133d668b7a7a3c2a943415d/dev_cad/examples/rectangular-pattern/model_verify/presentation/preview-iso.png" alt="Native rectangular feature pattern: Current deterministic presentation preview from durable build f0cc4a57fc47." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build f0cc4a57fc47.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the plate and source Slot sketch</li><li>Cut the source Slot once</li><li>Repeat the cut with one native rectangular feature pattern</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Qualify a real SolidCraft rectangular History pattern over one existing cut feature, rather than Forge-expanded repeated geometry.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>source = slot.extrude(-4); body = body - source; body.rectangular_pattern(source, count=columns, spacing=pitch, direction=Axis.X, count2=rows, spacing2=row_pitch, direction2=Axis.Y)</code></p>
+    <h2>Forge model</h2>
+    <p>One 120 x 80 x 4 mm plate, one native straight Slot cut and one native 3 x 2 rectangular feature pattern.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge emits the source Sketch/cut once, then exactly one solid.pattern.rectangular with features=[&#x27;Slot&#x27;]; columns/rows are dimensionless native parameters and pitches remain millimetre parameters.</p>
+    <h2>SolidCraft result</h2>
+    <p>SolidCraft saves one plate with six slot cuts and one native rectangular pattern History feature that references the original Slot cut.</p>
+    <h2>Saved-design test</h2>
+    <p>Required because columns and pitch are saved native pattern parameters. Change columns from 3 to 2 and pitch from 24 to 30 mm in the saved .sc design; the pattern must rebuild to a 2 x 2 layout without rerunning Python while retaining one source Slot cut and one RectangularPatternFeature.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>The six slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — Native integration through geometry checks additionally prove one saved RectangularPatternFeature. The four comparison libraries independently prove the final 3 x 2 slot geometry.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Native SolidCraft rectangular feature-pattern qualification.&quot;&quot;&quot;
+
+
+class RectangularPattern:
+    columns = 3
+    rows = 2
+    pitch = 24.0
+    row_pitch = 28.0
+
+    def build(self):
+        plate = Box(120, 80, 4, anchor=Anchor.BOTTOM)
+        with Sketch(name=&quot;Slot&quot;, on=plate) as slot:
+            SlotCenterToCenter2D((-5, 0), (5, 0), 6)
+
+        source_cut = slot.extrude(-4)
+        plate = plate - source_cut
+        return plate.rectangular_pattern(
+            source_cut,
+            count=self.columns,
+            spacing=self.pitch,
+            direction=Axis.X,
+            count2=self.rows,
+            spacing2=self.row_pitch,
+            direction2=Axis.Y,
+        )
+
+
+RectangularPattern()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rectangular-pattern/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>solid.box</code></li><li><code>model.faces</code></li><li><code>sketch.create</code></li><li><code>sketch.slot.center_to_center</code></li><li><code>sketch.finish</code></li><li><code>solid.extrude</code></li><li><code>solid.pattern.rectangular</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>
