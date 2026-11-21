@@ -201,25 +201,74 @@ Historical documentation-architecture discussion is preserved under
 `docs/plan.md` contains only unfinished repository work. Completed plan
 sections are removed after their corresponding change is merged.
 
-## Generated output and Pages
+## Generated output, branches and Pages
 
-Durable accepted output lives on the generated `build` branch and stable site
-output lives on generated `gh-pages`.
-
-The main path uses exact externally accepted `tool.cad.ci 0.15.0` on one
-caller-owned runner:
+Forge has three permanent source branches:
 
 ```text
-same-runner CAD-CI action
-  -> build fetch/update-main/publish
-  -> Forge site/build.py from prepared-main
-  -> Pages publish
+main
+dev-cad
+dev-ci
 ```
 
-Do not reintroduce Actions artifact transport, a second main publication
-runner, a second tool/library bootstrap, or a Forge-owned selection/build-store
-implementation. Forge owns site generation; released CAD-CI owns selection,
-SCons execution, durable-store and generated-branch mechanics.
+Branch roles are fixed:
+
+- `main` — stable integration only;
+- `dev-cad` — Forge API/compiler/model/Verification/site-content work;
+- `dev-ci` — Forge CI/infrastructure/publication integration.
+
+Generic CAD-CI behavior still belongs in `lib.py.cad.ci` /
+`tool.cad.ci` first. Forge consumes exact released generic behavior; do not
+implement a Forge-local planner, build store or generated-branch mutator.
+
+Short-lived work branches target one dev lane and are squash-merged. Their PRs
+are verification-only and must not publish durable PR build/Page state.
+
+Durable accepted output lives on generated `build`:
+
+```text
+main/
+dev-cad/
+dev-ci/
+```
+
+Generated Pages lives on one `gh-pages` branch:
+
+```text
+/           <- main stable site
+/dev-cad/   <- dev-cad preview
+/dev-ci/    <- dev-ci preview
+```
+
+The active stack is exact externally accepted `tool.cad.ci 0.16.1` backed by
+`lib.py.cad.ci 0.9.2`. One caller-owned runner executes CAD-CI, prepares and
+publishes its own complete scope, builds the Forge site from that exact prepared
+scope and publishes only the matching Pages root/subtree.
+
+Do not reintroduce Actions artifact transport, a second publication runner, a
+second tool/library bootstrap, or Forge-owned selection/build-store logic.
+
+For named dev lanes, incremental selection uses the previous
+`source_commit` recorded in that lane's durable `build.json` manifest as
+the base. Do not assume `github.event.before` is valid: branch recreation
+events use an all-zero before SHA.
+
+Promotion uses a temporary branch:
+
+```text
+dev-cad -> promote/dev-cad -> PR to main
+dev-ci  -> promote/dev-ci  -> PR to main
+```
+
+The temporary promotion branch is created at the current dev-lane head. The PR
+runs complete validation and is merged with a normal merge commit, never
+squash. GitHub may auto-delete the temporary promotion branch after merge; the
+long-lived dev lane remains intact. Then fast-forward/synchronize both dev
+lanes to the resulting main head.
+
+Do not open a promotion PR directly from the long-lived dev branch while
+automatic head-branch deletion is enabled; the first #572 promotion proved that
+GitHub will delete the long-lived head branch after merge.
 
 Site Python code may discover/load/validate/render data, but complete
 hand-authored pages and guide prose belong in external templates/content, not
