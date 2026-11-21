@@ -310,8 +310,11 @@ Requirements:
   longer created;
 - Forge must not reimplement generic selection to achieve this.
 
-Durable publication occurs only on a push to one of the three long-lived source
-branches.
+Durable publication occurs only for an integration event on one of the three
+long-lived source branches. Normal source updates arrive through `push`; a
+policy-controlled merge may explicitly invoke the same integration path through
+`workflow_dispatch` because GitHub suppresses recursive push workflows created
+with `GITHUB_TOKEN`.
 
 The generated `build` branch contains complete reconciled scopes:
 
@@ -397,9 +400,15 @@ Repository automation must use the policy-controlled merge workflow rather than
 calling the merge API with a chosen method.
 
 The policy workflow must reject draft, unmergeable or non-green PR heads. After
-a direct lane promotion it must ensure that the promoted long-lived lane exists
-and points at the resulting main merge commit, including while repository
-`delete_branch_on_merge` is still enabled.
+a successful merge into a durable source ref (`main`, `dev-cad` or
+`dev-ci`) it must explicitly dispatch the Forge integration workflow on that
+ref, because merges performed with the repository `GITHUB_TOKEN` do not
+generate a second workflow run from their resulting push event.
+
+After a direct lane promotion it must ensure that the promoted long-lived lane
+exists and points at the resulting main merge commit, including while repository
+`delete_branch_on_merge` is still enabled, and dispatch Forge integration for
+both `main` and the restored promoted lane.
 
 Merged source-branch cleanup is allow-list based. Only explicitly temporary
 prefixes may be deleted automatically. `main`, `dev-cad`, `dev-ci`,

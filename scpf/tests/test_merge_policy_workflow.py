@@ -20,19 +20,34 @@ class MergePolicyWorkflowTests(unittest.TestCase):
         self.assertIn("issues: write", text)
         self.assertIn("checks: read", text)
         self.assertIn("statuses: read", text)
+        self.assertIn("actions: write", text)
         self.assertIn("contents: write", text)
 
         self.assertIn("scripts/merge_policy.py", text)
-        self.assertIn("check-runs?filter=latest", text)
+        self.assertIn("check-runs?per_page=100", text)
+        self.assertNotIn("filter=latest", text)
+        self.assertIn("sort_by(.name, (.started_at // \"\"), .id)", text)
+        self.assertIn("group_by(.name)", text)
+        self.assertIn("map(last)", text)
         self.assertIn('STATUS_COUNT="$(jq', text)
         self.assertIn('merge_method="$METHOD"', text)
         self.assertIn('sha="$HEAD_SHA"', text)
 
         self.assertIn("DIRECT_PROMOTION", text)
         self.assertIn("CLEANUP_HEAD", text)
+        self.assertIn("INTEGRATE_BASE", text)
         self.assertIn("git/refs/heads/$HEAD_REF", text)
         self.assertIn("temporary head deleted", text)
         self.assertIn("long-lived lane recreated at merge commit", text)
+        self.assertIn("actions/workflows/scpf.yml/dispatches", text)
+        self.assertIn('-f ref="$BASE_REF"', text)
+        self.assertIn('-f ref="$HEAD_REF"', text)
+        self.assertIn("Integration dispatched: %s", text)
+        self.assertIn("COMMENT_BODY", text)
+        self.assertIn(
+            "printf 'Merged by repository policy: `%s -> %s`",
+            text,
+        )
 
     def test_cleanup_command_is_owner_only_and_keeps_unmerged_branches(self):
         text = WORKFLOW.read_text(encoding="utf-8")
