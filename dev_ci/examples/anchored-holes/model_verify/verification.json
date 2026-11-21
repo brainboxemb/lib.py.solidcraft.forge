@@ -1,0 +1,152 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "c3e2cccf3a9b3fc996c8b8ae857b4eef3d2cbfee7df0cd270881622622052fa6",
+          "size": 3144
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "AnchoredHoles",
+                "max": [
+                  100.0,
+                  60.0,
+                  10.0
+                ],
+                "min": [
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  100.0,
+                  60.0,
+                  10.0
+                ],
+                "min": [
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 2
+              },
+              "expected": {
+                "cylinder": 2
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 58994.69035083114,
+              "delta": 2.013257471844554e-08,
+              "expected": 58994.69035085127,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.5
+            }
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Base",
+              "type": "Sketch",
+              "warning": null
+            },
+            {
+              "type": "ExtrudeFeature",
+              "warning": null
+            },
+            {
+              "name": "Hole",
+              "type": "Sketch",
+              "warning": null
+            },
+            {
+              "name": "Hole",
+              "type": "ExtrudeFeature",
+              "warning": null
+            },
+            {
+              "name": "RectangularPattern1",
+              "type": "RectangularPatternFeature",
+              "warning": null
+            }
+          ],
+          "expected": [
+            {
+              "name": "Base",
+              "type": "Sketch",
+              "warning": null
+            },
+            {
+              "type": "ExtrudeFeature",
+              "warning": null
+            },
+            {
+              "name": "Hole",
+              "type": "Sketch",
+              "warning": null
+            },
+            {
+              "name": "Hole",
+              "type": "ExtrudeFeature",
+              "warning": null
+            },
+            {
+              "name": "RectangularPattern1",
+              "type": "RectangularPatternFeature",
+              "warning": null
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/anchored-holes/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "anchored-holes"
+}

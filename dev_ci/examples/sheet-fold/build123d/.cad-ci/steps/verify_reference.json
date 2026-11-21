@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "6bb87b2d1277408e4ee731f6cd9e4abb05558975a56d421e1761cd664161f62d",
+  "duration_seconds": 0.439,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:28:55.470Z",
+  "item": "examples-sheet-fold-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "ef55554df8369f2b28c675962578bfe9c03a317059bbbef4a646609e6f7437b6"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:29:07.478Z",
+  "run_started_at": "2026-11-21T11:24:39.682Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:28:55.419Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "47211b36be21d5916863cae7fc13cdf22322c28b03379eadc16e9ec3a8c2c1cd",
+  "timeout_seconds": null
+}

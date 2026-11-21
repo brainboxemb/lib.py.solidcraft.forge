@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "1645a9cfc4b1844970618b5e22f1a5adff36bdc9fac10648a959baaa4397f664",
+  "duration_seconds": 0.457,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:28:39.288Z",
+  "item": "examples-parametric-placement-pair-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "64e9d37175f71f90b16580ad74d82a4f1ed91a79fdd83156f5f482e20acfcae6"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:29:07.478Z",
+  "run_started_at": "2026-11-21T11:24:39.682Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:28:39.236Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "6bea3818db13a82ef09fa04fa995e909e4fa1e2d4efdf85d4c4bf8b7f9881671",
+  "timeout_seconds": null
+}

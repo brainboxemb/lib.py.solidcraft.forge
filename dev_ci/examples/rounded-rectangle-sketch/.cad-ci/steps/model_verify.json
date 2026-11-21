@@ -1,0 +1,33 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "36a70932fa42e17ee4659abd1df2a1af5561ecf2e70dd169e6632bb50b6e1fcb",
+  "duration_seconds": 0.723,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:27:47.525Z",
+  "item": "rounded-rectangle-sketch",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "model_verify": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "21268b95855e748e05651a23386baec0b73cb511abcb834b312f0136b89622ea"
+    },
+    "solidcraft.json": {
+      "kind": "file",
+      "mode": 420,
+      "sha256": "aa6ec5f3b0091858da894a4c5a314ef0c8e78148094287d63a214ad0572dea1d"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:29:07.478Z",
+  "run_started_at": "2026-11-21T11:24:39.682Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:27:47.472Z",
+  "status": "pass",
+  "step": "model_verify",
+  "target_spec_digest": "6a9979e9ff121d8c07611457083250c30e596c86d478f55db1b682d3031d1179",
+  "timeout_seconds": null
+}

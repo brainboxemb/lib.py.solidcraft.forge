@@ -1,0 +1,101 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "8510ae524b1abc88ba7a2dcc64dc1572fabb8101f4cdac7f46a369467f1a4d02",
+          "size": 1931
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Post",
+                "max": [
+                  -10.0,
+                  5.0,
+                  20.0
+                ],
+                "min": [
+                  -20.0,
+                  -5.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -10.0,
+                  5.0,
+                  20.0
+                ],
+                "min": [
+                  -20.0,
+                  -5.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Post (Post:2)",
+                "max": [
+                  20.0,
+                  5.0,
+                  20.0
+                ],
+                "min": [
+                  10.0,
+                  -5.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  20.0,
+                  5.0,
+                  20.0
+                ],
+                "min": [
+                  10.0,
+                  -5.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.0,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/assembly-decorator/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "assembly-decorator"
+}

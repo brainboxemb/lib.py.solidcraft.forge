@@ -1,0 +1,63 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "actual_min": [
+                -10.0,
+                -10.0,
+                -5.0
+              ],
+              "expected_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "expected_min": [
+                -10.0,
+                -10.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 8000.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 8000.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "cadquery",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/parametric-move/cadquery/model.py",
+          "status": "pass",
+          "stl": "parametric-move/cadquery/model.stl"
+        }
+      ],
+      "model": "parametric-move",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "69a1e18acc9d6b2074e3b4f4ee5e4393c761e196",
+  "status": "pass"
+}

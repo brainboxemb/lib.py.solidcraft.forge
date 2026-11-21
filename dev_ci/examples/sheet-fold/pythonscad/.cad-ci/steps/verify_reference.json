@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "d564dd7bbb52e316f40a3a240cdaa26528670f83b5add898194f9f197695fbb3",
+  "duration_seconds": 0.438,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:28:56.873Z",
+  "item": "examples-sheet-fold-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "514e5c4c76a98d0d7d6e958ca6016a035010dc88c339da5cb54de2a2a58ca4b1"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:29:07.478Z",
+  "run_started_at": "2026-11-21T11:24:39.682Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:28:56.822Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "901c993204cc6a88331e4c17c6d56707a71cbc088b61b0fea39ce52d77c3070e",
+  "timeout_seconds": null
+}

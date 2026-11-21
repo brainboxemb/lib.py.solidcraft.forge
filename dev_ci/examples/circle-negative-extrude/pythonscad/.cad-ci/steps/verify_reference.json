@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "0cc945994d8428b934253ccdea1cea649f2517d2a93fa88e6a8f1fabd714d4ac",
+  "duration_seconds": 0.437,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:28:13.962Z",
+  "item": "examples-circle-negative-extrude-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "6d1c302f76040455993f603e138a10c5c05a929735d17a91cc0633ea07fd9001"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:29:07.478Z",
+  "run_started_at": "2026-11-21T11:24:39.682Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:28:13.910Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "eb106eca60081fb461da72f0a980a46fce0a22e3529ce646320af7ed219b60d6",
+  "timeout_seconds": null
+}

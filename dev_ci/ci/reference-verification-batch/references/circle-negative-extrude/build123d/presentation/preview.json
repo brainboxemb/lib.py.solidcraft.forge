@@ -1,0 +1,32 @@
+{
+  "bounds": {
+    "max": [
+      10.0,
+      9.996891975402832,
+      0.0
+    ],
+    "min": [
+      -10.0,
+      -9.996891975402832,
+      -30.0
+    ]
+  },
+  "camera": {
+    "distance": 23.08770317714997,
+    "pitch_deg": -32.0,
+    "target": [
+      0.0,
+      0.0,
+      -15.0
+    ],
+    "yaw_deg": -45.0
+  },
+  "height": 540,
+  "image": "preview-iso.png",
+  "kind": "presentation-preview",
+  "renderer": "forge-trimesh-pillow-v1",
+  "schema": 1,
+  "source": "model.stl",
+  "view": "iso",
+  "width": 720
+}

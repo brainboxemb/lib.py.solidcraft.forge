@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "aa9d0834cb1ee901cd0b8b24f4f861bd7ac0e26d0affa6a399e68fa35201b16e",
+  "duration_seconds": 0.438,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:28:56.430Z",
+  "item": "examples-sheet-fold-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "8f30ba10ed23fec104f755e6ec9bebdc47e63cd980f730b8a618810fc76f48c3"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:29:07.478Z",
+  "run_started_at": "2026-11-21T11:24:39.682Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:28:56.378Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "fc087b2600ba048047272726c41ba66e60b167858d0ecd5cd706eb752e2cf4e3",
+  "timeout_seconds": null
+}

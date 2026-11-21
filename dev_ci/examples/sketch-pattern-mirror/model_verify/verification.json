@@ -1,0 +1,387 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "2fbfcb8d531ba05da73ca5abf69d297307c1a891deffb2fbd7faa6ea1160fdf9",
+          "size": 3530
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "SketchPatternMirror",
+                "max": [
+                  120.0,
+                  80.0,
+                  5.000000000000001
+                ],
+                "min": [
+                  -120.0,
+                  -80.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  120.0,
+                  80.0,
+                  5.0
+                ],
+                "min": [
+                  -120.0,
+                  -80.0,
+                  0.0
+                ]
+              },
+              "max_delta": 8.881784197001252e-16
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "selector": "sole",
+            "volume": {
+              "actual": 181578.7614030834,
+              "delta": 3.216555342078209e-07,
+              "expected": 181578.76140340505,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.05
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "hole_columns": 4.0,
+            "hole_diameter": 8.0,
+            "hole_pitch": 25.0,
+            "slot_count": 2.0,
+            "slot_pitch": 50.0
+          },
+          "expected": {
+            "hole_columns": 4.0,
+            "hole_diameter": 8.0,
+            "hole_pitch": 25.0,
+            "slot_count": 2.0,
+            "slot_pitch": 50.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "name": "Dog holes",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "Dog holes",
+              "status": "solved"
+            },
+            "label": "Dog holes sketch",
+            "pass": true
+          },
+          {
+            "actual": {
+              "name": "Clamp slots",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "Clamp slots",
+              "status": "solved"
+            },
+            "label": "Clamp slots sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Dog holes",
+              "type": "Sketch"
+            },
+            {
+              "name": "Dog holes",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "Clamp slots",
+              "type": "Sketch"
+            },
+            {
+              "name": "Clamp slots",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Dog holes",
+              "type": "Sketch"
+            },
+            {
+              "name": "Dog holes",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "Clamp slots",
+              "type": "Sketch"
+            },
+            {
+              "name": "Clamp slots",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/patterns_mutated/model.sc",
+          "sha256": "2348e8bdefd7baeeac9bded8850405afc318a6b2968038c1af6b0d0ba141eb50",
+          "size": 49676
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/patterns_mutated/measurements.json",
+          "sha256": "6852921b787d93c9a0f5e770a8ad8b5c64cfd8942b8adf845849bef1e1456fc0",
+          "size": 3533
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "SketchPatternMirror",
+                "max": [
+                  120.0,
+                  80.0,
+                  5.000000000000001
+                ],
+                "min": [
+                  -120.0,
+                  -80.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  120.0,
+                  80.0,
+                  5.0
+                ],
+                "min": [
+                  -120.0,
+                  -80.0,
+                  0.0
+                ]
+              },
+              "max_delta": 8.881784197001252e-16
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "changes": [
+          {
+            "comparison": {
+              "actual": {
+                "absolute_delta": 0.07729494172777521,
+                "baseline": 0.24914221233465159,
+                "mutated": 0.3264371540624268
+              },
+              "expected": {
+                "absolute_delta_gt": 0.01
+              },
+              "label": "SolidCraft saved design change layout_center_x",
+              "pass": true
+            },
+            "id": "layout_center_x",
+            "path": [
+              "bodies",
+              0,
+              "center_of_mass",
+              0
+            ]
+          }
+        ],
+        "named_bodies": [
+          {
+            "selector": "sole",
+            "volume": {
+              "actual": 180447.78805063973,
+              "delta": 2.5269982870668173e-06,
+              "expected": 180447.78804811274,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.05
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "hole_columns": 4.0,
+            "hole_diameter": 10.0,
+            "hole_pitch": 30.0,
+            "slot_count": 2.0,
+            "slot_pitch": 30.0
+          },
+          "expected": {
+            "hole_columns": 4.0,
+            "hole_diameter": 10.0,
+            "hole_pitch": 30.0,
+            "slot_count": 2.0,
+            "slot_pitch": 30.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "name": "Dog holes",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "Dog holes",
+              "status": "solved"
+            },
+            "label": "Dog holes sketch",
+            "pass": true
+          },
+          {
+            "actual": {
+              "name": "Clamp slots",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "Clamp slots",
+              "status": "solved"
+            },
+            "label": "Clamp slots sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Dog holes",
+              "type": "Sketch"
+            },
+            {
+              "name": "Dog holes",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "Clamp slots",
+              "type": "Sketch"
+            },
+            {
+              "name": "Clamp slots",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Dog holes",
+              "type": "Sketch"
+            },
+            {
+              "name": "Dog holes",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "Clamp slots",
+              "type": "Sketch"
+            },
+            {
+              "name": "Clamp slots",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "saved_design_patterns_mutated",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sketch-pattern-mirror/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sketch-pattern-mirror"
+}

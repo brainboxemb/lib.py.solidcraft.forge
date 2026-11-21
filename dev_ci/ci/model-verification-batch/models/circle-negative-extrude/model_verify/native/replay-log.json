@@ -1,0 +1,60 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "3c9c401b069bd5e722a4b0241777539fd1e64c8086637e24fda1a7dc2dc7b736",
+  "variables": {},
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "diameter",
+        "expression": "20",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "height",
+        "expression": "30",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": "XY",
+        "name": "Profile"
+      }
+    },
+    {
+      "index": 3,
+      "command": "sketch.circle.center",
+      "resolved_params": {
+        "center": [
+          0,
+          0
+        ],
+        "diameter": "diameter"
+      }
+    },
+    {
+      "index": 4,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 5,
+      "command": "solid.extrude",
+      "resolved_params": {
+        "distance": "height",
+        "direction": "negative",
+        "body_name": "NegativeCircleExtrude"
+      }
+    }
+  ],
+  "completed": 6
+}

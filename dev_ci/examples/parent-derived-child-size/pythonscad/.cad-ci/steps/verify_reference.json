@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "82ceef4364e4c7ca57af15c463312f78572f80e7d9574b121f3850b971b695da",
+  "duration_seconds": 0.44,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:28:41.949Z",
+  "item": "examples-parent-derived-child-size-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "257ded64a3a936bfdc3f6d2ef1f5d553dde94c514d4a3ce1d1bbf7a9eac2d37d"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:29:07.478Z",
+  "run_started_at": "2026-11-21T11:24:39.682Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:28:41.897Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "75e710b4c3f82ac796feeeb7c6b232c3bc1853afe39efe6158c8099835257ab1",
+  "timeout_seconds": null
+}

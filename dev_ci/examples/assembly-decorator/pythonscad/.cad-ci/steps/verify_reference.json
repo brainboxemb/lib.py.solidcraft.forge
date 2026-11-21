@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "5ee21aff1d5ec85ab85238b4c71d07da5c3994ac76d84b8488f5bb311d9b4512",
+  "duration_seconds": 0.449,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:28:06.641Z",
+  "item": "examples-assembly-decorator-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "810d1d059455b2bbb5b2c8ebe5228fb447ee5844bc028339208af8624f2fc411"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:29:07.478Z",
+  "run_started_at": "2026-11-21T11:24:39.682Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:28:06.590Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "2e5de700208cb01c591373548a39b3d595f91156857fcf730f41ee4739ac6877",
+  "timeout_seconds": null
+}

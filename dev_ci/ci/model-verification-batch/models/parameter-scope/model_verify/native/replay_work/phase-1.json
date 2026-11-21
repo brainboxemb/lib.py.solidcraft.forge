@@ -1,0 +1,151 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "d1_Panel_width",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "Panel",
+        "grounded": true
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "d1_Panel_width",
+        "width": 20.0,
+        "height": 10.0,
+        "operation": "new",
+        "corner": [
+          "-(d1_Panel_width / 2)",
+          -10.0,
+          0.0
+        ],
+        "body_name": "Panel"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "d2_Panel_2_width",
+        "expression": "60",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "Panel 2",
+        "grounded": false
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "d2_Panel_2_width",
+        "width": 20.0,
+        "height": 10.0,
+        "operation": "new",
+        "corner": [
+          "-(d2_Panel_2_width / 2) + 100 mm",
+          -10.0,
+          0.0
+        ],
+        "body_name": "Panel_2"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "shared_width",
+        "expression": "80",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "Panel 3",
+        "grounded": false
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "shared_width",
+        "width": 20.0,
+        "height": 10.0,
+        "operation": "new",
+        "corner": [
+          "-(shared_width / 2) + 220 mm",
+          -10.0,
+          0.0
+        ],
+        "body_name": "Panel_3"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "Panel 3",
+        "translate": [
+          120.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "Panel 4",
+        "grounded": false
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "shared_width / 2",
+        "width": 20.0,
+        "height": 10.0,
+        "operation": "new",
+        "corner": [
+          "-((shared_width / 2) / 2) + 460 mm",
+          -10.0,
+          0.0
+        ],
+        "body_name": "Panel_4"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    }
+  ]
+}

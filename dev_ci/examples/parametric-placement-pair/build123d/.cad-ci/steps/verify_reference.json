@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "7d4045a9b866a1ce2a60b16199c55028b0e5731ef3286bef5da95ef8b7eb5e5f",
+  "duration_seconds": 0.446,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:28:38.807Z",
+  "item": "examples-parametric-placement-pair-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "cb6d559d329bea835a15dedda5694c315286d3876981085b899b8111ec8dbda9"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:29:07.478Z",
+  "run_started_at": "2026-11-21T11:24:39.682Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:28:38.754Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "910055fc46e4e3afba1ba7859a23aa4850937d76e3d991f11ec1964a2cf5119c",
+  "timeout_seconds": null
+}

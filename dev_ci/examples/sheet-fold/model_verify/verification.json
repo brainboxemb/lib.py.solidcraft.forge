@@ -1,0 +1,383 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "d679413e1557b6aca048936afda6850c38d74f4f66977c11823182e5fd626308",
+          "size": 3370
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "SheetFold",
+                "max": [
+                  21.643805510000004,
+                  20.0,
+                  21.643805509615312
+                ],
+                "min": [
+                  -40.0,
+                  -20.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  21.64380551,
+                  20.0,
+                  21.64380551
+                ],
+                "min": [
+                  -40.0,
+                  -20.0,
+                  0.0
+                ]
+              },
+              "max_delta": 3.8468783714051824e-10
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole",
+            "sheet_metal": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body sheet_metal",
+              "pass": true
+            },
+            "volume": {
+              "actual": 6343.451332346599,
+              "delta": 1.1121483112219721e-07,
+              "expected": 6343.451332235384,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.01
+            }
+          }
+        ],
+        "sketches": [
+          {
+            "actual": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Blank sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Blank",
+              "type": "Sketch"
+            },
+            {
+              "name": "BaseFlange1",
+              "type": "BaseFlangeFeature"
+            },
+            {
+              "name": "Hole1",
+              "type": "HoleFeature"
+            },
+            {
+              "name": "Fold1",
+              "type": "FoldFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Blank",
+              "type": "Sketch"
+            },
+            {
+              "name": "BaseFlange1",
+              "type": "BaseFlangeFeature"
+            },
+            {
+              "name": "Hole1",
+              "type": "HoleFeature"
+            },
+            {
+              "name": "Fold1",
+              "type": "FoldFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/flat_pattern/results.json",
+          "sha256": "97ada4a164c93559cc979f4e3ca2301038b06c9698b5bdbd0cf507686c356cc5",
+          "size": 11052
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check result_count",
+              "pass": true
+            },
+            "id": "result_count",
+            "path": []
+          },
+          {
+            "comparison": {
+              "actual": {
+                "max_difference": 3.8468783714051824e-10,
+                "value": [
+                  80.00000000038469,
+                  40.0,
+                  2.0
+                ]
+              },
+              "expected": {
+                "tolerance": 0.001,
+                "value": [
+                  80.0,
+                  40.0,
+                  2.0
+                ]
+              },
+              "label": "SolidCraft inspection check flat_size",
+              "pass": true
+            },
+            "id": "flat_size",
+            "path": [
+              0,
+              "flat_size_mm"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check cutout_count",
+              "pass": true
+            },
+            "id": "cutout_count",
+            "path": [
+              0,
+              "cutout_shapes"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": {
+                "max_difference": 0.0,
+                "value": [
+                  -20.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "tolerance": 0.001,
+                "value": [
+                  -20.0,
+                  0.0
+                ]
+              },
+              "label": "SolidCraft inspection check hole_center",
+              "pass": true
+            },
+            "id": "hole_center",
+            "path": [
+              0,
+              "cutout_shapes",
+              0,
+              "circle",
+              "center"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 3.0,
+              "delta": 0.0,
+              "expected": 3.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check hole_radius",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "hole_radius",
+            "path": [
+              0,
+              "cutout_shapes",
+              0,
+              "circle",
+              "radius"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check bend_count",
+              "pass": true
+            },
+            "id": "bend_count",
+            "path": [
+              0,
+              "bends"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 90.0,
+              "delta": 0.0,
+              "expected": 90.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check bend_angle",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "bend_angle",
+            "path": [
+              0,
+              "bends",
+              0,
+              "angle_deg"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2.0,
+              "delta": 0.0,
+              "expected": 2.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check bend_radius",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "bend_radius",
+            "path": [
+              0,
+              "bends",
+              0,
+              "radius"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 4.71238898038469,
+              "delta": 0.0,
+              "expected": 4.71238898038469,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check bend_allowance",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "bend_allowance",
+            "path": [
+              0,
+              "bends",
+              0,
+              "allowance"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "SheetFold Rule",
+              "expected": "SheetFold Rule",
+              "label": "SolidCraft inspection check sheet_rule",
+              "pass": true
+            },
+            "id": "sheet_rule",
+            "path": [
+              0,
+              "rule"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2.0,
+              "delta": 0.0,
+              "expected": 2.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check sheet_thickness",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "sheet_thickness",
+            "path": [
+              0,
+              "thickness"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 0.5,
+              "delta": 0.0,
+              "expected": 0.5,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check sheet_k_factor",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "sheet_k_factor",
+            "path": [
+              0,
+              "k_factor"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_flat_pattern",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sheet-fold/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sheet-fold"
+}

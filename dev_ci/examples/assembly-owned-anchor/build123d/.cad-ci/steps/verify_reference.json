@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "c97e242e0912382d8528300bf13a4774acbd9fbaefae4a8e64403e92ee5f9847",
+  "duration_seconds": 0.436,
+  "engine": "scons",
+  "engine_schema": 2,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T11:28:07.081Z",
+  "item": "examples-assembly-owned-anchor-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "7eda02cb62a4633716e24010cc719f5302f3b2e969c4c370324fdbfdeee72f78"
+    }
+  },
+  "run_finished_at": "2026-11-21T11:29:07.478Z",
+  "run_started_at": "2026-11-21T11:24:39.682Z",
+  "schema": 3,
+  "started_at": "2026-11-21T11:28:07.029Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "6e5f5d6cfe29c28db6b7f37cd269dafa390d800a14466be5e1c3f1b218d51bc7",
+  "timeout_seconds": null
+}
