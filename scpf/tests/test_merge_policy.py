@@ -32,6 +32,14 @@ class MergePolicyTests(unittest.TestCase):
                 result = merge_policy.evaluate(base=base, head=head)
                 self.assertEqual(result.merge_method, method)
                 self.assertEqual(result.direct_lane_promotion, promotion)
+                self.assertEqual(
+                    result.integrate_base,
+                    base in {"main", "dev-cad", "dev-ci"},
+                )
+
+    def test_non_durable_base_does_not_request_integration(self):
+        result = merge_policy.evaluate(base="experiment", head="feature/x")
+        self.assertFalse(result.integrate_base)
 
     def test_cleanup_allow_list(self):
         for head in (
