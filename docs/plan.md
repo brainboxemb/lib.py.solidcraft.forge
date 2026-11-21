@@ -11,115 +11,258 @@ documents in `docs/`. Issues keep detail and history.
 The central CAD-CI, durable `build/main` store and generated `gh-pages`
 publication path are implemented and green.
 
-The first live Pages cut-over exposed presentation regressions. PR #566 and
-PR #569 repaired the generic Verification case-sheet layout, restored all 36
-conceptual setup diagrams and removed the misplaced engineering-diagram gallery
-from the Verification catalog root.
+The Verification recovery is complete:
 
-A second live cut-over then exposed a deeper verification-semantic regression:
-many current pages report `Visual N/R` even though the preserved Qualification
-site had approved visual verification for those same cases.
+- #378 was completed by PR #571;
+- all 36 active Verification models own required model-local visual policies;
+- all 36 visual reports pass;
+- the stable Pages validation passes;
+- main commit `45c6213ad6b6c02a230a95f936ca2c65f4c56da2` produced durable
+  build commit `550cad35ed18504af164bc0c6467fb3eb492fad6`;
+- generated `gh-pages` commit
+  `a11437cef70341d543a3ff8a713e59098dfbd0ee` passed a complete 36-page
+  content audit.
 
-The live Pages source has therefore been rolled back again to
-`backup/gh-pages-before-f11-2026-11-20`. GitHub Pages rollback run
-`44890618855` completed successfully from backup commit
-`127adb3900cdc9ca6194edb1102ea7d505316295`.
+The live Pages source remains intentionally on
+`backup/gh-pages-before-f11-2026-11-20` until #366 performs the explicit
+public cut-over and live-route verification.
 
-Issue #378 is reopened because its F7-F9/F11 full-catalog visual contract was
-never completed:
+The current source workflow is still intentionally simple: pull requests are
+normally opened against `main`, PR evidence may be published under
+`build/pr/<number>`, and a merged main change immediately participates in the
+stable build/Pages flow.
 
-- 36 active Verification cases exist;
-- all 36 have model-local declarative `verification/verify.py`;
-- all 36 have current `verification/reference_geometry.json`;
-- the preserved legacy visual baseline manifest contains approved baselines for
-  all 36 current cases;
-- only 5/36 current cases have model-local `verification/visual.json`;
-- #430 proved the visual path for the first five models only;
-- #432 completed procedural-to-declarative model verification but did not finish
-  F7-F9 for the remaining catalog;
-- #497 later intentionally mapped absent visual policies to `Visual N/R`.
-  Live review rejects that semantic downgrade.
+That topology is now proven, but it is not the intended long-term development
+model. It couples ordinary development too closely to the stable branch and
+creates durable per-PR scopes that can remain behind after interrupted work.
 
-#366 remains open but is blocked on #378.
+Issue #572 defines the next architecture after #366: keep `main` stable and
+introduce two long-lived integration lanes, `dev_cad` and `dev_ci`.
 
-## Current goal
+## Immediate goal
 
-Complete the original #378 visual-verification contract for every active
-Verification model without recreating the retired Qualification runner.
+Finish #366 without changing the now-proven publication architecture:
 
-For all 36 active cases:
+1. switch the live GitHub Pages source from the backup branch to generated
+   `gh-pages`;
+2. verify the public root, all required Verification routes and representative
+   case pages;
+3. verify legacy Qualification redirects;
+4. keep the rollback branch until the live cut-over is proven.
 
-1. preserve/migrate the approved model-local visual baseline;
-2. declare the historically required views;
-3. retain current SolidCraft render and camera evidence;
-4. run released `lib.py.cad.verification` image regression;
-5. produce expected-shape goal and overlay evidence from model-local expected
-   geometry;
-6. require visual PASS in semantic verification;
-7. keep presentation previews separate from verification truth.
+Do not combine the live cut-over with the development-lane migration.
 
-The existing visual implementation is the architecture. Do not introduce a new
-visual engine or central cross-model baseline registry.
+## Next architecture — long-lived development lanes
 
-Historical baseline pixels may be migrated byte-for-byte into model-local
-encoded baseline payloads, as already proven by the existing four migrated
-payload-based models. Generic decode/image/projection mechanics remain in the
-released verification library.
+After #366 is proven live, Forge should use three long-lived source branches:
 
-The old central `qualification/geometry_contracts.py` is migration evidence,
-not a source to restore. Required views, expected boxes/features and baseline
-provenance must end up model-local under each
-`examples/<slug>/verification/` directory.
+```text
+main
+dev_cad
+dev_ci
+```
 
-## Verification parity audit
+Their responsibilities are:
 
-Current hard findings:
+- `main` — stable/production integration only. A merge to `main` may update
+  the durable main build and the stable Pages root.
+- `dev_cad` — integration lane for Forge API, compiler, model, verification
+  data and other CAD/product work.
+- `dev_ci` — integration lane for Forge-side CI/infrastructure integration.
 
-- legacy approved visual baselines for current cases: 36/36;
-- current `visual.json` policies: 5/36;
-- missing current visual policies: 31;
-- current reference-geometry contracts: 36/36;
-- cases declaring `bounds_sufficient: false`: 18/36;
-- cases retaining explicit surface-distance probes for independent reference
-  geometry: 14/36.
+`dev_ci` does not change repository ownership boundaries. Generic CAD-CI
+functionality still belongs in `lib.py.cad.ci` and `tool.cad.ci`, is tested
+and released there, and is then consumed/qualified through Forge's `dev_ci`
+lane.
 
-The surface-distance probes were primarily reference-mesh verification evidence
-in the old runner and remain present in current `reference_geometry.json`.
-The immediate semantic regression is the missing native visual verification,
-not loss of those reference probes.
+### Pull-request rule
 
-Representative failure:
+Normal feature/fix pull requests target one development lane and perform
+verification only.
 
-`anchored-holes` currently reports
-`Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R`,
-while the preserved site had required Top/Right/Iso visual verification with
-Actual/Goal/Overlay evidence.
+They must not create durable per-PR build or Pages publication.
 
-## Execution order
+Target model:
 
-1. [#378, now] Correct requirements/design so every active Verification model
-   requires a model-local visual policy and semantic visual PASS.
-2. [#378] Migrate the 31 missing approved legacy baseline/view policies into
-   model-local verification data without re-encoding approved baseline pixels.
-3. [#378] Restore model-local expected-shape boxes/features and historically
-   required view overrides.
-4. [#378] Run the complete 36-model visual verification path and fix any real
-   render regressions rather than weakening thresholds or silently reapproving
-   baselines.
-5. [#378] Prove the semantic summary requires visual PASS for all 36 active
-   cases and publish a complete durable `build/main` baseline.
-6. [#366, blocked] Regenerate and inspect `gh-pages` from that complete
-   verification baseline.
-7. [#366] Only then retry the live Pages cut-over and verify public routes.
-8. [#481, next] Remove stale development branches after #366 is proven live.
+```text
+feature/fix branch
+  -> PR to dev_cad or dev_ci
+  -> changed-path-selected verification
+  -> no durable build/pr/<number>
+  -> no durable Pages PR scope
+  -> merge to development lane
+```
+
+The development branch push, not the PR, becomes the durable integration event.
+
+### Durable build layout
+
+The generated `build` branch should converge on exactly three long-lived
+Forge scopes:
+
+```text
+main/
+dev_cad/
+dev_ci/
+```
+
+Each scope is a complete reconciled durable baseline for that source lane.
+
+Required behavior:
+
+- a `dev_cad` push updates/replaces only `build/dev_cad`;
+- a `dev_ci` push updates/replaces only `build/dev_ci`;
+- a `main` push updates/replaces only `build/main`;
+- every publication preserves the two unrelated sibling scopes;
+- no lane derives membership by hand in Forge;
+- source freshness, deletion reconciliation and generated-branch race handling
+  remain generic CAD-CI responsibilities;
+- development scopes are replace/reconcile scopes, not append-only history.
+
+Once this model is proven, Forge no longer needs durable `build/pr/*` scopes.
+
+### Pages layout
+
+Keep one generated `gh-pages` branch.
+
+The stable site stays at the branch root. Development previews are sibling
+subtrees:
+
+```text
+/                 <- main stable site
+/dev_cad/         <- dev_cad preview
+/dev_ci/          <- dev_ci preview
+```
+
+Required behavior:
+
+- a `dev_cad` publication replaces only `/dev_cad/`;
+- a `dev_ci` publication replaces only `/dev_ci/`;
+- a `main` publication replaces the stable root while preserving both dev
+  previews;
+- a dev publication must never alter the stable root;
+- one dev lane must never alter the other dev preview;
+- the live GitHub Pages source remains the single generated `gh-pages` branch
+  after #366.
+
+Development previews are convenience/integration views. They are not stable
+verification truth and must not be used as the source for `build/main`.
+
+### Development-lane update flow
+
+For either development lane:
+
+```text
+feature branch
+  -> PR to dev_<lane>
+  -> verification only
+  -> merge
+  -> push dev_<lane>
+       -> selected CAD-CI run
+       -> fetch current build/dev_<lane>
+       -> reconcile affected items
+       -> publish build/dev_<lane>
+       -> build site from that exact prepared scope
+       -> publish gh-pages/dev_<lane>
+```
+
+This keeps the durable preview representative of the branch head while avoiding
+per-PR generated-state accumulation.
+
+### Promotion to main
+
+A development lane reaches stable `main` through an explicit promotion PR:
+
+```text
+dev_cad or dev_ci
+  -> promotion PR to main
+  -> complete validation against the accepted development state
+  -> merge to main
+  -> main push updates build/main
+  -> main push updates stable Pages root
+  -> synchronize development lane back to main
+```
+
+Merge policy is fixed by branch role:
+
+- short-lived feature/fix PRs into `dev_cad` or `dev_ci` are squash-merged;
+- promotion PRs from `dev_cad` or `dev_ci` into `main` use a normal merge
+  commit and are never squash-merged.
+
+The squash on the development lane keeps each individual work item compact.
+The normal merge into `main` preserves the ancestry of the long-lived
+development branch, so the promoted lane is genuinely contained by main and
+can be cleanly synchronized/fast-forwarded to the resulting main head.
+
+After a promotion, the promoted dev branch must be synchronized to the new main
+head before accepting work that assumes the promoted state. The other dev lane
+must also regularly incorporate main so the two integration lanes do not drift
+indefinitely from stable.
+
+### Isolation invariants
+
+The new architecture is accepted only when all of these are proven:
+
+1. a PR cannot write durable build or Pages state;
+2. `dev_cad` cannot modify `build/main`, `build/dev_ci` or stable Pages;
+3. `dev_ci` cannot modify `build/main`, `build/dev_cad` or stable Pages;
+4. `main` publication preserves both development scopes/previews;
+5. each lane has its own concurrency group so one lane cannot cancel another;
+6. generated publication retries remain safe when two lanes publish close
+   together;
+7. development-scope deletion/reconciliation uses the same released generic
+   planner semantics as main;
+8. a promotion to main is validated before stable publication;
+9. old per-PR scopes can be removed without losing accepted lane evidence.
+
+## Ownership and implementation order for #572
+
+Do not implement named development scopes as Forge-local Git-tree logic.
+
+The implementation sequence is:
+
+1. [#366] Finish and prove the current live Pages cut-over first.
+2. [#572] Specify generic named durable-scope behavior in
+   `lib.py.cad.ci`.
+3. [#572] Implement/test named-scope fetch, reconcile and publication in
+   `lib.py.cad.ci`.
+4. [#572] Expose the released behavior through `tool.cad.ci`; qualify it in
+   the external CAD-CI acceptance repository.
+5. [#572] Release the accepted generic stack.
+6. [#572] Change Forge event wiring so pushes on `main`, `dev_cad` and
+   `dev_ci` publish only their corresponding named scope.
+7. [#572] Remove durable PR publication from the Forge PR path; PRs become
+   verification-only.
+8. [#572] Add scoped Pages publication preserving stable root and unrelated dev
+   previews.
+9. [#572] Create `dev_cad` and `dev_ci` from one known-good main commit only
+   after the workflow supports them.
+10. [#572] Bootstrap and verify both development scopes.
+11. [#572] Prove dev-to-main promotion and post-promotion branch
+    synchronization.
+12. [#572/#481] Remove obsolete `build/pr/*` state and then clean stale source
+    branches using the new keep-set.
+
+The intended permanent branch keep-set after the migration is at least:
+
+```text
+main
+dev_cad
+dev_ci
+build
+gh-pages
+```
+
+The temporary rollback branch remains outside that permanent set until #366 has
+been live and stable long enough to make an explicit retention decision.
 
 ## Open issue assessment — 2026-11-21
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #378 Use explicit Forge verification stages instead of integration/native gates | now | Reopened. F7-F9/F11 were completed only for the five-model proof, not the full catalog. Restore visual verification for all 36 active cases. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Durable publication and page presentation are repaired, but live review exposed missing visual-verification semantics. Backup Pages stays live until #378 is complete. |
-| #481 Remove stale Forge development branches | next | Wait until #378/#366 are proven; preserve active/generated/rollback branches meanwhile. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | now | Generated main/build/Pages output is fully repaired and audited. Remaining work is the explicit live Pages-source cut-over and public verification. |
+| #572 Introduce long-lived dev_cad/dev_ci integration lanes | next | Planned post-#366 architecture. Replace direct-to-main daily development and durable per-PR scopes with two isolated development lanes and named durable build/Pages scopes. |
+| #481 Remove stale Forge development branches | after #572 | Cleanup should use the final branch keep-set, so perform it after the two new long-lived dev branches are proven. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by released runtime images, batching and later one-runner timing work. |
 | #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to the superseded Qualification architecture and old reuse strategy. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
@@ -139,4 +282,4 @@ Actual/Goal/Overlay evidence.
 
 Immediate chain:
 
-`#378 full-catalog visual verification -> #366 generated-site review/live cut-over -> #481 branch cleanup`.
+`#366 live cut-over -> #572 development lanes -> #481 stale-branch cleanup`.
