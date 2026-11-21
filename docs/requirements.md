@@ -294,7 +294,11 @@ For each push:
   `dev-cad`;
 - `dev-ci` uses released named-scope update/publication with name
   `dev-ci`;
-- selection uses the push base/head and current repository membership;
+- main selection uses the normal push base/head and current repository membership;
+- an existing named dev scope uses its own durable
+  `build/<lane>/build.json.source_commit` as the incremental base; do not
+  rely on `github.event.before`, because branch-create events use an all-zero
+  before SHA;
 - deletion-only updates remain valid;
 - a first publication for a missing named scope is bootstrapped from one
   complete processed run and `build prepare-named`;
@@ -340,15 +344,28 @@ Each long-lived source branch owns an independent concurrency group. A newer
 `dev-ci` or `main`.
 
 Short-lived feature/fix branches target one dev lane and are squash-merged.
-Promotion from `dev-cad` or `dev-ci` to `main` uses a normal merge commit
-so the promoted lane remains in main ancestry.
+
+Promotion uses a temporary head branch created at the accepted long-lived lane
+head:
+
+```text
+dev-cad -> promote/dev-cad -> main
+dev-ci  -> promote/dev-ci  -> main
+```
+
+The promotion PR requires complete validation and uses a normal merge commit.
+Do not use the long-lived dev branch itself as the PR head while repository
+automatic head-branch deletion is enabled; the first #572 promotion proved that
+GitHub deletes the direct long-lived head after merge.
 
 After promotion:
 
+- GitHub may auto-delete the temporary `promote/*` branch;
 - main publication updates only the stable complete scope/site;
-- the promoted dev lane is synchronized to the resulting main head before new
-  work assumes the promoted state;
-- the other dev lane regularly incorporates main to avoid indefinite drift.
+- both long-lived dev lanes are synchronized to the resulting main head before
+  new work assumes the promoted state;
+- recreating a missing long-lived lane at main must still update incrementally
+  from that lane's durable manifest source rather than forcing a full bootstrap.
 
 Generic source-freshness, complete-scope reconciliation and generated-branch
 retry behavior remain CAD-CI responsibilities.

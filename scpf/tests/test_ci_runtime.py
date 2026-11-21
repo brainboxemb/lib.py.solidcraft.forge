@@ -143,6 +143,14 @@ class CiRuntimeContractTests(unittest.TestCase):
             "github.event.pull_request.head.ref == 'dev-ci'",
             pr,
         )
+        self.assertIn(
+            "github.event.pull_request.head.ref == 'promote/dev-cad'",
+            pr,
+        )
+        self.assertIn(
+            "github.event.pull_request.head.ref == 'promote/dev-ci'",
+            pr,
+        )
         self.assertNotIn("reusable-pr.yml", pr)
         self.assertNotIn("publish build", pr)
         self.assertNotIn("publish pages", pr)
@@ -163,6 +171,21 @@ class CiRuntimeContractTests(unittest.TestCase):
         self.assertIn("dev-cad|dev-ci", push)
         self.assertIn("scope_exists=false", push)
         self.assertIn("full_run=true", push)
+        self.assertIn(
+            "base_sha: ${{ steps.lane.outputs.base_sha }}",
+            push,
+        )
+        self.assertIn(
+            "BASE_SHA: ${{ steps.lane.outputs.base_sha }}",
+            push,
+        )
+        self.assertIn(
+            'FETCH_HEAD:$SOURCE_SCOPE/build.json',
+            push,
+        )
+        self.assertIn('"source_commit"', push)
+        self.assertIn("python -c", push)
+        self.assertNotIn('python - "$probe/build.json" <<', push)
         self.assertIn("python -m cad_ci_tool build fetch", push)
         self.assertIn("python -m cad_ci_tool build update-main", push)
         self.assertIn("python -m cad_ci_tool build update-named", push)
