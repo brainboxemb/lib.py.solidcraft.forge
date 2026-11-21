@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Imported @assembly subassembly · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Imported @assembly subassembly</div>
+  <section class="hero small">
+    <p class="eyebrow">components</p>
+    <h1>Imported @assembly subassembly</h1>
+    <p class="guide-lead">An imported assembly returns reusable native component occurrences</p>
+    <p>An imported PostPair assembly creates two occurrences of one Post definition without adding an extra geometry layer.</p>
+    <p class="meta"><span>Two 10 × 10 × 20 mm posts centered at X=-15 mm and X=15 mm</span><span>4 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/assembly-decorator/model_verify/presentation/preview-iso.png" alt="Imported @assembly subassembly: Current deterministic presentation preview from durable build b98f00092b75." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build b98f00092b75.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Import the reusable PostPair assembly</li><li>Create one native Post component definition</li><li>Place the second Post as a translated occurrence copy</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify the public @assembly decorator on an imported reusable subassembly, independently of anchor or feature complexity.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>@component class Post; @assembly class PostPair; root model imports and returns PostPair()</code></p>
+    <h2>Forge model</h2>
+    <p>One reusable Post component definition plus two occurrences produced inside an imported @assembly factory. The root model treats the returned subassembly as ordinary assembly geometry.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>The Python-only @assembly wrapper disappears during lowering: Forge emits one Post component definition and one copied occurrence placed directly by occurrence.copy; no occurrence.move is needed.</p>
+    <h2>SolidCraft result</h2>
+    <p>Two identical 10 x 10 x 20 mm posts remain at X=-15 and X=+15 while the imported @assembly result builds from a replay-safe component/copy command plan.</p>
+    <h2>Saved-design test</h2>
+    <p>No saved-design mutation in this fixture; it isolates imported @assembly construction and native lowering.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>This case adds reusable assembly construction around two rectangular posts; the geometry contribution is completely described by their bounds.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>PythonSCAD</strong> — The public Python object/decorator layer should remain natural while still producing reusable native CAD structure.</li><li><strong>SolidCraft</strong> — The resulting assembly must lower to native component/occurrence commands and build without special runtime handling.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Qualification: an imported @assembly compiles as a native subassembly.&quot;&quot;&quot;
+
+from subassembly import PostPair
+
+
+class ImportedAssembly:
+    def build(self):
+        return PostPair()
+
+
+ImportedAssembly()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/assembly-decorator/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.copy</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

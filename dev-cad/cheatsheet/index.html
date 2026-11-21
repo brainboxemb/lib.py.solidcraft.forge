@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Cheatsheet · SCPF Python library</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../">Examples</a>
+      <a href="../guide/">API Guide</a>
+      <a href="../reference/">API Reference</a>
+      <a href="../verification/">Verification</a>
+      <a href="./">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../">← Library</a> / Cheatsheet</div>
+  <section class="hero small">
+    <p class="eyebrow">SCPF reference</p>
+    <h1>Cheatsheet</h1>
+    <p>SolidCraft version: <strong>0.42.0 tested</strong>.</p>
+    <p>
+      Common SCPF syntax alongside current examples. For explanations,
+      examples and limitations, read the <a href="../guide/">full API Guide</a>.
+    </p>
+  </section>
+  <div class="notice">
+    <strong>What is verified?</strong>
+    Linked examples and API unit tests run in CI. A cheatsheet fragment alone is
+    not a complete runnable model.
+  </div>
+  <section>
+<h2>Model classes</h2>
+<div class="reference-grid"><article class="reference" id="cheat-model-classes-class-example-build-self">
+<h3><code>class Example: ... build(self)</code></h3>
+<p>Write a Python model. No main() or show() is required.</p>
+<pre><code>class SimpleBox:
+    def build(self):
+        return Box(40, 30, 10)</code></pre>
+<p class="tip"><a href="../examples/simple-box/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-model-classes-model-parameters">
+<h3><code>Model parameters</code></h3>
+<p>Numeric model fields become named SolidCraft parameters.</p>
+<pre><code>length = 40.0
+Box(self.length, 30, 10)</code></pre>
+<p class="tip"><a href="../examples/simple-box/">View working example →</a></p>
+</article>
+</div>
+</section>
+<section>
+<h2>Shapes and sketches</h2>
+<div class="reference-grid"><article class="reference" id="cheat-shapes-and-sketches-box-length-width-height-anchor-center">
+<h3><code>Box(length, width, height, *, anchor=CENTER)</code></h3>
+<p>Native Box centred on XYZ by default; choose anchor=BOTTOM for a bottom-face datum at Z=0.</p>
+<pre><code>Box(40, 30, 10)</code></pre>
+<p class="tip"><a href="../examples/simple-box/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-shapes-and-sketches-rectangle2d-width-depth">
+<h3><code>Rectangle2D(width, depth)</code></h3>
+<p>Planar XY profile authored inside a Sketch.</p>
+<pre><code>with Sketch(plane=&#x27;XY&#x27;) as sketch:
+    Rectangle2D(100, 60)</code></pre>
+<p class="tip"><a href="../examples/anchored-holes/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-shapes-and-sketches-circle2d-d">
+<h3><code>Circle2D(d=...)</code></h3>
+<p>A round 2D profile authored inside a Sketch.</p>
+<pre><code>with Sketch(plane=&#x27;XY&#x27;) as sketch:
+    Circle2D(d=8)</code></pre>
+
+</article>
+<article class="reference" id="cheat-shapes-and-sketches-polygon2d-points-plane">
+<h3><code>Polygon2D(points, plane=...)</code></h3>
+<p>A closed profile on XY, XZ or YZ.</p>
+<pre><code>Polygon2D([(0,0), (40,0), (0,30)], plane=&#x27;XZ&#x27;)</code></pre>
+
+</article>
+<article class="reference" id="cheat-shapes-and-sketches-cylinder-d-h-axis-anchor-center">
+<h3><code>Cylinder(d=..., h=..., axis=..., anchor=CENTER)</code></h3>
+<p>Native cylinder centred by default; choose an axial anchor such as BOTTOM or LEFT when that end should define the datum.</p>
+<pre><code>Cylinder(d=24, h=14, axis=Axis.X, anchor=LEFT)</code></pre>
+
+</article>
+<article class="reference" id="cheat-shapes-and-sketches-sphere-radius-anchor-center">
+<h3><code>Sphere(radius, *, anchor=CENTER)</code></h3>
+<p>Native sphere centred by default; cardinal anchors select tangent datums.</p>
+<pre><code>Sphere(12, anchor=LEFT)</code></pre>
+
+</article>
+</div>
+</section>
+<section>
+<h2>Features and placement</h2>
+<div class="reference-grid"><article class="reference" id="cheat-features-and-placement-sketch-extrude-distance">
+<h3><code>sketch.extrude(distance)</code></h3>
+<p>Extrude an explicitly authored Sketch into editable native solid history.</p>
+<pre><code>with Sketch(plane=&#x27;XY&#x27;) as sketch:
+    Rectangle2D(80, 50)
+plate = sketch.extrude(8)</code></pre>
+<p class="tip"><a href="../examples/anchored-holes/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-features-and-placement-sketch-extrude-profiles">
+<h3><code>sketch.extrude(..., profiles=[...])</code></h3>
+<p>Extrude or cut only the closed Sketch regions selected by fixed sketch-local points.</p>
+<pre><code>cut = sketch.extrude(Depth.THROUGH_ALL, profiles=[(-30, 0), (30, 0)], exact_regions=True)</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-sketch-sheet-metal">
+<h3><code>Sketch.sheet_metal(...)</code></h3>
+<p>Create a native flat sheet from a closed XY Sketch with an explicit sheet rule.</p>
+<pre><code>sheet = sketch.sheet_metal(thickness=2, bend_radius=2, k_factor=0.5)</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-shape-fold">
+<h3><code>Shape.fold(...)</code></h3>
+<p>Fold existing sheet material along one straight line while keeping native sheet history.</p>
+<pre><code>sheet = sheet.fold(line=((20,-20,0),(20,20,0)), angle=90, fixed=(-30,0,0))</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-sketch-rectangular-pattern">
+<h3><code>Sketch.rectangular_pattern(...)</code></h3>
+<p>Repeat a profile or earlier Sketch result as a native rectangular sketch pattern.</p>
+<pre><code>row = sketch.rectangular_pattern(seed, count=4, spacing=25, direction=Axis.X)</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-sketch-mirror">
+<h3><code>Sketch.mirror(...)</code></h3>
+<p>Mirror a profile, pattern result or earlier mirror result over the Sketch X or Y axis.</p>
+<pre><code>sketch.mirror(row, axis=Axis.Y)</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-hole-d-depth">
+<h3><code>Hole(d=..., depth=...)</code></h3>
+<p>A native hole. THROUGH_ALL follows the target body.</p>
+<pre><code>Hole(d=8, depth=Depth.THROUGH_ALL)</code></pre>
+<p class="tip"><a href="../examples/anchored-holes/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-features-and-placement-shape-rectangular-pattern">
+<h3><code>shape.rectangular_pattern(...)</code></h3>
+<p>Repeat an already-applied native feature in one or two linear directions.</p>
+<pre><code>plate.rectangular_pattern(cut, count=4, spacing=20, direction=Axis.X)</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-shape-circular-pattern">
+<h3><code>shape.circular_pattern(...)</code></h3>
+<p>Repeat an already-applied native feature around a fixed axis.</p>
+<pre><code>plate.circular_pattern(cut, count=6, axis=Axis.Z)</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-shape-at-target-anchor-child">
+<h3><code>shape.at(target, anchor=..., child=...)</code></h3>
+<p>Place a direct CSG shape anchor on another shape anchor; CENTER-to-CENTER is supported first.</p>
+<pre><code>Cylinder(d=8, h=50, axis=Axis.X).at(body)</code></pre>
+<p class="tip"><a href="../examples/primitive-csg/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-features-and-placement-shape-on-target-face">
+<h3><code>shape.on(target, face=...)</code></h3>
+<p>Place a feature on a selected face of another shape.</p>
+<pre><code>Hole(d=8, depth=Depth.THROUGH_ALL).on(plate, face=Faces.TOP)</code></pre>
+<p class="tip"><a href="../examples/anchored-holes/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-features-and-placement-top-left-bottom-right">
+<h3><code>TOP + LEFT / BOTTOM + RIGHT</code></h3>
+<p>Combine cardinal directions to identify one edge of an axis-aligned rectangular solid.</p>
+<pre><code>body.fillet(2, edges=[BOTTOM + LEFT, BOTTOM + RIGHT])</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-box-at-anchor">
+<h3><code>Box(...).at(..., anchor=...)</code></h3>
+<p>Place a native Box by a face, edge or corner anchor without creating a Sketch.</p>
+<pre><code>Box(80, 50, 12).at(0, 0, 0, anchor=FRONT + BOTTOM)</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-shape-fillet">
+<h3><code>shape.fillet(...)</code></h3>
+<p>Round selected edges of a feature-based body.</p>
+<pre><code>body.fillet(2, edges=Edges.VERTICAL)</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-shape-chamfer">
+<h3><code>shape.chamfer(...)</code></h3>
+<p>Bevel selected edges using the same edge selectors as fillet.</p>
+<pre><code>body.chamfer(2, edges=Edges.VERTICAL)</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-shape-shell">
+<h3><code>shape.shell(...)</code></h3>
+<p>Create an open-sided shell (supported feature trees only).</p>
+<pre><code>Box(80, 50, 30).shell(2, open=Faces.TOP)</code></pre>
+
+</article>
+<article class="reference" id="cheat-features-and-placement-a-b-a-b-a-b">
+<h3><code>a + b / a - b / a &amp; b</code></h3>
+<p>Join, cut or intersect supported shapes; operation support depends on the shape types.</p>
+<pre><code>body + Hole(d=8).at(0, 0, 10)</code></pre>
+
+</article>
+</div>
+</section>
+<section>
+<h2>Reusable components</h2>
+<div class="reference-grid"><article class="reference" id="cheat-reusable-components-copy-placement-placement">
+<h3><code>copy(placement=Placement(...))</code></h3>
+<p>Create another occurrence of the same component definition at a declared pose.</p>
+<pre><code>second = first.copy(placement=Placement(x=40))</code></pre>
+<p class="tip"><a href="../examples/components/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-reusable-components-model-attach">
+<h3><code>model.attach(...)</code></h3>
+<p>Fix one reusable component to another through explicit attachment references.</p>
+<pre><code>right = Block().attach(left, parent=Anchor.RIGHT, child=Anchor.LEFT)</code></pre>
+<p class="tip"><a href="../examples/components/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-reusable-components-attach-offset-u-v">
+<h3><code>attach(offset=(u, v))</code></h3>
+<p>Keep an in-plane attachment offset associative; parameter expressions become native planar-joint values.</p>
+<pre><code>part.attach(base, parent=Anchor.FRONT_TOP_LEFT, child=mount, offset=(0, -wall + 12))</code></pre>
+<p class="tip"><a href="../examples/components/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-reusable-components-assembly-with-anchor-anchor">
+<h3><code>assembly.with_anchor(...) / anchor(...)</code></h3>
+<p>Expose a semantic attachment datum owned by an assembly without adding application-specific anchors to a generic component.</p>
+<pre><code>frame = (left + right).with_anchor(&quot;front_top_left&quot;, left, ref)
+parent = frame.anchor(&quot;front_top_left&quot;)</code></pre>
+<p class="tip"><a href="../examples/components/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-reusable-components-corner-anchors">
+<h3><code>corner anchors</code></h3>
+<p>Use one of the eight rectangular corner references when attaching components.</p>
+<pre><code>marker = Marker().attach(base, parent=Anchor.FRONT_TOP_RIGHT, child=Anchor.BACK_TOP_RIGHT)</code></pre>
+<p class="tip"><a href="../examples/corner-anchor/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-reusable-components-anchorframe">
+<h3><code>AnchorFrame</code></h3>
+<p>Define an oriented local attachment frame. Return it from anchors() when the datum belongs to the reusable component, or pass it directly to attach() when it belongs only to the assembly.</p>
+<pre><code>mount = AnchorFrame(origin=(0,0,-12), z=(0,1,0), x=(0,0,-1))
+part.attach(base, parent=Anchor.FRONT_TOP_LEFT, child=mount)</code></pre>
+
+</article>
+<article class="reference" id="cheat-reusable-components-anchortopology">
+<h3><code>AnchorTopology</code></h3>
+<p>Keep a named or assembly-local attachment reference on a planar-face edge or one of its endpoints so SolidCraft can follow changing geometry.</p>
+<pre><code>def anchors(self):
+    return {&quot;mount&quot;: AnchorTopology(edge=(0,10,5), on=(0,10,10), corner=(0,0,5))}</code></pre>
+
+</article>
+<article class="reference" id="cheat-reusable-components-placement-rotation-axis-degrees">
+<h3><code>Placement(rotation=(axis, degrees))</code></h3>
+<p>Give a component occurrence one absolute axis-angle orientation.</p>
+<pre><code>second = first.copy(placement=Placement(x=40, rotation=(Z, 180)))</code></pre>
+
+</article>
+</div>
+</section>
+<section>
+<h2>Compile and inspect</h2>
+<div class="reference-grid"><article class="reference" id="cheat-compile-and-inspect-python-m-scpf-out">
+<h3><code>python -m scpf ... --out</code></h3>
+<p>Compile a model to SolidCraft command JSON; no SolidCraft app needed.</p>
+<pre><code>python -m scpf examples/simple-box/scpf/model.py --out output/box.json</code></pre>
+<p class="tip"><a href="../examples/simple-box/">View working example →</a></p>
+</article>
+<article class="reference" id="cheat-compile-and-inspect-python-m-scpf-replay">
+<h3><code>python -m scpf replay ...</code></h3>
+<p>Send existing command JSON to an open SolidCraft session; does not recompile.</p>
+<pre><code>python -m scpf replay output/box.json</code></pre>
+
+</article>
+<article class="reference" id="cheat-compile-and-inspect-python-m-scpf-connect">
+<h3><code>python -m scpf ... --connect</code></h3>
+<p>Execute a model in an open SolidCraft GUI document.</p>
+<pre><code>python -m scpf examples/simple-box/scpf/model.py --connect</code></pre>
+
+</article>
+</div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../static/copy.js"></script>
+<script src="../static/search.js"></script>
+</body>
+</html>

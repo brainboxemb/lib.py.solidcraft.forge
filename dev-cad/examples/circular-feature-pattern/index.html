@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Native circular feature pattern · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Native circular feature pattern</div>
+  <section class="hero small">
+    <p class="eyebrow">features</p>
+    <h1>Native circular feature pattern</h1>
+    <p class="guide-lead">One source cut is repeated by a native circular History pattern</p>
+    <p>A plate receives one source through-hole cut and SolidCraft repeats that feature around a pitch circle as one editable circular pattern.</p>
+    <p class="meta"><span>100 × 100 × 6 mm plate; six Ø8 holes on 60 mm PCD</span><span>9 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/circular-feature-pattern/model_verify/presentation/preview-iso.png" alt="Native circular feature pattern: Current deterministic presentation preview from durable build b98f00092b75." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build b98f00092b75.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the plate and one BoltHole sketch</li><li>Apply one source through-hole cut</li><li>Repeat that cut with one native circular feature pattern</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Qualify one real SolidCraft circular History pattern over an existing cut feature, rather than Forge-expanded repeated holes.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>source = bolt.extrude(Depth.THROUGH_ALL); body = body - source; body.circular_pattern(source, count=bolts, axis=Axis.Z)</code></p>
+    <h2>Forge model</h2>
+    <p>One 100 x 100 x 6 mm plate, one native Ø8 source cut on a 60 mm pitch circle and one native six-instance circular feature pattern.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge emits the source Sketch/cut once, then exactly one solid.pattern.circular with features=[&#x27;BoltHole&#x27;]; bolts is a dimensionless native count parameter and pcd remains a millimetre parameter used by the source profile position.</p>
+    <h2>SolidCraft result</h2>
+    <p>SolidCraft saves one plate with six through holes and one native CircularPatternFeature that references the original BoltHole cut.</p>
+    <h2>Saved-design test</h2>
+    <p>Required because bolts is a saved native pattern-count parameter. Change bolts from 6 to 4 in the saved .sc design; the pattern must rebuild to four holes without rerunning Python while retaining one source cut and one CircularPatternFeature.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>The six bolt holes do not change the plate envelope. Volume, cylindrical-wall probes and native pattern-history checks are required.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — Native integration through saved-design checks prove one saved CircularPatternFeature and count mutation. The four comparison libraries independently prove the baseline six-hole geometry.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Native SolidCraft circular feature-pattern qualification.&quot;&quot;&quot;
+
+
+class CircularFeaturePattern:
+    bolts = 6
+    pcd = 60.0
+
+    def build(self):
+        plate = Box(100, 100, 6, anchor=Anchor.BOTTOM)
+
+        with Sketch(name=&quot;BoltHole&quot;, on=plate, parent=Anchor.TOP) as bolt:
+            bolt.add(
+                Circle2D(d=8),
+                offset=(self.pcd / 2, 0),
+            )
+
+        source_cut = bolt.extrude(Depth.THROUGH_ALL)
+        plate = plate - source_cut
+
+        return plate.circular_pattern(
+            source_cut,
+            count=self.bolts,
+            axis=Axis.Z,
+        )
+
+
+CircularFeaturePattern()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/circular-feature-pattern/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>solid.box</code></li><li><code>model.faces</code></li><li><code>sketch.create</code></li><li><code>sketch.circle.center</code></li><li><code>sketch.finish</code></li><li><code>solid.extrude</code></li><li><code>solid.pattern.circular</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

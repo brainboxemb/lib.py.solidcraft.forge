@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Named native group hierarchy · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Named native group hierarchy</div>
+  <section class="hero small">
+    <p class="eyebrow">components</p>
+    <h1>Named native group hierarchy</h1>
+    <p class="guide-lead">A grouped pair of Panels remains a real nested SolidCraft component</p>
+    <p>Two shared Panel occurrences are grouped under PanelGroup while a separate Frame remains a direct root component.</p>
+    <p class="meta"><span>Two 10 × 2 × 20 mm Panels; one 35 × 10 × 40 mm Frame</span><span>8 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/group-hierarchy/model_verify/presentation/preview-iso.png" alt="Named native group hierarchy: Current deterministic presentation preview from durable build b98f00092b75." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build b98f00092b75.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create two occurrences of one Panel definition</li><li>Group both Panel occurrences below PanelGroup</li><li>Keep Frame as a separate root-level component</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify that group(name) creates a real nested native component rather than a Python-only label.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>(left + right).group(&#x27;PanelGroup&#x27;); group + Frame()</code></p>
+    <h2>Forge model</h2>
+    <p>Two Panel occurrences share one definition under a named PanelGroup component, while Frame remains a direct root child.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge emits component.create(name=&#x27;PanelGroup&#x27;), creates Panel with parent=&#x27;PanelGroup&#x27;, copies its occurrence, and creates Frame at the design root.</p>
+    <h2>SolidCraft result</h2>
+    <p>Two 10 x 2 x 20 mm panels remain nested under PanelGroup and one 35 x 10 x 40 mm frame remains at root; native BOM inspection must preserve that hierarchy.</p>
+    <h2>Saved-design test</h2>
+    <p>No saved-design mutation in this fixture; it isolates persisted native grouping and hierarchy.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The body sizes describe the visible parts. The saved SolidCraft model is checked separately to confirm the expected group and BOM structure.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — Native components form a tree; top-level BOM inspection exposes direct children while flat BOM inspection expands subassemblies.</li><li><strong>PythonSCAD</strong> — Python-side composition should lower to inspectable native CAD structure rather than remain a transient wrapper.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Qualification: group(name) becomes a real nested native component.&quot;&quot;&quot;
+
+
+class Panel:
+    def build(self):
+        return Box(10, 2, 20, anchor=Anchor.BOTTOM)
+
+
+class Frame:
+    def build(self):
+        # The frame offset is visual fixture geometry, not the grouping API.
+        return Box(35, 10, 40, anchor=Anchor.BOTTOM).move(y=20)
+
+
+class GroupHierarchy:
+    def build(self):
+        left = Panel()
+        panels = (left + left.copy(placement=Placement(x=11))).group(&quot;PanelGroup&quot;)
+        frame = Frame()
+        return panels + frame
+
+
+GroupHierarchy()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/group-hierarchy/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>component.create</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.copy</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

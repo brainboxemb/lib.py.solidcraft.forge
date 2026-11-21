@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Examples &amp; cheatsheet · SCPF Python library</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="./">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="./search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="./">Examples</a>
+      <a href="./guide/">API Guide</a>
+      <a href="./reference/">API Reference</a>
+      <a href="./verification/">Verification</a>
+      <a href="cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">lib.py.solidcraft.forge / Python Forge</p>
+    <h1>SCPF examples &amp; API documentation</h1>
+    <p class="meta">Tested SolidCraft version: 0.42.0</p>
+    <p>
+      The examples below are the complete current Forge verification catalog.
+      Each example directory owns its explanation, source, verification contract
+      and independent reference implementations.
+    </p>
+    <div class="actions">
+      <a class="button primary" href="guide/">Read the API Guide →</a>
+      <a class="button" href="reference/">API Reference →</a>
+      <a class="button" href="verification/">Verification →</a>
+      <a class="button" href="cheatsheet/">Quick cheatsheet →</a>
+      <a class="button" href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">See real CAD models →</a>
+    </div>
+  </section>
+  <section class="section-heading">
+    <h2>Verification examples</h2>
+    <p>All 36 examples are discovered from their local <code>model.yml</code>.</p>
+  </section>
+  <div class="cards"><article class="card">
+  <a href="examples/anchor-topology-mutation/" class="card-image" aria-label="View Explicit topology pick follows parent resize">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/anchor-topology-mutation/model_verify/presentation/preview-iso.png" alt="Explicit topology pick follows parent resize preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">anchors</p>
+    <h2><a href="examples/anchor-topology-mutation/">Explicit topology pick follows parent resize</a></h2>
+    <p>An explicit AnchorTopology identifies one baseline edge/face/corner selection and SolidCraft retains that topology when the parent dimensions change.</p>
+    <p class="meta">11 generated SolidCraft commands</p>
+    <a class="button" href="examples/anchor-topology-mutation/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/anchored-holes/" class="card-image" aria-label="View Face-relative hole with native pattern">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/anchored-holes/model_verify/presentation/preview-iso.png" alt="Face-relative hole with native pattern preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">features</p>
+    <h2><a href="examples/anchored-holes/">Face-relative hole with native pattern</a></h2>
+    <p>A rectangular plate with one TOP-face hole source that is cut once and repeated as an editable native rectangular pattern.</p>
+    <p class="meta">14 generated SolidCraft commands</p>
+    <a class="button" href="examples/anchored-holes/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/as-built-attach/" class="card-image" aria-label="View As-built rigid relationship preserves pose">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/as-built-attach/model_verify/presentation/preview-iso.png" alt="As-built rigid relationship preserves pose preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">components</p>
+    <h2><a href="examples/as-built-attach/">As-built rigid relationship preserves pose</a></h2>
+    <p>Base and Marker keep their already authored occurrence poses while SolidCraft records a native rigid as-built relationship between them.</p>
+    <p class="meta">9 generated SolidCraft commands</p>
+    <a class="button" href="examples/as-built-attach/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/assembly-decorator/" class="card-image" aria-label="View Imported @assembly subassembly">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/assembly-decorator/model_verify/presentation/preview-iso.png" alt="Imported @assembly subassembly preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">components</p>
+    <h2><a href="examples/assembly-decorator/">Imported @assembly subassembly</a></h2>
+    <p>An imported PostPair assembly creates two occurrences of one Post definition without adding an extra geometry layer.</p>
+    <p class="meta">4 generated SolidCraft commands</p>
+    <a class="button" href="examples/assembly-decorator/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/assembly-owned-anchor/" class="card-image" aria-label="View Assembly-owned named anchor">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/assembly-owned-anchor/model_verify/presentation/preview-iso.png" alt="Assembly-owned named anchor preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">anchors</p>
+    <h2><a href="examples/assembly-owned-anchor/">Assembly-owned named anchor</a></h2>
+    <p>An assembly publishes a named corner datum and a Marker consumes it without adding application-specific anchor names to the generic Base component.</p>
+    <p class="meta">14 generated SolidCraft commands</p>
+    <a class="button" href="examples/assembly-owned-anchor/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/attach-angle/" class="card-image" aria-label="View Native attachment clocking angle">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/attach-angle/model_verify/presentation/preview-iso.png" alt="Native attachment clocking angle preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">associativity</p>
+    <h2><a href="examples/attach-angle/">Native attachment clocking angle</a></h2>
+    <p>A rectangular Arm is attached to a Base with a 90 degree clocking angle so orientation remains relationship intent rather than baked child geometry.</p>
+    <p class="meta">9 generated SolidCraft commands</p>
+    <a class="button" href="examples/attach-angle/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/bracket/" class="card-image" aria-label="View Minimal L-profile">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/bracket/model_verify/presentation/preview-iso.png" alt="Minimal L-profile preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">fundamentals</p>
+    <h2><a href="examples/bracket/">Minimal L-profile</a></h2>
+    <p>An L-shaped polygon is authored in XZ and symmetrically extruded without holes, fillets or secondary features.</p>
+    <p class="meta">7 generated SolidCraft commands</p>
+    <a class="button" href="examples/bracket/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/circle-negative-extrude/" class="card-image" aria-label="View Negative circle profile extrusion">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/circle-negative-extrude/model_verify/presentation/preview-iso.png" alt="Negative circle profile extrusion preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">fundamentals</p>
+    <h2><a href="examples/circle-negative-extrude/">Negative circle profile extrusion</a></h2>
+    <p>One minimal circular profile verifies explicit sketch authoring and a signed negative extrusion direction.</p>
+    <p class="meta">6 generated SolidCraft commands</p>
+    <a class="button" href="examples/circle-negative-extrude/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/circular-feature-pattern/" class="card-image" aria-label="View Native circular feature pattern">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/circular-feature-pattern/model_verify/presentation/preview-iso.png" alt="Native circular feature pattern preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">features</p>
+    <h2><a href="examples/circular-feature-pattern/">Native circular feature pattern</a></h2>
+    <p>A plate receives one source through-hole cut and SolidCraft repeats that feature around a pitch circle as one editable circular pattern.</p>
+    <p class="meta">9 generated SolidCraft commands</p>
+    <a class="button" href="examples/circular-feature-pattern/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/components/" class="card-image" aria-label="View Reuse one component definition in two placements">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/components/model_verify/presentation/preview-iso.png" alt="Reuse one component definition in two placements preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">components</p>
+    <h2><a href="examples/components/">Reuse one component definition in two placements</a></h2>
+    <p>One Block component definition is instantiated twice with a simple translated copy and no attachment relationship.</p>
+    <p class="meta">4 generated SolidCraft commands</p>
+    <a class="button" href="examples/components/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/corner-anchor/" class="card-image" aria-label="View Topology-backed corner anchor">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/corner-anchor/model_verify/presentation/preview-iso.png" alt="Topology-backed corner anchor preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">anchors</p>
+    <h2><a href="examples/corner-anchor/">Topology-backed corner anchor</a></h2>
+    <p>A Marker uses matching parent and child corner anchors so the native relationship follows two changing parent dimensions.</p>
+    <p class="meta">11 generated SolidCraft commands</p>
+    <a class="button" href="examples/corner-anchor/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/eight-corner-brackets/" class="card-image" aria-label="View Eight vertical L-profiles: two per side corner">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/eight-corner-brackets/model_verify/presentation/preview-iso.png" alt="Eight vertical L-profiles: two per side corner preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">components</p>
+    <h2><a href="examples/eight-corner-brackets/">Eight vertical L-profiles: two per side corner</a></h2>
+    <p>A parametric frame reuses one L-profile component in eight calculated placements, two on every rounded side corner.</p>
+    <p class="meta">28 generated SolidCraft commands</p>
+    <a class="button" href="examples/eight-corner-brackets/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/eight-flightcase-corners/" class="card-image" aria-label="View Eight flightcase corner protectors">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/eight-flightcase-corners/model_verify/presentation/preview-iso.png" alt="Eight flightcase corner protectors preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">components</p>
+    <h2><a href="examples/eight-flightcase-corners/">Eight flightcase corner protectors</a></h2>
+    <p>A parameterized case reuses one three-plate corner protector with assembly-owned positions and 3D orientations.</p>
+    <p class="meta">27 generated SolidCraft commands</p>
+    <a class="button" href="examples/eight-flightcase-corners/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/four-corner-l/" class="card-image" aria-label="View Four centred vertical L-profiles">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/four-corner-l/model_verify/presentation/preview-iso.png" alt="Four centred vertical L-profiles preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">components</p>
+    <h2><a href="examples/four-corner-l/">Four centred vertical L-profiles</a></h2>
+    <p>A parametric frame reuses one short L-profile component at each side corner with assembly-calculated positions and rotations.</p>
+    <p class="meta">20 generated SolidCraft commands</p>
+    <a class="button" href="examples/four-corner-l/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/group-hierarchy/" class="card-image" aria-label="View Named native group hierarchy">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/group-hierarchy/model_verify/presentation/preview-iso.png" alt="Named native group hierarchy preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">components</p>
+    <h2><a href="examples/group-hierarchy/">Named native group hierarchy</a></h2>
+    <p>Two shared Panel occurrences are grouped under PanelGroup while a separate Frame remains a direct root component.</p>
+    <p class="meta">8 generated SolidCraft commands</p>
+    <a class="button" href="examples/group-hierarchy/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/hole-family/" class="card-image" aria-label="View Native Hole family">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/hole-family/model_verify/presentation/preview-iso.png" alt="Native Hole family preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">features</p>
+    <h2><a href="examples/hole-family/">Native Hole family</a></h2>
+    <p>A single plate exercising simple, counterbore, countersink and threaded holes as direct native SolidCraft Hole features.</p>
+    <p class="meta">8 generated SolidCraft commands</p>
+    <a class="button" href="examples/hole-family/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/parameter-scope/" class="card-image" aria-label="View Explicit component parameters and shared dependencies">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/parameter-scope/model_verify/presentation/preview-iso.png" alt="Explicit component parameters and shared dependencies preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">parameters</p>
+    <h2><a href="examples/parameter-scope/">Explicit component parameters and shared dependencies</a></h2>
+    <p>Five Panel occurrences demonstrate local component parameters, explicit overrides, shared parent dependencies and a derived half-width expression.</p>
+    <p class="meta">16 generated SolidCraft commands</p>
+    <a class="button" href="examples/parameter-scope/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/parametric-anchor/" class="card-image" aria-label="View Face anchor follows parent geometry">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/parametric-anchor/model_verify/presentation/preview-iso.png" alt="Face anchor follows parent geometry preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">anchors</p>
+    <h2><a href="examples/parametric-anchor/">Face anchor follows parent geometry</a></h2>
+    <p>A Block attached to the Base RIGHT face remains tied to native parent topology when the parent width changes.</p>
+    <p class="meta">10 generated SolidCraft commands</p>
+    <a class="button" href="examples/parametric-anchor/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/parametric-attach/" class="card-image" aria-label="View Editable distance between attached components">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/parametric-attach/model_verify/presentation/preview-iso.png" alt="Editable distance between attached components preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">associativity</p>
+    <h2><a href="examples/parametric-attach/">Editable distance between attached components</a></h2>
+    <p>A Block is attached to a Base with a symbolic gap so editing the saved SolidCraft design moves the attached component without rerunning Python.</p>
+    <p class="meta">10 generated SolidCraft commands</p>
+    <a class="button" href="examples/parametric-attach/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/parametric-move/" class="card-image" aria-label="View Native parametric occurrence Placement">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/parametric-move/model_verify/presentation/preview-iso.png" alt="Native parametric occurrence Placement preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">components</p>
+    <h2><a href="examples/parametric-move/">Native parametric occurrence Placement</a></h2>
+    <p>Two Block occurrences share one definition while the second uses the parent offset parameter as an ordinary native occurrence Placement, not an assembly joint.</p>
+    <p class="meta">6 generated SolidCraft commands</p>
+    <a class="button" href="examples/parametric-move/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/parametric-offset/" class="card-image" aria-label="View Editable local offset at an attachment">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/parametric-offset/model_verify/presentation/preview-iso.png" alt="Editable local offset at an attachment preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">associativity</p>
+    <h2><a href="examples/parametric-offset/">Editable local offset at an attachment</a></h2>
+    <p>A Marker is corner-attached to a Base with a symbolic local planar offset that remains editable in the saved SolidCraft relationship.</p>
+    <p class="meta">10 generated SolidCraft commands</p>
+    <a class="button" href="examples/parametric-offset/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/parametric-placement-pair/" class="card-image" aria-label="View Symmetric parametric occurrence Placement">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/parametric-placement-pair/model_verify/presentation/preview-iso.png" alt="Symmetric parametric occurrence Placement preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">components</p>
+    <h2><a href="examples/parametric-placement-pair/">Symmetric parametric occurrence Placement</a></h2>
+    <p>Two occurrences of one Block definition are positioned at the negative and positive halves of one parent spacing parameter.</p>
+    <p class="meta">7 generated SolidCraft commands</p>
+    <a class="button" href="examples/parametric-placement-pair/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/parent-derived-child-size/" class="card-image" aria-label="View Child dimensions derived from parent parameters">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/parent-derived-child-size/model_verify/presentation/preview-iso.png" alt="Child dimensions derived from parent parameters preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">parameters</p>
+    <h2><a href="examples/parent-derived-child-size/">Child dimensions derived from parent parameters</a></h2>
+    <p>A parent block and child component preserve width and depth expressions so saved-design edits to the parent rebuild both bodies.</p>
+    <p class="meta">8 generated SolidCraft commands</p>
+    <a class="button" href="examples/parent-derived-child-size/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/primitive-csg/" class="card-image" aria-label="View Primitive CSG">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/primitive-csg/model_verify/presentation/preview-iso.png" alt="Primitive CSG preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">fundamentals</p>
+    <h2><a href="examples/primitive-csg/">Primitive CSG</a></h2>
+    <p>Sphere, Box and X-axis Cylinder primitives are translated and combined with union, subtraction and intersection independently of feature-history modelling.</p>
+    <p class="meta">4 generated SolidCraft commands</p>
+    <a class="button" href="examples/primitive-csg/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/rectangular-pattern/" class="card-image" aria-label="View Native rectangular feature pattern">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/rectangular-pattern/model_verify/presentation/preview-iso.png" alt="Native rectangular feature pattern preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">features</p>
+    <h2><a href="examples/rectangular-pattern/">Native rectangular feature pattern</a></h2>
+    <p>A plate receives one Slot source cut and SolidCraft repeats that existing feature in a rectangular rows-and-columns pattern.</p>
+    <p class="meta">11 generated SolidCraft commands</p>
+    <a class="button" href="examples/rectangular-pattern/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/repeated-parent-attachments/" class="card-image" aria-label="View Attachments on repeated parent occurrences">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/repeated-parent-attachments/model_verify/presentation/preview-iso.png" alt="Attachments on repeated parent occurrences preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">associativity</p>
+    <h2><a href="examples/repeated-parent-attachments/">Attachments on repeated parent occurrences</a></h2>
+    <p>Two Parent occurrences share one height parameter and each owns a Marker attached from parent TOP to child BOTTOM.</p>
+    <p class="meta">14 generated SolidCraft commands</p>
+    <a class="button" href="examples/repeated-parent-attachments/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/rotated-copy-placement/" class="card-image" aria-label="View Copied Placement with rotation">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/rotated-copy-placement/model_verify/presentation/preview-iso.png" alt="Copied Placement with rotation preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">components</p>
+    <h2><a href="examples/rotated-copy-placement/">Copied Placement with rotation</a></h2>
+    <p>A non-square Panel definition is reused twice with complete absolute Placements so rotation never changes the authored parent-frame translations.</p>
+    <p class="meta">6 generated SolidCraft commands</p>
+    <a class="button" href="examples/rotated-copy-placement/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/round-top-sketch/" class="card-image" aria-label="View TOP Sketch on circular body">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/round-top-sketch/model_verify/presentation/preview-iso.png" alt="TOP Sketch on circular body preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">fundamentals</p>
+    <h2><a href="examples/round-top-sketch/">TOP Sketch on circular body</a></h2>
+    <p>A circular base extrusion receives a second explicit Sketch on its TOP face and joins a smaller circular hub without rectangular-body metadata.</p>
+    <p class="meta">9 generated SolidCraft commands</p>
+    <a class="button" href="examples/round-top-sketch/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/rounded-rectangle-sketch/" class="card-image" aria-label="View Explicit rounded-rectangle sketch pad">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/rounded-rectangle-sketch/model_verify/presentation/preview-iso.png" alt="Explicit rounded-rectangle sketch pad preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">features</p>
+    <h2><a href="examples/rounded-rectangle-sketch/">Explicit rounded-rectangle sketch pad</a></h2>
+    <p>A named face-attached Sketch uses RoundedRectangle2D to create a joined rounded pad with native straight and arc sketch geometry.</p>
+    <p class="meta">13 generated SolidCraft commands</p>
+    <a class="button" href="examples/rounded-rectangle-sketch/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/selective-profile-extrude/" class="card-image" aria-label="View Selective Sketch profile extrusion">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/selective-profile-extrude/model_verify/presentation/preview-iso.png" alt="Selective Sketch profile extrusion preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">associativity</p>
+    <h2><a href="examples/selective-profile-extrude/">Selective Sketch profile extrusion</a></h2>
+    <p>A patterned Circle sketch retains four generated profiles while one native extrusion selects only the intended three closed regions.</p>
+    <p class="meta">9 generated SolidCraft commands</p>
+    <a class="button" href="examples/selective-profile-extrude/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/sheet-fold/" class="card-image" aria-label="View Flat sheet, through hole and 90° fold">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/sheet-fold/model_verify/presentation/preview-iso.png" alt="Flat sheet, through hole and 90° fold preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">features</p>
+    <h2><a href="examples/sheet-fold/">Flat sheet, through hole and 90° fold</a></h2>
+    <p>An 80 × 40 mm flat sheet blank with one through hole and one 90 degree native fold using a shared sheet rule.</p>
+    <p class="meta">14 generated SolidCraft commands</p>
+    <a class="button" href="examples/sheet-fold/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/simple-box/" class="card-image" aria-label="View Parameterized Box">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/simple-box/model_verify/presentation/preview-iso.png" alt="Parameterized Box preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">fundamentals</p>
+    <h2><a href="examples/simple-box/">Parameterized Box</a></h2>
+    <p>A minimal Forge model that exposes length, width and height as editable SolidCraft parameters and lowers directly to one native Box feature.</p>
+    <p class="meta">4 generated SolidCraft commands</p>
+    <a class="button" href="examples/simple-box/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/sketch-pattern-mirror/" class="card-image" aria-label="View Associative sketch pattern and mirror">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/sketch-pattern-mirror/model_verify/presentation/preview-iso.png" alt="Associative sketch pattern and mirror preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">associativity</p>
+    <h2><a href="examples/sketch-pattern-mirror/">Associative sketch pattern and mirror</a></h2>
+    <p>One Circle seed and one Slot seed generate repeated cut geometry through native sketch pattern and mirror relationships rather than Python-expanded copies.</p>
+    <p class="meta">22 generated SolidCraft commands</p>
+    <a class="button" href="examples/sketch-pattern-mirror/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/slot-family/" class="card-image" aria-label="View Native sketch Slot family">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/slot-family/model_verify/presentation/preview-iso.png" alt="Native sketch Slot family preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">features</p>
+    <h2><a href="examples/slot-family/">Native sketch Slot family</a></h2>
+    <p>One plate sketch contains five closed Slot profiles created with the five native Slot construction methods and removed with one through cut.</p>
+    <p class="meta">13 generated SolidCraft commands</p>
+    <a class="button" href="examples/slot-family/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/top-sketch-after-chamfer/" class="card-image" aria-label="View TOP Sketch after chamfer">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/top-sketch-after-chamfer/model_verify/presentation/preview-iso.png" alt="TOP Sketch after chamfer preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">features</p>
+    <h2><a href="examples/top-sketch-after-chamfer/">TOP Sketch after chamfer</a></h2>
+    <p>A chamfered plate with a centered through hole whose sketch is attached to the resulting TOP face after the chamfer.</p>
+    <p class="meta">7 generated SolidCraft commands</p>
+    <a class="button" href="examples/top-sketch-after-chamfer/">View example and engineering documentation →</a>
+  </div>
+</article>
+<article class="card">
+  <a href="examples/xz-anchor/" class="card-image" aria-label="View Anchors on XZ-profile extrusion">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/xz-anchor/model_verify/presentation/preview-iso.png" alt="Anchors on XZ-profile extrusion preview" loading="lazy">
+  </a>
+  <div class="card-content">
+    <p class="eyebrow">anchors</p>
+    <h2><a href="examples/xz-anchor/">Anchors on XZ-profile extrusion</a></h2>
+    <p>A Board authored from an XZ polygon and extruded in Y exposes standard corner anchors used by independent left and right Marker components.</p>
+    <p class="meta">21 generated SolidCraft commands</p>
+    <a class="button" href="examples/xz-anchor/">View example and engineering documentation →</a>
+  </div>
+</article>
+</div>
+  <p class="source-stamp">Library source commit: <code>4c408be0f34b8bec4f694a7873313279f0e67997</code></p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="./static/copy.js"></script>
+<script src="./static/search.js"></script>
+</body>
+</html>

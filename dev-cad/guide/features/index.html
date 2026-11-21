@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Features and references · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap guide-layout"><aside class="guide-sidebar"><h2>API Guide</h2><a href="../">Overview</a><a href="../getting-started/">Getting started</a><a href="../model-objects/">Model objects and parameters</a><a href="../transformations/">Positioning and orientation</a><a href="../assembly-basics/">From one component to an assembly</a><a href="../geometry/">Geometry, sketches and Boolean operations</a><a class="active" href="../features/">Features and references</a><div class="guide-subnav"><a href="#features">A feature changes an existing body</a><a href="#hole">Holes</a><a href="#feature-patterns">Native feature patterns</a><a href="#fillet">Fillets and chamfers</a><a href="#shell">Shells</a><a href="#anchors">Feature placement without hard-coded global offsets</a></div><a href="../components/">Components and assemblies</a><a href="../verification/">Verification and API boundaries</a></aside><article class="guide-article"><p class="crumb"><a href="../">API Guide</a> / Features and references</p><h1>Features and references</h1><p class="guide-lead">Native holes, fillets, shells and relative positioning.</p><h2 id="features">A feature changes an existing body</h2>
+<p>A native feature is different from subtracting arbitrary CSG geometry.
+SCPF can retain named sketches and operations in SolidCraft history.
+For exact results, supported body types and selection constraints matter.</p>
+<h2 id="hole">Holes</h2>
+<pre class="code-block"><code>from scpf import Box, Hole, Depth, Faces
+
+plate = Box(100, 60, 10)
+hole = Hole(d=8, depth=Depth.THROUGH_ALL)
+plate = plate + hole.on(plate, face=Faces.TOP)</code></pre>
+<p>A <code>Hole</code> is a native hole feature: adding it to the shape
+means adding the operation that <em>removes</em> material.
+<a href="../../reference/Faces/"><code>Faces.TOP</code></a> selects its entry face. Simple feature placement
+uses <code>on()</code>; assembly attachment uses explicit anchors.</p>
+<h2 id="feature-patterns">Native feature patterns</h2>
+<p>Pattern an already-applied native feature when the copies should remain one
+editable SolidCraft history operation. Rectangular and circular patterns share
+the same source-feature rules: the source is a <code>Sketch.extrude()</code>
+feature that is already part of the body, and a direct count Parameter remains
+editable in the saved design.</p>
+<pre class="code-block"><code>from scpf import Anchor, Axis, Box, Circle2D, Depth, Sketch
+
+plate = Box(100, 80, 6, anchor=Anchor.BOTTOM)
+with Sketch(name=&quot;BoltHole&quot;, on=plate, parent=Anchor.TOP) as bolt:
+    bolt.add(Circle2D(d=8), offset=(30, 0))
+
+cut = bolt.extrude(Depth.THROUGH_ALL)
+plate = plate - cut
+
+bolt_circle = plate.circular_pattern(
+    cut,
+    count=6,
+    axis=Axis.Z,
+)</code></pre>
+<p><code>circular_pattern()</code> omits <code>angle</code> by default so
+SolidCraft uses its native 360-degree full-circle behaviour. Supply a fixed
+degree value or direct Parameter for a partial arc. <code>origin=(x, y, z)</code>
+moves a fixed axis; a fixed non-zero XYZ vector can be used instead of
+<code>Axis.X/Y/Z</code>. Construction-axis and geometry-axis selectors are not
+yet exposed by Forge.</p>
+<pre class="code-block"><code>grid = plate.rectangular_pattern(
+    cut,
+    count=4,
+    spacing=20,
+    direction=Axis.X,
+    count2=3,
+    spacing2=18,
+    direction2=Axis.Y,
+)</code></pre>
+<p><code>rectangular_pattern()</code> and <code>circular_pattern()</code> both
+emit one native feature-pattern command rather than expanding independent
+copies in Python.</p>
+<h2 id="fillet">Fillets and chamfers</h2>
+<pre class="code-block"><code>from scpf import FRONT, LEFT, Box, Edges
+
+body = Box(80, 50, 15)
+rounded = body.fillet(3, edges=Edges.VERTICAL)
+bevelled = body.chamfer(3, edges=Edges.VERTICAL)
+one_edge = body.chamfer(3, edges=FRONT + LEFT)</code></pre>
+<p><code>fillet()</code> and <code>chamfer()</code> use the same edge-selection
+forms. Use <code>Edges.VERTICAL</code> for all vertical edges of a supported
+rectangular body, a two-direction selector such as <code>FRONT + LEFT</code>
+for one Box edge, <code>Edges.from_profile(...)</code> or
+<code>Edges.from_vertices(...)</code> for named Polygon2D geometry, or explicit
+XYZ pick coordinates. Both methods default to <code>Edges.VERTICAL</code>.
+A topological edge cannot always be inferred reliably from a visual camera
+position.</p>
+<h2 id="shell">Shells</h2>
+<pre class="code-block"><code>from scpf import Box, Faces
+case = Box(80, 50, 30).shell(2, open=Faces.TOP)</code></pre>
+<p><a href="../../reference/Faces/"><code>Faces.TOP</code></a> chooses the face to open and is also the same
+surface-selection vocabulary used by <code>feature.on(...)</code>.
+<a href="../../reference/Anchor/"><code>Anchor</code></a> is reserved for explicit component attachment in
+assemblies. See the source and regression tests for supported feature chains.</p>
+<h2 id="anchors">Feature placement without hard-coded global offsets</h2>
+<pre class="code-block"><code>from scpf import X, Y, Boss, Anchor
+
+boss = Boss(d=7, h=12, hole_d=2.5).attach(
+    case, parent=Anchor.INNER_BOTTOM,
+    offset=(X.MIN + 10, Y.MAX - 10),
+)</code></pre>
+<p><code>X.MIN</code> and <code>Y.MAX</code> refer to the parent
+bounds and are not rotation-axis constants. Anchoring support
+currently focuses on rectangular bases and a documented set of faces.
+Do not assume every curved or lofted surface supports it.</p>
+<section class="guide-api-summary"><h2>API on this page</h2><p class="guide-api-intro">These values and signatures are generated from the current Python API. They are shown here so the normal guide flow does not require opening the reference for every detail.</p><div class="guide-api-grid"><article class="guide-api-item"><h3><a href="../../reference/Faces/">Faces</a></h3><p>Select named planar faces for within-component feature operations.</p><div class="guide-api-members"><code>Faces.TOP</code> · <code>Faces.BOTTOM</code> · <code>Faces.LEFT</code> · <code>Faces.RIGHT</code> · <code>Faces.FRONT</code> · <code>Faces.BACK</code></div><p><strong>Use when:</strong> Pass a Faces value to operations such as Shape.on() and Shape.shell() to identify a surface of the target body.</p><p><strong>Current limits:</strong> The enum defines all six cardinal faces. Individual operations may support only a subset; Shape.on() currently accepts TOP and BOTTOM. Component assembly attachment uses Anchor instead.</p></article><article class="guide-api-item"><h3><a href="../../reference/Depth/">Depth</a></h3><p>Choose a supported feature-depth policy.</p><div class="guide-api-members"><code>Depth.THROUGH_ALL</code></div><p><strong>Use when:</strong> Use Depth.THROUGH_ALL for features such as Hole that should pass completely through their target instead of using a fixed distance.</p><p><strong>Current limits:</strong> THROUGH_ALL is currently the only named depth policy.</p></article><article class="guide-api-item"><h3><a href="../../reference/Edges/">Edges</a></h3><p>Select edges for supported fillet and chamfer feature operations.</p><div class="guide-api-members"><code>Edges.VERTICAL</code></div><p><strong>Use when:</strong> Use Edges.VERTICAL for the vertical edges of a supported rectangular body. Use from_profile() for named profile segments and from_vertices() for extrusion-axis edges grown from named profile vertices.</p><p><strong>Current limits:</strong> Only the selectors implemented here are public. from_profile() currently supports sides=&quot;both&quot;; from_vertices() requires named Polygon2D vertices.</p></article><article class="guide-api-item"><h3><a href="../../reference/Shape.on/">Shape.on()</a></h3><p>Place a supported within-component feature on a target face.</p><pre class="guide-api-signature"><code>Shape.on(self, target, *, face=&lt;Faces.TOP: &#x27;top&#x27;&gt;, offset=(0, 0))</code></pre><p><strong>Use when:</strong> Put a Hole or another supported feature on an existing Shape and select its entry/support surface with Faces.</p><p><strong>Current limits:</strong> Shape.on() currently accepts Faces.TOP and Faces.BOTTOM. This is feature placement; component assembly attachment uses Anchor and the component occurrence attach() API.</p></article><article class="guide-api-item"><h3><a href="../../reference/Shape.attach/">Shape.attach()</a></h3><p>Anchor a supported feature explicitly to another Shape.</p><pre class="guide-api-signature"><code>Shape.attach(self, target, *, parent=&lt;Anchor.TOP: &#x27;top&#x27;&gt;, child=&lt;Anchor.BOTTOM: &#x27;bottom&#x27;&gt;, offset=(0, 0))</code></pre><p><strong>Use when:</strong> Use this lower-level feature-placement form when parent/child Anchor references are required explicitly.</p><p><strong>Current limits:</strong> This is legacy within-component feature anchoring. Prefer on() for simple face placement. It is separate from component occurrence attachment used by assemblies.</p></article><article class="guide-api-item"><h3><a href="../../reference/Shape.fillet/">Shape.fillet()</a></h3><p>Round selected solid edges with one radius.</p><pre class="guide-api-signature"><code>Shape.fillet(self, radius, *, edges=&lt;Edges.VERTICAL: &#x27;vertical&#x27;&gt;)</code></pre><p><strong>Use when:</strong> Round one or more edges of a supported feature-based body. Fillet and chamfer use the same edge-selection forms.</p><p><strong>Current limits:</strong> Edges.VERTICAL and cardinal Box edge selectors require a supported rectangular body. Named profile/vertex selectors require matching Polygon2D ids in a supported extrusion.</p></article><article class="guide-api-item"><h3><a href="../../reference/Shape.chamfer/">Shape.chamfer()</a></h3><p>Chamfer selected solid edges by one equal distance.</p><pre class="guide-api-signature"><code>Shape.chamfer(self, distance, *, edges=&lt;Edges.VERTICAL: &#x27;vertical&#x27;&gt;)</code></pre><p><strong>Use when:</strong> Bevel one or more edges of a supported feature-based body. Chamfer and fillet use the same edge-selection forms.</p><p><strong>Current limits:</strong> Edges.VERTICAL and cardinal Box edge selectors require a supported rectangular body. Named profile/vertex selectors require matching Polygon2D ids in a supported extrusion.</p></article><article class="guide-api-item"><h3><a href="../../reference/Shape.shell/">Shape.shell()</a></h3><p>Hollow a supported solid and leave selected Faces open.</p><pre class="guide-api-signature"><code>Shape.shell(self, thickness, *, open=&lt;Faces.TOP: &#x27;top&#x27;&gt;)</code></pre><p><strong>Use when:</strong> Create an enclosure-like body with an even wall thickness while removing one or more named planar faces.</p><p><strong>Current limits:</strong> open= must be one Faces value or a non-empty sequence of Faces values. Support still depends on the underlying feature tree.</p></article><article class="guide-api-item"><h3><a href="../../reference/Shape.fold/">Shape.fold()</a></h3><p>Fold existing sheet material along one straight line.</p><pre class="guide-api-signature"><code>Shape.fold(self, *, line, angle=90, fixed=None, position=&#x27;centerline&#x27;, flip=False)</code></pre><p><strong>Use when:</strong> Bend material that already exists in a sheet blank. Dimensions and bend allowance come from the sheet&#x27;s shared rule.</p><p><strong>Current limits:</strong> This first qualified form supports one straight fold line. The line endpoints and fixed point are fixed finite coordinates.</p></article><article class="guide-api-item"><h3><a href="../../reference/Shape.rectangular_pattern/">Shape.rectangular_pattern()</a></h3><p>Pattern an existing native history feature in one or two directions.</p><pre class="guide-api-signature"><code>Shape.rectangular_pattern(self, feature, *, count, spacing, direction=&lt;Axis.X: &#x27;X&#x27;&gt;, count2=None, spacing2=None, direction2=&lt;Axis.Y: &#x27;Y&#x27;&gt;, alignment=&#x27;right&#x27;, alignment2=&#x27;right&#x27;, reversed=False, reversed2=False)</code></pre><p><strong>Use when:</strong> Repeat an already-created native sketch extrusion while keeping one editable SolidCraft rectangular-pattern history feature.</p><p><strong>Current limits:</strong> The source feature must already be part of this Shape. Supplying a second direction requires both count2 and spacing2.</p></article><article class="guide-api-item"><h3><a href="../../reference/Shape.circular_pattern/">Shape.circular_pattern()</a></h3><p>Pattern an existing native history feature around a fixed axis.</p><pre class="guide-api-signature"><code>Shape.circular_pattern(self, feature, *, count, axis=&lt;Axis.Z: &#x27;Z&#x27;&gt;, angle=None, origin=None, alignment=&#x27;right&#x27;, reversed=False)</code></pre><p><strong>Use when:</strong> Repeat an already-created native sketch extrusion around an axis while keeping one editable SolidCraft circular-pattern history feature, for example a bolt circle.</p><p><strong>Current limits:</strong> The source feature must already be part of this Shape. Axis values cover principal or fixed XYZ axes. Native construction-axis, edge-axis and face-axis selectors are not exposed yet.</p></article><article class="guide-api-item"><h3><a href="../../reference/feature-constructors/">Feature constructors</a></h3><p>Mechanical Hole-family and plastic-feature intent added to supported bodies.</p><div class="guide-api-group-members"><div class="guide-api-group-member" id="api-Hole"><h4><code>Hole</code></h4><pre class="guide-api-signature"><code>Hole(*, d, depth=&lt;Depth.THROUGH_ALL: &#x27;through_all&#x27;&gt;, direction=None)</code></pre><p>Create a simple cylindrical hole feature.</p><p><strong>Use when:</strong> Make an ordinary drilled hole without a head recess or thread intent.</p><p><strong>Current limits:</strong> d and finite depth values must be positive. Explicit native Hole features are positioned with at(); face-relative repeated simple holes may also use on() through the existing placement route.</p><p><a href="../../reference/feature-constructors/#Hole">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-CounterboreHole"><h4><code>CounterboreHole</code></h4><pre class="guide-api-signature"><code>CounterboreHole(*, d, counterbore_d, counterbore_depth, depth=&lt;Depth.THROUGH_ALL: &#x27;through_all&#x27;&gt;, direction=None)</code></pre><p>Create a hole with a cylindrical recess at its entry face.</p><p><strong>Use when:</strong> Seat a cylindrical screw head or other part below the entry surface.</p><p><strong>Current limits:</strong> counterbore_d must be larger than d. counterbore_depth and finite depth values must be positive. Position this native feature with at().</p><p><a href="../../reference/feature-constructors/#CounterboreHole">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-CountersinkHole"><h4><code>CountersinkHole</code></h4><pre class="guide-api-signature"><code>CountersinkHole(*, d, countersink_d, countersink_angle=90, depth=&lt;Depth.THROUGH_ALL: &#x27;through_all&#x27;&gt;, direction=None)</code></pre><p>Create a hole with a conical countersink at its entry face.</p><p><strong>Use when:</strong> Seat a countersunk fastener or specify a hole whose conical entry is part of the hole feature itself.</p><p><strong>Current limits:</strong> countersink_d must be larger than d. countersink_angle must be between 0 and 180 degrees. Position this native feature with at().</p><p><a href="../../reference/feature-constructors/#CountersinkHole">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-ThreadedHole"><h4><code>ThreadedHole</code></h4><pre class="guide-api-signature"><code>ThreadedHole(*, thread, depth=&lt;Depth.THROUGH_ALL: &#x27;through_all&#x27;&gt;, d=None, direction=None, hand=&#x27;right&#x27;, thread_depth=None, modeled=False, ease_out=None)</code></pre><p>Create a tapped hole with native thread intent.</p><p><strong>Use when:</strong> Preserve tapped-hole manufacturing intent instead of representing the result as an ordinary cylindrical subtraction.</p><p><strong>Current limits:</strong> The thread designation must be supported by SolidCraft. modeled=True creates actual thread geometry and can be substantially heavier than cosmetic/native thread metadata. Position this native feature with at().</p><p><a href="../../reference/feature-constructors/#ThreadedHole">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-Lip"><h4><code>Lip</code></h4><pre class="guide-api-signature"><code>Lip(*, width, height)</code></pre><p>Create a plastic enclosure lip feature.</p><p><strong>Use when:</strong> Add a lip to a supported shelled enclosure rim using feature placement.</p><p><strong>Current limits:</strong> width and height must be positive when compiled. Placement and parent-shape support follow the feature-placement API.</p><p><a href="../../reference/feature-constructors/#Lip">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-SnapFit"><h4><code>SnapFit</code></h4><pre class="guide-api-signature"><code>SnapFit(*, length, thickness, width, catch_depth, catch_length, hook, direction=None)</code></pre><p>Create a cantilever snap-fit feature.</p><p><strong>Use when:</strong> Add a plastic snap feature to a supported face with an explicit hook direction.</p><p><strong>Current limits:</strong> All five dimensions must be positive when compiled. hook must contain three coordinates; direction, when supplied, must also contain three.</p><p><a href="../../reference/feature-constructors/#SnapFit">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-Boss"><h4><code>Boss</code></h4><pre class="guide-api-signature"><code>Boss(*, d, h, hole_d=None, direction=None)</code></pre><p>Create a plastic screw-boss feature.</p><p><strong>Use when:</strong> Add a cylindrical support boss, optionally with a central hole, to a supported face.</p><p><strong>Current limits:</strong> d and h must be positive when compiled. hole_d, when supplied, must be positive. direction, when supplied, must contain three coordinates.</p><p><a href="../../reference/feature-constructors/#Boss">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-Rest"><h4><code>Rest</code></h4><pre class="guide-api-signature"><code>Rest(*, width, height, length=None, along=None, direction=None)</code></pre><p>Create a plastic support/rest feature.</p><p><strong>Use when:</strong> Add a support pad or elongated rest to a supported face.</p><p><strong>Current limits:</strong> width and height must be positive when compiled. length, when supplied, must be positive. along and direction must contain three coordinates.</p><p><a href="../../reference/feature-constructors/#Rest">Detailed parameter reference →</a></p></div></div></article></div></section></article></main>
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

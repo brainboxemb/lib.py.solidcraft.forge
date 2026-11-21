@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Geometry, sketches and Boolean operations · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap guide-layout"><aside class="guide-sidebar"><h2>API Guide</h2><a href="../">Overview</a><a href="../getting-started/">Getting started</a><a href="../model-objects/">Model objects and parameters</a><a href="../transformations/">Positioning and orientation</a><a href="../assembly-basics/">From one component to an assembly</a><a class="active" href="../geometry/">Geometry, sketches and Boolean operations</a><div class="guide-subnav"><a href="#solids">Start with a solid</a><a href="#profiles">Draw a 2D profile, then extrude it</a><a href="#profile-selection">Select profiles when extruding a Sketch</a><a href="#pattern-mirror">Repeat and mirror profiles inside one Sketch</a><a href="#boolean">Add, subtract and intersect</a></div><a href="../features/">Features and references</a><a href="../components/">Components and assemblies</a><a href="../verification/">Verification and API boundaries</a></aside><article class="guide-article"><p class="crumb"><a href="../">API Guide</a> / Geometry, sketches and Boolean operations</p><h1>Geometry, sketches and Boolean operations</h1><p class="guide-lead">Solids, 2D profiles, extrusions and the CSG operators.</p><h2 id="solids">Start with a solid</h2>
+<p><code>Box</code>, <code>Cylinder</code> and <code>Sphere</code> are centred
+on their geometric CENTER by default. Use <code>anchor=...</code> when a face,
+axial end or tangent datum should lie at the origin. For Cylinder the anchor is
+resolved after choosing <code>Axis.X</code>, <code>Axis.Y</code> or
+<code>Axis.Z</code>; for example LEFT/RIGHT are the axial ends of an X-axis
+cylinder and BOTTOM/TOP are the axial ends of a Z-axis cylinder.</p>
+<pre class="code-block"><code>from scpf import (
+    BOTTOM, FRONT, LEFT, RIGHT,
+    Axis, Box, Cylinder, Sphere,
+)
+
+plate = Box(80, 50, 8)
+board = Box(80, 50, 12).at(
+    0, 0, 0,
+    anchor=FRONT + BOTTOM,
+).fillet(
+    4,
+    edges=[BOTTOM + LEFT, BOTTOM + RIGHT],
+)
+pin = Cylinder(d=8, h=20, axis=Axis.Z).at(
+    10, 10, 8,
+    anchor=BOTTOM,
+)
+side_pin = Cylinder(d=8, h=20, axis=Axis.X).at(-10, 0, 0)
+ball = Sphere(12)
+
+body = Sphere(20) &amp; Box(30, 30, 30)
+centered_bore = Cylinder(d=8, h=30, axis=Axis.X).at(body)</code></pre>
+<p><code>at(x, y, z)</code> places CENTER at those coordinates unless another
+<code>anchor=...</code> is supplied. Passing another Shape instead uses
+shape-relative CENTER-to-CENTER placement. Forge derives the native Box corner,
+Cylinder base or Sphere center from the selected datum; callers do not add
+manual half-size corrections.</p>
+<h2 id="profiles">Draw a 2D profile, then extrude it</h2>
+<p>A <code>Rectangle2D</code> is a planar profile rather than a 3D body. 2D geometry is authored inside an explicit <code>Sketch</code> scope. <code>Polygon2D</code> can be created on the XY, XZ or YZ plane.</p>
+<pre class="code-block"><code>from scpf import Sketch, Rectangle2D, Polygon2D
+
+with Sketch(plane=&quot;XY&quot;) as plate_sketch:
+    Rectangle2D(80, 50)
+plate = plate_sketch.extrude(8)
+
+with Sketch(plane=&quot;XZ&quot;) as side_sketch:
+    Polygon2D(
+        [(0, 0), (40, 0), (40, 8), (8, 8), (8, 30), (0, 30)],
+        plane=&quot;XZ&quot;,
+        world=True,
+    )
+side = side_sketch.extrude(10)
+
+# Signed distance chooses the side of the sketch plane.
+backward = plate_sketch.extrude(-8)
+centered = plate_sketch.extrude(8, sym=True)</code></pre>
+<p>A sketch plane affects where its axes go; changing the camera does not rotate its geometry. Leave the <code>with Sketch(...)</code> scope, then call <code>sketch.extrude(...)</code> to create 3D material. A positive distance follows the sketch-plane normal, a negative distance goes the other way, and <code>sym=True</code> divides a positive distance equally over both sides. Direct <code>Rectangle2D(...).extrude(...)</code> syntax is intentionally not supported.</p>
+<h2 id="profile-selection">Select profiles when extruding a Sketch</h2>
+<p>By default <code>Sketch.extrude()</code> uses every closed profile in the
+Sketch. Use <code>profiles=[(x, y), ...]</code> when only some closed regions
+should be extruded or cut. The points are fixed coordinates in the Sketch
+itself; users do not need SolidCraft profile indices or curve ids.</p>
+<pre class="code-block"><code>from scpf import Anchor, Axis, Box, Circle2D, Depth, Sketch
+
+board = Box(120, 80, 5, anchor=Anchor.BOTTOM)
+with Sketch(name=&quot;Selected holes&quot;, on=board, parent=Anchor.TOP) as holes:
+    seed = holes.add(Circle2D(d=8), offset=(-30, 0))
+    holes.rectangular_pattern(
+        seed,
+        count=4,
+        spacing=20,
+        direction=Axis.X,
+    )
+
+board = board - holes.extrude(
+    Depth.THROUGH_ALL,
+    profiles=[(-30, 0), (-10, 0), (30, 0)],
+    exact_regions=True,
+)</code></pre>
+<p>SolidCraft 0.42 stores a successful point selection using the curves around
+the selected profile where possible. That lets the selection follow the profile
+when the saved design recomputes. <code>exact_regions=True</code> asks
+SolidCraft to use exactly the region containing each point. Profile points must
+be fixed finite numbers; Forge Parameters and expressions are not accepted in
+this field.</p>
+<h2 id="pattern-mirror">Repeat and mirror profiles inside one Sketch</h2>
+<p><code>Sketch.rectangular_pattern()</code> makes a native SolidCraft sketch pattern from a profile that already belongs to the Sketch. <code>Sketch.mirror()</code> mirrors a profile, a pattern result or an earlier mirror result. Both methods return a Sketch result that can be passed to another supported Sketch operation.</p>
+<pre class="code-block"><code>from scpf import Anchor, Axis, Box, Circle2D, Depth, Sketch
+
+board = Box(200, 120, 8)
+with Sketch(name=&quot;Dog holes&quot;, on=board, parent=Anchor.TOP) as holes:
+    seed = holes.add(Circle2D(d=8), offset=(-40, 20))
+    row = holes.rectangular_pattern(
+        seed,
+        count=4,
+        spacing=25,
+        direction=Axis.X,
+    )
+    holes.mirror(row, axis=Axis.X)
+
+board = board - holes.extrude(Depth.THROUGH_ALL)</code></pre>
+<p>The same operations work with native Slot profiles. A pattern or mirror result can be used as the source of the next operation.</p>
+<pre class="code-block"><code>from scpf import Anchor, Axis, Sketch, SlotCenterToCenter2D
+
+with Sketch(name=&quot;Clamp slots&quot;, on=board, parent=Anchor.TOP) as slots:
+    seed = SlotCenterToCenter2D((20, 20), (40, 20), 8)
+    arm = slots.rectangular_pattern(
+        seed,
+        count=2,
+        spacing=50,
+        direction=Axis.X,
+    )
+    opposite = slots.mirror(arm, axis=Axis.Y)
+    slots.mirror(arm, axis=Axis.X)
+    slots.mirror(opposite, axis=Axis.X)</code></pre>
+<p><code>count</code>, <code>count2</code>, <code>spacing</code> and <code>spacing2</code> may use suitable model Parameters, so those values remain editable in the saved SolidCraft design. Current native qualification covers attached <code>Sketch(on=...)</code> use. Pattern directions support <code>Axis.X</code>, <code>Axis.Y</code> or a fixed 2D vector. Mirrors currently support the Sketch X or Y origin axis. Per-instance pattern suppression is not supported.</p>
+<p>SolidCraft 0.42 stores the curves selected when a mirror is created. If a pattern later creates extra curves after its count changes, those new curves are not added to that existing mirror automatically.</p>
+<h2 id="boolean">Add, subtract and intersect</h2>
+<pre class="code-block"><code>body = Box(50, 50, 20)
+tool = Cylinder(d=12, h=22).at(0, 0, 0)
+joined = body + tool       # union, where supported
+cut = body - tool          # difference, where supported
+shared = body &amp; tool       # intersection, where supported</code></pre>
+<p>The supported compiler path depends on the operands. Native feature
+history and CSG trees are not interchangeable for every operation.
+For manufacturing features such as holes, prefer the native
+<a href="../features/">feature operations</a>.</p>
+<section class="guide-api-summary"><h2>API on this page</h2><p class="guide-api-intro">These values and signatures are generated from the current Python API. They are shown here so the normal guide flow does not require opening the reference for every detail.</p><div class="guide-api-grid"><article class="guide-api-item"><h3><a href="../../reference/Axis/">Axis</a></h3><p>Select one of the native principal X, Y or Z axes.</p><div class="guide-api-members"><code>Axis.X</code> · <code>Axis.Y</code> · <code>Axis.Z</code></div><p><strong>Use when:</strong> Use Axis for primitive orientation and supported patterns, for example Cylinder(..., axis=Axis.X) or a linear Hole pattern along Axis.Y.</p><p><strong>Current limits:</strong> Axis is a principal-axis selector, not an attachment reference and not an extrusion Direction.</p></article><article class="guide-api-item"><h3><a href="../../reference/Shape.at/">Shape.at()</a></h3><p>Place a shape at absolute coordinates or align it to another Shape.</p><pre class="guide-api-signature"><code>Shape.at(self, x=0, y=0, z=0, *, anchor=&lt;Anchor.CENTER: &#x27;center&#x27;&gt;, child=&lt;Anchor.CENTER: &#x27;center&#x27;&gt;)</code></pre><p><strong>Use when:</strong> Use shape.at(x, y, z) for geometric placement. Box, Cylinder, Cone and Sphere support their documented anchors. Use shape.at(target) for the supported shape-to-shape CENTER alignment.</p><p><strong>Current limits:</strong> Shape-to-shape alignment currently supports CENTER-to-CENTER only. at() is geometric placement/alignment; selecting a support face for a feature is the job of Shape.on().</p></article><article class="guide-api-item"><h3><a href="../../reference/Sketch/">Sketch</a></h3><p>Create an explicit named 2D sketch scope.</p><pre class="guide-api-signature"><code>Sketch(*, name=&#x27;Profile&#x27;, on=None, parent=&lt;Anchor.TOP: &#x27;top&#x27;&gt;, plane=None, origin=None, offset=None)</code></pre><p><strong>Use when:</strong> Author one or more 2D profiles before creating a 3D extrusion. A Sketch may be standalone on XY/XZ/YZ or supported by an existing Shape.</p><p><strong>Current limits:</strong> Sketch(on=target) selects the body modified by the later extrusion. With the default parent=Anchor.TOP, Forge selects the largest +Z planar face at replay time. An explicit plane/origin bypasses face lookup. BOTTOM/CENTER relative placement still requires supported base metadata. offset remains a standalone-plane option. Leave the with-scope before extruding.</p></article><article class="guide-api-item"><h3><a href="../../reference/Sketch.add/">Sketch.add()</a></h3><p>Add and place a supported 2D profile in this Sketch.</p><pre class="guide-api-signature"><code>Sketch.add(self, profile, *, anchor=None, offset=(0, 0))</code></pre><p><strong>Use when:</strong> Add a profile explicitly or apply a deliberate sketch-local offset. Dimension-defined profiles default to semantic CENTER. Polygon2D and Text2D keep their authored/insertion coordinates.</p><p><strong>Current limits:</strong> Explicit Anchor.CENTER is supported for Circle2D, Rectangle2D and RoundedRectangle2D. Polygon2D and Text2D do not have a qualified semantic centre yet; leave anchor=None for those profile types.</p></article><article class="guide-api-item"><h3><a href="../../reference/Sketch.rectangular_pattern/">Sketch.rectangular_pattern()</a></h3><p>Repeat a profile or earlier Sketch result with a native rectangular pattern.</p><pre class="guide-api-signature"><code>Sketch.rectangular_pattern(self, source, *, count, spacing, direction=&lt;Axis.X: &#x27;X&#x27;&gt;, count2=1, spacing2=None, direction2=None, alignment=&#x27;right&#x27;, alignment2=&#x27;right&#x27;, reversed=False, reversed2=False)</code></pre><p><strong>Use when:</strong> Repeat one Circle, Slot or other supported profile without drawing every copy separately. The returned Sketch result represents the source plus its copies and may be passed to mirror() or another supported Sketch operation.</p><p><strong>Current limits:</strong> The operation must be authored inside the active Sketch. Current native qualification covers attached Sketch(on=...) use. The two counts may create at most 500 instances in total. Per-instance suppression is not supported. SolidCraft 0.42 stores the curves selected by a mirror when that mirror is created. If a pattern later creates extra curves after its count changes, those new curves are not added to that existing mirror automatically.</p></article><article class="guide-api-item"><h3><a href="../../reference/Sketch.mirror/">Sketch.mirror()</a></h3><p>Mirror a profile or earlier Sketch result over the sketch X or Y axis.</p><pre class="guide-api-signature"><code>Sketch.mirror(self, source, *, axis)</code></pre><p><strong>Use when:</strong> Create symmetric sketch geometry from a Circle, Slot, pattern result or earlier mirror result. The returned Sketch result contains the mirrored copies and may be used by a later supported Sketch operation.</p><p><strong>Current limits:</strong> The operation must be authored inside the active Sketch. Current native qualification covers attached Sketch(on=...) use. Only the sketch X and Y origin axes are supported. SolidCraft 0.42 stores the curves selected when the mirror is created. If an upstream pattern later creates extra curves after its count changes, those new curves are not added to that existing mirror automatically.</p></article><article class="guide-api-item"><h3><a href="../../reference/Sketch.sheet_metal/">Sketch.sheet_metal()</a></h3><p>Create a native sheet-metal body from this closed flat Sketch.</p><pre class="guide-api-signature"><code>Sketch.sheet_metal(self, *, thickness, bend_radius, k_factor=0.5, rule_name=&#x27;Forge Sheet&#x27;)</code></pre><p><strong>Use when:</strong> Start a fabricated sheet part from its flat blank before applying holes, folds, hems or other sheet-metal features.</p><p><strong>Current limits:</strong> The first qualified form requires one standalone XY Sketch with one closed profile. Leave the Sketch scope before creating the sheet.</p></article><article class="guide-api-item"><h3><a href="../../reference/Sketch.extrude/">Sketch.extrude()</a></h3><p>Extrude selected profiles from a completed Sketch.</p><pre class="guide-api-signature"><code>Sketch.extrude(self, distance, *, sym=False, profiles=None, exact_regions=False)</code></pre><p><strong>Use when:</strong> Leave the Sketch context and create or cut material normal to the sketch plane. Use profiles= when the Sketch contains more closed regions than the extrusion should use.</p><p><strong>Current limits:</strong> A standalone Sketch requires a finite non-zero distance. Depth.THROUGH_ALL is only meaningful for a Sketch attached to an existing Shape and cannot be combined with sym=True. Profile pick points must be fixed finite numbers; Parameters and expressions are not accepted because SolidCraft 0.42 profile points are numeric.</p></article><article class="guide-api-item"><h3><a href="../../reference/geometry-constructors/">Geometry constructors</a></h3><p>Direct 3D primitives and 2D profile constructors.</p><div class="guide-api-group-members"><div class="guide-api-group-member" id="api-Box"><h4><code>Box</code></h4><pre class="guide-api-signature"><code>Box(length, width, thickness, *, anchor=&lt;Anchor.CENTER: &#x27;center&#x27;&gt;)</code></pre><p>Create a native rectangular solid around a declared anchor datum.</p><p><strong>Use when:</strong> Model a simple rectangular part directly without introducing a Sketch.</p><p><strong>Current limits:</strong> The default anchor is CENTER, so an unplaced Box is centred around the model origin in X, Y and Z. Use anchor=BOTTOM for a box whose bottom face centre is at Z=0. Use at() for later placement.</p><p><a href="../../reference/geometry-constructors/#Box">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-Cylinder"><h4><code>Cylinder</code></h4><pre class="guide-api-signature"><code>Cylinder(*, d, h, axis=&lt;Axis.Z: &#x27;Z&#x27;&gt;, anchor=&lt;Anchor.CENTER: &#x27;center&#x27;&gt;)</code></pre><p>Create a cylindrical solid centred around the origin by default.</p><p><strong>Use when:</strong> Model a cylinder along Axis.X, Axis.Y or Axis.Z. Use BOTTOM for a Z-axis base, LEFT for an X-axis base or FRONT for a Y-axis base.</p><p><strong>Current limits:</strong> Anchors refer to world XYZ bounds after choosing the cylinder axis. at() places the selected anchor at the requested coordinate.</p><p><a href="../../reference/geometry-constructors/#Cylinder">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-Cone"><h4><code>Cone</code></h4><pre class="guide-api-signature"><code>Cone(*, d, top_d=0, h, axis=&lt;Axis.Z: &#x27;Z&#x27;&gt;, anchor=&lt;Anchor.CENTER: &#x27;center&#x27;&gt;)</code></pre><p>Create a native cone or tapered cylinder (frustum).</p><p><strong>Use when:</strong> Model a cone, tapered pin or lightly conical cylinder directly with SolidCraft&#x27;s native solid.cone feature.</p><p><strong>Current limits:</strong> Because the two end radii may differ, transverse tangent anchors are intentionally not exposed. Use CENTER or the selected axis&#x27; two end anchors: LEFT/RIGHT for X, FRONT/BACK for Y, BOTTOM/TOP for Z.</p><p><a href="../../reference/geometry-constructors/#Cone">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-Sphere"><h4><code>Sphere</code></h4><pre class="guide-api-signature"><code>Sphere(radius, *, anchor=&lt;Anchor.CENTER: &#x27;center&#x27;&gt;)</code></pre><p>Create a sphere centred on the origin unless another anchor is given.</p><p><strong>Use when:</strong> Model a spherical primitive, optionally with a tangent-point anchor.</p><p><strong>Current limits:</strong> Cardinal anchors select points on the sphere&#x27;s world-aligned bounds. Sphere has no separate orientation axis; use at() for placement.</p><p><a href="../../reference/geometry-constructors/#Sphere">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-Rectangle2D"><h4><code>Rectangle2D</code></h4><pre class="guide-api-signature"><code>Rectangle2D(width, depth)</code></pre><p>Create a rectangular 2D profile.</p><p><strong>Use when:</strong> Author a simple rectangle inside an explicit Sketch before extrusion.</p><p><strong>Current limits:</strong> The dimension-defined profile is centred on the Sketch origin by default. Use Sketch.add(..., offset=(u, v)) for a deliberate local displacement.</p><p><a href="../../reference/geometry-constructors/#Rectangle2D">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-RoundedRectangle2D"><h4><code>RoundedRectangle2D</code></h4><pre class="guide-api-signature"><code>RoundedRectangle2D(width, depth, radius)</code></pre><p>Create a native rounded-rectangle 2D profile.</p><p><strong>Use when:</strong> A sketch needs a rectangle with true circular corner arcs rather than a polygonal approximation.</p><p><strong>Current limits:</strong> Current support is inside an explicit Sketch. width and depth must be positive. radius must be positive and below half the shorter side.</p><p><a href="../../reference/geometry-constructors/#RoundedRectangle2D">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-Circle2D"><h4><code>Circle2D</code></h4><pre class="guide-api-signature"><code>Circle2D(*, d=None, r=None)</code></pre><p>Create a circular 2D profile by diameter or radius.</p><p><strong>Use when:</strong> Author a circular profile inside an explicit Sketch.</p><p><strong>Current limits:</strong> Supply exactly one of d= or r=. The Sketch determines the plane.</p><p><a href="../../reference/geometry-constructors/#Circle2D">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-Polygon2D"><h4><code>Polygon2D</code></h4><pre class="guide-api-signature"><code>Polygon2D(points, *, plane=&#x27;XY&#x27;, ids=None, world=False)</code></pre><p>Create a closed named or unnamed polygon profile.</p><p><strong>Use when:</strong> A 2D profile needs arbitrary straight segments or named vertices and segments that later drive selectors such as Edges.from_profile().</p><p><strong>Current limits:</strong> At least three 2D points are required. Named and unnamed points cannot be mixed. world=True currently supports only plane=&quot;XZ&quot;.</p><p><a href="../../reference/geometry-constructors/#Polygon2D">Detailed parameter reference →</a></p></div></div></article><article class="guide-api-item"><h3><a href="../../reference/sketch-slot-constructors/">Native Slot constructors</a></h3><p>Five explicit 2D Slot construction methods mapped directly to SolidCraft sketch.slot.* commands.</p><div class="guide-api-group-members"><div class="guide-api-group-member" id="api-SlotCenterToCenter2D"><h4><code>SlotCenterToCenter2D</code></h4><pre class="guide-api-signature"><code>SlotCenterToCenter2D(p0, p1, width)</code></pre><p>Create a straight Slot from the centres of its two round ends.</p><p><strong>Current limits:</strong> p0 and p1 must be different points. The straight part runs between these two end centres.</p><p><a href="../../reference/sketch-slot-constructors/#SlotCenterToCenter2D">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-SlotOverall2D"><h4><code>SlotOverall2D</code></h4><pre class="guide-api-signature"><code>SlotOverall2D(p0, p1, width)</code></pre><p>Create a straight Slot from its two outermost end points.</p><p><strong>Current limits:</strong> The distance from p0 to p1 is the total Slot length, including both round ends, and must be larger than width.</p><p><a href="../../reference/sketch-slot-constructors/#SlotOverall2D">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-SlotCenterPoint2D"><h4><code>SlotCenterPoint2D</code></h4><pre class="guide-api-signature"><code>SlotCenterPoint2D(center, end, width)</code></pre><p>Create a straight Slot from its centre and one round-end centre.</p><p><strong>Current limits:</strong> center and end must differ. The other round-end centre is mirrored through center.</p><p><a href="../../reference/sketch-slot-constructors/#SlotCenterPoint2D">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-SlotArcThreePoint2D"><h4><code>SlotArcThreePoint2D</code></h4><pre class="guide-api-signature"><code>SlotArcThreePoint2D(start, through, end, width)</code></pre><p>Create a curved Slot whose centre arc passes through three points.</p><p><strong>Current limits:</strong> start, through and end must be three different points.</p><p><a href="../../reference/sketch-slot-constructors/#SlotArcThreePoint2D">Detailed parameter reference →</a></p></div><div class="guide-api-group-member" id="api-SlotArcCenter2D"><h4><code>SlotArcCenter2D</code></h4><pre class="guide-api-signature"><code>SlotArcCenter2D(center, start, width, *, end=None, sweep=None)</code></pre><p>Create a curved Slot from an arc centre and start point.</p><p><strong>Current limits:</strong> Supply exactly one of end= or sweep=. center and start must differ. sweep must be greater than 0 and less than 360 degrees.</p><p><a href="../../reference/sketch-slot-constructors/#SlotArcCenter2D">Detailed parameter reference →</a></p></div></div></article></div></section></article></main>
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

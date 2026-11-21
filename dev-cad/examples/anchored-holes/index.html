@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Face-relative hole with native pattern · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Face-relative hole with native pattern</div>
+  <section class="hero small">
+    <p class="eyebrow">features</p>
+    <h1>Face-relative hole with native pattern</h1>
+    <p class="guide-lead">One attached source cut repeated by native rectangular history</p>
+    <p>A rectangular plate with one TOP-face hole source that is cut once and repeated as an editable native rectangular pattern.</p>
+    <p class="meta"><span>100 × 60 × 10 mm plate; two Ø8 through holes at 40 mm spacing</span><span>14 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/anchored-holes/model_verify/presentation/preview-iso.png" alt="Face-relative hole with native pattern: Current deterministic presentation preview from durable build b98f00092b75." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build b98f00092b75.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the rectangular base sketch and extrude the plate</li><li>Attach one Hole sketch to the TOP face and cut through the plate</li><li>Repeat the source cut with one native rectangular feature pattern</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify one TOP-face source hole cut followed by one native rectangular history pattern.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>with Sketch(on=plate, parent=Anchor.TOP): Circle2D(...); source_cut = sketch.extrude(Depth.THROUGH_ALL); plate.rectangular_pattern(source_cut, ...)</code></p>
+    <h2>Forge model</h2>
+    <p>A feature-based plate with one face-attached source hole cut and one native rectangular pattern that creates the second hole.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge emits one attached Hole sketch/cut and one native solid.pattern.rectangular history feature. No Forge-side repeat helper or expanded duplicate profiles are used.</p>
+    <h2>SolidCraft result</h2>
+    <p>One plate with two through holes at the requested Y spacing, one source cut and one native rectangular pattern feature.</p>
+    <h2>Saved-design test</h2>
+    <p>No saved-design mutation in this fixture; geometry and feature placement are measured at geometry.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>The holes do not change the outer plate bounds. Volume and 3D hole-wall probes are required.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>OpenSCAD</strong> — Comparable geometry normally uses difference() and repeated cylinders. This case instead qualifies one semantic TOP-face source cut plus native SolidCraft pattern history; native solid.hole itself is qualified separately by hole-family.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Face-relative Hole cut repeated by one native history pattern.&quot;&quot;&quot;
+
+from dataclasses import dataclass
+
+
+@dataclass
+class AnchoredHoles:
+    &quot;&quot;&quot;Two through holes, each 20 mm from the center along the Y axis.&quot;&quot;&quot;
+
+    width: float = 100
+    depth: float = 60
+    thickness: float = 10
+    spacing: float = 40
+
+    def build(self):
+        with Sketch(name=&quot;Base&quot;, plane=&quot;XY&quot;) as sketch:
+            profile = Rectangle2D(self.width, self.depth)
+            sketch.add(
+                profile,
+                offset=(self.width / 2, self.depth / 2),
+            )
+
+        plate = sketch.extrude(self.thickness)
+
+        with Sketch(
+            name=&quot;Hole&quot;,
+            on=plate,
+            parent=Anchor.TOP,
+        ) as hole:
+            hole.add(
+                Circle2D(d=8),
+                offset=(
+                    self.width / 2,
+                    (self.depth - self.spacing) / 2,
+                ),
+            )
+
+        source_cut = hole.extrude(Depth.THROUGH_ALL)
+        plate = plate - source_cut
+
+        return plate.rectangular_pattern(
+            source_cut,
+            count=2,
+            spacing=self.spacing,
+            direction=Axis.Y,
+        )
+
+
+AnchoredHoles()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/anchored-holes/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>sketch.create</code></li><li><code>sketch.rectangle.two_point</code></li><li><code>sketch.finish</code></li><li><code>solid.extrude</code></li><li><code>model.faces</code></li><li><code>sketch.create</code></li><li><code>sketch.circle.center</code></li><li><code>sketch.finish</code></li><li><code>solid.extrude</code></li><li><code>solid.pattern.rectangular</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Explicit component parameters and shared dependencies · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Explicit component parameters and shared dependencies</div>
+  <section class="hero small">
+    <p class="eyebrow">parameters</p>
+    <h1>Explicit component parameters and shared dependencies</h1>
+    <p class="guide-lead">Published child parameters stay distinct from inherited shared values</p>
+    <p>Five Panel occurrences demonstrate local component parameters, explicit overrides, shared parent dependencies and a derived half-width expression.</p>
+    <p class="meta"><span>Panel widths 40, 60 and shared 80 mm; shared width is editable</span><span>16 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/b98f00092b755005908167563e6d832f199c5e70/dev-cad/examples/parameter-scope/model_verify/presentation/preview-iso.png" alt="Explicit component parameters and shared dependencies: Current deterministic presentation preview from durable build b98f00092b75." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build b98f00092b75.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create local and explicitly overridden Panel definitions</li><li>Reuse one shared parent width across repeated Panels</li><li>Derive one child width from half of the shared parent parameter</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify that reusable component defaults stay fixed unless explicitly included, while selected defaults become native parameters and parent Parameters/Expressions are reused rather than duplicated in the child.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>@component(include=(&#x27;width&#x27;,)) class Panel; Panel(width=self.shared_width); Panel(width=half(self.shared_width))</code></p>
+    <h2>Forge model</h2>
+    <p>Only explicitly included width defaults become component-local Parameters. The lower-case depth default remains fixed. Inherited Parameter/Expression inputs become external bindings to the existing parent dependency.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Explicitly included component parameters are namespaced with the internal definition number plus readable component name (for example d1_Panel_width); unincluded child defaults stay fixed; inherited names such as shared_width remain unprefixed and are emitted once even when several child definitions use them.</p>
+    <h2>SolidCraft result</h2>
+    <p>The saved SolidCraft design exposes d1_Panel_width, d2_Panel_2_width and shared_width; changing shared_width updates both directly-bound children and the derived half-width child without rerunning Python.</p>
+    <h2>Saved-design test</h2>
+    <p>Change shared_width from 80 to 100 mm in the saved native design; widths must change from [40,40,60,80,80] to [40,50,60,100,100].</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The body sizes and positions describe the visible result. The saved SolidCraft model is checked separately to confirm that shared parameters are reused instead of duplicated.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>PythonSCAD</strong> — Reference geometry remains ordinary Python; Forge adds explicit native parameter publication because that is persistence/editability intent rather than geometry syntax.</li><li><strong>SolidCraft</strong> — Native parameters and expressions are the source of truth for saved-design editability and rebuild behaviour.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Parameter scope qualification: explicit component publication and inherited bindings.&quot;&quot;&quot;
+
+
+@component(include=(&quot;width&quot;,))
+class Panel:
+    width = 40.0
+    depth = 20.0
+    HEIGHT = 10.0
+    _x = 0.0
+
+    def build(self):
+        # _x is fixed fixture layout, not a public occurrence-placement
+        # dependency. Keeping it in the body preserves the existing visual
+        # qualification while this case stays focused on parameter scope.
+        return Box(
+            self.width,
+            self.depth,
+            self.HEIGHT,
+            anchor=Anchor.BOTTOM,
+        ).move(x=self._x)
+
+
+class ParameterScope:
+    shared_width = 80.0
+
+    def build(self):
+        local = Panel(name=&quot;local&quot;, _x=0)
+        override = Panel(width=60.0, name=&quot;override&quot;, _x=100)
+
+        shared_a = Panel(width=self.shared_width, name=&quot;shared_a&quot;, _x=220)
+        shared_b = shared_a.copy(
+            name=&quot;shared_b&quot;,
+            placement=Placement(x=120),
+        )
+
+        derived = Panel(
+            width=half(self.shared_width),
+            name=&quot;derived&quot;,
+            _x=460,
+        )
+
+        return local + override + shared_a + shared_b + derived
+
+
+ParameterScope()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/parameter-scope/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>parameters.add</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>parameters.add</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.copy</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>
