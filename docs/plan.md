@@ -183,12 +183,16 @@ dev_cad or dev_ci
   -> synchronize development lane back to main
 ```
 
-Promotion from a long-lived dev branch should use a normal merge commit rather
-than squash merge. The purpose is to keep the dev branch in main ancestry so it
-can be cleanly fast-forwarded/synchronized to the resulting main head.
+Merge policy is fixed by branch role:
 
-Normal short-lived feature PRs into `dev_cad` or `dev_ci` may still use
-squash merge.
+- short-lived feature/fix PRs into `dev_cad` or `dev_ci` are squash-merged;
+- promotion PRs from `dev_cad` or `dev_ci` into `main` use a normal merge
+  commit and are never squash-merged.
+
+The squash on the development lane keeps each individual work item compact.
+The normal merge into `main` preserves the ancestry of the long-lived
+development branch, so the promoted lane is genuinely contained by main and
+can be cleanly synchronized/fast-forwarded to the resulting main head.
 
 After a promotion, the promoted dev branch must be synchronized to the new main
 head before accepting work that assumes the promoted state. The other dev lane
