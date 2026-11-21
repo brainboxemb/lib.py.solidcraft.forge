@@ -33,7 +33,7 @@
       "final_target_spec_digest": "5b3132a0b75c3338de1ecb29e98f12f61973839e593066b5c026aa2eda487e66",
       "item_id": "forge-tests",
       "outputs": [],
-      "source_commit": "3096d1010028261241002b6f2cc9539bb7e60f99"
+      "source_commit": "a012621db4cfcbb862a3cd103db5f98db0bf8b07"
     },
     "ci/model-verification-batch": {
       "engine": "scons",
@@ -2294,5 +2294,5 @@
   "name": "dev-ci",
   "schema": 1,
   "scope": "named",
-  "source_commit": "49d59aec5356a880510222a2af9f4399fce44ae2"
+  "source_commit": "a012621db4cfcbb862a3cd103db5f98db0bf8b07"
 }
