@@ -73,7 +73,7 @@ jobs:
               | sort_by(.name, (.started_at // ""), .id)
               | group_by(.name)
               | map(last)
-            ' <<<"$LATEST_CHECKS"
+            ' <<<"$CHECKS_JSON"
           )"
           CHECK_COUNT="$(jq -r 'length' <<<"$LATEST_CHECKS")"
           [ "$CHECK_COUNT" -gt 0 ] || refuse "no completed PR checks exist on the current head"
@@ -93,7 +93,7 @@ jobs:
                 | .name + "=" + .status + "/" + (.conclusion // "none")
               ]
               | join(", ")
-            ' <<<"$CHECKS_JSON"
+            ' <<<"$LATEST_CHECKS"
           )"
           [ -z "$BAD_CHECKS" ] || refuse "checks are not green: $BAD_CHECKS"
 
