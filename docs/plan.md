@@ -116,8 +116,9 @@ runtime/tooling simplification and operational Pages publication.
 Immediate order:
 
 1. #598 policy-controlled merge method and selective branch lifecycle;
-2. #481 stale source-branch cleanup using the final keep-set — existing stale
-   refs can move to the same safe cleanup mechanism once #598 is proven;
+2. #481 stale source-branch cleanup using `/cleanup-branches` on #481 after
+   #598 is live on `main`; delete only integrated temporary-prefix refs and
+   report open/unmerged branches without touching them;
 3. make an explicit go/no-go decision for #366 live Pages cut-over;
 4. rewrite the still-useful performance goal from #261 against the current
    released CAD-CI/runtime architecture.
@@ -186,7 +187,7 @@ HUB75 uses explicit Placement today.
 | Issue | Lane | Workstream | Priority | Next action |
 | --- | --- | --- | --- | --- |
 | #598 Enforce PR merge method through one policy-controlled merge path | `dev-ci` | WS0 | **P0 now** | Land the tested `/merge` gate; after that repository automation must not choose merge methods directly. Cleanup only explicit temporary prefixes and preserve/recreate long-lived lanes. |
-| #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 blocked** | Generated build cleanup is complete. Source-ref deletion is blocked because the connected GitHub tool exposes no delete-ref action; do not claim completion until deletion is actually supported. |
+| #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 next after #598** | Use owner command `/cleanup-branches` on #481. The workflow deletes only integrated temporary-prefix refs; open PR heads and unique/unmerged branches are retained and reported. |
 | #366 Make verified output durable, then cut Pages over | `dev-ci` | WS0 | **P1 decision gate** | Durable/generated side is complete; request explicit approval before changing the live Pages source, then verify public/legacy routes. |
 | #570 Remove CADCraft from Forge verification diagrams | `dev-cad` | WS2 | **P2** | Replace the six explanatory diagram sources with deterministic Forge-owned SVG/static sources; remove its CI/runtime input only after the content path no longer needs it. |
 | #261 Reduce full qualification from minutes to seconds | `dev-ci` | WS0 | **Retire/rewrite → P2** | Original Qualification/image plan is obsolete; retain measured-performance goal and rewrite against current runtime images, batching and SCons execution. |
@@ -257,8 +258,8 @@ The two long-lived development lanes are independent execution tracks.
 
 1. [#598, now dev-ci] Enforce merge-method selection through one policy-owned
    `/merge` workflow; direct automation merge calls become unsupported.
-2. [#481, blocked] Remove obsolete source branches when a supported GitHub
-   branch-deletion operation becomes available.
+2. [#481, after #598] Run the repository-owned `/cleanup-branches` command on
+   #481 and review every retained open/unmerged branch before any further deletion.
 3. [#366, decision gate] Decide whether to cut the live Pages source over to
    generated `gh-pages`; do not change it without explicit approval.
 4. [dev-cad P1] Fix #357 and #356, then continue the current model blockers
