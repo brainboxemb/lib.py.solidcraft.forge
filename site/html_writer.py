@@ -574,6 +574,105 @@ def qualification_status_line(summary):
     )
 
 
+
+def qualification_case_preview(view, title):
+    """Render the primary native preview in the historical overview position."""
+    url = view.get("preview_url")
+    if not url:
+        return ""
+    return (
+        '<figure class="qualification-case-preview">'
+        f'<a href="{escape(url)}" class="qualification-image-link" '
+        'target="_blank" rel="noopener" title="Open full-size native preview">'
+        f'<img src="{escape(url)}" '
+        f'alt="{escape(title)} native SolidCraft preview" loading="lazy">'
+        "</a>"
+        "<figcaption>Native SolidCraft preview from the accepted durable "
+        "build output.</figcaption>"
+        "</figure>"
+    )
+
+
+def qualification_setup_svg(view, title):
+    """Render the historical conceptual front projection from declared targets."""
+    bodies = view.get("expected_bodies") or ()
+    if not bodies:
+        return ""
+
+    try:
+        x_min = min(float(body["minimum"][0]) for body in bodies)
+        x_max = max(float(body["maximum"][0]) for body in bodies)
+        z_min = min(float(body["minimum"][2]) for body in bodies)
+        z_max = max(float(body["maximum"][2]) for body in bodies)
+    except (KeyError, IndexError, TypeError, ValueError):
+        return ""
+
+    x_span = max(x_max - x_min, 1.0)
+    z_span = max(z_max - z_min, 1.0)
+    pad = 42.0
+    width = 640.0
+    height = 360.0
+    scale = min(
+        (width - 2 * pad) / x_span,
+        (height - 2 * pad) / z_span,
+    )
+
+    def sx(value):
+        return pad + (float(value) - x_min) * scale
+
+    def sy(value):
+        return height - pad - (float(value) - z_min) * scale
+
+    shapes = []
+    for index, body in enumerate(bodies):
+        minimum = body["minimum"]
+        maximum = body["maximum"]
+        x0 = sx(minimum[0])
+        x1 = sx(maximum[0])
+        y0 = sy(maximum[2])
+        y1 = sy(minimum[2])
+        fill = "#dce8f5" if index % 2 == 0 else "#e5f2ea"
+        stroke = "#46627f" if index % 2 == 0 else "#47715d"
+        shapes.append(
+            f'<rect x="{x0:.1f}" y="{y0:.1f}" '
+            f'width="{x1 - x0:.1f}" height="{y1 - y0:.1f}" '
+            f'fill="{fill}" stroke="{stroke}" stroke-width="2"/>'
+        )
+        label = escape(body.get("label") or f"body {index + 1}")
+        shapes.append(
+            f'<text x="{x0 + 5:.1f}" y="{max(y0 + 17, 20):.1f}" '
+            'font-family="system-ui,sans-serif" font-size="13" '
+            f'fill="#26394f">{label}</text>'
+        )
+
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" '
+        f'role="img" aria-label="{escape(title)} expected setup schematic">'
+        '<rect width="640" height="360" fill="#f8fafc"/>'
+        '<text x="24" y="28" font-family="system-ui,sans-serif" '
+        'font-size="16" font-weight="700" fill="#20344d">'
+        "Expected setup — front projection</text>"
+        '<text x="24" y="50" font-family="system-ui,sans-serif" '
+        'font-size="12" fill="#60738a">'
+        "Conceptual geometry only; verification renders appear later.</text>"
+        + "".join(shapes)
+        + "</svg>"
+    )
+
+
+def qualification_setup_diagram(title):
+    """Render the historical setup-diagram figure around generated setup.svg."""
+    return (
+        '<figure class="qualification-setup-diagram">'
+        '<a href="setup.svg" class="qualification-image-link" '
+        'target="_blank" rel="noopener" title="Open full-size setup diagram">'
+        f'<img src="setup.svg" alt="{escape(title)} expected setup diagram">'
+        "</a>"
+        "<figcaption>Expected setup — conceptual diagram, not verification "
+        "output. Click for the full-size image.</figcaption>"
+        "</figure>"
+    )
+
 def _evidence_table(headers, rows):
     """Render a small exact-value evidence table."""
     if not rows:
@@ -603,8 +702,17 @@ def _evidence_link(url, label):
     )
 
 
-def qualification_current_evidence(view, title):
-    """Render one stable verification evidence block from normalized view data."""
+def qualification_current_evidence(
+    view,
+    title,
+    *,
+    forge_model="",
+    saved_design_test="",
+    bounds_sufficient="",
+    geometry_reason="",
+    reference_notes="",
+):
+    """Render stable results in the historical case-sheet information order."""
     parameters = _evidence_table(
         ("Parameter", "Value", "Unit", "Expression"),
         tuple(
@@ -618,7 +726,15 @@ def qualification_current_evidence(view, title):
         ),
     )
     bodies = _evidence_table(
-        ("Body", "Minimum", "Maximum", "Volume mm³", "Faces", "Edges", "Closed"),
+        (
+            "Body",
+            "Minimum",
+            "Maximum",
+            "Volume mm³",
+            "Faces",
+            "Edges",
+            "Closed",
+        ),
         tuple(
             (
                 row.get("name"),
@@ -631,6 +747,16 @@ def qualification_current_evidence(view, title):
             )
             for row in view["bodies"]
         ),
+    )
+    baseline_details = (
+        '<details class="qualification-detail-block">'
+        f'<summary><strong>Original model</strong> · '
+        f'{len(view["bodies"])} bodies</summary>'
+        "<h4>Editable parameters</h4>"
+        + parameters
+        + "<h4>Body size</h4>"
+        + bodies
+        + "</details>"
     )
 
     check_fragments = []
@@ -706,7 +832,8 @@ def qualification_current_evidence(view, title):
         )
 
     raw_links = " · ".join(
-        (
+        value
+        for value in (
             _evidence_link(view["commands_url"], "commands"),
             _evidence_link(view["verification_url"], "verification"),
             _evidence_link(view["measurements_url"], "measurements"),
@@ -715,24 +842,26 @@ def qualification_current_evidence(view, title):
             _evidence_link(view["native_results_url"], "native results"),
             _evidence_link(view["preview_metadata_url"], "preview metadata"),
         )
+        if value
     )
 
     return render_template(
         "qualification-current.html",
+        baseline_details=baseline_details,
         status_line=qualification_status_line(view),
-        preview_url=escape(view["preview_url"]),
-        title=escape(title),
         site_source_commit=escape(view["site_source_commit"]),
         accepted_source_commit=escape(view["accepted_source_commit"]),
         build_commit=escape(view["build_commit"]),
-        parameters=parameters,
-        bodies=bodies,
         verification_checks="".join(check_fragments),
         saved_designs=saved,
         raw_links=raw_links,
         visual_section=visual_section,
+        forge_model=escape(forge_model),
+        saved_design_test=escape(saved_design_test),
+        bounds_sufficient=escape(bounds_sufficient),
+        geometry_reason=escape(geometry_reason),
+        reference_notes=reference_notes,
     )
-
 
 def qualification_reference_comparison(
     reference_sources,
