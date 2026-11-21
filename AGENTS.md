@@ -203,15 +203,30 @@ sections are removed after their corresponding change is merged.
 
 ## Generated output and Pages
 
-Build and Pages publication are currently being migrated through #548, #497 and #366.
+Durable accepted output lives on the generated `build` branch and stable site
+output lives on generated `gh-pages`.
+
+The main path uses exact externally accepted `tool.cad.ci 0.15.0` on one
+caller-owned runner:
+
+```text
+same-runner CAD-CI action
+  -> build fetch/update-main/publish
+  -> Forge site/build.py from prepared-main
+  -> Pages publish
+```
+
+Do not reintroduce Actions artifact transport, a second main publication
+runner, a second tool/library bootstrap, or a Forge-owned selection/build-store
+implementation. Forge owns site generation; released CAD-CI owns selection,
+SCons execution, durable-store and generated-branch mechanics.
 
 Site Python code may discover/load/validate/render data, but complete
 hand-authored pages and guide prose belong in external templates/content, not
 Python string literals.
 
-The existing `build` and `gh-pages` branches are generated output from the
-earlier publication system. Current development status is determined from source
-and the current CAD-CI run.
+The public GitHub Pages source remains deliberately on the preserved backup
+branch until #366 explicitly performs the live cut-over.
 
 ## Release state
 

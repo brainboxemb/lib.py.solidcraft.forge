@@ -13,8 +13,7 @@ WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
 MODEL_VERIFY = ROOT / "scripts" / "model_verify_declarative.py"
 MODEL_BATCH = ROOT / "scripts" / "model_verification_batch.py"
 REFERENCE_BATCH = ROOT / "scripts" / "reference_verification_batch.py"
-PR_TOOL_COMMIT = "4c1016d594368146fb9c16602f01c158e85d9afb"
-MAIN_TOOL_COMMIT = "4c1016d594368146fb9c16602f01c158e85d9afb"
+TOOL_COMMIT = "9f37be0af5c4076f676b6407857c5905e11a47d6"
 
 
 def configured_variable(name: str) -> str:
@@ -109,7 +108,7 @@ class CiRuntimeContractTests(unittest.TestCase):
         self.assertFalse((ROOT / "scripts" / "solidcraft_runtime.py").exists())
 
     def test_normal_workflow_delegates_to_released_cad_ci(self):
-        """Keep the Forge workflow a thin CAD-CI consumer."""
+        """Keep PR delegation and main publication on released CAD-CI surfaces."""
 
         text = WORKFLOW.read_text(encoding="utf-8")
 
@@ -119,33 +118,52 @@ class CiRuntimeContractTests(unittest.TestCase):
         self.assertIn("if: github.event_name == 'pull_request'", text)
         self.assertIn(
             "uses: brainboxemb/tool.cad.ci/.github/workflows/"
-            f"reusable-pr.yml@{PR_TOOL_COMMIT}",
+            f"reusable-pr.yml@{TOOL_COMMIT}",
             text,
         )
         self.assertIn("contents: write", text)
         self.assertIn("packages: read", text)
         self.assertNotIn("cleanup_pr_build:", text)
         self.assertNotIn("publish_pr_build:", text)
-        self.assertNotIn("build_artifact_name: forge-cad-ci-build", text)
 
         self.assertIn("cad_ci_main:", text)
+        main = text.split("  cad_ci_main:", 1)[1].split(
+            "  validate_stable_pages_pr:", 1
+        )[0]
         self.assertIn(
-            "uses: brainboxemb/tool.cad.ci/.github/workflows/"
-            f"reusable-ci.yml@{MAIN_TOOL_COMMIT}",
-            text,
+            f"uses: brainboxemb/tool.cad.ci@{TOOL_COMMIT}",
+            main,
         )
-        self.assertIn("build_artifact_name: forge-cad-ci-main-build", text)
-        self.assertIn("publish_main_build:", text)
-        self.assertEqual(text.count("actions/download-artifact@v4"), 1)
-        self.assertIn("cad-ci build fetch", text)
-        self.assertIn("cad-ci build update-main", text)
-        self.assertIn("--main generated-build/main", text)
-        self.assertIn("--scope main", text)
-        self.assertIn("--base \"$BASE_SHA\"", text)
-        self.assertIn("--head \"$SOURCE_SHA\"", text)
-        self.assertIn("--source-ref \"$SOURCE_REF\"", text)
-        self.assertIn("--expected-source \"$SOURCE_SHA\"", text)
-        self.assertIn(f"ref: {MAIN_TOOL_COMMIT}", text)
+        self.assertEqual(main.count("runs-on: ubuntu-latest"), 1)
+        self.assertIn("cancel-in-progress: true", main)
+        self.assertIn("source_sha: ${{ github.sha }}", main)
+        self.assertIn("base_sha: ${{ github.event.before }}", main)
+        self.assertIn("python -m cad_ci_tool build fetch", main)
+        self.assertIn("python -m cad_ci_tool build update-main", main)
+        self.assertIn("--candidate-root build", main)
+        self.assertIn("--main generated-build/main", main)
+        self.assertIn("--out prepared-main", main)
+        self.assertIn("python -m cad_ci_tool publish build", main)
+        self.assertIn("--scope main", main)
+        self.assertIn('--base "$BASE_SHA"', main)
+        self.assertIn('--head "$SOURCE_SHA"', main)
+        self.assertIn("--build-main prepared-main", main)
+        self.assertIn("python site/build.py", main)
+        self.assertIn("python -m cad_ci_tool publish pages", main)
+        self.assertIn('--source-ref "$SOURCE_REF"', main)
+        self.assertIn('--expected-source "$SOURCE_SHA"', main)
+
+        self.assertNotIn("reusable-ci.yml@", main)
+        self.assertNotIn("actions/upload-artifact", main)
+        self.assertNotIn("actions/download-artifact", main)
+        self.assertNotIn("Checkout accepted CAD CI tool", main)
+        self.assertNotIn("actions/setup-python", main)
+        self.assertNotIn("pip install", main)
+        self.assertNotIn("publish_main_build:", text)
+        self.assertNotIn("publish_stable_pages:", text)
+
+        self.assertIn("validate_stable_pages_pr:", text)
+        self.assertIn(f"ref: {TOOL_COMMIT}", text)
 
         self.assertNotIn("cleanup_existing_stale_pr_builds:", text)
         self.assertNotIn("runtime_check:", text)

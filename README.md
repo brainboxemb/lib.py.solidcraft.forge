@@ -84,8 +84,7 @@ examples and model verification all consume that exact dependency artifact.
 A model does not depend on the unit-test or release-verification item. Its only
 Forge package prerequisite is `forge-package`.
 
-The proposed reconciled Verification catalog contains 36 declarative active
-model cases: the final 32-case historical Qualification set plus four restored
+The current Verification catalog contains 36 declarative active model cases: the final 32-case historical Qualification set plus four restored
 historical cases whose replay-safety blocker was later removed. Every full
 model case has four independent reference child items.
 
@@ -122,7 +121,7 @@ examples/*/verification/verify.py
   -> released lib.py.cad.verification
 ```
 
-All 32 historical model-verification cases use declarative `verify.py`
+All 36 current native model-verification cases use declarative `verify.py`
 contracts. Model-specific dimensions, mutations, inspections and expectations
 stay below the owning `examples/<model>/verification/` directory.
 
@@ -170,10 +169,12 @@ generation.
 `build/main` evidence. Current replacement output is published on the
 `gh-pages` branch through the generic CAD-CI publisher.
 
-The public GitHub Pages source is still deliberately pointed at
-`backup/gh-pages-before-f11-2026-11-20` while #558 corrects the remaining
-main/publication workflow overhead. #366 remains the umbrella for the final
-live Pages lifecycle and preview/cleanup work.
+Main verification, durable build publication and stable Pages generation now
+share one runner through externally accepted `tool.cad.ci 0.15.0`; #558
+tracks acceptance of that Forge migration. The public GitHub Pages source is
+still deliberately pointed at
+`backup/gh-pages-before-f11-2026-11-20`. #366 remains the umbrella for the
+explicit live cut-over and later preview/cleanup work.
 
 ## Documentation map
 

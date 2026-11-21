@@ -184,11 +184,52 @@ class SiteSourceTests(unittest.TestCase):
         workflow = (
             ROOT / ".github" / "workflows" / "scpf.yml"
         ).read_text(encoding="utf-8")
-        self.assertIn("publish_stable_pages:", workflow)
         self.assertIn("validate_stable_pages_pr:", workflow)
-        self.assertIn("cad-ci build fetch", workflow)
+        self.assertIn(
+            "brainboxemb/tool.cad.ci@9f37be0af5c4076f676b6407857c5905e11a47d6",
+            workflow,
+        )
+        self.assertIn(
+            "brainboxemb/tool.cad.ci/.github/workflows/reusable-pr.yml@9f37be0af5c4076f676b6407857c5905e11a47d6",
+            workflow,
+        )
+        self.assertNotIn("publish_main_build:", workflow)
+        self.assertNotIn("publish_stable_pages:", workflow)
+        self.assertNotIn("actions/upload-artifact", workflow)
+        self.assertNotIn("actions/download-artifact", workflow)
+
+        main = workflow.split("  cad_ci_main:", 1)[1].split(
+            "  validate_stable_pages_pr:", 1
+        )[0]
+        self.assertEqual(main.count("runs-on: ubuntu-latest"), 1)
+        self.assertIn("cancel-in-progress: true", main)
+        self.assertIn("source_sha: ${{ github.sha }}", main)
+        self.assertIn("base_sha: ${{ github.event.before }}", main)
+        self.assertIn(
+            "python -m cad_ci_tool build fetch",
+            main,
+        )
+        self.assertIn(
+            "python -m cad_ci_tool build update-main",
+            main,
+        )
+        self.assertIn(
+            "python -m cad_ci_tool publish build",
+            main,
+        )
+        self.assertIn("--candidate-root build", main)
+        self.assertIn("--build-main prepared-main", main)
+        self.assertIn("python site/build.py", main)
+        self.assertIn(
+            "python -m cad_ci_tool publish pages",
+            main,
+        )
+        self.assertNotIn("Checkout accepted CAD CI tool", main)
+        self.assertNotIn("actions/setup-python", main)
+        self.assertNotIn("pip install", main)
+        self.assertNotIn(".cad-ci-tool", main)
+
         self.assertIn("cad-ci build resolve", workflow)
-        self.assertIn("cad-ci publish pages", workflow)
         self.assertIn(
             "generated-site/verification/manifest.json",
             workflow,
@@ -196,10 +237,6 @@ class SiteSourceTests(unittest.TestCase):
         self.assertNotIn(
             "generated-site/qualification/manifest.json",
             workflow,
-        )
-        self.assertLess(
-            workflow.index("publish_main_build:"),
-            workflow.index("publish_stable_pages:"),
         )
 
     def test_source_only_site_build_discovers_all_examples(self):
