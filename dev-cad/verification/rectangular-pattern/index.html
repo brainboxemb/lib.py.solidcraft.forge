@@ -51,7 +51,7 @@
     <h2>What this example makes</h2>
     <p>SolidCraft saves one plate with six slot cuts and one native rectangular pattern History feature that references the original Slot cut.</p>
     <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Native rectangular feature pattern expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
-    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/presentation/preview-iso.png" alt="Native rectangular feature pattern native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/presentation/preview-iso.png" alt="Native rectangular feature pattern native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
   </section>
 
   <section class="panel">
@@ -88,7 +88,7 @@ RectangularPattern()
 </code></pre>
     <h3>API used</h3>
     <p><code>source = slot.extrude(-4); body = body - source; body.rectangular_pattern(source, count=columns, spacing=pitch, direction=Axis.X, count2=rows, spacing2=row_pitch, direction2=Axis.Y)</code></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e0274f5422bf196e057f889ead14d2513a85bf30/examples/rectangular-pattern/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/79b3060fddfdf3579d5d46c2e50502e8405e0b1d/examples/rectangular-pattern/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
   </section>
 
   <section class="panel">
@@ -102,7 +102,7 @@ RectangularPattern()
   <div class="qualification-reference-source">
     <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/rectangular-pattern/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e0274f5422bf196e057f889ead14d2513a85bf30/examples/rectangular-pattern/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/79b3060fddfdf3579d5d46c2e50502e8405e0b1d/examples/rectangular-pattern/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for the 3 x 2 rectangular slot pattern.&quot;&quot;&quot;
 
 from pythonscad import *
@@ -404,10 +404,10 @@ model = plate - cutters
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/pythonscad/references/rectangular-pattern/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/pythonscad/references/rectangular-pattern/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/pythonscad/references/rectangular-pattern/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/pythonscad/references/rectangular-pattern/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/pythonscad/references/rectangular-pattern/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/pythonscad/references/rectangular-pattern/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/pythonscad/references/rectangular-pattern/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/pythonscad/references/rectangular-pattern/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/pythonscad/references/rectangular-pattern/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/pythonscad/references/rectangular-pattern/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -415,7 +415,7 @@ model = plate - cutters
   <div class="qualification-reference-source">
     <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/rectangular-pattern/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e0274f5422bf196e057f889ead14d2513a85bf30/examples/rectangular-pattern/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/79b3060fddfdf3579d5d46c2e50502e8405e0b1d/examples/rectangular-pattern/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for the 3 x 2 rectangular slot pattern.&quot;&quot;&quot;
 
 from pybosl2 import cuboid, cyl
@@ -717,10 +717,10 @@ model = plate - cutters
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/pybosl2/references/rectangular-pattern/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/pybosl2/references/rectangular-pattern/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/pybosl2/references/rectangular-pattern/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/pybosl2/references/rectangular-pattern/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/pybosl2/references/rectangular-pattern/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/pybosl2/references/rectangular-pattern/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/pybosl2/references/rectangular-pattern/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/pybosl2/references/rectangular-pattern/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/pybosl2/references/rectangular-pattern/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/pybosl2/references/rectangular-pattern/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -728,7 +728,7 @@ model = plate - cutters
   <div class="qualification-reference-source">
     <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/rectangular-pattern/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e0274f5422bf196e057f889ead14d2513a85bf30/examples/rectangular-pattern/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/79b3060fddfdf3579d5d46c2e50502e8405e0b1d/examples/rectangular-pattern/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;CadQuery geometry reference for the 3 x 2 rectangular slot pattern.&quot;&quot;&quot;
 
 import cadquery as cq
@@ -1029,10 +1029,10 @@ model.add(result, name=&quot;rectangular_pattern&quot;)
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/cadquery/references/rectangular-pattern/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/cadquery/references/rectangular-pattern/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/cadquery/references/rectangular-pattern/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/cadquery/references/rectangular-pattern/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/cadquery/references/rectangular-pattern/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/cadquery/references/rectangular-pattern/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/cadquery/references/rectangular-pattern/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/cadquery/references/rectangular-pattern/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/cadquery/references/rectangular-pattern/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/cadquery/references/rectangular-pattern/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -1040,7 +1040,7 @@ model.add(result, name=&quot;rectangular_pattern&quot;)
   <div class="qualification-reference-source">
     <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/rectangular-pattern/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e0274f5422bf196e057f889ead14d2513a85bf30/examples/rectangular-pattern/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/79b3060fddfdf3579d5d46c2e50502e8405e0b1d/examples/rectangular-pattern/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;build123d geometry reference for the 3 x 2 rectangular slot pattern.&quot;&quot;&quot;
 
 from build123d import (
@@ -1346,10 +1346,10 @@ with BuildPart() as model:
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/build123d/references/rectangular-pattern/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/build123d/references/rectangular-pattern/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/build123d/references/rectangular-pattern/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/build123d/references/rectangular-pattern/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/build123d/references/rectangular-pattern/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/build123d/references/rectangular-pattern/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/build123d/references/rectangular-pattern/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/build123d/references/rectangular-pattern/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/build123d/references/rectangular-pattern/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/build123d/references/rectangular-pattern/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -1369,7 +1369,7 @@ with BuildPart() as model:
     Open the measurement details to inspect body sizes and editable parameters.
   </p>
   <details class="qualification-detail-block"><summary><strong>Original model</strong> · 1 bodies</summary><h4>Editable parameters</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>columns</td><td>3.0</td><td></td><td>3</td></tr><tr><td>pitch</td><td>24.0</td><td>mm</td><td>24</td></tr><tr><td>rows</td><td>2.0</td><td></td><td>2</td></tr><tr><td>row_pitch</td><td>28.0</td><td>mm</td><td>28</td></tr></tbody></table></div><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>RectangularPattern</td><td>[-60.0, -40.0, 0.0]</td><td>[60.0, 40.0, 4.0]</td><td>36281.4159864975</td><td>30</td><td>84</td><td>True</td></tr></tbody></table></div></details>
-  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>columns_2_pitch_30</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/saved_designs/columns_2_pitch_30/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
+  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>columns_2_pitch_30</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/saved_designs/columns_2_pitch_30/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
   &quot;bodies&quot;: [
     {
       &quot;area_mm2&quot;: 20715.3982235979,
@@ -1467,7 +1467,7 @@ with BuildPart() as model:
     {
       &quot;error&quot;: null,
       &quot;id&quot;: 1,
-      &quot;ms&quot;: 2.6313619999999998,
+      &quot;ms&quot;: 1.858043,
       &quot;name&quot;: &quot;Box1&quot;,
       &quot;rolled_back&quot;: false,
       &quot;suppressed&quot;: false,
@@ -1477,7 +1477,7 @@ with BuildPart() as model:
     {
       &quot;error&quot;: null,
       &quot;id&quot;: 2,
-      &quot;ms&quot;: 0.278335,
+      &quot;ms&quot;: 0.273959,
       &quot;name&quot;: &quot;Slot&quot;,
       &quot;rolled_back&quot;: false,
       &quot;suppressed&quot;: false,
@@ -1487,7 +1487,7 @@ with BuildPart() as model:
     {
       &quot;error&quot;: null,
       &quot;id&quot;: 3,
-      &quot;ms&quot;: 16.313803,
+      &quot;ms&quot;: 11.324048999999999,
       &quot;name&quot;: &quot;Slot&quot;,
       &quot;rolled_back&quot;: false,
       &quot;suppressed&quot;: false,
@@ -1497,7 +1497,7 @@ with BuildPart() as model:
     {
       &quot;error&quot;: null,
       &quot;id&quot;: 4,
-      &quot;ms&quot;: 67.974071,
+      &quot;ms&quot;: 47.541488,
       &quot;name&quot;: &quot;RectangularPattern1&quot;,
       &quot;rolled_back&quot;: false,
       &quot;suppressed&quot;: false,
@@ -1524,14 +1524,14 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape not-required</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -1554,26 +1554,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/right/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/right/goal.png" alt="right Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/right/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/right/goal.png" alt="right Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/right/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/right/overlay.png" alt="right Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/right/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/right/overlay.png" alt="right Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -1596,26 +1596,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -1638,20 +1638,20 @@ with BuildPart() as model:
   <p class="meta">Regression not-required · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/top/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/top/actual.png" alt="top Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/top/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/top/actual.png" alt="top Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/top/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/top/goal.png" alt="top Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/top/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/top/goal.png" alt="top Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/top/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/visual/top/overlay.png" alt="top Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/top/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/visual/top/overlay.png" alt="top Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
@@ -2007,14 +2007,14 @@ with BuildPart() as model:
     <p>The six slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.</p>
 
     <h3>Raw test files</h3>
-    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/03088b9f104f52848404a9fc0ac00fda0c0bc250/dev-cad/examples/rectangular-pattern/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac/dev-cad/examples/rectangular-pattern/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
 
     <h3>Reference documentation</h3>
     <ul><li><strong>SolidCraft</strong> — Native integration through geometry checks additionally prove one saved RectangularPatternFeature. The four comparison libraries independently prove the final 3 x 2 slot geometry.</li></ul>
 
     <p class="source-stamp">
-      Site source <code>e0274f5422bf196e057f889ead14d2513a85bf30</code> · accepted model evidence source
-      <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · durable build <code>03088b9f104f52848404a9fc0ac00fda0c0bc250</code>
+      Site source <code>79b3060fddfdf3579d5d46c2e50502e8405e0b1d</code> · accepted model evidence source
+      <code>79b3060fddfdf3579d5d46c2e50502e8405e0b1d</code> · durable build <code>c6ed72c6be04158e3b8bfd8f850dc71d049cb7ac</code>
     </p>
   </div>
 </details>
@@ -2030,7 +2030,7 @@ with BuildPart() as model:
     </p>
     <p>
       <a href="../../examples/rectangular-pattern/">Open the example →</a>
-      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e0274f5422bf196e057f889ead14d2513a85bf30/examples/rectangular-pattern/verification/verify.py">Open verification/verify.py →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/79b3060fddfdf3579d5d46c2e50502e8405e0b1d/examples/rectangular-pattern/verification/verify.py">Open verification/verify.py →</a>
     </p>
   </section>
 </main>
