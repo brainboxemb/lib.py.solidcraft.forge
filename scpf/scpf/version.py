@@ -4,6 +4,8 @@ TESTED_SOLIDCRAFT_VERSION is the single source of truth for the SolidCraft
 version qualified by this Forge revision. Workflows and downstream CAD
 projects must read this value rather than duplicating a version literal.
 """
+from importlib import metadata
+from pathlib import Path
 import re
 import shutil
 import subprocess
@@ -11,6 +13,44 @@ import warnings
 
 TESTED_SOLIDCRAFT_VERSION = "0.42.0"
 _VERSION = re.compile(r"(?<!\d)(\d+)\.(\d+)\.(\d+)(?!\d)")
+_GIT_SHA = re.compile(r"^[0-9a-f]{40}$")
+
+
+def package_version():
+    """Return the running SCPF distribution version."""
+
+    try:
+        return metadata.version("scpf")
+    except metadata.PackageNotFoundError:
+        return "unknown"
+
+
+def forge_revision():
+    """Return the exact checkout revision when running from a Git checkout."""
+
+    package_dir = Path(__file__).resolve().parent
+    checkout = next(
+        (
+            path
+            for path in (package_dir, *package_dir.parents)
+            if (path / ".git").exists()
+        ),
+        None,
+    )
+    if checkout is None:
+        return None
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(checkout), "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=2,
+        )
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        return None
+    revision = result.stdout.strip().lower()
+    return revision if _GIT_SHA.fullmatch(revision) else None
 
 
 def parse_version(raw):
