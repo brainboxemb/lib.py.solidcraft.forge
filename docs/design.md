@@ -533,7 +533,9 @@ Each migrated view stores a model-local JSON payload containing:
 
 - `encoding: zlib`;
 - normalized width/height 96 x 72;
-- the exact historical compressed/base64 pixel payload;
+- the exact historical decoded compressed/image payload bytes;
+- the historical base64 text when canonical, or a provenance-recorded
+  canonicalization when legacy padding is invalid;
 - approval/source provenance.
 
 The Forge visual adapter asks released `decode_baseline()` to materialize the
@@ -558,8 +560,11 @@ The default required views are front/right/iso. Model-local policy preserves the
 historical overrides for cases whose internal geometry is best exposed by top,
 front or right views.
 
-Historical approved encoded baseline payloads are migrated byte-for-byte into
-the owning model directory. There is no restored central baseline registry.
+Historical approved encoded baseline payloads preserve the decoded compressed
+or image bytes exactly in the owning model directory. Canonical base64 text is
+kept unchanged; invalid legacy padding may be normalized only when that
+normalization is recorded in model-local provenance. There is no restored
+central baseline registry.
 
 The visual stage remains inside the existing model-verification item. Expanding
 the catalog must not add a second CAD-CI item or duplicate generic image
