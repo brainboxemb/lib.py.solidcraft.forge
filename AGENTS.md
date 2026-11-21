@@ -228,8 +228,10 @@ The two dev lanes are independent execution tracks. Continue unrelated work in
 the other lane while one lane validates or publishes; a running workflow is a
 gate only for work that depends on its result. Repository-wide governance that
 applies equally to both lanes may use a short-lived direct-to-`main` branch
-and is still squash-merged. Only temporary `promote/dev-cad` /
-`promote/dev-ci` PRs use normal merge commits.
+and is still squash-merged. Every PR to stable `main`, including temporary
+`promote/dev-cad` / `promote/dev-ci` promotion PRs, is squash-merged.
+Synchronize the resulting main commit back into the dev lanes; any normal merge
+commit needed for that synchronization stays in dev history.
 
 Durable accepted output lives on generated `build`:
 
@@ -268,8 +270,8 @@ dev-ci  -> promote/dev-ci  -> PR to main
 ```
 
 The temporary promotion branch is created at the current dev-lane head. The PR
-runs complete validation and is merged with a normal merge commit, never
-squash. GitHub may auto-delete the temporary promotion branch after merge; the
+runs complete validation and is squash-merged so stable `main` receives one
+logical promotion commit rather than the dev-lane commit graph. GitHub may auto-delete the temporary promotion branch after merge; the
 long-lived dev lane remains intact. Then fast-forward/synchronize both dev
 lanes to the resulting main head.
 
