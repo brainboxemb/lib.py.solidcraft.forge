@@ -24,7 +24,7 @@ from example_metadata import discover_example_metadata, section_presentation
 from example_documentation import discover_example_documentation
 from cheatsheet_content import load_cheatsheet
 from build_evidence import IMPLEMENTATIONS, load_stable_build_evidence
-from qualification_view import diagram_views, qualification_case_view
+from qualification_view import qualification_case_view
 from verification_special import coverage_content, legacy_redirect, results_content
 from html_writer import (
     CAD_SITE,
@@ -43,9 +43,12 @@ from html_writer import (
     reference_method_content,
     reference_notes,
     qualification_card,
+    qualification_case_preview,
     qualification_current_evidence,
     qualification_reference_comparison,
-    qualification_diagrams,
+    qualification_setup_diagram,
+    qualification_setup_svg,
+    qualification_status_line,
     reference_shell,
     render_template,
 )
@@ -662,14 +665,41 @@ def build(
             )
             for implementation in IMPLEMENTATIONS
         }
-        current_evidence = (
-            qualification_current_evidence(
-                stable_view_by_slug[slug],
+        if stable is not None:
+            stable_view = stable_view_by_slug[slug]
+            setup_svg = qualification_setup_svg(stable_view, info.title)
+            if setup_svg:
+                (case_dir / "setup.svg").write_text(
+                    setup_svg,
+                    encoding="utf-8",
+                )
+                setup_diagram = qualification_setup_diagram(info.title)
+            else:
+                setup_diagram = ""
+            case_preview = qualification_case_preview(
+                stable_view,
                 info.title,
             )
-            if stable is not None
-            else render_template("qualification-evidence-unavailable.html")
-        )
+            status_line = qualification_status_line(stable_view)
+            current_evidence = qualification_current_evidence(
+                stable_view,
+                info.title,
+                forge_model=documentation.forge_model,
+                saved_design_test=documentation.saved_design_test,
+                bounds_sufficient=(
+                    "yes" if documentation.bounds_sufficient else "no"
+                ),
+                geometry_reason=documentation.geometry_reason,
+                reference_notes=reference_notes_html,
+            )
+        else:
+            setup_diagram = ""
+            case_preview = ""
+            status_line = ""
+            current_evidence = render_template(
+                "qualification-evidence-unavailable.html"
+            )
+
         reference_comparison = qualification_reference_comparison(
             reference_sources,
             reference_source_urls,
@@ -683,21 +713,21 @@ def build(
             "qualification-case.html",
             slug=escape(slug),
             title=escape(info.title),
-            section=escape(section_label),
-            documentation_goal=escape(documentation.goal),
-            forge_api=escape(documentation.forge_api),
-            forge_model=escape(documentation.forge_model),
-            lowering=escape(documentation.lowering),
+            status_line=status_line,
             solidcraft_result=escape(documentation.solidcraft_result),
-            saved_design_test=escape(documentation.saved_design_test),
-            bounds_sufficient=escape(
-                "yes" if documentation.bounds_sufficient else "no"
-            ),
-            geometry_reason=escape(documentation.geometry_reason),
-            reference_notes=reference_notes_html,
+            setup_diagram=setup_diagram,
+            case_preview=case_preview,
+            forge_api=escape(documentation.forge_api),
+            lowering=escape(documentation.lowering),
             verification_url=escape(verification_url),
-            forge_source=escape((ROOT / "examples" / slug / "scpf" / "model.py").read_text(encoding="utf-8")),
-            forge_source_url=escape(f"{LIBRARY_URL}/blob/{sha}/examples/{slug}/scpf/model.py"),
+            forge_source=escape(
+                (
+                    ROOT / "examples" / slug / "scpf" / "model.py"
+                ).read_text(encoding="utf-8")
+            ),
+            forge_source_url=escape(
+                f"{LIBRARY_URL}/blob/{sha}/examples/{slug}/scpf/model.py"
+            ),
             current_evidence=current_evidence,
             reference_comparison=reference_comparison,
         )
@@ -737,12 +767,10 @@ def build(
             "qualification-evidence-note.html",
             build_commit=escape(stable.build_commit),
         )
-        diagrams = qualification_diagrams(diagram_views(stable))
     else:
         evidence_note = render_template(
             "qualification-evidence-unavailable.html"
         )
-        diagrams = ""
 
     # Restore standalone Verification knowledge pages that existed on the
     # pre-cut-over site, now sourced from current declarations/evidence.
@@ -873,7 +901,6 @@ def build(
         example_count=len(example_rows),
         groups=verification_groups,
         evidence_note=evidence_note,
-        diagrams=diagrams,
     )
     (verification_root / "index.html").write_text(
         page(
