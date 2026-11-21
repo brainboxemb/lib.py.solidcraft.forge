@@ -479,6 +479,24 @@ Forge must not add a second Git-diff selector or cache/fingerprint mechanism.
 The exact released CAD-CI planner owns affected-item selection.
 
 
+## Native parametric Slot width
+
+Forge's five native `Slot*2D` profiles preserve SolidCraft Slot semantics.
+
+Requirements:
+
+- `width` accepts a fixed positive number, `Parameter` or `Expression`;
+- Forge validates the current evaluated width as positive and finite but retains
+  the symbolic value for native lowering;
+- native `sketch.slot.*` commands receive the expression through the normal
+  `command_value()` path so SolidCraft owns the driving dimension;
+- all five native Slot variants use the same width contract;
+- Slot authoring-point coordinates remain fixed sketch-local numbers until
+  expression-valued Slot point coordinates or a dimension/constraint lowering
+  path is separately qualified against the native runtime;
+- Forge must not replace a parametric native Slot with rounded-rectangle or
+  other approximated geometry.
+
 ## Visual model verification
 
 Forge visual verification separates model/engine policy from generic image

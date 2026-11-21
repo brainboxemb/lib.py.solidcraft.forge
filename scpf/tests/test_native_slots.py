@@ -6,6 +6,7 @@ from scpf import (
     Box,
     CENTER,
     Depth,
+    Parameter,
     Sketch,
     SlotArcCenter2D,
     SlotArcThreePoint2D,
@@ -38,13 +39,14 @@ class NativeSlotFamilyTests(unittest.TestCase):
                 "sketch.slot.arc_center",
             ],
         )
-        self.assertTrue(all(command["params"]["width"] == 8.0
-                            for command in slot_commands))
+        self.assertTrue(
+            all(command["params"]["width"] == "slot_width"
+                for command in slot_commands)
+        )
         self.assertEqual(slot_commands[-1]["params"]["sweep"], 120)
 
-        # The parent Box dimensions are editable Parameters. Fixed Slot-local
-        # coordinates must remain numeric instead of inheriting symbolic
-        # width/depth expressions from the attached Sketch target.
+        # Plate and Slot width are editable Parameters. Slot-local authored
+        # coordinates remain fixed numeric values in this qualification slice.
         point_keys = ("p0", "p1", "center", "end", "start", "through")
         for command in slot_commands:
             for key in point_keys:
@@ -102,30 +104,30 @@ class NativeSlotFamilyTests(unittest.TestCase):
         self.assertNotIn("distance", extrude["params"])
 
     @staticmethod
-    def _slot_cases():
+    def _slot_cases(width=6):
         return (
             (
                 "sketch.slot.center_to_center",
-                lambda: SlotCenterToCenter2D((1, 2), (21, 2), 6),
+                lambda: SlotCenterToCenter2D((1, 2), (21, 2), width),
             ),
             (
                 "sketch.slot.overall",
-                lambda: SlotOverall2D((-15, 4), (15, 4), 6),
+                lambda: SlotOverall2D((-15, 4), (15, 4), width),
             ),
             (
                 "sketch.slot.center_point",
-                lambda: SlotCenterPoint2D((0, -6), (10, -6), 6),
+                lambda: SlotCenterPoint2D((0, -6), (10, -6), width),
             ),
             (
                 "sketch.slot.arc_three_point",
                 lambda: SlotArcThreePoint2D(
-                    (-15, 0), (0, 10), (15, 0), 6
+                    (-15, 0), (0, 10), (15, 0), width
                 ),
             ),
             (
                 "sketch.slot.arc_center",
                 lambda: SlotArcCenter2D(
-                    (0, 0), (12, 0), 6, sweep=120
+                    (0, 0), (12, 0), width, sweep=120
                 ),
             ),
         )
@@ -176,10 +178,24 @@ class NativeSlotFamilyTests(unittest.TestCase):
                         profile = factory()
                         sketch.add(profile, anchor=CENTER)
 
-    def test_symbolic_width_is_rejected_by_direct_native_slot_creator(self):
-        from scpf import Parameter, SlotCenterToCenter2D
-        with self.assertRaisesRegex(TypeError, "sketch.draw.dimensioned"):
-            SlotCenterToCenter2D((0, 0), (20, 0), Parameter("width", 8))
+    def test_symbolic_width_lowers_on_all_native_slot_creators(self):
+        width = Parameter("slot_width", 8)
+        for command_name, factory in self._slot_cases(width):
+            with self.subTest(command=command_name):
+                command = self._compile_slot(
+                    command_name,
+                    factory,
+                    explicit_add=False,
+                )
+                self.assertEqual(command["params"]["width"], "slot_width")
+
+    def test_symbolic_width_still_validates_current_value(self):
+        with self.assertRaisesRegex(ValueError, "positive finite"):
+            SlotCenterToCenter2D(
+                (0, 0),
+                (20, 0),
+                Parameter("slot_width", 0),
+            )
 
     def test_arc_center_requires_one_end_definition(self):
         from scpf import SlotArcCenter2D

@@ -663,6 +663,24 @@ the catalog must not add a second CAD-CI item or duplicate generic image
 mechanics.
 
 
+## Native Slot parameter lowering
+
+`core._slot_width()` validates a Slot width by evaluating it with `_pv()`
+for positivity/finite checks, then returns the original number/Parameter/
+Expression unchanged.
+
+`features._emit_explicit_sketch()` already routes every Slot width through
+`command_value()`. Therefore a symbolic SCPF width lowers directly to the
+native `sketch.slot.center_to_center`, `slot.overall`,
+`slot.center_point`, `slot.arc_three_point` or `slot.arc_center` width
+field without introducing a second authoring representation.
+
+The authoring-point helper remains intentionally stricter. Point coordinates
+are still fixed numeric sketch-local coordinates in this slice. Parametric Slot
+length/position must be qualified separately through native point expressions,
+`sketch.dimension` or `sketch.draw.dimensioned`; Forge must not infer that
+contract from unrelated sketch primitives.
+
 ## F10 diagram evidence flow
 
 F10 is one independent CAD-CI item discovered through the existing `ci/*`
