@@ -1,0 +1,8 @@
+schema: 1
+role: verification-candidate
+decision: restore-verification
+owner: "#559"
+reason: >
+  Former Qualification case removed when symbolic occurrence.move required a
+  predicted SolidCraft occurrence name. Current replay variables remove that
+  blocker; full native Verification must be reinstated or explicitly superseded.

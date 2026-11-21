@@ -6,6 +6,8 @@ watch:
   - site/**
   - examples/*/model.yml
   - examples/*/README.md
+  - examples/*/role.yml
+  - examples/README.md
 strategy:
   reuse: true
 steps:
@@ -18,6 +20,8 @@ steps:
       - site/**
       - examples/*/model.yml
       - examples/*/README.md
+      - examples/*/role.yml
+      - examples/README.md
       - examples/*/verification/verify.py
       - examples/*/scpf/model.py
     run: [python, ../../site/test_example_metadata.py]

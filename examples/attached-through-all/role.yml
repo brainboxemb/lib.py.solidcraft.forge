@@ -1,0 +1,8 @@
+schema: 1
+role: regression-fixture
+decision: keep
+owner: scpf/tests/test_sketch_attachment.py
+reason: >
+  Minimal reproduction for attached THROUGH_ALL cut direction from #249. The
+  current unit suite owns the TOP/BOTTOM direction contract; this directory is
+  retained as a focused source fixture rather than a full Verification case.

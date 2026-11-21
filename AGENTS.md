@@ -25,13 +25,15 @@ The active CI structure is defined by:
 - `scripts/tool_ci.py`
 - `scripts/tool_verify.py`
 - `scripts/forge_example.py`
-- `scripts/model_verify.py`
+- `scripts/model_verification_batch.py`
+- `scripts/model_verify_declarative.py`
 
 The generic planner/executor is `tool.cad.ci`.
 
-During staged model verification, Forge may declare item-level `process` state in
-`examples/<model>/ci.yml`. Forge does not interpret that field; released
-`tool.cad.ci` / `lib.py.cad.ci` own its selection and execution semantics.
+Forge model items declare item-level `process` state in
+`examples/<model>/ci.yml`. All 32 historical model-verification items are now
+active. Forge does not interpret `process`; released `tool.cad.ci` /
+`lib.py.cad.ci` own its selection and execution semantics.
 
 ## Current verification steps
 
@@ -66,15 +68,15 @@ Migrated model items use `model_verify`. That step compiles the model with the
 exact built Forge wheel, produces the initial native SolidCraft model and then
 delegates verification to released `lib.py.cad.verfication`.
 
-A declaratively migrated model keeps only model-specific verification data in
+A model keeps only model-specific verification data in
 `verification/verify.py`; it does not own a procedural verification CLI.
-During staged migration it uses `scripts/model_verify_declarative.py`; older
-models retain `scripts/model_verify.py` until their own migration change.
+All 32 historical model items use the declarative verification path, have
+native `model_verify` coverage and own model-local independent-reference
+geometry contracts. The shared reference path runs PythonSCAD, pyBOSL2,
+CadQuery and build123d for the complete catalog.
 
-All 32 historical model items have native `model_verify` coverage and
-model-local independent-reference geometry contracts. The shared reference item
-runs PythonSCAD, pyBOSL2, CadQuery and build123d for the complete catalog.
-Issue #378 continues with visual, diagram and summary verification.
+The catalog lineage and the additional non-catalog fixtures below `examples/`
+are documented in `docs/background/example-history.md`.
 
 ## Model ownership
 
@@ -92,9 +94,10 @@ examples/<model>/
     <model-specific command/data files>
 ```
 
-Older models may temporarily retain `verification/verify_model.py` until their
-individual migration PR. Do not add new shared verification mechanics to those
-files.
+All current historical model-verification cases use
+`verification/verify.py`. Do not add new procedural per-model verification
+CLIs; reusable verification mechanics belong in the released verification
+library.
 
 Presentation metadata in `model.yml` uses only:
 
@@ -118,6 +121,12 @@ Exact verification values remain in `verification/verify.py`; actual current
 results come from durable `build/main`. Do not add a central Python example
 page catalog.
 
+A top-level directory below `examples/` that is not a complete model
+Verification case must own a local `role.yml` explaining its current fixture
+role, owner and keep/promote/retire decision. `ci/site-source` enforces this
+without running CAD. Do not replace these distributed role declarations with a
+central hand-authored membership list.
+
 Native-model expectations and mutation definitions live as model-specific data
 in the model verification definition.
 Example-owned command-contract tests remain under `examples/<example>/tests/`
@@ -132,8 +141,8 @@ Forge is a consumer only. Root `cad-ci.yml` selects the immutable released
 runtime role images:
 
 ```text
-FORGE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-solidcraft:v0.2.0
-REFERENCE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-reference:v0.2.0
+FORGE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-solidcraft:v0.3.2
+REFERENCE_RUNTIME_IMAGE=ghcr.io/brainboxemb/cad-reference:v0.3.2
 ```
 
 Normal SolidCraft model/visual verification uses only

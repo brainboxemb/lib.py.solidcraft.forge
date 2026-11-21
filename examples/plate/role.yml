@@ -1,0 +1,8 @@
+schema: 1
+role: legacy-sample
+decision: retire-or-modernize
+owner: "#559"
+reason: >
+  Pre-Qualification sample from #7. It has no current CI or Verification owner
+  and its README refers to comparison sources that no longer exist. Keep only
+  until #559 makes the explicit retire/modernize decision.

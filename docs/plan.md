@@ -8,134 +8,138 @@ documents in `docs/`. Issues keep detail and history.
 
 ## Current status
 
-The 32-case verification catalog and its documentation sources are current,
-declarative and durable.
+The historical 32-case model-verification catalog is declarative, active and
+durable.
 
-- #548 and #554 are complete on current main;
-- current main and the corresponding durable `build/main` update are green;
-- `build/main` contains 32/32 model verification items, 128/128 reference
-  child results and all 6 current CADCraft SVG diagrams;
-- #548 is complete: all verified examples own preserved human engineering
-  documentation in local `README.md` files, while `model.yml` remains the
-  agreed generic presentation schema, now including local presentation `priority`;
-- the historical case text and geometry-sufficiency rationale were migrated
-  verbatim and audited 32/32 with zero mismatches;
-- site layout, guide prose and browser scripts are no longer embedded as
-  complete pages in `site/build.py`.
-- remaining hand-authored site content/configuration, including cheatsheet content
-  and verification section labels/priority, must live under `site/content/` rather
-  than as Python literals.
+- all 32 model items declare `process: true`;
+- all 32 use model-local declarative `verification/verify.py`;
+- all 32 have four independent reference child items (128 total);
+- current durable `build/main` contains all 32 model scopes and all 128
+  reference scopes;
+- the current model batch manifest reports `compile_error: null` for all 32;
+- the six current CADCraft diagrams are durable;
+- per-example engineering documentation is local to each verified example
+  README and presentation metadata remains local to `model.yml`.
 
-The live public Pages site has been deliberately switched back to the preserved
-pre-cut-over baseline after the failed #556 cut-over. The snapshot remains on
-`backup/gh-pages-before-f11-2026-11-20`.
+#497 is complete. PR #557 merged as
+`f8bf0b01228b23407d9ab67462cc2afd44fe83be`; the corresponding main run
+successfully updated durable `build/main` and published replacement output to
+the `gh-pages` branch.
 
-Do not publish the replacement site again until #497 content-parity, terminology,
-grouping/source-comparison and stable-generation checks are green and the
-replacement has been reviewed.
+The public GitHub Pages source is still deliberately pointed at the preserved
+pre-cut-over backup branch
+`backup/gh-pages-before-f11-2026-11-20`. The new `gh-pages` output exists,
+but no live cut-over is performed while the remaining main/publication workflow
+architecture is being corrected.
 
-The #557 replacement renderer restores the content-parity regressions found
-after #556:
+The example-history audit found that `examples/` contains more than the
+current 32 verified model cases. The complete lineage is recorded in
+`docs/background/example-history.md`.
 
-- complete Forge source is visible inline on every Verification case page;
-- PythonSCAD, pyBOSL2, CadQuery and build123d source is visible inline beside
-  each current reference result/preview;
-- public routing/navigation/labels use Verification;
-- the catalog is grouped into the preserved six functional sections;
-- section and example learning order is declarative through local priorities;
-- section labels/descriptions and cheatsheet content live under `site/content/`,
-  not as hand-authored Python presentation constants.
+Important findings:
 
-PR #557 has passed both the selected site-source CAD-CI graph and complete
-stable-site generation against resolved durable `build/main` evidence. The live
-site remains deliberately on the preserved backup until the replacement is
-reviewed and deliberately republished.
+- four former Qualification cases
+  (`as-built-attach`, `parametric-move`,
+  `parametric-placement-pair`, `rotated-copy-placement`) were removed for a
+  replay-safety limitation that has since been technically resolved, but those
+  cases were never explicitly reconsidered for full Verification;
+- `custom-anchor` remains an intentional expected-rejection release fixture
+  and is still limited by open #81;
+- `model_authoring` was requested as a qualification fixture in #213 but was
+  never carried into the current model-verification catalog;
+- `attached-through-all` is a focused regression fixture rather than a
+  historical catalog case;
+- `plate` is a pre-Qualification sample with stale documentation and no
+  current verification owner.
 
-The current durable evidence is complete for machine verification but not yet
-for visual content parity:
-
-- native visual-verification PNG evidence exists for 5/32 examples;
-- the other 27 examples have no current visual-verification policy; #497 adds
-  current presentation previews without treating those previews as visual PASS;
-- all 128 independent references have current STL + structured verification
-  evidence;
-- none of those 128 reference outputs currently has a durable rendered image.
+Current primary documentation has been corrected so it no longer presents the
+old five-model staged proof as the current state.
 
 ## Current goal
 
-Complete #497: generate and publish stable Pages from current Forge source plus
-the authoritative generic `build/main` baseline without reducing the useful
-engineering information on the preserved public site.
+Complete #559: reconcile every `examples/` directory with an explicit current
+role, using the recorded history rather than assuming the 32-case catalog is the
+complete meaning of `examples/`.
 
-## Required proof for #497
+This audit must not silently expand or shrink the Verification catalog.
 
-- stable site generation reads accepted evidence from
-  `build/main/examples/<slug>/` and the corresponding reference child item
-  paths, not from retired `qualification/**` output or batch producer paths;
-- per-item `source_commit` provenance is preserved; a sparse durable baseline
-  is not misrepresented as one uniform model source commit;
-- root `provenance.json` records the site source commit and the immutable
-  build-branch commit used for generation;
-- all 32 verified examples are present;
-- the public site uses `Verification` terminology and URL/navigation labels;
-  retired `Qualification` terminology is not presented as the current public
-  concept;
-- every verification model page shows the complete Forge model source inline
-  and shows each available PythonSCAD, pyBOSL2, CadQuery and build123d
-  reference source inline beside its current result/preview;
-- the verification index is grouped by each example's existing `model.yml.section`
-  value; the generator must not replace that distributed metadata with a new
-  central hand-authored grouping registry;
-- preserved README engineering statements remain verbatim source material and
-  are never reconstructed from machine evidence;
-- current status, parameters, measurements, geometry checks, saved-design
-  results, reference checks and raw evidence links come from durable evidence;
-- the six current CADCraft diagrams are consumed from durable build output;
-- old-vs-new content inventory covers every public information category before
-  cut-over;
-- missing native/reference visual presentation is resolved from current durable
-  CAD evidence before cut-over; historical images must not be presented as
-  current evidence;
-- presentation-only source changes reuse accepted technical evidence and do not
-  rerun model/reference verification merely to rebuild Pages;
-- the complete site is published through released `cad-ci publish pages`;
-- no PR Pages preview/cleanup behavior is added in #497; a PR-only complete
-  site-generation validation is allowed and does not publish `gh-pages`;
-- normal incremental Forge CI and durable build publication remain green after
-  merge.
+## Required proof for #559
+
+The history model and structural role guard are complete in #560. A non-model
+example directory now requires local `role.yml`, validated by the source-only
+site CI item.
+
+The remaining #559 work is to execute the recorded decisions. For every
+top-level directory below `examples/`:
+
+- establish its historical origin and current purpose;
+- identify its current executing owner (model verification, Forge release
+  verification, unit/regression test, maintained documentation sample, or
+  none);
+- for former Qualification cases, record why they left the catalog and whether
+  the original blocker still exists;
+- make an explicit keep/promote/retire decision;
+- do not infer current validity from directory age, branch existence or
+  `model.yml` presence alone;
+- add a structural guard so future example directories cannot silently exist
+  outside every declared role;
+- keep full model Verification membership distributed through per-example
+  configuration rather than recreating a central executable case registry.
+
+The history document itself is descriptive evidence, not an execution catalog.
+
+## Next publication work
+
+After #559 is resolved, continue #558 and #366.
+
+#558 owns the Forge use-case for the corrected main workflow:
+
+- one high-level main workflow and one hosted runner;
+- one exact CAD-CI bootstrap;
+- no CAD execution when selection contains no CAD work;
+- no artifact handoff to a second runner for durable-main publication;
+- Pages generation/publication follows on the same runner when required;
+- documentation/site-only changes reuse authoritative `build/main`;
+- the site generator remains Forge-owned while generated-branch safety stays
+  generic CAD-CI behavior.
+
+Any missing generic behavior must be implemented/released through the normal
+`lib.py.cad.ci -> tool.cad.ci -> tool.cad.ci.test -> Forge` chain rather than
+as a Forge workaround.
+
+#366 remains the umbrella for the final durable-build/Pages lifecycle,
+including the remaining live cut-over and later preview/cleanup behavior.
 
 ## Execution order
 
-1. Freeze the old-vs-new content/source inventory and durable evidence mapping.
-2. [complete in #557] Restore the source-comparison contract, Verification
-   terminology and grouped/priority-driven catalog presentation.
-3. [complete in #556] Keep verification truth separate from deterministic
-   presentation preview derivation.
-4. [complete in #556] Implement a Forge-owned durable-evidence loader for canonical
-   `build/main/examples/<slug>/` item outputs and per-item provenance.
-5. [complete in #556/#557] Render current model/reference/status/measurement/
-   saved-design/diagram data through external templates.
-6. [complete in #556] Produce deterministic current native/reference
-   presentation previews from accepted durable CAD artifacts.
-7. [complete in #557] Add regression tests for source visibility, Verification
-   terminology, grouping, priorities and configuration separation.
-8. [complete in PR #557 CI] Generate the complete stable site from PR source
-   plus resolved durable build evidence.
-9. Review the generated replacement against the preserved production baseline;
-   only then republish the stable root through released `cad-ci publish pages`.
-10. Continue #366 for final generic Pages preview/cleanup lifecycle work after
-    stable publication is intentionally restored.
+1. [complete in #560] Freeze the complete example-history model.
+2. [complete in #560] Give every non-catalog directory an explicit local role.
+3. [complete in #560] Add the source-only structural role guard and correct
+   stale primary architecture documentation.
+4. [#559] Restore the five recorded Verification candidates or explicitly
+   supersede them with equivalent current coverage; retire/modernize the legacy
+   sample and remove redundant unowned fixture tests.
+5. Close #559 only when no `verification-candidate` or unresolved
+   `legacy-sample` role remains.
+6. [#558] Implement any required generic single-runner main/publication support
+   in the owning CAD-CI repositories and release/accept it.
+7. [#558] Migrate Forge main publication to that released workflow without
+   duplicate runner/bootstrap/artifact phases.
+8. [#366] Re-enable the intended live Pages source only after the corrected
+   main/publication path is green.
+9. [#366] Complete remaining preview/cleanup lifecycle work.
 
-## Open issue assessment — 2026-11-20
+## Open issue assessment — 2026-11-21
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #497 Publish stable Pages from the generic build/main baseline | now | #548 and the 32-case durable baseline are complete; stable Pages is the active migration. Visual parity is the remaining evidence gap before cut-over. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Durable build storage is active; final generic Pages preview/cleanup lifecycle follows #497 stable publication. |
-| #391 Extract reusable CAD verification library from Forge | effectively complete but still open | Generic verification ownership and consumer migration are complete; cleanup/close separately. |
-| #481 Remove stale Forge development branches | blocked | Current connected tooling cannot safely delete stale refs. |
-| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by v0.3.2 runtime batching and measured #484 work. |
-| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded qualification architecture. |
+| #559 Reconcile Forge example history, verification catalog and orphaned fixtures | now | History audit found four formerly-qualified cases whose replay blocker is gone, one unfinished model-authoring lineage, one focused regression fixture, one intentional blocked release fixture and one stale sample. |
+| #558 Run main verification and Pages publication as one selective workflow | next / generic dependency | Current main/Pages path still pays duplicate runner/bootstrap/artifact overhead. Must use the same selective/single-runner architecture as the accepted PR direction; missing generic support belongs upstream first. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked by #558 | Durable build and gh-pages publication exist; final live source cut-over and preview/cleanup lifecycle wait for the corrected main workflow. |
+| #391 Extract reusable CAD verification library from Forge | effectively complete but still open | Generic verification ownership and consumer migration are complete; remaining cleanup/closure should be reviewed separately. |
+| #481 Remove stale Forge development branches | later | Many issue branches belong to closed issues. Branch refs are cleanup debt, not active-work truth. |
+| #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by v0.3.2 runtime batching and #484 measurements. |
+| #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to superseded Qualification architecture. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
 | #356 Improve CLI errors: show concise model errors instead of raw Python tracebacks | later | Independent CLI quality work. |
 | #355 Support current SolidCraft parametric Slot API in Forge | later | Independent product/API work. |
@@ -146,11 +150,11 @@ engineering information on the preserved public site.
 | #325 Research: determine root cause of HUB75 AnchorFrame regression | later | Independent model/API investigation. |
 | #175 Change 0005: qualify HUB75-like AnchorFrame orientation against known-good Placement poses | later | Domain verification backlog. |
 | #82 Reconsider automatic hiding of the SolidCraft Joints folder | later | Independent product behavior. |
-| #81 Support inline AnchorFrame references for rotated occurrences | later | Forge API backlog. |
+| #81 Support inline AnchorFrame references for rotated occurrences | later / blocks custom-anchor | The current `custom-anchor` release fixture intentionally proves this unsupported case rejects clearly. |
 | #9 SCPF: first-class Sketch objects, constraints and face workplanes | later | Major Forge feature backlog. |
 | #8 Add generic hollow primitives: Tube, RectTube and OvalTube | later | Major Forge feature backlog. |
 | #5 SCPF: generic anchors and parametric constraints for native SolidCraft | later | Major Forge feature backlog. |
 
 Immediate chain:
 
-`#497 stable Pages -> #366 final Pages lifecycle`.
+`#559 example reconciliation -> #558 single-runner main/Pages -> #366 final live Pages lifecycle`.

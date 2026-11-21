@@ -1,0 +1,8 @@
+schema: 1
+role: verification-candidate
+decision: restore-verification
+owner: "#559"
+reason: >
+  Former Qualification case removed with the replay-unsafe Placement path.
+  Current replay-bound occurrence IDs support the original symmetric symbolic
+  Placement contract; full native Verification must be reinstated.
