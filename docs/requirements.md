@@ -268,7 +268,16 @@ Normal pull requests are verification-only.
 
 Requirements:
 
-- a pull-request job performs changed-path-selected CAD-CI execution;
+- a pull-request job keeps one stable required-check identity;
+- before bootstrapping CAD-CI, a normal PR into `dev-cad` or `dev-ci` may
+  cheaply classify the changed filenames;
+- if every changed path is below `docs/`, that same required check may finish
+  successfully without checking out/installing the CAD-CI tool stack, logging
+  in to GHCR or running any site/CAD target;
+- any non-`docs/` path must use the normal changed-path-selected CAD-CI
+  execution;
+- promotion PRs targeting `main` must never use the docs-only shortcut and
+  still require complete validation even when their diff is documentation-only;
 - a pull request must not publish `build/pr/*`, Pages previews or any other
   durable generated state;
 - pull requests do not require `contents: write`;
