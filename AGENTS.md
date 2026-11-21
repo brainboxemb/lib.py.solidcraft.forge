@@ -224,6 +224,13 @@ implement a Forge-local planner, build store or generated-branch mutator.
 Short-lived work branches target one dev lane and are squash-merged. Their PRs
 are verification-only and must not publish durable PR build/Page state.
 
+The two dev lanes are independent execution tracks. Continue unrelated work in
+the other lane while one lane validates or publishes; a running workflow is a
+gate only for work that depends on its result. Repository-wide governance that
+applies equally to both lanes may use a short-lived direct-to-`main` branch
+and is still squash-merged. Only temporary `promote/dev-cad` /
+`promote/dev-ci` PRs use normal merge commits.
+
 Durable accepted output lives on generated `build`:
 
 ```text
