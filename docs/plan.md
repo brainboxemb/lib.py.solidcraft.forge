@@ -48,9 +48,9 @@ Implement #572 in Forge now:
 
 1. adopt exact accepted `tool.cad.ci 0.16.1`;
 2. make pull requests verification-only, with no durable PR build/Pages write;
-3. make pushes to `main`, `dev_cad` and `dev_ci` publish only their own
+3. make pushes to `main`, `dev-cad` and `dev-ci` publish only their own
    complete build scope;
-4. publish dev Pages below `/dev_cad/` and `/dev_ci/`, while stable main
+4. publish dev Pages below `/dev-cad/` and `/dev-ci/`, while stable main
    preserves both subtrees;
 5. create both long-lived dev branches only after that workflow is merged;
 6. bootstrap and prove both lanes;
@@ -66,21 +66,21 @@ Forge should use three long-lived source branches:
 
 ```text
 main
-dev_cad
-dev_ci
+dev-cad
+dev-ci
 ```
 
 Their responsibilities are:
 
 - `main` — stable/production integration only. A merge to `main` may update
   the durable main build and the stable Pages root.
-- `dev_cad` — integration lane for Forge API, compiler, model, verification
+- `dev-cad` — integration lane for Forge API, compiler, model, verification
   data and other CAD/product work.
-- `dev_ci` — integration lane for Forge-side CI/infrastructure integration.
+- `dev-ci` — integration lane for Forge-side CI/infrastructure integration.
 
-`dev_ci` does not change repository ownership boundaries. Generic CAD-CI
+`dev-ci` does not change repository ownership boundaries. Generic CAD-CI
 functionality still belongs in `lib.py.cad.ci` and `tool.cad.ci`, is tested
-and released there, and is then consumed/qualified through Forge's `dev_ci`
+and released there, and is then consumed/qualified through Forge's `dev-ci`
 lane.
 
 ### Pull-request rule
@@ -94,7 +94,7 @@ Target model:
 
 ```text
 feature/fix branch
-  -> PR to dev_cad or dev_ci
+  -> PR to dev-cad or dev-ci
   -> changed-path-selected verification
   -> no durable build/pr/<number>
   -> no durable Pages PR scope
@@ -110,16 +110,16 @@ Forge scopes:
 
 ```text
 main/
-dev_cad/
-dev_ci/
+dev-cad/
+dev-ci/
 ```
 
 Each scope is a complete reconciled durable baseline for that source lane.
 
 Required behavior:
 
-- a `dev_cad` push updates/replaces only `build/dev_cad`;
-- a `dev_ci` push updates/replaces only `build/dev_ci`;
+- a `dev-cad` push updates/replaces only `build/dev-cad`;
+- a `dev-ci` push updates/replaces only `build/dev-ci`;
 - a `main` push updates/replaces only `build/main`;
 - every publication preserves the two unrelated sibling scopes;
 - no lane derives membership by hand in Forge;
@@ -138,14 +138,14 @@ subtrees:
 
 ```text
 /                 <- main stable site
-/dev_cad/         <- dev_cad preview
-/dev_ci/          <- dev_ci preview
+/dev-cad/         <- dev-cad preview
+/dev-ci/          <- dev-ci preview
 ```
 
 Required behavior:
 
-- a `dev_cad` publication replaces only `/dev_cad/`;
-- a `dev_ci` publication replaces only `/dev_ci/`;
+- a `dev-cad` publication replaces only `/dev-cad/`;
+- a `dev-ci` publication replaces only `/dev-ci/`;
 - a `main` publication replaces the stable root while preserving both dev
   previews;
 - a dev publication must never alter the stable root;
@@ -182,7 +182,7 @@ per-PR generated-state accumulation.
 A development lane reaches stable `main` through an explicit promotion PR:
 
 ```text
-dev_cad or dev_ci
+dev-cad or dev-ci
   -> promotion PR to main
   -> complete validation against the accepted development state
   -> merge to main
@@ -193,8 +193,8 @@ dev_cad or dev_ci
 
 Merge policy is fixed by branch role:
 
-- short-lived feature/fix PRs into `dev_cad` or `dev_ci` are squash-merged;
-- promotion PRs from `dev_cad` or `dev_ci` into `main` use a normal merge
+- short-lived feature/fix PRs into `dev-cad` or `dev-ci` are squash-merged;
+- promotion PRs from `dev-cad` or `dev-ci` into `main` use a normal merge
   commit and are never squash-merged.
 
 The squash on the development lane keeps each individual work item compact.
@@ -212,8 +212,8 @@ indefinitely from stable.
 The new architecture is accepted only when all of these are proven:
 
 1. a PR cannot write durable build or Pages state;
-2. `dev_cad` cannot modify `build/main`, `build/dev_ci` or stable Pages;
-3. `dev_ci` cannot modify `build/main`, `build/dev_cad` or stable Pages;
+2. `dev-cad` cannot modify `build/main`, `build/dev-ci` or stable Pages;
+3. `dev-ci` cannot modify `build/main`, `build/dev-cad` or stable Pages;
 4. `main` publication preserves both development scopes/previews;
 5. each lane has its own concurrency group so one lane cannot cancel another;
 6. generated publication retries remain safe when two lanes publish close
@@ -235,14 +235,14 @@ The implementation sequence is:
    `tool.cad.ci 0.16.1`.
 3. [complete] External black-box acceptance is green in
    `tool.cad.ci.test` PR #61.
-4. [#572, now] Change Forge event wiring so pushes on `main`, `dev_cad` and
-   `dev_ci` publish only their corresponding complete scope.
+4. [#572, now] Change Forge event wiring so pushes on `main`, `dev-cad` and
+   `dev-ci` publish only their corresponding complete scope.
 5. [#572] Remove durable PR publication; PRs become verification-only.
 6. [#572] Make Forge site generation consume either `main` or one named
    complete scope and record the actual evidence scope.
 7. [#572] Publish dev Pages to their named subtree and make stable publication
    preserve both dev subtrees.
-8. [#572] Create `dev_cad` and `dev_ci` from one known-good main commit only
+8. [#572] Create `dev-cad` and `dev-ci` from one known-good main commit only
    after the workflow supports them.
 9. [#572] Bootstrap and verify both development scopes.
 10. [#572] Prove dev-to-main promotion and post-promotion synchronization.
@@ -255,8 +255,8 @@ The intended permanent branch keep-set after the migration is at least:
 
 ```text
 main
-dev_cad
-dev_ci
+dev-cad
+dev-ci
 build
 gh-pages
 ```
@@ -268,11 +268,11 @@ been live and stable long enough to make an explicit retention decision.
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #572 Introduce long-lived dev_cad/dev_ci integration lanes | now | Generic named-scope stack is released and externally accepted. Implement and bootstrap the two Forge lanes now. |
+| #572 Introduce long-lived dev-cad/dev-ci integration lanes | now | Generic named-scope stack is released and externally accepted. Implement and bootstrap the two Forge lanes now. |
 | #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | separate after lane bootstrap | Generated output is ready, but the public Pages cut-over stays independent from #572 and is not performed during the migration. |
 | #481 Remove stale Forge development branches | after #572 | Cleanup should use the final branch keep-set, so perform it after the two new long-lived dev branches are proven. |
 | #574 Restore structured Raw test files presentation on all Verification case pages | post-migration triage | Generic site-template regression discovered during review; assign final workstream/priority after the lane proof. |
-| #576 Skip expensive CAD-CI and stable-site jobs for docs-only pull requests | post-migration triage (dev_ci candidate) | Docs-only PR #575 proved avoidable bootstrap/runner overhead; classify under the new CI lane after #572 is live. |
+| #576 Skip expensive CAD-CI and stable-site jobs for docs-only pull requests | post-migration triage (dev-ci candidate) | Docs-only PR #575 proved avoidable bootstrap/runner overhead; classify under the new CI lane after #572 is live. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by released runtime images, batching and later one-runner timing work. |
 | #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to the superseded Qualification architecture and old reuse strategy. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |

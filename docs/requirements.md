@@ -261,8 +261,8 @@ generated-branch mechanics.
 The source branches have fixed roles:
 
 - `main` is stable integration;
-- `dev_cad` is the long-lived Forge/CAD/product integration lane;
-- `dev_ci` is the long-lived Forge CI/infrastructure integration lane.
+- `dev-cad` is the long-lived Forge/CAD/product integration lane;
+- `dev-ci` is the long-lived Forge CI/infrastructure integration lane.
 
 Normal pull requests are verification-only.
 
@@ -283,17 +283,17 @@ The generated `build` branch contains complete reconciled scopes:
 
 ```text
 main/
-dev_cad/
-dev_ci/
+dev-cad/
+dev-ci/
 ```
 
 For each push:
 
 - `main` uses the released complete-main update/publication path;
-- `dev_cad` uses released named-scope update/publication with name
-  `dev_cad`;
-- `dev_ci` uses released named-scope update/publication with name
-  `dev_ci`;
+- `dev-cad` uses released named-scope update/publication with name
+  `dev-cad`;
+- `dev-ci` uses released named-scope update/publication with name
+  `dev-ci`;
 - selection uses the push base/head and current repository membership;
 - deletion-only updates remain valid;
 - a first publication for a missing named scope is bootstrapped from one
@@ -313,16 +313,16 @@ Its layout is:
 
 ```text
 /                 stable main site
-/dev_cad/         dev_cad integration preview
-/dev_ci/          dev_ci integration preview
+/dev-cad/         dev-cad integration preview
+/dev-ci/          dev-ci integration preview
 ```
 
 Requirements:
 
 - `main` publishes the stable root and explicitly preserves both named dev
   subtrees;
-- `dev_cad` replaces only the `dev_cad` subtree;
-- `dev_ci` replaces only the `dev_ci` subtree;
+- `dev-cad` replaces only the `dev-cad` subtree;
+- `dev-ci` replaces only the `dev-ci` subtree;
 - one lane may never remove or overwrite another lane's site;
 - the stable root must never be sourced from a development build scope;
 - the public GitHub Pages source switch tracked by #366 remains a separate
@@ -336,11 +336,11 @@ scope.
 ## Lane concurrency and promotion
 
 Each long-lived source branch owns an independent concurrency group. A newer
-`dev_cad` run may cancel an older `dev_cad` run but must not cancel
-`dev_ci` or `main`.
+`dev-cad` run may cancel an older `dev-cad` run but must not cancel
+`dev-ci` or `main`.
 
 Short-lived feature/fix branches target one dev lane and are squash-merged.
-Promotion from `dev_cad` or `dev_ci` to `main` uses a normal merge commit
+Promotion from `dev-cad` or `dev-ci` to `main` uses a normal merge commit
 so the promoted lane remains in main ancestry.
 
 After promotion:
