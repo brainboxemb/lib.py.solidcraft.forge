@@ -245,8 +245,17 @@ jobs:
 
           deleted=()
           retired_closed_issue=()
+          retired_history_backups=()
+          backup_mismatch=()
           open=()
           unmerged=()
+
+          OBSOLETE_HISTORY_BACKUPS=(
+            "backup/dev-cad-before-clean-history-2026-11-21=286923c7db25b5f77dce27e0a7c330cfb44ae3c5"
+            "backup/dev-ci-before-clean-history-2026-11-21=ece7f96ca35afe662aaff4f9ea7e27fed8161049"
+            "backup/main-before-clean-history-2026-11-21=02899ca28457dfb1587bc2bbc3a319cc40a4dfd0"
+            "backup/main-before-final-clean-history-2026-11-21=95cc876a655f784afc518cdb6a0104159f0620a6"
+          )
 
           is_open_head() {
             local candidate="$1"
@@ -344,6 +353,24 @@ jobs:
             unmerged+=("$source_branch @ $source_sha")
           done
 
+          for backup_spec in "${OBSOLETE_HISTORY_BACKUPS[@]}"; do
+            backup_branch="${backup_spec%%=*}"
+            expected_sha="${backup_spec#*=}"
+            if ! current_sha="$(
+              gh api "repos/$REPOSITORY/git/ref/heads/$backup_branch" --jq '.object.sha' 2>/dev/null
+            )"; then
+              continue
+            fi
+            if [ "$current_sha" != "$expected_sha" ]; then
+              backup_mismatch+=("$backup_branch @ $current_sha (expected $expected_sha)")
+              continue
+            fi
+            gh api -X DELETE \
+              "repos/$REPOSITORY/git/refs/heads/$backup_branch" \
+              >/dev/null
+            retired_history_backups+=("$backup_branch @ $current_sha")
+          done
+
           format_group() {
             local title="$1"
             shift
@@ -362,6 +389,10 @@ jobs:
               format_group "Deleted integrated or squash-merged temporary branches" "${deleted[@]}"
               echo
               format_group "Retired unique branches owned by closed issues" "${retired_closed_issue[@]}"
+              echo
+              format_group "Retired exact clean-history backup refs" "${retired_history_backups[@]}"
+              echo
+              format_group "Kept because a clean-history backup SHA changed" "${backup_mismatch[@]}"
               echo
               format_group "Kept because an open PR still uses the branch" "${open[@]}"
               echo
