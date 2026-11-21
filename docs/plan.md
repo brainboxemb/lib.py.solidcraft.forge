@@ -115,10 +115,11 @@ runtime/tooling simplification and operational Pages publication.
 
 Immediate order:
 
-1. #481 stale source-branch cleanup using the final keep-set — currently
-   blocked because the connected GitHub tool exposes no branch-delete action;
-2. make an explicit go/no-go decision for #366 live Pages cut-over;
-3. rewrite the still-useful performance goal from #261 against the current
+1. #598 policy-controlled merge method and selective branch lifecycle;
+2. #481 stale source-branch cleanup using the final keep-set — existing stale
+   refs can move to the same safe cleanup mechanism once #598 is proven;
+3. make an explicit go/no-go decision for #366 live Pages cut-over;
+4. rewrite the still-useful performance goal from #261 against the current
    released CAD-CI/runtime architecture.
 
 ### WS1 — Active CAD blockers and developer UX
@@ -184,6 +185,7 @@ HUB75 uses explicit Placement today.
 
 | Issue | Lane | Workstream | Priority | Next action |
 | --- | --- | --- | --- | --- |
+| #598 Enforce PR merge method through one policy-controlled merge path | `dev-ci` | WS0 | **P0 now** | Land the tested `/merge` gate; after that repository automation must not choose merge methods directly. Cleanup only explicit temporary prefixes and preserve/recreate long-lived lanes. |
 | #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 blocked** | Generated build cleanup is complete. Source-ref deletion is blocked because the connected GitHub tool exposes no delete-ref action; do not claim completion until deletion is actually supported. |
 | #366 Make verified output durable, then cut Pages over | `dev-ci` | WS0 | **P1 decision gate** | Durable/generated side is complete; request explicit approval before changing the live Pages source, then verify public/legacy routes. |
 | #570 Remove CADCraft from Forge verification diagrams | `dev-cad` | WS2 | **P2** | Replace the six explanatory diagram sources with deterministic Forge-owned SVG/static sources; remove its CI/runtime input only after the content path no longer needs it. |
