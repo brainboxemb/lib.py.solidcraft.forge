@@ -51,7 +51,7 @@
     <h2>What this example makes</h2>
     <p>The saved SolidCraft design exposes d1_Panel_width, d2_Panel_2_width and shared_width; changing shared_width updates both directly-bound children and the derived half-width child without rerunning Python.</p>
     <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Explicit component parameters and shared dependencies expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
-    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/presentation/preview-iso.png" alt="Explicit component parameters and shared dependencies native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/presentation/preview-iso.png" alt="Explicit component parameters and shared dependencies native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
   </section>
 
   <section class="panel">
@@ -105,7 +105,7 @@ ParameterScope()
 </code></pre>
     <h3>API used</h3>
     <p><code>@component(include=(&#x27;width&#x27;,)) class Panel; Panel(width=self.shared_width); Panel(width=half(self.shared_width))</code></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/parameter-scope/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7e9d2d7db8c2cca66a76a00b3f5ebc4af098dc27/examples/parameter-scope/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
   </section>
 
   <section class="panel">
@@ -119,7 +119,7 @@ ParameterScope()
   <div class="qualification-reference-source">
     <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/parameter-scope/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/parameter-scope/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7e9d2d7db8c2cca66a76a00b3f5ebc4af098dc27/examples/parameter-scope/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for Forge parameter-scope qualification.
 
 PythonSCAD evaluates these Python values directly; this reference intentionally
@@ -174,10 +174,10 @@ model = (
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/pythonscad/references/parameter-scope/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/pythonscad/references/parameter-scope/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/pythonscad/references/parameter-scope/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/pythonscad/references/parameter-scope/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/pythonscad/references/parameter-scope/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/pythonscad/references/parameter-scope/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/pythonscad/references/parameter-scope/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/pythonscad/references/parameter-scope/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/pythonscad/references/parameter-scope/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/pythonscad/references/parameter-scope/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -185,7 +185,7 @@ model = (
   <div class="qualification-reference-source">
     <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/parameter-scope/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/parameter-scope/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7e9d2d7db8c2cca66a76a00b3f5ebc4af098dc27/examples/parameter-scope/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for Forge parameter-scope qualification.
 
 The repeated Python value shows the same visible intent; it is not a reference
@@ -240,10 +240,10 @@ model = (
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/pybosl2/references/parameter-scope/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/pybosl2/references/parameter-scope/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/pybosl2/references/parameter-scope/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/pybosl2/references/parameter-scope/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/pybosl2/references/parameter-scope/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/pybosl2/references/parameter-scope/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/pybosl2/references/parameter-scope/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/pybosl2/references/parameter-scope/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/pybosl2/references/parameter-scope/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/pybosl2/references/parameter-scope/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -251,7 +251,7 @@ model = (
   <div class="qualification-reference-source">
     <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/parameter-scope/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/parameter-scope/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7e9d2d7db8c2cca66a76a00b3f5ebc4af098dc27/examples/parameter-scope/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;CadQuery geometry reference for explicit parameter-scope qualification.
 
 CadQuery evaluates these Python values directly. Saved SolidCraft parameter
@@ -313,10 +313,10 @@ model.add(panel(shared_width / 2), name=&quot;derived&quot;, loc=cq.Location((46
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/cadquery/references/parameter-scope/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/cadquery/references/parameter-scope/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/cadquery/references/parameter-scope/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/cadquery/references/parameter-scope/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/cadquery/references/parameter-scope/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/cadquery/references/parameter-scope/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/cadquery/references/parameter-scope/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/cadquery/references/parameter-scope/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/cadquery/references/parameter-scope/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/cadquery/references/parameter-scope/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -324,7 +324,7 @@ model.add(panel(shared_width / 2), name=&quot;derived&quot;, loc=cq.Location((46
   <div class="qualification-reference-source">
     <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4c408be0f34b8bec4f694a7873313279f0e67997</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c408be0f34b8bec4f694a7873313279f0e67997/examples/parameter-scope/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/parameter-scope/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7e9d2d7db8c2cca66a76a00b3f5ebc4af098dc27/examples/parameter-scope/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;build123d geometry reference: fixed/shared/derived panel widths.
 
 Persisted native SolidCraft parameter changes are qualified separately.
@@ -378,10 +378,10 @@ with BuildPart() as model:
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/build123d/references/parameter-scope/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/build123d/references/parameter-scope/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/build123d/references/parameter-scope/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/build123d/references/parameter-scope/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/build123d/references/parameter-scope/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/build123d/references/parameter-scope/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/build123d/references/parameter-scope/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/build123d/references/parameter-scope/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/build123d/references/parameter-scope/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/build123d/references/parameter-scope/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -401,7 +401,7 @@ with BuildPart() as model:
     Open the measurement details to inspect body sizes and editable parameters.
   </p>
   <details class="qualification-detail-block"><summary><strong>Original model</strong> · 5 bodies</summary><h4>Editable parameters</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>d1_Panel_width</td><td>40.0</td><td>mm</td><td>40</td></tr><tr><td>d2_Panel_2_width</td><td>60.0</td><td>mm</td><td>60</td></tr><tr><td>shared_width</td><td>80.0</td><td>mm</td><td>80</td></tr></tbody></table></div><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>Panel</td><td>[-20.0, -10.0, 0.0]</td><td>[20.0, 10.0, 10.0]</td><td>8000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>Panel_2</td><td>[70.0, -10.0, 0.0]</td><td>[130.0, 10.0, 10.0]</td><td>12000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>Panel_3</td><td>[180.0, -10.0, 0.0]</td><td>[260.0, 10.0, 10.0]</td><td>16000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>Panel_3 (Panel 3:2)</td><td>[300.0, -10.0, 0.0]</td><td>[380.0, 10.0, 10.0]</td><td>16000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>Panel_4</td><td>[440.0, -10.0, 0.0]</td><td>[480.0, 10.0, 10.0]</td><td>8000.0</td><td>6</td><td>12</td><td>True</td></tr></tbody></table></div></details>
-  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>shared_width_100</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/saved_designs/shared_width_100/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
+  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>shared_width_100</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/saved_designs/shared_width_100/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
   &quot;bodies&quot;: [
     {
       &quot;area_mm2&quot;: 2800.0,
@@ -696,26 +696,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -738,26 +738,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/right/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/right/goal.png" alt="right Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/right/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/right/goal.png" alt="right Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/right/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/right/overlay.png" alt="right Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/right/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/right/overlay.png" alt="right Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -780,26 +780,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -1188,14 +1188,14 @@ with BuildPart() as model:
     <p>The body sizes and positions describe the visible result. The saved SolidCraft model is checked separately to confirm that shared parameters are reused instead of duplicated.</p>
 
     <h3>Raw test files</h3>
-    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5/dev-ci/examples/parameter-scope/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/99e106eab1f0923b7ba2472823820ce11f42e3be/dev-ci/examples/parameter-scope/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
 
     <h3>Reference documentation</h3>
     <ul><li><strong>PythonSCAD</strong> — Reference geometry remains ordinary Python; Forge adds explicit native parameter publication because that is persistence/editability intent rather than geometry syntax.</li><li><strong>SolidCraft</strong> — Native parameters and expressions are the source of truth for saved-design editability and rebuild behaviour.</li></ul>
 
     <p class="source-stamp">
-      Site source <code>1c54d708c7240d48ffb5786f16e9527d2ceb738c</code> · accepted model evidence source
-      <code>57d95fbef5bf6e591df5afcce16155897077cdcd</code> · durable build <code>7d5ce3eee41e82ad40bfca1b00e01eaf1e319ef5</code>
+      Site source <code>7e9d2d7db8c2cca66a76a00b3f5ebc4af098dc27</code> · accepted model evidence source
+      <code>57d95fbef5bf6e591df5afcce16155897077cdcd</code> · durable build <code>99e106eab1f0923b7ba2472823820ce11f42e3be</code>
     </p>
   </div>
 </details>
@@ -1211,7 +1211,7 @@ with BuildPart() as model:
     </p>
     <p>
       <a href="../../examples/parameter-scope/">Open the example →</a>
-      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/parameter-scope/verification/verify.py">Open verification/verify.py →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7e9d2d7db8c2cca66a76a00b3f5ebc4af098dc27/examples/parameter-scope/verification/verify.py">Open verification/verify.py →</a>
     </p>
   </section>
 </main>
