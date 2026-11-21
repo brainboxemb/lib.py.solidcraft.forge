@@ -117,6 +117,30 @@ CI repositories.
 Before changing CI structure, read the current issues, PRs, branches,
 `AGENTS.md` and [plan.md](plan.md).
 
+## Parallel lane execution and stable-main history
+
+Forge has two independent long-lived development lanes:
+
+- `dev-cad` for Forge API/compiler/model/Verification/site-content work;
+- `dev-ci` for Forge CI/infrastructure/publication work.
+
+Independent work in those lanes should progress in parallel. A running workflow
+blocks only work whose next step depends on that result. Shared dependency
+releases, cross-repository ownership changes and promotion to `main` are
+explicit synchronization gates.
+
+Repository-wide governance/documentation that applies equally to both lanes may
+use a short-lived branch directly against `main`.
+
+Every PR whose base is `main` is **squash-merged**, including promotion PRs
+from `promote/dev-cad` and `promote/dev-ci`. Stable `main` must receive one
+logical commit per accepted change/promotion, not the complete dev-lane commit
+graph.
+
+After promotion, synchronize `main` back into both dev lanes. A normal merge
+commit is acceptable on a dev lane when needed for that synchronization; it
+must not be created on `main`.
+
 ## Change discipline
 
 For active repository work:
