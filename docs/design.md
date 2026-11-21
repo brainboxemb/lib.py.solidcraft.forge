@@ -325,14 +325,22 @@ not prepare, publish or clean sparse PR scopes.
 
 A development branch can exist before its generated complete scope.
 
-For a normal push with an existing named scope, Forge runs incremental
-base/head selection and then:
+For a normal push with an existing named scope, Forge reads the previous
+accepted source commit from `build/<lane>/build.json` and uses that SHA as the
+incremental selection/update base:
 
 ```text
-build fetch
+build/<lane>/build.json.source_commit
+  -> CAD-CI base SHA
+  -> build fetch
   -> update-named --named generated-build/<lane>
   -> publish build --scope named --scope-name <lane>
 ```
+
+This is deliberately not derived from `github.event.before`: a recreated
+long-lived branch produces a branch-create push whose before SHA is all zeroes,
+while the durable named scope still knows the exact previously accepted source
+commit.
 
 For the first publication of a lane, the push runs the complete processed graph
 and then:
@@ -386,13 +394,28 @@ serialize the three lanes through one global concurrency group.
 
 ### Promotion
 
-Feature/fix PRs into either dev lane are squash-merged. Promotion PRs from a
-long-lived dev branch into `main` use normal merge commits.
+Feature/fix PRs into either dev lane are squash-merged.
 
-After a promotion, main publishes stable output from main itself. The promoted
-development branch is then synchronized to the resulting main head; a
-development preview is never promoted by copying its generated build/Page
-scope into stable output.
+Promotion never uses the long-lived lane directly as the PR head. Create one
+temporary promotion ref at the accepted lane head:
+
+```text
+dev-cad -> promote/dev-cad -> PR main
+dev-ci  -> promote/dev-ci  -> PR main
+```
+
+The promotion PR requests complete validation and uses a normal merge commit.
+Repository automatic head deletion may then remove the temporary promotion
+branch without deleting `dev-cad` or `dev-ci`.
+
+After promotion, main publishes stable output from main itself. Both
+development lanes are then fast-forwarded/synchronized to the resulting main
+head. A development preview is never promoted by copying its generated
+build/Page scope into stable output.
+
+If a long-lived lane has to be recreated, its first push still uses the prior
+durable named-scope `source_commit` as base. This keeps synchronization
+incremental and avoids treating branch recreation as a new full bootstrap.
 
 ## Nested reference-item migration
 
