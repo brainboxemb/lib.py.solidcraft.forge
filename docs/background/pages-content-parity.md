@@ -124,3 +124,42 @@ A stable site records:
 Public machine-evidence links pin the immutable generated build commit and a
 path below `main/`. Temporary GitHub Actions artifacts are transport between
 CI jobs only and are never linked by Pages.
+
+
+## Legacy special pages and route compatibility — 2026-11-21
+
+The final pre-cut-over audit compared
+`backup/gh-pages-before-f11-2026-11-20/qualification/` with current generated
+`gh-pages/verification/`.
+
+Directory comparison found:
+
+- 32 shared historical model case routes;
+- four new/restored current Verification cases:
+  `as-built-attach`, `parametric-move`,
+  `parametric-placement-pair`, `rotated-copy-placement`;
+- three old standalone routes with no one-to-one model page:
+  `coverage`, `joint-anatomy`, `results`.
+
+The simple-box case comparison confirmed all old content categories remain in
+the canonical Verification page: Forge source, all four independent reference
+sources, native result, parameters/body measurements, visual evidence,
+saved-design evidence, geometry checks, raw evidence and engineering/reference
+documentation.
+
+The three standalone pages require explicit preservation:
+
+- Results is rebuilt from current normalized durable build/main evidence rather
+  than copied from old generated HTML.
+- Coverage reuses the source-owned capability/API coverage declarations that
+  survived the migration; known replay/as-built claims are updated for the
+  restored historical cases.
+- Joint anatomy is restored from the authored historical template at
+  `51b79c223939c84980206593fe9b062f474ca220`. Its six CadCraft plans already
+  exist under current `verification/diagrams/sources/`, and stable rendered
+  SVG/DXF links use the immutable generated build commit.
+
+The canonical route remains `verification/`. Generated `qualification/`
+output is compatibility-only: redirect pages, a byte-identical manifest alias
+and the six old local CadCraft JSON aliases. This preserves existing public
+URLs without reviving Qualification as current product terminology.

@@ -273,3 +273,19 @@ Keep it as a current snapshot, not as historical documentation:
 
 Issues contain detail and history. README and design/requirements documents describe stable purpose and behavior. The plan tells an agent what work is actually current and what should happen next.
 
+
+
+### Verification cut-over compatibility
+
+Canonical public content stays under `verification/`. Do not reintroduce a
+second authored Qualification site.
+
+The pre-cut-over `qualification/` output is generated compatibility only:
+redirect HTML, the current Verification manifest alias and legacy
+joint-anatomy CadCraft JSON aliases.
+
+The standalone Results page comes from durable evidence; Coverage comes from
+`site/api_coverage.py` + `site/capability_map.py`; Joint anatomy human prose
+belongs in its external template and its diagrams remain owned by
+`verification/diagrams/sources/`. Do not move those complete pages into
+Python strings.

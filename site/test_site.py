@@ -75,6 +75,19 @@ class SiteSourceTests(unittest.TestCase):
         self.assertTrue(
             (SITE / "templates" / "verification-group.html").is_file()
         )
+        self.assertTrue(
+            (SITE / "templates" / "verification-coverage.html").is_file()
+        )
+        self.assertTrue(
+            (SITE / "templates" / "verification-results.html").is_file()
+        )
+        self.assertTrue(
+            (SITE / "templates" / "verification-joint-anatomy.html").is_file()
+        )
+        self.assertTrue(
+            (SITE / "templates" / "legacy-redirect.html").is_file()
+        )
+        self.assertTrue((SITE / "verification_special.py").is_file())
 
     def test_verification_pages_keep_inline_source_comparison(self):
         build = (SITE / "build.py").read_text(encoding="utf-8")
@@ -315,6 +328,114 @@ class SiteSourceTests(unittest.TestCase):
             self.assertIn(
                 "Its body size fully describes the visible geometry",
                 simple_page,
+            )
+
+            for special in ("results", "coverage", "joint-anatomy"):
+                self.assertTrue(
+                    (
+                        out
+                        / "verification"
+                        / special
+                        / "index.html"
+                    ).is_file()
+                )
+                self.assertTrue(
+                    (
+                        out
+                        / "qualification"
+                        / special
+                        / "index.html"
+                    ).is_file()
+                )
+
+            results_page = (
+                out / "verification" / "results" / "index.html"
+            ).read_text(encoding="utf-8")
+            self.assertIn("Verification results", results_page)
+            self.assertIn("Current case results", results_page)
+            for slug in manifest["examples"]:
+                self.assertIn(
+                    f'href="../{slug}/"',
+                    results_page,
+                )
+
+            coverage_page = (
+                out / "verification" / "coverage" / "index.html"
+            ).read_text(encoding="utf-8")
+            for heading in (
+                "SolidCraft functionality coverage",
+                "SolidCraft → Forge support",
+                "Coverage by area",
+                "Capability detail",
+                "Functional verification",
+                "Verification by area",
+                "Verification detail",
+                "Public Python API exports",
+            ):
+                self.assertIn(heading, coverage_page)
+            self.assertIn("as-built-attach", coverage_page)
+            self.assertIn("parametric-placement-pair", coverage_page)
+            self.assertNotIn(">Qualification<", coverage_page)
+
+            joint_page = (
+                out / "verification" / "joint-anatomy" / "index.html"
+            ).read_text(encoding="utf-8")
+            for heading in (
+                "Placing a corner bracket with Forge",
+                "Wat is een joint origin? / What is a joint origin?",
+                "Where does the joint-origin frame come from?",
+                "What the current Forge code is doing",
+                "Requirements for the Forge API",
+                "Verification order",
+                "Native SolidCraft references",
+            ):
+                self.assertIn(heading, joint_page)
+            for name in (
+                "corner-bracket-goal",
+                "corner-bracket-depth",
+                "solidcraft-joint-anatomy",
+                "solidcraft-joint-references",
+                "corner-bracket-local-axes",
+                "corner-bracket-front-corners",
+            ):
+                self.assertTrue(
+                    (
+                        out
+                        / "verification"
+                        / "joint-anatomy"
+                        / f"{name}.cadcraft.json"
+                    ).is_file()
+                )
+                self.assertTrue(
+                    (
+                        out
+                        / "qualification"
+                        / "joint-anatomy"
+                        / f"{name}.cadcraft.json"
+                    ).is_file()
+                )
+
+            legacy_root = (
+                out / "qualification" / "index.html"
+            ).read_text(encoding="utf-8")
+            self.assertIn("../verification/", legacy_root)
+            self.assertNotIn(">Qualification<", legacy_root)
+            for slug in manifest["examples"]:
+                redirect = (
+                    out / "qualification" / slug / "index.html"
+                ).read_text(encoding="utf-8")
+                self.assertIn(
+                    f"../../verification/{slug}/",
+                    redirect,
+                )
+
+            self.assertEqual(
+                (out / "qualification" / "manifest.json").read_text(
+                    encoding="utf-8"
+                ),
+                (out / "verification" / "manifest.json").read_text(
+                    encoding="utf-8"
+                ),
             )
 
             verification_index = (

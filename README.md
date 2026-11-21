@@ -170,11 +170,15 @@ generation.
 `gh-pages` branch through the generic CAD-CI publisher.
 
 Main verification, durable build publication and stable Pages generation now
-share one runner through externally accepted `tool.cad.ci 0.15.0`; #558
-tracks acceptance of that Forge migration. The public GitHub Pages source is
-still deliberately pointed at
-`backup/gh-pages-before-f11-2026-11-20`. #366 remains the umbrella for the
-explicit live cut-over and later preview/cleanup work.
+share one runner through externally accepted `tool.cad.ci 0.15.0`; #558 is
+complete.
+
+#366 now owns cut-over readiness. The replacement site restores the historical
+standalone Results, Coverage and Joint anatomy knowledge as canonical
+Verification pages and preserves old `/qualification/` URLs as generated
+compatibility aliases. The public GitHub Pages source is still deliberately
+pointed at `backup/gh-pages-before-f11-2026-11-20` until a separate explicit
+live cut-over.
 
 ## Documentation map
 

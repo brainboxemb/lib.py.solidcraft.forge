@@ -8,104 +8,95 @@ documents in `docs/`. Issues keep detail and history.
 
 ## Current status
 
-#559 is complete.
+#558 is complete.
 
-The current native Verification catalog contains 36 active declarative cases:
-the final historical 32-case baseline plus the four replay-safe historical
-cases restored by #559. Every full model case has four independent reference
-children, giving 144 current reference items.
+Forge main verification, durable build publication and stable Pages generation
+now run on one hosted runner through externally accepted
+`tool.cad.ci 0.15.0`.
 
-The current durable baseline is green:
+The proven main run #2170 / `44884338160` produced:
 
-- Forge source: `ad36b062203b7de2b20c7fa2d11c99dfc50a1340`;
-- generated build commit:
-  `7c1bffacbc3369d998a85cac1121672d5110b2ff`;
-- `build/main`: 36 model scopes + 144 reference scopes;
-- current `gh-pages` output:
-  `3ef0f1e5327e2eea1367d5fbf86e7061e1a8f769`;
-- stable site manifest: 36 Verification cases.
+- Forge source:
+  `e658a44abb15773f7dac813afcf2fcfbf575f72a`;
+- generated build:
+  `fe1857e93cbe364460fa072d69c24d553db2ddc7`;
+- generated `gh-pages`:
+  `7b08be375258dc34b84dfcb33c378613a0ed773a`;
+- 36 native Verification cases and 144 independent reference items;
+- site generation in about one second after the one-runner CAD-CI/build path.
 
-`model_authoring` remains deliberately Q1/Q2-only. `custom-anchor` remains
-the expected-rejection release fixture blocked by #81.
-`attached-through-all` and `plate` are explicit regression fixtures with
-current executing owners.
+The public GitHub Pages source remains deliberately pointed at
+`backup/gh-pages-before-f11-2026-11-20`. Generated `gh-pages` is not live.
 
-The public GitHub Pages source is still deliberately pointed at
-`backup/gh-pages-before-f11-2026-11-20`. Generated `gh-pages` is not the
-live source yet.
+A cut-over audit found that the normal 32 historical case pages have full
+content parity in their new Verification pages, and the four restored cases are
+additional current content. The audit also found three old standalone public
+pages that were not yet source-owned by the replacement site:
+
+- `qualification/results/`;
+- `qualification/coverage/`;
+- `qualification/joint-anatomy/`.
+
+The latter two contain independent engineering knowledge, not merely old route
+names. Existing `/qualification/.../` URLs would also 404 after a direct
+branch cut-over.
 
 ## Current goal
 
-Complete #558 by migrating Forge main verification + durable build publication
-+ stable Pages publication to the externally accepted same-runner surface.
+Complete the #366 cut-over-readiness repair before changing the live Pages
+source.
 
-The required generic chain is complete:
+This change restores canonical:
 
-- `tool.cad.ci 0.15.0` release:
-  `9f37be0af5c4076f676b6407857c5905e11a47d6`;
-- pinned `lib.py.cad.ci 0.8.4`:
-  `4e033fd17e911b3feb92b1a34433b884ca788ab6`;
-- external acceptance:
-  `tool.cad.ci.test` PR #59 / merge
-  `2fcfbc7bcd2f80a3e629d2846fe79fb8001d3029`.
+- `verification/results/`;
+- `verification/coverage/`;
+- `verification/joint-anatomy/`;
 
-## Required proof for #558
+and generates backward-compatible `qualification/` aliases for the root,
+current case pages, the three special pages, the manifest and joint-anatomy
+CadCraft source files.
 
-The Forge main workflow must use one job and one runner:
+Canonical navigation remains Verification-only.
 
-```text
-released same-runner action
-  -> one selected CAD-CI graph
-  -> build fetch
-  -> update-main
-  -> publish build/main
-  -> Forge site generation from prepared-main
-  -> publish gh-pages
-```
+## Required proof before live cut-over
 
-Acceptance requires:
+- all 36 current Verification cases remain present;
+- representative old/new case content parity remains green;
+- current results page is generated from durable build/main evidence;
+- coverage links only to current model Verification cases;
+- joint-anatomy preserves the authored engineering explanation and all six
+  current CadCraft sources;
+- stable joint diagrams use immutable durable build URLs;
+- old `qualification/<case>/` URLs redirect to canonical Verification pages;
+- old special-page URLs redirect to canonical special pages;
+- old and new manifest URLs contain identical current bytes;
+- public canonical templates contain no visible Qualification navigation;
+- complete PR and main site generation are green.
 
-- no main-path Actions upload/download artifact;
-- no second or third main publication job;
-- no second tool/library checkout/install;
-- no Forge-owned item-selection or build-store logic;
-- documentation/site-only changes do not start CAD runtimes merely because
-  Pages is published;
-- deletion-only durable updates remain supported;
-- site generation consumes the exact prepared main tree that was published;
-- the returned immutable build commit is stored in site provenance;
-- `build/main` and `gh-pages` remain freshness-safe generated output;
-- representative main CI is green after merge.
+## Live boundary
 
-PR verification remains on released `reusable-pr.yml`. The separate
-read-only stable-site PR validation is not a reason to duplicate the generic PR
-lifecycle in Forge.
+Do **not** repoint the public Pages source during this parity repair.
 
-## Next publication work
-
-After #558 is green on main, #366 owns the remaining live lifecycle.
-
-The live Pages source must **not** be repointed from
-`backup/gh-pages-before-f11-2026-11-20` merely because #558 succeeds.
-That cut-over is a separate explicit action under #366.
+After the generated replacement is reviewed and the above proof is green, the
+remaining live cut-over is a separate explicit #366 action. Keep
+`backup/gh-pages-before-f11-2026-11-20` intact as rollback evidence.
 
 ## Execution order
 
-1. [#558] Migrate Forge main to exact released tool.cad.ci 0.15.0.
-2. [#558] Prove the PR/source regression tests.
-3. [#558] Merge and observe one-runner main publication end to end.
-4. Close #558 only after durable `build/main` and generated `gh-pages`
-   provenance are verified.
-5. [#366] Review the generated replacement site.
-6. [#366] Repoint the live Pages source only with explicit cut-over approval.
-7. [#366] Complete remaining preview/cleanup lifecycle work.
+1. [#366] Restore the three source-owned Verification special pages.
+2. [#366] Generate old-route compatibility aliases.
+3. [#366] Prove source-only and complete durable stable-site generation.
+4. [#366] Merge and review generated `gh-pages`.
+5. [explicit approval] Repoint the live Pages source to the intended generated
+   branch.
+6. Verify the actual public site and old redirect URLs.
+7. Only then decide later preview/cleanup and backup-retention policy.
 
 ## Open issue assessment — 2026-11-21
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #558 Run main verification and Pages publication as one selective workflow | now | Generic 0.15.0 same-runner support is released and externally accepted; Forge migration and main proof remain. |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked by #558 | Durable build and generated gh-pages exist; live source cut-over waits for the corrected main flow. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | now | Durable build/main and one-runner gh-pages publication are complete; special-page parity, legacy URL compatibility and explicit live cut-over remain. |
 | #391 Extract reusable CAD verification library from Forge | effectively complete but still open | Generic verification ownership and consumer migration are complete; remaining closure review is separate. |
 | #481 Remove stale Forge development branches | later | Stale refs from closed work remain cleanup debt. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by released runtime batching and later timing work. |
@@ -127,4 +118,4 @@ That cut-over is a separate explicit action under #366.
 
 Immediate chain:
 
-`#558 single-runner main/Pages -> #366 explicit live Pages lifecycle`.
+`#366 parity/compatibility -> explicit live cut-over review`.

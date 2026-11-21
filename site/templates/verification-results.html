@@ -1,0 +1,33 @@
+<main class="wrap">
+  <div class="crumb"><a href="../">← Verification</a> / Results</div>
+  <section class="hero small">
+    <p class="eyebrow">Current durable verification evidence</p>
+    <h1>Verification results</h1>
+    <p>
+      One current row per full native Verification case. Stable Pages reads
+      status, accepted source, measurements, saved-design evidence and
+      independent references from the authoritative durable build/main tree.
+    </p>
+    <p class="meta">Current source: <code>${source_sha}</code> · durable build: <code>${build_commit}</code> · SolidCraft ${solidcraft_version}</p>
+  </section>
+  ${evidence_note}
+  <section class="panel">
+    <h2>Current case results</h2>
+    <div class="qualification-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Case</th>
+            <th>Status</th>
+            <th>Accepted source</th>
+            <th>Bodies</th>
+            <th>Parameters</th>
+            <th>Saved designs</th>
+            <th>References</th>
+          </tr>
+        </thead>
+        <tbody>${result_rows}</tbody>
+      </table>
+    </div>
+  </section>
+</main>

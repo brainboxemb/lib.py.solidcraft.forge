@@ -1145,3 +1145,40 @@ components    -> 4 · Components and occurrences
 anchors       -> 5 · Anchors and local frames
 associativity -> 6 · Associative relationships
 ```
+
+
+## Verification special pages and legacy route compatibility
+
+The old published site contained three standalone Qualification pages that are
+not ordinary model cases: results, capability coverage and joint anatomy.
+They are retained as canonical Verification pages rather than discarded during
+the route rename.
+
+```text
+site/api_coverage.py + site/capability_map.py
+  -> site/verification_special.py row composition
+  -> site/templates/verification-coverage.html
+  -> verification/coverage/
+
+normalized stable_view_by_slug
+  -> site/verification_special.py result rows
+  -> site/templates/verification-results.html
+  -> verification/results/
+
+authored historical joint explanation
+  -> site/templates/verification-joint-anatomy.html
+current verification/diagrams/sources/*.cadcraft.json
+durable diagram evidence
+  -> verification/joint-anatomy/
+```
+
+The joint-anatomy human explanation is restored from source commit
+`51b79c223939c84980206593fe9b062f474ca220` and remains authored template
+content. Its six CadCraft sources are already owned by the current
+`verification/diagrams/sources/` tree; stable SVG/DXF URLs are pinned to the
+immutable generated build commit.
+
+The `qualification/` output tree is compatibility-only. It contains redirect
+HTML, a byte-identical alias of the current Verification manifest, and the six
+legacy local CadCraft JSON aliases. It is generated from current membership and
+does not become an executable or human-authored catalog.

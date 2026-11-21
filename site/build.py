@@ -25,6 +25,7 @@ from example_documentation import discover_example_documentation
 from cheatsheet_content import load_cheatsheet
 from build_evidence import IMPLEMENTATIONS, load_stable_build_evidence
 from qualification_view import diagram_views, qualification_case_view
+from verification_special import coverage_content, legacy_redirect, results_content
 from html_writer import (
     CAD_SITE,
     LIBRARY_URL,
@@ -743,6 +744,109 @@ def build(
         )
         diagrams = ""
 
+    # Restore standalone Verification knowledge pages that existed on the
+    # pre-cut-over site, now sourced from current declarations/evidence.
+    results_root = verification_root / "results"
+    results_root.mkdir(exist_ok=True)
+    results_body = results_content(
+        example_rows,
+        stable_view_by_slug,
+        source_sha=sha,
+        build_commit=(stable.build_commit if stable is not None else None),
+        solidcraft_version=TESTED_SOLIDCRAFT_VERSION,
+        evidence_note=evidence_note,
+    )
+    (results_root / "index.html").write_text(
+        page(
+            "Verification results",
+            results_body,
+            stylesheet="../../style.css",
+            home="../../",
+            cheatsheet="../../cheatsheet/",
+        ),
+        encoding="utf-8",
+    )
+
+    coverage_root = verification_root / "coverage"
+    coverage_root.mkdir(exist_ok=True)
+    coverage_body = coverage_content(
+        (row.slug for row in example_rows),
+        evidence_note,
+    )
+    (coverage_root / "index.html").write_text(
+        page(
+            "Verification coverage",
+            coverage_body,
+            stylesheet="../../style.css",
+            home="../../",
+            cheatsheet="../../cheatsheet/",
+        ),
+        encoding="utf-8",
+    )
+
+    joint_root = verification_root / "joint-anatomy"
+    joint_root.mkdir(exist_ok=True)
+    joint_names = (
+        "corner-bracket-goal",
+        "corner-bracket-depth",
+        "solidcraft-joint-anatomy",
+        "solidcraft-joint-references",
+        "corner-bracket-local-axes",
+        "corner-bracket-front-corners",
+    )
+    for name in joint_names:
+        source = (
+            ROOT
+            / "verification"
+            / "diagrams"
+            / "sources"
+            / f"{name}.cadcraft.json"
+        )
+        if not source.is_file():
+            raise ValueError(f"Joint-anatomy diagram source missing: {source}")
+        shutil.copyfile(source, joint_root / source.name)
+
+    if stable is not None:
+        diagram_raw_base = (
+            "https://raw.githubusercontent.com/"
+            "brainboxemb/lib.py.solidcraft.forge/"
+            f"{stable.build_commit}/main/ci/verification-diagrams/"
+            "diagrams/rendered"
+        )
+        diagram_blob_base = (
+            "https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/"
+            f"{stable.build_commit}/main/ci/verification-diagrams/"
+            "diagrams/rendered"
+        )
+    else:
+        diagram_raw_base = (
+            "https://raw.githubusercontent.com/"
+            "brainboxemb/lib.py.solidcraft.forge/build/main/"
+            "ci/verification-diagrams/diagrams/rendered"
+        )
+        diagram_blob_base = (
+            "https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/"
+            "build/main/ci/verification-diagrams/diagrams/rendered"
+        )
+
+    joint_body = render_template(
+        "verification-joint-anatomy.html",
+        source_sha=escape(sha),
+        solidcraft_version=escape(TESTED_SOLIDCRAFT_VERSION),
+        diagram_raw_base=escape(diagram_raw_base),
+        diagram_blob_base=escape(diagram_blob_base),
+    )
+    (joint_root / "index.html").write_text(
+        page(
+            "SolidCraft joint anatomy",
+            joint_body,
+            stylesheet="../../style.css",
+            home="../../",
+            cheatsheet="../../cheatsheet/",
+        ),
+        encoding="utf-8",
+    )
+
     verification_groups = "".join(
         render_template(
             "verification-group.html",
@@ -781,20 +885,52 @@ def build(
         ),
         encoding="utf-8",
     )
+    verification_manifest_data = {
+        "library_commit": sha,
+        "evidence_source": "build/main",
+        "build_commit": (
+            stable.build_commit if stable is not None else None
+        ),
+        "cases": verification_manifest,
+    }
+    verification_manifest_text = (
+        json.dumps(verification_manifest_data, indent=2) + "\n"
+    )
     (verification_root / "manifest.json").write_text(
-        json.dumps(
-            {
-                "library_commit": sha,
-                "evidence_source": "build/main",
-                "build_commit": (
-                    stable.build_commit if stable is not None else None
-                ),
-                "cases": verification_manifest,
-            },
-            indent=2,
-        ) + "\n",
+        verification_manifest_text,
         encoding="utf-8",
     )
+
+    # Backward-compatible public routes from the pre-cut-over site. Canonical
+    # navigation and authored content remain under /verification/.
+    legacy_root = out / "qualification"
+    legacy_root.mkdir(exist_ok=True)
+    (legacy_root / "index.html").write_text(
+        legacy_redirect("../verification/"),
+        encoding="utf-8",
+    )
+    (legacy_root / "manifest.json").write_text(
+        verification_manifest_text,
+        encoding="utf-8",
+    )
+    for slug in (
+        *(row.slug for row in example_rows),
+        "results",
+        "coverage",
+        "joint-anatomy",
+    ):
+        legacy_dir = legacy_root / slug
+        legacy_dir.mkdir(exist_ok=True)
+        (legacy_dir / "index.html").write_text(
+            legacy_redirect(f"../../verification/{slug}/"),
+            encoding="utf-8",
+        )
+    legacy_joint = legacy_root / "joint-anatomy"
+    for name in joint_names:
+        shutil.copyfile(
+            joint_root / f"{name}.cadcraft.json",
+            legacy_joint / f"{name}.cadcraft.json",
+        )
 
     sections = []
     example_slugs = {row.slug for row in example_rows}

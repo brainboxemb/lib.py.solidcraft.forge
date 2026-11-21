@@ -790,3 +790,35 @@ The current public concept is **verification**, not qualification.
   `3 · Parameters and dependencies`, `components` →
   `4 · Components and occurrences`, `anchors` → `5 · Anchors and local frames`,
   and `associativity` → `6 · Associative relationships`.
+
+
+## Verification cut-over compatibility
+
+The canonical public terminology and route are `Verification` and
+`/verification/`.
+
+The stable site must also preserve the pre-cut-over public
+`/qualification/` URLs as compatibility aliases:
+
+- the old root redirects to `/verification/`;
+- old case paths redirect to the corresponding current Verification case;
+- `coverage/`, `results/` and `joint-anatomy/` redirect to current
+  canonical special pages;
+- the old `qualification/manifest.json` path serves the exact same current
+  manifest bytes as `verification/manifest.json`;
+- the six historical joint-anatomy CadCraft JSON paths remain available.
+
+Compatibility output must not reintroduce Qualification as current navigation or
+as a second authored content tree.
+
+The canonical Verification site must preserve the standalone knowledge that
+existed before cut-over:
+
+- a current durable results table derived from normalized build/main evidence;
+- a capability/API coverage page derived from source-owned coverage
+  declarations and linked current Verification cases;
+- the authored joint-origin/corner-bracket anatomy explanation, backed by the
+  current six source-owned CadCraft plans and durable rendered diagrams.
+
+Human explanatory copy belongs in templates/content. Python may validate,
+compose rows, resolve evidence URLs and write compatibility aliases.
