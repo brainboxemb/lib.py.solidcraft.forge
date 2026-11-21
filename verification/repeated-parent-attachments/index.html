@@ -51,7 +51,7 @@
     <h2>What this example makes</h2>
     <p>Both markers sit on their own parent TOP face. After parent_height changes in the saved design, both disconnected joint graphs must rebuild so both markers follow the changed top faces.</p>
     <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Attachments on repeated parent occurrences expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
-    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/presentation/preview-iso.png" alt="Attachments on repeated parent occurrences native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/presentation/preview-iso.png" alt="Attachments on repeated parent occurrences native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
   </section>
 
   <section class="panel">
@@ -96,7 +96,7 @@ RepeatedParentAttachments()
 </code></pre>
     <h3>API used</h3>
     <p><code>right = left.copy(placement=Placement(x=60)); marker_a = Marker().attach(left, parent=Anchor.TOP, child=Anchor.BOTTOM); marker_b = marker_a.copy().attach(right, parent=Anchor.TOP, child=Anchor.BOTTOM)</code></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/02899ca28457dfb1587bc2bbc3a319cc40a4dfd0/examples/repeated-parent-attachments/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/95cc876a655f784afc518cdb6a0104159f0620a6/examples/repeated-parent-attachments/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
   </section>
 
   <section class="panel">
@@ -110,7 +110,7 @@ RepeatedParentAttachments()
   <div class="qualification-reference-source">
     <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/repeated-parent-attachments/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/02899ca28457dfb1587bc2bbc3a319cc40a4dfd0/examples/repeated-parent-attachments/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/95cc876a655f784afc518cdb6a0104159f0620a6/examples/repeated-parent-attachments/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for two parent/marker pairs.&quot;&quot;&quot;
 
 from pythonscad import *
@@ -155,10 +155,10 @@ model = left_parent | right_parent | left_marker | right_marker
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/pythonscad/references/repeated-parent-attachments/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/pythonscad/references/repeated-parent-attachments/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/pythonscad/references/repeated-parent-attachments/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/pythonscad/references/repeated-parent-attachments/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/pythonscad/references/repeated-parent-attachments/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/pythonscad/references/repeated-parent-attachments/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/pythonscad/references/repeated-parent-attachments/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/pythonscad/references/repeated-parent-attachments/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/pythonscad/references/repeated-parent-attachments/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/pythonscad/references/repeated-parent-attachments/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -166,7 +166,7 @@ model = left_parent | right_parent | left_marker | right_marker
   <div class="qualification-reference-source">
     <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/repeated-parent-attachments/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/02899ca28457dfb1587bc2bbc3a319cc40a4dfd0/examples/repeated-parent-attachments/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/95cc876a655f784afc518cdb6a0104159f0620a6/examples/repeated-parent-attachments/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;pyBOSL2 reference for two independent TOP-to-BOTTOM attachments.&quot;&quot;&quot;
 
 from pybosl2 import Anchor, cuboid
@@ -224,10 +224,10 @@ model = left_pair | right_pair
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/pybosl2/references/repeated-parent-attachments/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/pybosl2/references/repeated-parent-attachments/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/pybosl2/references/repeated-parent-attachments/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/pybosl2/references/repeated-parent-attachments/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/pybosl2/references/repeated-parent-attachments/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/pybosl2/references/repeated-parent-attachments/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/pybosl2/references/repeated-parent-attachments/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/pybosl2/references/repeated-parent-attachments/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/pybosl2/references/repeated-parent-attachments/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/pybosl2/references/repeated-parent-attachments/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -235,7 +235,7 @@ model = left_pair | right_pair
   <div class="qualification-reference-source">
     <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/repeated-parent-attachments/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/02899ca28457dfb1587bc2bbc3a319cc40a4dfd0/examples/repeated-parent-attachments/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/95cc876a655f784afc518cdb6a0104159f0620a6/examples/repeated-parent-attachments/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;CadQuery reference for two repeated parent/marker placements.&quot;&quot;&quot;
 
 import cadquery as cq
@@ -284,10 +284,10 @@ model.add(marker, name=&quot;right_marker&quot;, loc=cq.Location((60, 0, parent_
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/cadquery/references/repeated-parent-attachments/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/cadquery/references/repeated-parent-attachments/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/cadquery/references/repeated-parent-attachments/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/cadquery/references/repeated-parent-attachments/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/cadquery/references/repeated-parent-attachments/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/cadquery/references/repeated-parent-attachments/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/cadquery/references/repeated-parent-attachments/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/cadquery/references/repeated-parent-attachments/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/cadquery/references/repeated-parent-attachments/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/cadquery/references/repeated-parent-attachments/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -295,7 +295,7 @@ model.add(marker, name=&quot;right_marker&quot;, loc=cq.Location((60, 0, parent_
   <div class="qualification-reference-source">
     <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/repeated-parent-attachments/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/02899ca28457dfb1587bc2bbc3a319cc40a4dfd0/examples/repeated-parent-attachments/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/95cc876a655f784afc518cdb6a0104159f0620a6/examples/repeated-parent-attachments/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;build123d reference for two parent/marker pairs.&quot;&quot;&quot;
 from build123d import Align, Box, BuildPart, Locations
 
@@ -344,10 +344,10 @@ with BuildPart() as model:
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/build123d/references/repeated-parent-attachments/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/build123d/references/repeated-parent-attachments/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/build123d/references/repeated-parent-attachments/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/build123d/references/repeated-parent-attachments/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/build123d/references/repeated-parent-attachments/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/build123d/references/repeated-parent-attachments/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/build123d/references/repeated-parent-attachments/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/build123d/references/repeated-parent-attachments/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/build123d/references/repeated-parent-attachments/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/build123d/references/repeated-parent-attachments/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -367,7 +367,7 @@ with BuildPart() as model:
     Open the measurement details to inspect body sizes and editable parameters.
   </p>
   <details class="qualification-detail-block"><summary><strong>Original model</strong> · 4 bodies</summary><h4>Editable parameters</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>parent_height</td><td>40.0</td><td>mm</td><td>40</td></tr></tbody></table></div><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>Parent</td><td>[-10.0, -10.0, 0.0]</td><td>[10.0, 10.0, 40.0]</td><td>16000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>Parent (Parent:2)</td><td>[50.0, -10.0, 0.0]</td><td>[70.0, 10.0, 40.0]</td><td>16000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>Marker</td><td>[-5.0, -5.0, 40.0]</td><td>[5.0, 5.0, 50.0]</td><td>1000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>Marker (Marker:2)</td><td>[55.0, -5.0, 40.0]</td><td>[65.0, 5.0, 50.0]</td><td>1000.0</td><td>6</td><td>12</td><td>True</td></tr></tbody></table></div></details>
-  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>height_60</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/saved_designs/height_60/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
+  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>height_60</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/saved_designs/height_60/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
   &quot;bodies&quot;: [
     {
       &quot;area_mm2&quot;: 5600.0,
@@ -584,26 +584,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -626,26 +626,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/right/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/right/goal.png" alt="right Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/right/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/right/goal.png" alt="right Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/right/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/right/overlay.png" alt="right Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/right/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/right/overlay.png" alt="right Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -668,26 +668,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -1188,14 +1188,14 @@ with BuildPart() as model:
     <p>Four rectangular body bounds expose both parent heights and both child positions. saved-design mutation separately proves that both disconnected native joint graphs follow the shared parent-height change.</p>
 
     <h3>Raw test files</h3>
-    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/561b8e8c86785380c3065a10f3bb5451dd945436/main/examples/repeated-parent-attachments/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/773a11f0d00f7083db4f8b6380b0c5df1a789b21/main/examples/repeated-parent-attachments/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
 
     <h3>Reference documentation</h3>
     <ul><li><strong>SolidCraft</strong> — This case isolates the 0.42 joint-solver behaviour for two disconnected graphs that share reusable component definitions.</li><li><strong>BOSL2</strong> — Two independent TOP-to-BOTTOM attachments express the same parent/child intent without SolidCraft-specific replay identity.</li></ul>
 
     <p class="source-stamp">
-      Site source <code>02899ca28457dfb1587bc2bbc3a319cc40a4dfd0</code> · accepted model evidence source
-      <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · durable build <code>561b8e8c86785380c3065a10f3bb5451dd945436</code>
+      Site source <code>95cc876a655f784afc518cdb6a0104159f0620a6</code> · accepted model evidence source
+      <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · durable build <code>773a11f0d00f7083db4f8b6380b0c5df1a789b21</code>
     </p>
   </div>
 </details>
@@ -1211,7 +1211,7 @@ with BuildPart() as model:
     </p>
     <p>
       <a href="../../examples/repeated-parent-attachments/">Open the example →</a>
-      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/02899ca28457dfb1587bc2bbc3a319cc40a4dfd0/examples/repeated-parent-attachments/verification/verify.py">Open verification/verify.py →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/95cc876a655f784afc518cdb6a0104159f0620a6/examples/repeated-parent-attachments/verification/verify.py">Open verification/verify.py →</a>
     </p>
   </section>
 </main>
