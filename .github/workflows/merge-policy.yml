@@ -232,6 +232,11 @@ jobs:
               --json headRefName \
               --jq '.[].headRefName'
           )
+          mapfile -t MERGED_HEADS < <(
+            gh api --paginate \
+              "repos/$REPOSITORY/pulls?state=closed&per_page=100" \
+              --jq '.[] | select(.merged_at != null) | .head.ref'
+          )
           mapfile -t BRANCHES < <(
             gh api --paginate \
               "repos/$REPOSITORY/branches?per_page=100" \
@@ -246,6 +251,17 @@ jobs:
             local candidate="$1"
             local item
             for item in "${OPEN_HEADS[@]}"; do
+              if [ "$item" = "$candidate" ]; then
+                return 0
+              fi
+            done
+            return 1
+          }
+
+          is_merged_pr_head() {
+            local candidate="$1"
+            local item
+            for item in "${MERGED_HEADS[@]}"; do
               if [ "$item" = "$candidate" ]; then
                 return 0
               fi
@@ -286,7 +302,7 @@ jobs:
               continue
             fi
 
-            if ! is_integrated "$source_branch"; then
+            if ! is_integrated "$source_branch" && ! is_merged_pr_head "$source_branch"; then
               unmerged+=("$source_branch")
               continue
             fi
@@ -312,7 +328,7 @@ jobs:
             {
               echo "Branch cleanup completed by repository policy."
               echo
-              format_group "Deleted integrated temporary branches" "${deleted[@]}"
+              format_group "Deleted integrated or squash-merged temporary branches" "${deleted[@]}"
               echo
               format_group "Kept because an open PR still uses the branch" "${open[@]}"
               echo

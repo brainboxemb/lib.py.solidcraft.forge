@@ -57,11 +57,18 @@ class MergePolicyWorkflowTests(unittest.TestCase):
         self.assertIn("github.event.issue.number == 481", text)
         self.assertIn("gh pr list", text)
         self.assertIn("--state open", text)
+        self.assertIn("pulls?state=closed&per_page=100", text)
+        self.assertIn("select(.merged_at != null) | .head.ref", text)
+        self.assertIn("is_merged_pr_head", text)
         self.assertIn("scripts/merge_policy.py", text)
         self.assertIn("--base __cleanup__", text)
         self.assertIn("compare/$encoded...$target", text)
         self.assertIn('"ahead"', text)
         self.assertIn('"identical"', text)
+        self.assertIn(
+            "Deleted integrated or squash-merged temporary branches",
+            text,
+        )
         self.assertIn("Kept because an open PR still uses the branch", text)
         self.assertIn("Kept because unique/unmerged commits remain", text)
         self.assertIn("git/refs/heads/$source_branch", text)
