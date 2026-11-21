@@ -1,36 +1,37 @@
 <main class="wrap">
   <div class="crumb"><a href="../">← Verification</a> / ${title}</div>
+
   <section class="hero small">
-    <p class="eyebrow">${section}</p>
+    <p class="eyebrow">Forge model example · ${section}</p>
+    ${status_line}
     <h1>${title}</h1>
-    <p class="guide-lead">${documentation_goal}</p>
   </section>
+
+  <section class="panel qualification-example-overview">
+    <h2>What this example makes</h2>
+    <p>${solidcraft_result}</p>
+    ${setup_diagram}
+    ${case_preview}
+  </section>
+
   <section class="panel">
     <h2>Forge code</h2>
     <p>This is the complete Forge source used for this example.</p>
     <pre><code>${forge_source}</code></pre>
+    <h3>API used</h3>
+    <p><code>${forge_api}</code></p>
     <p><a href="${forge_source_url}">Open the editable Forge source in GitHub →</a></p>
   </section>
-  ${current_evidence}
+
   ${reference_comparison}
+
   <section class="panel">
-    <h2>Engineering explanation</h2>
-    <h3>Forge API</h3>
-    <p><code>${forge_api}</code></p>
-    <h3>Forge model</h3>
-    <p>${forge_model}</p>
-    <h3>How Forge builds it in SolidCraft</h3>
+    <h2>How Forge builds it in SolidCraft</h2>
     <p>${lowering}</p>
-    <h3>SolidCraft result</h3>
-    <p>${solidcraft_result}</p>
-    <h3>Saved-design test</h3>
-    <p>${saved_design_test}</p>
-    <h3>Geometry evidence</h3>
-    <p><strong>Are outer bounds sufficient?</strong> ${bounds_sufficient}</p>
-    <p>${geometry_reason}</p>
-    <h3>Reference notes</h3>
-    <ul>${reference_notes}</ul>
   </section>
+
+  ${current_evidence}
+
   <section class="panel">
     <h2>Sources of truth</h2>
     <p>

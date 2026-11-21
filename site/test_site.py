@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
 sys.path.insert(0, str(ROOT / "scpf"))
 
-from html_writer import qualification_reference_comparison
+from html_writer import qualification_reference_comparison, qualification_setup_svg
 
 
 class SiteSourceTests(unittest.TestCase):
@@ -106,6 +106,46 @@ class SiteSourceTests(unittest.TestCase):
             build,
         )
         self.assertIn("for implementation in IMPLEMENTATIONS", build)
+
+    def test_verification_case_keeps_historical_information_order(self):
+        case_template = (
+            SITE / "templates" / "qualification-case.html"
+        ).read_text(encoding="utf-8")
+        headings = (
+            "What this example makes",
+            "Forge code",
+            "${reference_comparison}",
+            "How Forge builds it in SolidCraft",
+            "${current_evidence}",
+            "Sources of truth",
+        )
+        positions = [case_template.index(value) for value in headings]
+        self.assertEqual(positions, sorted(positions))
+        self.assertIn("${setup_diagram}", case_template)
+        self.assertIn("${case_preview}", case_template)
+        self.assertNotIn("Engineering explanation", case_template)
+
+        index_template = (
+            SITE / "templates" / "qualification-index.html"
+        ).read_text(encoding="utf-8")
+        self.assertNotIn("${diagrams}", index_template)
+
+    def test_setup_diagram_uses_declared_target_envelopes(self):
+        svg = qualification_setup_svg(
+            {
+                "expected_bodies": (
+                    {
+                        "label": "Plate",
+                        "minimum": [-50.0, -50.0, 0.0],
+                        "maximum": [50.0, 50.0, 6.0],
+                    },
+                ),
+            },
+            "Example plate",
+        )
+        self.assertIn("Expected setup", svg)
+        self.assertIn("Plate", svg)
+        self.assertIn('viewBox="0 0 640 360"', svg)
 
     def test_public_templates_use_verification_terminology(self):
         for path in (SITE / "templates").glob("*.html"):

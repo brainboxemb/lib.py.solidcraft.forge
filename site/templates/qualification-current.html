@@ -1,24 +1,41 @@
 <section class="panel qualification-current">
-  <h2>Current durable verification</h2>
-  ${status_line}
-  <figure class="qualification-case-preview">
-    <a href="${preview_url}" class="qualification-image-link" target="_blank" rel="noopener">
-      <img src="${preview_url}" alt="${title} current durable preview" loading="lazy">
-    </a>
-    <figcaption>Current deterministic presentation preview from durable build evidence. This preview is presentation output, not an extra verification check.</figcaption>
-  </figure>
-  <p class="source-stamp">
-    Site source <code>${site_source_commit}</code> · accepted model evidence source
-    <code>${accepted_source_commit}</code> · durable build <code>${build_commit}</code>
+  <h2>SolidCraft result</h2>
+  <p>
+    Built and measured from the accepted durable SolidCraft evidence.
+    Open the measurement details to inspect body sizes and editable parameters.
   </p>
-  <h3>Editable parameters</h3>
-  ${parameters}
-  <h3>Measured native bodies</h3>
-  ${bodies}
-  <h3>Verification checks</h3>
-  ${verification_checks}
+  ${baseline_details}
   ${saved_designs}
-  <h3>Durable raw evidence</h3>
-  <p class="evidence-links">${raw_links}</p>
 </section>
 ${visual_section}
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    ${status_line}
+
+    <h3>Forge model</h3>
+    <p>${forge_model}</p>
+
+    <h3>Verification checks</h3>
+    ${verification_checks}
+
+    <h3>Saved-design test</h3>
+    <p>${saved_design_test}</p>
+
+    <h3>Geometry evidence</h3>
+    <p><strong>Are outer bounds sufficient?</strong> ${bounds_sufficient}</p>
+    <p>${geometry_reason}</p>
+
+    <h3>Raw test files</h3>
+    <p class="evidence-links">${raw_links}</p>
+
+    <h3>Reference documentation</h3>
+    <ul>${reference_notes}</ul>
+
+    <p class="source-stamp">
+      Site source <code>${site_source_commit}</code> · accepted model evidence source
+      <code>${accepted_source_commit}</code> · durable build <code>${build_commit}</code>
+    </p>
+  </div>
+</details>

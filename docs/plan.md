@@ -14,73 +14,106 @@ PR #562 completed #558 and moved Forge main verification, durable build
 publication and stable Pages generation onto one hosted runner through exact
 externally accepted `tool.cad.ci 0.15.0`.
 
-PR #563 completed the #366 cut-over-readiness repair. Main run #2173 /
-`44885328702` is green and produced:
+PR #563 restored the special Verification pages, legacy Qualification routes
+and source/reference content needed for cut-over testing. A live source switch
+to generated `gh-pages` was then performed on 2026-11-21. GitHub Pages run
+#818 / `44888168038` deployed `gh-pages`
+`74f087afd3ec3477b014c96a54380241dd8f73ae` successfully.
 
-- Forge source: `2bd8a1cc08dc9cbee015211e506bbbc6ebf0a1ee`;
-- generated build: `6cd32285db2f272d91136117813604873a39240e`;
-- generated `gh-pages`: `9bc48876a189073a9a94fa25564c4165e0225a0f`;
-- 36 native Verification cases and 144 independent reference items.
+Live review exposed a remaining presentation-parity regression on ordinary
+case sheets. For example, `verification/circular-feature-pattern/` no longer
+used the accepted historical information order: the conceptual setup diagram
+and native preview were missing from the overview, the large durable
+verification block appeared before the reference/explanation flow, and the
+engineering explanation was moved to the bottom. The Verification index also
+embedded a six-item joint/corner-bracket engineering gallery that did not
+belong on the catalog overview.
 
-The generated replacement now contains the three restored canonical special
-pages, legacy Qualification-route compatibility and representative old/new case
-content parity.
+The live Pages source was therefore rolled back to
+`backup/gh-pages-before-f11-2026-11-20`. Pages run #819 /
+`44888467498` completed successfully from backup commit
+`127adb3900cdc9ca6194edb1102ea7d505316295`.
 
-The public GitHub Pages source is still deliberately pointed at
-`backup/gh-pages-before-f11-2026-11-20`. Generated `gh-pages` is not live.
+#366 is reopened and owns the parity repair. The current fix is developed on
+`issue/366-verification-case-parity`.
 
 ## Current goal
 
-Finish #366 only after explicit approval of the live Pages-source switch.
+Restore the accepted case-sheet information architecture without reintroducing
+the old Qualification execution model or a second source of verification truth.
 
-There is no remaining parity/code repair before that switch. Until approval is
-given, #366 is blocked at the live publication boundary and no Forge-local
-workaround or alternate publication path should be introduced.
+The target presentation order is:
 
-#391 is complete. Its closure review confirmed that reusable CAD verification
-mechanics are owned by `lib.py.cad.verification`; Forge retains only
-consumer/model policy, reference execution, presentation and publication
-composition.
+1. status and case title;
+2. "What this example makes";
+3. conceptual setup diagram plus native preview;
+4. Forge source and API used;
+5. independent reference source/result comparison;
+6. "How Forge builds it in SolidCraft";
+7. SolidCraft result and visual evidence;
+8. collapsed technical verification detail and provenance.
 
-While #366 is blocked, the next repository work is #481: remove stale
-development branches after confirming none represent active work.
+The conceptual setup diagram must be derived from the declared expected body
+envelopes already present in verification evidence from `verify.py`; do not
+restore the removed central `EXPECTED_VISUAL_BOXES` catalog.
 
-## Live cut-over proof
+The Verification index remains a grouped case catalog with links to the
+standalone results, coverage and joint-anatomy pages. Joint/corner-bracket
+engineering diagrams belong on `verification/joint-anatomy/`, not as a
+gallery appended to the catalog root.
 
-The generated replacement already proves:
+#391 is complete. Reusable CAD verification mechanics remain owned by
+`lib.py.cad.verification`; Forge retains consumer/model policy, reference
+execution, presentation and publication composition.
 
-- all 36 current Verification cases are present;
-- representative old/new case content parity is green;
-- `verification/results/` is generated from durable `build/main` evidence;
-- `verification/coverage/` links only to current model Verification cases;
-- `verification/joint-anatomy/` preserves authored engineering explanation
-  and all six current CadCraft sources;
-- stable joint diagrams use immutable durable build URLs;
-- old `qualification/<case>/` and special-page URLs have generated redirects;
+## Cut-over validation state
+
+Already proven and retained:
+
+- all 36 current Verification cases exist;
+- `verification/results/`, `verification/coverage/` and
+  `verification/joint-anatomy/` are generated;
+- old `qualification/<case>/` and special-page routes have generated
+  compatibility redirects;
 - old and new manifest URLs contain identical current bytes;
-- canonical templates contain no visible Qualification navigation;
-- complete PR and main site generation are green.
+- canonical navigation uses Verification terminology;
+- durable Pages generation and publication from `build/main` are green.
 
-Keep `backup/gh-pages-before-f11-2026-11-20` intact as rollback evidence until
-the live site has been switched and verified.
+Still required before another live switch:
+
+- representative case sheets must match the accepted historical information
+  architecture;
+- setup diagrams and primary previews must appear in their original overview
+  role;
+- heavy machine evidence must be secondary/collapsed rather than defining the
+  page layout;
+- the Verification catalog root must not embed the joint engineering gallery;
+- complete PR and main site generation must remain green after the repair.
+
+Keep `backup/gh-pages-before-f11-2026-11-20` intact and live until the repaired
+generated site is reviewed again.
 
 ## Execution order
 
-1. [#366, blocked] Obtain explicit approval for the live Pages-source cut-over.
-2. [#366] Repoint the public Pages source to generated `gh-pages`.
-3. [#366] Verify the actual public root, Verification pages and old
-   Qualification redirects.
-4. [#366] Only after successful live verification decide preview/cleanup and
-   backup-retention policy.
-5. [#481, now while #366 is blocked] Remove stale development branches after
-   confirming none represent active work.
+1. [#366, now] Restore generic Verification case-sheet presentation parity.
+2. [#366] Remove the misplaced engineering-diagram gallery from the catalog
+   root while retaining the standalone joint-anatomy page.
+3. [#366] Generate and inspect representative case pages, especially
+   `circular-feature-pattern`, and run the complete site/CI checks.
+4. [#366] Merge the repair and let main publish a fresh generated
+   `gh-pages`.
+5. [#366] Review the generated branch before switching the live Pages source.
+6. [#366] Repoint live Pages to `gh-pages` only after that review, then verify
+   the public root, representative Verification cases and old Qualification
+   redirects.
+7. [#481, next] Remove stale development branches after #366 is proven live.
 
 ## Open issue assessment — 2026-11-21
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | blocked | Durable build/main, one-runner publication, page parity and legacy compatibility are complete. Only the explicitly approved live Pages-source switch, public verification and later retention/preview decisions remain. |
-| #481 Remove stale Forge development branches | now | #391 is closed; clean stale refs from merged, abandoned or superseded work and preserve only active/generated/rollback branches. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | now | Live review found a case-sheet presentation-parity regression. Backup Pages is restored; repair the generic Verification layout, review generated gh-pages, then retry the live cut-over. |
+| #481 Remove stale Forge development branches | next | #391 is closed, but branch cleanup waits until the #366 Pages repair is proven live; preserve active/generated/rollback branches meanwhile. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by released runtime images, batching and later one-runner timing work. |
 | #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to the superseded Qualification architecture and old reuse strategy. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
@@ -100,4 +133,4 @@ the live site has been switched and verified.
 
 Immediate chain:
 
-`#366 blocked on explicit live approval -> #481 branch cleanup`.
+`#366 case-page parity repair -> generated-site review -> live cut-over -> #481 branch cleanup`.
