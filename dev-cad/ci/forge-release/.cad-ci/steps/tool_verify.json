@@ -1,12 +1,12 @@
 {
   "action_executed": true,
   "bundle_sha256": "ff111949a1d54d98aa2270eb7cd9ee1ba50487699ee22ef94c2d235cf97ec367",
-  "duration_seconds": 0.963,
+  "duration_seconds": 0.732,
   "engine": "scons",
   "engine_schema": 2,
   "error": null,
   "exit_code": 0,
-  "finished_at": "2026-11-21T11:39:06.839Z",
+  "finished_at": "2026-11-21T12:56:32.341Z",
   "item": "forge-release",
   "outcome": "BUILT",
   "output_state": "UNCHANGED",
@@ -17,10 +17,10 @@
       "sha256": "3d7ea248305944a41606627c5e05dc860c80e4609fdfdc483ab6bbc3dd60465e"
     }
   },
-  "run_finished_at": "2026-11-21T11:43:56.637Z",
-  "run_started_at": "2026-11-21T11:38:36.067Z",
+  "run_finished_at": "2026-11-21T12:58:02.231Z",
+  "run_started_at": "2026-11-21T12:56:15.200Z",
   "schema": 3,
-  "started_at": "2026-11-21T11:39:05.880Z",
+  "started_at": "2026-11-21T12:56:31.611Z",
   "status": "pass",
   "step": "tool_verify",
   "target_spec_digest": "fd851b38535424ae4fe0685e24c9c1d7f97ec6b8857baba4d5c1d86db696c663",
