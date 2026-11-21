@@ -19,8 +19,10 @@ dev-cad
 dev-ci
 ```
 
-All three currently point to main merge commit
-`286923c7db25b5f77dce27e0a7c330cfb44ae3c5`.
+The most recent fully synchronized three-lane baseline is main merge commit
+`286923c7db25b5f77dce27e0a7c330cfb44ae3c5`. Active work may temporarily
+advance one development lane until its next promotion; use GitHub branch heads
+and durable scope manifests for live commit identity.
 
 The exact accepted generic stack remains:
 
@@ -38,8 +40,9 @@ dev-cad/
 dev-ci/
 ```
 
-Each scope is a complete 188-item baseline with
-`source_commit = 286923c7db25b5f77dce27e0a7c330cfb44ae3c5`.
+At that synchronization point each scope was a complete 188-item baseline.
+During active development, each named scope records its own accepted
+`source_commit` and may legitimately be ahead of `main` until promotion.
 
 Generated Pages records the matching scope at the stable root, `/dev-cad/`
 and `/dev-ci/`.
