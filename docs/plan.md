@@ -8,18 +8,7 @@ documents in `docs/`. Issues keep implementation detail and history.
 
 ## Current status — long-lived lanes are live
 
-The #572 source/build/Pages lane topology is implemented on `main` commit
-`4c408be0f34b8bec4f694a7873313279f0e67997`.
-
-The exact accepted generic stack is:
-
-- `lib.py.cad.ci 0.9.2` @
-  `3f688243f4ee65b1fa42f82adde5344fe5101775`;
-- `tool.cad.ci 0.16.1` @
-  `4c6bb8b35009ef5008bd99134cf84b59fddc0b8a`;
-- external named-scope acceptance: `tool.cad.ci.test` PR #61.
-
-Forge now has three long-lived source branches:
+The final long-lived source lanes are:
 
 ```text
 main
@@ -27,76 +16,89 @@ dev-cad
 dev-ci
 ```
 
-`main` and `dev-ci` currently point to `4c408be0f34b8bec4f694a7873313279f0e67997`; `dev-cad` is now ahead at `eb99203c273396fc1b55ff8cabdcd9415ac82536` after the first normal feature merge (#581).
+The exact accepted generic stack remains:
 
-Normal PRs are verification-only. PR #577 proved the new review path: the
-`cad_ci_pr` job passed and the durable push/publication job was skipped.
+- `lib.py.cad.ci 0.9.2` @
+  `3f688243f4ee65b1fa42f82adde5344fe5101775`;
+- `tool.cad.ci 0.16.1` @
+  `4c6bb8b35009ef5008bd99134cf84b59fddc0b8a`;
+- external named-scope acceptance: `tool.cad.ci.test` PR #61.
 
-The first `main` push through the new workflow is green. It updated only
-`build/main` and stable Pages while preserving the development-subtree keep
-set.
+The hyphenated lane bootstrap is proven:
 
-The final lane names are `dev-cad` and `dev-ci`. Main commit
-`4c408be0f34b8bec4f694a7873313279f0e67997` contains the hyphenated workflow
-and documentation.
+- `dev-cad` bootstrap run `44900066106`: green, 188-item complete scope;
+- `dev-ci` bootstrap run `44900069488`: green, 188-item complete scope;
+- stable root and both named Pages subtrees record their matching build scope;
+- the temporary underscore Pages subtrees are gone.
 
-Both branches were created from that exact main head and completed their first
-full bootstrap successfully:
+The first normal feature flow is also proven:
 
-- `dev-cad`: Actions run `44900066106`, 188-item complete scope;
-- `dev-ci`: Actions run `44900069488`, 188-item complete scope.
+- #581 targeted `dev-cad`, changed only `docs/plan.md`, passed the review-only
+  PR path and skipped durable publication;
+- #581 was squash-merged to `dev-cad`;
+- dev-cad push run `44900683589` was green;
+- exact Git-tree comparison proved only `build/dev-cad` and
+  `gh-pages/dev-cad` changed while `build/main`, `build/dev-ci`, stable
+  Pages and `gh-pages/dev-ci` remained byte-for-byte at the same Git objects.
 
-Durable state now proves the final naming end to end:
+The first promotion proof is complete enough to expose one final synchronization
+edge case:
 
-| Source lane | Build manifest | Pages provenance | Source commit |
-| --- | --- | --- | --- |
-| `main` | `scope: main` | stable root, `build_scope: main` | `4c408be0…` |
-| `dev-cad` | `scope: named, name: dev-cad` | `/dev-cad/`, `build_scope: dev-cad` | `4c408be0…` |
-| `dev-ci` | `scope: named, name: dev-ci` | `/dev-ci/`, `build_scope: dev-ci` | `4c408be0…` |
+1. promotion PR #583 ran complete validation and passed;
+2. #583 was merged to main with a **normal merge commit** as
+   `b13d772aa9388c21f1362d990ae94e875a93a7c1`;
+3. main push run `44901399321` was green;
+4. main publication changed only `build/main` and stable Pages; both dev
+   build/Page tree SHAs were preserved;
+5. `dev-ci` fast-forwarded to the new main head and run `44901462770` was
+   green;
+6. GitHub automatically deleted `dev-cad` because it was the direct PR head;
+7. `dev-cad` was recreated at the main merge commit, but branch-create run
+   `44901501059` failed before CAD execution because GitHub supplied
+   `github.event.before = 0000000000000000000000000000000000000000`.
 
-Current Pages build commits are:
+The failure is a workflow-base bug, not a CAD or generated-state failure.
+`build/dev-cad/build.json` already contains the correct previous accepted
+`source_commit`; named lanes must use that durable source commit as their
+incremental base.
 
-- stable root: `ac8be31cfdbe289d456116bf88707aee6f823193`;
-- `dev-cad`: `b98f00092b755005908167563e6d832f199c5e70`;
-- `dev-ci`: `351ce4c60e602f74f7771ab44a3985440d277086`.
+The first dev-ci integration push of that fix, run `44901868170`, failed in
+the lane-resolution shell before CAD execution because the embedded Python
+heredoc terminator was indented inside command substitution.
 
-The earlier underscore scopes/branches were temporary migration proof only.
-They are obsolete and belong to #481 / generated-state cleanup; they are not
-part of the permanent keep-set.
+The follow-up on `issue/572-manifest-base-shell-fix` keeps the same manifest
+base design but uses a single-line Python manifest reader that is valid inside
+the YAML shell block.
 
-The first normal feature-lane proof is complete:
+The #572 synchronization fix therefore does two things:
 
-- #581 targeted `dev-cad` and changed only `docs/plan.md`;
-- PR run `44900595100` passed `cad_ci_pr` and skipped `cad_ci_push`;
-- #581 was squash-merged to `dev-cad` as
-  `eb99203c273396fc1b55ff8cabdcd9415ac82536`;
-- dev-cad push run `44900683589` completed successfully.
-
-The durable isolation proof after that push is exact:
-
-| Generated object | Before #581 push | After #581 push | Expected |
-| --- | --- | --- | --- |
-| `build/main` tree | `74b223c1e4b09a27e322cdcd9f48661ab7d399b9` | same | preserved |
-| `build/dev-ci` tree | `6438ce9f4a9bed7d674dedf9f407be7ee50d6653` | same | preserved |
-| `gh-pages/dev-ci` tree | `811a7be3ca9703a104f2f3c2c24b3a46fa8c306c` | same | preserved |
-| stable Pages provenance blob | `0c8fd545c20d7133ca398587934189e13eb4be86` | same | preserved |
-| `build/dev-cad` tree | `34444c1fecfb554eea60d5bf827255f670e7eef6` | `76ab2ec9371f711fdc25899bbba297dae55a4db0` | changed |
-| `gh-pages/dev-cad` tree | `c59779fb5455bcc96ad91e903bd194af5e36acf3` | `1095a77a29d76f42c535e8b14dc6c930b848c1ff` | changed |
-
-The temporary underscore Pages subtrees are already absent. Old underscore
-source branches/build scopes and any old `build/pr/*` state remain cleanup
-work.
-
-Two #572 proofs remain before the migration is closed:
-
-1. promote `dev-cad -> main` through a normal merge commit, verify stable
-   publication preserves both dev scopes/previews, then synchronize both lanes;
-2. remove obsolete generated `build/pr/*` and underscore scopes where
-   supported, then perform stale source-branch cleanup under #481.
+- named dev pushes derive their incremental base from their own durable
+  `build.json.source_commit`, making branch recreation/synchronization safe;
+- future promotions use temporary `promote/dev-cad` or `promote/dev-ci`
+  branches. GitHub may auto-delete that temporary head after merge without
+  deleting the long-lived lane.
 
 The live public GitHub Pages source is still intentionally on
 `backup/gh-pages-before-f11-2026-11-20`. Issue #366 owns that separate
-operational cut-over and requires an explicit decision; #572 does not switch it.
+operational cut-over and requires explicit approval.
+
+The generated `build` branch still contains obsolete migration/history state:
+
+```text
+pr/515/
+pr/549/
+dev_cad/
+dev_ci/
+```
+
+Those entries are cleanup work after the synchronization fix is proven. The
+permanent generated keep-set is exactly:
+
+```text
+main/
+dev-cad/
+dev-ci/
+```
 
 ## Priority model
 
@@ -233,28 +235,35 @@ not a substitute for this plan.
 
 - Short-lived feature/fix PRs target `dev-cad` or `dev-ci` and are
   **squash-merged**.
-- Promotion PRs from `dev-cad` or `dev-ci` target `main`, require a
-  complete processed validation run, and use a **normal merge commit**.
-- After promotion, synchronize the promoted lane to the resulting main head.
-- The other development lane should incorporate the new main head before work
-  that assumes the promoted state.
+- Promotion does **not** use the long-lived dev branch directly as the PR head.
+  Create `promote/dev-cad` or `promote/dev-ci` at the current lane head.
+- Promotion PRs from that temporary branch target `main`, require a complete
+  processed validation run, and use a **normal merge commit**.
+- GitHub may auto-delete the temporary promotion head after merge; this is
+  desirable and must never delete the long-lived lane.
+- After promotion, fast-forward/synchronize both long-lived dev lanes to the
+  resulting main head.
+- Named lane incremental selection uses the prior durable
+  `build/<lane>/build.json.source_commit` as base, not
+  `github.event.before`.
 - A PR never publishes durable build or Pages state; the destination
   development-branch push performs the durable integration update.
 
 ## Immediate execution order
 
-1. [complete] #581 proved short-lived PR -> `dev-cad` review-only flow.
-2. [complete] The resulting `dev-cad` push changed only its own durable
-   build/Page scope.
-3. [#578/#572, now] Open the first promotion PR `dev-cad -> main`; require
-   full validation and merge with a normal merge commit.
-4. Verify the main push preserves both dev scopes/previews, then synchronize
-   `dev-cad` and `dev-ci` to the resulting main head.
-5. [#572] Remove old `build/pr/*` and obsolete underscore generated state
-   where supported, then close the lane migration.
-6. [#481] Remove stale source branches against the final keep-set.
-7. Start P1 work in parallel by lane:
+1. [#572, now] Merge the durable-base/promotion-branch fix through `dev-ci`.
+2. Prove a recreated/synchronized `dev-cad` can update from its durable
+   manifest base without a full bootstrap.
+3. Promote the CI fix through temporary `promote/dev-ci -> main`; verify
+   complete validation and normal merge while `dev-ci` itself remains present.
+4. Synchronize both long-lived lanes to the resulting main head and prove both
+   named durable scopes/Pages previews are current.
+5. [#572] Atomically remove generated `pr/515`, `pr/549`, `dev_cad` and
+   `dev_ci` from the build branch, preserving only main/dev-cad/dev-ci.
+6. Close #572 when those generated-state and synchronization proofs are green.
+7. [#481] Remove stale source branches against the final keep-set.
+8. Start P1 work in parallel by lane:
    - `dev-ci`: #576;
    - `dev-cad`: #357 / #356, then the current model blockers.
-8. Treat #366 as a separate explicit live-publication decision, not as a
-   hidden prerequisite for CAD development.
+9. Treat #366 as a separate explicit live-publication decision, not as a
+   prerequisite for CAD development.

@@ -25,7 +25,7 @@ jobs:
         with:
           source_sha: ${{ github.event.pull_request.head.sha }}
           base_sha: ${{ github.event.pull_request.base.sha }}
-          full_run: ${{ github.event.pull_request.base.ref == 'main' && (github.event.pull_request.head.ref == 'dev-cad' || github.event.pull_request.head.ref == 'dev-ci') }}
+          full_run: ${{ github.event.pull_request.base.ref == 'main' && (github.event.pull_request.head.ref == 'dev-cad' || github.event.pull_request.head.ref == 'dev-ci' || github.event.pull_request.head.ref == 'promote/dev-cad' || github.event.pull_request.head.ref == 'promote/dev-ci') }}
           github_token: ${{ github.token }}
 
   cad_ci_push:
@@ -42,12 +42,14 @@ jobs:
         id: lane
         env:
           SOURCE_SCOPE: ${{ github.ref_name }}
+          EVENT_BEFORE: ${{ github.event.before }}
         run: |
           case "$SOURCE_SCOPE" in
             main)
               echo "scope=main" >> "$GITHUB_OUTPUT"
               echo "scope_exists=true" >> "$GITHUB_OUTPUT"
               echo "full_run=false" >> "$GITHUB_OUTPUT"
+              echo "base_sha=$EVENT_BEFORE" >> "$GITHUB_OUTPUT"
               ;;
             dev-cad|dev-ci)
               echo "scope=$SOURCE_SCOPE" >> "$GITHUB_OUTPUT"
@@ -56,11 +58,17 @@ jobs:
               git -C "$probe" remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
               if git -C "$probe" fetch --quiet --depth=1 origin build &&
                  git -C "$probe" cat-file -e "FETCH_HEAD:$SOURCE_SCOPE/build.json" 2>/dev/null; then
+                git -C "$probe" show "FETCH_HEAD:$SOURCE_SCOPE/build.json" > "$probe/build.json"
+                BASE_SHA="$(
+                  python -c 'import json,re,sys; from pathlib import Path; source=json.loads(Path(sys.argv[1]).read_text(encoding="utf-8")).get("source_commit"); print(source) if isinstance(source,str) and re.fullmatch(r"[0-9a-f]{40}", source) else sys.exit("named durable scope has invalid source_commit")' "$probe/build.json"
+                )"
                 echo "scope_exists=true" >> "$GITHUB_OUTPUT"
                 echo "full_run=false" >> "$GITHUB_OUTPUT"
+                echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
               else
                 echo "scope_exists=false" >> "$GITHUB_OUTPUT"
                 echo "full_run=true" >> "$GITHUB_OUTPUT"
+                echo "base_sha=$EVENT_BEFORE" >> "$GITHUB_OUTPUT"
               fi
               rm -rf "$probe"
               ;;
@@ -74,7 +82,7 @@ jobs:
         uses: brainboxemb/tool.cad.ci@4c6bb8b35009ef5008bd99134cf84b59fddc0b8a
         with:
           source_sha: ${{ github.sha }}
-          base_sha: ${{ github.event.before }}
+          base_sha: ${{ steps.lane.outputs.base_sha }}
           full_run: ${{ steps.lane.outputs.full_run }}
           github_token: ${{ github.token }}
 
@@ -86,7 +94,7 @@ jobs:
 
       - name: Prepare complete durable scope
         env:
-          BASE_SHA: ${{ github.event.before }}
+          BASE_SHA: ${{ steps.lane.outputs.base_sha }}
           SOURCE_SHA: ${{ github.sha }}
           SCOPE: ${{ steps.lane.outputs.scope }}
           SCOPE_EXISTS: ${{ steps.lane.outputs.scope_exists }}
