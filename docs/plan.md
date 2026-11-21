@@ -62,8 +62,15 @@ The failure is a workflow-base bug, not a CAD or generated-state failure.
 `source_commit`; named lanes must use that durable source commit as their
 incremental base.
 
-The #572 fix now in progress on `issue/572-promotion-sync-robustness` therefore
-does two things:
+The first dev-ci integration push of that fix, run `44901868170`, failed in
+the lane-resolution shell before CAD execution because the embedded Python
+heredoc terminator was indented inside command substitution.
+
+The follow-up on `issue/572-manifest-base-shell-fix` keeps the same manifest
+base design but uses a single-line Python manifest reader that is valid inside
+the YAML shell block.
+
+The #572 synchronization fix therefore does two things:
 
 - named dev pushes derive their incremental base from their own durable
   `build.json.source_commit`, making branch recreation/synchronization safe;
