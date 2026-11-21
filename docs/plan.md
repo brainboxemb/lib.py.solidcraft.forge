@@ -186,7 +186,7 @@ HUB75 uses explicit Placement today.
 
 | Issue | Lane | Workstream | Priority | Next action |
 | --- | --- | --- | --- | --- |
-| #598 Enforce PR merge method through one policy-controlled merge path | `dev-ci` | WS0 | **P0 now** | Direct dev-cad promotion is proven: early merge blocked, later merge produced two-parent main and advanced dev-cad. Fix the remaining duplicate-check-run selection edge case and bot comment formatting before closing. |
+| #598 Enforce PR merge method through one policy-controlled merge path | `dev-ci` | WS0 | **P0 now** | Merge method, green-check gate and lane restoration are proven. Final gap: merges made with `GITHUB_TOKEN` do not emit a follow-up push workflow, so dispatch Forge integration explicitly for every durable destination ref. |
 | #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 next after #598** | Use owner command `/cleanup-branches` on #481. The workflow deletes only integrated temporary-prefix refs; open PR heads and unique/unmerged branches are retained and reported. |
 | #366 Make verified output durable, then cut Pages over | `dev-ci` | WS0 | **P1 decision gate** | Durable/generated side is complete; request explicit approval before changing the live Pages source, then verify public/legacy routes. |
 | #570 Remove CADCraft from Forge verification diagrams | `dev-cad` | WS2 | **P2** | Replace the six explanatory diagram sources with deterministic Forge-owned SVG/static sources; remove its CI/runtime input only after the content path no longer needs it. |
@@ -256,9 +256,10 @@ The two long-lived development lanes are independent execution tracks.
 
 ## Immediate execution order
 
-1. [#598, now dev-ci] Finish live acceptance: evaluate only the newest
-   check-run for each check name after concurrency cancellation, and keep
-   merge-result comments literal/readable.
+1. [#598, now dev-ci] Finish durable-integration acceptance: after a
+   policy-controlled merge, explicitly dispatch Forge integration on the
+   destination long-lived ref; direct dev-lane promotion dispatches both
+   `main` and the restored promoted lane.
 2. [#481, after #598] Run the repository-owned `/cleanup-branches` command on
    #481 and review every retained open/unmerged branch before any further deletion.
 3. [#366, decision gate] Decide whether to cut the live Pages source over to
