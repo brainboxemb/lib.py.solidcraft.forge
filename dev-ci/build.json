@@ -30,10 +30,10 @@
       "engine_schema": 2,
       "final_bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
       "final_step": "tool_test",
-      "final_target_spec_digest": "f2aa477fce606e39d6c78bb1b213d131671370b66e58a4206175e1a58225f8ba",
+      "final_target_spec_digest": "42774ee41728cd5a50017910a142187571264ee714d13e8de602f59567f5c5a6",
       "item_id": "forge-tests",
       "outputs": [],
-      "source_commit": "545f1ac66c3cecbe3b6a30b780cce4e75a288f6a"
+      "source_commit": "c899551e38af3bc48ef2af64158e492809e39ae5"
     },
     "ci/model-verification-batch": {
       "engine": "scons",
@@ -2294,5 +2294,5 @@
   "name": "dev-ci",
   "schema": 1,
   "scope": "named",
-  "source_commit": "f857c045da8ac78783c3c3f83c3b17fdcec5ba9d"
+  "source_commit": "c899551e38af3bc48ef2af64158e492809e39ae5"
 }
