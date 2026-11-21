@@ -1,4 +1,4 @@
-"""Load accepted Forge evidence from one materialized generic build/main scope.
+"""Load accepted Forge evidence from one materialized complete build scope.
 
 This module is deliberately presentation-neutral. It validates the durable
 source-path item layout and returns normalized evidence without rendering HTML,
@@ -64,10 +64,11 @@ class ExampleBuildEvidence:
 
 @dataclass(frozen=True)
 class StableBuildEvidence:
-    """One complete accepted build/main input for stable Pages."""
+    """One complete accepted build scope used for Forge site evidence."""
 
     root: Path
     build_commit: str
+    scope: str
     manifest_source_commit: str
     examples: tuple[ExampleBuildEvidence, ...]
     verification_wheel_path: Path
@@ -76,7 +77,7 @@ class StableBuildEvidence:
     diagram_paths: tuple[Path, ...]
 
     def relative_path(self, path: Path) -> str:
-        """Return one artifact path relative to the durable main scope."""
+        """Return one artifact path relative to the durable complete scope."""
         return Path(path).resolve().relative_to(self.root).as_posix()
 
     def raw_url(self, path: Path) -> str:
@@ -85,7 +86,7 @@ class StableBuildEvidence:
         return (
             "https://raw.githubusercontent.com/"
             "brainboxemb/lib.py.solidcraft.forge/"
-            f"{self.build_commit}/main/{relative}"
+            f"{self.build_commit}/{self.scope}/{relative}"
         )
 
     def blob_url(self, path: Path) -> str:
@@ -93,7 +94,7 @@ class StableBuildEvidence:
         relative = self.relative_path(path)
         return (
             "https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/"
-            f"{self.build_commit}/main/{relative}"
+            f"{self.build_commit}/{self.scope}/{relative}"
         )
 
 
@@ -406,36 +407,71 @@ def _example(
     )
 
 
+def _validated_scope(scope: str) -> str:
+    """Return one safe logical complete-scope name."""
+
+    if not isinstance(scope, str) or not scope.strip():
+        raise ValueError("build scope must be non-empty text")
+    value = scope.strip()
+    path = Path(value)
+    if (
+        path.is_absolute()
+        or len(path.parts) != 1
+        or value in {".", "..", "pr"}
+        or "/" in value
+        or "\\" in value
+    ):
+        raise ValueError(f"unsafe build scope: {scope}")
+    return value
+
+
 def load_stable_build_evidence(
     root: Path,
     build_commit: str,
     slugs: Iterable[str],
+    *,
+    scope: str = "main",
 ) -> StableBuildEvidence:
-    """Load the complete stable-Pages evidence set from one build/main tree."""
+    """Load one complete accepted build scope for Forge site generation."""
 
     root = Path(root).resolve()
+    scope = _validated_scope(scope)
     if (
         not isinstance(build_commit, str)
         or re.fullmatch(r"[0-9a-f]{40}", build_commit.strip()) is None
     ):
         raise ValueError("build_commit must be one full immutable Git SHA")
 
-    manifest = _json_object(root / "build.json", "build/main manifest")
-    if manifest.get("schema") != 1 or manifest.get("scope") != "main":
-        raise ValueError("stable Pages requires build schema 1 scope main")
+    manifest = _json_object(
+        root / "build.json",
+        f"build/{scope} manifest",
+    )
+    if manifest.get("schema") != 1:
+        raise ValueError(f"build/{scope} requires build schema 1")
+    if scope == "main":
+        if manifest.get("scope") != "main" or manifest.get("name") is not None:
+            raise ValueError("build/main requires manifest scope main")
+    elif (
+        manifest.get("scope") != "named"
+        or manifest.get("name") != scope
+    ):
+        raise ValueError(
+            f"build/{scope} requires named manifest with matching name"
+        )
+
     manifest_source_commit = manifest.get("source_commit")
     if (
         not isinstance(manifest_source_commit, str)
         or not manifest_source_commit.strip()
     ):
-        raise ValueError("build/main manifest has no source_commit")
+        raise ValueError(f"build/{scope} manifest has no source_commit")
     manifest_items = manifest.get("items")
     if not isinstance(manifest_items, dict):
-        raise ValueError("build/main manifest has no item map")
+        raise ValueError(f"build/{scope} manifest has no item map")
 
     normalized_slugs = tuple(sorted(set(slugs)))
     if not normalized_slugs:
-        raise ValueError("stable Pages requires at least one verified example")
+        raise ValueError("site evidence requires at least one verified example")
     examples = tuple(
         _example(root, manifest_items, slug)
         for slug in normalized_slugs
@@ -481,6 +517,7 @@ def load_stable_build_evidence(
     return StableBuildEvidence(
         root=root,
         build_commit=build_commit.strip(),
+        scope=scope,
         manifest_source_commit=manifest_source_commit,
         examples=examples,
         verification_wheel_path=verification_wheel_path,

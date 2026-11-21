@@ -252,108 +252,106 @@ without retaining the old qualification runner.
 This restores command-contract coverage without reintroducing the historical
 qualification orchestration.
 
-## Durable generated build output
+## Durable generated build output and development lanes
 
-Successful transient verification output becomes durable only through the
-released CAD-CI build-store/publication commands.
+Forge uses the exact externally accepted `tool.cad.ci 0.16.1` /
+`lib.py.cad.ci 0.9.2` stack for all selection, execution, durable-scope and
+generated-branch mechanics.
 
-For pull requests Forge delegates the complete lifecycle to the exact externally
-accepted `tool.cad.ci` reusable PR workflow:
+The source branches have fixed roles:
 
-- one reusable PR job performs changed-path-selected CAD-CI execution;
-- if materialized `build/` output exists, the same runner invokes
-  `cad-ci build prepare-pr --base/--head`;
-- the same runner publishes the sparse PR scope with
-  `cad-ci publish build --scope pr`;
-- no GitHub artifact upload/download boundary exists between verification and
-  PR publication;
-- no second Forge-owned publication runner exists;
-- on `pull_request.closed`, normal CAD-CI execution is skipped and the same
-  reusable workflow invokes `cad-ci publish build-cleanup`;
-- same-repository PR publication may use `contents: write`; fork PRs must not
-  receive durable publication privileges;
-- generated-branch validation, source freshness and retry behavior remain
-  released CAD-CI responsibilities.
+- `main` is stable integration;
+- `dev_cad` is the long-lived Forge/CAD/product integration lane;
+- `dev_ci` is the long-lived Forge CI/infrastructure integration lane.
 
-Forge must not install/build its own copy of the accepted CAD-CI stack inside a
-second publication job and must not implement its own build-store copy,
-manifest validation, generated-branch race retry or Git publication logic.
+Normal pull requests are verification-only.
 
-## Stable build main bootstrap
+Requirements:
 
-The retired Forge-owned `build/main` format is not an input to the current
-generic build store.
+- a pull-request job performs changed-path-selected CAD-CI execution;
+- a pull request must not publish `build/pr/*`, Pages previews or any other
+  durable generated state;
+- pull requests do not require `contents: write`;
+- PR close events do not need generated-scope cleanup because PR scopes are no
+  longer created;
+- Forge must not reimplement generic selection to achieve this.
 
-The first authoritative generic main baseline is created from a complete
-accepted run of the current processed item set:
+Durable publication occurs only on a push to one of the three long-lived source
+branches.
 
-- PR verification remains incremental;
-- the bootstrap main push runs all `process: true` items;
-- staged `process: false` items do not participate and do not require output;
-- the reusable CAD-CI artifact is the only candidate-output source;
-- `cad-ci build prepare-main` validates and packages the complete processed
-  candidate;
-- `cad-ci publish build --scope main` replaces only the generated
-  `build/main` scope;
-- existing `build/pr/*` scopes are preserved;
-- the retired main manifest is neither parsed nor translated;
-- every stored item keeps its public `.cad-ci` evidence.
+The generated `build` branch contains complete reconciled scopes:
 
-The main/push path keeps write permission confined to its separate publication
-job. The PR path uses the accepted single-runner reusable PR workflow, which
-owns the required PR publication permission and same-repository guard.
+```text
+main/
+dev_cad/
+dev_ci/
+```
 
-The bootstrap full run is transitional. Once a valid generic main baseline
-exists, future #366 work must use partial main updates rather than requiring a
-full run for every main change.
+For each push:
 
-## Steady-state durable build updates
+- `main` uses the released complete-main update/publication path;
+- `dev_cad` uses released named-scope update/publication with name
+  `dev_cad`;
+- `dev_ci` uses released named-scope update/publication with name
+  `dev_ci`;
+- selection uses the push base/head and current repository membership;
+- deletion-only updates remain valid;
+- a first publication for a missing named scope is bootstrapped from one
+  complete processed run and `build prepare-named`;
+- updating one scope must preserve both unrelated complete scopes;
+- Forge must not inspect or merge generated branch trees itself.
 
-After the generic `build/main` baseline exists, normal durable publication is
-incremental.
+The same runner that executes CAD-CI continues through build preparation,
+publication and Forge-owned site generation. There is no Actions artifact
+handoff and no second tool/library bootstrap.
 
-For pull requests:
+## Lane Pages publication
 
-- Forge calls the exact accepted `reusable-pr.yml` revision once;
-- that single reusable job remains changed-path selected;
-- `cad-ci build prepare-pr --base/--head` derives the sparse durable scope from
-  the same released planner semantics on the same runner;
-- the PR scope contains all affected processed top-level items, not a
-  Forge-hard-coded model name;
-- unrelated item output is absent;
-- close-only events execute only released PR-scope cleanup and do not run normal
-  CAD-CI verification;
-- cleanup must preserve `build/main` and every unrelated PR scope;
-- Forge must not implement generated-branch deletion logic itself.
+The generated `gh-pages` branch remains one shared publication branch.
 
-For main pushes:
+Its layout is:
 
-- Forge uses the exact externally accepted root action from
-  `tool.cad.ci 0.15.0`;
-- one caller-owned job and one hosted runner execute the complete main
-  lifecycle;
-- the action performs exactly one changed-path-selected `cad-ci run`; Forge
-  does not use `full_run: true`;
-- documentation/site-only selection may execute source checks but must not
-  start SolidCraft/reference CAD runtimes merely because Pages is published;
-- after the action, the same workspace and exact tool/library source stack are
-  reused without another checkout, Python setup or BrainboxEmb package install;
-- `cad-ci build fetch` materializes the current durable baseline;
-- `cad-ci build update-main --base/--head` always reconciles that baseline
-  with current processed membership, including deletion-only updates with no
-  replacement candidate;
-- `cad-ci publish build --scope main` publishes the prepared main scope while
-  preserving PR scopes and returns the immutable generated build commit;
-- Forge builds the site directly from that same `prepared-main` tree and the
-  returned build commit; it does not re-fetch the just-published build;
-- `cad-ci publish pages` publishes the complete Forge-owned site from the same
-  runner.
+```text
+/                 stable main site
+/dev_cad/         dev_cad integration preview
+/dev_ci/          dev_ci integration preview
+```
 
-There is no Actions artifact transport and no second/third publication runner
-on the main path. Forge must not calculate or merge item sets itself. Base/head
-selection, build-store membership/deletion, generated-branch freshness and
-publication remain released CAD-CI responsibilities.
+Requirements:
 
+- `main` publishes the stable root and explicitly preserves both named dev
+  subtrees;
+- `dev_cad` replaces only the `dev_cad` subtree;
+- `dev_ci` replaces only the `dev_ci` subtree;
+- one lane may never remove or overwrite another lane's site;
+- the stable root must never be sourced from a development build scope;
+- the public GitHub Pages source switch tracked by #366 remains a separate
+  operational decision and is not performed by #572.
+
+Forge site generation must consume the exact complete scope prepared on the
+same runner and record that actual scope in provenance and Verification
+metadata. Main output records `main`; development output records its named
+scope.
+
+## Lane concurrency and promotion
+
+Each long-lived source branch owns an independent concurrency group. A newer
+`dev_cad` run may cancel an older `dev_cad` run but must not cancel
+`dev_ci` or `main`.
+
+Short-lived feature/fix branches target one dev lane and are squash-merged.
+Promotion from `dev_cad` or `dev_ci` to `main` uses a normal merge commit
+so the promoted lane remains in main ancestry.
+
+After promotion:
+
+- main publication updates only the stable complete scope/site;
+- the promoted dev lane is synchronized to the resulting main head before new
+  work assumes the promoted state;
+- the other dev lane regularly incorporates main to avoid indefinite drift.
+
+Generic source-freshness, complete-scope reconciliation and generated-branch
+retry behavior remain CAD-CI responsibilities.
 
 ## Isolated reference items
 

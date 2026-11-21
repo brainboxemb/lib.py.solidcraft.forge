@@ -91,7 +91,7 @@ class StableBuildEvidenceTests(unittest.TestCase):
             },
         )
 
-    def make_complete_tree(self, root: Path) -> None:
+    def make_complete_tree(self, root: Path, *, scope: str = "main") -> None:
         """Create one complete example plus four accepted references."""
 
         items = {}
@@ -247,15 +247,15 @@ class StableBuildEvidenceTests(unittest.TestCase):
             },
         )
 
-        write_json(
-            root / "build.json",
-            {
-                "schema": 1,
-                "scope": "main",
-                "source_commit": "manifest-commit",
-                "items": items,
-            },
-        )
+        manifest = {
+            "schema": 1,
+            "scope": "main" if scope == "main" else "named",
+            "source_commit": "manifest-commit",
+            "items": items,
+        }
+        if scope != "main":
+            manifest["name"] = scope
+        write_json(root / "build.json", manifest)
         write_bytes(
             root
             / "ci"
@@ -311,6 +311,44 @@ class StableBuildEvidenceTests(unittest.TestCase):
                 [path.name for path in evidence.diagram_paths],
                 ["joint.svg"],
             )
+
+    def test_named_complete_scope_preserves_scope_in_artifact_urls(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.make_complete_tree(root, scope="dev_cad")
+
+            evidence = load_stable_build_evidence(
+                root,
+                "d" * 40,
+                ("simple-box",),
+                scope="dev_cad",
+            )
+
+            self.assertEqual(evidence.scope, "dev_cad")
+            self.assertIn(
+                "/" + ("d" * 40) + "/dev_cad/",
+                evidence.raw_url(evidence.examples[0].preview_path),
+            )
+            self.assertIn(
+                "/" + ("d" * 40) + "/dev_cad/",
+                evidence.blob_url(evidence.examples[0].preview_path),
+            )
+
+    def test_named_scope_manifest_name_must_match_requested_scope(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.make_complete_tree(root, scope="dev_ci")
+
+            with self.assertRaisesRegex(
+                ValueError,
+                "matching name",
+            ):
+                load_stable_build_evidence(
+                    root,
+                    "d" * 40,
+                    ("simple-box",),
+                    scope="dev_cad",
+                )
 
     def test_missing_visual_verification_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:

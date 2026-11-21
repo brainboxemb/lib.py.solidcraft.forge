@@ -259,17 +259,21 @@ class SiteSourceTests(unittest.TestCase):
                     rendered,
                 )
 
-    def test_stable_site_cli_uses_only_durable_build_main_inputs(self):
+    def test_site_cli_and_workflow_use_long_lived_complete_scopes(self):
         build = (SITE / "build.py").read_text(encoding="utf-8")
 
-        self.assertIn("--build-main", build)
-        self.assertIn("--build-commit", build)
+        for required in (
+            "--build-evidence",
+            "--build-scope",
+            "--build-commit",
+        ):
+            self.assertIn(required, build)
         for retired in (
+            "--build-main",
             "--native",
             "--diagram-root",
             "--references",
             "--evidence-sha",
-            "--build-scope",
             "--build-manifest",
         ):
             self.assertNotIn(retired, build)
@@ -277,60 +281,91 @@ class SiteSourceTests(unittest.TestCase):
         workflow = (
             ROOT / ".github" / "workflows" / "scpf.yml"
         ).read_text(encoding="utf-8")
-        self.assertIn("validate_stable_pages_pr:", workflow)
-        self.assertIn(
-            "brainboxemb/tool.cad.ci@9f37be0af5c4076f676b6407857c5905e11a47d6",
-            workflow,
+        tool_revision = (
+            "4c6bb8b35009ef5008bd99134cf84b59fddc0b8a"
         )
         self.assertIn(
-            "brainboxemb/tool.cad.ci/.github/workflows/reusable-pr.yml@9f37be0af5c4076f676b6407857c5905e11a47d6",
+            f"brainboxemb/tool.cad.ci@{tool_revision}",
             workflow,
         )
-        self.assertNotIn("publish_main_build:", workflow)
-        self.assertNotIn("publish_stable_pages:", workflow)
+        self.assertNotIn("reusable-pr.yml", workflow)
+        self.assertNotIn("build prepare-pr", workflow)
+        self.assertNotIn("build-cleanup", workflow)
+        self.assertNotIn("pages-cleanup", workflow)
         self.assertNotIn("actions/upload-artifact", workflow)
         self.assertNotIn("actions/download-artifact", workflow)
 
-        main = workflow.split("  cad_ci_main:", 1)[1].split(
-            "  validate_stable_pages_pr:", 1
+        self.assertIn("branches: [main, dev_cad, dev_ci]", workflow)
+        self.assertIn("types: [opened, synchronize, reopened]", workflow)
+
+        pr = workflow.split("  cad_ci_pr:", 1)[1].split(
+            "  cad_ci_push:", 1
         )[0]
-        self.assertEqual(main.count("runs-on: ubuntu-latest"), 1)
-        self.assertIn("cancel-in-progress: true", main)
-        self.assertIn("source_sha: ${{ github.sha }}", main)
-        self.assertIn("base_sha: ${{ github.event.before }}", main)
+        self.assertEqual(pr.count("runs-on: ubuntu-latest"), 1)
+        self.assertIn("contents: read", pr)
+        self.assertNotIn("contents: write", pr)
+        self.assertIn(
+            "source_sha: ${{ github.event.pull_request.head.sha }}",
+            pr,
+        )
+        self.assertIn(
+            "base_sha: ${{ github.event.pull_request.base.sha }}",
+            pr,
+        )
+        self.assertIn(
+            "github.event.pull_request.head.ref == 'dev_cad'",
+            pr,
+        )
+        self.assertIn(
+            "github.event.pull_request.head.ref == 'dev_ci'",
+            pr,
+        )
+        self.assertNotIn("publish build", pr)
+        self.assertNotIn("publish pages", pr)
+
+        push = workflow.split("  cad_ci_push:", 1)[1]
+        self.assertEqual(push.count("runs-on: ubuntu-latest"), 1)
+        self.assertIn(
+            "group: forge-push-${{ github.repository }}-${{ github.ref_name }}",
+            push,
+        )
+        self.assertIn("cancel-in-progress: true", push)
+        self.assertIn("dev_cad|dev_ci", push)
+        self.assertIn("scope_exists=false", push)
+        self.assertIn("full_run=true", push)
         self.assertIn(
             "python -m cad_ci_tool build fetch",
-            main,
+            push,
         )
         self.assertIn(
             "python -m cad_ci_tool build update-main",
-            main,
+            push,
         )
         self.assertIn(
-            "python -m cad_ci_tool publish build",
-            main,
+            "python -m cad_ci_tool build update-named",
+            push,
         )
-        self.assertIn("--candidate-root build", main)
-        self.assertIn("--build-main prepared-main", main)
-        self.assertIn("python site/build.py", main)
         self.assertIn(
-            "python -m cad_ci_tool publish pages",
-            main,
+            "python -m cad_ci_tool build prepare-named",
+            push,
         )
-        self.assertNotIn("Checkout accepted CAD CI tool", main)
-        self.assertNotIn("actions/setup-python", main)
-        self.assertNotIn("pip install", main)
-        self.assertNotIn(".cad-ci-tool", main)
-
-        self.assertIn("cad-ci build resolve", workflow)
+        self.assertIn("--scope named --scope-name", push)
+        self.assertIn("--build-evidence prepared-scope", push)
+        self.assertIn('--build-scope "$SCOPE"', push)
+        self.assertIn("--preserve-subtree dev_cad", push)
+        self.assertIn("--preserve-subtree dev_ci", push)
+        self.assertIn('page_args=(--name "$SCOPE")', push)
         self.assertIn(
             "generated-site/verification/manifest.json",
-            workflow,
+            push,
         )
         self.assertNotIn(
             "generated-site/qualification/manifest.json",
-            workflow,
+            push,
         )
+        self.assertNotIn("actions/setup-python", push)
+        self.assertNotIn("pip install", push)
+
 
     def test_source_only_site_build_discovers_all_examples(self):
         with tempfile.TemporaryDirectory() as tmp:
