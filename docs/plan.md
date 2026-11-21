@@ -57,8 +57,10 @@ dev-cad -> promote/dev-cad -> main
 dev-ci  -> promote/dev-ci  -> main
 ```
 
-Promotion PRs run complete validation and are merged with a normal merge
-commit. Both long-lived lanes are then synchronized to the resulting main head.
+Promotion PRs run complete validation and are **squash-merged** so stable
+`main` receives one logical commit per promotion. Both long-lived lanes are
+then synchronized from the resulting main head; any normal merge commit needed
+for that synchronization belongs on the dev lane, never on `main`.
 Named-lane incremental selection uses the previous durable
 `build/<lane>/build.json.source_commit`, not `github.event.before`.
 
@@ -176,6 +178,7 @@ HUB75 uses explicit Placement today.
 
 | Issue | Lane | Workstream | Priority | Next action |
 | --- | --- | --- | --- | --- |
+| #592 Document parallel work policy across dev-cad and dev-ci | direct `main` | repository governance | **P0 now** | Record parallel-lane execution and squash-only stable-main policy; close after replacement direct-main PR is squash-merged. |
 | #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 blocked** | Generated build cleanup is complete. Source-ref deletion is blocked because the connected GitHub tool exposes no delete-ref action; do not claim completion until deletion is actually supported. |
 | #366 Make verified output durable, then cut Pages over | `dev-ci` | WS0 | **P1 decision gate** | Durable/generated side is complete; request explicit approval before changing the live Pages source, then verify public/legacy routes. |
 | #570 Remove CADCraft from Forge verification diagrams | `dev-cad` | WS2 | **P2** | Replace the six explanatory diagram sources with deterministic Forge-owned SVG/static sources; remove its CI/runtime input only after the content path no longer needs it. |
@@ -203,6 +206,28 @@ Every open issue has one primary lane and disposition. New issues should be
 added to this table when they become active planning inputs; issue history is
 not a substitute for this plan.
 
+## Parallel execution and clean-main policy
+
+The two development lanes are intentionally independent execution tracks.
+
+- `dev-cad` work and `dev-ci` work may progress in parallel.
+- A running workflow blocks only work that depends on its result; do not idle
+  the other lane merely because one lane is validating or publishing.
+- Shared dependency releases, owner-repository handoffs and architecture
+  boundaries remain real dependency gates.
+- Repository-wide governance that applies equally to both lanes may use a
+  short-lived branch directly against `main`.
+- **Every PR whose base is `main` is squash-merged**, including
+  `promote/dev-cad` and `promote/dev-ci`.
+- After promotion, synchronize `main` back into both dev lanes. A normal
+  merge commit may be used for that synchronization because it stays outside
+  stable-main history.
+
+The historical normal promotion merges #583, #586, #588 and #591 remain in
+existing main ancestry. Do not create further normal merge commits on
+`main`; removing those historical parents would require an explicit history
+rewrite and is outside ordinary repository maintenance.
+
 ## Merge and promotion policy
 
 - Short-lived feature/fix PRs target `dev-cad` or `dev-ci` and are
@@ -210,11 +235,12 @@ not a substitute for this plan.
 - Promotion does **not** use the long-lived dev branch directly as the PR head.
   Create `promote/dev-cad` or `promote/dev-ci` at the current lane head.
 - Promotion PRs from that temporary branch target `main`, require a complete
-  processed validation run, and use a **normal merge commit**.
+  processed validation run, and are **squash-merged**.
 - GitHub may auto-delete the temporary promotion head after merge; this is
   desirable and must never delete the long-lived lane.
-- After promotion, fast-forward/synchronize both long-lived dev lanes to the
-  resulting main head.
+- After promotion, synchronize both long-lived dev lanes from the resulting
+  main head. Any normal merge commit needed for synchronization belongs only
+  to dev history.
 - Named lane incremental selection uses the prior durable
   `build/<lane>/build.json.source_commit` as base, not
   `github.event.before`.
