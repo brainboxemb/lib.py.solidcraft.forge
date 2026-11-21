@@ -1,0 +1,18 @@
+{
+  "items": {
+    "ci/site-source": {
+      "engine": "scons",
+      "engine_schema": 1,
+      "final_bundle_sha256": "5774d9064d078820bb920e45fbb49877eacfad4e3ef5fdd2f3f9e2ede19dc3d6",
+      "final_step": "test_site_source",
+      "final_target_spec_digest": "c897c397fd296007fdb7b12c41f32fdf5d4ad6afe6b03093fa6d5782fd3ca6a9",
+      "item_id": "site-source",
+      "outputs": [],
+      "source_commit": "aea1901c916bc46e63ba025d913ae65b87c28b58"
+    }
+  },
+  "pull_request": 566,
+  "schema": 1,
+  "scope": "pr",
+  "source_commit": "aea1901c916bc46e63ba025d913ae65b87c28b58"
+}
