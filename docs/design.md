@@ -6,21 +6,24 @@ This document summarizes repository-level responsibility boundaries. Historical/
 
 ## Main execution path
 
-Normal Forge CI is intentionally simple:
+Forge uses the exact released CAD-CI root action on both review and long-lived
+branch integration events:
 
 ```text
 GitHub workflow
-  -> pull request: tool.cad.ci reusable-pr
+  -> pull request
      -> read cad-ci.yml
      -> execute selected SCons targets
-     -> prepare/publish sparse PR output on the same runner
-  -> main push: tool.cad.ci reusable-ci
-     -> read cad-ci.yml
+     -> no durable generated-state write
+  -> push main/dev_cad/dev_ci
      -> execute selected SCons targets
+     -> reconcile/publish only that branch's complete build scope
+     -> publish only that branch's Pages root/subtree
 ```
 
-The GitHub workflow does not understand runtime packaging or selected item
-kinds.
+Promotion pull requests from `dev_cad` or `dev_ci` to `main` request a
+complete processed run. The GitHub workflow does not understand runtime
+packaging or selected item kinds.
 
 ## Runtime lifecycle
 
@@ -1053,7 +1056,7 @@ as current evidence.
 ## Stable Pages publication flow
 
 Stable main publication uses one caller-owned runner with exact released
-`tool.cad.ci 0.15.0`:
+`tool.cad.ci 0.16.1`:
 
 ```text
 push main
@@ -1063,32 +1066,36 @@ push main
        -> one selected cad-ci run
   -> cad-ci build fetch
   -> cad-ci build update-main
-  -> cad-ci publish build
+  -> cad-ci publish build --scope main
        -> immutable build commit
   -> Forge site/build.py
        source = current Forge commit
-       evidence = same prepared-main tree
+       evidence = same prepared complete scope
+       scope = main
        build commit = publication result
   -> cad-ci publish pages
+       --preserve-subtree dev_cad
+       --preserve-subtree dev_ci
   -> gh-pages stable root
 ```
 
-The action leaves the exact CLI stack and materialized `build/` output in the
-same workspace. Forge therefore does not transport an Actions artifact, start a
-second publication runner, reinstall CAD-CI, or re-fetch the just-published main
-scope before site generation.
+Development pushes use the same runner shape with `update-named` (or
+`prepare-named` for first bootstrap), named build publication and named Pages
+subtree publication.
 
-Forge owns only the site generator, content interpretation and provenance
-composition. Released CAD-CI owns selection, SCons execution, durable-store
-membership/deletion, generated-branch publication, source freshness and retry.
+The root action leaves the exact CLI stack and materialized `build/` output in
+the same workspace. Forge therefore does not transport an Actions artifact,
+start a second publication runner, reinstall CAD-CI, or re-fetch the
+just-published complete scope before site generation.
 
-The PR verification/publication path remains the released
-`reusable-pr.yml` workflow. Stable-site PR validation remains a separate
-read-only presentation check; #558 does not duplicate the generic PR lifecycle
-inside Forge merely to combine that check.
+Forge owns only source-branch event wiring, the site generator, content
+interpretation and provenance composition. Released CAD-CI owns selection,
+SCons execution, complete-scope membership/deletion, generated-branch
+publication, source freshness and retry.
 
-#497 deliberately does not add PR Pages scopes. #366 owns the later generic
-preview/cleanup lifecycle and live cut-over.
+Pull requests are verification-only and use no reusable PR publication flow,
+no sparse durable PR scope and no Pages preview. #366 remains responsible only
+for the separate live GitHub Pages source cut-over.
 
 
 ## Verification page source-comparison composition
