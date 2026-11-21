@@ -15,13 +15,13 @@ GitHub workflow
      -> read cad-ci.yml
      -> execute selected SCons targets
      -> no durable generated-state write
-  -> push main/dev_cad/dev_ci
+  -> push main/dev-cad/dev-ci
      -> execute selected SCons targets
      -> reconcile/publish only that branch's complete build scope
      -> publish only that branch's Pages root/subtree
 ```
 
-Promotion pull requests from `dev_cad` or `dev_ci` to `main` request a
+Promotion pull requests from `dev-cad` or `dev-ci` to `main` request a
 complete processed run. The GitHub workflow does not understand runtime
 packaging or selected item kinds.
 
@@ -293,7 +293,7 @@ Forge uses one source-branch topology and one released CAD-CI stack:
 
 ```text
 feature/fix PR
-  -> dev_cad or dev_ci
+  -> dev-cad or dev-ci
   -> changed-path-selected verification only
   -> no generated-branch write
 
@@ -303,18 +303,18 @@ push main
   -> update-main
   -> publish build/main
   -> build site from prepared-main
-  -> publish stable Pages root, preserving dev_cad + dev_ci
+  -> publish stable Pages root, preserving dev-cad + dev-ci
 
-push dev_cad
+push dev-cad
   -> selected CAD-CI run
   -> fetch build branch
-  -> update-named dev_cad
-  -> publish build/dev_cad
-  -> build site from prepared-dev_cad
-  -> publish Pages subtree dev_cad
+  -> update-named dev-cad
+  -> publish build/dev-cad
+  -> build site from prepared-dev-cad
+  -> publish Pages subtree dev-cad
 
-push dev_ci
-  -> same flow with dev_ci
+push dev-ci
+  -> same flow with dev-ci
 ```
 
 The pull-request path uses the released root composite action only for
@@ -356,7 +356,7 @@ its logical scope name.
 The evidence loader validates:
 
 - stable scope `main` against a main manifest;
-- development scope `dev_cad` or `dev_ci` against a named manifest with the
+- development scope `dev-cad` or `dev-ci` against a named manifest with the
   same name.
 
 Generated provenance and Verification metadata record the supplied scope.
@@ -370,14 +370,14 @@ Publication uses released CAD-CI mechanics:
 ```text
 main
   -> publish pages
-     --preserve-subtree dev_cad
-     --preserve-subtree dev_ci
+     --preserve-subtree dev-cad
+     --preserve-subtree dev-ci
 
-dev_cad
-  -> publish pages --name dev_cad
+dev-cad
+  -> publish pages --name dev-cad
 
-dev_ci
-  -> publish pages --name dev_ci
+dev-ci
+  -> publish pages --name dev-ci
 ```
 
 The generated branch is shared, but every mutation is scoped. CAD-CI retries a
@@ -1074,8 +1074,8 @@ push main
        scope = main
        build commit = publication result
   -> cad-ci publish pages
-       --preserve-subtree dev_cad
-       --preserve-subtree dev_ci
+       --preserve-subtree dev-cad
+       --preserve-subtree dev-ci
   -> gh-pages stable root
 ```
 
