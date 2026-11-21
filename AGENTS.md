@@ -230,11 +230,11 @@ is a gate only for work that depends on its result. Repository-wide governance
 that applies equally to both lanes may use a short-lived branch directly against
 `main`.
 
-Every PR whose base is `main` is squash-merged by default. The only exception
-is a PR whose head is literally the long-lived `dev-cad` or `dev-ci`
-branch; those direct lane-to-main PRs may use a normal merge commit. Temporary
-promotion heads such as `promote/dev-cad` and `promote/dev-ci` are not the
-exception and are squash-merged. Governance PRs to `main` are squash-merged.
+Every PR whose base is `main` is squash-merged, without exceptions. This
+includes direct long-lived `dev-cad` / `dev-ci` PRs, temporary promotion
+heads such as `promote/dev-cad` / `promote/dev-ci`, and governance PRs.
+Normal merge commits may exist only when synchronizing `main` back into a dev
+lane; they must never be created on stable `main`.
 
 Durable accepted output lives on generated `build`:
 
@@ -273,9 +273,9 @@ dev-ci  -> promote/dev-ci  -> PR to main
 ```
 
 The temporary promotion branch is created at the current dev-lane head. The PR
-runs complete validation and is squash-merged because its base is `main` and
-its head is not the long-lived dev lane itself. A direct `dev-cad` or
-`dev-ci` PR to `main` is the only case where a normal merge is allowed.
+runs complete validation and is squash-merged. Direct `dev-cad` or `dev-ci`
+PRs to `main` are also squash-merged; stable `main` has no normal-merge
+exception.
 GitHub may auto-delete the temporary promotion branch after merge; the
 long-lived dev lane remains intact. Then synchronize both dev lanes to the
 resulting main head.
