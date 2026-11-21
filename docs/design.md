@@ -512,16 +512,16 @@ The corresponding released-library `OrthographicCamera` receives:
 This preserves the established front/top image-axis conventions without
 copying generic projection code into Forge.
 
-### Simple-box proof
+### Historical simple-box proof
 
-Issue #430 enables the visual path for `simple-box` only.
+Issue #430 originally proved the visual path with `simple-box` first.
 
 Its model-local policy requires front, right and iso regression views and one
 expected box from (-20,-15,0) to (20,15,10). Approved historical baseline PNGs
 remain model-local and are compared by the released visual API.
 
-Other models are not enabled by this change. The proven path is applied to the
-remaining staged proof models later under #378.
+That staged proof is no longer the completion boundary. Reopened #378 applies
+the same proven path to every active Verification model.
 
 
 ### Historical baseline payload migration
@@ -540,22 +540,30 @@ The Forge visual adapter asks released `decode_baseline()` to materialize the
 payload for `verify_visual_view()`. Forge does not implement zlib/base64/Pillow
 decoding.
 
-### Five-model staged proof
+### Full-catalog visual verification
 
-The active #378 proof set contains only:
+The former five-model proof established the implementation path but did not
+complete #378. Every active Verification model now uses that same path.
 
-- simple-box (already proven);
-- anchor-topology-mutation;
-- attach-angle;
-- four-corner-l;
-- xz-anchor.
+Each model owns:
 
-All use front/right/iso regression views. The first three added models use their
-model body expectations as expected boxes. `four-corner-l` retains the
-historical arm-level expected-shape decomposition so a mirrored/rotated L corner
-cannot pass merely because its outer bounding box is unchanged.
+- its required view set;
+- approved local baseline image/payload per required view;
+- expected boxes;
+- expected through-hole/through-slot features where the historical contract
+  requires them;
+- baseline provenance.
 
-No other model is `process: true` during this staged proof.
+The default required views are front/right/iso. Model-local policy preserves the
+historical overrides for cases whose internal geometry is best exposed by top,
+front or right views.
+
+Historical approved encoded baseline payloads are migrated byte-for-byte into
+the owning model directory. There is no restored central baseline registry.
+
+The visual stage remains inside the existing model-verification item. Expanding
+the catalog must not add a second CAD-CI item or duplicate generic image
+mechanics.
 
 
 ## F10 diagram evidence flow
@@ -646,10 +654,14 @@ Generic status precedence is delegated to released
 
 ### Visual
 
-`model_verify/visual.json` already contains released-library semantic visual
-evidence. F11 maps it back to the existing public `visual` check and preserves
-the regression/expected-shape detail needed by Pages. It never reopens images
-or reruns comparison.
+Every active Verification model produces `model_verify/visual.json` containing
+released-library semantic visual evidence. F11 maps it back to the existing
+public `visual` check and preserves the regression/expected-shape detail needed
+by Pages. It never reopens images or reruns comparison.
+
+Absence of visual evidence for an active model is incomplete verification; it
+is not mapped to `not-required`. Presentation previews remain separate and
+cannot satisfy the visual check.
 
 ### References
 
@@ -1005,17 +1017,18 @@ examples/<slug>/<implementation>/
 
 They do not glob batch producer outputs.
 
-Visual semantics follow current evidence ownership:
+Visual semantics require current evidence for every active model:
 
-- durable `model_verify/visual.json` present: current visual verification is
-  required and its actual/goal/overlay/diff evidence is shown;
-- no durable `visual.json`: visual is `not-required` for the current
-  contract;
-- `presentation/preview-iso.png` is shown in both cases but never contributes
-  a visual status.
+- durable `model_verify/visual.json` must be present;
+- every model-required view must have current render/regression/expected-shape
+  evidence;
+- the resulting visual status participates in the normal semantic result;
+- `presentation/preview-iso.png` remains presentation evidence only and never
+  contributes a visual status.
 
-This deliberately avoids carrying historical visual PASS forward without
-current evidence.
+Historical approved baselines may be migrated as model-local payloads, but PASS
+is always recomputed from the current render against that current model-local
+policy.
 
 ## Stable Pages content composition
 
