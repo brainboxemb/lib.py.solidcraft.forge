@@ -26,13 +26,14 @@ exists, who currently owns it, and the current keep/promote/retire decision.
 
 Supported exception roles are:
 
-- `verification-candidate` — historical or requested model case that still
-  needs an explicit full Verification migration;
 - `release-verification` — fixture owned by Forge package release verification;
 - `regression-fixture` — focused source fixture whose behavior is owned by a
-  current test outside the full model-verification catalog;
-- `legacy-sample` — old sample retained only while an explicit
-  modernize/retire decision is pending.
+  current executing test outside the full model-verification catalog. This also
+  covers deliberately non-native Q1/Q2 fixtures such as `model_authoring`.
+
+Temporary migration candidates and unowned legacy samples are not permanent
+roles. They must be promoted, explicitly superseded, or retired before the
+reconciliation issue closes.
 
 The historical lineage of the current 32-case catalog and every current
 exception is recorded in `docs/background/example-history.md`.

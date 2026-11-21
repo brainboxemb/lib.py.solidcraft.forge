@@ -1,4 +1,5 @@
 """Sketch contract tests."""
+from pathlib import Path
 import unittest
 
 from scpf import (
@@ -13,6 +14,10 @@ from scpf import (
     Parameter,
 )
 from scpf.compiler import ModelError, compile_model
+from scpf.runner import run_script
+
+ROOT = Path(__file__).resolve().parents[2]
+
 
 class SketchAttachmentTests(unittest.TestCase):
     def test_attached_through_all_uses_support_face_direction(self):
@@ -42,6 +47,19 @@ class SketchAttachmentTests(unittest.TestCase):
                 )
                 self.assertEqual(extrude["operation"], "cut")
                 self.assertNotIn("distance", extrude)
+
+    def test_focused_attached_through_all_example_still_compiles(self):
+        document = run_script(
+            ROOT / "examples/attached-through-all/scpf/model.py"
+        )
+        extrude = next(
+            row["params"]
+            for row in document["commands"]
+            if row["command"] == "solid.extrude"
+        )
+        self.assertTrue(extrude["through_all"])
+        self.assertEqual(extrude["direction"], "negative")
+        self.assertEqual(extrude["operation"], "cut")
 
     def test_existing_attached_sketch_still_works(self):
         base = Box(80, 60, 5)

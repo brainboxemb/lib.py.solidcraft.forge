@@ -7,9 +7,8 @@ relationship.
 
 import cadquery as cq
 
-
-base = cq.Solid.makeBox(40, 30, 10, cq.Vector(-20, -15, 0))
-marker = cq.Solid.makeBox(30, 10, 8, cq.Vector(-15, -5, 0))
+base = cq.Solid.makeBox(40, 30, 10, cq.Vector(-20, -15, -5))
+marker = cq.Solid.makeBox(30, 10, 8, cq.Vector(-15, -5, -4))
 marker_pose = (
     cq.Location((50, 20, 15))
     * cq.Location(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 90)

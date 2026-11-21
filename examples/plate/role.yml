@@ -1,8 +1,8 @@
 schema: 1
-role: legacy-sample
-decision: retire-or-modernize
-owner: "#559"
+role: regression-fixture
+decision: keep
+owner: scpf/tests/test_live.py
 reason: >
-  Pre-Qualification sample from #7. It has no current CI or Verification owner
-  and its README refers to comparison sources that no longer exist. Keep only
-  until #559 makes the explicit retire/modernize decision.
+  Pre-Qualification Plate sample from #7 is still executed directly by current
+  live-protocol tests for atomic batch and --connect --new behavior. It remains
+  a focused regression fixture rather than a full model Verification case.

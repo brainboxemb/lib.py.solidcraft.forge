@@ -1,8 +1,8 @@
-"""Load preserved example-owned engineering documentation.
+"""Load example-owned engineering documentation with explicit provenance.
 
-The documentation was migrated verbatim from the last canonical legacy
-qualification case table. This loader validates structure and provenance only;
-it does not infer verification facts.
+Historical cases retain their original Qualification source provenance; newer
+or restored cases name their own issue/commit sources. The loader validates
+structure and provenance only and never infers verification facts.
 """
 
 from __future__ import annotations
@@ -15,6 +15,10 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES_ROOT = ROOT / "examples"
 LEGACY_CASE_SOURCE_COMMIT = "be40b09e7454a90e87d83768a9e7453c52ba5d76"
+_DOCUMENTATION_PROVENANCE = re.compile(
+    r"^> Documentation provenance:\s+.+$",
+    re.MULTILINE,
+)
 
 _SECTION_ORDER = (
     "Goal",
@@ -74,9 +78,12 @@ def load_example_documentation(example_root: Path) -> ExampleDocumentation:
         raise ValueError(f"{slug}: missing README.md")
 
     source = path.read_text(encoding="utf-8")
-    if LEGACY_CASE_SOURCE_COMMIT not in source:
+    if (
+        LEGACY_CASE_SOURCE_COMMIT not in source
+        and not _DOCUMENTATION_PROVENANCE.search(source)
+    ):
         raise ValueError(
-            f"{slug}: README.md must preserve legacy documentation provenance"
+            f"{slug}: README.md must declare documentation provenance"
         )
 
     legacy_title = re.search(

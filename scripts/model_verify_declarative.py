@@ -199,6 +199,28 @@ def run_inside_runtime(
         flush=True,
     )
     print(f"{slug} model verification: {report['status']}", flush=True)
+    if report["status"] != "pass":
+        failed = next(
+            (
+                row for row in report.get("checks", ())
+                if row.get("status") in {"fail", "error"}
+            ),
+            None,
+        )
+        if failed is not None:
+            print(
+                f"{slug} verification failure: "
+                + json.dumps(
+                    {
+                        "id": failed.get("id"),
+                        "status": failed.get("status"),
+                        "error": failed.get("error"),
+                        "evidence": failed.get("evidence"),
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
     if visual_report is not None:
         print(
             f"{slug} visual verification: {visual_report['status']}",

@@ -1,17 +1,16 @@
 """CadQuery reference for two independently positioned block occurrences.
 
 This reference compares visible assembly/location geometry only. SolidCraft
-saved-design parameter mutation remains native Forge qualification evidence.
+saved-design parameter mutation remains native Forge verification evidence.
 """
 
 import cadquery as cq
-
 
 block = cq.Solid.makeBox(
     20,
     20,
     10,
-    cq.Vector(-10, -10, 0),
+    cq.Vector(-10, -10, -5),
 )
 
 model = cq.Assembly()

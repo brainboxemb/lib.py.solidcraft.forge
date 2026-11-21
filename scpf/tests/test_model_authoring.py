@@ -13,6 +13,44 @@ from scpf import Sketch
 ROOT = Path(__file__).resolve().parents[2]
 
 class ModelAuthoring(unittest.TestCase):
+    def test_model_authoring_fixture_keeps_q1_q2_contract(self):
+        """Run the exact #213 fixture without making native Q3+ claims."""
+
+        commands = run_script(
+            ROOT / "examples/model_authoring/scpf/model.py"
+        )["commands"]
+
+        parameters = [
+            row["params"]["name"]
+            for row in commands
+            if row["command"] == "parameters.add"
+        ]
+        self.assertEqual(len(parameters), 1)
+        self.assertTrue(parameters[0].endswith("_Plate_length"), parameters)
+
+        materials = [
+            row["params"]["name"]
+            for row in commands
+            if row["command"] == "material.create"
+        ]
+        self.assertEqual(materials, ["Birch", "Steel"])
+
+        components = [
+            row["params"]["name"]
+            for row in commands
+            if row["command"] == "component.create"
+        ]
+        self.assertEqual(components, ["Plate", "Block"])
+
+        copies = [
+            row["params"]
+            for row in commands
+            if row["command"] == "occurrence.copy"
+        ]
+        self.assertEqual(len(copies), 1)
+        self.assertEqual(copies[0]["component"], "Block")
+        self.assertEqual(copies[0]["translate"], [20.0, 0.0, 0.0])
+
     def test_every_public_core_api_name_is_available_to_model_scripts(self):
         import scpf
         from scpf import core

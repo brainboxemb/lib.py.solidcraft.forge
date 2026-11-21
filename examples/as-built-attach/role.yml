@@ -1,8 +1,0 @@
-schema: 1
-role: verification-candidate
-decision: restore-verification
-owner: "#559"
-reason: >
-  Former Qualification case removed for replay-unsafe occurrence addressing.
-  Replay-bound occurrence IDs now restore the original capability; full native
-  Verification must be reinstated or explicitly superseded.

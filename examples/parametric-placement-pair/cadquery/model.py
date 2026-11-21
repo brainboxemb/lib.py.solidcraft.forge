@@ -2,12 +2,11 @@
 
 import cadquery as cq
 
-
 block = cq.Solid.makeBox(
     20,
     20,
     10,
-    cq.Vector(-10, -10, 0),
+    cq.Vector(-10, -10, -5),
 )
 
 model = cq.Assembly()

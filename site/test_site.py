@@ -221,14 +221,20 @@ class SiteSourceTests(unittest.TestCase):
             manifest = json.loads(
                 (out / "manifest.json").read_text(encoding="utf-8")
             )
-            self.assertEqual(len(manifest["examples"]), 32)
+            expected_count = len(
+                tuple((ROOT / "examples").glob("*/model.yml"))
+            )
+            self.assertEqual(len(manifest["examples"]), expected_count)
 
             verification = json.loads(
                 (out / "verification" / "manifest.json").read_text(
                     encoding="utf-8"
                 )
             )
-            self.assertEqual(len(verification["cases"]), 32)
+            self.assertEqual(
+                len(verification["cases"]),
+                expected_count,
+            )
             self.assertEqual(
                 verification["evidence_source"],
                 "build/main",
@@ -341,7 +347,10 @@ class SiteSourceTests(unittest.TestCase):
                 row for row in search["entries"]
                 if row["kind"] == "Example"
             ]
-            self.assertEqual(len(example_entries), 32)
+            self.assertEqual(
+                len(example_entries),
+                expected_count,
+            )
 
 
 if __name__ == "__main__":
