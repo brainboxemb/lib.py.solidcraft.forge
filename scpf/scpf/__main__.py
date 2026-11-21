@@ -8,7 +8,73 @@ import warnings
 from .live import LiveError, new_design, send_document
 from .replay import validate_replay_document
 from .runner import run_script
-from .version import check_cli_version
+from .version import (
+    TESTED_SOLIDCRAFT_VERSION,
+    check_cli_version,
+    forge_revision,
+    package_version,
+)
+
+
+_PACKAGE_ROOT = Path(__file__).resolve().parent
+
+
+def _source_location(exc, fallback):
+    """Return the best user-source location represented by one exception."""
+
+    if isinstance(exc, SyntaxError):
+        filename = getattr(exc, "filename", None)
+        lineno = getattr(exc, "lineno", None)
+        if filename:
+            return Path(filename), lineno
+
+    fallback = Path(fallback).resolve()
+    source_root = fallback.parent
+    for parent in fallback.parents:
+        if parent.name == "models":
+            source_root = parent.parent
+            break
+
+    location = None
+    traceback = exc.__traceback__
+    while traceback is not None:
+        filename = Path(traceback.tb_frame.f_code.co_filename).resolve()
+        if filename == fallback or source_root in filename.parents:
+            location = (filename, traceback.tb_lineno)
+        traceback = traceback.tb_next
+
+    if location is not None:
+        return location
+    return fallback, None
+
+
+def _debug_identity():
+    """Write diagnostic package identity without changing the exception."""
+
+    print(f"SCPF {package_version()}", file=sys.stderr)
+    revision = forge_revision()
+    if revision is not None:
+        print(f"Forge revision: {revision}", file=sys.stderr)
+    print(
+        f"Tested SolidCraft: {TESTED_SOLIDCRAFT_VERSION}",
+        file=sys.stderr,
+    )
+
+
+def _exit_model_error(parser, exc, script):
+    """Exit with a compact model/build/compiler error."""
+
+    path, line = _source_location(exc, script)
+    location = f"{path}:{line}" if line is not None else str(path)
+    parser.exit(
+        1,
+        (
+            f"SCPF {package_version()} error\n"
+            f"{location}\n\n"
+            f"{type(exc).__name__}: {exc}\n\n"
+            "Run again with --debug for the full Python traceback.\n"
+        ),
+    )
 
 
 def read_command_file(path):
@@ -27,6 +93,11 @@ def _check_model(argv):
         description="Build and compile an SCPF model without native SolidCraft.",
     )
     parser.add_argument("script", type=Path)
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Show the full Python traceback for model/build failures",
+    )
     args = parser.parse_args(argv)
 
     failure = None
@@ -42,10 +113,10 @@ def _check_model(argv):
         print(f"SCPF check warning: {item.message}", file=sys.stderr)
 
     if failure is not None:
-        parser.exit(
-            1,
-            f"SCPF check failed: {type(failure).__name__}: {failure}\n",
-        )
+        if args.debug:
+            _debug_identity()
+            raise failure
+        _exit_model_error(parser, failure, args.script)
 
     print(
         f"SCPF check PASS: {args.script}: "
@@ -60,6 +131,16 @@ def main(argv=None):
         return _check_model(argv[1:])
 
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"SCPF {package_version()}",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Show the full Python traceback for model/build failures",
+    )
     parser.add_argument(
         "script", type=Path,
         help="SCPF model.py, or 'replay' followed by an existing SolidCraft JSON file",
@@ -101,7 +182,13 @@ def main(argv=None):
             parser.error("unexpected second file; use 'replay <file.json>'")
         if args.out is None and args.connect is None:
             parser.error("model scripts require --out or --connect")
-        document = run_script(args.script)
+        try:
+            document = run_script(args.script)
+        except Exception as exc:
+            if args.debug:
+                _debug_identity()
+                raise
+            _exit_model_error(parser, exc, args.script)
 
     if args.out is not None:
         args.out.parent.mkdir(parents=True, exist_ok=True)
