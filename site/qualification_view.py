@@ -180,17 +180,31 @@ def _visual_rows(
                 return None
             return _artifact_url(stable, root / relative, raw=True)
 
+        regression_required = row.get("regression_required", True)
+        expected_shape_required = row.get("expected_shape_required", True)
         rows.append(
             {
                 "view": row.get("view"),
                 "status": row.get("status"),
-                "baseline_status": evidence.get("baseline_status"),
-                "expected_shape_status": evidence.get("expected_shape_status"),
+                "baseline_status": (
+                    evidence.get("baseline_status")
+                    if regression_required
+                    else "not-required"
+                ),
+                "expected_shape_status": (
+                    evidence.get("expected_shape_status")
+                    if expected_shape_required
+                    else "not-required"
+                ),
                 "actual_url": image_url("actual_image"),
                 "goal_url": image_url("goal_image"),
                 "overlay_url": image_url("overlay_image"),
                 "diff_url": image_url("diff_image"),
-                "regression_json": _json_text(evidence.get("regression") or {}),
+                "regression_json": _json_text(
+                    (evidence.get("regression") or {})
+                    if regression_required
+                    else {}
+                ),
             }
         )
     return tuple(rows)
