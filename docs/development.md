@@ -134,10 +134,11 @@ use a short-lived branch directly against `main`.
 Merge policy is explicit:
 
 - feature/fix PRs into a dev lane: squash merge;
-- PRs whose base is `main`: squash merge by default;
-- only a PR whose head is literally the long-lived `dev-cad` or `dev-ci`
-  branch may use a normal merge into `main`;
-- temporary `promote/*` heads and governance PRs to `main` are squash-merged.
+- every PR whose base is `main`: squash merge, without exceptions;
+- this includes direct long-lived lane PRs, temporary `promote/*` heads and
+  governance PRs;
+- normal merge commits are allowed only when synchronizing `main` back into a
+  dev lane, never on stable `main`.
 
 ## Change discipline
 
