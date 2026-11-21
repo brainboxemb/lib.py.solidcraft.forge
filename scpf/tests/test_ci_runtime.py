@@ -127,6 +127,25 @@ class CiRuntimeContractTests(unittest.TestCase):
         self.assertIn("contents: read", pr)
         self.assertNotIn("contents: write", pr)
         self.assertIn("packages: read", pr)
+        self.assertIn("pull-requests: read", pr)
+        self.assertIn(
+            "Classify pull request before CAD CI bootstrap",
+            pr,
+        )
+        self.assertIn("gh api --paginate", pr)
+        self.assertIn("/pulls/${PR_NUMBER}/files?per_page=100", pr)
+        self.assertIn('if [ "$BASE_REF" = "main" ]', pr)
+        self.assertIn("docs/*", pr)
+        self.assertIn("classification=docs-only", pr)
+        self.assertIn("classification=cad-ci-required", pr)
+        self.assertIn(
+            "if: steps.classify.outputs.run_cad == 'false'",
+            pr,
+        )
+        self.assertIn(
+            "if: steps.classify.outputs.run_cad == 'true'",
+            pr,
+        )
         self.assertIn(
             "source_sha: ${{ github.event.pull_request.head.sha }}",
             pr,
