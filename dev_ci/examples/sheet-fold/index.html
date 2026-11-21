@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Flat sheet, through hole and 90° fold · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Flat sheet, through hole and 90° fold</div>
+  <section class="hero small">
+    <p class="eyebrow">features</p>
+    <h1>Flat sheet, through hole and 90° fold</h1>
+    <p class="guide-lead">Native sheet-metal history with a recoverable flat pattern</p>
+    <p>An 80 × 40 mm flat sheet blank with one through hole and one 90 degree native fold using a shared sheet rule.</p>
+    <p class="meta"><span>80 × 40 × 2 mm sheet; R2 bend, K=0.5, 90° fold, Ø6 hole</span><span>14 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/sheet-fold/model_verify/presentation/preview-iso.png" alt="Flat sheet, through hole and 90° fold: Current deterministic presentation preview from durable build be6ad0a32935." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build be6ad0a32935.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the flat rectangular Blank sketch</li><li>Create native sheet material and cut the Ø6 hole while flat</li><li>Fold the sheet 90 degrees and preserve the developed flat pattern</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Qualify the fabrication workflow used by later bent parts: create one flat sheet blank, cut an ordinary Hole while flat, fold existing material, and recover the developed flat pattern.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>with Sketch(...): Rectangle2D(...); blank.sheet_metal(thickness=..., bend_radius=..., k_factor=...); sheet + Hole(...).at(...); sheet.fold(line=..., angle=..., fixed=...)</code></p>
+    <h2>Forge model</h2>
+    <p>One 80 x 40 mm rectangular flat blank with a shared 2 mm sheet rule, one Ø6 through hole in the fixed flat, and one 90 degree fold along the Y direction near the right side.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge emits one sheet.manage_rules, one Blank sketch, one sheet.flange(type=&#x27;base&#x27;), one native solid.hole and one native sheet.fold. No solid.extrude or fused-solid bend approximation is used.</p>
+    <h2>SolidCraft result</h2>
+    <p>SolidCraft 0.42 keeps one connected sheet-metal body with the Ø6 hole on the fixed flat, one native Fold feature and a flat pattern that recovers the original rectangular blank and cutout.</p>
+    <h2>Saved-design test</h2>
+    <p>No saved-design mutation is required in this first sheet-metal qualification. unit, integration and native geometry checks prove the shared rule, native feature history and formed geometry; a post-build flat-pattern inspection proves recoverability of the developed blank.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>The formed bounding box does not prove sheet thickness, the Ø6 cutout or that the upright region came from a native bend. Volume and native sheet history/flat-pattern evidence are required.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>build123d</strong> — The pinned build123d 0.12.0 reference uses make_brake_formed for an independent final-geometry comparison. Its newer BuildSheet/bend API is design input only and is not silently substituted into the pinned reference runtime.</li><li><strong>CadQuery</strong> — Independent final geometry is built from flat and bent solid envelopes; CadQuery does not provide the same native sheet-history contract.</li><li><strong>PythonSCAD</strong> — Constructive geometry independently represents the formed envelope and through hole; native sheet rules/history remain SolidCraft-only evidence.</li><li><strong>pyBOSL2</strong> — Constructive geometry independently represents the formed envelope and through hole; native sheet rules/history remain SolidCraft-only evidence.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Native sheet-metal fold fixture used by qualification #305.&quot;&quot;&quot;
+
+
+class SheetFold:
+    width = 80.0
+    depth = 40.0
+    thickness = 2.0
+    bend_radius = 2.0
+    k_factor = 0.5
+    fold_angle = 90.0
+    hole_diameter = 6.0
+
+    def build(self):
+        with Sketch(name=&quot;Blank&quot;, plane=&quot;XY&quot;) as blank:
+            Rectangle2D(self.width, self.depth)
+
+        sheet = blank.sheet_metal(
+            thickness=self.thickness,
+            bend_radius=self.bend_radius,
+            k_factor=self.k_factor,
+            rule_name=&quot;SheetFold Rule&quot;,
+        )
+
+        sheet = sheet + Hole(
+            d=self.hole_diameter,
+            direction=(0, 0, -1),
+        ).at(-20, 0, self.thickness)
+
+        return sheet.fold(
+            line=((20, -20), (20, 20)),
+            angle=self.fold_angle,
+            fixed=(-30, 0, 0),
+        )
+
+
+SheetFold()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/sheet-fold/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>sheet.manage_rules</code></li><li><code>sketch.create</code></li><li><code>sketch.rectangle.two_point</code></li><li><code>sketch.finish</code></li><li><code>sheet.flange</code></li><li><code>solid.hole</code></li><li><code>sheet.fold</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Minimal L-profile · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Minimal L-profile</div>
+  <section class="hero small">
+    <p class="eyebrow">fundamentals</p>
+    <h1>Minimal L-profile</h1>
+    <p class="guide-lead">A simple XZ L-profile provides a clean reusable geometry baseline</p>
+    <p>An L-shaped polygon is authored in XZ and symmetrically extruded without holes, fillets or secondary features.</p>
+    <p class="meta"><span>24 mm extrusion width; 40 mm arms; 12 mm arm thickness</span><span>7 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/bracket/model_verify/presentation/preview-iso.png" alt="Minimal L-profile: Current deterministic presentation preview from durable build be6ad0a32935." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build be6ad0a32935.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the L-shaped XZ polygon</li><li>Finish the explicit Profile sketch</li><li>Extrude the profile symmetrically through 24 mm</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Provide a deliberately simple reusable L-shaped reference component for later attachment/orientation qualification.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>with Sketch(plane=&#x27;XZ&#x27;): Polygon2D(..., plane=&#x27;XZ&#x27;); sketch.extrude(width, direction=Direction.SYMMETRIC)</code></p>
+    <h2>Forge model</h2>
+    <p>One symbolic L profile extruded symmetrically through its width; no holes, fillets, anchors or secondary features.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Native XZ sketch/polygon plus symmetric extrusion. No assembly commands are present yet.</p>
+    <h2>SolidCraft result</h2>
+    <p>A clean 40 mm L profile with 12 mm arms and 24 mm symmetric extrusion width.</p>
+    <h2>Saved-design test</h2>
+    <p>Not yet an attachment mutation case. This component is intentionally the geometry baseline for upcoming multi-orientation anchor tests.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>A filled box can share the L-profile envelope. L-profile volume and a probe in the missing corner are required.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>OpenSCAD</strong> — Equivalent baseline is a 2D L polygon followed by linear_extrude(center=true).</li><li><strong>BOSL2</strong> — Later attachment cases can reuse this simple shape while testing anchor/orient semantics independently of bracket feature complexity.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>@dataclass
+class Bracket:
+    &quot;&quot;&quot;Minimal L-profile qualification fixture.
+
+    Deliberately no holes, fillets or secondary features: this fixture exists
+    to verify profile geometry, XZ extrusion and later assembly relationships
+    without unrelated feature behavior obscuring the result.
+    &quot;&quot;&quot;
+
+    width: float = 24
+    arm_length: float = 40
+    arm_height: float = 12
+
+    def build(self):
+        with Sketch(name=&quot;Profile&quot;, plane=&quot;XZ&quot;) as sketch:
+            Polygon2D(
+                [
+                    (0, 0),
+                    (self.arm_length, 0),
+                    (self.arm_length, self.arm_height),
+                    (self.arm_height, self.arm_height),
+                    (self.arm_height, self.arm_length),
+                    (0, self.arm_length),
+                ],
+                plane=&quot;XZ&quot;,
+            )
+        return sketch.extrude(self.width, sym=True)
+
+
+Bracket()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/bracket/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>sketch.create</code></li><li><code>sketch.line</code></li><li><code>sketch.finish</code></li><li><code>solid.extrude</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

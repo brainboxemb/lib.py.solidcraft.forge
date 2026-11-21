@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Copied Placement with rotation · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Copied Placement with rotation</div>
+  <section class="hero small">
+    <p class="eyebrow">components</p>
+    <h1>Copied Placement with rotation</h1>
+    <p class="guide-lead">Two copied Panel occurrences preserve both translation and Z-axis orientation</p>
+    <p>A non-square Panel definition is reused twice with complete absolute Placements so rotation never changes the authored parent-frame translations.</p>
+    <p class="meta"><span>Panel 20 × 10 × 4 mm; occurrence centers X=-40 mm and X=40 mm; Z rotation 90°</span><span>6 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/rotated-copy-placement/model_verify/presentation/preview-iso.png" alt="Copied Placement with rotation: Current deterministic presentation preview from durable build be6ad0a32935." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build be6ad0a32935.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create one reusable Panel definition</li><li>Bind both real native occurrence IDs</li><li>Apply each full translation and rotation through occurrence.move</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Verify that a copied occurrence combining concrete XYZ and orientation keeps its declared parent-frame position instead of rotating a pre-applied copy translation.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>left = Panel(placement=Placement(x=-40, rotation=(Z, 90))); right = left.copy(placement=Placement(x=40, rotation=(Z, 90)))</code></p>
+    <h2>Forge model</h2>
+    <p>Two occurrences share one non-square Panel definition. Each carries one complete absolute Placement with X translation and Z-axis orientation.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge creates/copies the Panel occurrence at native identity, binds each real occurrence ID, then applies each complete translation and Z=90 degree orientation through occurrence.move. No predicted Component:N name and no pre-rotated copy translation is used.</p>
+    <h2>SolidCraft result</h2>
+    <p>Two rotated 10 x 20 x 4 mm envelopes remain centred at X=-40 and X=+40. No placement joint is created.</p>
+    <h2>Saved-design test</h2>
+    <p>Not required: this case isolates concrete copy-plus-rotation lowering; parameter-driven occurrence recompute is proved by the dedicated parametric Placement cases.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The centred non-square 10 x 20 world envelopes prove that both Panel occurrences are rotated while their X centers remain at the authored -40/+40 positions.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — Translation and rotation are applied together to each bound occurrence through occurrence.move.</li><li><strong>PythonSCAD</strong> — Independent geometry proves two 10 x 20 x 4 rotated envelopes at the expected centers.</li><li><strong>pyBOSL2</strong> — Independent geometry checks the same rotated world envelopes.</li><li><strong>CadQuery</strong> — Independent Assembly Locations apply the same placement and orientation.</li><li><strong>build123d</strong> — Independent Rot and Locations reproduce the two placed panels.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Qualification: copied Placement keeps translation when rotation is present.&quot;&quot;&quot;
+
+
+class Panel:
+    def build(self):
+        return Box(20, 10, 4)
+
+
+class RotatedCopyPlacement:
+    def build(self):
+        left = Panel(
+            placement=Placement(
+                x=-40,
+                rotation=(Z, 90),
+            )
+        )
+        right = left.copy(
+            placement=Placement(
+                x=40,
+                rotation=(Z, 90),
+            )
+        )
+        return left + right
+
+
+RotatedCopyPlacement()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/rotated-copy-placement/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

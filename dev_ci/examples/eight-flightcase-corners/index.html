@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Eight flightcase corner protectors · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../../">← Examples</a> / Eight flightcase corner protectors</div>
+  <section class="hero small">
+    <p class="eyebrow">components</p>
+    <h1>Eight flightcase corner protectors</h1>
+    <p class="guide-lead">One neutral trihedral protector is reused on all eight case corners</p>
+    <p>A parameterized case reuses one three-plate corner protector with assembly-owned positions and 3D orientations.</p>
+    <p class="meta"><span>Case 120 × 80 × 60 mm; protector envelope 24 × 24 × 24 mm</span><span>27 generated SolidCraft commands</span></p>
+  </section>
+  <figure class="example-image">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/eight-flightcase-corners/model_verify/presentation/preview-iso.png" alt="Eight flightcase corner protectors: Current deterministic presentation preview from durable build be6ad0a32935." loading="lazy">
+    <figcaption>Current deterministic presentation preview from durable build be6ad0a32935.</figcaption>
+  </figure>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Model stages</h2>
+      <ol><li>Create the parameterized CaseBlock</li><li>Create one reusable FlightcaseCorner definition</li><li>Place and orient eight protector occurrences</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Goal</h2>
+      <p>Reuse one neutral three-plate corner protector on all eight case corners. The assembly calculates each XYZ position and 3D orientation directly from case dimensions.</p>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Forge API</h2>
+    <p><code>FlightcaseCorner.copy(placement=Placement(x=..., y=..., z=..., rotation=(axis, angle)))</code></p>
+    <h2>Forge model</h2>
+    <p>One rounded CaseBlock plus eight occurrences of one neutral trihedral protector. Position and orientation belong to the assembly; there is no Attachment.</p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge binds the occurrence ids returned by component.create/occurrence.copy to replay variables. Numeric unrotated copies use occurrence.copy translate directly; symbolic positions and rotations use a later occurrence.move addressed by the bound id.</p>
+    <h2>SolidCraft result</h2>
+    <p>Each of the eight case corners is wrapped by three connected plates: one horizontal and two vertical. The protector outer envelope is a fixed 24x24x24 mm at every corner.</p>
+    <h2>Saved-design test</h2>
+    <p>Change case_width/depth/height from 120x80x60 to 160x120x90 mm; all protectors follow the calculated corner positions without rerunning Python, while every protector remains exactly 24x24x24 mm.</p>
+    <h2>Geometry evidence</h2>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>This case qualifies eight corner placements around the case. Per-occurrence bounds and the visual decomposition describe this case&#x27;s placement geometry; native relationships are checked separately.</p>
+    <h2>Reference notes</h2>
+    <ul><li><strong>SolidCraft</strong> — component.create/occurrence.copy return real occurrence ids; the replay executor binds those ids before later parametric occurrence.move commands.</li><li><strong>BOSL2</strong> — One neutral trihedral part is reused in eight assembly-owned poses.</li></ul>
+  </section>
+  <div class="twocol">
+    <section class="panel">
+      <h2>Python source</h2>
+      <pre><code>&quot;&quot;&quot;Eight trihedral flightcase corner protectors around one rounded case.&quot;&quot;&quot;
+
+
+class CaseBlock:
+    _width = 120.0
+    _depth = 80.0
+    _height = 60.0
+
+    def build(self):
+        return Box(
+            self._width,
+            self._depth,
+            self._height,
+            anchor=Anchor.BOTTOM,
+        ).fillet(8, edges=Edges.VERTICAL)
+
+
+class FlightcaseCorner:
+    # Fixed representative dimensions for this orientation qualification.
+    # These values intentionally do not depend on CaseBlock dimensions.
+    ARM = 20.0
+    THICKNESS = 4.0
+    OVERLAP = 0.5
+
+    def build(self):
+        arm = self.ARM
+        t = self.THICKNESS
+        overlap = self.OVERLAP
+
+        # Neutral protector for a bottom/front/left corner.
+        # The case interior is local +X/+Y/+Z; the three plates sit outside
+        # the bottom, front and left faces and overlap slightly inside the cap.
+        bottom = Box(arm, arm, t).move(
+            x=half(arm),
+            y=half(arm),
+            z=-half(t),
+        )
+        front = Box(arm, t + overlap, arm + overlap).move(
+            x=half(arm),
+            y=half(overlap - t),
+            z=half(arm - overlap),
+        )
+        side = Box(t + overlap, arm, arm + overlap).move(
+            x=half(overlap - t),
+            y=half(arm),
+            z=half(arm - overlap),
+        )
+        return bottom + front + side
+
+
+class EightFlightcaseCorners:
+    case_width = 120.0
+    case_depth = 80.0
+    case_height = 60.0
+
+    def build(self):
+        case = CaseBlock(
+            _width=self.case_width,
+            _depth=self.case_depth,
+            _height=self.case_height,
+        )
+        protector = FlightcaseCorner()
+
+        half_width = half(self.case_width)
+        half_depth = half(self.case_depth)
+
+        def placed(x, y, z, rotation=None):
+            return protector.copy(
+                placement=Placement(
+                    x=x,
+                    y=y,
+                    z=z,
+                    rotation=rotation,
+                ),
+            )
+
+        front_bottom_left = placed(-half_width, -half_depth, 0)
+        front_bottom_right = placed(
+            half_width, -half_depth, 0, (Z, 90),
+        )
+        rear_bottom_right = placed(
+            half_width, half_depth, 0, (Z, 180),
+        )
+        rear_bottom_left = placed(
+            -half_width, half_depth, 0, (Z, 270),
+        )
+
+        front_top_left = placed(
+            -half_width,
+            -half_depth,
+            self.case_height,
+            ((1, 1, 0), 180),
+        )
+        front_top_right = placed(
+            half_width,
+            -half_depth,
+            self.case_height,
+            (Y, 180),
+        )
+        rear_top_right = placed(
+            half_width,
+            half_depth,
+            self.case_height,
+            ((1, -1, 0), 180),
+        )
+        rear_top_left = placed(
+            -half_width,
+            half_depth,
+            self.case_height,
+            (X, 180),
+        )
+
+        return (
+            case
+            + front_bottom_left + front_bottom_right
+            + rear_bottom_right + rear_bottom_left
+            + front_top_left + front_top_right
+            + rear_top_right + rear_top_left
+        )
+
+
+EightFlightcaseCorners()
+</code></pre>
+      <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/eight-flightcase-corners/scpf/model.py">Open the editable source in GitHub →</a></p>
+    </section>
+    <section class="panel">
+      <h2>Generated command sequence</h2>
+      <ol class="commands"><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>parameters.add</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>solid.fillet</code></li><li><code>component.activate</code></li><li><code>component.create</code></li><li><code>solid.box</code></li><li><code>solid.box</code></li><li><code>solid.box</code></li><li><code>component.activate</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.copy</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li><li><code>occurrence.move</code></li></ol>
+      <p><a class="button" href="commands.json">View command JSON →</a></p>
+    </section>
+  </div>
+  <section class="notice">
+    The engineering explanation above is preserved in this example's
+    <code>README.md</code>. Exact expected geometry and tolerances live in
+    <code>verification/verify.py</code>. Current PASS/FAIL and measured evidence
+    are supplied by the accepted durable build.
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Editable local offset at an attachment · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../">← Verification</a> / Editable local offset at an attachment</div>
+
+  <section class="hero small">
+    <p class="eyebrow">Forge model example · 6 · Associative relationships</p>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual PASS</span></div>
+    <h1>Editable local offset at an attachment</h1>
+  </section>
+
+  <section class="panel qualification-example-overview">
+    <h2>What this example makes</h2>
+    <p>The marker moves within the selected corner anchor&#x27;s local attachment plane.</p>
+    <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Editable local offset at an attachment expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/presentation/preview-iso.png" alt="Editable local offset at an attachment native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+  </section>
+
+  <section class="panel">
+    <h2>Forge code</h2>
+    <p>This is the complete Forge source used for this example.</p>
+    <pre><code>class Base:
+    def build(self):
+        return Box(40, 30, 20, anchor=Anchor.BOTTOM)
+
+
+class Marker:
+    def build(self):
+        return Box(10, 10, 10, anchor=Anchor.BOTTOM)
+
+
+class ParametricOffset:
+    shift = 5.0
+
+    def build(self):
+        base = Base()
+        marker = Marker().attach(
+            base,
+            parent=Anchor.FRONT_TOP_RIGHT,
+            child=Anchor.BACK_TOP_RIGHT,
+            offset=(0, -self.shift),
+        )
+        return base + marker
+
+
+ParametricOffset()
+</code></pre>
+    <h3>API used</h3>
+    <p><code>attach(..., offset=(u, v))</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/parametric-offset/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+  </section>
+
+  <section class="panel">
+  <h2>Reference code</h2>
+  <p>
+    The same model is written independently with the reference libraries below.
+    This makes it easier to compare modelling style and the resulting shape.
+  </p>
+  <p class="meta">Each source is shown from the current Forge tree beside the accepted durable result for that independent implementation.</p>
+  <div class="qualification-reference-list"><section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/parametric-offset/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/parametric-offset/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for a corner marker with local planar shift.
+
+Forge additionally qualifies that the saved SolidCraft joint follows a changed
+shift parameter without rerunning Python.
+&quot;&quot;&quot;
+
+from pythonscad import *
+
+shift = 5.0
+base = cube([40, 30, 20], center=True).up(10)
+marker = cube([10, 10, 10], center=True).translate([15, -20, 20])
+model = base | marker
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      20.0,
+      15.0,
+      25.0
+    ],
+    &quot;actual_min&quot;: [
+      -20.0,
+      -25.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      20.0,
+      15.0,
+      25.0
+    ],
+    &quot;expected_min&quot;: [
+      -20.0,
+      -25.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/pythonscad/references/parametric-offset/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/pythonscad/references/parametric-offset/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/pythonscad/references/parametric-offset/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/pythonscad/references/parametric-offset/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/pythonscad/references/parametric-offset/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/parametric-offset/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/parametric-offset/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for the parametric-offset case.
+
+This keeps the visible placement explicit. Forge&#x27;s qualification additionally
+checks a persisted local joint-frame offset after native parameter mutation.
+&quot;&quot;&quot;
+
+from pybosl2 import cuboid
+
+shift = 5.0
+base = cuboid([40, 30, 20]).up(10)
+marker = cuboid([10, 10, 10]).translate([15, -20, 20])
+model = base | marker
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      20.0,
+      15.0,
+      25.0
+    ],
+    &quot;actual_min&quot;: [
+      -20.0,
+      -25.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      20.0,
+      15.0,
+      25.0
+    ],
+    &quot;expected_min&quot;: [
+      -20.0,
+      -25.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/pybosl2/references/parametric-offset/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/pybosl2/references/parametric-offset/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/pybosl2/references/parametric-offset/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/pybosl2/references/parametric-offset/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/pybosl2/references/parametric-offset/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/parametric-offset/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/parametric-offset/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;CadQuery geometry reference for a corner marker with a planar shift.
+
+The final Location compares the visible local-offset result. Forge separately
+qualifies persisted local joint-frame mutation in SolidCraft.
+&quot;&quot;&quot;
+
+import cadquery as cq
+
+
+shift = 5.0
+base = cq.Solid.makeBox(40, 30, 20, cq.Vector(-20, -15, 0))
+marker = cq.Solid.makeBox(10, 10, 10, cq.Vector(-5, -5, -5))
+
+model = cq.Assembly()
+model.add(base, name=&quot;base&quot;)
+model.add(marker, name=&quot;marker&quot;, loc=cq.Location((15, -20, 20)))
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      20.0,
+      15.0,
+      25.0
+    ],
+    &quot;actual_min&quot;: [
+      -20.0,
+      -25.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      20.0,
+      15.0,
+      25.0
+    ],
+    &quot;expected_min&quot;: [
+      -20.0,
+      -25.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/cadquery/references/parametric-offset/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/cadquery/references/parametric-offset/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/cadquery/references/parametric-offset/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/cadquery/references/parametric-offset/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/cadquery/references/parametric-offset/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/parametric-offset/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/parametric-offset/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;build123d reference: a marker shifted relative to a top/front corner.&quot;&quot;&quot;
+from build123d import Align, Box, BuildPart, Locations
+
+shift = 5.0
+bottom = (Align.CENTER, Align.CENTER, Align.MIN)
+
+with BuildPart() as model:
+    Box(40, 30, 20, align=bottom)
+    with Locations((15, -15 - shift, 20)):
+        Box(10, 10, 10)
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      20.0,
+      15.0,
+      25.0
+    ],
+    &quot;actual_min&quot;: [
+      -20.0,
+      -25.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      20.0,
+      15.0,
+      25.0
+    ],
+    &quot;expected_min&quot;: [
+      -20.0,
+      -25.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/build123d/references/parametric-offset/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/build123d/references/parametric-offset/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/build123d/references/parametric-offset/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/build123d/references/parametric-offset/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/build123d/references/parametric-offset/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+</div>
+</section>
+
+
+  <section class="panel">
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>The computed child seed pose retains the symbolic local offset, then the actual relationship is joint.create(type=&#x27;planar&#x27;, values=[u,v,angle]). The seed move is not an additional joint.</p>
+  </section>
+
+  <section class="panel qualification-current">
+  <h2>SolidCraft result</h2>
+  <p>
+    Built and measured from the accepted durable SolidCraft evidence.
+    Open the measurement details to inspect body sizes and editable parameters.
+  </p>
+  <details class="qualification-detail-block"><summary><strong>Original model</strong> · 2 bodies</summary><h4>Editable parameters</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>shift</td><td>5.0</td><td>mm</td><td>5 mm</td></tr></tbody></table></div><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>Base</td><td>[-20.0, -15.0, 0.0]</td><td>[20.0, 15.0, 20.0]</td><td>24000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>Marker</td><td>[10.0, -25.0, 15.0]</td><td>[20.0, -15.0, 25.0]</td><td>1000.0</td><td>6</td><td>12</td><td>True</td></tr></tbody></table></div></details>
+  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>shift_10</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/saved_designs/shift_10/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
+  &quot;bodies&quot;: [
+    {
+      &quot;area_mm2&quot;: 5200.0,
+      &quot;bbox&quot;: {
+        &quot;max&quot;: [
+          20.0,
+          15.0,
+          20.0
+        ],
+        &quot;min&quot;: [
+          -20.0,
+          -15.0,
+          0.0
+        ]
+      },
+      &quot;center_of_mass&quot;: [
+        2.6147972675971686e-15,
+        -2.3495279795800646e-15,
+        10.0
+      ],
+      &quot;closed&quot;: true,
+      &quot;density_g_cm3&quot;: 1.29,
+      &quot;edges&quot;: 12,
+      &quot;face_types&quot;: {
+        &quot;plane&quot;: 6
+      },
+      &quot;faces&quot;: 6,
+      &quot;kernel&quot;: {
+        &quot;edges&quot;: 12,
+        &quot;faces&quot;: 6,
+        &quot;shells&quot;: 1,
+        &quot;vertices&quot;: 8
+      },
+      &quot;mass_g&quot;: 30.96,
+      &quot;material&quot;: &quot;Default&quot;,
+      &quot;measured_by&quot;: &quot;smlib&quot;,
+      &quot;name&quot;: &quot;Base&quot;,
+      &quot;notes&quot;: [],
+      &quot;vertices&quot;: 8,
+      &quot;volume_mm3&quot;: 24000.0
+    },
+    {
+      &quot;area_mm2&quot;: 600.0,
+      &quot;bbox&quot;: {
+        &quot;max&quot;: [
+          20.0,
+          -15.0,
+          30.0
+        ],
+        &quot;min&quot;: [
+          10.0,
+          -25.0,
+          20.0
+        ]
+      },
+      &quot;center_of_mass&quot;: [
+        15.0,
+        -20.0,
+        25.0
+      ],
+      &quot;closed&quot;: true,
+      &quot;density_g_cm3&quot;: 1.29,
+      &quot;edges&quot;: 12,
+      &quot;face_types&quot;: {
+        &quot;plane&quot;: 6
+      },
+      &quot;faces&quot;: 6,
+      &quot;kernel&quot;: {
+        &quot;edges&quot;: 12,
+        &quot;faces&quot;: 6,
+        &quot;shells&quot;: 1,
+        &quot;vertices&quot;: 8
+      },
+      &quot;mass_g&quot;: 1.29,
+      &quot;material&quot;: &quot;Default&quot;,
+      &quot;measured_by&quot;: &quot;smlib&quot;,
+      &quot;name&quot;: &quot;Marker&quot;,
+      &quot;notes&quot;: [],
+      &quot;vertices&quot;: 8,
+      &quot;volume_mm3&quot;: 1000.0
+    }
+  ],
+  &quot;body_count&quot;: 2,
+  &quot;params&quot;: [
+    {
+      &quot;comment&quot;: &quot;&quot;,
+      &quot;error&quot;: null,
+      &quot;expression&quot;: &quot;10 mm&quot;,
+      &quot;model&quot;: false,
+      &quot;name&quot;: &quot;shift&quot;,
+      &quot;unit&quot;: &quot;mm&quot;,
+      &quot;value&quot;: 10.0
+    }
+  ],
+  &quot;sketches&quot;: [],
+  &quot;timeline&quot;: [
+    {
+      &quot;error&quot;: null,
+      &quot;id&quot;: 3,
+      &quot;ms&quot;: 2.216605,
+      &quot;name&quot;: &quot;Box1&quot;,
+      &quot;rolled_back&quot;: false,
+      &quot;suppressed&quot;: false,
+      &quot;type&quot;: &quot;BoxFeature&quot;,
+      &quot;warning&quot;: null
+    },
+    {
+      &quot;error&quot;: null,
+      &quot;id&quot;: 6,
+      &quot;ms&quot;: 1.261779,
+      &quot;name&quot;: &quot;Box2&quot;,
+      &quot;rolled_back&quot;: false,
+      &quot;suppressed&quot;: false,
+      &quot;type&quot;: &quot;BoxFeature&quot;,
+      &quot;warning&quot;: null
+    }
+  ],
+  &quot;total&quot;: {
+    &quot;area_mm2&quot;: 5800.0,
+    &quot;edges&quot;: 24,
+    &quot;faces&quot;: 12,
+    &quot;mass_g&quot;: 32.25,
+    &quot;open_bodies_skipped&quot;: 0,
+    &quot;vertices&quot;: 16,
+    &quot;volume_mm3&quot;: 25000.0
+  }
+}</code></pre></details>
+</section>
+<section class="panel qualification-visual-check">
+  <h2>Current visual verification</h2>
+  <p>These views exist only where the current model owns a visual verification policy. Actual, goal, overlay and diff are current durable verification evidence.</p>
+  <section class="qualification-view" data-view="front">
+  <h3>front · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.021557,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="right">
+  <h3>right · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/right/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/right/goal.png" alt="right Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/right/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/right/overlay.png" alt="right Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.018084,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="iso">
+  <h3>iso · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.020255,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+
+</section>
+
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual PASS</span></div>
+
+    <h3>Forge model</h3>
+    <p>Attachment stores two symbolic local planar values; these are not world X/Y/Z coordinates.</p>
+
+    <h3>Verification checks</h3>
+    <details class="qualification-detail-block">
+  <summary><code>baseline</code> · <span class="qualification-status pass">PASS</span></summary>
+  
+  <pre><code>{
+  &quot;body_envelopes&quot;: {
+    &quot;actual_count&quot;: 2,
+    &quot;expected_count&quot;: 2,
+    &quot;kind&quot;: &quot;body_envelopes&quot;,
+    &quot;matched_pairs&quot;: [
+      {
+        &quot;actual&quot;: {
+          &quot;label&quot;: &quot;Base&quot;,
+          &quot;max&quot;: [
+            20.0,
+            15.0,
+            20.0
+          ],
+          &quot;min&quot;: [
+            -20.0,
+            -15.0,
+            0.0
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;label&quot;: null,
+          &quot;max&quot;: [
+            20.0,
+            15.0,
+            20.0
+          ],
+          &quot;min&quot;: [
+            -20.0,
+            -15.0,
+            0.0
+          ]
+        },
+        &quot;max_delta&quot;: 0.0
+      },
+      {
+        &quot;actual&quot;: {
+          &quot;label&quot;: &quot;Marker&quot;,
+          &quot;max&quot;: [
+            20.0,
+            -15.0,
+            25.0
+          ],
+          &quot;min&quot;: [
+            10.0,
+            -25.0,
+            15.0
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;label&quot;: null,
+          &quot;max&quot;: [
+            20.0,
+            -15.0,
+            25.0
+          ],
+          &quot;min&quot;: [
+            10.0,
+            -25.0,
+            15.0
+          ]
+        },
+        &quot;max_delta&quot;: 0.0
+      }
+    ],
+    &quot;pass&quot;: true,
+    &quot;tolerance&quot;: 0.001,
+    &quot;unmatched_actual&quot;: [],
+    &quot;unmatched_expected&quot;: []
+  },
+  &quot;named_bodies&quot;: [
+    {
+      &quot;body_name&quot;: &quot;Marker&quot;,
+      &quot;bounds&quot;: {
+        &quot;actual_max&quot;: [
+          20.0,
+          -15.0,
+          25.0
+        ],
+        &quot;actual_min&quot;: [
+          10.0,
+          -25.0,
+          15.0
+        ],
+        &quot;deltas&quot;: [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        &quot;expected_max&quot;: [
+          20.0,
+          -15.0,
+          25.0
+        ],
+        &quot;expected_min&quot;: [
+          10.0,
+          -25.0,
+          15.0
+        ],
+        &quot;kind&quot;: &quot;bounds&quot;,
+        &quot;label&quot;: &quot;Marker bounds&quot;,
+        &quot;max_delta&quot;: 0.0,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.001
+      },
+      &quot;name_prefix&quot;: &quot;Marker&quot;
+    }
+  ]
+}</code></pre>
+</details>
+<details class="qualification-detail-block">
+  <summary><code>saved_design_shift_10</code> · <span class="qualification-status pass">PASS</span></summary>
+  
+  <pre><code>{
+  &quot;body_envelopes&quot;: {
+    &quot;actual_count&quot;: 2,
+    &quot;expected_count&quot;: 2,
+    &quot;kind&quot;: &quot;body_envelopes&quot;,
+    &quot;matched_pairs&quot;: [
+      {
+        &quot;actual&quot;: {
+          &quot;label&quot;: &quot;Base&quot;,
+          &quot;max&quot;: [
+            20.0,
+            15.0,
+            20.0
+          ],
+          &quot;min&quot;: [
+            -20.0,
+            -15.0,
+            0.0
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;label&quot;: null,
+          &quot;max&quot;: [
+            20.0,
+            15.0,
+            20.0
+          ],
+          &quot;min&quot;: [
+            -20.0,
+            -15.0,
+            0.0
+          ]
+        },
+        &quot;max_delta&quot;: 0.0
+      },
+      {
+        &quot;actual&quot;: {
+          &quot;label&quot;: &quot;Marker&quot;,
+          &quot;max&quot;: [
+            20.0,
+            -15.0,
+            30.0
+          ],
+          &quot;min&quot;: [
+            10.0,
+            -25.0,
+            20.0
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;label&quot;: null,
+          &quot;max&quot;: [
+            20.0,
+            -15.0,
+            30.0
+          ],
+          &quot;min&quot;: [
+            10.0,
+            -25.0,
+            20.0
+          ]
+        },
+        &quot;max_delta&quot;: 0.0
+      }
+    ],
+    &quot;pass&quot;: true,
+    &quot;tolerance&quot;: 0.001,
+    &quot;unmatched_actual&quot;: [],
+    &quot;unmatched_expected&quot;: []
+  },
+  &quot;named_bodies&quot;: [
+    {
+      &quot;body_name&quot;: &quot;Marker&quot;,
+      &quot;bounds&quot;: {
+        &quot;actual_max&quot;: [
+          20.0,
+          -15.0,
+          30.0
+        ],
+        &quot;actual_min&quot;: [
+          10.0,
+          -25.0,
+          20.0
+        ],
+        &quot;deltas&quot;: [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        &quot;expected_max&quot;: [
+          20.0,
+          -15.0,
+          30.0
+        ],
+        &quot;expected_min&quot;: [
+          10.0,
+          -25.0,
+          20.0
+        ],
+        &quot;kind&quot;: &quot;bounds&quot;,
+        &quot;label&quot;: &quot;Marker bounds&quot;,
+        &quot;max_delta&quot;: 0.0,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.001
+      },
+      &quot;name_prefix&quot;: &quot;Marker&quot;
+    }
+  ]
+}</code></pre>
+</details>
+
+
+    <h3>Saved-design test</h3>
+    <p>Change shift from 5 to 10 mm in the saved design; the marker must follow the same local axis by another 5 mm.</p>
+
+    <h3>Geometry evidence</h3>
+    <p><strong>Are outer bounds sufficient?</strong> yes</p>
+    <p>The base and marker sizes and positions show the local offset. The saved SolidCraft model is then changed to confirm that the planar joint updates correctly.</p>
+
+    <h3>Raw test files</h3>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/parametric-offset/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+
+    <h3>Reference documentation</h3>
+    <ul><li><strong>BOSL2</strong> — Important reference: attach() operates in the local coordinate system at the parent anchor, not blindly in world coordinates.</li><li><strong>OpenSCAD</strong> — A raw translate([x,y,z]) is world/object transform syntax and therefore is not equivalent to this local joint offset.</li></ul>
+
+    <p class="source-stamp">
+      Site source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · accepted model evidence source
+      <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · durable build <code>be6ad0a329352849d5dbdff8880c83e1f5e0f2c4</code>
+    </p>
+  </div>
+</details>
+
+
+  <section class="panel">
+    <h2>Sources of truth</h2>
+    <p>
+      General model/page metadata is stored in <code>model.yml</code>.
+      Preserved engineering explanation is stored in <code>README.md</code>.
+      Exact expected values and tolerances are defined by
+      <code>verification/verify.py</code>.
+    </p>
+    <p>
+      <a href="../../examples/parametric-offset/">Open the example →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/parametric-offset/verification/verify.py">Open verification/verify.py →</a>
+    </p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>

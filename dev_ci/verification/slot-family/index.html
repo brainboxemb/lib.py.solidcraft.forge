@@ -1,0 +1,1798 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Native sketch Slot family · SCPF Python library</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../../">SCPF <span>Python library</span></a>
+    <div class="site-search" data-search-index="../../search-index.json">
+      <label class="sr-only" for="site-search-input">Search SCPF documentation</label>
+      <input id="site-search-input" class="site-search-input" type="search"
+             autocomplete="off" spellcheck="false" placeholder="Search API…"
+             aria-label="Search SCPF documentation" aria-expanded="false"
+             aria-controls="site-search-results">
+      <span class="site-search-shortcut" aria-hidden="true">/</span>
+      <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
+    </div>
+    <nav aria-label="Main">
+      <a href="../../">Examples</a>
+      <a href="../../guide/">API Guide</a>
+      <a href="../../reference/">API Reference</a>
+      <a href="../../verification/">Verification</a>
+      <a href="../../cheatsheet/">Cheatsheet</a>
+      <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge">Source</a>
+    </nav>
+  </div>
+</header>
+<div class="development-banner" role="status">
+  <div class="wrap">
+    <strong>Development version.</strong>
+    Forge is under active development and testing. APIs, behaviour, coverage
+    and verification results may be incomplete or change without notice;
+    published PASS results are not a support guarantee or production-readiness claim.
+  </div>
+</div>
+<main class="wrap">
+  <div class="crumb"><a href="../">← Verification</a> / Native sketch Slot family</div>
+
+  <section class="hero small">
+    <p class="eyebrow">Forge model example · 2 · Parent/child features and faces</p>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual PASS</span></div>
+    <h1>Native sketch Slot family</h1>
+  </section>
+
+  <section class="panel qualification-example-overview">
+    <h2>What this example makes</h2>
+    <p>SolidCraft saves one plate, one Slot family sketch containing five closed profiles and one error-free cut extrusion. The native timeline must not contain sketch.rectangle.rounded as a substitute for Slot construction.</p>
+    <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Native sketch Slot family expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/presentation/preview-iso.png" alt="Native sketch Slot family native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+  </section>
+
+  <section class="panel">
+    <h2>Forge code</h2>
+    <p>This is the complete Forge source used for this example.</p>
+    <pre><code>&quot;&quot;&quot;Qualification fixture for all five native SolidCraft Slot creators.&quot;&quot;&quot;
+
+
+class SlotFamily:
+    width = 160.0
+    depth = 120.0
+    thickness = 5.0
+
+    SLOT_WIDTH = 8.0
+
+    def build(self):
+        body = Box(
+            self.width,
+            self.depth,
+            self.thickness,
+            anchor=Anchor.BOTTOM,
+        )
+
+        with Sketch(name=&quot;Slot family&quot;, on=body) as slots:
+            SlotCenterToCenter2D((-60, -35), (-40, -35), self.SLOT_WIDTH)
+            SlotOverall2D((-10, -35), (20, -35), self.SLOT_WIDTH)
+            SlotCenterPoint2D((55, -35), (65, -35), self.SLOT_WIDTH)
+            SlotArcThreePoint2D((-50, 25), (-35, 38), (-20, 25), self.SLOT_WIDTH)
+            SlotArcCenter2D((40, 25), (52, 25), self.SLOT_WIDTH, sweep=120)
+
+        return body - slots.extrude(Depth.THROUGH_ALL)
+
+
+SlotFamily()
+</code></pre>
+    <h3>API used</h3>
+    <p><code>SlotCenterToCenter2D(...); SlotOverall2D(...); SlotCenterPoint2D(...); SlotArcThreePoint2D(...); SlotArcCenter2D(...) inside one explicit Sketch</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/slot-family/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+  </section>
+
+  <section class="panel">
+  <h2>Reference code</h2>
+  <p>
+    The same model is written independently with the reference libraries below.
+    This makes it easier to compare modelling style and the resulting shape.
+  </p>
+  <p class="meta">Each source is shown from the current Forge tree beside the accepted durable result for that independent implementation.</p>
+  <div class="qualification-reference-list"><section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/slot-family/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/slot-family/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
+
+import math
+from pythonscad import *
+
+CUT_HEIGHT = 9
+CUT_Z = -2
+SLOT_WIDTH = 8.0
+
+def arc_band_points(center, radius, start_deg, sweep_deg, width, steps=96):
+    cx, cy = center
+    half = width / 2
+    angles = [
+        math.radians(start_deg + sweep_deg * i / steps)
+        for i in range(steps + 1)
+    ]
+    outer = [
+        [cx + (radius + half) * math.cos(a), cy + (radius + half) * math.sin(a)]
+        for a in angles
+    ]
+    inner = [
+        [cx + (radius - half) * math.cos(a), cy + (radius - half) * math.sin(a)]
+        for a in reversed(angles)
+    ]
+    start = [
+        cx + radius * math.cos(angles[0]),
+        cy + radius * math.sin(angles[0]),
+    ]
+    end = [
+        cx + radius * math.cos(angles[-1]),
+        cy + radius * math.sin(angles[-1]),
+    ]
+    return outer + inner, start, end
+
+
+def straight_slot(center_x, center_y, center_separation, width=SLOT_WIDTH):
+    bar = cube([center_separation, width, CUT_HEIGHT], center=True).translate(
+        [center_x, center_y, 2.5]
+    )
+    left = cylinder(d=width, h=CUT_HEIGHT).translate(
+        [center_x - center_separation / 2, center_y, CUT_Z]
+    )
+    right = cylinder(d=width, h=CUT_HEIGHT).translate(
+        [center_x + center_separation / 2, center_y, CUT_Z]
+    )
+    return bar | left | right
+
+def arc_slot(center, radius, start_deg, sweep_deg, width=SLOT_WIDTH):
+    points, start, end = arc_band_points(
+        center, radius, start_deg, sweep_deg, width
+    )
+    band = polygon(points).linear_extrude(height=CUT_HEIGHT).translate(
+        [0, 0, CUT_Z]
+    )
+    start_cap = cylinder(d=width, h=CUT_HEIGHT).translate(
+        [start[0], start[1], CUT_Z]
+    )
+    end_cap = cylinder(d=width, h=CUT_HEIGHT).translate(
+        [end[0], end[1], CUT_Z]
+    )
+    return band | start_cap | end_cap
+
+plate = cube([160, 120, 5], center=True).up(2.5)
+
+# Center-to-center: end-circle centres are (-60,-35) and (-40,-35).
+cutters = straight_slot(-50, -35, 20)
+
+# Overall endpoints are (-10,-35) and (20,-35), so the end-circle centres
+# are 4 mm inward from those endpoints: -6 and 16.
+cutters = cutters | straight_slot(5, -35, 22)
+
+# Center-point: slot centre is (55,-35), one end-circle centre is (65,-35).
+cutters = cutters | straight_slot(55, -35, 20)
+
+# Three-point arc through (-50,25), (-35,38), (-20,25).
+three_center = (-35.0, 22.846153846153847)
+three_radius = 15.153846153846153
+cutters = cutters | arc_slot(
+    three_center,
+    three_radius,
+    171.82876644005026,
+    -163.65753288010052,
+)
+
+# Center arc: centre (40,25), start (52,25), radius 12, sweep +120 deg.
+cutters = cutters | arc_slot((40, 25), 12, 0, 120)
+
+model = plate - cutters
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      80.0,
+      60.0,
+      5.0
+    ],
+    &quot;actual_min&quot;: [
+      -80.0,
+      -60.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      80.0,
+      60.0,
+      5.0
+    ],
+    &quot;expected_min&quot;: [
+      -80.0,
+      -60.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9995573645709346,
+      &quot;delta_mm&quot;: 0.00044263542906541886,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9995573645709346,
+      &quot;delta_mm&quot;: 0.00044263542906541886,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9995573645709346,
+      &quot;delta_mm&quot;: 0.00044263542906541886,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.999762018073371,
+      &quot;delta_mm&quot;: 0.0002379819266291605,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9997620180733646,
+      &quot;delta_mm&quot;: 0.00023798192663537776,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9997620180733646,
+      &quot;delta_mm&quot;: 0.00023798192663537776,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 89575.4719487445,
+    &quot;delta_mm3&quot;: 48.81395319492731,
+    &quot;expected_mm3&quot;: 89526.65799554957,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 55.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/pythonscad/references/slot-family/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/pythonscad/references/slot-family/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/pythonscad/references/slot-family/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/pythonscad/references/slot-family/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/pythonscad/references/slot-family/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/slot-family/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/slot-family/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
+
+import math
+from pybosl2 import Path2D, cuboid, cyl
+
+CUT_HEIGHT = 9
+CUT_Z = -2
+SLOT_WIDTH = 8.0
+
+def arc_band_points(center, radius, start_deg, sweep_deg, width, steps=96):
+    cx, cy = center
+    half = width / 2
+    angles = [
+        math.radians(start_deg + sweep_deg * i / steps)
+        for i in range(steps + 1)
+    ]
+    outer = [
+        [cx + (radius + half) * math.cos(a), cy + (radius + half) * math.sin(a)]
+        for a in angles
+    ]
+    inner = [
+        [cx + (radius - half) * math.cos(a), cy + (radius - half) * math.sin(a)]
+        for a in reversed(angles)
+    ]
+    start = [
+        cx + radius * math.cos(angles[0]),
+        cy + radius * math.sin(angles[0]),
+    ]
+    end = [
+        cx + radius * math.cos(angles[-1]),
+        cy + radius * math.sin(angles[-1]),
+    ]
+    return outer + inner, start, end
+
+
+def straight_slot(center_x, center_y, center_separation, width=SLOT_WIDTH):
+    bar = cuboid([center_separation, width, CUT_HEIGHT]).translate(
+        [center_x, center_y, 2.5]
+    )
+    left = cyl(diameter=width, height=CUT_HEIGHT).translate(
+        [center_x - center_separation / 2, center_y, 2.5]
+    )
+    right = cyl(diameter=width, height=CUT_HEIGHT).translate(
+        [center_x + center_separation / 2, center_y, 2.5]
+    )
+    return bar | left | right
+
+def polygon_solid(points):
+    min_x = min(p[0] for p in points)
+    max_x = max(p[0] for p in points)
+    min_y = min(p[1] for p in points)
+    max_y = max(p[1] for p in points)
+    box_center = ((min_x + max_x) / 2, (min_y + max_y) / 2)
+    local = [[p[0] - box_center[0], p[1] - box_center[1]] for p in points]
+    return (
+        Path2D(local)
+        .polygon()
+        .linear_extrude(height=CUT_HEIGHT)
+        .translate([box_center[0], box_center[1], CUT_Z])
+    )
+
+def arc_slot(center, radius, start_deg, sweep_deg, width=SLOT_WIDTH):
+    points, start, end = arc_band_points(
+        center, radius, start_deg, sweep_deg, width
+    )
+    band = polygon_solid(points)
+    start_cap = cyl(diameter=width, height=CUT_HEIGHT).translate(
+        [start[0], start[1], 2.5]
+    )
+    end_cap = cyl(diameter=width, height=CUT_HEIGHT).translate(
+        [end[0], end[1], 2.5]
+    )
+    return band | start_cap | end_cap
+
+plate = cuboid([160, 120, 5]).up(2.5)
+cutters = straight_slot(-50, -35, 20)
+cutters = cutters | straight_slot(5, -35, 22)
+cutters = cutters | straight_slot(55, -35, 20)
+
+three_center = (-35.0, 22.846153846153847)
+three_radius = 15.153846153846153
+cutters = cutters | arc_slot(
+    three_center,
+    three_radius,
+    171.82876644005026,
+    -163.65753288010052,
+)
+cutters = cutters | arc_slot((40, 25), 12, 0, 120)
+
+model = plate - cutters
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      80.0,
+      60.0,
+      5.0
+    ],
+    &quot;actual_min&quot;: [
+      -80.0,
+      -60.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      80.0,
+      60.0,
+      5.0
+    ],
+    &quot;expected_min&quot;: [
+      -80.0,
+      -60.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.999557517585173,
+      &quot;delta_mm&quot;: 0.00044248241482680584,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9995575175851803,
+      &quot;delta_mm&quot;: 0.0004424824148197004,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9995575175851803,
+      &quot;delta_mm&quot;: 0.0004424824148197004,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9997624966848933,
+      &quot;delta_mm&quot;: 0.00023750331510674627,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9997624966848933,
+      &quot;delta_mm&quot;: 0.00023750331510674627,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9997624966848933,
+      &quot;delta_mm&quot;: 0.00023750331510674627,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 89575.47184727287,
+    &quot;delta_mm3&quot;: 48.81385172330192,
+    &quot;expected_mm3&quot;: 89526.65799554957,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 55.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/pybosl2/references/slot-family/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/pybosl2/references/slot-family/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/pybosl2/references/slot-family/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/pybosl2/references/slot-family/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/pybosl2/references/slot-family/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/slot-family/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/slot-family/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;CadQuery geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
+
+import math
+import cadquery as cq
+
+CUT_HEIGHT = 9
+CUT_Z = -2
+SLOT_WIDTH = 8.0
+
+def arc_band_points(center, radius, start_deg, sweep_deg, width, steps=96):
+    cx, cy = center
+    half = width / 2
+    angles = [
+        math.radians(start_deg + sweep_deg * i / steps)
+        for i in range(steps + 1)
+    ]
+    outer = [
+        [cx + (radius + half) * math.cos(a), cy + (radius + half) * math.sin(a)]
+        for a in angles
+    ]
+    inner = [
+        [cx + (radius - half) * math.cos(a), cy + (radius - half) * math.sin(a)]
+        for a in reversed(angles)
+    ]
+    start = [
+        cx + radius * math.cos(angles[0]),
+        cy + radius * math.sin(angles[0]),
+    ]
+    end = [
+        cx + radius * math.cos(angles[-1]),
+        cy + radius * math.sin(angles[-1]),
+    ]
+    return outer + inner, start, end
+
+
+def straight_slot(center_x, center_y, overall_length, width=SLOT_WIDTH):
+    return (
+        cq.Workplane(&quot;XY&quot;)
+        .center(center_x, center_y)
+        .slot2D(overall_length, width)
+        .extrude(CUT_HEIGHT)
+        .translate((0, 0, CUT_Z))
+    )
+
+def arc_slot(center, radius, start_deg, sweep_deg, width=SLOT_WIDTH):
+    points, start, end = arc_band_points(
+        center, radius, start_deg, sweep_deg, width
+    )
+    band = (
+        cq.Workplane(&quot;XY&quot;)
+        .polyline(points)
+        .close()
+        .extrude(CUT_HEIGHT)
+        .translate((0, 0, CUT_Z))
+    )
+    start_cap = (
+        cq.Workplane(&quot;XY&quot;)
+        .center(start[0], start[1])
+        .circle(width / 2)
+        .extrude(CUT_HEIGHT)
+        .translate((0, 0, CUT_Z))
+    )
+    end_cap = (
+        cq.Workplane(&quot;XY&quot;)
+        .center(end[0], end[1])
+        .circle(width / 2)
+        .extrude(CUT_HEIGHT)
+        .translate((0, 0, CUT_Z))
+    )
+    return band.union(start_cap).union(end_cap)
+
+plate = cq.Workplane(&quot;XY&quot;).box(160, 120, 5, centered=(True, True, False))
+
+# overall lengths: 28, 30 and 28 mm respectively.
+cutters = straight_slot(-50, -35, 28)
+cutters = cutters.union(straight_slot(5, -35, 30))
+cutters = cutters.union(straight_slot(55, -35, 28))
+
+three_center = (-35.0, 22.846153846153847)
+three_radius = 15.153846153846153
+cutters = cutters.union(
+    arc_slot(
+        three_center,
+        three_radius,
+        171.82876644005026,
+        -163.65753288010052,
+    )
+)
+cutters = cutters.union(arc_slot((40, 25), 12, 0, 120))
+
+result = plate.cut(cutters)
+model = cq.Assembly()
+model.add(result, name=&quot;slot_family&quot;)
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      80.0,
+      60.0,
+      5.0
+    ],
+    &quot;actual_min&quot;: [
+      -80.0,
+      -60.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      80.0,
+      60.0,
+      5.0
+    ],
+    &quot;expected_min&quot;: [
+      -80.0,
+      -60.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.999557517585173,
+      &quot;delta_mm&quot;: 0.00044248241482680584,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9995575175851803,
+      &quot;delta_mm&quot;: 0.0004424824148197004,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9995575175851803,
+      &quot;delta_mm&quot;: 0.0004424824148197004,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9997624966848933,
+      &quot;delta_mm&quot;: 0.00023750331510674627,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9997624966848933,
+      &quot;delta_mm&quot;: 0.00023750331510674627,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9997624966848933,
+      &quot;delta_mm&quot;: 0.00023750331510674627,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 89527.51191460073,
+    &quot;delta_mm3&quot;: 0.8539190511655761,
+    &quot;expected_mm3&quot;: 89526.65799554957,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 55.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/cadquery/references/slot-family/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/cadquery/references/slot-family/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/cadquery/references/slot-family/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/cadquery/references/slot-family/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/cadquery/references/slot-family/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/slot-family/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/slot-family/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;build123d geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
+
+from build123d import (
+    Align,
+    Axis,
+    Box,
+    BuildLine,
+    BuildPart,
+    BuildSketch,
+    CenterArc,
+    Locations,
+    Mode,
+    SlotCenterPoint,
+    SlotCenterToCenter,
+    SlotArc,
+    SlotOverall,
+    ThreePointArc,
+    extrude,
+)
+
+bottom = (Align.CENTER, Align.CENTER, Align.MIN)
+
+with BuildPart() as model:
+    Box(160, 120, 5, align=bottom)
+
+    with BuildSketch(model.faces().sort_by(Axis.Z)[-1]):
+        with Locations((-50, -35)):
+            SlotCenterToCenter(20, 8)
+        with Locations((5, -35)):
+            SlotOverall(30, 8)
+        SlotCenterPoint((55, -35), (65, -35), 8)
+
+        with BuildLine(mode=Mode.PRIVATE) as three_point:
+            ThreePointArc((-50, 25), (-35, 38), (-20, 25))
+        SlotArc(three_point.edges()[0], 8)
+
+        with BuildLine(mode=Mode.PRIVATE) as center_arc:
+            CenterArc((40, 25), 12, 0, 120)
+        SlotArc(center_arc.edges()[0], 8)
+
+    extrude(amount=-5, mode=Mode.SUBTRACT)
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      80.0,
+      60.0,
+      5.0
+    ],
+    &quot;actual_min&quot;: [
+      -80.0,
+      -60.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      80.0,
+      60.0,
+      5.0
+    ],
+    &quot;expected_min&quot;: [
+      -80.0,
+      -60.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;surface_distance_probes&quot;: [
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-to-center slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -50.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;overall slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        5.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 4.0,
+      &quot;delta_mm&quot;: 0.0,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center-point slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        55.0,
+        -35.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987872559835993,
+      &quot;delta_mm&quot;: 0.001212744016400702,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.9987872559835993,
+      &quot;delta_mm&quot;: 0.001212744016400702,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.998787255983592,
+      &quot;delta_mm&quot;: 0.0012127440164078074,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;three-point arc slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        -35.0,
+        38.0,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.998757226683346,
+      &quot;delta_mm&quot;: 0.001242773316653789,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=0.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        0.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.998757226683346,
+      &quot;delta_mm&quot;: 0.001242773316653789,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=2.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        2.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    },
+    {
+      &quot;actual_mm&quot;: 3.998757226683346,
+      &quot;delta_mm&quot;: 0.001242773316653789,
+      &quot;expected_mm&quot;: 4.0,
+      &quot;label&quot;: &quot;center arc slot at z=4.5&quot;,
+      &quot;pass&quot;: true,
+      &quot;point&quot;: [
+        46.0,
+        35.392304845413264,
+        4.5
+      ],
+      &quot;tolerance_mm&quot;: 0.3
+    }
+  ],
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 89528.29516987003,
+    &quot;delta_mm3&quot;: 1.6371743204654194,
+    &quot;expected_mm3&quot;: 89526.65799554957,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 55.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/build123d/references/slot-family/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/build123d/references/slot-family/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/build123d/references/slot-family/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/build123d/references/slot-family/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/build123d/references/slot-family/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+</div>
+</section>
+
+
+  <section class="panel">
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Each public constructor emits exactly its matching sketch.slot.* command; the sketch is finished once and one native cut extrusion removes all five profiles.</p>
+  </section>
+
+  <section class="panel qualification-current">
+  <h2>SolidCraft result</h2>
+  <p>
+    Built and measured from the accepted durable SolidCraft evidence.
+    Open the measurement details to inspect body sizes and editable parameters.
+  </p>
+  <details class="qualification-detail-block"><summary><strong>Original model</strong> · 1 bodies</summary><h4>Editable parameters</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>width</td><td>160.0</td><td>mm</td><td>160</td></tr><tr><td>depth</td><td>120.0</td><td>mm</td><td>120</td></tr><tr><td>thickness</td><td>5.0</td><td>mm</td><td>5</td></tr></tbody></table></div><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>SlotFamily</td><td>[-80.0, -60.0, -8.88178419700126e-16]</td><td>[80.0, 60.0, 5.000000000000003]</td><td>89526.6579965052</td><td>26</td><td>72</td><td>True</td></tr></tbody></table></div></details>
+  
+</section>
+<section class="panel qualification-visual-check">
+  <h2>Current visual verification</h2>
+  <p>These views exist only where the current model owns a visual verification policy. Actual, goal, overlay and diff are current durable verification evidence.</p>
+  <section class="qualification-view" data-view="front">
+  <h3>front · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.002894,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="right">
+  <h3>right · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape not-required</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.000289,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="iso">
+  <h3>iso · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression pass · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
+  </a>
+  <figcaption><strong>Diff</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{
+  &quot;changed_pixel_fraction&quot;: 0.0,
+  &quot;changed_pixel_threshold&quot;: 12,
+  &quot;max_changed_fraction&quot;: 0.08,
+  &quot;max_mean_difference&quot;: 6.0,
+  &quot;mean_absolute_difference&quot;: 0.021846,
+  &quot;pass&quot;: true
+}</code></pre>
+  </details>
+</section>
+<section class="qualification-view" data-view="top">
+  <h3>top · <span class="qualification-status pass">PASS</span></h3>
+  <p class="meta">Regression not-required · expected shape pass</p>
+  <div class="qualification-view-grid">
+    <figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/top/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/top/actual.png" alt="top Actual" loading="lazy">
+  </a>
+  <figcaption><strong>Actual</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/top/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/top/goal.png" alt="top Goal" loading="lazy">
+  </a>
+  <figcaption><strong>Goal</strong></figcaption>
+</figure>
+<figure class="qualification-visual-item">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/top/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/visual/top/overlay.png" alt="top Overlay" loading="lazy">
+  </a>
+  <figcaption><strong>Overlay</strong></figcaption>
+</figure>
+
+  </div>
+  <details class="qualification-detail-block">
+    <summary>Regression metrics</summary>
+    <pre><code>{}</code></pre>
+  </details>
+</section>
+
+</section>
+
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual PASS</span></div>
+
+    <h3>Forge model</h3>
+    <p>One 160 x 120 x 5 mm plate with five separate closed Slot profiles in one named sketch, removed with one through-all cut.</p>
+
+    <h3>Verification checks</h3>
+    <details class="qualification-detail-block">
+  <summary><code>baseline</code> · <span class="qualification-status pass">PASS</span></summary>
+  
+  <pre><code>{
+  &quot;body_count&quot;: {
+    &quot;actual&quot;: 1,
+    &quot;expected&quot;: 1,
+    &quot;label&quot;: &quot;SolidCraft body count&quot;,
+    &quot;pass&quot;: true
+  },
+  &quot;body_envelopes&quot;: {
+    &quot;actual_count&quot;: 1,
+    &quot;expected_count&quot;: 1,
+    &quot;kind&quot;: &quot;body_envelopes&quot;,
+    &quot;matched_pairs&quot;: [
+      {
+        &quot;actual&quot;: {
+          &quot;label&quot;: &quot;SlotFamily&quot;,
+          &quot;max&quot;: [
+            80.0,
+            60.0,
+            5.000000000000003
+          ],
+          &quot;min&quot;: [
+            -80.0,
+            -60.0,
+            -8.88178419700126e-16
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;label&quot;: null,
+          &quot;max&quot;: [
+            80.0,
+            60.0,
+            5.0
+          ],
+          &quot;min&quot;: [
+            -80.0,
+            -60.0,
+            0.0
+          ]
+        },
+        &quot;max_delta&quot;: 2.6645352591003757e-15
+      }
+    ],
+    &quot;pass&quot;: true,
+    &quot;tolerance&quot;: 0.01,
+    &quot;unmatched_actual&quot;: [],
+    &quot;unmatched_expected&quot;: []
+  },
+  &quot;named_bodies&quot;: [
+    {
+      &quot;face_count&quot;: {
+        &quot;actual&quot;: 26,
+        &quot;expected&quot;: 26,
+        &quot;label&quot;: &quot;sole body face count&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;face_type_counts&quot;: {
+        &quot;actual&quot;: {
+          &quot;cylinder&quot;: 14,
+          &quot;plane&quot;: 12
+        },
+        &quot;expected&quot;: {
+          &quot;cylinder&quot;: 14,
+          &quot;plane&quot;: 12
+        },
+        &quot;label&quot;: &quot;sole body face type counts&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;selector&quot;: &quot;sole&quot;,
+      &quot;volume&quot;: {
+        &quot;actual&quot;: 89526.6579965052,
+        &quot;delta&quot;: 9.556242730468512e-07,
+        &quot;expected&quot;: 89526.65799554957,
+        &quot;kind&quot;: &quot;scalar&quot;,
+        &quot;label&quot;: &quot;sole body volume&quot;,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.01
+      }
+    }
+  ],
+  &quot;sketch_count&quot;: {
+    &quot;actual&quot;: 1,
+    &quot;expected&quot;: 1,
+    &quot;label&quot;: &quot;SolidCraft sketch count&quot;,
+    &quot;pass&quot;: true
+  },
+  &quot;sketches&quot;: [
+    {
+      &quot;actual&quot;: {
+        &quot;curves&quot;: 29,
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;profiles&quot;: 5,
+        &quot;status&quot;: &quot;solved&quot;
+      },
+      &quot;expected&quot;: {
+        &quot;curves&quot;: 29,
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;profiles&quot;: 5,
+        &quot;status&quot;: &quot;solved&quot;
+      },
+      &quot;label&quot;: &quot;Slot family sketch&quot;,
+      &quot;pass&quot;: true
+    }
+  ],
+  &quot;timeline&quot;: {
+    &quot;actual&quot;: [
+      {
+        &quot;name&quot;: &quot;Box1&quot;,
+        &quot;type&quot;: &quot;BoxFeature&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;
+      }
+    ],
+    &quot;expected&quot;: [
+      {
+        &quot;name&quot;: &quot;Box1&quot;,
+        &quot;type&quot;: &quot;BoxFeature&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;
+      }
+    ],
+    &quot;label&quot;: &quot;SolidCraft timeline&quot;,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+</details>
+
+
+    <h3>Saved-design test</h3>
+    <p>No saved-design mutation is required; this case isolates the five native sketch construction methods and their saved feature history.</p>
+
+    <h3>Geometry evidence</h3>
+    <p><strong>Are outer bounds sufficient?</strong> no</p>
+    <p>The five slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.</p>
+
+    <h3>Raw test files</h3>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/be6ad0a329352849d5dbdff8880c83e1f5e0f2c4/dev_ci/examples/slot-family/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+
+    <h3>Reference documentation</h3>
+    <ul><li><strong>SolidCraft</strong> — Native integration through geometry checks additionally prove the five sketch.slot.* command identities. The four comparison libraries independently prove the resulting five cut shapes.</li></ul>
+
+    <p class="source-stamp">
+      Site source <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · accepted model evidence source
+      <code>69a1e18acc9d6b2074e3b4f4ee5e4393c761e196</code> · durable build <code>be6ad0a329352849d5dbdff8880c83e1f5e0f2c4</code>
+    </p>
+  </div>
+</details>
+
+
+  <section class="panel">
+    <h2>Sources of truth</h2>
+    <p>
+      General model/page metadata is stored in <code>model.yml</code>.
+      Preserved engineering explanation is stored in <code>README.md</code>.
+      Exact expected values and tolerances are defined by
+      <code>verification/verify.py</code>.
+    </p>
+    <p>
+      <a href="../../examples/slot-family/">Open the example →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/69a1e18acc9d6b2074e3b4f4ee5e4393c761e196/examples/slot-family/verification/verify.py">Open verification/verify.py →</a>
+    </p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>SCPF</strong> generates commands; native SolidCraft creates the geometry.
+    <a href="https://brainboxemb.github.io/2026-011-02.cad.solidcraft/">Full SolidCraft CAD projects →</a>
+  </div>
+</footer>
+<script src="../../static/copy.js"></script>
+<script src="../../static/search.js"></script>
+</body>
+</html>
