@@ -1,0 +1,161 @@
+name: Merge policy
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  merge:
+    if: >-
+      github.event.issue.pull_request &&
+      github.event.comment.body == '/merge' &&
+      github.actor == github.repository_owner
+    runs-on: ubuntu-latest
+    concurrency:
+      group: merge-policy-${{ github.repository }}-${{ github.event.issue.number }}
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      checks: read
+      statuses: read
+    steps:
+      - name: Checkout merge policy
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          sparse-checkout: scripts/merge_policy.py
+          sparse-checkout-cone-mode: false
+
+      - name: Merge through repository policy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+
+          refuse() {
+            reason="$1"
+            echo "merge refused: $reason" >&2
+            gh api -X POST \
+              "repos/$REPOSITORY/issues/$PR_NUMBER/comments" \
+              -f body="Merge refused by repository policy: $reason" \
+              >/dev/null
+            exit 1
+          }
+
+          PR_JSON="$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")"
+          STATE="$(jq -r '.state' <<<"$PR_JSON")"
+          DRAFT="$(jq -r '.draft' <<<"$PR_JSON")"
+          MERGEABLE="$(jq -r 'if .mergeable == null then "unknown" else (.mergeable|tostring) end' <<<"$PR_JSON")"
+          BASE_REF="$(jq -r '.base.ref' <<<"$PR_JSON")"
+          HEAD_REF="$(jq -r '.head.ref' <<<"$PR_JSON")"
+          HEAD_SHA="$(jq -r '.head.sha' <<<"$PR_JSON")"
+          HEAD_REPO="$(jq -r '.head.repo.full_name // ""' <<<"$PR_JSON")"
+
+          [ "$STATE" = "open" ] || refuse "pull request is not open"
+          [ "$DRAFT" = "false" ] || refuse "pull request is still a draft"
+          [ "$MERGEABLE" = "true" ] || refuse "pull request is not currently mergeable ($MERGEABLE)"
+
+          CHECKS_JSON="$(
+            gh api \
+              -H "Accept: application/vnd.github+json" \
+              "repos/$REPOSITORY/commits/$HEAD_SHA/check-runs?filter=latest&per_page=100"
+          )"
+          CHECK_COUNT="$(jq -r '.total_count' <<<"$CHECKS_JSON")"
+          [ "$CHECK_COUNT" -gt 0 ] || refuse "no completed PR checks exist on the current head"
+
+          BAD_CHECKS="$(
+            jq -r '
+              [
+                .check_runs[]
+                | select(
+                    .status != "completed"
+                    or (
+                      .conclusion != "success"
+                      and .conclusion != "neutral"
+                      and .conclusion != "skipped"
+                    )
+                  )
+                | .name + "=" + .status + "/" + (.conclusion // "none")
+              ]
+              | join(", ")
+            ' <<<"$CHECKS_JSON"
+          )"
+          [ -z "$BAD_CHECKS" ] || refuse "checks are not green: $BAD_CHECKS"
+
+          STATUS_JSON="$(gh api "repos/$REPOSITORY/commits/$HEAD_SHA/status")"
+          STATUS_COUNT="$(jq -r '.statuses | length' <<<"$STATUS_JSON")"
+          STATUS_STATE="$(jq -r '.state' <<<"$STATUS_JSON")"
+          if [ "$STATUS_COUNT" -gt 0 ] && [ "$STATUS_STATE" != "success" ]; then
+            refuse "commit status contexts are not green ($STATUS_STATE)"
+          fi
+
+          POLICY="$(
+            python scripts/merge_policy.py \
+              --base "$BASE_REF" \
+              --head "$HEAD_REF"
+          )"
+          METHOD="$(jq -r '.merge_method' <<<"$POLICY")"
+          DIRECT_PROMOTION="$(jq -r '.direct_lane_promotion' <<<"$POLICY")"
+          CLEANUP_HEAD="$(jq -r '.cleanup_head' <<<"$POLICY")"
+
+          if [ "$DIRECT_PROMOTION" = "true" ] && [ "$HEAD_REPO" != "$REPOSITORY" ]; then
+            refuse "long-lived lane promotion must originate from this repository"
+          fi
+
+          echo "base=$BASE_REF"
+          echo "head=$HEAD_REF"
+          echo "head_sha=$HEAD_SHA"
+          echo "merge_method=$METHOD"
+          echo "direct_lane_promotion=$DIRECT_PROMOTION"
+          echo "cleanup_head=$CLEANUP_HEAD"
+
+          MERGE_JSON="$(
+            gh api -X PUT \
+              "repos/$REPOSITORY/pulls/$PR_NUMBER/merge" \
+              -f sha="$HEAD_SHA" \
+              -f merge_method="$METHOD"
+          )"
+          MERGED="$(jq -r '.merged' <<<"$MERGE_JSON")"
+          [ "$MERGED" = "true" ] || refuse "GitHub declined merge: $(jq -r '.message' <<<"$MERGE_JSON")"
+          MERGE_SHA="$(jq -r '.sha' <<<"$MERGE_JSON")"
+
+          CLEANUP_RESULT="not-requested"
+          if [ "$DIRECT_PROMOTION" = "true" ]; then
+            sleep 1
+            if gh api "repos/$REPOSITORY/git/ref/heads/$HEAD_REF" >/dev/null 2>&1; then
+              gh api -X PATCH \
+                "repos/$REPOSITORY/git/refs/heads/$HEAD_REF" \
+                -f sha="$MERGE_SHA" \
+                -F force=false \
+                >/dev/null
+              CLEANUP_RESULT="long-lived lane advanced to merge commit"
+            else
+              gh api -X POST \
+                "repos/$REPOSITORY/git/refs" \
+                -f ref="refs/heads/$HEAD_REF" \
+                -f sha="$MERGE_SHA" \
+                >/dev/null
+              CLEANUP_RESULT="long-lived lane recreated at merge commit"
+            fi
+          elif [ "$CLEANUP_HEAD" = "true" ] && [ "$HEAD_REPO" = "$REPOSITORY" ]; then
+            if gh api "repos/$REPOSITORY/git/ref/heads/$HEAD_REF" >/dev/null 2>&1; then
+              gh api -X DELETE \
+                "repos/$REPOSITORY/git/refs/heads/$HEAD_REF" \
+                >/dev/null
+              CLEANUP_RESULT="temporary head deleted"
+            else
+              CLEANUP_RESULT="temporary head already absent"
+            fi
+          fi
+
+          gh api -X POST \
+            "repos/$REPOSITORY/issues/$PR_NUMBER/comments" \
+            -f body="Merged by repository policy: `$HEAD_REF -> $BASE_REF` using **$METHOD** at `$MERGE_SHA`. Branch lifecycle: $CLEANUP_RESULT." \
+            >/dev/null
