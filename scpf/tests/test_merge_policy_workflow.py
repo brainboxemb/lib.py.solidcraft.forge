@@ -39,7 +39,7 @@ class MergePolicyWorkflowTests(unittest.TestCase):
         self.assertIn("long-lived lane recreated at merge commit", text)
         self.assertIn("COMMENT_BODY", text)
         self.assertIn(
-            "printf 'Merged by repository policy: \`%s -> %s\`",
+            "printf 'Merged by repository policy: `%s -> %s`",
             text,
         )
 
