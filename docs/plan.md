@@ -24,37 +24,45 @@ The Verification recovery is complete:
   content audit.
 
 The live Pages source remains intentionally on
-`backup/gh-pages-before-f11-2026-11-20` until #366 performs the explicit
-public cut-over and live-route verification.
+`backup/gh-pages-before-f11-2026-11-20`. Issue #366 still owns the explicit
+public cut-over and live-route verification, but it is no longer a prerequisite
+for the development-lane migration.
 
-The current source workflow is still intentionally simple: pull requests are
-normally opened against `main`, PR evidence may be published under
-`build/pr/<number>`, and a merged main change immediately participates in the
-stable build/Pages flow.
+The generic lane primitives are now released and externally accepted:
 
-That topology is now proven, but it is not the intended long-term development
-model. It couples ordinary development too closely to the stable branch and
-creates durable per-PR scopes that can remain behind after interrupted work.
+- `lib.py.cad.ci 0.9.2` at
+  `3f688243f4ee65b1fa42f82adde5344fe5101775`;
+- `tool.cad.ci 0.16.1` at
+  `4c6bb8b35009ef5008bd99134cf84b59fddc0b8a`;
+- `tool.cad.ci.test` PR #61 proved independent complete named build scopes,
+  named Pages subtrees, sibling preservation and stable-root preservation
+  through the released stack.
 
-Issue #572 defines the next architecture after #366: keep `main` stable and
-introduce two long-lived integration lanes, `dev_cad` and `dev_ci`.
+Forge still uses the old topology: pull requests target `main`, the reusable
+PR workflow may publish `build/pr/<number>`, and only pushes to `main`
+produce durable build/Pages output.
 
 ## Immediate goal
 
-Finish #366 without changing the now-proven publication architecture:
+Implement #572 in Forge now:
 
-1. switch the live GitHub Pages source from the backup branch to generated
-   `gh-pages`;
-2. verify the public root, all required Verification routes and representative
-   case pages;
-3. verify legacy Qualification redirects;
-4. keep the rollback branch until the live cut-over is proven.
+1. adopt exact accepted `tool.cad.ci 0.16.1`;
+2. make pull requests verification-only, with no durable PR build/Pages write;
+3. make pushes to `main`, `dev_cad` and `dev_ci` publish only their own
+   complete build scope;
+4. publish dev Pages below `/dev_cad/` and `/dev_ci/`, while stable main
+   preserves both subtrees;
+5. create both long-lived dev branches only after that workflow is merged;
+6. bootstrap and prove both lanes;
+7. immediately after the lane proof, refresh this plan against every open issue
+   and assign the new workstream/priority structure.
 
-Do not combine the live cut-over with the development-lane migration.
+Keep #366 separate from this migration. Do not switch the live Pages source as
+part of #572.
 
 ## Next architecture — long-lived development lanes
 
-After #366 is proven live, Forge should use three long-lived source branches:
+Forge should use three long-lived source branches:
 
 ```text
 main
@@ -221,27 +229,27 @@ Do not implement named development scopes as Forge-local Git-tree logic.
 
 The implementation sequence is:
 
-1. [#366] Finish and prove the current live Pages cut-over first.
-2. [#572] Specify generic named durable-scope behavior in
-   `lib.py.cad.ci`.
-3. [#572] Implement/test named-scope fetch, reconcile and publication in
-   `lib.py.cad.ci`.
-4. [#572] Expose the released behavior through `tool.cad.ci`; qualify it in
-   the external CAD-CI acceptance repository.
-5. [#572] Release the accepted generic stack.
-6. [#572] Change Forge event wiring so pushes on `main`, `dev_cad` and
-   `dev_ci` publish only their corresponding named scope.
-7. [#572] Remove durable PR publication from the Forge PR path; PRs become
-   verification-only.
-8. [#572] Add scoped Pages publication preserving stable root and unrelated dev
-   previews.
-9. [#572] Create `dev_cad` and `dev_ci` from one known-good main commit only
+1. [complete] Generic named complete build/Page scopes are released in
+   `lib.py.cad.ci 0.9.2`.
+2. [complete] The thin public surface is released in
+   `tool.cad.ci 0.16.1`.
+3. [complete] External black-box acceptance is green in
+   `tool.cad.ci.test` PR #61.
+4. [#572, now] Change Forge event wiring so pushes on `main`, `dev_cad` and
+   `dev_ci` publish only their corresponding complete scope.
+5. [#572] Remove durable PR publication; PRs become verification-only.
+6. [#572] Make Forge site generation consume either `main` or one named
+   complete scope and record the actual evidence scope.
+7. [#572] Publish dev Pages to their named subtree and make stable publication
+   preserve both dev subtrees.
+8. [#572] Create `dev_cad` and `dev_ci` from one known-good main commit only
    after the workflow supports them.
-10. [#572] Bootstrap and verify both development scopes.
-11. [#572] Prove dev-to-main promotion and post-promotion branch
-    synchronization.
+9. [#572] Bootstrap and verify both development scopes.
+10. [#572] Prove dev-to-main promotion and post-promotion synchronization.
+11. [post-#572] Reassess every open issue, assign workstream + priority, and
+    update this plan from the new branch topology.
 12. [#572/#481] Remove obsolete `build/pr/*` state and then clean stale source
-    branches using the new keep-set.
+    branches using the final keep-set.
 
 The intended permanent branch keep-set after the migration is at least:
 
@@ -260,9 +268,11 @@ been live and stable long enough to make an explicit retention decision.
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | now | Generated main/build/Pages output is fully repaired and audited. Remaining work is the explicit live Pages-source cut-over and public verification. |
-| #572 Introduce long-lived dev_cad/dev_ci integration lanes | next | Planned post-#366 architecture. Replace direct-to-main daily development and durable per-PR scopes with two isolated development lanes and named durable build/Pages scopes. |
+| #572 Introduce long-lived dev_cad/dev_ci integration lanes | now | Generic named-scope stack is released and externally accepted. Implement and bootstrap the two Forge lanes now. |
+| #366 Make verified item output durable on build, then cut Pages publication over to tool.cad.ci | separate after lane bootstrap | Generated output is ready, but the public Pages cut-over stays independent from #572 and is not performed during the migration. |
 | #481 Remove stale Forge development branches | after #572 | Cleanup should use the final branch keep-set, so perform it after the two new long-lived dev branches are proven. |
+| #574 Restore structured Raw test files presentation on all Verification case pages | post-migration triage | Generic site-template regression discovered during review; assign final workstream/priority after the lane proof. |
+| #576 Skip expensive CAD-CI and stable-site jobs for docs-only pull requests | post-migration triage (dev_ci candidate) | Docs-only PR #575 proved avoidable bootstrap/runner overhead; classify under the new CI lane after #572 is live. |
 | #261 Reduce full qualification from minutes to seconds with a reusable CI image | probably obsolete | Superseded by released runtime images, batching and later one-runner timing work. |
 | #340 Reuse full release qualification after identical squash merge | probably obsolete | Refers to the superseded Qualification architecture and old reuse strategy. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | later | Independent Forge API defect. |
@@ -282,4 +292,4 @@ been live and stable long enough to make an explicit retention decision.
 
 Immediate chain:
 
-`#366 live cut-over -> #572 development lanes -> #481 stale-branch cleanup`.
+`#572 development lanes -> post-migration issue/workstream reprioritization -> #366 public cut-over / #481 cleanup as separately scheduled work`.
