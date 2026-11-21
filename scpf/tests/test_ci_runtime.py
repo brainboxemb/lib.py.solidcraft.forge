@@ -114,6 +114,7 @@ class CiRuntimeContractTests(unittest.TestCase):
 
         self.assertIn("types: [opened, synchronize, reopened]", text)
         self.assertIn("branches: [main, dev-cad, dev-ci]", text)
+        self.assertIn("workflow_dispatch:", text)
 
         self.assertIn("cad_ci_pr:", text)
         pr = text.split("  cad_ci_pr:", 1)[1].split(
@@ -177,6 +178,10 @@ class CiRuntimeContractTests(unittest.TestCase):
         self.assertIn("cad_ci_push:", text)
         push = text.split("  cad_ci_push:", 1)[1]
         self.assertIn(
+            "github.event_name == 'push' || github.event_name == 'workflow_dispatch'",
+            push,
+        )
+        self.assertIn(
             f"uses: brainboxemb/tool.cad.ci@{TOOL_COMMIT}",
             push,
         )
@@ -187,7 +192,7 @@ class CiRuntimeContractTests(unittest.TestCase):
         )
         self.assertIn("cancel-in-progress: true", push)
         self.assertIn("contents: write", push)
-        self.assertIn("dev-cad|dev-ci", push)
+        self.assertIn("main|dev-cad|dev-ci", push)
         self.assertIn("scope_exists=false", push)
         self.assertIn("full_run=true", push)
         self.assertIn(
@@ -202,6 +207,10 @@ class CiRuntimeContractTests(unittest.TestCase):
             'FETCH_HEAD:$SOURCE_SCOPE/build.json',
             push,
         )
+        self.assertNotIn("EVENT_BEFORE", push)
+        self.assertIn('SOURCE_SHA: ${{ github.sha }}', push)
+        self.assertIn('base_sha=$SOURCE_SHA', push)
+        self.assertIn("durable main scope is missing", push)
         self.assertIn('"source_commit"', push)
         self.assertIn("python -c", push)
         self.assertNotIn('python - "$probe/build.json" <<', push)
