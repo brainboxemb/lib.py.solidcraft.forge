@@ -134,8 +134,10 @@ Shared dependency releases, cross-repository ownership changes and promotion to
 
 Repository-wide governance/documentation changes that apply equally to both
 lanes may use a short-lived branch directly against `main`. Those PRs are
-**squash-merged** like normal feature/fix PRs. Only temporary
-`promote/dev-cad` / `promote/dev-ci` PRs use a normal merge commit.
+**squash-merged** like normal feature/fix PRs. Promotion PRs to `main` are
+also squash-merged: stable `main` receives one logical commit per promotion.
+After promotion, synchronize `main` back into the dev lanes; a normal merge
+commit is acceptable there because it remains outside stable-main history.
 
 ## Change discipline
 
