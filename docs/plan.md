@@ -50,16 +50,21 @@ and `/dev-ci/`.
 Normal short-lived PRs target one dev lane, verify only and are squash-merged.
 The destination dev push is the durable integration event.
 
-Promotion uses a temporary head branch:
+Promotion normally uses a temporary head branch:
 
 ```text
 dev-cad -> promote/dev-cad -> main
 dev-ci  -> promote/dev-ci  -> main
 ```
 
-Promotion PRs run complete validation and are merged with a normal merge
-commit. Both long-lived lanes are then synchronized to the resulting main head.
-Named-lane incremental selection uses the previous durable
+Promotion PRs run complete validation. A PR whose base is `main` is
+**squash-merged** unless its head is literally the long-lived `dev-cad` or
+`dev-ci` branch. Only those two direct long-lived-lane PRs may use a normal
+merge commit.
+
+Temporary promotion heads such as `promote/dev-cad` and `promote/dev-ci`
+are therefore squash-merged. Both long-lived lanes are then synchronized to the
+resulting main head. Named-lane incremental selection uses the previous durable
 `build/<lane>/build.json.source_commit`, not `github.event.before`.
 
 The public GitHub Pages source still intentionally uses
@@ -203,18 +208,34 @@ Every open issue has one primary lane and disposition. New issues should be
 added to this table when they become active planning inputs; issue history is
 not a substitute for this plan.
 
+## Parallel execution policy
+
+The two long-lived development lanes are independent execution tracks.
+
+- `dev-cad` and `dev-ci` may progress in parallel.
+- A running workflow blocks only work whose next step depends on its result.
+  Do not idle the other lane merely because one lane is validating or
+  publishing.
+- Shared dependency releases, owner-repository handoffs and true architecture
+  synchronization points remain dependency gates.
+- Repository-wide governance that applies equally to both lanes may use a
+  short-lived branch directly against `main`.
+- Governance-only PRs to `main` are squash-merged.
+
 ## Merge and promotion policy
 
 - Short-lived feature/fix PRs target `dev-cad` or `dev-ci` and are
   **squash-merged**.
-- Promotion does **not** use the long-lived dev branch directly as the PR head.
-  Create `promote/dev-cad` or `promote/dev-ci` at the current lane head.
-- Promotion PRs from that temporary branch target `main`, require a complete
-  processed validation run, and use a **normal merge commit**.
-- GitHub may auto-delete the temporary promotion head after merge; this is
-  desirable and must never delete the long-lived lane.
-- After promotion, fast-forward/synchronize both long-lived dev lanes to the
-  resulting main head.
+- Every PR whose base is `main` is **squash-merged by default**.
+- The only exception is a PR whose head is literally the long-lived
+  `dev-cad` or `dev-ci` branch. Those two direct lane-to-main PRs may use a
+  normal merge commit to preserve lane ancestry.
+- Temporary promotion heads such as `promote/dev-cad` and
+  `promote/dev-ci` are not the exception; they are squash-merged.
+- Promotion PRs require complete processed validation.
+- After promotion, synchronize both long-lived dev lanes to the resulting main
+  head. Any merge commit needed for that synchronization belongs on the dev
+  lane, not on `main`.
 - Named lane incremental selection uses the prior durable
   `build/<lane>/build.json.source_commit` as base, not
   `github.event.before`.
