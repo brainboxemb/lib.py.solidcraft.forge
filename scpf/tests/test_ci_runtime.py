@@ -13,7 +13,7 @@ WORKFLOW = ROOT / ".github" / "workflows" / "scpf.yml"
 MODEL_VERIFY = ROOT / "scripts" / "model_verify_declarative.py"
 MODEL_BATCH = ROOT / "scripts" / "model_verification_batch.py"
 REFERENCE_BATCH = ROOT / "scripts" / "reference_verification_batch.py"
-TOOL_COMMIT = "9f37be0af5c4076f676b6407857c5905e11a47d6"
+TOOL_COMMIT = "4c6bb8b35009ef5008bd99134cf84b59fddc0b8a"
 
 
 def configured_variable(name: str) -> str:
@@ -108,63 +108,86 @@ class CiRuntimeContractTests(unittest.TestCase):
         self.assertFalse((ROOT / "scripts" / "solidcraft_runtime.py").exists())
 
     def test_normal_workflow_delegates_to_released_cad_ci(self):
-        """Keep PR delegation and main publication on released CAD-CI surfaces."""
+        """Keep review and lane publication on released CAD-CI surfaces."""
 
         text = WORKFLOW.read_text(encoding="utf-8")
 
-        self.assertIn("types: [opened, synchronize, reopened, closed]", text)
+        self.assertIn("types: [opened, synchronize, reopened]", text)
+        self.assertIn("branches: [main, dev_cad, dev_ci]", text)
 
         self.assertIn("cad_ci_pr:", text)
-        self.assertIn("if: github.event_name == 'pull_request'", text)
-        self.assertIn(
-            "uses: brainboxemb/tool.cad.ci/.github/workflows/"
-            f"reusable-pr.yml@{TOOL_COMMIT}",
-            text,
-        )
-        self.assertIn("contents: write", text)
-        self.assertIn("packages: read", text)
-        self.assertNotIn("cleanup_pr_build:", text)
-        self.assertNotIn("publish_pr_build:", text)
-
-        self.assertIn("cad_ci_main:", text)
-        main = text.split("  cad_ci_main:", 1)[1].split(
-            "  validate_stable_pages_pr:", 1
+        pr = text.split("  cad_ci_pr:", 1)[1].split(
+            "  cad_ci_push:", 1
         )[0]
+        self.assertIn("if: github.event_name == 'pull_request'", pr)
         self.assertIn(
             f"uses: brainboxemb/tool.cad.ci@{TOOL_COMMIT}",
-            main,
+            pr,
         )
-        self.assertEqual(main.count("runs-on: ubuntu-latest"), 1)
-        self.assertIn("cancel-in-progress: true", main)
-        self.assertIn("source_sha: ${{ github.sha }}", main)
-        self.assertIn("base_sha: ${{ github.event.before }}", main)
-        self.assertIn("python -m cad_ci_tool build fetch", main)
-        self.assertIn("python -m cad_ci_tool build update-main", main)
-        self.assertIn("--candidate-root build", main)
-        self.assertIn("--main generated-build/main", main)
-        self.assertIn("--out prepared-main", main)
-        self.assertIn("python -m cad_ci_tool publish build", main)
-        self.assertIn("--scope main", main)
-        self.assertIn('--base "$BASE_SHA"', main)
-        self.assertIn('--head "$SOURCE_SHA"', main)
-        self.assertIn("--build-main prepared-main", main)
-        self.assertIn("python site/build.py", main)
-        self.assertIn("python -m cad_ci_tool publish pages", main)
-        self.assertIn('--source-ref "$SOURCE_REF"', main)
-        self.assertIn('--expected-source "$SOURCE_SHA"', main)
+        self.assertIn("contents: read", pr)
+        self.assertNotIn("contents: write", pr)
+        self.assertIn("packages: read", pr)
+        self.assertIn(
+            "source_sha: ${{ github.event.pull_request.head.sha }}",
+            pr,
+        )
+        self.assertIn(
+            "base_sha: ${{ github.event.pull_request.base.sha }}",
+            pr,
+        )
+        self.assertIn(
+            "github.event.pull_request.head.ref == 'dev_cad'",
+            pr,
+        )
+        self.assertIn(
+            "github.event.pull_request.head.ref == 'dev_ci'",
+            pr,
+        )
+        self.assertNotIn("reusable-pr.yml", pr)
+        self.assertNotIn("publish build", pr)
+        self.assertNotIn("publish pages", pr)
 
-        self.assertNotIn("reusable-ci.yml@", main)
-        self.assertNotIn("actions/upload-artifact", main)
-        self.assertNotIn("actions/download-artifact", main)
-        self.assertNotIn("Checkout accepted CAD CI tool", main)
-        self.assertNotIn("actions/setup-python", main)
-        self.assertNotIn("pip install", main)
+        self.assertIn("cad_ci_push:", text)
+        push = text.split("  cad_ci_push:", 1)[1]
+        self.assertIn(
+            f"uses: brainboxemb/tool.cad.ci@{TOOL_COMMIT}",
+            push,
+        )
+        self.assertEqual(push.count("runs-on: ubuntu-latest"), 1)
+        self.assertIn(
+            "group: forge-push-${{ github.repository }}-${{ github.ref_name }}",
+            push,
+        )
+        self.assertIn("cancel-in-progress: true", push)
+        self.assertIn("contents: write", push)
+        self.assertIn("dev_cad|dev_ci", push)
+        self.assertIn("scope_exists=false", push)
+        self.assertIn("full_run=true", push)
+        self.assertIn("python -m cad_ci_tool build fetch", push)
+        self.assertIn("python -m cad_ci_tool build update-main", push)
+        self.assertIn("python -m cad_ci_tool build update-named", push)
+        self.assertIn("python -m cad_ci_tool build prepare-named", push)
+        self.assertIn("--main generated-build/main", push)
+        self.assertIn('--named "generated-build/$SCOPE"', push)
+        self.assertIn("--scope named --scope-name", push)
+        self.assertIn("--build-evidence prepared-scope", push)
+        self.assertIn('--build-scope "$SCOPE"', push)
+        self.assertIn("--preserve-subtree dev_cad", push)
+        self.assertIn("--preserve-subtree dev_ci", push)
+        self.assertIn('page_args=(--name "$SCOPE")', push)
+        self.assertIn('--source-ref "$SOURCE_REF"', push)
+        self.assertIn('--expected-source "$SOURCE_SHA"', push)
+
+        self.assertNotIn("reusable-ci.yml@", text)
+        self.assertNotIn("reusable-pr.yml@", text)
+        self.assertNotIn("actions/upload-artifact", text)
+        self.assertNotIn("actions/download-artifact", text)
+        self.assertNotIn("Checkout accepted CAD CI tool", text)
+        self.assertNotIn("actions/setup-python", text)
+        self.assertNotIn("pip install", text)
         self.assertNotIn("publish_main_build:", text)
         self.assertNotIn("publish_stable_pages:", text)
-
-        self.assertIn("validate_stable_pages_pr:", text)
-        self.assertIn(f"ref: {TOOL_COMMIT}", text)
-
+        self.assertNotIn("validate_stable_pages_pr:", text)
         self.assertNotIn("cleanup_existing_stale_pr_builds:", text)
         self.assertNotIn("runtime_check:", text)
         self.assertNotIn("environment_json:", text)
