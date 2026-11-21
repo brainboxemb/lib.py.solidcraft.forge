@@ -40,11 +40,20 @@
 </div>
 <main class="wrap">
   <div class="crumb"><a href="../">← Verification</a> / Native sketch Slot family</div>
+
   <section class="hero small">
-    <p class="eyebrow">2 · Parent/child features and faces</p>
+    <p class="eyebrow">Forge model example · 2 · Parent/child features and faces</p>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
     <h1>Native sketch Slot family</h1>
-    <p class="guide-lead">Qualify all five SolidCraft 0.42 Slot construction methods as direct SCPF sketch profiles rather than approximating them with rounded rectangles or hand-built curves.</p>
   </section>
+
+  <section class="panel qualification-example-overview">
+    <h2>What this example makes</h2>
+    <p>SolidCraft saves one plate, one Slot family sketch containing five closed profiles and one error-free cut extrusion. The native timeline must not contain sketch.rectangle.rounded as a substitute for Slot construction.</p>
+    <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Native sketch Slot family expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/model_verify/presentation/preview-iso.png" alt="Native sketch Slot family native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+  </section>
+
   <section class="panel">
     <h2>Forge code</h2>
     <p>This is the complete Forge source used for this example.</p>
@@ -78,185 +87,23 @@ class SlotFamily:
 
 SlotFamily()
 </code></pre>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/slot-family/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+    <h3>API used</h3>
+    <p><code>SlotCenterToCenter2D(...); SlotOverall2D(...); SlotCenterPoint2D(...); SlotArcThreePoint2D(...); SlotArcCenter2D(...) inside one explicit Sketch</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/slot-family/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
   </section>
-  <section class="panel qualification-current">
-  <h2>Current durable verification</h2>
-  <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
-  <figure class="qualification-case-preview">
-    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/model_verify/presentation/preview-iso.png" alt="Native sketch Slot family current durable preview" loading="lazy">
-    </a>
-    <figcaption>Current deterministic presentation preview from durable build evidence. This preview is presentation output, not an extra verification check.</figcaption>
-  </figure>
-  <p class="source-stamp">
-    Site source <code>8fcee42c7531414ac29cc5123eaa7ab54d7f2039</code> · accepted model evidence source
-    <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · durable build <code>c4451e1c95556db2a519a99d4677a16a8019bbb7</code>
-  </p>
-  <h3>Editable parameters</h3>
-  <div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>width</td><td>160.0</td><td>mm</td><td>160</td></tr><tr><td>depth</td><td>120.0</td><td>mm</td><td>120</td></tr><tr><td>thickness</td><td>5.0</td><td>mm</td><td>5</td></tr></tbody></table></div>
-  <h3>Measured native bodies</h3>
-  <div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>SlotFamily</td><td>[-80.0, -60.0, -8.88178419700126e-16]</td><td>[80.0, 60.0, 5.000000000000003]</td><td>89526.6579965052</td><td>26</td><td>72</td><td>True</td></tr></tbody></table></div>
-  <h3>Verification checks</h3>
-  <details class="qualification-detail-block">
-  <summary><code>baseline</code> · <span class="qualification-status pass">PASS</span></summary>
-  
-  <pre><code>{
-  &quot;body_count&quot;: {
-    &quot;actual&quot;: 1,
-    &quot;expected&quot;: 1,
-    &quot;label&quot;: &quot;SolidCraft body count&quot;,
-    &quot;pass&quot;: true
-  },
-  &quot;body_envelopes&quot;: {
-    &quot;actual_count&quot;: 1,
-    &quot;expected_count&quot;: 1,
-    &quot;kind&quot;: &quot;body_envelopes&quot;,
-    &quot;matched_pairs&quot;: [
-      {
-        &quot;actual&quot;: {
-          &quot;label&quot;: &quot;SlotFamily&quot;,
-          &quot;max&quot;: [
-            80.0,
-            60.0,
-            5.000000000000003
-          ],
-          &quot;min&quot;: [
-            -80.0,
-            -60.0,
-            -8.88178419700126e-16
-          ]
-        },
-        &quot;expected&quot;: {
-          &quot;label&quot;: null,
-          &quot;max&quot;: [
-            80.0,
-            60.0,
-            5.0
-          ],
-          &quot;min&quot;: [
-            -80.0,
-            -60.0,
-            0.0
-          ]
-        },
-        &quot;max_delta&quot;: 2.6645352591003757e-15
-      }
-    ],
-    &quot;pass&quot;: true,
-    &quot;tolerance&quot;: 0.01,
-    &quot;unmatched_actual&quot;: [],
-    &quot;unmatched_expected&quot;: []
-  },
-  &quot;named_bodies&quot;: [
-    {
-      &quot;face_count&quot;: {
-        &quot;actual&quot;: 26,
-        &quot;expected&quot;: 26,
-        &quot;label&quot;: &quot;sole body face count&quot;,
-        &quot;pass&quot;: true
-      },
-      &quot;face_type_counts&quot;: {
-        &quot;actual&quot;: {
-          &quot;cylinder&quot;: 14,
-          &quot;plane&quot;: 12
-        },
-        &quot;expected&quot;: {
-          &quot;cylinder&quot;: 14,
-          &quot;plane&quot;: 12
-        },
-        &quot;label&quot;: &quot;sole body face type counts&quot;,
-        &quot;pass&quot;: true
-      },
-      &quot;selector&quot;: &quot;sole&quot;,
-      &quot;volume&quot;: {
-        &quot;actual&quot;: 89526.6579965052,
-        &quot;delta&quot;: 9.556242730468512e-07,
-        &quot;expected&quot;: 89526.65799554957,
-        &quot;kind&quot;: &quot;scalar&quot;,
-        &quot;label&quot;: &quot;sole body volume&quot;,
-        &quot;pass&quot;: true,
-        &quot;tolerance&quot;: 0.01
-      }
-    }
-  ],
-  &quot;sketch_count&quot;: {
-    &quot;actual&quot;: 1,
-    &quot;expected&quot;: 1,
-    &quot;label&quot;: &quot;SolidCraft sketch count&quot;,
-    &quot;pass&quot;: true
-  },
-  &quot;sketches&quot;: [
-    {
-      &quot;actual&quot;: {
-        &quot;curves&quot;: 29,
-        &quot;name&quot;: &quot;Slot family&quot;,
-        &quot;profiles&quot;: 5,
-        &quot;status&quot;: &quot;solved&quot;
-      },
-      &quot;expected&quot;: {
-        &quot;curves&quot;: 29,
-        &quot;name&quot;: &quot;Slot family&quot;,
-        &quot;profiles&quot;: 5,
-        &quot;status&quot;: &quot;solved&quot;
-      },
-      &quot;label&quot;: &quot;Slot family sketch&quot;,
-      &quot;pass&quot;: true
-    }
-  ],
-  &quot;timeline&quot;: {
-    &quot;actual&quot;: [
-      {
-        &quot;name&quot;: &quot;Box1&quot;,
-        &quot;type&quot;: &quot;BoxFeature&quot;
-      },
-      {
-        &quot;name&quot;: &quot;Slot family&quot;,
-        &quot;type&quot;: &quot;Sketch&quot;
-      },
-      {
-        &quot;name&quot;: &quot;Slot family&quot;,
-        &quot;type&quot;: &quot;ExtrudeFeature&quot;
-      }
-    ],
-    &quot;expected&quot;: [
-      {
-        &quot;name&quot;: &quot;Box1&quot;,
-        &quot;type&quot;: &quot;BoxFeature&quot;
-      },
-      {
-        &quot;name&quot;: &quot;Slot family&quot;,
-        &quot;type&quot;: &quot;Sketch&quot;
-      },
-      {
-        &quot;name&quot;: &quot;Slot family&quot;,
-        &quot;type&quot;: &quot;ExtrudeFeature&quot;
-      }
-    ],
-    &quot;label&quot;: &quot;SolidCraft timeline&quot;,
-    &quot;pass&quot;: true
-  }
-}</code></pre>
-</details>
-
-  
-  <h3>Durable raw evidence</h3>
-  <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
-</section>
-<section class="notice">
-  <strong>Current visual verification: not required.</strong>
-  This model has no current <code>verification/visual.json</code> policy. The durable isometric image above is a current presentation preview, not a visual PASS claim.
-</section>
-
 
   <section class="panel">
-  <h2>Independent references</h2>
-  <p>Each source is shown from the current Forge tree beside the accepted durable result for that independent implementation.</p>
+  <h2>Reference code</h2>
+  <p>
+    The same model is written independently with the reference libraries below.
+    This makes it easier to compare modelling style and the resulting shape.
+  </p>
+  <p class="meta">Each source is shown from the current Forge tree beside the accepted durable result for that independent implementation.</p>
   <div class="qualification-reference-list"><section class="qualification-reference-row">
   <div class="qualification-reference-source">
     <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/slot-family/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/slot-family/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/slot-family/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
 
 import math
@@ -588,10 +435,10 @@ model = plate - cutters
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/pythonscad/references/slot-family/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/pythonscad/references/slot-family/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/pythonscad/references/slot-family/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/pythonscad/references/slot-family/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/pythonscad/references/slot-family/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/pythonscad/references/slot-family/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/pythonscad/references/slot-family/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/pythonscad/references/slot-family/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/pythonscad/references/slot-family/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/pythonscad/references/slot-family/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -599,7 +446,7 @@ model = plate - cutters
   <div class="qualification-reference-source">
     <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/slot-family/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/slot-family/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/slot-family/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
 
 import math
@@ -933,10 +780,10 @@ model = plate - cutters
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/pybosl2/references/slot-family/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/pybosl2/references/slot-family/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/pybosl2/references/slot-family/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/pybosl2/references/slot-family/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/pybosl2/references/slot-family/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/pybosl2/references/slot-family/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/pybosl2/references/slot-family/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/pybosl2/references/slot-family/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/pybosl2/references/slot-family/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/pybosl2/references/slot-family/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -944,7 +791,7 @@ model = plate - cutters
   <div class="qualification-reference-source">
     <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/slot-family/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/slot-family/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/slot-family/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;CadQuery geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
 
 import math
@@ -1281,10 +1128,10 @@ model.add(result, name=&quot;slot_family&quot;)
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/cadquery/references/slot-family/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/cadquery/references/slot-family/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/cadquery/references/slot-family/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/cadquery/references/slot-family/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/cadquery/references/slot-family/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/cadquery/references/slot-family/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/cadquery/references/slot-family/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/cadquery/references/slot-family/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/cadquery/references/slot-family/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/cadquery/references/slot-family/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -1292,7 +1139,7 @@ model.add(result, name=&quot;slot_family&quot;)
   <div class="qualification-reference-source">
     <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/slot-family/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/slot-family/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/slot-family/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;build123d geometry reference for the five Slot-family cut shapes.&quot;&quot;&quot;
 
 from build123d import (
@@ -1577,34 +1424,209 @@ with BuildPart() as model:
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/build123d/references/slot-family/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/build123d/references/slot-family/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/build123d/references/slot-family/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/build123d/references/slot-family/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/build123d/references/slot-family/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/build123d/references/slot-family/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/slot-family/build123d/references/slot-family/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/build123d/references/slot-family/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/build123d/references/slot-family/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/build123d/references/slot-family/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
 </div>
 </section>
 
+
   <section class="panel">
-    <h2>Engineering explanation</h2>
-    <h3>Forge API</h3>
-    <p><code>SlotCenterToCenter2D(...); SlotOverall2D(...); SlotCenterPoint2D(...); SlotArcThreePoint2D(...); SlotArcCenter2D(...) inside one explicit Sketch</code></p>
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Each public constructor emits exactly its matching sketch.slot.* command; the sketch is finished once and one native cut extrusion removes all five profiles.</p>
+  </section>
+
+  <section class="panel qualification-current">
+  <h2>SolidCraft result</h2>
+  <p>
+    Built and measured from the accepted durable SolidCraft evidence.
+    Open the measurement details to inspect body sizes and editable parameters.
+  </p>
+  <details class="qualification-detail-block"><summary><strong>Original model</strong> · 1 bodies</summary><h4>Editable parameters</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>width</td><td>160.0</td><td>mm</td><td>160</td></tr><tr><td>depth</td><td>120.0</td><td>mm</td><td>120</td></tr><tr><td>thickness</td><td>5.0</td><td>mm</td><td>5</td></tr></tbody></table></div><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>SlotFamily</td><td>[-80.0, -60.0, -8.88178419700126e-16]</td><td>[80.0, 60.0, 5.000000000000003]</td><td>89526.6579965052</td><td>26</td><td>72</td><td>True</td></tr></tbody></table></div></details>
+  
+</section>
+<section class="notice">
+  <strong>Current visual verification: not required.</strong>
+  This model has no current <code>verification/visual.json</code> policy. The durable isometric image above is a current presentation preview, not a visual PASS claim.
+</section>
+
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design N/R · Visual N/R</span></div>
+
     <h3>Forge model</h3>
     <p>One 160 x 120 x 5 mm plate with five separate closed Slot profiles in one named sketch, removed with one through-all cut.</p>
-    <h3>How Forge builds it in SolidCraft</h3>
-    <p>Each public constructor emits exactly its matching sketch.slot.* command; the sketch is finished once and one native cut extrusion removes all five profiles.</p>
-    <h3>SolidCraft result</h3>
-    <p>SolidCraft saves one plate, one Slot family sketch containing five closed profiles and one error-free cut extrusion. The native timeline must not contain sketch.rectangle.rounded as a substitute for Slot construction.</p>
+
+    <h3>Verification checks</h3>
+    <details class="qualification-detail-block">
+  <summary><code>baseline</code> · <span class="qualification-status pass">PASS</span></summary>
+  
+  <pre><code>{
+  &quot;body_count&quot;: {
+    &quot;actual&quot;: 1,
+    &quot;expected&quot;: 1,
+    &quot;label&quot;: &quot;SolidCraft body count&quot;,
+    &quot;pass&quot;: true
+  },
+  &quot;body_envelopes&quot;: {
+    &quot;actual_count&quot;: 1,
+    &quot;expected_count&quot;: 1,
+    &quot;kind&quot;: &quot;body_envelopes&quot;,
+    &quot;matched_pairs&quot;: [
+      {
+        &quot;actual&quot;: {
+          &quot;label&quot;: &quot;SlotFamily&quot;,
+          &quot;max&quot;: [
+            80.0,
+            60.0,
+            5.000000000000003
+          ],
+          &quot;min&quot;: [
+            -80.0,
+            -60.0,
+            -8.88178419700126e-16
+          ]
+        },
+        &quot;expected&quot;: {
+          &quot;label&quot;: null,
+          &quot;max&quot;: [
+            80.0,
+            60.0,
+            5.0
+          ],
+          &quot;min&quot;: [
+            -80.0,
+            -60.0,
+            0.0
+          ]
+        },
+        &quot;max_delta&quot;: 2.6645352591003757e-15
+      }
+    ],
+    &quot;pass&quot;: true,
+    &quot;tolerance&quot;: 0.01,
+    &quot;unmatched_actual&quot;: [],
+    &quot;unmatched_expected&quot;: []
+  },
+  &quot;named_bodies&quot;: [
+    {
+      &quot;face_count&quot;: {
+        &quot;actual&quot;: 26,
+        &quot;expected&quot;: 26,
+        &quot;label&quot;: &quot;sole body face count&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;face_type_counts&quot;: {
+        &quot;actual&quot;: {
+          &quot;cylinder&quot;: 14,
+          &quot;plane&quot;: 12
+        },
+        &quot;expected&quot;: {
+          &quot;cylinder&quot;: 14,
+          &quot;plane&quot;: 12
+        },
+        &quot;label&quot;: &quot;sole body face type counts&quot;,
+        &quot;pass&quot;: true
+      },
+      &quot;selector&quot;: &quot;sole&quot;,
+      &quot;volume&quot;: {
+        &quot;actual&quot;: 89526.6579965052,
+        &quot;delta&quot;: 9.556242730468512e-07,
+        &quot;expected&quot;: 89526.65799554957,
+        &quot;kind&quot;: &quot;scalar&quot;,
+        &quot;label&quot;: &quot;sole body volume&quot;,
+        &quot;pass&quot;: true,
+        &quot;tolerance&quot;: 0.01
+      }
+    }
+  ],
+  &quot;sketch_count&quot;: {
+    &quot;actual&quot;: 1,
+    &quot;expected&quot;: 1,
+    &quot;label&quot;: &quot;SolidCraft sketch count&quot;,
+    &quot;pass&quot;: true
+  },
+  &quot;sketches&quot;: [
+    {
+      &quot;actual&quot;: {
+        &quot;curves&quot;: 29,
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;profiles&quot;: 5,
+        &quot;status&quot;: &quot;solved&quot;
+      },
+      &quot;expected&quot;: {
+        &quot;curves&quot;: 29,
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;profiles&quot;: 5,
+        &quot;status&quot;: &quot;solved&quot;
+      },
+      &quot;label&quot;: &quot;Slot family sketch&quot;,
+      &quot;pass&quot;: true
+    }
+  ],
+  &quot;timeline&quot;: {
+    &quot;actual&quot;: [
+      {
+        &quot;name&quot;: &quot;Box1&quot;,
+        &quot;type&quot;: &quot;BoxFeature&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;
+      }
+    ],
+    &quot;expected&quot;: [
+      {
+        &quot;name&quot;: &quot;Box1&quot;,
+        &quot;type&quot;: &quot;BoxFeature&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;type&quot;: &quot;Sketch&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Slot family&quot;,
+        &quot;type&quot;: &quot;ExtrudeFeature&quot;
+      }
+    ],
+    &quot;label&quot;: &quot;SolidCraft timeline&quot;,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+</details>
+
+
     <h3>Saved-design test</h3>
     <p>No saved-design mutation is required; this case isolates the five native sketch construction methods and their saved feature history.</p>
+
     <h3>Geometry evidence</h3>
     <p><strong>Are outer bounds sufficient?</strong> no</p>
     <p>The five slot cuts do not change the plate envelope. Volume and 3D slot-wall probes are required.</p>
-    <h3>Reference notes</h3>
+
+    <h3>Raw test files</h3>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/slot-family/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+
+    <h3>Reference documentation</h3>
     <ul><li><strong>SolidCraft</strong> — Native integration through geometry checks additionally prove the five sketch.slot.* command identities. The four comparison libraries independently prove the resulting five cut shapes.</li></ul>
-  </section>
+
+    <p class="source-stamp">
+      Site source <code>5b0fa00227de30940d35ccbf059cff1924afe116</code> · accepted model evidence source
+      <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · durable build <code>4c39a109727a43c9457bd1c171937975a3ad766c</code>
+    </p>
+  </div>
+</details>
+
+
   <section class="panel">
     <h2>Sources of truth</h2>
     <p>
@@ -1615,7 +1637,7 @@ with BuildPart() as model:
     </p>
     <p>
       <a href="../../examples/slot-family/">Open the example →</a>
-      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/slot-family/verification/verify.py">Open verification/verify.py →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/slot-family/verification/verify.py">Open verification/verify.py →</a>
     </p>
   </section>
 </main>

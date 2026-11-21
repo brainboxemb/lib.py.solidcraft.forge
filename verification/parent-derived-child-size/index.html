@@ -40,11 +40,20 @@
 </div>
 <main class="wrap">
   <div class="crumb"><a href="../">← Verification</a> / Child dimensions derived from parent parameters</div>
+
   <section class="hero small">
-    <p class="eyebrow">3 · Parameters and dependencies</p>
+    <p class="eyebrow">Forge model example · 3 · Parameters and dependencies</p>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
     <h1>Child dimensions derived from parent parameters</h1>
-    <p class="guide-lead">Isolate one dependency contract: a reusable child receives width and depth expressions derived from parent parameters, and those child dimensions remain editable/associative in the saved SolidCraft design.</p>
   </section>
+
+  <section class="panel qualification-example-overview">
+    <h2>What this example makes</h2>
+    <p>At 120x80 mm parent size, the child measures 60x40 mm. Its fixed height and fixed body layout are deliberately unrelated to this qualification.</p>
+    <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Child dimensions derived from parent parameters expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/model_verify/presentation/preview-iso.png" alt="Child dimensions derived from parent parameters native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+  </section>
+
   <section class="panel">
     <h2>Forge code</h2>
     <p>This is the complete Forge source used for this example.</p>
@@ -96,27 +105,426 @@ class ParentDerivedChildSize:
 
 ParentDerivedChildSize()
 </code></pre>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parent-derived-child-size/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+    <h3>API used</h3>
+    <p><code>DerivedChild(width=self.base_width / 2, depth=self.base_depth / 2)</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parent-derived-child-size/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
   </section>
-  <section class="panel qualification-current">
-  <h2>Current durable verification</h2>
-  <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
-  <figure class="qualification-case-preview">
-    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/model_verify/presentation/preview-iso.png" alt="Child dimensions derived from parent parameters current durable preview" loading="lazy">
-    </a>
-    <figcaption>Current deterministic presentation preview from durable build evidence. This preview is presentation output, not an extra verification check.</figcaption>
-  </figure>
-  <p class="source-stamp">
-    Site source <code>8fcee42c7531414ac29cc5123eaa7ab54d7f2039</code> · accepted model evidence source
-    <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · durable build <code>c4451e1c95556db2a519a99d4677a16a8019bbb7</code>
+
+  <section class="panel">
+  <h2>Reference code</h2>
+  <p>
+    The same model is written independently with the reference libraries below.
+    This makes it easier to compare modelling style and the resulting shape.
   </p>
-  <h3>Editable parameters</h3>
-  <div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>base_width</td><td>120.0</td><td>mm</td><td>120</td></tr><tr><td>base_depth</td><td>80.0</td><td>mm</td><td>80</td></tr></tbody></table></div>
-  <h3>Measured native bodies</h3>
-  <div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>ParentBlock</td><td>[-60.0, -40.0, 0.0]</td><td>[60.0, 40.0, 10.0]</td><td>96000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>DerivedChild</td><td>[-30.0, -20.0, 20.0]</td><td>[30.0, 20.0, 26.0]</td><td>14400.0</td><td>6</td><td>12</td><td>True</td></tr></tbody></table></div>
-  <h3>Verification checks</h3>
-  <details class="qualification-detail-block">
+  <p class="meta">Each source is shown from the current Forge tree beside the accepted durable result for that independent implementation.</p>
+  <div class="qualification-reference-list"><section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/parent-derived-child-size/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parent-derived-child-size/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;PythonSCAD reference: child dimensions are half the parent dimensions.&quot;&quot;&quot;
+
+from pythonscad import *
+
+base_width = 120.0
+base_depth = 80.0
+
+parent = cube([base_width, base_depth, 10], center=True).up(5)
+child = cube([base_width / 2, base_depth / 2, 6], center=True).up(23)
+model = parent | child
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      60.0,
+      40.0,
+      26.0
+    ],
+    &quot;actual_min&quot;: [
+      -60.0,
+      -40.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      60.0,
+      40.0,
+      26.0
+    ],
+    &quot;expected_min&quot;: [
+      -60.0,
+      -40.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/pythonscad/references/parent-derived-child-size/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/pythonscad/references/parent-derived-child-size/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/pythonscad/references/parent-derived-child-size/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/pythonscad/references/parent-derived-child-size/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/pythonscad/references/parent-derived-child-size/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/parent-derived-child-size/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parent-derived-child-size/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;pyBOSL2 reference: child dimensions are derived from parent values.&quot;&quot;&quot;
+
+from pybosl2 import cuboid
+
+base_width = 120.0
+base_depth = 80.0
+
+parent = cuboid([base_width, base_depth, 10]).up(5)
+child = cuboid([base_width / 2, base_depth / 2, 6]).up(23)
+model = parent | child
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      60.0,
+      40.0,
+      26.0
+    ],
+    &quot;actual_min&quot;: [
+      -60.0,
+      -40.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      60.0,
+      40.0,
+      26.0
+    ],
+    &quot;expected_min&quot;: [
+      -60.0,
+      -40.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/pybosl2/references/parent-derived-child-size/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/pybosl2/references/parent-derived-child-size/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/pybosl2/references/parent-derived-child-size/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/pybosl2/references/parent-derived-child-size/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/pybosl2/references/parent-derived-child-size/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/parent-derived-child-size/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parent-derived-child-size/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;CadQuery reference with child dimensions derived from parent values.&quot;&quot;&quot;
+
+import cadquery as cq
+
+
+base_width = 120.0
+base_depth = 80.0
+
+parent = cq.Solid.makeBox(
+    base_width,
+    base_depth,
+    10,
+    cq.Vector(-base_width / 2, -base_depth / 2, 0),
+)
+child = cq.Solid.makeBox(
+    base_width / 2,
+    base_depth / 2,
+    6,
+    cq.Vector(-base_width / 4, -base_depth / 4, 20),
+)
+
+model = cq.Assembly()
+model.add(parent, name=&quot;parent&quot;)
+model.add(child, name=&quot;child&quot;)
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      60.0,
+      40.0,
+      26.0
+    ],
+    &quot;actual_min&quot;: [
+      -60.0,
+      -40.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      60.0,
+      40.0,
+      26.0
+    ],
+    &quot;expected_min&quot;: [
+      -60.0,
+      -40.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/cadquery/references/parent-derived-child-size/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/cadquery/references/parent-derived-child-size/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/cadquery/references/parent-derived-child-size/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/cadquery/references/parent-derived-child-size/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/cadquery/references/parent-derived-child-size/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/parent-derived-child-size/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parent-derived-child-size/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;build123d reference: a child&#x27;s dimensions derive from its parent.&quot;&quot;&quot;
+from build123d import Align, Box, BuildPart, Locations
+
+base_width, base_depth = 120.0, 80.0
+bottom = (Align.CENTER, Align.CENTER, Align.MIN)
+
+with BuildPart() as model:
+    Box(base_width, base_depth, 10, align=bottom)
+    with Locations((0, 0, 20)):
+        Box(base_width / 2, base_depth / 2, 6, align=bottom)
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      60.0,
+      40.0,
+      26.0
+    ],
+    &quot;actual_min&quot;: [
+      -60.0,
+      -40.0,
+      0.0
+    ],
+    &quot;expected_max&quot;: [
+      60.0,
+      40.0,
+      26.0
+    ],
+    &quot;expected_min&quot;: [
+      -60.0,
+      -40.0,
+      0.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/build123d/references/parent-derived-child-size/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/build123d/references/parent-derived-child-size/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/build123d/references/parent-derived-child-size/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/build123d/references/parent-derived-child-size/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/build123d/references/parent-derived-child-size/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+</div>
+</section>
+
+
+  <section class="panel">
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>The parent and child sketch dimensions preserve base_width/base_depth expressions. Forge must not flatten base_width / 2 or base_depth / 2 to numeric constants when compiling the child component.</p>
+  </section>
+
+  <section class="panel qualification-current">
+  <h2>SolidCraft result</h2>
+  <p>
+    Built and measured from the accepted durable SolidCraft evidence.
+    Open the measurement details to inspect body sizes and editable parameters.
+  </p>
+  <details class="qualification-detail-block"><summary><strong>Original model</strong> · 2 bodies</summary><h4>Editable parameters</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>base_width</td><td>120.0</td><td>mm</td><td>120</td></tr><tr><td>base_depth</td><td>80.0</td><td>mm</td><td>80</td></tr></tbody></table></div><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>ParentBlock</td><td>[-60.0, -40.0, 0.0]</td><td>[60.0, 40.0, 10.0]</td><td>96000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>DerivedChild</td><td>[-30.0, -20.0, 20.0]</td><td>[30.0, 20.0, 26.0]</td><td>14400.0</td><td>6</td><td>12</td><td>True</td></tr></tbody></table></div></details>
+  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>size_160x120</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/model_verify/saved_designs/size_160x120/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
+  &quot;bodies&quot;: [
+    {
+      &quot;area_mm2&quot;: 44000.0,
+      &quot;bbox&quot;: {
+        &quot;max&quot;: [
+          80.0,
+          60.0,
+          10.0
+        ],
+        &quot;min&quot;: [
+          -80.0,
+          -60.0,
+          0.0
+        ]
+      },
+      &quot;center_of_mass&quot;: [
+        1.0459189070388675e-14,
+        -9.398111918320258e-15,
+        5.0
+      ],
+      &quot;closed&quot;: true,
+      &quot;density_g_cm3&quot;: 1.29,
+      &quot;edges&quot;: 12,
+      &quot;face_types&quot;: {
+        &quot;plane&quot;: 6
+      },
+      &quot;faces&quot;: 6,
+      &quot;kernel&quot;: {
+        &quot;edges&quot;: 12,
+        &quot;faces&quot;: 6,
+        &quot;shells&quot;: 1,
+        &quot;vertices&quot;: 8
+      },
+      &quot;mass_g&quot;: 247.68,
+      &quot;material&quot;: &quot;Default&quot;,
+      &quot;measured_by&quot;: &quot;smlib&quot;,
+      &quot;name&quot;: &quot;ParentBlock&quot;,
+      &quot;notes&quot;: [],
+      &quot;vertices&quot;: 8,
+      &quot;volume_mm3&quot;: 192000.0
+    },
+    {
+      &quot;area_mm2&quot;: 11280.0,
+      &quot;bbox&quot;: {
+        &quot;max&quot;: [
+          40.0,
+          30.0,
+          26.0
+        ],
+        &quot;min&quot;: [
+          -40.0,
+          -30.0,
+          20.0
+        ]
+      },
+      &quot;center_of_mass&quot;: [
+        6.821210263296961e-15,
+        -6.063298011819522e-15,
+        23.0
+      ],
+      &quot;closed&quot;: true,
+      &quot;density_g_cm3&quot;: 1.29,
+      &quot;edges&quot;: 12,
+      &quot;face_types&quot;: {
+        &quot;plane&quot;: 6
+      },
+      &quot;faces&quot;: 6,
+      &quot;kernel&quot;: {
+        &quot;edges&quot;: 12,
+        &quot;faces&quot;: 6,
+        &quot;shells&quot;: 1,
+        &quot;vertices&quot;: 8
+      },
+      &quot;mass_g&quot;: 37.152,
+      &quot;material&quot;: &quot;Default&quot;,
+      &quot;measured_by&quot;: &quot;smlib&quot;,
+      &quot;name&quot;: &quot;DerivedChild&quot;,
+      &quot;notes&quot;: [],
+      &quot;vertices&quot;: 8,
+      &quot;volume_mm3&quot;: 28800.0
+    }
+  ],
+  &quot;body_count&quot;: 2,
+  &quot;params&quot;: [
+    {
+      &quot;comment&quot;: &quot;&quot;,
+      &quot;error&quot;: null,
+      &quot;expression&quot;: &quot;160 mm&quot;,
+      &quot;model&quot;: false,
+      &quot;name&quot;: &quot;base_width&quot;,
+      &quot;unit&quot;: &quot;mm&quot;,
+      &quot;value&quot;: 160.0
+    },
+    {
+      &quot;comment&quot;: &quot;&quot;,
+      &quot;error&quot;: null,
+      &quot;expression&quot;: &quot;120 mm&quot;,
+      &quot;model&quot;: false,
+      &quot;name&quot;: &quot;base_depth&quot;,
+      &quot;unit&quot;: &quot;mm&quot;,
+      &quot;value&quot;: 120.0
+    }
+  ],
+  &quot;sketches&quot;: [],
+  &quot;timeline&quot;: [
+    {
+      &quot;error&quot;: null,
+      &quot;id&quot;: 3,
+      &quot;ms&quot;: 2.2949260000000002,
+      &quot;name&quot;: &quot;Box1&quot;,
+      &quot;rolled_back&quot;: false,
+      &quot;suppressed&quot;: false,
+      &quot;type&quot;: &quot;BoxFeature&quot;,
+      &quot;warning&quot;: null
+    },
+    {
+      &quot;error&quot;: null,
+      &quot;id&quot;: 6,
+      &quot;ms&quot;: 1.330568,
+      &quot;name&quot;: &quot;Box2&quot;,
+      &quot;rolled_back&quot;: false,
+      &quot;suppressed&quot;: false,
+      &quot;type&quot;: &quot;BoxFeature&quot;,
+      &quot;warning&quot;: null
+    }
+  ],
+  &quot;total&quot;: {
+    &quot;area_mm2&quot;: 55280.0,
+    &quot;edges&quot;: 24,
+    &quot;faces&quot;: 12,
+    &quot;mass_g&quot;: 284.832,
+    &quot;open_bodies_skipped&quot;: 0,
+    &quot;vertices&quot;: 16,
+    &quot;volume_mm3&quot;: 220800.0
+  }
+}</code></pre></details>
+</section>
+<section class="notice">
+  <strong>Current visual verification: not required.</strong>
+  This model has no current <code>verification/visual.json</code> policy. The durable isometric image above is a current presentation preview, not a visual PASS claim.
+</section>
+
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+
+    <h3>Forge model</h3>
+    <p>One ParentBlock and one DerivedChild. Only base_width and base_depth are published as document parameters; the child carries expressions that reference those existing parent parameters instead of receiving independent duplicated values.</p>
+
+    <h3>Verification checks</h3>
+    <details class="qualification-detail-block">
   <summary><code>baseline</code> · <span class="qualification-status pass">PASS</span></summary>
   
   <pre><code>{
@@ -297,414 +705,28 @@ ParentDerivedChildSize()
 }</code></pre>
 </details>
 
-  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>size_160x120</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/model_verify/saved_designs/size_160x120/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
-  &quot;bodies&quot;: [
-    {
-      &quot;area_mm2&quot;: 44000.0,
-      &quot;bbox&quot;: {
-        &quot;max&quot;: [
-          80.0,
-          60.0,
-          10.0
-        ],
-        &quot;min&quot;: [
-          -80.0,
-          -60.0,
-          0.0
-        ]
-      },
-      &quot;center_of_mass&quot;: [
-        1.0459189070388675e-14,
-        -9.398111918320258e-15,
-        5.0
-      ],
-      &quot;closed&quot;: true,
-      &quot;density_g_cm3&quot;: 1.29,
-      &quot;edges&quot;: 12,
-      &quot;face_types&quot;: {
-        &quot;plane&quot;: 6
-      },
-      &quot;faces&quot;: 6,
-      &quot;kernel&quot;: {
-        &quot;edges&quot;: 12,
-        &quot;faces&quot;: 6,
-        &quot;shells&quot;: 1,
-        &quot;vertices&quot;: 8
-      },
-      &quot;mass_g&quot;: 247.68,
-      &quot;material&quot;: &quot;Default&quot;,
-      &quot;measured_by&quot;: &quot;smlib&quot;,
-      &quot;name&quot;: &quot;ParentBlock&quot;,
-      &quot;notes&quot;: [],
-      &quot;vertices&quot;: 8,
-      &quot;volume_mm3&quot;: 192000.0
-    },
-    {
-      &quot;area_mm2&quot;: 11280.0,
-      &quot;bbox&quot;: {
-        &quot;max&quot;: [
-          40.0,
-          30.0,
-          26.0
-        ],
-        &quot;min&quot;: [
-          -40.0,
-          -30.0,
-          20.0
-        ]
-      },
-      &quot;center_of_mass&quot;: [
-        6.821210263296961e-15,
-        -6.063298011819522e-15,
-        23.0
-      ],
-      &quot;closed&quot;: true,
-      &quot;density_g_cm3&quot;: 1.29,
-      &quot;edges&quot;: 12,
-      &quot;face_types&quot;: {
-        &quot;plane&quot;: 6
-      },
-      &quot;faces&quot;: 6,
-      &quot;kernel&quot;: {
-        &quot;edges&quot;: 12,
-        &quot;faces&quot;: 6,
-        &quot;shells&quot;: 1,
-        &quot;vertices&quot;: 8
-      },
-      &quot;mass_g&quot;: 37.152,
-      &quot;material&quot;: &quot;Default&quot;,
-      &quot;measured_by&quot;: &quot;smlib&quot;,
-      &quot;name&quot;: &quot;DerivedChild&quot;,
-      &quot;notes&quot;: [],
-      &quot;vertices&quot;: 8,
-      &quot;volume_mm3&quot;: 28800.0
-    }
-  ],
-  &quot;body_count&quot;: 2,
-  &quot;params&quot;: [
-    {
-      &quot;comment&quot;: &quot;&quot;,
-      &quot;error&quot;: null,
-      &quot;expression&quot;: &quot;160 mm&quot;,
-      &quot;model&quot;: false,
-      &quot;name&quot;: &quot;base_width&quot;,
-      &quot;unit&quot;: &quot;mm&quot;,
-      &quot;value&quot;: 160.0
-    },
-    {
-      &quot;comment&quot;: &quot;&quot;,
-      &quot;error&quot;: null,
-      &quot;expression&quot;: &quot;120 mm&quot;,
-      &quot;model&quot;: false,
-      &quot;name&quot;: &quot;base_depth&quot;,
-      &quot;unit&quot;: &quot;mm&quot;,
-      &quot;value&quot;: 120.0
-    }
-  ],
-  &quot;sketches&quot;: [],
-  &quot;timeline&quot;: [
-    {
-      &quot;error&quot;: null,
-      &quot;id&quot;: 3,
-      &quot;ms&quot;: 2.2949260000000002,
-      &quot;name&quot;: &quot;Box1&quot;,
-      &quot;rolled_back&quot;: false,
-      &quot;suppressed&quot;: false,
-      &quot;type&quot;: &quot;BoxFeature&quot;,
-      &quot;warning&quot;: null
-    },
-    {
-      &quot;error&quot;: null,
-      &quot;id&quot;: 6,
-      &quot;ms&quot;: 1.330568,
-      &quot;name&quot;: &quot;Box2&quot;,
-      &quot;rolled_back&quot;: false,
-      &quot;suppressed&quot;: false,
-      &quot;type&quot;: &quot;BoxFeature&quot;,
-      &quot;warning&quot;: null
-    }
-  ],
-  &quot;total&quot;: {
-    &quot;area_mm2&quot;: 55280.0,
-    &quot;edges&quot;: 24,
-    &quot;faces&quot;: 12,
-    &quot;mass_g&quot;: 284.832,
-    &quot;open_bodies_skipped&quot;: 0,
-    &quot;vertices&quot;: 16,
-    &quot;volume_mm3&quot;: 220800.0
-  }
-}</code></pre></details>
-  <h3>Durable raw evidence</h3>
-  <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
-</section>
-<section class="notice">
-  <strong>Current visual verification: not required.</strong>
-  This model has no current <code>verification/visual.json</code> policy. The durable isometric image above is a current presentation preview, not a visual PASS claim.
-</section>
 
-
-  <section class="panel">
-  <h2>Independent references</h2>
-  <p>Each source is shown from the current Forge tree beside the accepted durable result for that independent implementation.</p>
-  <div class="qualification-reference-list"><section class="qualification-reference-row">
-  <div class="qualification-reference-source">
-    <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/parent-derived-child-size/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parent-derived-child-size/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
-    <pre><code>&quot;&quot;&quot;PythonSCAD reference: child dimensions are half the parent dimensions.&quot;&quot;&quot;
-
-from pythonscad import *
-
-base_width = 120.0
-base_depth = 80.0
-
-parent = cube([base_width, base_depth, 10], center=True).up(5)
-child = cube([base_width / 2, base_depth / 2, 6], center=True).up(23)
-model = parent | child
-</code></pre>
-    <details class="qualification-detail-block">
-      <summary>Expected versus measured geometry</summary>
-      <pre><code>{
-  &quot;bounds&quot;: {
-    &quot;actual_max&quot;: [
-      60.0,
-      40.0,
-      26.0
-    ],
-    &quot;actual_min&quot;: [
-      -60.0,
-      -40.0,
-      0.0
-    ],
-    &quot;expected_max&quot;: [
-      60.0,
-      40.0,
-      26.0
-    ],
-    &quot;expected_min&quot;: [
-      -60.0,
-      -40.0,
-      0.0
-    ],
-    &quot;max_delta_mm&quot;: 0.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm&quot;: 0.5
-  }
-}</code></pre>
-    </details>
-  </div>
-  <div class="qualification-reference-output">
-    <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/pythonscad/references/parent-derived-child-size/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/pythonscad/references/parent-derived-child-size/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
-      </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/pythonscad/references/parent-derived-child-size/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/pythonscad/references/parent-derived-child-size/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/pythonscad/references/parent-derived-child-size/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
-    </figure>
-  </div>
-</section>
-<section class="qualification-reference-row">
-  <div class="qualification-reference-source">
-    <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/parent-derived-child-size/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parent-derived-child-size/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
-    <pre><code>&quot;&quot;&quot;pyBOSL2 reference: child dimensions are derived from parent values.&quot;&quot;&quot;
-
-from pybosl2 import cuboid
-
-base_width = 120.0
-base_depth = 80.0
-
-parent = cuboid([base_width, base_depth, 10]).up(5)
-child = cuboid([base_width / 2, base_depth / 2, 6]).up(23)
-model = parent | child
-</code></pre>
-    <details class="qualification-detail-block">
-      <summary>Expected versus measured geometry</summary>
-      <pre><code>{
-  &quot;bounds&quot;: {
-    &quot;actual_max&quot;: [
-      60.0,
-      40.0,
-      26.0
-    ],
-    &quot;actual_min&quot;: [
-      -60.0,
-      -40.0,
-      0.0
-    ],
-    &quot;expected_max&quot;: [
-      60.0,
-      40.0,
-      26.0
-    ],
-    &quot;expected_min&quot;: [
-      -60.0,
-      -40.0,
-      0.0
-    ],
-    &quot;max_delta_mm&quot;: 0.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm&quot;: 0.5
-  }
-}</code></pre>
-    </details>
-  </div>
-  <div class="qualification-reference-output">
-    <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/pybosl2/references/parent-derived-child-size/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/pybosl2/references/parent-derived-child-size/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
-      </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/pybosl2/references/parent-derived-child-size/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/pybosl2/references/parent-derived-child-size/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/pybosl2/references/parent-derived-child-size/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
-    </figure>
-  </div>
-</section>
-<section class="qualification-reference-row">
-  <div class="qualification-reference-source">
-    <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/parent-derived-child-size/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parent-derived-child-size/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
-    <pre><code>&quot;&quot;&quot;CadQuery reference with child dimensions derived from parent values.&quot;&quot;&quot;
-
-import cadquery as cq
-
-
-base_width = 120.0
-base_depth = 80.0
-
-parent = cq.Solid.makeBox(
-    base_width,
-    base_depth,
-    10,
-    cq.Vector(-base_width / 2, -base_depth / 2, 0),
-)
-child = cq.Solid.makeBox(
-    base_width / 2,
-    base_depth / 2,
-    6,
-    cq.Vector(-base_width / 4, -base_depth / 4, 20),
-)
-
-model = cq.Assembly()
-model.add(parent, name=&quot;parent&quot;)
-model.add(child, name=&quot;child&quot;)
-</code></pre>
-    <details class="qualification-detail-block">
-      <summary>Expected versus measured geometry</summary>
-      <pre><code>{
-  &quot;bounds&quot;: {
-    &quot;actual_max&quot;: [
-      60.0,
-      40.0,
-      26.0
-    ],
-    &quot;actual_min&quot;: [
-      -60.0,
-      -40.0,
-      0.0
-    ],
-    &quot;expected_max&quot;: [
-      60.0,
-      40.0,
-      26.0
-    ],
-    &quot;expected_min&quot;: [
-      -60.0,
-      -40.0,
-      0.0
-    ],
-    &quot;max_delta_mm&quot;: 0.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm&quot;: 0.5
-  }
-}</code></pre>
-    </details>
-  </div>
-  <div class="qualification-reference-output">
-    <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/cadquery/references/parent-derived-child-size/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/cadquery/references/parent-derived-child-size/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
-      </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/cadquery/references/parent-derived-child-size/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/cadquery/references/parent-derived-child-size/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/cadquery/references/parent-derived-child-size/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
-    </figure>
-  </div>
-</section>
-<section class="qualification-reference-row">
-  <div class="qualification-reference-source">
-    <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>4956349b595c9eb47337da72124d3ba9dee2dc46</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4956349b595c9eb47337da72124d3ba9dee2dc46/examples/parent-derived-child-size/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parent-derived-child-size/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
-    <pre><code>&quot;&quot;&quot;build123d reference: a child&#x27;s dimensions derive from its parent.&quot;&quot;&quot;
-from build123d import Align, Box, BuildPart, Locations
-
-base_width, base_depth = 120.0, 80.0
-bottom = (Align.CENTER, Align.CENTER, Align.MIN)
-
-with BuildPart() as model:
-    Box(base_width, base_depth, 10, align=bottom)
-    with Locations((0, 0, 20)):
-        Box(base_width / 2, base_depth / 2, 6, align=bottom)
-</code></pre>
-    <details class="qualification-detail-block">
-      <summary>Expected versus measured geometry</summary>
-      <pre><code>{
-  &quot;bounds&quot;: {
-    &quot;actual_max&quot;: [
-      60.0,
-      40.0,
-      26.0
-    ],
-    &quot;actual_min&quot;: [
-      -60.0,
-      -40.0,
-      0.0
-    ],
-    &quot;expected_max&quot;: [
-      60.0,
-      40.0,
-      26.0
-    ],
-    &quot;expected_min&quot;: [
-      -60.0,
-      -40.0,
-      0.0
-    ],
-    &quot;max_delta_mm&quot;: 0.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm&quot;: 0.5
-  }
-}</code></pre>
-    </details>
-  </div>
-  <div class="qualification-reference-output">
-    <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/build123d/references/parent-derived-child-size/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/build123d/references/parent-derived-child-size/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
-      </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/build123d/references/parent-derived-child-size/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/build123d/references/parent-derived-child-size/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parent-derived-child-size/build123d/references/parent-derived-child-size/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
-    </figure>
-  </div>
-</section>
-</div>
-</section>
-
-  <section class="panel">
-    <h2>Engineering explanation</h2>
-    <h3>Forge API</h3>
-    <p><code>DerivedChild(width=self.base_width / 2, depth=self.base_depth / 2)</code></p>
-    <h3>Forge model</h3>
-    <p>One ParentBlock and one DerivedChild. Only base_width and base_depth are published as document parameters; the child carries expressions that reference those existing parent parameters instead of receiving independent duplicated values.</p>
-    <h3>How Forge builds it in SolidCraft</h3>
-    <p>The parent and child sketch dimensions preserve base_width/base_depth expressions. Forge must not flatten base_width / 2 or base_depth / 2 to numeric constants when compiling the child component.</p>
-    <h3>SolidCraft result</h3>
-    <p>At 120x80 mm parent size, the child measures 60x40 mm. Its fixed height and fixed body layout are deliberately unrelated to this qualification.</p>
     <h3>Saved-design test</h3>
     <p>Change base_width/base_depth from 120x80 to 160x120 mm in the saved .sc design; without rerunning Python the child must rebuild from 60x40 to 80x60 mm.</p>
+
     <h3>Geometry evidence</h3>
     <p><strong>Are outer bounds sufficient?</strong> yes</p>
     <p>The geometry is two rectangular bodies whose declared sizes and positions are sufficient; the parent-to-child expression is proved by native mutation.</p>
-    <h3>Reference notes</h3>
+
+    <h3>Raw test files</h3>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parent-derived-child-size/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+
+    <h3>Reference documentation</h3>
     <ul><li><strong>SolidCraft</strong> — Native parameters and expressions must preserve the parent-to-child dimensional dependency after the Python compiler has finished.</li><li><strong>PythonSCAD</strong> — The Python model expresses the dependency with ordinary arithmetic rather than a special application-specific sizing API.</li></ul>
-  </section>
+
+    <p class="source-stamp">
+      Site source <code>5b0fa00227de30940d35ccbf059cff1924afe116</code> · accepted model evidence source
+      <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · durable build <code>4c39a109727a43c9457bd1c171937975a3ad766c</code>
+    </p>
+  </div>
+</details>
+
+
   <section class="panel">
     <h2>Sources of truth</h2>
     <p>
@@ -715,7 +737,7 @@ with BuildPart() as model:
     </p>
     <p>
       <a href="../../examples/parent-derived-child-size/">Open the example →</a>
-      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parent-derived-child-size/verification/verify.py">Open verification/verify.py →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parent-derived-child-size/verification/verify.py">Open verification/verify.py →</a>
     </p>
   </section>
 </main>

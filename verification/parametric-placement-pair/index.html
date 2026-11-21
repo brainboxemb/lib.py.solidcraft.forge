@@ -40,11 +40,20 @@
 </div>
 <main class="wrap">
   <div class="crumb"><a href="../">← Verification</a> / Symmetric parametric occurrence Placement</div>
+
   <section class="hero small">
-    <p class="eyebrow">4 · Components and occurrences</p>
+    <p class="eyebrow">Forge model example · 4 · Components and occurrences</p>
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
     <h1>Symmetric parametric occurrence Placement</h1>
-    <p class="guide-lead">Verify the WoodFrame-style dependency shape: two occurrences of one reusable definition are placed symmetrically from one parent spacing parameter.</p>
   </section>
+
+  <section class="panel qualification-example-overview">
+    <h2>What this example makes</h2>
+    <p>With spacing=80 mm the two 20 mm blocks are centred at X=-40 and X=+40.</p>
+    <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Symmetric parametric occurrence Placement expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/model_verify/presentation/preview-iso.png" alt="Symmetric parametric occurrence Placement native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+  </section>
+
   <section class="panel">
     <h2>Forge code</h2>
     <p>This is the complete Forge source used for this example.</p>
@@ -71,27 +80,437 @@ class ParametricPlacementPair:
 
 ParametricPlacementPair()
 </code></pre>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parametric-placement-pair/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+    <h3>API used</h3>
+    <p><code>left = Block(placement=Placement(x=-half(self.spacing))); right = left.copy(placement=Placement(x=half(self.spacing)))</code></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parametric-placement-pair/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
   </section>
-  <section class="panel qualification-current">
-  <h2>Current durable verification</h2>
-  <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
-  <figure class="qualification-case-preview">
-    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/model_verify/presentation/preview-iso.png" alt="Symmetric parametric occurrence Placement current durable preview" loading="lazy">
-    </a>
-    <figcaption>Current deterministic presentation preview from durable build evidence. This preview is presentation output, not an extra verification check.</figcaption>
-  </figure>
-  <p class="source-stamp">
-    Site source <code>8fcee42c7531414ac29cc5123eaa7ab54d7f2039</code> · accepted model evidence source
-    <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · durable build <code>c4451e1c95556db2a519a99d4677a16a8019bbb7</code>
+
+  <section class="panel">
+  <h2>Reference code</h2>
+  <p>
+    The same model is written independently with the reference libraries below.
+    This makes it easier to compare modelling style and the resulting shape.
   </p>
-  <h3>Editable parameters</h3>
-  <div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>spacing</td><td>80.0</td><td>mm</td><td>80 mm</td></tr></tbody></table></div>
-  <h3>Measured native bodies</h3>
-  <div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>Block</td><td>[-50.0, -10.0, -5.0]</td><td>[-30.0, 10.0, 5.0]</td><td>4000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>Block (Block:2)</td><td>[30.0, -10.0, -5.0]</td><td>[50.0, 10.0, 5.0]</td><td>4000.0</td><td>6</td><td>12</td><td>True</td></tr></tbody></table></div>
-  <h3>Verification checks</h3>
-  <details class="qualification-detail-block">
+  <p class="meta">Each source is shown from the current Forge tree beside the accepted durable result for that independent implementation.</p>
+  <div class="qualification-reference-list"><section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/ad36b062203b7de2b20c7fa2d11c99dfc50a1340/examples/parametric-placement-pair/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parametric-placement-pair/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for a symmetric pair of translated blocks.&quot;&quot;&quot;
+
+from pythonscad import *
+
+left = cube([20, 20, 10], center=True).left(40)
+right = cube([20, 20, 10], center=True).right(40)
+model = left | right
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      50.0,
+      10.0,
+      5.0
+    ],
+    &quot;actual_min&quot;: [
+      -50.0,
+      -10.0,
+      -5.0
+    ],
+    &quot;expected_max&quot;: [
+      50.0,
+      10.0,
+      5.0
+    ],
+    &quot;expected_min&quot;: [
+      -50.0,
+      -10.0,
+      -5.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 8000.0,
+    &quot;delta_mm3&quot;: 0.0,
+    &quot;expected_mm3&quot;: 8000.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 2.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/pythonscad/references/parametric-placement-pair/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/pythonscad/references/parametric-placement-pair/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/pythonscad/references/parametric-placement-pair/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/pythonscad/references/parametric-placement-pair/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/pythonscad/references/parametric-placement-pair/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/ad36b062203b7de2b20c7fa2d11c99dfc50a1340/examples/parametric-placement-pair/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parametric-placement-pair/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for a symmetric pair of translated blocks.&quot;&quot;&quot;
+
+from pybosl2 import cuboid
+
+left = cuboid([20, 20, 10]).left(40)
+right = cuboid([20, 20, 10]).right(40)
+model = left | right
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      50.0,
+      10.0,
+      5.0
+    ],
+    &quot;actual_min&quot;: [
+      -50.0,
+      -10.0,
+      -5.0
+    ],
+    &quot;expected_max&quot;: [
+      50.0,
+      10.0,
+      5.0
+    ],
+    &quot;expected_min&quot;: [
+      -50.0,
+      -10.0,
+      -5.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 8000.0,
+    &quot;delta_mm3&quot;: 0.0,
+    &quot;expected_mm3&quot;: 8000.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 2.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/pybosl2/references/parametric-placement-pair/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/pybosl2/references/parametric-placement-pair/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/pybosl2/references/parametric-placement-pair/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/pybosl2/references/parametric-placement-pair/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/pybosl2/references/parametric-placement-pair/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/ad36b062203b7de2b20c7fa2d11c99dfc50a1340/examples/parametric-placement-pair/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parametric-placement-pair/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;CadQuery reference for two independently and symmetrically placed blocks.&quot;&quot;&quot;
+
+import cadquery as cq
+
+block = cq.Solid.makeBox(
+    20,
+    20,
+    10,
+    cq.Vector(-10, -10, -5),
+)
+
+model = cq.Assembly()
+model.add(block, name=&quot;left&quot;, loc=cq.Location((-40, 0, 0)))
+model.add(block, name=&quot;right&quot;, loc=cq.Location((40, 0, 0)))
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      50.0,
+      10.0,
+      5.0
+    ],
+    &quot;actual_min&quot;: [
+      -50.0,
+      -10.0,
+      -5.0
+    ],
+    &quot;expected_max&quot;: [
+      50.0,
+      10.0,
+      5.0
+    ],
+    &quot;expected_min&quot;: [
+      -50.0,
+      -10.0,
+      -5.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 8000.0,
+    &quot;delta_mm3&quot;: 0.0,
+    &quot;expected_mm3&quot;: 8000.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 2.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/cadquery/references/parametric-placement-pair/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/cadquery/references/parametric-placement-pair/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/cadquery/references/parametric-placement-pair/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/cadquery/references/parametric-placement-pair/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/cadquery/references/parametric-placement-pair/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+<section class="qualification-reference-row">
+  <div class="qualification-reference-source">
+    <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
+    <p class="source-stamp">Accepted evidence source <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/ad36b062203b7de2b20c7fa2d11c99dfc50a1340/examples/parametric-placement-pair/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parametric-placement-pair/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <pre><code>&quot;&quot;&quot;build123d reference: a symmetric pair of translated blocks.&quot;&quot;&quot;
+from build123d import Align, Box, BuildPart, Locations
+
+center = (Align.CENTER, Align.CENTER, Align.CENTER)
+
+with BuildPart() as model:
+    with Locations((-40, 0, 0), (40, 0, 0)):
+        Box(20, 20, 10, align=center)
+</code></pre>
+    <details class="qualification-detail-block">
+      <summary>Expected versus measured geometry</summary>
+      <pre><code>{
+  &quot;bounds&quot;: {
+    &quot;actual_max&quot;: [
+      50.0,
+      10.0,
+      5.0
+    ],
+    &quot;actual_min&quot;: [
+      -50.0,
+      -10.0,
+      -5.0
+    ],
+    &quot;expected_max&quot;: [
+      50.0,
+      10.0,
+      5.0
+    ],
+    &quot;expected_min&quot;: [
+      -50.0,
+      -10.0,
+      -5.0
+    ],
+    &quot;max_delta_mm&quot;: 0.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm&quot;: 0.5
+  },
+  &quot;volume&quot;: {
+    &quot;actual_mm3&quot;: 8000.0,
+    &quot;delta_mm3&quot;: 0.0,
+    &quot;expected_mm3&quot;: 8000.0,
+    &quot;pass&quot;: true,
+    &quot;tolerance_mm3&quot;: 2.0
+  },
+  &quot;watertight&quot;: {
+    &quot;actual&quot;: true,
+    &quot;expected&quot;: true,
+    &quot;pass&quot;: true
+  }
+}</code></pre>
+    </details>
+  </div>
+  <div class="qualification-reference-output">
+    <figure class="qualification-reference-preview">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/build123d/references/parametric-placement-pair/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/build123d/references/parametric-placement-pair/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      </a>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/build123d/references/parametric-placement-pair/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/build123d/references/parametric-placement-pair/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/build123d/references/parametric-placement-pair/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+    </figure>
+  </div>
+</section>
+</div>
+</section>
+
+
+  <section class="panel">
+    <h2>How Forge builds it in SolidCraft</h2>
+    <p>Forge publishes spacing, creates one Block definition, binds both real occurrence IDs, and emits two occurrence.move expressions using -(spacing / 2) and spacing / 2. No predicted occurrence name and no placement joint is used.</p>
+  </section>
+
+  <section class="panel qualification-current">
+  <h2>SolidCraft result</h2>
+  <p>
+    Built and measured from the accepted durable SolidCraft evidence.
+    Open the measurement details to inspect body sizes and editable parameters.
+  </p>
+  <details class="qualification-detail-block"><summary><strong>Original model</strong> · 2 bodies</summary><h4>Editable parameters</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>spacing</td><td>80.0</td><td>mm</td><td>80 mm</td></tr></tbody></table></div><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>Block</td><td>[-50.0, -10.0, -5.0]</td><td>[-30.0, 10.0, 5.0]</td><td>4000.0</td><td>6</td><td>12</td><td>True</td></tr><tr><td>Block (Block:2)</td><td>[30.0, -10.0, -5.0]</td><td>[50.0, 10.0, 5.0]</td><td>4000.0</td><td>6</td><td>12</td><td>True</td></tr></tbody></table></div></details>
+  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>spacing_120</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/model_verify/saved_designs/spacing_120/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
+  &quot;bodies&quot;: [
+    {
+      &quot;area_mm2&quot;: 1600.0,
+      &quot;bbox&quot;: {
+        &quot;max&quot;: [
+          -50.0,
+          10.0,
+          5.0
+        ],
+        &quot;min&quot;: [
+          -70.0,
+          -10.0,
+          -5.0
+        ]
+      },
+      &quot;center_of_mass&quot;: [
+        -60.0,
+        1.4210854715202004e-16,
+        0.0
+      ],
+      &quot;closed&quot;: true,
+      &quot;density_g_cm3&quot;: 1.29,
+      &quot;edges&quot;: 12,
+      &quot;face_types&quot;: {
+        &quot;plane&quot;: 6
+      },
+      &quot;faces&quot;: 6,
+      &quot;kernel&quot;: {
+        &quot;edges&quot;: 12,
+        &quot;faces&quot;: 6,
+        &quot;shells&quot;: 1,
+        &quot;vertices&quot;: 8
+      },
+      &quot;mass_g&quot;: 5.16,
+      &quot;material&quot;: &quot;Default&quot;,
+      &quot;measured_by&quot;: &quot;smlib&quot;,
+      &quot;name&quot;: &quot;Block&quot;,
+      &quot;notes&quot;: [],
+      &quot;vertices&quot;: 8,
+      &quot;volume_mm3&quot;: 4000.0
+    },
+    {
+      &quot;area_mm2&quot;: 1600.0,
+      &quot;bbox&quot;: {
+        &quot;max&quot;: [
+          70.0,
+          10.0,
+          5.0
+        ],
+        &quot;min&quot;: [
+          50.0,
+          -10.0,
+          -5.0
+        ]
+      },
+      &quot;center_of_mass&quot;: [
+        60.0,
+        1.4210854715202004e-16,
+        0.0
+      ],
+      &quot;closed&quot;: true,
+      &quot;density_g_cm3&quot;: 1.29,
+      &quot;edges&quot;: 12,
+      &quot;face_types&quot;: {
+        &quot;plane&quot;: 6
+      },
+      &quot;faces&quot;: 6,
+      &quot;kernel&quot;: {
+        &quot;edges&quot;: 12,
+        &quot;faces&quot;: 6,
+        &quot;shells&quot;: 1,
+        &quot;vertices&quot;: 8
+      },
+      &quot;mass_g&quot;: 5.16,
+      &quot;material&quot;: &quot;Default&quot;,
+      &quot;measured_by&quot;: &quot;smlib&quot;,
+      &quot;name&quot;: &quot;Block (Block:2)&quot;,
+      &quot;notes&quot;: [],
+      &quot;vertices&quot;: 8,
+      &quot;volume_mm3&quot;: 4000.0
+    }
+  ],
+  &quot;body_count&quot;: 2,
+  &quot;params&quot;: [
+    {
+      &quot;comment&quot;: &quot;&quot;,
+      &quot;error&quot;: null,
+      &quot;expression&quot;: &quot;120 mm&quot;,
+      &quot;model&quot;: false,
+      &quot;name&quot;: &quot;spacing&quot;,
+      &quot;unit&quot;: &quot;mm&quot;,
+      &quot;value&quot;: 120.0
+    }
+  ],
+  &quot;sketches&quot;: [],
+  &quot;timeline&quot;: [
+    {
+      &quot;error&quot;: null,
+      &quot;id&quot;: 3,
+      &quot;ms&quot;: 2.350018,
+      &quot;name&quot;: &quot;Box1&quot;,
+      &quot;rolled_back&quot;: false,
+      &quot;suppressed&quot;: false,
+      &quot;type&quot;: &quot;BoxFeature&quot;,
+      &quot;warning&quot;: null
+    }
+  ],
+  &quot;total&quot;: {
+    &quot;area_mm2&quot;: 3200.0,
+    &quot;edges&quot;: 24,
+    &quot;faces&quot;: 12,
+    &quot;mass_g&quot;: 10.32,
+    &quot;open_bodies_skipped&quot;: 0,
+    &quot;vertices&quot;: 16,
+    &quot;volume_mm3&quot;: 8000.0
+  }
+}</code></pre></details>
+</section>
+<section class="notice">
+  <strong>Current visual verification: not required.</strong>
+  This model has no current <code>verification/visual.json</code> policy. The durable isometric image above is a current presentation preview, not a visual PASS claim.
+</section>
+
+
+<details class="panel qualification-technical-details">
+  <summary><strong>Technical test details</strong></summary>
+  <div class="qualification-technical-details-body">
+    <div class="qualification-status-line"><span class="qualification-status pass">PASS</span><span class="qualification-levels">Integration PASS · Native model PASS · Geometry PASS · Saved design PASS · Visual N/R</span></div>
+
+    <h3>Forge model</h3>
+    <p>Two occurrences share one Block definition. Their absolute X placements are the negative and positive halves of the same parent parameter.</p>
+
+    <h3>Verification checks</h3>
+    <details class="qualification-detail-block">
   <summary><code>baseline</code> · <span class="qualification-status pass">PASS</span></summary>
   
   <pre><code>{
@@ -242,425 +661,28 @@ ParametricPlacementPair()
 }</code></pre>
 </details>
 
-  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>spacing_120</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/model_verify/saved_designs/spacing_120/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
-  &quot;bodies&quot;: [
-    {
-      &quot;area_mm2&quot;: 1600.0,
-      &quot;bbox&quot;: {
-        &quot;max&quot;: [
-          -50.0,
-          10.0,
-          5.0
-        ],
-        &quot;min&quot;: [
-          -70.0,
-          -10.0,
-          -5.0
-        ]
-      },
-      &quot;center_of_mass&quot;: [
-        -60.0,
-        1.4210854715202004e-16,
-        0.0
-      ],
-      &quot;closed&quot;: true,
-      &quot;density_g_cm3&quot;: 1.29,
-      &quot;edges&quot;: 12,
-      &quot;face_types&quot;: {
-        &quot;plane&quot;: 6
-      },
-      &quot;faces&quot;: 6,
-      &quot;kernel&quot;: {
-        &quot;edges&quot;: 12,
-        &quot;faces&quot;: 6,
-        &quot;shells&quot;: 1,
-        &quot;vertices&quot;: 8
-      },
-      &quot;mass_g&quot;: 5.16,
-      &quot;material&quot;: &quot;Default&quot;,
-      &quot;measured_by&quot;: &quot;smlib&quot;,
-      &quot;name&quot;: &quot;Block&quot;,
-      &quot;notes&quot;: [],
-      &quot;vertices&quot;: 8,
-      &quot;volume_mm3&quot;: 4000.0
-    },
-    {
-      &quot;area_mm2&quot;: 1600.0,
-      &quot;bbox&quot;: {
-        &quot;max&quot;: [
-          70.0,
-          10.0,
-          5.0
-        ],
-        &quot;min&quot;: [
-          50.0,
-          -10.0,
-          -5.0
-        ]
-      },
-      &quot;center_of_mass&quot;: [
-        60.0,
-        1.4210854715202004e-16,
-        0.0
-      ],
-      &quot;closed&quot;: true,
-      &quot;density_g_cm3&quot;: 1.29,
-      &quot;edges&quot;: 12,
-      &quot;face_types&quot;: {
-        &quot;plane&quot;: 6
-      },
-      &quot;faces&quot;: 6,
-      &quot;kernel&quot;: {
-        &quot;edges&quot;: 12,
-        &quot;faces&quot;: 6,
-        &quot;shells&quot;: 1,
-        &quot;vertices&quot;: 8
-      },
-      &quot;mass_g&quot;: 5.16,
-      &quot;material&quot;: &quot;Default&quot;,
-      &quot;measured_by&quot;: &quot;smlib&quot;,
-      &quot;name&quot;: &quot;Block (Block:2)&quot;,
-      &quot;notes&quot;: [],
-      &quot;vertices&quot;: 8,
-      &quot;volume_mm3&quot;: 4000.0
-    }
-  ],
-  &quot;body_count&quot;: 2,
-  &quot;params&quot;: [
-    {
-      &quot;comment&quot;: &quot;&quot;,
-      &quot;error&quot;: null,
-      &quot;expression&quot;: &quot;120 mm&quot;,
-      &quot;model&quot;: false,
-      &quot;name&quot;: &quot;spacing&quot;,
-      &quot;unit&quot;: &quot;mm&quot;,
-      &quot;value&quot;: 120.0
-    }
-  ],
-  &quot;sketches&quot;: [],
-  &quot;timeline&quot;: [
-    {
-      &quot;error&quot;: null,
-      &quot;id&quot;: 3,
-      &quot;ms&quot;: 2.350018,
-      &quot;name&quot;: &quot;Box1&quot;,
-      &quot;rolled_back&quot;: false,
-      &quot;suppressed&quot;: false,
-      &quot;type&quot;: &quot;BoxFeature&quot;,
-      &quot;warning&quot;: null
-    }
-  ],
-  &quot;total&quot;: {
-    &quot;area_mm2&quot;: 3200.0,
-    &quot;edges&quot;: 24,
-    &quot;faces&quot;: 12,
-    &quot;mass_g&quot;: 10.32,
-    &quot;open_bodies_skipped&quot;: 0,
-    &quot;vertices&quot;: 16,
-    &quot;volume_mm3&quot;: 8000.0
-  }
-}</code></pre></details>
-  <h3>Durable raw evidence</h3>
-  <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
-</section>
-<section class="notice">
-  <strong>Current visual verification: not required.</strong>
-  This model has no current <code>verification/visual.json</code> policy. The durable isometric image above is a current presentation preview, not a visual PASS claim.
-</section>
 
-
-  <section class="panel">
-  <h2>Independent references</h2>
-  <p>Each source is shown from the current Forge tree beside the accepted durable result for that independent implementation.</p>
-  <div class="qualification-reference-list"><section class="qualification-reference-row">
-  <div class="qualification-reference-source">
-    <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/ad36b062203b7de2b20c7fa2d11c99dfc50a1340/examples/parametric-placement-pair/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parametric-placement-pair/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
-    <pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for a symmetric pair of translated blocks.&quot;&quot;&quot;
-
-from pythonscad import *
-
-left = cube([20, 20, 10], center=True).left(40)
-right = cube([20, 20, 10], center=True).right(40)
-model = left | right
-</code></pre>
-    <details class="qualification-detail-block">
-      <summary>Expected versus measured geometry</summary>
-      <pre><code>{
-  &quot;bounds&quot;: {
-    &quot;actual_max&quot;: [
-      50.0,
-      10.0,
-      5.0
-    ],
-    &quot;actual_min&quot;: [
-      -50.0,
-      -10.0,
-      -5.0
-    ],
-    &quot;expected_max&quot;: [
-      50.0,
-      10.0,
-      5.0
-    ],
-    &quot;expected_min&quot;: [
-      -50.0,
-      -10.0,
-      -5.0
-    ],
-    &quot;max_delta_mm&quot;: 0.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm&quot;: 0.5
-  },
-  &quot;volume&quot;: {
-    &quot;actual_mm3&quot;: 8000.0,
-    &quot;delta_mm3&quot;: 0.0,
-    &quot;expected_mm3&quot;: 8000.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm3&quot;: 2.0
-  },
-  &quot;watertight&quot;: {
-    &quot;actual&quot;: true,
-    &quot;expected&quot;: true,
-    &quot;pass&quot;: true
-  }
-}</code></pre>
-    </details>
-  </div>
-  <div class="qualification-reference-output">
-    <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/pythonscad/references/parametric-placement-pair/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/pythonscad/references/parametric-placement-pair/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
-      </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/pythonscad/references/parametric-placement-pair/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/pythonscad/references/parametric-placement-pair/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/pythonscad/references/parametric-placement-pair/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
-    </figure>
-  </div>
-</section>
-<section class="qualification-reference-row">
-  <div class="qualification-reference-source">
-    <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/ad36b062203b7de2b20c7fa2d11c99dfc50a1340/examples/parametric-placement-pair/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parametric-placement-pair/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
-    <pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for a symmetric pair of translated blocks.&quot;&quot;&quot;
-
-from pybosl2 import cuboid
-
-left = cuboid([20, 20, 10]).left(40)
-right = cuboid([20, 20, 10]).right(40)
-model = left | right
-</code></pre>
-    <details class="qualification-detail-block">
-      <summary>Expected versus measured geometry</summary>
-      <pre><code>{
-  &quot;bounds&quot;: {
-    &quot;actual_max&quot;: [
-      50.0,
-      10.0,
-      5.0
-    ],
-    &quot;actual_min&quot;: [
-      -50.0,
-      -10.0,
-      -5.0
-    ],
-    &quot;expected_max&quot;: [
-      50.0,
-      10.0,
-      5.0
-    ],
-    &quot;expected_min&quot;: [
-      -50.0,
-      -10.0,
-      -5.0
-    ],
-    &quot;max_delta_mm&quot;: 0.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm&quot;: 0.5
-  },
-  &quot;volume&quot;: {
-    &quot;actual_mm3&quot;: 8000.0,
-    &quot;delta_mm3&quot;: 0.0,
-    &quot;expected_mm3&quot;: 8000.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm3&quot;: 2.0
-  },
-  &quot;watertight&quot;: {
-    &quot;actual&quot;: true,
-    &quot;expected&quot;: true,
-    &quot;pass&quot;: true
-  }
-}</code></pre>
-    </details>
-  </div>
-  <div class="qualification-reference-output">
-    <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/pybosl2/references/parametric-placement-pair/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/pybosl2/references/parametric-placement-pair/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
-      </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/pybosl2/references/parametric-placement-pair/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/pybosl2/references/parametric-placement-pair/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/pybosl2/references/parametric-placement-pair/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
-    </figure>
-  </div>
-</section>
-<section class="qualification-reference-row">
-  <div class="qualification-reference-source">
-    <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/ad36b062203b7de2b20c7fa2d11c99dfc50a1340/examples/parametric-placement-pair/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parametric-placement-pair/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
-    <pre><code>&quot;&quot;&quot;CadQuery reference for two independently and symmetrically placed blocks.&quot;&quot;&quot;
-
-import cadquery as cq
-
-block = cq.Solid.makeBox(
-    20,
-    20,
-    10,
-    cq.Vector(-10, -10, -5),
-)
-
-model = cq.Assembly()
-model.add(block, name=&quot;left&quot;, loc=cq.Location((-40, 0, 0)))
-model.add(block, name=&quot;right&quot;, loc=cq.Location((40, 0, 0)))
-</code></pre>
-    <details class="qualification-detail-block">
-      <summary>Expected versus measured geometry</summary>
-      <pre><code>{
-  &quot;bounds&quot;: {
-    &quot;actual_max&quot;: [
-      50.0,
-      10.0,
-      5.0
-    ],
-    &quot;actual_min&quot;: [
-      -50.0,
-      -10.0,
-      -5.0
-    ],
-    &quot;expected_max&quot;: [
-      50.0,
-      10.0,
-      5.0
-    ],
-    &quot;expected_min&quot;: [
-      -50.0,
-      -10.0,
-      -5.0
-    ],
-    &quot;max_delta_mm&quot;: 0.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm&quot;: 0.5
-  },
-  &quot;volume&quot;: {
-    &quot;actual_mm3&quot;: 8000.0,
-    &quot;delta_mm3&quot;: 0.0,
-    &quot;expected_mm3&quot;: 8000.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm3&quot;: 2.0
-  },
-  &quot;watertight&quot;: {
-    &quot;actual&quot;: true,
-    &quot;expected&quot;: true,
-    &quot;pass&quot;: true
-  }
-}</code></pre>
-    </details>
-  </div>
-  <div class="qualification-reference-output">
-    <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/cadquery/references/parametric-placement-pair/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/cadquery/references/parametric-placement-pair/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
-      </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/cadquery/references/parametric-placement-pair/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/cadquery/references/parametric-placement-pair/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/cadquery/references/parametric-placement-pair/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
-    </figure>
-  </div>
-</section>
-<section class="qualification-reference-row">
-  <div class="qualification-reference-source">
-    <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/ad36b062203b7de2b20c7fa2d11c99dfc50a1340/examples/parametric-placement-pair/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parametric-placement-pair/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
-    <pre><code>&quot;&quot;&quot;build123d reference: a symmetric pair of translated blocks.&quot;&quot;&quot;
-from build123d import Align, Box, BuildPart, Locations
-
-center = (Align.CENTER, Align.CENTER, Align.CENTER)
-
-with BuildPart() as model:
-    with Locations((-40, 0, 0), (40, 0, 0)):
-        Box(20, 20, 10, align=center)
-</code></pre>
-    <details class="qualification-detail-block">
-      <summary>Expected versus measured geometry</summary>
-      <pre><code>{
-  &quot;bounds&quot;: {
-    &quot;actual_max&quot;: [
-      50.0,
-      10.0,
-      5.0
-    ],
-    &quot;actual_min&quot;: [
-      -50.0,
-      -10.0,
-      -5.0
-    ],
-    &quot;expected_max&quot;: [
-      50.0,
-      10.0,
-      5.0
-    ],
-    &quot;expected_min&quot;: [
-      -50.0,
-      -10.0,
-      -5.0
-    ],
-    &quot;max_delta_mm&quot;: 0.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm&quot;: 0.5
-  },
-  &quot;volume&quot;: {
-    &quot;actual_mm3&quot;: 8000.0,
-    &quot;delta_mm3&quot;: 0.0,
-    &quot;expected_mm3&quot;: 8000.0,
-    &quot;pass&quot;: true,
-    &quot;tolerance_mm3&quot;: 2.0
-  },
-  &quot;watertight&quot;: {
-    &quot;actual&quot;: true,
-    &quot;expected&quot;: true,
-    &quot;pass&quot;: true
-  }
-}</code></pre>
-    </details>
-  </div>
-  <div class="qualification-reference-output">
-    <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/build123d/references/parametric-placement-pair/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/build123d/references/parametric-placement-pair/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
-      </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/build123d/references/parametric-placement-pair/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/build123d/references/parametric-placement-pair/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/c4451e1c95556db2a519a99d4677a16a8019bbb7/main/examples/parametric-placement-pair/build123d/references/parametric-placement-pair/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
-    </figure>
-  </div>
-</section>
-</div>
-</section>
-
-  <section class="panel">
-    <h2>Engineering explanation</h2>
-    <h3>Forge API</h3>
-    <p><code>left = Block(placement=Placement(x=-half(self.spacing))); right = left.copy(placement=Placement(x=half(self.spacing)))</code></p>
-    <h3>Forge model</h3>
-    <p>Two occurrences share one Block definition. Their absolute X placements are the negative and positive halves of the same parent parameter.</p>
-    <h3>How Forge builds it in SolidCraft</h3>
-    <p>Forge publishes spacing, creates one Block definition, binds both real occurrence IDs, and emits two occurrence.move expressions using -(spacing / 2) and spacing / 2. No predicted occurrence name and no placement joint is used.</p>
-    <h3>SolidCraft result</h3>
-    <p>With spacing=80 mm the two 20 mm blocks are centred at X=-40 and X=+40.</p>
     <h3>Saved-design test</h3>
     <p>Change spacing from 80 to 120 mm in the saved design; without rerunning Python the two centres must move symmetrically to X=-60 and X=+60.</p>
+
     <h3>Geometry evidence</h3>
     <p><strong>Are outer bounds sufficient?</strong> yes</p>
     <p>The two centred disjoint Block envelopes prove the symmetric baseline and mutation positions. Saved-design recompute proves both native placement expressions remain tied to the same spacing parameter.</p>
-    <h3>Reference notes</h3>
+
+    <h3>Raw test files</h3>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/4c39a109727a43c9457bd1c171937975a3ad766c/main/examples/parametric-placement-pair/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+
+    <h3>Reference documentation</h3>
     <ul><li><strong>SolidCraft</strong> — Both occurrence translations remain parameter-referencing expressed moves in the saved design.</li><li><strong>CadQuery</strong> — Independent Assembly Locations provide a comparison for symmetric occurrence placement without constraints.</li><li><strong>PythonSCAD</strong> — Symmetric translate(-spacing/2) and translate(spacing/2) express the same visible intent.</li><li><strong>pyBOSL2</strong> — Independent translated blocks verify the baseline symmetric geometry.</li><li><strong>build123d</strong> — Independent Locations verify the two baseline centers.</li></ul>
-  </section>
+
+    <p class="source-stamp">
+      Site source <code>5b0fa00227de30940d35ccbf059cff1924afe116</code> · accepted model evidence source
+      <code>ad36b062203b7de2b20c7fa2d11c99dfc50a1340</code> · durable build <code>4c39a109727a43c9457bd1c171937975a3ad766c</code>
+    </p>
+  </div>
+</details>
+
+
   <section class="panel">
     <h2>Sources of truth</h2>
     <p>
@@ -671,7 +693,7 @@ with BuildPart() as model:
     </p>
     <p>
       <a href="../../examples/parametric-placement-pair/">Open the example →</a>
-      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/8fcee42c7531414ac29cc5123eaa7ab54d7f2039/examples/parametric-placement-pair/verification/verify.py">Open verification/verify.py →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/5b0fa00227de30940d35ccbf059cff1924afe116/examples/parametric-placement-pair/verification/verify.py">Open verification/verify.py →</a>
     </p>
   </section>
 </main>
