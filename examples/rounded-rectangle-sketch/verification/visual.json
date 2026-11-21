@@ -36,7 +36,32 @@
     "verified_during_solidcraft_0_42_0_qualification": true
   },
   "expected_boxes": [
-    {}
+    {
+      "label": "Base plate",
+      "minimum": [
+        -40,
+        -30,
+        0
+      ],
+      "maximum": [
+        40,
+        30,
+        5
+      ]
+    },
+    {
+      "label": "Rounded pad",
+      "minimum": [
+        -20,
+        -15,
+        5
+      ],
+      "maximum": [
+        20,
+        15,
+        13
+      ]
+    }
   ],
   "expected_features": []
 }
