@@ -34,6 +34,21 @@ Voor iedere actieve repo:
 8. Eén logische wijziging = één issue, branch en PR.
 9. Na merge/release het plan opnieuw actualiseren.
 
+Werk niet onnodig serieel:
+
+- `dev-cad` en `dev-ci` zijn onafhankelijke werkstromen en mogen parallel
+  vooruitgaan;
+- wacht alleen op een workflow als de volgende stap werkelijk van die uitslag
+  afhangt;
+- gedeelde dependency-releases, owner-repository handoffs en promoties naar
+  `main` blijven echte synchronisatiepunten;
+- repositorybrede governance die beide lanes gelijk raakt mag via een
+  kortlevende branch rechtstreeks naar `main`;
+- **iedere PR naar `main` wordt squash-merged**, inclusief
+  `promote/dev-cad` / `promote/dev-ci`;
+- synchroniseer na promotie `main` terug naar beide dev-lanes; eventuele
+  normale mergecommits horen in dev-history en niet in `main`.
+
 Repositorygrenzen:
 
 - Generieke CAD-CI-logica hoort in `lib.py.cad.ci`.
