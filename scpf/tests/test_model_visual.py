@@ -235,6 +235,62 @@ class ModelVisualTests(unittest.TestCase):
             "missing",
         )
 
+    def test_every_active_model_owns_approved_visual_policy(self):
+        active = sorted(
+            path.parent.parent.name
+            for path in (ROOT / "examples").glob(
+                "*/verification/verify.py"
+            )
+        )
+        visual = sorted(
+            path.parent.parent.name
+            for path in (ROOT / "examples").glob(
+                "*/verification/visual.json"
+            )
+        )
+
+        self.assertEqual(len(active), 36)
+        self.assertEqual(visual, active)
+
+        for slug in active:
+            with self.subTest(slug=slug):
+                policy_path = (
+                    ROOT / "examples" / slug / "verification" / "visual.json"
+                )
+                policy = self.visual.load_visual_policy(policy_path)
+                self.assertEqual(
+                    tuple(policy["views"]),
+                    ("front", "right", "iso"),
+                )
+                self.assertTrue(policy["expected_views"])
+                self.assertEqual(
+                    policy["baseline_provenance"]["approval"],
+                    "approved",
+                )
+                self.assertTrue(policy["expected_boxes"])
+
+                for view in policy["views"].values():
+                    baseline = view.get("baseline")
+                    payload = view.get("baseline_payload")
+                    self.assertNotEqual(bool(baseline), bool(payload))
+                    if baseline:
+                        path = policy_path.parent / baseline
+                        self.assertTrue(path.is_file(), path)
+                        self.assertGreater(path.stat().st_size, 0)
+                    else:
+                        path = policy_path.parent / payload
+                        value = json.loads(
+                            path.read_text(encoding="utf-8")
+                        )
+                        self.assertEqual(value["approval"], "approved")
+                        self.assertIn(
+                            value["encoding"],
+                            ("zlib", "png"),
+                        )
+                        self.assertGreater(value["width"], 0)
+                        self.assertGreater(value["height"], 0)
+                        self.assertTrue(value["data"])
+
     def test_presentation_preview_reuses_current_iso_render(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp)
