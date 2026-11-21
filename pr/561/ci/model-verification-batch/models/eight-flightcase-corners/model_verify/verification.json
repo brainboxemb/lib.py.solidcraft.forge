@@ -1,0 +1,1146 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "823bbeb67dd6108af75d9e3eaf1674e3e579c7da5a48184f9d47f9a0c3134fa0",
+          "size": 9184
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 9,
+          "expected": 9,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 9,
+          "expected_count": 9,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "CaseBlock",
+                "max": [
+                  60.0,
+                  40.0,
+                  60.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  60.0,
+                  40.0,
+                  60.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner",
+                "max": [
+                  -40.0,
+                  -20.0,
+                  20.0
+                ],
+                "min": [
+                  -64.0,
+                  -44.0,
+                  -4.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -40.0,
+                  -20.0,
+                  20.0
+                ],
+                "min": [
+                  -64.0,
+                  -44.0,
+                  -4.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:2)",
+                "max": [
+                  64.0,
+                  -20.0,
+                  20.0
+                ],
+                "min": [
+                  40.0,
+                  -44.0,
+                  -4.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  64.0,
+                  -20.0,
+                  20.0
+                ],
+                "min": [
+                  40.0,
+                  -44.0,
+                  -4.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:3)",
+                "max": [
+                  64.0,
+                  44.0,
+                  20.0
+                ],
+                "min": [
+                  40.0,
+                  20.0,
+                  -4.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  64.0,
+                  44.0,
+                  20.0
+                ],
+                "min": [
+                  40.0,
+                  20.0,
+                  -4.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:4)",
+                "max": [
+                  -40.0,
+                  44.0,
+                  20.0
+                ],
+                "min": [
+                  -64.0,
+                  19.999999999999996,
+                  -4.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -40.0,
+                  44.0,
+                  20.0
+                ],
+                "min": [
+                  -64.0,
+                  20.0,
+                  -4.0
+                ]
+              },
+              "max_delta": 3.552713678800501e-15
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:5)",
+                "max": [
+                  -40.0,
+                  -20.000000000000004,
+                  64.0
+                ],
+                "min": [
+                  -64.0,
+                  -44.00000000000001,
+                  40.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -40.0,
+                  -20.0,
+                  64.0
+                ],
+                "min": [
+                  -64.0,
+                  -44.0,
+                  40.0
+                ]
+              },
+              "max_delta": 7.105427357601002e-15
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:6)",
+                "max": [
+                  64.0,
+                  -20.0,
+                  64.0
+                ],
+                "min": [
+                  40.0,
+                  -44.0,
+                  40.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  64.0,
+                  -20.0,
+                  64.0
+                ],
+                "min": [
+                  40.0,
+                  -44.0,
+                  40.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:7)",
+                "max": [
+                  64.0,
+                  44.0,
+                  64.0
+                ],
+                "min": [
+                  40.0,
+                  20.0,
+                  40.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  64.0,
+                  44.0,
+                  64.0
+                ],
+                "min": [
+                  40.0,
+                  20.0,
+                  40.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:8)",
+                "max": [
+                  -40.0,
+                  44.0,
+                  64.0
+                ],
+                "min": [
+                  -64.0,
+                  19.999999999999996,
+                  40.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -40.0,
+                  44.0,
+                  64.0
+                ],
+                "min": [
+                  -64.0,
+                  20.0,
+                  40.0
+                ]
+              },
+              "max_delta": 3.552713678800501e-15
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "body_groups": [
+          {
+            "body_envelopes": {
+              "actual_count": 8,
+              "expected_count": 8,
+              "kind": "body_envelopes",
+              "matched_pairs": [
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner",
+                    "max": [
+                      -40.0,
+                      -20.0,
+                      20.0
+                    ],
+                    "min": [
+                      -64.0,
+                      -44.0,
+                      -4.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      -40.0,
+                      -20.0,
+                      20.0
+                    ],
+                    "min": [
+                      -64.0,
+                      -44.0,
+                      -4.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:2)",
+                    "max": [
+                      64.0,
+                      -20.0,
+                      20.0
+                    ],
+                    "min": [
+                      40.0,
+                      -44.0,
+                      -4.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      64.0,
+                      -20.0,
+                      20.0
+                    ],
+                    "min": [
+                      40.0,
+                      -44.0,
+                      -4.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:3)",
+                    "max": [
+                      64.0,
+                      44.0,
+                      20.0
+                    ],
+                    "min": [
+                      40.0,
+                      20.0,
+                      -4.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      64.0,
+                      44.0,
+                      20.0
+                    ],
+                    "min": [
+                      40.0,
+                      20.0,
+                      -4.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:4)",
+                    "max": [
+                      -40.0,
+                      44.0,
+                      20.0
+                    ],
+                    "min": [
+                      -64.0,
+                      19.999999999999996,
+                      -4.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      -40.0,
+                      44.0,
+                      20.0
+                    ],
+                    "min": [
+                      -64.0,
+                      20.0,
+                      -4.0
+                    ]
+                  },
+                  "max_delta": 3.552713678800501e-15
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:5)",
+                    "max": [
+                      -40.0,
+                      -20.000000000000004,
+                      64.0
+                    ],
+                    "min": [
+                      -64.0,
+                      -44.00000000000001,
+                      40.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      -40.0,
+                      -20.0,
+                      64.0
+                    ],
+                    "min": [
+                      -64.0,
+                      -44.0,
+                      40.0
+                    ]
+                  },
+                  "max_delta": 7.105427357601002e-15
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:6)",
+                    "max": [
+                      64.0,
+                      -20.0,
+                      64.0
+                    ],
+                    "min": [
+                      40.0,
+                      -44.0,
+                      40.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      64.0,
+                      -20.0,
+                      64.0
+                    ],
+                    "min": [
+                      40.0,
+                      -44.0,
+                      40.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:7)",
+                    "max": [
+                      64.0,
+                      44.0,
+                      64.0
+                    ],
+                    "min": [
+                      40.0,
+                      20.0,
+                      40.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      64.0,
+                      44.0,
+                      64.0
+                    ],
+                    "min": [
+                      40.0,
+                      20.0,
+                      40.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:8)",
+                    "max": [
+                      -40.0,
+                      44.0,
+                      64.0
+                    ],
+                    "min": [
+                      -64.0,
+                      19.999999999999996,
+                      40.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      -40.0,
+                      44.0,
+                      64.0
+                    ],
+                    "min": [
+                      -64.0,
+                      20.0,
+                      40.0
+                    ]
+                  },
+                  "max_delta": 3.552713678800501e-15
+                }
+              ],
+              "pass": true,
+              "tolerance": 0.001,
+              "unmatched_actual": [],
+              "unmatched_expected": []
+            },
+            "count": {
+              "actual": 8,
+              "expected": 8,
+              "label": "FlightcaseCorner body group count",
+              "pass": true
+            },
+            "matched_names": [
+              "FlightcaseCorner",
+              "FlightcaseCorner (FlightcaseCorner:2)",
+              "FlightcaseCorner (FlightcaseCorner:3)",
+              "FlightcaseCorner (FlightcaseCorner:4)",
+              "FlightcaseCorner (FlightcaseCorner:5)",
+              "FlightcaseCorner (FlightcaseCorner:6)",
+              "FlightcaseCorner (FlightcaseCorner:7)",
+              "FlightcaseCorner (FlightcaseCorner:8)"
+            ],
+            "name_prefix": "FlightcaseCorner"
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/size_160x120x90/model.sc",
+          "sha256": "255bb920869433e2ee33ab4255abc346ec38265ecc74e6a0a992ef7c3a04005a",
+          "size": 22506
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/size_160x120x90/measurements.json",
+          "sha256": "8201828c0113e99cca464911b1f3f96b8ce9f64ae220cf618dbd62c9a5b6bb8b",
+          "size": 9171
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 9,
+          "expected": 9,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 9,
+          "expected_count": 9,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "CaseBlock",
+                "max": [
+                  80.0,
+                  60.0,
+                  90.0
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  80.0,
+                  60.0,
+                  90.0
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner",
+                "max": [
+                  -60.0,
+                  -40.0,
+                  20.0
+                ],
+                "min": [
+                  -84.0,
+                  -64.0,
+                  -4.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -60.0,
+                  -40.0,
+                  20.0
+                ],
+                "min": [
+                  -84.0,
+                  -64.0,
+                  -4.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:2)",
+                "max": [
+                  84.0,
+                  -40.0,
+                  20.0
+                ],
+                "min": [
+                  60.0,
+                  -64.0,
+                  -4.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  84.0,
+                  -40.0,
+                  20.0
+                ],
+                "min": [
+                  60.0,
+                  -64.0,
+                  -4.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:3)",
+                "max": [
+                  84.0,
+                  64.0,
+                  20.0
+                ],
+                "min": [
+                  60.0,
+                  40.0,
+                  -4.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  84.0,
+                  64.0,
+                  20.0
+                ],
+                "min": [
+                  60.0,
+                  40.0,
+                  -4.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:4)",
+                "max": [
+                  -60.0,
+                  64.0,
+                  20.0
+                ],
+                "min": [
+                  -84.0,
+                  40.0,
+                  -4.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -60.0,
+                  64.0,
+                  20.0
+                ],
+                "min": [
+                  -84.0,
+                  40.0,
+                  -4.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:5)",
+                "max": [
+                  -60.0,
+                  -40.0,
+                  94.0
+                ],
+                "min": [
+                  -84.0,
+                  -64.0,
+                  70.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -60.0,
+                  -40.0,
+                  94.0
+                ],
+                "min": [
+                  -84.0,
+                  -64.0,
+                  70.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:6)",
+                "max": [
+                  84.0,
+                  -40.0,
+                  94.0
+                ],
+                "min": [
+                  60.0,
+                  -64.0,
+                  70.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  84.0,
+                  -40.0,
+                  94.0
+                ],
+                "min": [
+                  60.0,
+                  -64.0,
+                  70.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:7)",
+                "max": [
+                  84.0,
+                  64.0,
+                  94.0
+                ],
+                "min": [
+                  60.0,
+                  40.0,
+                  70.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  84.0,
+                  64.0,
+                  94.0
+                ],
+                "min": [
+                  60.0,
+                  40.0,
+                  70.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FlightcaseCorner (FlightcaseCorner:8)",
+                "max": [
+                  -60.0,
+                  64.0,
+                  94.0
+                ],
+                "min": [
+                  -84.0,
+                  40.0,
+                  70.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -60.0,
+                  64.0,
+                  94.0
+                ],
+                "min": [
+                  -84.0,
+                  40.0,
+                  70.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "body_groups": [
+          {
+            "body_envelopes": {
+              "actual_count": 8,
+              "expected_count": 8,
+              "kind": "body_envelopes",
+              "matched_pairs": [
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner",
+                    "max": [
+                      -60.0,
+                      -40.0,
+                      20.0
+                    ],
+                    "min": [
+                      -84.0,
+                      -64.0,
+                      -4.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      -60.0,
+                      -40.0,
+                      20.0
+                    ],
+                    "min": [
+                      -84.0,
+                      -64.0,
+                      -4.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:2)",
+                    "max": [
+                      84.0,
+                      -40.0,
+                      20.0
+                    ],
+                    "min": [
+                      60.0,
+                      -64.0,
+                      -4.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      84.0,
+                      -40.0,
+                      20.0
+                    ],
+                    "min": [
+                      60.0,
+                      -64.0,
+                      -4.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:3)",
+                    "max": [
+                      84.0,
+                      64.0,
+                      20.0
+                    ],
+                    "min": [
+                      60.0,
+                      40.0,
+                      -4.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      84.0,
+                      64.0,
+                      20.0
+                    ],
+                    "min": [
+                      60.0,
+                      40.0,
+                      -4.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:4)",
+                    "max": [
+                      -60.0,
+                      64.0,
+                      20.0
+                    ],
+                    "min": [
+                      -84.0,
+                      40.0,
+                      -4.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      -60.0,
+                      64.0,
+                      20.0
+                    ],
+                    "min": [
+                      -84.0,
+                      40.0,
+                      -4.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:5)",
+                    "max": [
+                      -60.0,
+                      -40.0,
+                      94.0
+                    ],
+                    "min": [
+                      -84.0,
+                      -64.0,
+                      70.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      -60.0,
+                      -40.0,
+                      94.0
+                    ],
+                    "min": [
+                      -84.0,
+                      -64.0,
+                      70.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:6)",
+                    "max": [
+                      84.0,
+                      -40.0,
+                      94.0
+                    ],
+                    "min": [
+                      60.0,
+                      -64.0,
+                      70.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      84.0,
+                      -40.0,
+                      94.0
+                    ],
+                    "min": [
+                      60.0,
+                      -64.0,
+                      70.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:7)",
+                    "max": [
+                      84.0,
+                      64.0,
+                      94.0
+                    ],
+                    "min": [
+                      60.0,
+                      40.0,
+                      70.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      84.0,
+                      64.0,
+                      94.0
+                    ],
+                    "min": [
+                      60.0,
+                      40.0,
+                      70.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "FlightcaseCorner (FlightcaseCorner:8)",
+                    "max": [
+                      -60.0,
+                      64.0,
+                      94.0
+                    ],
+                    "min": [
+                      -84.0,
+                      40.0,
+                      70.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      -60.0,
+                      64.0,
+                      94.0
+                    ],
+                    "min": [
+                      -84.0,
+                      40.0,
+                      70.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                }
+              ],
+              "pass": true,
+              "tolerance": 0.001,
+              "unmatched_actual": [],
+              "unmatched_expected": []
+            },
+            "count": {
+              "actual": 8,
+              "expected": 8,
+              "label": "FlightcaseCorner body group count",
+              "pass": true
+            },
+            "matched_names": [
+              "FlightcaseCorner",
+              "FlightcaseCorner (FlightcaseCorner:2)",
+              "FlightcaseCorner (FlightcaseCorner:3)",
+              "FlightcaseCorner (FlightcaseCorner:4)",
+              "FlightcaseCorner (FlightcaseCorner:5)",
+              "FlightcaseCorner (FlightcaseCorner:6)",
+              "FlightcaseCorner (FlightcaseCorner:7)",
+              "FlightcaseCorner (FlightcaseCorner:8)"
+            ],
+            "name_prefix": "FlightcaseCorner"
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "case_depth": 120.0,
+            "case_height": 90.0,
+            "case_width": 160.0
+          },
+          "expected": {
+            "case_depth": 120.0,
+            "case_height": 90.0,
+            "case_width": 160.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_size_160x120x90",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/eight-flightcase-corners/model_verify/native/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "eight-flightcase-corners"
+}

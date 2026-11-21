@@ -1,0 +1,33 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "2bcb2cf7268bbb7c03cba5021f6fc1d1e77edaca6fdb5fe5151e3b53bdb62ebb",
+  "duration_seconds": 0.14,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T00:44:31.906Z",
+  "item": "primitive-csg",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "model_verify": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "652fe3b8236ad9da5894666b63caea832969d732ca5baee411efa7df63c414d9"
+    },
+    "solidcraft.json": {
+      "kind": "file",
+      "mode": 420,
+      "sha256": "410fdd5812cd3fc13cdc19887bd269596cacf8dfa4ccf291675956f02e837ce5"
+    }
+  },
+  "run_finished_at": "2026-11-21T00:45:41.923Z",
+  "run_started_at": "2026-11-21T00:43:30.422Z",
+  "schema": 3,
+  "started_at": "2026-11-21T00:44:31.861Z",
+  "status": "pass",
+  "step": "model_verify",
+  "target_spec_digest": "aa70718ef815e2377c442b3c1206c21c6ad0f61111c9b747b459a49f13430d6e",
+  "timeout_seconds": null
+}

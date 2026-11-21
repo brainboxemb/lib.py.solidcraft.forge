@@ -1,0 +1,90 @@
+[
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "Panel",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Panel"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Panel"
+    ],
+    "feature": 3,
+    "ms": 2.3946039999999997,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 1,
+    "occurrence": 4
+  },
+  {
+    "occurrence": 2,
+    "pending": false,
+    "transform": [
+      [
+        6.123233995736766e-17,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        -1.0,
+        6.123233995736766e-17,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        -40.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  {
+    "occurrence": 4,
+    "pending": false,
+    "transform": [
+      [
+        6.123233995736766e-17,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        -1.0,
+        6.123233995736766e-17,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        40.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "b1ded73906afb9a9ff317a7fc06621491a34cb9fea1dd6742b7ac83954d30bda",
+  "duration_seconds": 0.125,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T00:45:41.031Z",
+  "item": "examples-rotated-copy-placement-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "526a0c83da64adc588b290c519720cea33113613006517297878f179f4cc6780"
+    }
+  },
+  "run_finished_at": "2026-11-21T00:45:41.923Z",
+  "run_started_at": "2026-11-21T00:43:30.422Z",
+  "schema": 3,
+  "started_at": "2026-11-21T00:45:40.986Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "dadf7c99d92e83e47e64bcb6998cbd2b5d0d7aacf503dd5a561c7ef5e58aa45d",
+  "timeout_seconds": null
+}
