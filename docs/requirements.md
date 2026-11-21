@@ -472,8 +472,12 @@ Approved baselines are versioned model data. A CI render must never replace or
 approve its own baseline.
 
 Approved historical baseline pixels may be migrated into model-local encoded
-baseline payloads without re-encoding or reapproval. The migration must retain
-the original compressed/base64 payload bytes plus source/approval provenance.
+baseline payloads without pixel re-encoding or reapproval. The migration must
+retain the exact decoded compressed/image baseline bytes plus source/approval
+provenance. Non-canonical base64 text padding may be normalized when needed by
+the released decoder, provided the decoded bytes remain identical and the
+normalization is recorded in model-local provenance.
+
 The removed central historical baseline manifest is migration evidence only and
 must not become a runtime registry.
 
