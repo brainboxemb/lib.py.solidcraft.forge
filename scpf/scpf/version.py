@@ -25,10 +25,14 @@ def package_version():
         return "unknown"
 
 
-def forge_revision():
+def forge_revision(start=None):
     """Return the exact checkout revision when running from a Git checkout."""
 
-    package_dir = Path(__file__).resolve().parent
+    package_dir = (
+        Path(__file__).resolve().parent
+        if start is None
+        else Path(start).resolve()
+    )
     checkout = next(
         (
             path
