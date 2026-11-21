@@ -28,17 +28,24 @@ def _source_location(exc, fallback):
         if filename:
             return Path(filename), lineno
 
+    fallback = Path(fallback).resolve()
+    source_root = fallback.parent
+    for parent in fallback.parents:
+        if parent.name == "models":
+            source_root = parent.parent
+            break
+
     location = None
     traceback = exc.__traceback__
     while traceback is not None:
         filename = Path(traceback.tb_frame.f_code.co_filename).resolve()
-        if filename != _PACKAGE_ROOT and _PACKAGE_ROOT not in filename.parents:
+        if filename == fallback or source_root in filename.parents:
             location = (filename, traceback.tb_lineno)
         traceback = traceback.tb_next
 
     if location is not None:
         return location
-    return Path(fallback).resolve(), None
+    return fallback, None
 
 
 def _debug_identity():
