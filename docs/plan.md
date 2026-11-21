@@ -218,8 +218,10 @@ not a substitute for this plan.
 
 1. [#481, blocked] Remove obsolete source branches when a supported GitHub
    branch-deletion operation becomes available.
-2. [#576, now dev-ci] Make docs-only PR validation cheap without copying the
-   generic CAD-CI planner into Forge; preserve full promotion validation.
+2. [#576, acceptance dev-ci] The pre-bootstrap classifier is merged on
+   `dev-ci` at `545f1ac66c3cecbe3b6a30b780cce4e75a288f6a`. Prove this
+   docs-only plan PR keeps the same required check green while skipping the
+   released CAD-CI action; promotion validation to `main` remains complete.
 3. [dev-cad P1] Fix #357 and #356, then continue the current model blockers
    #355, #354, #567 and #568.
 4. [#574, dev-cad P1] Restore the generic structured Raw test files block on
