@@ -39,13 +39,14 @@ class NativeSlotFamilyTests(unittest.TestCase):
                 "sketch.slot.arc_center",
             ],
         )
-        self.assertTrue(all(command["params"]["width"] == 8.0
-                            for command in slot_commands))
+        self.assertTrue(
+            all(command["params"]["width"] == "slot_width"
+                for command in slot_commands)
+        )
         self.assertEqual(slot_commands[-1]["params"]["sweep"], 120)
 
-        # The parent Box dimensions are editable Parameters. Fixed Slot-local
-        # coordinates must remain numeric instead of inheriting symbolic
-        # width/depth expressions from the attached Sketch target.
+        # Plate and Slot width are editable Parameters. Slot-local authored
+        # coordinates remain fixed numeric values in this qualification slice.
         point_keys = ("p0", "p1", "center", "end", "start", "through")
         for command in slot_commands:
             for key in point_keys:
