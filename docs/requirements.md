@@ -328,18 +328,31 @@ For pull requests:
 
 For main pushes:
 
-- the reusable CAD-CI run remains changed-path selected and must not use
-  `full_run: true`;
-- if no materialized build artifact exists, durable publication is skipped;
-- otherwise the publication job fetches the current generated `build` branch;
-- `cad-ci build update-main --base/--head` starts from the current
-  `build/main` baseline and replaces only affected processed item paths;
-- unchanged item output and manifest rows remain preserved;
-- `cad-ci publish build --scope main` publishes the updated main scope while
-  preserving all PR scopes.
+- Forge uses the exact externally accepted root action from
+  `tool.cad.ci 0.15.0`;
+- one caller-owned job and one hosted runner execute the complete main
+  lifecycle;
+- the action performs exactly one changed-path-selected `cad-ci run`; Forge
+  does not use `full_run: true`;
+- documentation/site-only selection may execute source checks but must not
+  start SolidCraft/reference CAD runtimes merely because Pages is published;
+- after the action, the same workspace and exact tool/library source stack are
+  reused without another checkout, Python setup or BrainboxEmb package install;
+- `cad-ci build fetch` materializes the current durable baseline;
+- `cad-ci build update-main --base/--head` always reconciles that baseline
+  with current processed membership, including deletion-only updates with no
+  replacement candidate;
+- `cad-ci publish build --scope main` publishes the prepared main scope while
+  preserving PR scopes and returns the immutable generated build commit;
+- Forge builds the site directly from that same `prepared-main` tree and the
+  returned build commit; it does not re-fetch the just-published build;
+- `cad-ci publish pages` publishes the complete Forge-owned site from the same
+  runner.
 
-Forge must not calculate or merge item sets itself. Base/head selection,
-build-store validation and publication remain released CAD-CI responsibilities.
+There is no Actions artifact transport and no second/third publication runner
+on the main path. Forge must not calculate or merge item sets itself. Base/head
+selection, build-store membership/deletion, generated-branch freshness and
+publication remain released CAD-CI responsibilities.
 
 
 ## Isolated reference items

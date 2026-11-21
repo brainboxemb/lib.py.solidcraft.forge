@@ -146,8 +146,8 @@ Forge item ci.yml
 Forge contains no helper that interprets `process`, no duplicate changed-path
 selection and no second execution policy.
 
-The staged proof is complete. All 32 historical model-verification items now
-declare `process: true` and participate in normal CAD-CI selection. Reference
+The staged proof is complete. All 36 current native model-verification items
+now declare `process: true` and participate in normal CAD-CI selection. Reference
 items remain independently selectable through their own changed paths and
 dependencies.
 
@@ -216,7 +216,7 @@ examples/<model>/ci.yml
 Forge owns only the declarative repository configuration. It does not reproduce
 the planner in Forge code or tests.
 
-All 32 historical model-verification items are active. Independent reference
+All 36 current native model-verification items are active. Independent reference
 items remain independently selected by released CAD-CI; model and reference
 execution are not collapsed into one consumer-owned scheduler.
 
@@ -1041,24 +1041,43 @@ as current evidence.
 
 ## Stable Pages publication flow
 
-Stable publication is one main-only flow:
+Stable main publication uses one caller-owned runner with exact released
+`tool.cad.ci 0.15.0`:
 
 ```text
-green Forge main
-  -> accepted build/main publication
-  -> checkout/materialize current source + immutable build branch
-  -> generate complete stable site
-  -> validate content/provenance
+push main
+  -> tool.cad.ci root action
+       -> exact source/base
+       -> exact released tool + pinned library source
+       -> one selected cad-ci run
+  -> cad-ci build fetch
+  -> cad-ci build update-main
+  -> cad-ci publish build
+       -> immutable build commit
+  -> Forge site/build.py
+       source = current Forge commit
+       evidence = same prepared-main tree
+       build commit = publication result
   -> cad-ci publish pages
   -> gh-pages stable root
 ```
 
-Forge supplies the complete generated site directory and Forge-specific
-provenance. Released CAD-CI owns all generated-branch Git/Pages publication,
-freshness and retry mechanics.
+The action leaves the exact CLI stack and materialized `build/` output in the
+same workspace. Forge therefore does not transport an Actions artifact, start a
+second publication runner, reinstall CAD-CI, or re-fetch the just-published main
+scope before site generation.
+
+Forge owns only the site generator, content interpretation and provenance
+composition. Released CAD-CI owns selection, SCons execution, durable-store
+membership/deletion, generated-branch publication, source freshness and retry.
+
+The PR verification/publication path remains the released
+`reusable-pr.yml` workflow. Stable-site PR validation remains a separate
+read-only presentation check; #558 does not duplicate the generic PR lifecycle
+inside Forge merely to combine that check.
 
 #497 deliberately does not add PR Pages scopes. #366 owns the later generic
-preview/cleanup lifecycle.
+preview/cleanup lifecycle and live cut-over.
 
 
 ## Verification page source-comparison composition

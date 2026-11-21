@@ -15,65 +15,39 @@ jobs:
     permissions:
       contents: write
       packages: read
-    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-pr.yml@4c1016d594368146fb9c16602f01c158e85d9afb
+    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-pr.yml@9f37be0af5c4076f676b6407857c5905e11a47d6
 
   cad_ci_main:
     if: github.event_name == 'push'
     permissions:
-      contents: read
-      packages: read
-    uses: brainboxemb/tool.cad.ci/.github/workflows/reusable-ci.yml@4c1016d594368146fb9c16602f01c158e85d9afb
-    with:
-      upload_build: true
-      build_artifact_name: forge-cad-ci-main-build
-
-  publish_main_build:
-    needs: cad_ci_main
-    if: >-
-      github.event_name == 'push' &&
-      needs.cad_ci_main.outputs.build_artifact_name != ''
-    permissions:
       contents: write
+      packages: read
     runs-on: ubuntu-latest
+    concurrency:
+      group: forge-main-${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     steps:
-      - name: Checkout Forge main source
-        uses: actions/checkout@v4
+      - name: Run exact released CAD CI stack
+        uses: brainboxemb/tool.cad.ci@9f37be0af5c4076f676b6407857c5905e11a47d6
         with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0
-
-      - name: Checkout accepted CAD CI tool
-        uses: actions/checkout@v4
-        with:
-          repository: brainboxemb/tool.cad.ci
-          ref: 4c1016d594368146fb9c16602f01c158e85d9afb
-          path: .cad-ci-tool
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install accepted CAD CI tool
-        run: python -m pip install ./.cad-ci-tool
-
-      - name: Download verified CAD CI output
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.cad_ci_main.outputs.build_artifact_name }}
-          path: candidate-build
+          source_sha: ${{ github.sha }}
+          base_sha: ${{ github.event.before }}
+          github_token: ${{ github.token }}
 
       - name: Fetch current durable build branch
-        run: cad-ci build fetch --repo . --out generated-build
+        run: >-
+          python -m cad_ci_tool build fetch
+          --repo .
+          --out generated-build
 
       - name: Prepare affected main build update
         env:
           BASE_SHA: ${{ github.event.before }}
           SOURCE_SHA: ${{ github.sha }}
         run: |
-          cad-ci build update-main \
+          python -m cad_ci_tool build update-main \
             --repo . \
-            --candidate-root candidate-build \
+            --candidate-root build \
             --main generated-build/main \
             --out prepared-main \
             --source-commit "$SOURCE_SHA" \
@@ -81,19 +55,61 @@ jobs:
             --head "$SOURCE_SHA"
 
       - name: Publish affected main build update
+        id: durable_build
         env:
           SOURCE_REF: ${{ github.ref_name }}
           SOURCE_SHA: ${{ github.sha }}
         run: |
-          cad-ci publish build \
+          BUILD_COMMIT="$(
+            python -m cad_ci_tool publish build \
+              --repo . \
+              --candidate prepared-main \
+              --scope main \
+              --message "build: main $SOURCE_SHA affected items" \
+              --source-ref "$SOURCE_REF" \
+              --expected-source "$SOURCE_SHA"
+          )"
+          test -n "$BUILD_COMMIT"
+          echo "commit=$BUILD_COMMIT" >> "$GITHUB_OUTPUT"
+
+      - name: Build stable Forge Pages
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          BUILD_COMMIT: ${{ steps.durable_build.outputs.commit }}
+        run: |
+          python site/build.py \
+            --out generated-site \
+            --source-sha "$SOURCE_SHA" \
+            --build-main prepared-main \
+            --build-commit "$BUILD_COMMIT"
+          test -s generated-site/provenance.json
+          test -s generated-site/verification/manifest.json
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          value = json.loads(
+              Path("generated-site/provenance.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          assert value["source_commit"] == os.environ["SOURCE_SHA"]
+          assert value["build_commit"] == os.environ["BUILD_COMMIT"]
+          assert value["build_scope"] == "main"
+          PY
+
+      - name: Publish stable Pages
+        env:
+          SOURCE_REF: ${{ github.ref_name }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          python -m cad_ci_tool publish pages \
             --repo . \
-            --candidate prepared-main \
-            --scope main \
-            --message "build: main $SOURCE_SHA affected items" \
+            --site generated-site \
+            --message "pages: stable $SOURCE_SHA" \
             --source-ref "$SOURCE_REF" \
             --expected-source "$SOURCE_SHA"
-
-
 
   validate_stable_pages_pr:
     needs: cad_ci_pr
@@ -115,7 +131,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: brainboxemb/tool.cad.ci
-          ref: 4c1016d594368146fb9c16602f01c158e85d9afb
+          ref: 9f37be0af5c4076f676b6407857c5905e11a47d6
           path: .cad-ci-tool
 
       - name: Set up Python
@@ -137,9 +153,14 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           if [ -d "generated-build/pr/$PR_NUMBER" ]; then
-            cad-ci build resolve               --main generated-build/main               --overlay "generated-build/pr/$PR_NUMBER"               --out resolved-build-main
+            cad-ci build resolve \
+              --main generated-build/main \
+              --overlay "generated-build/pr/$PR_NUMBER" \
+              --out resolved-build-main
           else
-            cad-ci build resolve               --main generated-build/main               --out resolved-build-main
+            cad-ci build resolve \
+              --main generated-build/main \
+              --out resolved-build-main
           fi
 
       - name: Validate complete stable site generation
@@ -147,7 +168,11 @@ jobs:
           SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
           BUILD_COMMIT: ${{ steps.durable_build.outputs.commit }}
         run: |
-          python site/build.py             --out generated-site             --source-sha "$SOURCE_SHA"             --build-main resolved-build-main             --build-commit "$BUILD_COMMIT"
+          python site/build.py \
+            --out generated-site \
+            --source-sha "$SOURCE_SHA" \
+            --build-main resolved-build-main \
+            --build-commit "$BUILD_COMMIT"
           test -s generated-site/provenance.json
           test -s generated-site/verification/manifest.json
           python - <<'PY'
@@ -164,51 +189,3 @@ jobs:
           assert value["build_commit"] == os.environ["BUILD_COMMIT"]
           assert value["build_scope"] == "main"
           PY
-
-  publish_stable_pages:
-    needs: publish_main_build
-    if: github.event_name == 'push'
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Forge main source
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0
-
-      - name: Checkout accepted CAD CI tool
-        uses: actions/checkout@v4
-        with:
-          repository: brainboxemb/tool.cad.ci
-          ref: 4c1016d594368146fb9c16602f01c158e85d9afb
-          path: .cad-ci-tool
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install accepted CAD CI tool
-        run: python -m pip install ./.cad-ci-tool
-
-      - name: Fetch authoritative durable build branch
-        id: durable_build
-        run: |
-          BUILD_COMMIT="$(cad-ci build fetch --repo . --out generated-build)"
-          echo "commit=$BUILD_COMMIT" >> "$GITHUB_OUTPUT"
-
-      - name: Build stable Forge Pages
-        env:
-          SOURCE_SHA: ${{ github.sha }}
-          BUILD_COMMIT: ${{ steps.durable_build.outputs.commit }}
-        run: |
-          python site/build.py             --out generated-site             --source-sha "$SOURCE_SHA"             --build-main generated-build/main             --build-commit "$BUILD_COMMIT"
-
-      - name: Publish stable Pages
-        env:
-          SOURCE_REF: ${{ github.ref_name }}
-          SOURCE_SHA: ${{ github.sha }}
-        run: |
-          cad-ci publish pages             --repo .             --site generated-site             --message "pages: stable $SOURCE_SHA"             --source-ref "$SOURCE_REF"             --expected-source "$SOURCE_SHA"
