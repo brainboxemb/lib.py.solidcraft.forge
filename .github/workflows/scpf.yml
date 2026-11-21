@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize, reopened]
   push:
     branches: [main, dev-cad, dev-ci]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -81,7 +82,7 @@ jobs:
           github_token: ${{ github.token }}
 
   cad_ci_push:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
       packages: read
@@ -94,16 +95,10 @@ jobs:
         id: lane
         env:
           SOURCE_SCOPE: ${{ github.ref_name }}
-          EVENT_BEFORE: ${{ github.event.before }}
+          SOURCE_SHA: ${{ github.sha }}
         run: |
           case "$SOURCE_SCOPE" in
-            main)
-              echo "scope=main" >> "$GITHUB_OUTPUT"
-              echo "scope_exists=true" >> "$GITHUB_OUTPUT"
-              echo "full_run=false" >> "$GITHUB_OUTPUT"
-              echo "base_sha=$EVENT_BEFORE" >> "$GITHUB_OUTPUT"
-              ;;
-            dev-cad|dev-ci)
+            main|dev-cad|dev-ci)
               echo "scope=$SOURCE_SCOPE" >> "$GITHUB_OUTPUT"
               probe="$(mktemp -d)"
               git -C "$probe" init --quiet
@@ -112,15 +107,18 @@ jobs:
                  git -C "$probe" cat-file -e "FETCH_HEAD:$SOURCE_SCOPE/build.json" 2>/dev/null; then
                 git -C "$probe" show "FETCH_HEAD:$SOURCE_SCOPE/build.json" > "$probe/build.json"
                 BASE_SHA="$(
-                  python -c 'import json,re,sys; from pathlib import Path; source=json.loads(Path(sys.argv[1]).read_text(encoding="utf-8")).get("source_commit"); print(source) if isinstance(source,str) and re.fullmatch(r"[0-9a-f]{40}", source) else sys.exit("named durable scope has invalid source_commit")' "$probe/build.json"
+                  python -c 'import json,re,sys; from pathlib import Path; source=json.loads(Path(sys.argv[1]).read_text(encoding="utf-8")).get("source_commit"); print(source) if isinstance(source,str) and re.fullmatch(r"[0-9a-f]{40}", source) else sys.exit("durable scope has invalid source_commit")' "$probe/build.json"
                 )"
                 echo "scope_exists=true" >> "$GITHUB_OUTPUT"
                 echo "full_run=false" >> "$GITHUB_OUTPUT"
                 echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
+              elif [ "$SOURCE_SCOPE" = "main" ]; then
+                echo "durable main scope is missing; stable integration cannot be updated incrementally" >&2
+                exit 2
               else
                 echo "scope_exists=false" >> "$GITHUB_OUTPUT"
                 echo "full_run=true" >> "$GITHUB_OUTPUT"
-                echo "base_sha=$EVENT_BEFORE" >> "$GITHUB_OUTPUT"
+                echo "base_sha=$SOURCE_SHA" >> "$GITHUB_OUTPUT"
               fi
               rm -rf "$probe"
               ;;
