@@ -184,6 +184,8 @@ class CiRuntimeContractTests(unittest.TestCase):
             push,
         )
         self.assertIn('"source_commit"', push)
+        self.assertIn("python -c", push)
+        self.assertNotIn('python - "$probe/build.json" <<', push)
         self.assertIn("python -m cad_ci_tool build fetch", push)
         self.assertIn("python -m cad_ci_tool build update-main", push)
         self.assertIn("python -m cad_ci_tool build update-named", push)
