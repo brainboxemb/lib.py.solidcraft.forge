@@ -210,9 +210,13 @@ The two development lanes are intentionally independent execution tracks.
 - Repository-wide governance changes that apply equally to both lanes may use
   a short-lived branch directly against `main`; do not force them into one
   development lane merely for convenience.
-- Such direct-main governance PRs are still short-lived feature PRs and are
-  **squash-merged**. Only `promote/dev-cad` / `promote/dev-ci` promotion
-  PRs use a normal merge commit.
+- Every PR whose base is `main` is **squash-merged**, including
+  `promote/dev-cad` / `promote/dev-ci`. Stable `main` therefore receives
+  one logical commit per accepted promotion instead of importing the complete
+  dev-lane commit graph.
+- After a squash promotion, synchronize `main` back into both dev lanes.
+  A normal merge commit may be used for that synchronization because it stays
+  in development-lane history and does not pollute `main`.
 
 ## Merge and promotion policy
 
@@ -221,11 +225,13 @@ The two development lanes are intentionally independent execution tracks.
 - Promotion does **not** use the long-lived dev branch directly as the PR head.
   Create `promote/dev-cad` or `promote/dev-ci` at the current lane head.
 - Promotion PRs from that temporary branch target `main`, require a complete
-  processed validation run, and use a **normal merge commit**.
+  processed validation run, and are **squash-merged** so `main` receives one
+  logical promotion commit.
 - GitHub may auto-delete the temporary promotion head after merge; this is
   desirable and must never delete the long-lived lane.
-- After promotion, fast-forward/synchronize both long-lived dev lanes to the
-  resulting main head.
+- After promotion, synchronize both long-lived dev lanes from the resulting
+  main head. Any merge commit needed for that synchronization belongs on the
+  dev lane, never on `main`.
 - Named lane incremental selection uses the prior durable
   `build/<lane>/build.json.source_commit` as base, not
   `github.event.before`.
