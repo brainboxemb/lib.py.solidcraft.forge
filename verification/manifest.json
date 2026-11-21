@@ -1,7 +1,7 @@
 {
-  "library_commit": "f8bf0b01228b23407d9ab67462cc2afd44fe83be",
+  "library_commit": "90f0417443ae6046ee3ee909a31df299ba95bb3e",
   "evidence_source": "build/main",
-  "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2",
+  "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5",
   "cases": {
     "anchor-topology-mutation": {
       "title": "Explicit topology pick follows parent resize",
@@ -10,7 +10,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "anchored-holes": {
       "title": "Face-relative hole with native pattern",
@@ -19,7 +19,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "assembly-decorator": {
       "title": "Imported @assembly subassembly",
@@ -28,7 +28,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "assembly-owned-anchor": {
       "title": "Assembly-owned named anchor",
@@ -37,7 +37,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "attach-angle": {
       "title": "Native attachment clocking angle",
@@ -46,7 +46,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "bracket": {
       "title": "Minimal L-profile",
@@ -55,7 +55,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "circle-negative-extrude": {
       "title": "Negative circle profile extrusion",
@@ -64,7 +64,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "circular-feature-pattern": {
       "title": "Native circular feature pattern",
@@ -73,7 +73,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "components": {
       "title": "Reuse one component definition in two placements",
@@ -82,7 +82,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "corner-anchor": {
       "title": "Topology-backed corner anchor",
@@ -91,7 +91,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "eight-corner-brackets": {
       "title": "Eight vertical L-profiles: two per side corner",
@@ -100,7 +100,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "eight-flightcase-corners": {
       "title": "Eight flightcase corner protectors",
@@ -109,7 +109,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "four-corner-l": {
       "title": "Four centred vertical L-profiles",
@@ -118,7 +118,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "group-hierarchy": {
       "title": "Named native group hierarchy",
@@ -127,7 +127,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "hole-family": {
       "title": "Native Hole family",
@@ -136,7 +136,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "parameter-scope": {
       "title": "Explicit component parameters and shared dependencies",
@@ -145,7 +145,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "parametric-anchor": {
       "title": "Face anchor follows parent geometry",
@@ -154,7 +154,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "parametric-attach": {
       "title": "Editable distance between attached components",
@@ -163,7 +163,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "parametric-offset": {
       "title": "Editable local offset at an attachment",
@@ -172,7 +172,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "parent-derived-child-size": {
       "title": "Child dimensions derived from parent parameters",
@@ -181,7 +181,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "primitive-csg": {
       "title": "Primitive CSG",
@@ -190,7 +190,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "rectangular-pattern": {
       "title": "Native rectangular feature pattern",
@@ -199,7 +199,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "repeated-parent-attachments": {
       "title": "Attachments on repeated parent occurrences",
@@ -208,7 +208,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "round-top-sketch": {
       "title": "TOP Sketch on circular body",
@@ -217,7 +217,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "rounded-rectangle-sketch": {
       "title": "Explicit rounded-rectangle sketch pad",
@@ -226,7 +226,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "selective-profile-extrude": {
       "title": "Selective Sketch profile extrusion",
@@ -235,7 +235,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "sheet-fold": {
       "title": "Flat sheet, through hole and 90\u00b0 fold",
@@ -244,7 +244,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "simple-box": {
       "title": "Parameterized Box",
@@ -253,7 +253,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "sketch-pattern-mirror": {
       "title": "Associative sketch pattern and mirror",
@@ -262,7 +262,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "slot-family": {
       "title": "Native sketch Slot family",
@@ -271,7 +271,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "top-sketch-after-chamfer": {
       "title": "TOP Sketch after chamfer",
@@ -280,7 +280,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     },
     "xz-anchor": {
       "title": "Anchors on XZ-profile extrusion",
@@ -289,7 +289,7 @@
       "evidence_source": "build/main",
       "status": "pass",
       "accepted_source_commit": "4956349b595c9eb47337da72124d3ba9dee2dc46",
-      "build_commit": "407f42bf410ecb4e2403fceaa661371a51afeea2"
+      "build_commit": "b87f2e9ce057401198f0a509f8237329b97479e5"
     }
   }
 }
