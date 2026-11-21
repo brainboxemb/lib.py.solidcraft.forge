@@ -50,17 +50,24 @@ and `/dev-ci/`.
 Normal short-lived PRs target one dev lane, verify only and are squash-merged.
 The destination dev push is the durable integration event.
 
-Promotion normally uses a temporary head branch:
+Promotion is direct from the long-lived lane:
 
 ```text
-dev-cad -> promote/dev-cad -> main
-dev-ci  -> promote/dev-ci  -> main
+dev-cad -> main
+dev-ci  -> main
 ```
 
-Promotion PRs run complete validation. Every PR whose base is `main` is
-**squash-merged**, including direct long-lived `dev-cad` / `dev-ci` PRs and
-temporary `promote/dev-cad` / `promote/dev-ci` PRs. Both long-lived lanes are then synchronized to the
-resulting main head. Named-lane incremental selection uses the previous durable
+Promotion PRs run complete validation and are merged through the repository
+merge-policy workflow. The merge method is selected mechanically:
+
+- base `main` + head exactly `dev-cad` or `dev-ci` -> normal merge commit;
+- every other PR -> squash merge.
+
+Temporary `promote/*` heads are no longer part of the supported promotion
+flow. After a direct lane promotion, the merge-policy workflow ensures that the
+long-lived lane ref still exists and points at the resulting main merge commit,
+even when GitHub's repository setting auto-deletes merged head branches.
+Named-lane incremental selection uses the previous durable
 `build/<lane>/build.json.source_commit`, not `github.event.before`.
 
 The public GitHub Pages source still intentionally uses
@@ -108,10 +115,12 @@ runtime/tooling simplification and operational Pages publication.
 
 Immediate order:
 
-1. #481 stale source-branch cleanup using the final keep-set — currently
-   blocked because the connected GitHub tool exposes no branch-delete action;
-2. make an explicit go/no-go decision for #366 live Pages cut-over;
-3. rewrite the still-useful performance goal from #261 against the current
+1. #598 policy-controlled merge method and selective branch lifecycle;
+2. #481 stale source-branch cleanup using `/cleanup-branches` on #481 after
+   #598 is live on `main`; delete only integrated temporary-prefix refs and
+   report open/unmerged branches without touching them;
+3. make an explicit go/no-go decision for #366 live Pages cut-over;
+4. rewrite the still-useful performance goal from #261 against the current
    released CAD-CI/runtime architecture.
 
 ### WS1 — Active CAD blockers and developer UX
@@ -177,7 +186,8 @@ HUB75 uses explicit Placement today.
 
 | Issue | Lane | Workstream | Priority | Next action |
 | --- | --- | --- | --- | --- |
-| #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 blocked** | Generated build cleanup is complete. Source-ref deletion is blocked because the connected GitHub tool exposes no delete-ref action; do not claim completion until deletion is actually supported. |
+| #598 Enforce PR merge method through one policy-controlled merge path | `dev-ci` | WS0 | **P0 now** | Land the tested `/merge` gate; after that repository automation must not choose merge methods directly. Cleanup only explicit temporary prefixes and preserve/recreate long-lived lanes. |
+| #481 Remove stale Forge development branches | `dev-ci` | WS0 | **P0 next after #598** | Use owner command `/cleanup-branches` on #481. The workflow deletes only integrated temporary-prefix refs; open PR heads and unique/unmerged branches are retained and reported. |
 | #366 Make verified output durable, then cut Pages over | `dev-ci` | WS0 | **P1 decision gate** | Durable/generated side is complete; request explicit approval before changing the live Pages source, then verify public/legacy routes. |
 | #570 Remove CADCraft from Forge verification diagrams | `dev-cad` | WS2 | **P2** | Replace the six explanatory diagram sources with deterministic Forge-owned SVG/static sources; remove its CI/runtime input only after the content path no longer needs it. |
 | #261 Reduce full qualification from minutes to seconds | `dev-ci` | WS0 | **Retire/rewrite → P2** | Original Qualification/image plan is obsolete; retain measured-performance goal and rewrite against current runtime images, batching and SCons execution. |
@@ -217,20 +227,27 @@ The two long-lived development lanes are independent execution tracks.
 - Repository-wide governance that applies equally to both lanes may use a
   short-lived branch directly against `main`.
 - Governance-only PRs to `main` are squash-merged.
-- Normal merge commits are permitted only when synchronizing stable `main`
-  back into a development lane; they must never be created on `main`.
+- Do not choose a merge method manually. Repository automation must use the
+  policy-controlled merge workflow from #598.
 
 ## Merge and promotion policy
 
 - Short-lived feature/fix PRs target `dev-cad` or `dev-ci` and are
   **squash-merged**.
-- Every PR whose base is `main` is **squash-merged**, without exceptions.
-- This includes direct `dev-cad` / `dev-ci` PRs, temporary
-  `promote/dev-cad` / `promote/dev-ci` PRs and governance PRs.
+- PRs to `main` are **squash-merged by default**.
+- The only normal-merge exception is a PR whose head is literally the
+  long-lived `dev-cad` or `dev-ci` branch and whose base is `main`.
+- Temporary heads such as `promote/dev-cad`, `promote/dev-ci`, governance
+  branches and all other short-lived heads are squash-merged.
 - Promotion PRs require complete processed validation.
-- After promotion, synchronize both long-lived dev lanes to the resulting main
-  head. Any merge commit needed for that synchronization belongs on the dev
-  lane, not on `main`.
+- Merge method selection is not a human/assistant choice. Once #598 lands,
+  repository automation must merge through the policy-controlled `/merge`
+  path; direct merge calls are unsupported.
+- After a direct lane promotion, the policy workflow restores/synchronizes the
+  promoted long-lived branch to the resulting main merge commit if GitHub's
+  automatic head-branch deletion removed it.
+- The other long-lived lane incorporates main separately; it is never reset
+  over unpromoted work.
 - Named lane incremental selection uses the prior durable
   `build/<lane>/build.json.source_commit` as base, not
   `github.event.before`.
@@ -239,17 +256,19 @@ The two long-lived development lanes are independent execution tracks.
 
 ## Immediate execution order
 
-1. [#481, blocked] Remove obsolete source branches when a supported GitHub
-   branch-deletion operation becomes available.
-2. [#366, decision gate] Decide whether to cut the live Pages source over to
+1. [#598, now dev-ci] Enforce merge-method selection through one policy-owned
+   `/merge` workflow; direct automation merge calls become unsupported.
+2. [#481, after #598] Run the repository-owned `/cleanup-branches` command on
+   #481 and review every retained open/unmerged branch before any further deletion.
+3. [#366, decision gate] Decide whether to cut the live Pages source over to
    generated `gh-pages`; do not change it without explicit approval.
-3. [dev-cad P1] Fix #357 and #356, then continue the current model blockers
+4. [dev-cad P1] Fix #357 and #356, then continue the current model blockers
    #355, #354, #567 and #568.
-4. [#574, dev-cad P1] Restore the generic structured Raw test files block on
+5. [#574, dev-cad P1] Restore the generic structured Raw test files block on
    Verification case pages.
-5. [#349] Split the latch-required Revolve work into a focused P1 child; keep
+6. [#349] Split the latch-required Revolve work into a focused P1 child; keep
    the remaining SOLID › CREATE inventory at P2.
-6. [#366] Keep the live Pages-source cut-over as an explicit decision gate; do
+7. [#366] Keep the live Pages-source cut-over as an explicit decision gate; do
    not mix it into ordinary CAD or CI development.
-7. Rewrite/retire the superseded issues identified in the table (#261, #340,
+8. Rewrite/retire the superseded issues identified in the table (#261, #340,
    #175, #5) before treating them as implementation work.

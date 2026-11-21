@@ -230,11 +230,16 @@ is a gate only for work that depends on its result. Repository-wide governance
 that applies equally to both lanes may use a short-lived branch directly against
 `main`.
 
-Every PR whose base is `main` is squash-merged, without exceptions. This
-includes direct long-lived `dev-cad` / `dev-ci` PRs, temporary promotion
-heads such as `promote/dev-cad` / `promote/dev-ci`, and governance PRs.
-Normal merge commits may exist only when synchronizing `main` back into a dev
-lane; they must never be created on stable `main`.
+Do not select a PR merge method manually. Use the repository `/merge`
+policy workflow.
+
+The policy is mechanical:
+- base `main` + head exactly `dev-cad` or `dev-ci` -> normal merge commit;
+- every other PR -> squash merge.
+
+Temporary `promote/*` heads are not part of the supported promotion flow.
+Merged short-lived branches are removed only through the policy cleanup
+allow-list; permanent/generated/backup refs are never cleanup targets.
 
 Durable accepted output lives on generated `build`:
 
@@ -265,24 +270,20 @@ For named dev lanes, incremental selection uses the previous
 the base. Do not assume `github.event.before` is valid: branch recreation
 events use an all-zero before SHA.
 
-Promotion uses a temporary branch:
+Promotion is direct from the accepted long-lived lane:
 
 ```text
-dev-cad -> promote/dev-cad -> PR to main
-dev-ci  -> promote/dev-ci  -> PR to main
+dev-cad -> PR main
+dev-ci  -> PR main
 ```
 
-The temporary promotion branch is created at the current dev-lane head. The PR
-runs complete validation and is squash-merged. Direct `dev-cad` or `dev-ci`
-PRs to `main` are also squash-merged; stable `main` has no normal-merge
-exception.
-GitHub may auto-delete the temporary promotion branch after merge; the
-long-lived dev lane remains intact. Then synchronize both dev lanes to the
-resulting main head.
+The PR runs complete validation. Merge it only through `/merge`; the policy
+workflow selects a normal merge commit for exactly those two long-lived heads
+and restores/advances the lane ref to the resulting main merge commit if
+GitHub's automatic head deletion removed it.
 
-Do not open a promotion PR directly from the long-lived dev branch while
-automatic head-branch deletion is enabled; the first #572 promotion proved that
-GitHub will delete the long-lived head branch after merge.
+All other PRs, including governance and any temporary `promote/*` heads, are
+squash-merged by the same policy workflow.
 
 Site Python code may discover/load/validate/render data, but complete
 hand-authored pages and guide prose belong in external templates/content, not

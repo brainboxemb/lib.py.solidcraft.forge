@@ -5,22 +5,26 @@ needs:
   - forge-package
 watch:
   - .github/workflows/scpf.yml
+  - .github/workflows/merge-policy.yml
   - scpf/scpf/**
   - scpf/tests/**
   - scpf/pyproject.toml
   - scripts/tool_ci.py
   - scripts/forge_example.py
   - scripts/qualification_summary.py
+  - scripts/merge_policy.py
 strategy:
   reuse: true
 steps:
   - id: tool_test
     inputs:
       - .github/workflows/scpf.yml
+      - .github/workflows/merge-policy.yml
       - scpf/scpf/**
       - scpf/tests/**
       - scpf/pyproject.toml
       - scripts/tool_ci.py
       - scripts/forge_example.py
       - scripts/qualification_summary.py
+      - scripts/merge_policy.py
     run: [python, ../../scripts/tool_ci.py, tool_test]

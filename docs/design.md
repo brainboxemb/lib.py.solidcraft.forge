@@ -409,30 +409,47 @@ The generated branch is shared, but every mutation is scoped. CAD-CI retries a
 publication race from the latest generated-branch head; Forge does not
 serialize the three lanes through one global concurrency group.
 
-### Promotion
+### Promotion and merge control
 
 Feature/fix PRs into either dev lane are squash-merged.
 
-Promotion never uses the long-lived lane directly as the PR head. Create one
-temporary promotion ref at the accepted lane head:
+Promotion uses the long-lived lane itself as PR head:
 
 ```text
-dev-cad -> promote/dev-cad -> PR main
-dev-ci  -> promote/dev-ci  -> PR main
+dev-cad -> PR main
+dev-ci  -> PR main
 ```
 
-The promotion PR requests complete validation and uses a normal merge commit.
-Repository automatic head deletion may then remove the temporary promotion
-branch without deleting `dev-cad` or `dev-ci`.
+The promotion PR requests complete validation.
 
-After promotion, main publishes stable output from main itself. Both
-development lanes are then fast-forwarded/synchronized to the resulting main
-head. A development preview is never promoted by copying its generated
-build/Page scope into stable output.
+Merge execution is centralized in `.github/workflows/merge-policy.yml`.
+A repository-owner `/merge` comment triggers the workflow. The workflow reads
+the current PR metadata and delegates the base/head decision to
+`scripts/merge_policy.py`.
 
-If a long-lived lane has to be recreated, its first push still uses the prior
-durable named-scope `source_commit` as base. This keeps synchronization
-incremental and avoids treating branch recreation as a new full bootstrap.
+The policy returns:
+
+```text
+main + dev-cad -> merge
+main + dev-ci  -> merge
+everything else -> squash
+```
+
+Before merging, the workflow requires the current head to be open, non-draft,
+mergeable and green across current check-runs/status contexts. It supplies the
+immutable head SHA to GitHub's merge API.
+
+Repository `delete_branch_on_merge` currently remains enabled. After a direct
+long-lived-lane promotion the policy workflow therefore verifies the promoted
+lane ref and recreates or advances it to the resulting main merge commit when
+needed.
+
+For other merged PRs, branch cleanup is limited to explicit temporary prefixes.
+Permanent/generated/backup refs are never deleted by the merge workflow.
+
+After promotion, main publishes stable output from main itself. The other
+development lane incorporates main separately. A development preview is never
+promoted by copying its generated build/Page scope into stable output.
 
 ## Nested reference-item migration
 
