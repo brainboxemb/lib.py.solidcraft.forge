@@ -130,7 +130,7 @@ Primary lane: `dev-cad`.
 These are concrete blockers found in current HUB75/latch work and should be
 handled before broad coverage expansion:
 
-1. #357 Slot default-coordinate regression;
+1. #357 Slot default-coordinate regression — active now;
 2. #356 concise CLI errors plus `python -m scpf --version`;
 3. #355 parametric native Slot support;
 4. #354 standalone sketch extrusion as a boolean operand;
@@ -192,7 +192,7 @@ HUB75 uses explicit Placement today.
 | #570 Remove CADCraft from Forge verification diagrams | `dev-cad` | WS2 | **P2** | Replace the six explanatory diagram sources with deterministic Forge-owned SVG/static sources; remove its CI/runtime input only after the content path no longer needs it. |
 | #261 Reduce full qualification from minutes to seconds | `dev-ci` | WS0 | **Retire/rewrite → P2** | Original Qualification/image plan is obsolete; retain measured-performance goal and rewrite against current runtime images, batching and SCons execution. |
 | #340 Reuse full release qualification after identical squash merge | `dev-ci` | WS0 | **Retire** | Old Qualification + squash-to-main model is superseded by long-lived lanes and normal promotion merges; close with historical note. |
-| #357 Fix Sketch.add() default handling for native Slot profiles | `dev-cad` | WS1 | **P1** | Small regression fix first; align `Sketch.add()` with native Slot coordinate semantics and cover all variants. |
+| #357 Fix Sketch.add() default handling for native Slot profiles | `dev-cad` | WS1 | **P1 now** | Align `Sketch.add()` with the existing auto-registration rule: all five native Slot kinds preserve authored coordinates by default; add all-variant regressions and explicit-anchor rejection. |
 | #356 Improve CLI errors and expose --version | `dev-cad` | WS1 | **P1** | Implement concise model/compiler errors, package version command and explicit debug traceback path. |
 | #355 Support current SolidCraft parametric Slot API in Forge | `dev-cad` | WS1 | **P1** | Qualify current SolidCraft 0.42 dimensioned Slot contract and restore parameter/expression support. |
 | #354 Support standalone sketch extrusions as boolean operands | `dev-cad` | WS1 | **P1** | Generalize boolean operand lowering for `sketch_base_extrusion`. |

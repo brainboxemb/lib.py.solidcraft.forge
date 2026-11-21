@@ -10,6 +10,24 @@ from .core import Anchor, Axis, Depth, Shape, _pv as pv
 
 _ACTIVE_SKETCH = ContextVar("scpf_active_sketch", default=None)
 
+_COORDINATE_DEFINED_PROFILE_KINDS = frozenset(
+    {
+        "polygon",
+        "text",
+        "slot_center_to_center",
+        "slot_overall",
+        "slot_center_point",
+        "slot_arc_three_point",
+        "slot_arc_center",
+    }
+)
+
+
+def _coordinate_defined(profile):
+    """Return whether a 2D profile owns authored sketch-local coordinates."""
+
+    return profile.kind in _COORDINATE_DEFINED_PROFILE_KINDS
+
 
 def register_profile(profile):
     """Capture authored 2D geometry only while an explicit Sketch is active."""
@@ -18,15 +36,7 @@ def register_profile(profile):
         # Polygon vertices and text insertion points already carry their own
         # sketch-local placement. Dimension-defined primitives use the semantic
         # Sketch centre by default.
-        anchor = (
-            None
-            if profile.kind in (
-                "polygon", "text",
-                "slot_center_to_center", "slot_overall", "slot_center_point",
-                "slot_arc_three_point", "slot_arc_center",
-            )
-            else Anchor.CENTER
-        )
+        anchor = None if _coordinate_defined(profile) else Anchor.CENTER
         sketch._store_profile(profile, anchor=anchor, offset=(0, 0))
     return profile
 
@@ -128,12 +138,14 @@ class Sketch:
         Use when:
             Add a profile explicitly or apply a deliberate sketch-local
             offset. Dimension-defined profiles default to semantic CENTER.
-            Polygon2D and Text2D keep their authored/insertion coordinates.
+            Polygon2D, Text2D and native Slot profiles keep their authored
+            coordinates.
 
         Limits:
             Explicit Anchor.CENTER is supported for Circle2D, Rectangle2D and
-            RoundedRectangle2D. Polygon2D and Text2D do not have a qualified
-            semantic centre yet; leave anchor=None for those profile types.
+            RoundedRectangle2D. Polygon2D, Text2D and native Slot profiles
+            define their own sketch-local coordinates; leave anchor=None for
+            those profile types.
 
         Example:
             sketch.add(Circle2D(d=8), anchor=Anchor.CENTER, offset=(20, 0))
@@ -154,10 +166,10 @@ class Sketch:
         ):
             raise ValueError(
                 "Sketch supports Circle2D, Rectangle2D, Polygon2D, "
-                "RoundedRectangle2D or Text2D profiles"
+                "RoundedRectangle2D, Text2D or native Slot profiles"
             )
 
-        coordinate_defined = profile.kind in ("polygon", "text")
+        coordinate_defined = _coordinate_defined(profile)
         if anchor is None:
             anchor = None if coordinate_defined else Anchor.CENTER
         else:

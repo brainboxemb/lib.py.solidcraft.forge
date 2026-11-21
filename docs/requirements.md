@@ -68,6 +68,31 @@ The package keeps its own tested SolidCraft compatibility guard. CI must verify
 that its declared `SOLIDCRAFT_VERSION` agrees with the package compatibility
 contract.
 
+## SCPF CLI identity and error presentation
+
+The CLI exposes the identity of the running SCPF package independently from
+SolidCraft runtime compatibility.
+
+Requirements:
+
+- `python -m scpf --version` succeeds without a model path, SolidCraft
+  connection or native CLI;
+- the reported SCPF version comes from the installed/running Python package
+  metadata and must not be confused with `TESTED_SOLIDCRAFT_VERSION`;
+- normal model/build/compiler failures are caught at the CLI boundary and shown
+  as a short engineering-level error;
+- concise output includes SCPF version, the primary exception message and the
+  model/source filename + line number when traceback/source information makes
+  that location available;
+- concise output points to `--debug` for a full traceback;
+- `--debug` preserves the original exception traceback and additionally
+  reports the exact Forge Git revision when the running package is inside a
+  reliably discoverable Git checkout;
+- unexpected internal exceptions may be labelled as internal failures, but the
+  full traceback is still hidden by default;
+- library APIs such as `run_script()` continue raising their original
+  exception types; this requirement changes CLI presentation only.
+
 ## Verification package dependency
 
 Library ownership and runtime packaging are separate concerns.

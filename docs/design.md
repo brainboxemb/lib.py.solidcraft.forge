@@ -61,6 +61,37 @@ A runtime update is explicit:
 `scpf/scpf/version.py::TESTED_SOLIDCRAFT_VERSION` remains Forge's package-level
 SolidCraft compatibility behavior.
 
+### SCPF package identity
+
+`scpf.version.package_version()` reads the installed distribution metadata for
+`scpf`. It is the CLI source for `python -m scpf --version`; it is not read
+from a CAD repository manifest and it is independent from the tested
+SolidCraft version.
+
+When diagnostics run from an editable/source checkout,
+`scpf.version.forge_revision()` may walk upward from the imported package and
+use `git rev-parse HEAD` only when a real Git checkout is found. Installed
+wheels without checkout metadata simply omit the revision.
+
+### CLI exception boundary
+
+`scpf.__main__` is the only presentation boundary:
+
+```text
+run_script(model)
+  -> original ModelError / TypeError / ValueError / SyntaxError / internal error
+  -> CLI boundary
+       normal: compact SCPF <version> error + source location + message
+       --debug: identity diagnostics + original traceback
+```
+
+Source location is derived from `SyntaxError.filename/lineno` first, otherwise
+from the deepest traceback frame outside the installed `scpf` package. If no
+external frame is available, the requested model path is the fallback.
+
+The library/compiler layers do not wrap exceptions merely to improve CLI text;
+programmatic callers retain existing exception types and tracebacks.
+
 `cad-ci.yml::variables.SOLIDCRAFT_VERSION` is the SolidCraft version Forge CI
 expects from the selected released runtime.
 
