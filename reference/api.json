@@ -717,8 +717,8 @@
       "summary": "Add and place a supported 2D profile in this Sketch.",
       "guide": "guide/geometry/#profiles",
       "reference": "reference/Sketch.add/",
-      "use_when": "Add a profile explicitly or apply a deliberate sketch-local offset. Dimension-defined profiles default to semantic CENTER. Polygon2D and Text2D keep their authored/insertion coordinates.",
-      "limits": "Explicit Anchor.CENTER is supported for Circle2D, Rectangle2D and RoundedRectangle2D. Polygon2D and Text2D do not have a qualified semantic centre yet; leave anchor=None for those profile types.",
+      "use_when": "Add a profile explicitly or apply a deliberate sketch-local offset. Dimension-defined profiles default to semantic CENTER. Polygon2D, Text2D and native Slot profiles keep their authored coordinates.",
+      "limits": "Explicit Anchor.CENTER is supported for Circle2D, Rectangle2D and RoundedRectangle2D. Polygon2D, Text2D and native Slot profiles define their own sketch-local coordinates; leave anchor=None for those profile types.",
       "parameters": [
         {
           "name": "profile",

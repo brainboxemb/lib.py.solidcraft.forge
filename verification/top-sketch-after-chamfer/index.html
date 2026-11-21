@@ -51,7 +51,7 @@
     <h2>What this example makes</h2>
     <p>SolidCraft 0.42 builds one chamfered plate with one centered through hole. The Top hole Sketch remains a solved feature attached to the actual post-chamfer top face.</p>
     <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="TOP Sketch after chamfer expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
-    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/presentation/preview-iso.png" alt="TOP Sketch after chamfer native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/presentation/preview-iso.png" alt="TOP Sketch after chamfer native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
   </section>
 
   <section class="panel">
@@ -83,7 +83,7 @@ TopSketchAfterChamfer()
 </code></pre>
     <h3>API used</h3>
     <p><code>Box(...).chamfer(..., edges=Edges.VERTICAL); with Sketch(on=plate, parent=Anchor.TOP): Circle2D(...); cut through all</code></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/top-sketch-after-chamfer/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/top-sketch-after-chamfer/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
   </section>
 
   <section class="panel">
@@ -97,7 +97,7 @@ TopSketchAfterChamfer()
   <div class="qualification-reference-source">
     <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/top-sketch-after-chamfer/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/top-sketch-after-chamfer/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/top-sketch-after-chamfer/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;PythonSCAD geometry reference for a chamfered plate with one through hole.&quot;&quot;&quot;
 
 from pythonscad import *
@@ -208,10 +208,10 @@ model = plate - hole
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/pythonscad/references/top-sketch-after-chamfer/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/pythonscad/references/top-sketch-after-chamfer/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/pythonscad/references/top-sketch-after-chamfer/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/pythonscad/references/top-sketch-after-chamfer/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/pythonscad/references/top-sketch-after-chamfer/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/pythonscad/references/top-sketch-after-chamfer/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/pythonscad/references/top-sketch-after-chamfer/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/pythonscad/references/top-sketch-after-chamfer/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/pythonscad/references/top-sketch-after-chamfer/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/pythonscad/references/top-sketch-after-chamfer/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -219,7 +219,7 @@ model = plate - hole
   <div class="qualification-reference-source">
     <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/top-sketch-after-chamfer/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/top-sketch-after-chamfer/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/top-sketch-after-chamfer/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;pyBOSL2 geometry reference for a chamfered plate with one through hole.&quot;&quot;&quot;
 
 from pybosl2 import cuboid, cyl
@@ -330,10 +330,10 @@ model = plate - hole
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/pybosl2/references/top-sketch-after-chamfer/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/pybosl2/references/top-sketch-after-chamfer/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/pybosl2/references/top-sketch-after-chamfer/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/pybosl2/references/top-sketch-after-chamfer/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/pybosl2/references/top-sketch-after-chamfer/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/pybosl2/references/top-sketch-after-chamfer/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/pybosl2/references/top-sketch-after-chamfer/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/pybosl2/references/top-sketch-after-chamfer/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/pybosl2/references/top-sketch-after-chamfer/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/pybosl2/references/top-sketch-after-chamfer/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -341,7 +341,7 @@ model = plate - hole
   <div class="qualification-reference-source">
     <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/top-sketch-after-chamfer/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/top-sketch-after-chamfer/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/top-sketch-after-chamfer/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;CadQuery reference for a chamfered plate with one through hole.&quot;&quot;&quot;
 
 import cadquery as cq
@@ -446,10 +446,10 @@ model.add(plate, name=&quot;top_sketch_after_chamfer&quot;)
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/cadquery/references/top-sketch-after-chamfer/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/cadquery/references/top-sketch-after-chamfer/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/cadquery/references/top-sketch-after-chamfer/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/cadquery/references/top-sketch-after-chamfer/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/cadquery/references/top-sketch-after-chamfer/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/cadquery/references/top-sketch-after-chamfer/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/cadquery/references/top-sketch-after-chamfer/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/cadquery/references/top-sketch-after-chamfer/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/cadquery/references/top-sketch-after-chamfer/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/cadquery/references/top-sketch-after-chamfer/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -457,7 +457,7 @@ model.add(plate, name=&quot;top_sketch_after_chamfer&quot;)
   <div class="qualification-reference-source">
     <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
     <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/top-sketch-after-chamfer/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/top-sketch-after-chamfer/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/top-sketch-after-chamfer/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;build123d reference for a chamfered plate with one through hole.&quot;&quot;&quot;
 
 from build123d import (
@@ -571,10 +571,10 @@ with BuildPart() as model:
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/build123d/references/top-sketch-after-chamfer/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/build123d/references/top-sketch-after-chamfer/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/build123d/references/top-sketch-after-chamfer/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/build123d/references/top-sketch-after-chamfer/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/build123d/references/top-sketch-after-chamfer/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/build123d/references/top-sketch-after-chamfer/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/build123d/references/top-sketch-after-chamfer/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/build123d/references/top-sketch-after-chamfer/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/build123d/references/top-sketch-after-chamfer/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/build123d/references/top-sketch-after-chamfer/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -604,26 +604,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -646,14 +646,14 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape not-required</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -676,26 +676,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -718,20 +718,20 @@ with BuildPart() as model:
   <p class="meta">Regression not-required · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/top/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/top/actual.png" alt="top Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/top/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/top/actual.png" alt="top Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/top/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/top/goal.png" alt="top Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/top/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/top/goal.png" alt="top Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/top/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/visual/top/overlay.png" alt="top Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/top/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/visual/top/overlay.png" alt="top Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
@@ -893,14 +893,14 @@ with BuildPart() as model:
     <p>The outer bounds do not prove the four corner chamfers or the through hole. Volume, cylindrical-wall probes and native timeline/sketch checks are required.</p>
 
     <h3>Raw test files</h3>
-    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/e3ecfc3f81def744e37f6e4979fad67524e0496a/main/examples/top-sketch-after-chamfer/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/top-sketch-after-chamfer/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
 
     <h3>Reference documentation</h3>
     <ul><li><strong>PythonSCAD</strong> — Independent CSG reference cuts the four corner wedges before subtracting the central through hole.</li><li><strong>CadQuery</strong> — Independent feature reference applies a vertical-edge chamfer before creating the top-face hole.</li><li><strong>build123d</strong> — Independent builder reference applies the same feature order: Box, vertical-edge chamfer, top-face hole.</li></ul>
 
     <p class="source-stamp">
-      Site source <code>3ac2a09e0e447a59ded3f1101d44c8ece599a6b1</code> · accepted model evidence source
-      <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · durable build <code>e3ecfc3f81def744e37f6e4979fad67524e0496a</code>
+      Site source <code>1c54d708c7240d48ffb5786f16e9527d2ceb738c</code> · accepted model evidence source
+      <code>1c54d708c7240d48ffb5786f16e9527d2ceb738c</code> · durable build <code>7b7f97126e2d38bd7493fb193846586dfb8da923</code>
     </p>
   </div>
 </details>
@@ -916,7 +916,7 @@ with BuildPart() as model:
     </p>
     <p>
       <a href="../../examples/top-sketch-after-chamfer/">Open the example →</a>
-      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/3ac2a09e0e447a59ded3f1101d44c8ece599a6b1/examples/top-sketch-after-chamfer/verification/verify.py">Open verification/verify.py →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/top-sketch-after-chamfer/verification/verify.py">Open verification/verify.py →</a>
     </p>
   </section>
 </main>
