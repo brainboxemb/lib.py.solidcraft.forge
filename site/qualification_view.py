@@ -87,6 +87,46 @@ def _verification_rows(report: dict[str, Any]) -> tuple[dict[str, Any], ...]:
     return tuple(rows)
 
 
+def _expected_body_rows(report: dict[str, Any]) -> tuple[dict[str, Any], ...]:
+    """Expose declared target envelopes for the conceptual setup diagram."""
+    rows = []
+    for check in report.get("checks", []):
+        if not isinstance(check, dict):
+            continue
+        evidence = check.get("evidence")
+        if not isinstance(evidence, dict):
+            continue
+        envelopes = evidence.get("body_envelopes")
+        if not isinstance(envelopes, dict):
+            continue
+        for pair in envelopes.get("matched_pairs", []):
+            if not isinstance(pair, dict):
+                continue
+            expected = pair.get("expected")
+            actual = pair.get("actual")
+            if not isinstance(expected, dict):
+                continue
+            minimum = expected.get("min")
+            maximum = expected.get("max")
+            if not isinstance(minimum, list) or not isinstance(maximum, list):
+                continue
+            actual = actual if isinstance(actual, dict) else {}
+            rows.append(
+                {
+                    "label": (
+                        expected.get("label")
+                        or actual.get("label")
+                        or f"body {len(rows) + 1}"
+                    ),
+                    "minimum": minimum,
+                    "maximum": maximum,
+                }
+            )
+        if rows:
+            break
+    return tuple(rows)
+
+
 def _saved_design_rows(
     stable: StableBuildEvidence,
     example: ExampleBuildEvidence,
@@ -220,6 +260,7 @@ def qualification_case_view(
         "parameters": _parameter_rows(example.measurements),
         "bodies": _body_rows(example.measurements),
         "verification_checks": _verification_rows(example.verification),
+        "expected_bodies": _expected_body_rows(example.verification),
         "saved_designs": _saved_design_rows(stable, example),
         "visual_views": _visual_rows(stable, example),
         "references": _reference_rows(stable, example),
