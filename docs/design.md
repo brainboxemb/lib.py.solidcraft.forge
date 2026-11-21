@@ -439,10 +439,18 @@ Before merging, the workflow requires the current head to be open, non-draft,
 mergeable and green across current check-runs/status contexts. It supplies the
 immutable head SHA to GitHub's merge API.
 
+A successful GitHub-API merge made with `GITHUB_TOKEN` does not trigger the
+normal `push` workflow. Therefore the merge workflow explicitly dispatches
+`scpf.yml` on the merged destination ref after GitHub returns the immutable
+merge SHA. The dispatched Forge workflow runs the same branch-integration job as
+a normal push.
+
 Repository `delete_branch_on_merge` currently remains enabled. After a direct
 long-lived-lane promotion the policy workflow therefore verifies the promoted
 lane ref and recreates or advances it to the resulting main merge commit when
-needed.
+needed, then also dispatches `scpf.yml` on that promoted lane. Stable
+`main` and the promoted named lane therefore both advance their durable
+build/Page scopes to the same merge commit.
 
 For other merged PRs, branch cleanup is limited to explicit temporary prefixes.
 Permanent/generated/backup refs are never deleted by the merge workflow.
