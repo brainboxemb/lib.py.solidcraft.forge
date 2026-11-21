@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+import sys
 import unittest
 
 
@@ -11,6 +12,7 @@ POLICY_PATH = ROOT / "scripts" / "merge_policy.py"
 spec = importlib.util.spec_from_file_location("merge_policy", POLICY_PATH)
 assert spec is not None and spec.loader is not None
 merge_policy = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = merge_policy
 spec.loader.exec_module(merge_policy)
 
 
