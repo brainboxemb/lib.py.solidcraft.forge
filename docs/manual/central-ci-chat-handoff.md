@@ -49,12 +49,12 @@ Werk niet onnodig serieel:
 Merge-regel:
 
 - korte feature/fix-PR's naar `dev-cad` of `dev-ci` worden squash-merged;
-- iedere PR met base `main` wordt standaard squash-merged;
-- alleen wanneer de head letterlijk de long-lived branch `dev-cad` of
-  `dev-ci` is, mag een normale merge naar `main` worden gebruikt;
-- tijdelijke heads zoals `promote/dev-cad` en `promote/dev-ci` vallen niet
-  onder die uitzondering en worden dus squash-merged;
-- governance-PR's rechtstreeks naar `main` worden squash-merged.
+- iedere PR met base `main` wordt squash-merged, zonder uitzonderingen;
+- dit geldt dus ook voor directe `dev-cad` / `dev-ci` PR's en tijdelijke
+  `promote/dev-cad` / `promote/dev-ci` heads;
+- governance-PR's rechtstreeks naar `main` worden eveneens squash-merged;
+- normale mergecommits zijn alleen toegestaan bij het synchroniseren van
+  `main` terug naar een dev-lane, nooit op `main`.
 
 Repositorygrenzen:
 
