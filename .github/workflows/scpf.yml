@@ -15,12 +15,64 @@ jobs:
     permissions:
       contents: read
       packages: read
+      pull-requests: read
     runs-on: ubuntu-latest
     concurrency:
       group: forge-pr-${{ github.repository }}-${{ github.event.pull_request.number }}
       cancel-in-progress: true
     steps:
+      - name: Classify pull request before CAD CI bootstrap
+        id: classify
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          if [ "$BASE_REF" = "main" ]; then
+            echo "run_cad=true" >> "$GITHUB_OUTPUT"
+            echo "classification=main-target" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          mapfile -t changed_paths < <(
+            gh api --paginate \
+              "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
+              --jq '.[].filename'
+          )
+
+          if [ "${#changed_paths[@]}" -eq 0 ]; then
+            echo "run_cad=true" >> "$GITHUB_OUTPUT"
+            echo "classification=empty-or-unknown" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          docs_only=true
+          for path in "${changed_paths[@]}"; do
+            case "$path" in
+              docs/*) ;;
+              *)
+                docs_only=false
+                break
+                ;;
+            esac
+          done
+
+          if [ "$docs_only" = "true" ]; then
+            echo "run_cad=false" >> "$GITHUB_OUTPUT"
+            echo "classification=docs-only" >> "$GITHUB_OUTPUT"
+          else
+            echo "run_cad=true" >> "$GITHUB_OUTPUT"
+            echo "classification=cad-ci-required" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Report docs-only validation
+        if: steps.classify.outputs.run_cad == 'false'
+        run: >-
+          echo "Docs-only pull request:
+          CAD-CI bootstrap and runtime work are not required."
+
       - name: Run exact released CAD CI stack
+        if: steps.classify.outputs.run_cad == 'true'
         uses: brainboxemb/tool.cad.ci@4c6bb8b35009ef5008bd99134cf84b59fddc0b8a
         with:
           source_sha: ${{ github.event.pull_request.head.sha }}

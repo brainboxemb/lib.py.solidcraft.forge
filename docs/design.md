@@ -317,9 +317,26 @@ push dev-ci
   -> same flow with dev-ci
 ```
 
-The pull-request path uses the released root composite action only for
-verification. Forge does not call the reusable PR publication workflow and does
-not prepare, publish or clean sparse PR scopes.
+The pull-request path keeps one `cad_ci_pr` required-check job. Before the
+released root action is invoked, Forge may perform one repository-level cheap
+classification based only on the changed filenames reported by the GitHub Pull
+Request API.
+
+For a normal PR whose base is `dev-cad` or `dev-ci`:
+
+- if every changed filename is below `docs/`, the job reports
+  `docs-only` and skips the released CAD-CI action entirely;
+- otherwise it invokes the released root action exactly as before.
+
+This classifier is deliberately narrower than CAD-CI item selection. It does
+not calculate affected items, dependency closure or SCons targets and therefore
+does not duplicate the generic planner.
+
+Promotion PRs targeting `main` bypass the docs-only shortcut and always invoke
+the released action with complete validation.
+
+Forge does not call the reusable PR publication workflow and does not prepare,
+publish or clean sparse PR scopes.
 
 ### Push bootstrap versus update
 
