@@ -1,0 +1,38 @@
+{
+  "geometry": {
+    "bounds": {
+      "actual_max": [
+        75.0,
+        15.0,
+        20.0
+      ],
+      "actual_min": [
+        -20.0,
+        -25.0,
+        0.0
+      ],
+      "expected_max": [
+        75.0,
+        15.0,
+        20.0
+      ],
+      "expected_min": [
+        -20.0,
+        -25.0,
+        0.0
+      ],
+      "max_delta_mm": 0.0,
+      "pass": true,
+      "tolerance_mm": 0.5
+    }
+  },
+  "implementation": "cadquery",
+  "presentation": {
+    "metadata": "presentation/preview.json",
+    "preview": "presentation/preview-iso.png",
+    "status": "pass"
+  },
+  "source": "examples/assembly-owned-anchor/cadquery/model.py",
+  "status": "pass",
+  "stl": "assembly-owned-anchor/cadquery/model.stl"
+}

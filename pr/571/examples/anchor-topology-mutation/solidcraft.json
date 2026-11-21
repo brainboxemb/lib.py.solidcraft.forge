@@ -1,0 +1,155 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "base_width",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "base_height",
+        "expression": "20",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "Board",
+        "grounded": true
+      },
+      "bind": {
+        "$board": "occurrence"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "base_width",
+        "width": 20.0,
+        "height": "base_height",
+        "corner": [
+          "-base_width / 2",
+          -10.0,
+          0
+        ],
+        "body_name": "Board"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "Marker",
+        "grounded": false
+      },
+      "bind": {
+        "$marker": "occurrence"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": 10.0,
+        "width": 10.0,
+        "height": 10.0,
+        "operation": "new",
+        "center": [
+          0.0,
+          0.0,
+          -5.0
+        ],
+        "body_name": "Marker"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$marker",
+        "translate": [
+          -20.0,
+          -10.0,
+          20.0
+        ]
+      }
+    },
+    {
+      "command": "joint.create",
+      "params": {
+        "type": "rigid",
+        "name": "Attach Marker to Board",
+        "a": {
+          "edge": [
+            -20.0,
+            -10.0,
+            10.0
+          ],
+          "on": [
+            0.0,
+            -10.0,
+            10.0
+          ],
+          "corner": [
+            -20.0,
+            -10.0,
+            20.0
+          ],
+          "z": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "x": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "occurrence": "$board"
+        },
+        "b": {
+          "point": [
+            -20.0,
+            -10.0,
+            20.0
+          ],
+          "z": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "x": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "occurrence": "$marker"
+        },
+        "angle": 0.0
+      }
+    },
+    {
+      "command": "browser.visibility",
+      "params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ]
+}

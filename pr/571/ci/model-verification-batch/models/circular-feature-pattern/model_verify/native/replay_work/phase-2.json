@@ -1,0 +1,58 @@
+{
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": {
+          "face": [
+            -20.710678118654755,
+            -20.710678118654755,
+            6.0
+          ],
+          "body": "CircularFeaturePattern",
+          "index": 0
+        },
+        "project_edges": false,
+        "name": "BoltHole"
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          "(pcd / 2)",
+          0.0
+        ],
+        "diameter": 8
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "operation": "cut",
+        "targets": [
+          "CircularFeaturePattern"
+        ],
+        "name": "BoltHole",
+        "through_all": true,
+        "direction": "negative"
+      }
+    },
+    {
+      "command": "solid.pattern.circular",
+      "params": {
+        "features": [
+          "BoltHole"
+        ],
+        "axis": "Z",
+        "count": "bolts",
+        "alignment": "right",
+        "reversed": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "actual_min": [
+                -50.0,
+                -10.0,
+                -5.0
+              ],
+              "expected_max": [
+                50.0,
+                10.0,
+                5.0
+              ],
+              "expected_min": [
+                -50.0,
+                -10.0,
+                -5.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "volume": {
+              "actual_mm3": 8000.0,
+              "delta_mm3": 0.0,
+              "expected_mm3": 8000.0,
+              "pass": true,
+              "tolerance_mm3": 2.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "build123d",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/parametric-placement-pair/build123d/model.py",
+          "status": "pass",
+          "stl": "parametric-placement-pair/build123d/model.stl"
+        }
+      ],
+      "model": "parametric-placement-pair",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "4508f1979f06ad8f1862d3805ac86900556eaef2",
+  "status": "pass"
+}

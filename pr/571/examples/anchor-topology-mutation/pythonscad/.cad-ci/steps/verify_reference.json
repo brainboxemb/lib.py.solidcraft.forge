@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "ca78ec5b9d0034231c23389c049fd2e1f850ea683a5104abf1866a256e3ff9c6",
+  "duration_seconds": 0.215,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T10:14:11.465Z",
+  "item": "examples-anchor-topology-mutation-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "2a2e12cfb9744bb12b1e0cf8f9c8694a87578d28ebe7b9990a4911c2c6dc11bd"
+    }
+  },
+  "run_finished_at": "2026-11-21T10:14:44.040Z",
+  "run_started_at": "2026-11-21T10:10:53.611Z",
+  "schema": 3,
+  "started_at": "2026-11-21T10:14:11.392Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "06aa7692f3166a6c06ce676ac3ea428e199042f02f6202c03bd3b6c9802c8a44",
+  "timeout_seconds": null
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "b43e55ec11b4235b1114c43d30c99f710b9291bbdf3a9bd42eec565364d154b7",
+  "duration_seconds": 0.214,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T10:14:25.988Z",
+  "item": "examples-parametric-anchor-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "5e935928ae5e8fcb0931a202eb4add5edd4a056c0af6dd98d95b6b26f95c2c94"
+    }
+  },
+  "run_finished_at": "2026-11-21T10:14:44.040Z",
+  "run_started_at": "2026-11-21T10:10:53.611Z",
+  "schema": 3,
+  "started_at": "2026-11-21T10:14:25.916Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "d33d9703ceac5ae4e5566cc302c6b9dcee3d6e67c62a7ee78d62fed22c8d3230",
+  "timeout_seconds": null
+}

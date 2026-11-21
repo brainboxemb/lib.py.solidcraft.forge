@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "ab9f38a3285fe2d398940165b6a0acd203f91f780eb56d497f80fa36a23b150e",
+  "duration_seconds": 0.228,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T10:14:21.808Z",
+  "item": "examples-eight-flightcase-corners-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "0aaf287bc61507c31f1fc8c0b0d2a2d66f4bf92ca45f22515364bc586c870791"
+    }
+  },
+  "run_finished_at": "2026-11-21T10:14:44.040Z",
+  "run_started_at": "2026-11-21T10:10:53.611Z",
+  "schema": 3,
+  "started_at": "2026-11-21T10:14:21.724Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "3e47b251f73d3bc638bb438359c87d49bfdeecf966dba50284b2e52d12d71bf0",
+  "timeout_seconds": null
+}

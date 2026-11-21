@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "0411060a67f411122aee48980385e6a44383d5c81ef3bb355cb9bce16331dff3",
+  "duration_seconds": 0.215,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T10:14:40.602Z",
+  "item": "examples-slot-family-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "3efba32db680f48896e68e20d421df87444ba4d3c274e8afa13cc6d2bda92d89"
+    }
+  },
+  "run_finished_at": "2026-11-21T10:14:44.040Z",
+  "run_started_at": "2026-11-21T10:10:53.611Z",
+  "schema": 3,
+  "started_at": "2026-11-21T10:14:40.529Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "365166b48d4868ed5e043c30a3bfe978f22ca01a7b3e95974221920fea078392",
+  "timeout_seconds": null
+}

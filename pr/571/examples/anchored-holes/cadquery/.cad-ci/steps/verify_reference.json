@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "dd1d03142b274a30a4717c7d546e7f1b61b2e348cc0c152b35322029b5f1976c",
+  "duration_seconds": 0.215,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T10:14:11.904Z",
+  "item": "examples-anchored-holes-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "16eeb2a2df14e013396441f5b2899883823471a96f46a568e54ba05fae9217b6"
+    }
+  },
+  "run_finished_at": "2026-11-21T10:14:44.040Z",
+  "run_started_at": "2026-11-21T10:10:53.611Z",
+  "schema": 3,
+  "started_at": "2026-11-21T10:14:11.832Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "1be77c59da1db1c6a0e39a467e0bd08435780b5270ab999788cc0e24b5a75fbd",
+  "timeout_seconds": null
+}

@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "883dd0539cf9d41a63ca57cb861cf827dbe3b89fd1d6f3fe69428d008e4333f6",
+  "duration_seconds": 0.215,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T10:14:41.263Z",
+  "item": "examples-top-sketch-after-chamfer-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "d43e75a81e1bad8d3a142f653090d5ab575c9855d6151a2acae64a018705035f"
+    }
+  },
+  "run_finished_at": "2026-11-21T10:14:44.040Z",
+  "run_started_at": "2026-11-21T10:10:53.611Z",
+  "schema": 3,
+  "started_at": "2026-11-21T10:14:41.190Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "40e8b0634e43f169b98093bfffaea33a20288dc736dc695a6b6c4c63ab33d047",
+  "timeout_seconds": null
+}

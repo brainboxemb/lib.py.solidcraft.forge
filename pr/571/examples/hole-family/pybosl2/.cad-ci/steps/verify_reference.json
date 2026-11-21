@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "0c91181aa5270bdd45b0d94a669f9a435c1513f02d7efdaae9fb9e84c9c64e8e",
+  "duration_seconds": 0.212,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T10:14:24.451Z",
+  "item": "examples-hole-family-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "9fa62efdb869e6f5d0287a7a9c8ec962e15d97e67b4bbc045804e026c2920bcb"
+    }
+  },
+  "run_finished_at": "2026-11-21T10:14:44.040Z",
+  "run_started_at": "2026-11-21T10:10:53.611Z",
+  "schema": 3,
+  "started_at": "2026-11-21T10:14:24.380Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "5e0ebf30779763c86377bb4a9ad86b7611cf4d06334fef35311b3e8181556238",
+  "timeout_seconds": null
+}

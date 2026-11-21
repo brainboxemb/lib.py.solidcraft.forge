@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "7e4289c5f1810c7b6743178ebd0dfd932d6435670f31e536bd644fac52551b0b",
+  "duration_seconds": 0.253,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T10:14:34.640Z",
+  "item": "examples-round-top-sketch-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "d16ceed368c5b4163fa86b0a1f26edf8b5849c232e9e199815eac53d3b5cd457"
+    }
+  },
+  "run_finished_at": "2026-11-21T10:14:44.040Z",
+  "run_started_at": "2026-11-21T10:10:53.611Z",
+  "schema": 3,
+  "started_at": "2026-11-21T10:14:34.567Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "efc379815bfb7c772e1b741bb91dd364715fd492da150432d2f01b50e6eeec0c",
+  "timeout_seconds": null
+}

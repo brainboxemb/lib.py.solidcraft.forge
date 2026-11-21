@@ -1,0 +1,182 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                60.0,
+                30.0,
+                5.0
+              ],
+              "actual_min": [
+                -60.0,
+                -30.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                30.0,
+                5.0
+              ],
+              "expected_min": [
+                -60.0,
+                -30.0,
+                0.0
+              ],
+              "max_delta_mm": 0.0,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 3.8837660895287613,
+                "delta_mm": 0.11623391047123866,
+                "expected_mm": 4.0,
+                "label": "selected hole 1 at z=0.5",
+                "pass": true,
+                "point": [
+                  -30.0,
+                  0.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837660895287613,
+                "delta_mm": 0.11623391047123866,
+                "expected_mm": 4.0,
+                "label": "selected hole 1 at z=2.5",
+                "pass": true,
+                "point": [
+                  -30.0,
+                  0.0,
+                  2.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837660895287613,
+                "delta_mm": 0.11623391047123866,
+                "expected_mm": 4.0,
+                "label": "selected hole 1 at z=4.5",
+                "pass": true,
+                "point": [
+                  -30.0,
+                  0.0,
+                  4.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837671158714455,
+                "delta_mm": 0.11623288412855448,
+                "expected_mm": 4.0,
+                "label": "selected hole 2 at z=0.5",
+                "pass": true,
+                "point": [
+                  -10.0,
+                  0.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837671158714455,
+                "delta_mm": 0.11623288412855448,
+                "expected_mm": 4.0,
+                "label": "selected hole 2 at z=2.5",
+                "pass": true,
+                "point": [
+                  -10.0,
+                  0.0,
+                  2.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.8837671158714455,
+                "delta_mm": 0.11623288412855448,
+                "expected_mm": 4.0,
+                "label": "selected hole 2 at z=4.5",
+                "pass": true,
+                "point": [
+                  -10.0,
+                  0.0,
+                  4.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.88376712018165,
+                "delta_mm": 0.11623287981834984,
+                "expected_mm": 4.0,
+                "label": "selected hole 4 at z=0.5",
+                "pass": true,
+                "point": [
+                  30.0,
+                  0.0,
+                  0.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.88376712018165,
+                "delta_mm": 0.11623287981834984,
+                "expected_mm": 4.0,
+                "label": "selected hole 4 at z=2.5",
+                "pass": true,
+                "point": [
+                  30.0,
+                  0.0,
+                  2.5
+                ],
+                "tolerance_mm": 0.3
+              },
+              {
+                "actual_mm": 3.88376712018165,
+                "delta_mm": 0.11623287981834984,
+                "expected_mm": 4.0,
+                "label": "selected hole 4 at z=4.5",
+                "pass": true,
+                "point": [
+                  30.0,
+                  0.0,
+                  4.5
+                ],
+                "tolerance_mm": 0.3
+              }
+            ],
+            "volume": {
+              "actual_mm3": 35275.0318826036,
+              "delta_mm3": 29.014119465151452,
+              "expected_mm3": 35246.01776313845,
+              "pass": true,
+              "tolerance_mm3": 40.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/selective-profile-extrude/pybosl2/model.py",
+          "status": "pass",
+          "stl": "selective-profile-extrude/pybosl2/model.stl"
+        }
+      ],
+      "model": "selective-profile-extrude",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "4508f1979f06ad8f1862d3805ac86900556eaef2",
+  "status": "pass"
+}

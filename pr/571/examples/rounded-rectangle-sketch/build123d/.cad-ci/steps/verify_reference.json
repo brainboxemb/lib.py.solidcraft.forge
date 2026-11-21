@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "ef4f12a5f07f0fda0092300061ab22a2aa657b85c955f8d1d50f921debe154ed",
+  "duration_seconds": 0.215,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T10:14:35.520Z",
+  "item": "examples-rounded-rectangle-sketch-build123d",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "bf04e318096c4afe280a914fa7f6a6b98c0d13820c9a1cdcdf590210dd74b5ee"
+    }
+  },
+  "run_finished_at": "2026-11-21T10:14:44.040Z",
+  "run_started_at": "2026-11-21T10:10:53.611Z",
+  "schema": 3,
+  "started_at": "2026-11-21T10:14:35.447Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "e05df99f7a9e8aab1a51d9774edd82294b610d3ceffb5319214a7f6e606ca5f6",
+  "timeout_seconds": null
+}

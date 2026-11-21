@@ -1,0 +1,168 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "4a2573512184806855bf448a8dcf3d15a224fa8e84bd2ca24100553857cfa4bb",
+  "variables": {
+    "$face_point_1": [
+      -37.082039324993694,
+      -7.082039324993691,
+      5.0
+    ],
+    "$face_index_1": 0,
+    "$sketch_1_profile_1": [
+      "c1"
+    ],
+    "$sketch_1_operation_1": [
+      "c1",
+      "c2",
+      "c3",
+      "c4"
+    ]
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "hole_diameter",
+        "expression": "8",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "hole_pitch",
+        "expression": "20",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 120,
+        "width": 60,
+        "height": 5,
+        "corner": [
+          -60.0,
+          -30.0,
+          0
+        ],
+        "body_name": "SelectiveProfileExtrude"
+      }
+    },
+    {
+      "index": 3,
+      "command": "model.faces",
+      "resolved_params": {
+        "body": "SelectiveProfileExtrude"
+      },
+      "bindings": {
+        "$face_point_1": [
+          -37.082039324993694,
+          -7.082039324993691,
+          5.0
+        ],
+        "$face_index_1": 0
+      }
+    },
+    {
+      "index": 4,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": {
+          "face": [
+            -37.082039324993694,
+            -7.082039324993691,
+            5.0
+          ],
+          "body": "SelectiveProfileExtrude",
+          "index": 0
+        },
+        "project_edges": false,
+        "name": "Selected holes"
+      }
+    },
+    {
+      "index": 5,
+      "command": "sketch.circle.center",
+      "resolved_params": {
+        "center": [
+          -30.0,
+          0.0
+        ],
+        "diameter": "hole_diameter"
+      },
+      "bindings": {
+        "$sketch_1_profile_1": [
+          "c1"
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "command": "sketch.pattern.rectangular",
+      "resolved_params": {
+        "entities": [
+          "c1"
+        ],
+        "count": 4,
+        "spacing": "hole_pitch",
+        "dir": [
+          1.0,
+          0.0
+        ]
+      },
+      "bindings": {
+        "$sketch_1_operation_1": [
+          "c1",
+          "c2",
+          "c3",
+          "c4"
+        ]
+      }
+    },
+    {
+      "index": 7,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 8,
+      "command": "solid.extrude",
+      "resolved_params": {
+        "operation": "cut",
+        "targets": [
+          "SelectiveProfileExtrude"
+        ],
+        "name": "Selected holes",
+        "through_all": true,
+        "direction": "negative",
+        "profiles": [
+          {
+            "point": [
+              -30.0,
+              0.0
+            ]
+          },
+          {
+            "point": [
+              -10.0,
+              0.0
+            ]
+          },
+          {
+            "point": [
+              30.0,
+              0.0
+            ]
+          }
+        ],
+        "exact_regions": true
+      }
+    }
+  ],
+  "completed": 9
+}

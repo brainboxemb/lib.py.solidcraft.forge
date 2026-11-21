@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "4850df38375aab3504f7f1315eb0ce339b8f101a88802797a6a307f8a2a70a35",
+  "duration_seconds": 0.215,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T10:14:29.736Z",
+  "item": "examples-parametric-placement-pair-pybosl2",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "506e1c478a7894dfa154433ba1c4cf86893ac317c3b45da027d9aabc90aba89b"
+    }
+  },
+  "run_finished_at": "2026-11-21T10:14:44.040Z",
+  "run_started_at": "2026-11-21T10:10:53.611Z",
+  "schema": 3,
+  "started_at": "2026-11-21T10:14:29.663Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "6959a1c332a5c4783cba7c8b73768b67d402224ee18a760b044f17382a606728",
+  "timeout_seconds": null
+}

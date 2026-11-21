@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "8b47754856021e256df2804eda4fbb2614f510cf8f9ad8764a502342f1864f4c",
+  "duration_seconds": 0.213,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T10:14:18.502Z",
+  "item": "examples-circular-feature-pattern-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "c93dc5ca4582bab40a28011572259e8574ed22b603aa93d098a61e78bef6e92b"
+    }
+  },
+  "run_finished_at": "2026-11-21T10:14:44.040Z",
+  "run_started_at": "2026-11-21T10:10:53.611Z",
+  "schema": 3,
+  "started_at": "2026-11-21T10:14:18.430Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "9cb504ddb2b639e48f6a76cf30fa5ce7c3fffefc2312259f4c939f958af3f9c2",
+  "timeout_seconds": null
+}

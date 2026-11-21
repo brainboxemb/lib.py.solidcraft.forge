@@ -1,0 +1,91 @@
+{
+  "models": [
+    {
+      "implementations": [
+        {
+          "geometry": {
+            "bounds": {
+              "actual_max": [
+                50.0,
+                49.72609329223633,
+                26.0
+              ],
+              "actual_min": [
+                -50.0,
+                -49.72609329223633,
+                0.0
+              ],
+              "expected_max": [
+                50.0,
+                50.0,
+                26.0
+              ],
+              "expected_min": [
+                -50.0,
+                -50.0,
+                0.0
+              ],
+              "max_delta_mm": 0.2739067077636719,
+              "pass": true,
+              "tolerance_mm": 0.5
+            },
+            "surface_distance_probes": [
+              {
+                "actual_mm": 5.0,
+                "delta_mm": 0.0,
+                "expected_mm": 5.0,
+                "label": "disc radial outside",
+                "pass": true,
+                "point": [
+                  55.0,
+                  0.0,
+                  5.0
+                ],
+                "tolerance_mm": 0.35
+              },
+              {
+                "actual_mm": 8.0,
+                "delta_mm": 0.0,
+                "expected_mm": 8.0,
+                "label": "hub radial inside step",
+                "pass": true,
+                "point": [
+                  30.0,
+                  0.0,
+                  18.0
+                ],
+                "tolerance_mm": 0.35
+              }
+            ],
+            "volume": {
+              "actual_mm3": 102117.90563271602,
+              "delta_mm3": 750.4042164281709,
+              "expected_mm3": 102868.30984914419,
+              "pass": true,
+              "tolerance_mm3": 800.0
+            },
+            "watertight": {
+              "actual": true,
+              "expected": true,
+              "pass": true
+            }
+          },
+          "implementation": "pybosl2",
+          "presentation": {
+            "metadata": "presentation/preview.json",
+            "preview": "presentation/preview-iso.png",
+            "status": "pass"
+          },
+          "source": "examples/round-top-sketch/pybosl2/model.py",
+          "status": "pass",
+          "stl": "round-top-sketch/pybosl2/model.stl"
+        }
+      ],
+      "model": "round-top-sketch",
+      "status": "pass"
+    }
+  ],
+  "schema": 1,
+  "source_sha": "4508f1979f06ad8f1862d3805ac86900556eaef2",
+  "status": "pass"
+}
