@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "8e245e774b2f8c44f2be28a96f12582bed1ffa6428e4ff8c47f3f18b3cc10f98",
+  "duration_seconds": 0.17,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T00:49:36.108Z",
+  "item": "examples-parametric-placement-pair-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "abb1520534bc5928d7d4c7de5780874b71b25ec8e9b0834cb9b7dac17c6c3f51"
+    }
+  },
+  "run_finished_at": "2026-11-21T00:49:37.510Z",
+  "run_started_at": "2026-11-21T00:46:57.396Z",
+  "schema": 3,
+  "started_at": "2026-11-21T00:49:36.049Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "5588275462302325089ee53d2be0f551d0bd93e4ca7e443ba3d1da59bcda8565",
+  "timeout_seconds": null
+}

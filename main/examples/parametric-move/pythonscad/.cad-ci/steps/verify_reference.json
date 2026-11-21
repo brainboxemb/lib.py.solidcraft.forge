@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "7a6b4848b564e478f1c2b6f8ee0767ca19b636b2af2833b5d53666d65caff276",
+  "duration_seconds": 0.17,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T00:49:35.408Z",
+  "item": "examples-parametric-move-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "06b2a1dff861924b026bb5b8a4225ddf9fdbfaaab08bad29b934a92a3e89cb42"
+    }
+  },
+  "run_finished_at": "2026-11-21T00:49:37.510Z",
+  "run_started_at": "2026-11-21T00:46:57.396Z",
+  "schema": 3,
+  "started_at": "2026-11-21T00:49:35.349Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "0db391db6c1c0123199502ced79f5ebfcbed9bc2a71ad4c67034208db32d72eb",
+  "timeout_seconds": null
+}

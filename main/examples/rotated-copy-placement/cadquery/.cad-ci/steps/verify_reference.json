@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "d110ccda70d9c5b0efd56164561a880780b07314b9ac809127b7b769e13526b6",
+  "duration_seconds": 0.169,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T00:49:36.455Z",
+  "item": "examples-rotated-copy-placement-cadquery",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "147a0ee8f503ac0edca5c87dc6caf3be21edc8bb06867cd457f8df5b6fdc4f39"
+    }
+  },
+  "run_finished_at": "2026-11-21T00:49:37.510Z",
+  "run_started_at": "2026-11-21T00:46:57.396Z",
+  "schema": 3,
+  "started_at": "2026-11-21T00:49:36.396Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "3fb4dc3fc73749669f297c5407a982925270f90c300c1ab9a87da82df54fe5bd",
+  "timeout_seconds": null
+}

@@ -12,6 +12,11 @@
     },
     {
       "error": null,
+      "model": "as-built-attach",
+      "status": "pass"
+    },
+    {
+      "error": null,
       "model": "assembly-decorator",
       "status": "pass"
     },
@@ -92,7 +97,17 @@
     },
     {
       "error": null,
+      "model": "parametric-move",
+      "status": "pass"
+    },
+    {
+      "error": null,
       "model": "parametric-offset",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "parametric-placement-pair",
       "status": "pass"
     },
     {
@@ -113,6 +128,11 @@
     {
       "error": null,
       "model": "repeated-parent-attachments",
+      "status": "pass"
+    },
+    {
+      "error": null,
+      "model": "rotated-copy-placement",
       "status": "pass"
     },
     {
@@ -162,6 +182,6 @@
     }
   ],
   "schema": 1,
-  "source_sha": "4956349b595c9eb47337da72124d3ba9dee2dc46",
+  "source_sha": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340",
   "status": "pass"
 }

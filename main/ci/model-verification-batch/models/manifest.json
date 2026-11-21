@@ -14,6 +14,12 @@
     },
     {
       "compile_error": null,
+      "input": "/output/models/as-built-attach/solidcraft.json",
+      "output": "/output/models/as-built-attach/model_verify",
+      "slug": "as-built-attach"
+    },
+    {
+      "compile_error": null,
       "input": "/output/models/assembly-decorator/solidcraft.json",
       "output": "/output/models/assembly-decorator/model_verify",
       "slug": "assembly-decorator"
@@ -110,9 +116,21 @@
     },
     {
       "compile_error": null,
+      "input": "/output/models/parametric-move/solidcraft.json",
+      "output": "/output/models/parametric-move/model_verify",
+      "slug": "parametric-move"
+    },
+    {
+      "compile_error": null,
       "input": "/output/models/parametric-offset/solidcraft.json",
       "output": "/output/models/parametric-offset/model_verify",
       "slug": "parametric-offset"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/parametric-placement-pair/solidcraft.json",
+      "output": "/output/models/parametric-placement-pair/model_verify",
+      "slug": "parametric-placement-pair"
     },
     {
       "compile_error": null,
@@ -137,6 +155,12 @@
       "input": "/output/models/repeated-parent-attachments/solidcraft.json",
       "output": "/output/models/repeated-parent-attachments/model_verify",
       "slug": "repeated-parent-attachments"
+    },
+    {
+      "compile_error": null,
+      "input": "/output/models/rotated-copy-placement/solidcraft.json",
+      "output": "/output/models/rotated-copy-placement/model_verify",
+      "slug": "rotated-copy-placement"
     },
     {
       "compile_error": null,
@@ -194,5 +218,5 @@
     }
   ],
   "schema": 1,
-  "source_sha": "4956349b595c9eb47337da72124d3ba9dee2dc46"
+  "source_sha": "ad36b062203b7de2b20c7fa2d11c99dfc50a1340"
 }

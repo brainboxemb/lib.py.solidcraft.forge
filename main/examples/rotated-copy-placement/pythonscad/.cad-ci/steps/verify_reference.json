@@ -1,0 +1,28 @@
+{
+  "action_executed": true,
+  "bundle_sha256": "5f0ff32569f5704c5c55cf70fc736aa8124a65d2d059effa15e31ed17c4745da",
+  "duration_seconds": 0.169,
+  "engine": "scons",
+  "engine_schema": 1,
+  "error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-21T00:49:36.803Z",
+  "item": "examples-rotated-copy-placement-pythonscad",
+  "outcome": "BUILT",
+  "output_state": "UNCHANGED",
+  "outputs": {
+    "references": {
+      "kind": "directory",
+      "mode": 493,
+      "sha256": "a96463da31d7e639bf76ac91f9621f8feeac3dfdd85a2f21ee04eab900713685"
+    }
+  },
+  "run_finished_at": "2026-11-21T00:49:37.510Z",
+  "run_started_at": "2026-11-21T00:46:57.396Z",
+  "schema": 3,
+  "started_at": "2026-11-21T00:49:36.745Z",
+  "status": "pass",
+  "step": "verify_reference",
+  "target_spec_digest": "e46933ed50991b45f22b9ec71cd97aafea34c3987e32fe40b41d2b3b42da2c61",
+  "timeout_seconds": null
+}
