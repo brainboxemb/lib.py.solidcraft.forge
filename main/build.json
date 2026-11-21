@@ -33,7 +33,7 @@
       "final_target_spec_digest": "f2aa477fce606e39d6c78bb1b213d131671370b66e58a4206175e1a58225f8ba",
       "item_id": "forge-tests",
       "outputs": [],
-      "source_commit": "69a1e18acc9d6b2074e3b4f4ee5e4393c761e196"
+      "source_commit": "4c408be0f34b8bec4f694a7873313279f0e67997"
     },
     "ci/model-verification-batch": {
       "engine": "scons",
@@ -68,7 +68,7 @@
       "final_target_spec_digest": "0949c6ab06d7dc6ec8b691e9e8708015e89729cf825b8d2020133cf4973c72a4",
       "item_id": "site-source",
       "outputs": [],
-      "source_commit": "69a1e18acc9d6b2074e3b4f4ee5e4393c761e196"
+      "source_commit": "4c408be0f34b8bec4f694a7873313279f0e67997"
     },
     "ci/verification-diagrams": {
       "engine": "scons",
@@ -2293,5 +2293,5 @@
   },
   "schema": 1,
   "scope": "main",
-  "source_commit": "69a1e18acc9d6b2074e3b4f4ee5e4393c761e196"
+  "source_commit": "4c408be0f34b8bec4f694a7873313279f0e67997"
 }
