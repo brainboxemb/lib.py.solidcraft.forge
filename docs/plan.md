@@ -132,7 +132,7 @@ handled before broad coverage expansion:
 
 1. #357 Slot default-coordinate regression — active now;
 2. #356 concise CLI errors plus `python -m scpf --version`;
-3. #355 parametric native Slot support;
+3. #355 parametric native Slot support — **now on dev-cad**;
 4. #354 standalone sketch extrusion as a boolean operand;
 5. #567 connected line/arc Sketch profiles for sheet-metal blanks;
 6. #568 native sheet-metal flange/contour features;
@@ -194,7 +194,7 @@ HUB75 uses explicit Placement today.
 | #340 Reuse full release qualification after identical squash merge | `dev-ci` | WS0 | **Retire** | Old Qualification + squash-to-main model is superseded by long-lived lanes and normal promotion merges; close with historical note. |
 | #357 Fix Sketch.add() default handling for native Slot profiles | `dev-cad` | WS1 | **P1 now** | Align `Sketch.add()` with the existing auto-registration rule: all five native Slot kinds preserve authored coordinates by default; add all-variant regressions and explicit-anchor rejection. |
 | #356 Improve CLI errors and expose --version | `dev-cad` | WS1 | **P1** | Implement concise model/compiler errors, package version command and explicit debug traceback path. |
-| #355 Support current SolidCraft parametric Slot API in Forge | `dev-cad` | WS1 | **P1** | Qualify current SolidCraft 0.42 dimensioned Slot contract and restore parameter/expression support. |
+| #355 Support current SolidCraft parametric Slot API in Forge | `dev-cad` | WS1 | **P1 now** | Qualify the SolidCraft 0.42 Slot expression/dimension contract first; then implement only the degrees of freedom the native API actually supports. |
 | #354 Support standalone sketch extrusions as boolean operands | `dev-cad` | WS1 | **P1** | Generalize boolean operand lowering for `sketch_base_extrusion`. |
 | #567 Mixed line/arc closed Sketch profiles for sheet-metal blanks | `dev-cad` | WS1 | **P1** | Deliver focused connected-curve profile API; do not wait for all of #9. |
 | #568 Native sheet-metal flange and contour features | `dev-cad` | WS1 | **P1** | Pin SolidCraft 0.42 command contracts and expose generic fabrication-intent APIs. |
