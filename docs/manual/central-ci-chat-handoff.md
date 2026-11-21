@@ -45,9 +45,10 @@ Werk niet onnodig serieel:
   `main` blijven echte synchronisatiepunten;
 - repositorybrede governance die beide lanes gelijk raakt mag via een
   kortlevende branch rechtstreeks naar `main`;
-- zulke direct-main governance PR's worden **squash-merged**;
-- alleen `promote/dev-cad` / `promote/dev-ci` naar `main` gebruiken een
-  normale merge commit.
+- **iedere** PR naar `main` wordt squash-merged, inclusief
+  `promote/dev-cad` / `promote/dev-ci`;
+- synchroniseer na promotie `main` terug naar beide dev-lanes; eventuele
+  normale mergecommits horen in de dev-lane en niet in `main`.
 
 Repositorygrenzen:
 
