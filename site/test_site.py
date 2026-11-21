@@ -17,6 +17,7 @@ SITE = ROOT / "site"
 sys.path.insert(0, str(ROOT / "scpf"))
 
 from html_writer import qualification_reference_comparison, qualification_setup_svg
+from qualification_view import _expected_body_rows
 
 
 class SiteSourceTests(unittest.TestCase):
@@ -146,6 +147,45 @@ class SiteSourceTests(unittest.TestCase):
         self.assertIn("Expected setup", svg)
         self.assertIn("Plate", svg)
         self.assertIn('viewBox="0 0 640 360"', svg)
+
+    def test_setup_target_envelopes_include_body_groups(self):
+        rows = _expected_body_rows(
+            {
+                "checks": [
+                    {
+                        "evidence": {
+                            "body_groups": [
+                                {
+                                    "body_envelopes": {
+                                        "matched_pairs": [
+                                            {
+                                                "actual": {"label": "Block"},
+                                                "expected": {
+                                                    "min": [-20.0, -15.0, 0.0],
+                                                    "max": [20.0, 15.0, 10.0],
+                                                },
+                                            },
+                                            {
+                                                "actual": {
+                                                    "label": "Block (Block:2)"
+                                                },
+                                                "expected": {
+                                                    "min": [20.0, -15.0, 0.0],
+                                                    "max": [60.0, 15.0, 10.0],
+                                                },
+                                            },
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        )
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0]["label"], "Block")
+        self.assertEqual(rows[1]["label"], "Block (Block:2)")
 
     def test_public_templates_use_verification_terminology(self):
         for path in (SITE / "templates").glob("*.html"):
