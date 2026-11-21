@@ -51,7 +51,7 @@
     <h2>What this example makes</h2>
     <p>SolidCraft saves one plate with six through holes and one native CircularPatternFeature that references the original BoltHole cut.</p>
     <figure class="qualification-setup-diagram"><a href="setup.svg" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size setup diagram"><img src="setup.svg" alt="Native circular feature pattern expected setup diagram"></a><figcaption>Expected setup — conceptual diagram, not verification output. Click for the full-size image.</figcaption></figure>
-    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/presentation/preview-iso.png" alt="Native circular feature pattern native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
+    <figure class="qualification-case-preview"><a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener" title="Open full-size native preview"><img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/presentation/preview-iso.png" alt="Native circular feature pattern native SolidCraft preview" loading="lazy"></a><figcaption>Native SolidCraft preview from the accepted durable build output.</figcaption></figure>
   </section>
 
   <section class="panel">
@@ -87,7 +87,7 @@ CircularFeaturePattern()
 </code></pre>
     <h3>API used</h3>
     <p><code>source = bolt.extrude(Depth.THROUGH_ALL); body = body - source; body.circular_pattern(source, count=bolts, axis=Axis.Z)</code></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/circular-feature-pattern/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/49d59aec5356a880510222a2af9f4399fce44ae2/examples/circular-feature-pattern/scpf/model.py">Open the editable Forge source in GitHub →</a></p>
   </section>
 
   <section class="panel">
@@ -100,8 +100,8 @@ CircularFeaturePattern()
   <div class="qualification-reference-list"><section class="qualification-reference-row">
   <div class="qualification-reference-source">
     <h4>pythonscad · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/circular-feature-pattern/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/circular-feature-pattern/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p class="source-stamp">Accepted evidence source <code>49d59aec5356a880510222a2af9f4399fce44ae2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/49d59aec5356a880510222a2af9f4399fce44ae2/examples/circular-feature-pattern/pythonscad/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/49d59aec5356a880510222a2af9f4399fce44ae2/examples/circular-feature-pattern/pythonscad/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;PythonSCAD reference for a six-hole circular feature pattern.&quot;&quot;&quot;
 
 from math import cos, pi, sin
@@ -401,18 +401,18 @@ model = plate - cutters
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/pythonscad/references/circular-feature-pattern/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/pythonscad/references/circular-feature-pattern/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/pythonscad/references/circular-feature-pattern/pythonscad/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/pythonscad/references/circular-feature-pattern/pythonscad/presentation/preview-iso.png" alt="pythonscad current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/pythonscad/references/circular-feature-pattern/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/pythonscad/references/circular-feature-pattern/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/pythonscad/references/circular-feature-pattern/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/pythonscad/references/circular-feature-pattern/pythonscad/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/pythonscad/references/circular-feature-pattern/pythonscad/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/pythonscad/references/circular-feature-pattern/pythonscad/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
 <section class="qualification-reference-row">
   <div class="qualification-reference-source">
     <h4>pybosl2 · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/circular-feature-pattern/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/circular-feature-pattern/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p class="source-stamp">Accepted evidence source <code>49d59aec5356a880510222a2af9f4399fce44ae2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/49d59aec5356a880510222a2af9f4399fce44ae2/examples/circular-feature-pattern/pybosl2/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/49d59aec5356a880510222a2af9f4399fce44ae2/examples/circular-feature-pattern/pybosl2/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;pyBOSL2 reference for a six-hole circular feature pattern.&quot;&quot;&quot;
 
 from math import cos, pi, sin
@@ -712,18 +712,18 @@ model = plate - cutters
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/pybosl2/references/circular-feature-pattern/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/pybosl2/references/circular-feature-pattern/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/pybosl2/references/circular-feature-pattern/pybosl2/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/pybosl2/references/circular-feature-pattern/pybosl2/presentation/preview-iso.png" alt="pybosl2 current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/pybosl2/references/circular-feature-pattern/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/pybosl2/references/circular-feature-pattern/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/pybosl2/references/circular-feature-pattern/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/pybosl2/references/circular-feature-pattern/pybosl2/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/pybosl2/references/circular-feature-pattern/pybosl2/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/pybosl2/references/circular-feature-pattern/pybosl2/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
 <section class="qualification-reference-row">
   <div class="qualification-reference-source">
     <h4>cadquery · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/circular-feature-pattern/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/circular-feature-pattern/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p class="source-stamp">Accepted evidence source <code>49d59aec5356a880510222a2af9f4399fce44ae2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/49d59aec5356a880510222a2af9f4399fce44ae2/examples/circular-feature-pattern/cadquery/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/49d59aec5356a880510222a2af9f4399fce44ae2/examples/circular-feature-pattern/cadquery/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;CadQuery reference for a six-hole circular feature pattern.&quot;&quot;&quot;
 
 from math import cos, pi, sin
@@ -1029,18 +1029,18 @@ model.add(result, name=&quot;circular_feature_pattern&quot;)
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/cadquery/references/circular-feature-pattern/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/cadquery/references/circular-feature-pattern/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/cadquery/references/circular-feature-pattern/cadquery/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/cadquery/references/circular-feature-pattern/cadquery/presentation/preview-iso.png" alt="cadquery current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/cadquery/references/circular-feature-pattern/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/cadquery/references/circular-feature-pattern/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/cadquery/references/circular-feature-pattern/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/cadquery/references/circular-feature-pattern/cadquery/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/cadquery/references/circular-feature-pattern/cadquery/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/cadquery/references/circular-feature-pattern/cadquery/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
 <section class="qualification-reference-row">
   <div class="qualification-reference-source">
     <h4>build123d · <span class="qualification-status pass">PASS</span></h4>
-    <p class="source-stamp">Accepted evidence source <code>45c6213ad6b6c02a230a95f936ca2c65f4c56da2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/45c6213ad6b6c02a230a95f936ca2c65f4c56da2/examples/circular-feature-pattern/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
-    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/circular-feature-pattern/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
+    <p class="source-stamp">Accepted evidence source <code>49d59aec5356a880510222a2af9f4399fce44ae2</code> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/49d59aec5356a880510222a2af9f4399fce44ae2/examples/circular-feature-pattern/build123d/model.py" target="_blank" rel="noopener">Open accepted source</a></p>
+    <p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/49d59aec5356a880510222a2af9f4399fce44ae2/examples/circular-feature-pattern/build123d/model.py" target="_blank" rel="noopener">Open current reference source</a></p>
     <pre><code>&quot;&quot;&quot;build123d reference for a six-hole circular feature pattern.&quot;&quot;&quot;
 
 from math import cos, pi, sin
@@ -1351,10 +1351,10 @@ with BuildPart() as model:
   </div>
   <div class="qualification-reference-output">
     <figure class="qualification-reference-preview">
-      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/build123d/references/circular-feature-pattern/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
-        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/build123d/references/circular-feature-pattern/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
+      <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/build123d/references/circular-feature-pattern/build123d/presentation/preview-iso.png" class="qualification-image-link" target="_blank" rel="noopener">
+        <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/build123d/references/circular-feature-pattern/build123d/presentation/preview-iso.png" alt="build123d current reference preview" loading="lazy">
       </a>
-      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/build123d/references/circular-feature-pattern/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/build123d/references/circular-feature-pattern/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/build123d/references/circular-feature-pattern/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
+      <figcaption>Current deterministic STL presentation preview · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/build123d/references/circular-feature-pattern/build123d/model.stl" target="_blank" rel="noopener">STL</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/build123d/references/circular-feature-pattern/build123d/verification.json" target="_blank" rel="noopener">verification JSON</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/build123d/references/circular-feature-pattern/build123d/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></figcaption>
     </figure>
   </div>
 </section>
@@ -1374,7 +1374,7 @@ with BuildPart() as model:
     Open the measurement details to inspect body sizes and editable parameters.
   </p>
   <details class="qualification-detail-block"><summary><strong>Original model</strong> · 1 bodies</summary><h4>Editable parameters</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Expression</th></tr></thead><tbody><tr><td>pcd</td><td>60.0</td><td>mm</td><td>60</td></tr><tr><td>bolts</td><td>6.0</td><td></td><td>6</td></tr></tbody></table></div><h4>Body size</h4><div class="qualification-table-scroll"><table class="api-table"><thead><tr><th>Body</th><th>Minimum</th><th>Maximum</th><th>Volume mm³</th><th>Faces</th><th>Edges</th><th>Closed</th></tr></thead><tbody><tr><td>CircularFeaturePattern</td><td>[-50.0, -50.0, -2.7698767739501816e-32]</td><td>[50.0, 50.0, 6.000000000000001]</td><td>58190.44263118612</td><td>12</td><td>30</td><td>True</td></tr></tbody></table></div></details>
-  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>bolts_4</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/saved_designs/bolts_4/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
+  <h3>Saved-design results</h3><details class="qualification-detail-block"><summary>bolts_4</summary><p><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/saved_designs/bolts_4/measurements.json" target="_blank" rel="noopener">Open durable measurements</a></p><pre><code>{
   &quot;bodies&quot;: [
     {
       &quot;area_mm2&quot;: 22601.061929857035,
@@ -1454,7 +1454,7 @@ with BuildPart() as model:
     {
       &quot;error&quot;: null,
       &quot;id&quot;: 1,
-      &quot;ms&quot;: 2.0733840000000003,
+      &quot;ms&quot;: 2.472832,
       &quot;name&quot;: &quot;Box1&quot;,
       &quot;rolled_back&quot;: false,
       &quot;suppressed&quot;: false,
@@ -1464,7 +1464,7 @@ with BuildPart() as model:
     {
       &quot;error&quot;: null,
       &quot;id&quot;: 2,
-      &quot;ms&quot;: 0.18013099999999999,
+      &quot;ms&quot;: 0.142751,
       &quot;name&quot;: &quot;BoltHole&quot;,
       &quot;rolled_back&quot;: false,
       &quot;suppressed&quot;: false,
@@ -1474,7 +1474,7 @@ with BuildPart() as model:
     {
       &quot;error&quot;: null,
       &quot;id&quot;: 3,
-      &quot;ms&quot;: 8.092932000000001,
+      &quot;ms&quot;: 9.611404,
       &quot;name&quot;: &quot;BoltHole&quot;,
       &quot;rolled_back&quot;: false,
       &quot;suppressed&quot;: false,
@@ -1484,7 +1484,7 @@ with BuildPart() as model:
     {
       &quot;error&quot;: null,
       &quot;id&quot;: 4,
-      &quot;ms&quot;: 29.258855,
+      &quot;ms&quot;: 30.818904,
       &quot;name&quot;: &quot;CircularPattern1&quot;,
       &quot;rolled_back&quot;: false,
       &quot;suppressed&quot;: false,
@@ -1511,26 +1511,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/front/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/front/actual.png" alt="front Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/front/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/front/goal.png" alt="front Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/front/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/front/overlay.png" alt="front Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/front/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/front/diff.png" alt="front Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -1553,14 +1553,14 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape not-required</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/right/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/right/actual.png" alt="right Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/right/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/right/diff.png" alt="right Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -1583,26 +1583,26 @@ with BuildPart() as model:
   <p class="meta">Regression pass · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/iso/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/iso/actual.png" alt="iso Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/iso/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/iso/goal.png" alt="iso Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/iso/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/iso/overlay.png" alt="iso Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/iso/diff.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/iso/diff.png" alt="iso Diff" loading="lazy">
   </a>
   <figcaption><strong>Diff</strong></figcaption>
 </figure>
@@ -1625,20 +1625,20 @@ with BuildPart() as model:
   <p class="meta">Regression not-required · expected shape pass</p>
   <div class="qualification-view-grid">
     <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/top/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/top/actual.png" alt="top Actual" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/top/actual.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/top/actual.png" alt="top Actual" loading="lazy">
   </a>
   <figcaption><strong>Actual</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/top/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/top/goal.png" alt="top Goal" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/top/goal.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/top/goal.png" alt="top Goal" loading="lazy">
   </a>
   <figcaption><strong>Goal</strong></figcaption>
 </figure>
 <figure class="qualification-visual-item">
-  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/top/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/visual/top/overlay.png" alt="top Overlay" loading="lazy">
+  <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/top/overlay.png" class="qualification-image-link" target="_blank" rel="noopener">
+    <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/visual/top/overlay.png" alt="top Overlay" loading="lazy">
   </a>
   <figcaption><strong>Overlay</strong></figcaption>
 </figure>
@@ -1906,14 +1906,14 @@ with BuildPart() as model:
     <p>The six bolt holes do not change the plate envelope. Volume, cylindrical-wall probes and native pattern-history checks are required.</p>
 
     <h3>Raw test files</h3>
-    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/examples/circular-feature-pattern/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
+    <p class="evidence-links"><a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/solidcraft.json" target="_blank" rel="noopener">commands</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/verification.json" target="_blank" rel="noopener">verification</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/baseline/measurements.json" target="_blank" rel="noopener">measurements</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/native/model.sc" target="_blank" rel="noopener">native .sc</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/native/model.step" target="_blank" rel="noopener">STEP</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/native/results.json" target="_blank" rel="noopener">native results</a> · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/examples/circular-feature-pattern/model_verify/presentation/preview.json" target="_blank" rel="noopener">preview metadata</a></p>
 
     <h3>Reference documentation</h3>
     <ul><li><strong>SolidCraft</strong> — Native integration through saved-design checks prove one saved CircularPatternFeature and count mutation. The four comparison libraries independently prove the baseline six-hole geometry.</li></ul>
 
     <p class="source-stamp">
-      Site source <code>1c54d708c7240d48ffb5786f16e9527d2ceb738c</code> · accepted model evidence source
-      <code>1c54d708c7240d48ffb5786f16e9527d2ceb738c</code> · durable build <code>7b7f97126e2d38bd7493fb193846586dfb8da923</code>
+      Site source <code>49d59aec5356a880510222a2af9f4399fce44ae2</code> · accepted model evidence source
+      <code>49d59aec5356a880510222a2af9f4399fce44ae2</code> · durable build <code>dfc8428765ef9dfed885ed33a80a4fc73085af4a</code>
     </p>
   </div>
 </details>
@@ -1929,7 +1929,7 @@ with BuildPart() as model:
     </p>
     <p>
       <a href="../../examples/circular-feature-pattern/">Open the example →</a>
-      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/1c54d708c7240d48ffb5786f16e9527d2ceb738c/examples/circular-feature-pattern/verification/verify.py">Open verification/verify.py →</a>
+      · <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/49d59aec5356a880510222a2af9f4399fce44ae2/examples/circular-feature-pattern/verification/verify.py">Open verification/verify.py →</a>
     </p>
   </section>
 </main>

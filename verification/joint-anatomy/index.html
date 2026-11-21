@@ -47,7 +47,7 @@
   <p class="guide-lead">Goal: one short, readable Forge expression that tells SolidCraft exactly
   how a reusable corner bracket is attached — without raw direction vectors in normal model code
   and without a second orientation solver in Forge.</p>
-  <p class="meta">SolidCraft 0.42.0 · current source <code>1c54d708c7240d48ffb5786f16e9527d2ceb738c</code> · authored page lineage: <code>51b79c223939c84980206593fe9b062f474ca220</code></p>
+  <p class="meta">SolidCraft 0.43.0 · current source <code>49d59aec5356a880510222a2af9f4399fce44ae2</code> · authored page lineage: <code>51b79c223939c84980206593fe9b062f474ca220</code></p>
 </section>
 
 <section class="panel">
@@ -67,22 +67,22 @@
 
   <h3>Front view: the brackets are outside the wood frame</h3>
   <figure class="qualification-setup-diagram qualification-technical-large">
-    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-goal.svg" class="qualification-image-link" target="_blank" rel="noopener">
-      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-goal.svg" alt="Four outside corner brackets around the front edge of an open wood frame">
+    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-goal.svg" class="qualification-image-link" target="_blank" rel="noopener">
+      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-goal.svg" alt="Four outside corner brackets around the front edge of an open wood frame">
     </a>
     <figcaption>Four outside brackets. The opening stays free and no bracket is drawn inside the wood.
     <a href="corner-bracket-goal.cadcraft.json">CadCraft source</a> ·
-    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-goal.dxf">DXF</a></figcaption>
+    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-goal.dxf">DXF</a></figcaption>
   </figure>
 
   <h3>Depth view: four becomes eight</h3>
   <figure class="qualification-setup-diagram qualification-technical-large">
-    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-depth.svg" class="qualification-image-link" target="_blank" rel="noopener">
-      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-depth.svg" alt="Side view showing front bracket positions and repeated rear bracket positions">
+    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-depth.svg" class="qualification-image-link" target="_blank" rel="noopener">
+      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-depth.svg" alt="Side view showing front bracket positions and repeated rear bracket positions">
     </a>
     <figcaption>The first verification uses the front row only; the eight-bracket case repeats the same four connections at the rear.
     <a href="corner-bracket-depth.cadcraft.json">CadCraft source</a> ·
-    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-depth.dxf">DXF</a></figcaption>
+    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-depth.dxf">DXF</a></figcaption>
   </figure>
 
   <p>The bracket itself knows only its own local geometry. It does not know left/right,
@@ -125,12 +125,12 @@ X      = how is it rotated around that direction?
 Y      = calculated automatically</code></pre>
 
   <figure class="qualification-setup-diagram qualification-concept-diagram">
-    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-anatomy.svg" class="qualification-image-link" target="_blank" rel="noopener">
-      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-anatomy.svg" alt="Two SolidCraft joint origins A and B with x and z axes">
+    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-anatomy.svg" class="qualification-image-link" target="_blank" rel="noopener">
+      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-anatomy.svg" alt="Two SolidCraft joint origins A and B with x and z axes">
     </a>
     <figcaption>SolidCraft mates joint origin B to joint origin A.
     <a href="solidcraft-joint-anatomy.cadcraft.json">CadCraft source</a> ·
-    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-anatomy.dxf">DXF</a></figcaption>
+    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-anatomy.dxf">DXF</a></figcaption>
   </figure>
 
   <h3>Conceptual API object</h3>
@@ -193,12 +193,12 @@ Y      = calculated automatically</code></pre>
   <h2>3. Where does the joint-origin frame come from?</h2>
 
   <figure class="qualification-setup-diagram qualification-concept-diagram">
-    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-references.svg" class="qualification-image-link" target="_blank" rel="noopener">
-      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-references.svg" alt="Topology-backed joint origin compared with an explicit point-based bracket joint origin">
+    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-references.svg" class="qualification-image-link" target="_blank" rel="noopener">
+      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-references.svg" alt="Topology-backed joint origin compared with an explicit point-based bracket joint origin">
     </a>
     <figcaption>Left: frame topology. Right: explicit child joint origin on the bracket.
     <a href="solidcraft-joint-references.cadcraft.json">CadCraft source</a> ·
-    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-references.dxf">DXF</a></figcaption>
+    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/solidcraft-joint-references.dxf">DXF</a></figcaption>
   </figure>
 
   <div class="twocol">
@@ -226,12 +226,12 @@ Y      = calculated automatically</code></pre>
   model axes. The joint origin then defines another local frame on that geometry.</p>
 
   <figure class="qualification-setup-diagram qualification-concept-diagram">
-    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-local-axes.svg" class="qualification-image-link" target="_blank" rel="noopener">
-      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-local-axes.svg" alt="Corner bracket local model axes, points A and B, and front/rear joint-frame directions">
+    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-local-axes.svg" class="qualification-image-link" target="_blank" rel="noopener">
+      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-local-axes.svg" alt="Corner bracket local model axes, points A and B, and front/rear joint-frame directions">
     </a>
     <figcaption>The bracket's model axes and the current assembly-local joint frames.
     <a href="corner-bracket-local-axes.cadcraft.json">CadCraft source</a> ·
-    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-local-axes.dxf">DXF</a></figcaption>
+    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-local-axes.dxf">DXF</a></figcaption>
   </figure>
 
   <div class="notice"><strong>Do not mix these two coordinate systems.</strong>
@@ -257,12 +257,12 @@ joint x = +X = (1, 0, 0)     # right along the bracket profile</code></pre>
 
   <h3>Four front corners, one by one</h3>
   <figure class="qualification-setup-diagram qualification-technical-large">
-    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-front-corners.svg" class="qualification-image-link" target="_blank" rel="noopener">
-      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-front-corners.svg" alt="Four enlarged front frame corners with bracket point A or B and parent x direction">
+    <a href="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-front-corners.svg" class="qualification-image-link" target="_blank" rel="noopener">
+      <img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-front-corners.svg" alt="Four enlarged front frame corners with bracket point A or B and parent x direction">
     </a>
     <figcaption>Four enlarged front-corner placements. The parent topology frame rotates around the frame; the current child definition is reused.
     <a href="corner-bracket-front-corners.cadcraft.json">CadCraft source</a> ·
-    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/7b7f97126e2d38bd7493fb193846586dfb8da923/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-front-corners.dxf">DXF</a></figcaption>
+    <a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/dfc8428765ef9dfed885ed33a80a4fc73085af4a/main/ci/verification-diagrams/diagrams/rendered/corner-bracket-front-corners.dxf">DXF</a></figcaption>
   </figure>
 
   <table>
