@@ -96,32 +96,45 @@ def _expected_body_rows(report: dict[str, Any]) -> tuple[dict[str, Any], ...]:
         evidence = check.get("evidence")
         if not isinstance(evidence, dict):
             continue
-        envelopes = evidence.get("body_envelopes")
-        if not isinstance(envelopes, dict):
-            continue
-        for pair in envelopes.get("matched_pairs", []):
-            if not isinstance(pair, dict):
-                continue
-            expected = pair.get("expected")
-            actual = pair.get("actual")
-            if not isinstance(expected, dict):
-                continue
-            minimum = expected.get("min")
-            maximum = expected.get("max")
-            if not isinstance(minimum, list) or not isinstance(maximum, list):
-                continue
-            actual = actual if isinstance(actual, dict) else {}
-            rows.append(
-                {
-                    "label": (
-                        expected.get("label")
-                        or actual.get("label")
-                        or f"body {len(rows) + 1}"
-                    ),
-                    "minimum": minimum,
-                    "maximum": maximum,
-                }
-            )
+
+        envelope_groups = []
+        direct = evidence.get("body_envelopes")
+        if isinstance(direct, dict):
+            envelope_groups.append(direct)
+
+        body_groups = evidence.get("body_groups")
+        if isinstance(body_groups, list):
+            for group in body_groups:
+                if not isinstance(group, dict):
+                    continue
+                nested = group.get("body_envelopes")
+                if isinstance(nested, dict):
+                    envelope_groups.append(nested)
+
+        for envelopes in envelope_groups:
+            for pair in envelopes.get("matched_pairs", []):
+                if not isinstance(pair, dict):
+                    continue
+                expected = pair.get("expected")
+                actual = pair.get("actual")
+                if not isinstance(expected, dict):
+                    continue
+                minimum = expected.get("min")
+                maximum = expected.get("max")
+                if not isinstance(minimum, list) or not isinstance(maximum, list):
+                    continue
+                actual = actual if isinstance(actual, dict) else {}
+                rows.append(
+                    {
+                        "label": (
+                            expected.get("label")
+                            or actual.get("label")
+                            or f"body {len(rows) + 1}"
+                        ),
+                        "minimum": minimum,
+                        "maximum": maximum,
+                    }
+                )
         if rows:
             break
     return tuple(rows)
