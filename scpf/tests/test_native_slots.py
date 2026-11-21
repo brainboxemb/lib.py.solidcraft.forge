@@ -3,7 +3,9 @@ import unittest
 from pathlib import Path
 
 from scpf import (
+    Box,
     CENTER,
+    Depth,
     Sketch,
     SlotArcCenter2D,
     SlotArcThreePoint2D,
@@ -129,7 +131,8 @@ class NativeSlotFamilyTests(unittest.TestCase):
         )
 
     def _compile_slot(self, command_name, factory, *, explicit_add):
-        with Sketch(plane="XY") as sketch:
+        body = Box(80, 60, 5)
+        with Sketch(on=body) as sketch:
             profile = factory()
             if explicit_add:
                 sketch.add(profile)
@@ -138,7 +141,7 @@ class NativeSlotFamilyTests(unittest.TestCase):
                     (command_name, sketch._profiles),
                 )
         commands = compile_model(
-            sketch.extrude(5),
+            body - sketch.extrude(Depth.THROUGH_ALL),
             "SlotAddRegression",
         )["commands"]
         return next(
