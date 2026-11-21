@@ -81,6 +81,10 @@ class ModelVisualTests(unittest.TestCase):
         policy = self.visual.load_visual_policy(POLICY)
 
         self.assertEqual(tuple(policy["views"]), ("front", "right", "iso"))
+        self.assertEqual(
+            tuple(policy["expected_views"]),
+            ("front", "right", "iso"),
+        )
         self.assertEqual(policy["render"], {"width": 720, "height": 540})
         self.assertEqual(
             policy["regression"],
@@ -153,6 +157,83 @@ class ModelVisualTests(unittest.TestCase):
                     ROOT / "examples" / slug / "ci.yml"
                 ).read_text(encoding="utf-8")
                 self.assertIn("process: true", ci_text)
+
+    def test_policy_separates_regression_and_expected_shape_views(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "visual.json"
+            path.write_text(
+                json.dumps(
+                    {
+                        "schema": 1,
+                        "views": {
+                            "front": {
+                                "baseline_payload": "baselines/front.json"
+                            }
+                        },
+                        "expected_views": ["top"],
+                        "render": {"width": 720, "height": 540},
+                        "regression": {
+                            "width": 96,
+                            "height": 72,
+                            "changed_pixel_threshold": 12,
+                            "max_mean_difference": 6,
+                            "max_changed_fraction": 0.08,
+                        },
+                        "baseline_provenance": {"approval": "approved"},
+                        "expected_boxes": [
+                            {
+                                "label": "plate",
+                                "minimum": [-10, -10, 0],
+                                "maximum": [10, 10, 2],
+                            }
+                        ],
+                        "expected_features": [
+                            {
+                                "type": "through_path_slot",
+                                "label": "curved slot",
+                                "centerline": [
+                                    [-5, 0],
+                                    [0, 4],
+                                    [5, 0],
+                                ],
+                                "width": 2,
+                                "z": [0, 2],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            policy = self.visual.load_visual_policy(path)
+
+        self.assertEqual(tuple(policy["views"]), ("front",))
+        self.assertEqual(tuple(policy["expected_views"]), ("top",))
+        self.assertEqual(
+            policy["expected_features"][0]["type"],
+            "through_path_slot",
+        )
+
+    def test_view_status_uses_only_required_visual_roles(self):
+        evidence = {
+            "baseline_status": "missing",
+            "expected_shape_status": "pass",
+        }
+        self.assertEqual(
+            self.visual._view_status(
+                evidence,
+                regression_required=False,
+                expected_shape_required=True,
+            ),
+            "pass",
+        )
+        self.assertEqual(
+            self.visual._view_status(
+                evidence,
+                regression_required=True,
+                expected_shape_required=False,
+            ),
+            "missing",
+        )
 
     def test_presentation_preview_reuses_current_iso_render(self):
         with tempfile.TemporaryDirectory() as tmp:
