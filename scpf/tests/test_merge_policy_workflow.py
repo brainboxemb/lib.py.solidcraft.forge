@@ -23,7 +23,11 @@ class MergePolicyWorkflowTests(unittest.TestCase):
         self.assertIn("contents: write", text)
 
         self.assertIn("scripts/merge_policy.py", text)
-        self.assertIn("check-runs?filter=latest", text)
+        self.assertIn("check-runs?per_page=100", text)
+        self.assertNotIn("filter=latest", text)
+        self.assertIn("sort_by(.name, (.started_at // \"\"), .id)", text)
+        self.assertIn("group_by(.name)", text)
+        self.assertIn("map(last)", text)
         self.assertIn('STATUS_COUNT="$(jq', text)
         self.assertIn('merge_method="$METHOD"', text)
         self.assertIn('sha="$HEAD_SHA"', text)
@@ -33,6 +37,11 @@ class MergePolicyWorkflowTests(unittest.TestCase):
         self.assertIn("git/refs/heads/$HEAD_REF", text)
         self.assertIn("temporary head deleted", text)
         self.assertIn("long-lived lane recreated at merge commit", text)
+        self.assertIn("COMMENT_BODY", text)
+        self.assertIn(
+            "printf 'Merged by repository policy: \`%s -> %s\`",
+            text,
+        )
 
     def test_cleanup_command_is_owner_only_and_keeps_unmerged_branches(self):
         text = WORKFLOW.read_text(encoding="utf-8")
