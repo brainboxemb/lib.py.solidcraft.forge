@@ -14,6 +14,7 @@ concurrency:
 jobs:
   verify:
     name: ci
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -24,12 +25,15 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+
       - name: Install CI runtime dependencies
         run: python -m pip install PyYAML==6.0.2
+
       - name: Run selected project items
         env:
           GH_TOKEN: ${{ github.token }}
@@ -44,25 +48,33 @@ jobs:
           path: build/qualification/
           if-no-files-found: ignore
 
-  publish-build:
-    needs: verify
-    if: github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'dev')
+  build:
+    name: build
+    if: github.event_name != 'pull_request' && (github.ref_name == 'dev' || github.ref_name == 'main')
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      actions: read
+      actions: write
     steps:
-      - uses: actions/checkout@v7
+      - name: Check out source
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - run: python -m pip install PyYAML==6.0.2
-      - uses: actions/download-artifact@v8
-        with:
-          name: cad-qualification
-          path: build/qualification/
+
+      - name: Install CI runtime dependencies
+        run: python -m pip install PyYAML==6.0.2
+
+      - name: Run selected project items
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PYTHONPATH: modules/ci/src
+        run: python -m cad_library_ci
+
       - name: Publish build scope
         env:
           PYTHONPATH: modules/build/src
@@ -72,14 +84,6 @@ jobs:
           --source-ref "${{ github.ref_name }}"
           --source-sha "${{ github.sha }}"
 
-  dispatch-pages:
-    needs: publish-build
-    if: github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'dev')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: write
-    steps:
       - name: Dispatch Pages
         env:
           GH_TOKEN: ${{ github.token }}
