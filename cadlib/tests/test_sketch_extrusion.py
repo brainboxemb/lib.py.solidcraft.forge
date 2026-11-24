@@ -13,6 +13,7 @@ from scpf import (
     Edges,
     Sketch,
     Parameter,
+    Polygon2D,
 )
 from scpf.compiler import ModelError, compile_model
 
