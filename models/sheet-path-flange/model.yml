@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: sheet-metal
+priority: 50
+title: Native path flange
+tagline: A reusable line-only Sketch path drives an existing-edge flange
+description: >
+  A native sheet edge follows a reusable open Sketch path with an optional feature-radius override while the active sheet rule owns material values.
+parameters: 80 × 40 × 2 mm sheet; 14 mm path; R3 feature override
+stages:
+  - Create the flat sheet and a reusable line-only open path
+  - Add a native path flange to the selected existing edge
+  - Mutate path height and radius and verify the flat pattern

@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: sheet-metal
+priority: 30
+title: Native contour flange
+tagline: An open connected Sketch chain creates one editable sheet body
+description: >
+  A reusable line/tangent-arc/line contour creates native contour-flange sheet history with parameterized width and one shared material rule.
+parameters: 50 mm width; 2.5 mm sheet; R2.5 bend; K=0.44; open XZ contour
+stages:
+  - Build the connected open contour Sketch
+  - Create a native contour-flange sheet from the ordered chain
+  - Mutate width and contour height and verify native sheet history

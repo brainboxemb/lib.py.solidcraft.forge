@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "views": {
+    "front": {
+      "baseline_payload": "baselines/front.json"
+    },
+    "right": {
+      "baseline_payload": "baselines/right.json"
+    },
+    "iso": {
+      "baseline_payload": "baselines/iso.json"
+    }
+  },
+  "expected_views": [
+    "iso",
+    "front",
+    "right"
+  ],
+  "render": {
+    "width": 720,
+    "height": 540
+  },
+  "regression": {
+    "width": 96,
+    "height": 72,
+    "changed_pixel_threshold": 12,
+    "max_mean_difference": 6,
+    "max_changed_fraction": 0.08
+  },
+  "baseline_provenance": {
+    "approval": "approved",
+    "source_commit": "360ebe87bbae50464bb78d27b91ffb58cfdc1475",
+    "historical_manifest_solidcraft_version": "0.30.1",
+    "migrated_from": "qualification/visual_baselines.json",
+    "migrated_without_reencoding": true,
+    "verified_during_solidcraft_0_42_0_qualification": true
+  },
+  "expected_boxes": [
+    {
+      "label": "left Panel",
+      "minimum": [
+        -5,
+        -1,
+        0
+      ],
+      "maximum": [
+        5,
+        1,
+        20
+      ]
+    },
+    {
+      "label": "right Panel",
+      "minimum": [
+        6,
+        -1,
+        0
+      ],
+      "maximum": [
+        16,
+        1,
+        20
+      ]
+    },
+    {
+      "label": "root Frame",
+      "minimum": [
+        -17.5,
+        15,
+        0
+      ],
+      "maximum": [
+        17.5,
+        25,
+        40
+      ]
+    }
+  ],
+  "expected_features": []
+}

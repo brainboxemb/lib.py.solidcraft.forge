@@ -1,0 +1,18 @@
+{
+  "commands": [
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "contour_width",
+        "expression": "60 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "end_height",
+        "expression": "35 mm"
+      }
+    }
+  ]
+}

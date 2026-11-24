@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: anchors
+priority: 40
+title: Assembly-owned named anchor
+tagline: A semantic datum belongs to the assembly rather than the reusable part
+description: >
+  An assembly publishes a named corner datum and a Marker consumes it without adding application-specific anchor names to the generic Base component.
+parameters: Base 40 × 30 × 20 mm; Companion 10 mm cube; Marker 10 mm cube
+stages:
+  - Create Base and Companion components
+  - Publish the semantic corner anchor on the assembly
+  - Attach Marker through the assembly-owned datum

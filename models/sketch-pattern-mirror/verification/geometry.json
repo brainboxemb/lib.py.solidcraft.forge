@@ -1,0 +1,500 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -120,
+    -80,
+    0
+  ],
+  "bounds_max": [
+    120,
+    80,
+    5
+  ],
+  "bounds_tolerance_mm": 0.5,
+  "volume_mm3": 181578.76140340505,
+  "volume_tolerance_mm3": 180,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "hole 1,1 at z=0.5",
+      "point": [
+        -60,
+        -45,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 1,1 at z=2.5",
+      "point": [
+        -60,
+        -45,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 1,1 at z=4.5",
+      "point": [
+        -60,
+        -45,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 2,1 at z=0.5",
+      "point": [
+        -35,
+        -45,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 2,1 at z=2.5",
+      "point": [
+        -35,
+        -45,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 2,1 at z=4.5",
+      "point": [
+        -35,
+        -45,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 3,1 at z=0.5",
+      "point": [
+        -10,
+        -45,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 3,1 at z=2.5",
+      "point": [
+        -10,
+        -45,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 3,1 at z=4.5",
+      "point": [
+        -10,
+        -45,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 4,1 at z=0.5",
+      "point": [
+        15,
+        -45,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 4,1 at z=2.5",
+      "point": [
+        15,
+        -45,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 4,1 at z=4.5",
+      "point": [
+        15,
+        -45,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 1,2 at z=0.5",
+      "point": [
+        -60,
+        45,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 1,2 at z=2.5",
+      "point": [
+        -60,
+        45,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 1,2 at z=4.5",
+      "point": [
+        -60,
+        45,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 2,2 at z=0.5",
+      "point": [
+        -35,
+        45,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 2,2 at z=2.5",
+      "point": [
+        -35,
+        45,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 2,2 at z=4.5",
+      "point": [
+        -35,
+        45,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 3,2 at z=0.5",
+      "point": [
+        -10,
+        45,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 3,2 at z=2.5",
+      "point": [
+        -10,
+        45,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 3,2 at z=4.5",
+      "point": [
+        -10,
+        45,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 4,2 at z=0.5",
+      "point": [
+        15,
+        45,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 4,2 at z=2.5",
+      "point": [
+        15,
+        45,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 4,2 at z=4.5",
+      "point": [
+        15,
+        45,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 1,1 at z=0.5",
+      "point": [
+        -80,
+        -20,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 1,1 at z=2.5",
+      "point": [
+        -80,
+        -20,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 1,1 at z=4.5",
+      "point": [
+        -80,
+        -20,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,1 at z=0.5",
+      "point": [
+        -30,
+        -20,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,1 at z=2.5",
+      "point": [
+        -30,
+        -20,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,1 at z=4.5",
+      "point": [
+        -30,
+        -20,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,1 at z=0.5",
+      "point": [
+        30,
+        -20,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,1 at z=2.5",
+      "point": [
+        30,
+        -20,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,1 at z=4.5",
+      "point": [
+        30,
+        -20,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 4,1 at z=0.5",
+      "point": [
+        80,
+        -20,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 4,1 at z=2.5",
+      "point": [
+        80,
+        -20,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 4,1 at z=4.5",
+      "point": [
+        80,
+        -20,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 1,2 at z=0.5",
+      "point": [
+        -80,
+        20,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 1,2 at z=2.5",
+      "point": [
+        -80,
+        20,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 1,2 at z=4.5",
+      "point": [
+        -80,
+        20,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,2 at z=0.5",
+      "point": [
+        -30,
+        20,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,2 at z=2.5",
+      "point": [
+        -30,
+        20,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,2 at z=4.5",
+      "point": [
+        -30,
+        20,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,2 at z=0.5",
+      "point": [
+        30,
+        20,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,2 at z=2.5",
+      "point": [
+        30,
+        20,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,2 at z=4.5",
+      "point": [
+        30,
+        20,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 4,2 at z=0.5",
+      "point": [
+        80,
+        20,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 4,2 at z=2.5",
+      "point": [
+        80,
+        20,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 4,2 at z=4.5",
+      "point": [
+        80,
+        20,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    }
+  ]
+}

@@ -4,54 +4,57 @@ This file contains unfinished work only.
 
 ## Accepted baseline
 
-The ten-owner migration gate is accepted and promoted on `main@378b5051cc2accc98e4774af3189d377be52ab1c`.
+The physical Forge model migration is complete on `dev`.
 
-Accepted physical owners:
-1. `simple-box`;
-2. `primitive-csg`;
-3. `anchored-holes`;
-4. `assembly-decorator`;
-5. `parametric-attach`;
-6. `corner-anchor`;
-7. `rectangular-pattern`;
-8. `rotated-sketch-cutter`;
-9. `slot-family`;
-10. `sheet-fold`.
+The accepted migration baseline now has:
+- 46 physical model owners;
+- SCPF as primary per owner;
+- historically real reference implementations local to the same physical owner;
+- native and applicable geometry verification;
+- 36 model-local approved SolidCraft visual-verification policies;
+- current per-view native evidence generated from `model.sc`;
+- saved-design and inspection behavior retained where historically real;
+- `components` as one physical owner with
+  `purpose: [example, verification]`;
+- exactly four public Examples;
+- all 46 physical owners projected into Verification;
+- durable generated CAD artifacts on `build/<scope>/models/**`, not copied to
+  `gh-pages`.
 
-For the baseline:
-- SCPF is primary per owner;
-- historical reference implementations are local implementations only where they existed;
-- owner-local command contracts pass;
-- all 10 native SCPF stages pass;
-- all 45 applicable geometry stages pass;
-- historical saved-design and inspection behavior is retained;
-- SCPF replay semantics remain consumer-owned through `scpf.headless.run_document()`;
-- OLD vs NEW evidence is recorded in `docs/acceptance/five-owner-gate.md` and `docs/acceptance/ten-owner-gate.md`;
-- `build/main/models` and `build/dev/models` contain all ten owners;
-- Pages projects owners by purpose without creating duplicate owners: Examples contains `simple-box`, `anchored-holes` and `corner-anchor`; Verification contains all ten owners.
+The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the
+A/B authority until documentation and public-route parity is accepted.
 
-The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the A/B authority until remaining-graph parity is demonstrated.
+## Now — #31 final integration
 
-## Now — #29 core feature slice
+PR #34 is the single remaining migration lane.
 
-The twenty-owner candidate is technically accepted on `553033bdd2ccf0e5612e8f12d2a95c51a51ec462` by CI run **45456265226** with qualification artifact **14950656646**. OLD vs NEW evidence is recorded in `docs/acceptance/twenty-owner-gate.md`.
+Implemented and qualified on the PR branch:
+- historical nine-chapter Guide and Cheatsheet projections;
+- 44 case-sensitive public SCPF API Reference routes, statically validated
+  against `cadlib/src/scpf` without importing or executing the package;
+- the API design-contract compatibility route;
+- Verification `coverage`, `joint-anatomy` and `results` projections from
+  source declarations and durable build evidence;
+- the accepted reusable Hextra/CAD presentation foundation from
+  `template.cad.library`;
+- a fixed 63-route OLD-vs-NEW route/content gate;
+- desktop/mobile rendered-layout evidence with zero missing local assets.
 
-The ten added owners are:
-- basic geometry: `round-top-sketch`, `native-revolve`, `circle-negative-extrude`, `bracket`;
-- parent/child features and faces: `hole-family`, `top-sketch-after-chamfer`, `circular-feature-pattern`, `rounded-rectangle-sketch`, `attached-through-all`, `cone-boolean`.
+Remaining work:
+1. require final CI and Pages checks on the current PR head;
+2. inspect the Forge-specific documentation screenshots produced by the final
+   Pages run;
+3. squash PR #34 into `dev`;
+4. verify the post-merge durable build/Pages chain and close #31;
+5. promote the accepted `dev` baseline to `main` with the repository's
+   normal merge-commit policy.
 
-All ten remain `purpose: verification`. `native-revolve`, `attached-through-all` and `cone-boolean` are intentionally SCPF-only; the other seven retain all four historical reference implementations.
-
-The candidate restored the historical public `Sketch.revolve()` contract in `cadlib/scpf` because the migration exposed that NEW had lost it. No model-local workaround was introduced.
-
-Remaining work for #29 is integration acceptance only: squash PR #30 to `dev`, verify durable build and Pages output for twenty owners, then complete a full `dev -> main` promotion with a merge commit and stable post-merge checks.
-
-## After #29
-
-Continue the remaining graph by the historical functional groups: parameters/dependencies, components/occurrences, anchors/local frames, associative relationships, then sheet metal.
+The reusable visual foundation remains template-owned. Forge-specific Guide,
+API Reference, Cheatsheet and Verification explanatory content remain owned
+here.
 
 ## Later
 
-1. migrate remaining API/guide/reference documentation;
-2. qualify NEW release/version mechanics;
-3. retire duplicated historical orchestration only after all real consumers have equivalent coverage.
+1. qualify NEW release/version mechanics;
+2. retire duplicated historical orchestration only after all real consumers
+   and public documentation have equivalent coverage.

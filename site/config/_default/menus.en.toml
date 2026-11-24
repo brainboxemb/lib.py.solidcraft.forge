@@ -1,20 +1,41 @@
 [[main]]
 name = "Documentation"
 pageRef = "/docs"
-weight = 1
+weight = 10
+
+[[main]]
+name = "Guide"
+pageRef = "/guide"
+weight = 20
+
+[[main]]
+name = "API Reference"
+pageRef = "/reference"
+weight = 30
+
+[[main]]
+name = "Cheatsheet"
+pageRef = "/cheatsheet"
+weight = 40
 
 [[main]]
 name = "Examples"
 pageRef = "/examples"
-weight = 2
+weight = 50
 
 [[main]]
 name = "Verification"
 pageRef = "/verification"
-weight = 3
+weight = 60
 
 [[main]]
 name = "Search"
-weight = 4
+weight = 70
 [main.params]
 type = "search"
+
+[[main]]
+name = "Theme"
+weight = 80
+[main.params]
+type = "theme-toggle"

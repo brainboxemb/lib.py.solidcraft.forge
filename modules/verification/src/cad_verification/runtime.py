@@ -28,4 +28,14 @@ def run(
             output,
             definition,
         )
+    if adapter == "solidcraft-visual":
+        from .adapters.solidcraft_visual import (
+            run_solidcraft_visual_verification_file,
+        )
+        return run_solidcraft_visual_verification_file(
+            artifact,
+            output,
+            definition,
+            verification_id=verification_id,
+        )
     raise ValueError(f"unsupported verification adapter: {adapter}")

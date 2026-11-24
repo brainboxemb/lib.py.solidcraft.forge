@@ -1,0 +1,311 @@
+{
+  "schema": 1,
+  "views": {
+    "front": {
+      "baseline_payload": "baselines/front.json"
+    },
+    "right": {
+      "baseline_payload": "baselines/right.json"
+    },
+    "iso": {
+      "baseline_payload": "baselines/iso.json"
+    }
+  },
+  "expected_views": [
+    "top",
+    "front",
+    "iso"
+  ],
+  "render": {
+    "width": 720,
+    "height": 540
+  },
+  "regression": {
+    "width": 96,
+    "height": 72,
+    "changed_pixel_threshold": 12,
+    "max_mean_difference": 6,
+    "max_changed_fraction": 0.08
+  },
+  "baseline_provenance": {
+    "approval": "approved",
+    "source_commit": "509a444e40e9490c21689f468cd3a78ee49a014f",
+    "historical_manifest_solidcraft_version": "0.30.1",
+    "migrated_from": "qualification/visual_baselines.json",
+    "migrated_without_reencoding": true,
+    "verified_during_solidcraft_0_42_0_qualification": true
+  },
+  "expected_boxes": [
+    {
+      "label": "SketchPatternMirror",
+      "minimum": [
+        -120,
+        -80,
+        0
+      ],
+      "maximum": [
+        120,
+        80,
+        5
+      ]
+    }
+  ],
+  "expected_features": [
+    {
+      "type": "through_hole",
+      "label": "hole 1,1",
+      "center": [
+        -60,
+        -45
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 2,1",
+      "center": [
+        -35,
+        -45
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 3,1",
+      "center": [
+        -10,
+        -45
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 4,1",
+      "center": [
+        15,
+        -45
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 1,2",
+      "center": [
+        -60,
+        45
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 2,2",
+      "center": [
+        -35,
+        45
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 3,2",
+      "center": [
+        -10,
+        45
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "hole 4,2",
+      "center": [
+        15,
+        45
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_slot",
+      "label": "slot 1,1",
+      "centerline": [
+        [
+          -90,
+          -20
+        ],
+        [
+          -70,
+          -20
+        ]
+      ],
+      "width": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_slot",
+      "label": "slot 2,1",
+      "centerline": [
+        [
+          -40,
+          -20
+        ],
+        [
+          -20,
+          -20
+        ]
+      ],
+      "width": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_slot",
+      "label": "slot 3,1",
+      "centerline": [
+        [
+          20,
+          -20
+        ],
+        [
+          40,
+          -20
+        ]
+      ],
+      "width": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_slot",
+      "label": "slot 4,1",
+      "centerline": [
+        [
+          70,
+          -20
+        ],
+        [
+          90,
+          -20
+        ]
+      ],
+      "width": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_slot",
+      "label": "slot 1,2",
+      "centerline": [
+        [
+          -90,
+          20
+        ],
+        [
+          -70,
+          20
+        ]
+      ],
+      "width": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_slot",
+      "label": "slot 2,2",
+      "centerline": [
+        [
+          -40,
+          20
+        ],
+        [
+          -20,
+          20
+        ]
+      ],
+      "width": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_slot",
+      "label": "slot 3,2",
+      "centerline": [
+        [
+          20,
+          20
+        ],
+        [
+          40,
+          20
+        ]
+      ],
+      "width": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_slot",
+      "label": "slot 4,2",
+      "centerline": [
+        [
+          70,
+          20
+        ],
+        [
+          90,
+          20
+        ]
+      ],
+      "width": 8,
+      "z": [
+        0,
+        5
+      ]
+    }
+  ]
+}

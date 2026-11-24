@@ -1,0 +1,14 @@
+schema: 1
+purpose: verification
+section: components
+priority: 20
+title: Native parametric occurrence Placement
+tagline: A reusable occurrence keeps its X placement as an editable native expression
+description: >
+  Two Block occurrences share one definition while the second uses the parent offset parameter as an ordinary native occurrence Placement, not an assembly joint.
+parameters: Two 20 × 20 × 10 mm Blocks; offset 40 mm
+stages:
+  - Create one reusable Block definition
+  - Copy the Block occurrence
+  - Move the copy with the symbolic offset parameter
+  - Recompute the saved design after changing offset

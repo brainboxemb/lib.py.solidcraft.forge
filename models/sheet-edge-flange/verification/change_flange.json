@@ -1,0 +1,18 @@
+{
+  "commands": [
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "flange_height",
+        "expression": "25 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "flange_angle",
+        "expression": "75 deg"
+      }
+    }
+  ]
+}
