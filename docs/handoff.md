@@ -60,6 +60,9 @@ Durable working rules:
 - use `main` for stable integration and `dev` for normal integration;
   squash short-lived work branches into `dev`, and promote `dev -> main`
   with a merge commit;
+- execute every source-branch integration by posting `/merge` on the pull
+  request and letting `.github/workflows/merge-policy.yml` choose the merge
+  method; never use direct merge API, auto-merge or manual merge fallback;
 - preserve the two released CAD runtime roles, `reference` and `solidcraft`,
   unless a separately qualified change updates that contract;
 - use the historical Forge repository as the A/B migration reference until the
