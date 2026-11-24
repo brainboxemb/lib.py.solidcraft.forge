@@ -6,7 +6,7 @@
     "primitive-csg",
     "simple-box"
   ],
-  "full": true,
+  "full": false,
   "models": [
     {
       "id": "anchored-holes",
@@ -82,12 +82,6 @@
     }
   ],
   "schema": 2,
-  "selected": [
-    "anchored-holes",
-    "assembly-decorator",
-    "parametric-attach",
-    "primitive-csg",
-    "simple-box"
-  ],
-  "source_sha": "606f07588c8a41ee4f2ae18aef55ff25d1ceb2fc"
+  "selected": [],
+  "source_sha": "033ccf5e157d37e371884ec80246097ba82202e2"
 }
