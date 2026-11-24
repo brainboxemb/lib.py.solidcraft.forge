@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: features
+priority: 40
+title: TOP Sketch after chamfer
+tagline: Face-attached sketch remains valid after topology-changing chamfer
+description: >
+  A chamfered plate with a centered through hole whose sketch is attached to the resulting TOP face after the chamfer.
+parameters: 100 × 70 × 10 mm plate; 8 mm corner chamfers; Ø12 through hole
+stages:
+  - Create the bottom-anchored Box plate
+  - Chamfer the four vertical edges
+  - Resolve the resulting TOP face and cut the attached hole sketch through all
