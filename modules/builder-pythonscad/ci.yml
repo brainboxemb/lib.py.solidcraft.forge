@@ -1,0 +1,6 @@
+schema: 1
+id: builder-pythonscad
+kind: python
+builder:
+  runtime: reference
+  entrypoint: cad_library_builder_pythonscad:build

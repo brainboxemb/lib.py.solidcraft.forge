@@ -1,0 +1,6 @@
+schema: 1
+id: build
+kind: python
+impact: full
+watch:
+  - .github/workflows/ci.yml

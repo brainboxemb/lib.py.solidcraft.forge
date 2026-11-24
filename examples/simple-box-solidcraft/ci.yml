@@ -1,0 +1,9 @@
+schema: 1
+id: simple-box-solidcraft
+kind: example
+builder: builder-solidcraft
+source: solidcraft/commands.json
+verification:
+  module: verification
+  adapter: mesh-geometry
+  definition: verification/geometry.json

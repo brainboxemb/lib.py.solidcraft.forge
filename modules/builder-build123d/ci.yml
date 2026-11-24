@@ -1,0 +1,7 @@
+schema: 1
+id: builder-build123d
+kind: python
+builder:
+  runtime: reference
+  python: /opt/build123d/bin/python
+  entrypoint: cad_library_builder_build123d:build

@@ -1,0 +1,15 @@
+[[main]]
+name = "Documentation"
+pageRef = "/docs"
+weight = 1
+
+[[main]]
+name = "Examples"
+pageRef = "/examples"
+weight = 2
+
+[[main]]
+name = "Search"
+weight = 3
+[main.params]
+type = "search"

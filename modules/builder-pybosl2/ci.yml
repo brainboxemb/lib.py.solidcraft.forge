@@ -1,0 +1,9 @@
+schema: 1
+id: builder-pybosl2
+kind: python
+builder:
+  runtime: reference
+  entrypoint: cad_library_builder_pybosl2:build
+  needs: [builder-pythonscad]
+watch:
+  - modules/builder-pythonscad/**
