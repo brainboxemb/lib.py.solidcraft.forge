@@ -16,6 +16,19 @@ def capture(site: Path, base_path: str, output: Path):
     if not chrome:
         raise RuntimeError("Chrome/Chromium is required")
     routes = [("home", ""), ("documentation", "docs/"), ("documentation-model-pages", "docs/model-pages/"), ("examples", "examples/"), ("verification", "verification/")]
+    optional_routes = [
+        ("guide", "guide/"),
+        ("api-reference", "reference/"),
+        ("cheatsheet", "cheatsheet/"),
+        ("verification-coverage", "verification/coverage/"),
+        ("verification-results", "verification/results/"),
+        ("verification-joint-anatomy", "verification/joint-anatomy/"),
+    ]
+    routes.extend(
+        (name, route)
+        for name, route in optional_routes
+        if (site / route / "index.html").is_file()
+    )
     for section in ("examples", "verification"):
         routes.extend((f"{section}-{p.parent.name}", f"{section}/{p.parent.name}/")
                       for p in sorted((site / section).glob("*/index.html"))[:1])
