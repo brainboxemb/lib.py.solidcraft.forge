@@ -3,7 +3,7 @@
 &lt;h2 data-hextra-search-id="build-evidence"&gt;Build evidence&lt;span class="hx:absolute hx:-mt-20" id="build-evidence"&gt;&lt;/span&gt;
 &lt;a href="#build-evidence" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Primary implementation: &lt;code&gt;scpf&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Build source: &lt;code&gt;4d6872fdd2cba9515aa78f8aad80050ae46fd345&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Build source: &lt;code&gt;b901155c4e4074e1a6d41600523340aa335da6de&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Durable scope: &lt;code&gt;dev&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/dev/models/anchored-holes/model.png" alt="Face-relative hole with native pattern preview" data-zoomable loading="lazy" /&gt;&lt;/p&gt;
@@ -34,6 +34,7 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;geometry&lt;/code&gt;: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · &lt;a href="https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/dev/models/anchored-holes/scpf/verification/geometry/verification.json" target="_blank" rel="noopener"&gt;verification&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;native&lt;/code&gt;: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · &lt;a href="https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/dev/models/anchored-holes/scpf/verification/native/verification.json" target="_blank" rel="noopener"&gt;verification&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;visual&lt;/code&gt;: status=pass, adapter=solidcraft-visual, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · &lt;a href="https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/dev/models/anchored-holes/scpf/verification/visual/verification.json" target="_blank" rel="noopener"&gt;verification&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Parameterized Box</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/examples/simple-box/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/examples/simple-box/</guid><description>
@@ -41,7 +42,7 @@
 &lt;h2 data-hextra-search-id="build-evidence"&gt;Build evidence&lt;span class="hx:absolute hx:-mt-20" id="build-evidence"&gt;&lt;/span&gt;
 &lt;a href="#build-evidence" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Primary implementation: &lt;code&gt;scpf&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Build source: &lt;code&gt;4d6872fdd2cba9515aa78f8aad80050ae46fd345&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Build source: &lt;code&gt;b901155c4e4074e1a6d41600523340aa335da6de&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Durable scope: &lt;code&gt;dev&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/dev/models/simple-box/model.png" alt="Parameterized Box preview" data-zoomable loading="lazy" /&gt;&lt;/p&gt;
@@ -72,6 +73,7 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;geometry&lt;/code&gt;: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · &lt;a href="https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/dev/models/simple-box/scpf/verification/geometry/verification.json" target="_blank" rel="noopener"&gt;verification&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;native&lt;/code&gt;: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · &lt;a href="https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/dev/models/simple-box/scpf/verification/native/verification.json" target="_blank" rel="noopener"&gt;verification&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;visual&lt;/code&gt;: status=pass, adapter=solidcraft-visual, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · &lt;a href="https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/dev/models/simple-box/scpf/verification/visual/verification.json" target="_blank" rel="noopener"&gt;verification&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Topology-backed corner anchor</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/examples/corner-anchor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/examples/corner-anchor/</guid><description>
@@ -79,7 +81,7 @@
 &lt;h2 data-hextra-search-id="build-evidence"&gt;Build evidence&lt;span class="hx:absolute hx:-mt-20" id="build-evidence"&gt;&lt;/span&gt;
 &lt;a href="#build-evidence" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Primary implementation: &lt;code&gt;scpf&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Build source: &lt;code&gt;4d6872fdd2cba9515aa78f8aad80050ae46fd345&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Build source: &lt;code&gt;b901155c4e4074e1a6d41600523340aa335da6de&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Durable scope: &lt;code&gt;dev&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;img src="https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/dev/models/corner-anchor/model.png" alt="Topology-backed corner anchor preview" data-zoomable loading="lazy" /&gt;&lt;/p&gt;
@@ -110,6 +112,7 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;geometry&lt;/code&gt;: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · &lt;a href="https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/dev/models/corner-anchor/scpf/verification/geometry/verification.json" target="_blank" rel="noopener"&gt;verification&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;native&lt;/code&gt;: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · &lt;a href="https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/dev/models/corner-anchor/scpf/verification/native/verification.json" target="_blank" rel="noopener"&gt;verification&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;visual&lt;/code&gt;: status=pass, adapter=solidcraft-visual, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · &lt;a href="https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/dev/models/corner-anchor/scpf/verification/visual/verification.json" target="_blank" rel="noopener"&gt;verification&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;</description></item></channel></rss>
