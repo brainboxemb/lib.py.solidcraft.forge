@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/21-ten-owner-gate
-modules: [ci, builder-scpf, builder-solidcraft, verification, preview]
+branch: issue/31-pages-reference-parity
+modules: [ci, builder-scpf, builder-solidcraft, verification, preview, pages]
 library: true
 models: [simple-box, primitive-csg, anchored-holes, assembly-decorator, parametric-attach, corner-anchor, rectangular-pattern, rotated-sketch-cutter, slot-family, sheet-fold]
 tasks: [test]
