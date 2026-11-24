@@ -11,7 +11,7 @@
     "simple-box",
     "slot-family"
   ],
-  "full": true,
+  "full": false,
   "models": [
     {
       "id": "anchored-holes",
@@ -154,17 +154,6 @@
     }
   ],
   "schema": 2,
-  "selected": [
-    "anchored-holes",
-    "assembly-decorator",
-    "corner-anchor",
-    "parametric-attach",
-    "primitive-csg",
-    "rectangular-pattern",
-    "rotated-sketch-cutter",
-    "sheet-fold",
-    "simple-box",
-    "slot-family"
-  ],
-  "source_sha": "8f28cbb46acd894554a2152611aec5d161a9ab38"
+  "selected": [],
+  "source_sha": "25b5dada0ee6d9ffc1cb929ed6ade4be378605d0"
 }
