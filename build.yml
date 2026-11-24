@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/38-visual-verification
-modules: [verification, builder-scpf, builder-solidcraft]
+branch: issue/40-remaining-owners
+modules: [ci, verification, builder-scpf, builder-solidcraft, builder-cadquery, builder-build123d, builder-pythonscad, builder-pybosl2, preview, pages]
 library: true
-models: [anchored-holes, assembly-decorator, bracket, circle-negative-extrude, circular-feature-pattern, corner-anchor, hole-family, parametric-attach, primitive-csg, rectangular-pattern, round-top-sketch, rounded-rectangle-sketch, sheet-fold, simple-box, slot-family, top-sketch-after-chamfer]
+models: [anchor-topology-mutation, as-built-attach, assembly-owned-anchor, attach-angle, components, eight-corner-brackets, eight-flightcase-corners, exploded-views, four-corner-l, group-hierarchy, parameter-scope, parametric-anchor, parametric-move, parametric-offset, parametric-placement-pair, parent-derived-child-size, repeated-parent-attachments, rotated-copy-placement, selective-profile-extrude, sheet-contour-flange, sheet-edge-flange, sheet-hem, sheet-path-flange, sheet-perforate, sketch-pattern-mirror, xz-anchor]
 tasks: [test]
