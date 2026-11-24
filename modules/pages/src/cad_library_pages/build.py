@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import tempfile
 
+from .api_reference import prepare_api_reference
 from .cheatsheet import prepare_cheatsheet
 from .documentation import prepare_documentation
 from .guides import prepare_guides
@@ -20,6 +21,7 @@ def build(*, source_root: Path, destination: Path, base_url: str, build_scope: P
         source = Path(tmp) / "site"
         shutil.copytree(source_root / "site", source)
         prepare_documentation(source_root, source)
+        prepare_api_reference(source_root, source)
         prepare_guides(source_root, source)
         prepare_cheatsheet(source_root, source)
         prepare_models(source_root, source, build_scope)
