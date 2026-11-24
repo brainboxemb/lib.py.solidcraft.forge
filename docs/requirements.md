@@ -30,7 +30,7 @@
 1. Generic `cad_verification` source is local under `modules/verification/`.
 2. Model-specific expectations remain with the physical model owner.
 3. A migration slice is accepted only with retained evidence equivalent to the historical Forge baseline for the behavior under migration.
-4. Verification-only model owners must not appear in the public catalogue.
+4. Every model owner whose `model.yml.purpose` contains `verification` must appear in the public Verification catalogue. Every owner whose purpose contains `example` must appear in Examples. An owner with both purposes appears in both views while remaining one physical owner.
 
 ## Migration
 
@@ -45,4 +45,4 @@
 1. Keep `docs/plan.md` as the source of truth for unfinished work.
 2. Keep `docs/handoff.md` usable as a standalone continuation message.
 3. Use Hugo/Hextra; Pages never runs CAD.
-4. API, guide and reference content becomes normal documentation while CAD models use the shared model presentation.
+4. API, guide and reference content becomes normal documentation. CAD owners are projected into the Examples and/or Verification sections according to `model.yml.purpose` without duplicating source or generated CAD artifacts.

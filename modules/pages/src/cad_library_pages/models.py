@@ -83,16 +83,20 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
         if not ci_path.is_file():
             continue
         meta = yaml.safe_load(model_yml.read_text()) or {}
-        if "example" not in _purposes(meta):
+        purposes = _purposes(meta)
+        if not purposes:
             continue
+        unknown = set(purposes) - {"example", "verification"}
+        if unknown:
+            raise ValueError(
+                f"invalid model purpose(s) for {model_yml}: {sorted(unknown)}"
+            )
         ci = yaml.safe_load(ci_path.read_text()) or {}
         item = ci.get("id")
         if not isinstance(item, str) or not _ID.fullmatch(item):
             raise ValueError(f"invalid model id: {ci_path}")
 
         title = str(meta.get("title", item))
-        page = site / "content" / "models" / item / "index.md"
-        page.parent.mkdir(parents=True, exist_ok=True)
         description = str(meta.get("description", "")).strip()
         lines = [
             "---",
@@ -162,4 +166,9 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
         else:
             lines.append("No published build evidence is available for this source scope.")
 
-        page.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+        content = "\n".join(lines).rstrip() + "\n"
+        for purpose in purposes:
+            section = "examples" if purpose == "example" else "verification"
+            page = site / "content" / section / item / "index.md"
+            page.parent.mkdir(parents=True, exist_ok=True)
+            page.write_text(content, encoding="utf-8")

@@ -4,12 +4,17 @@ pageRef = "/docs"
 weight = 1
 
 [[main]]
-name = "Models"
-pageRef = "/models"
+name = "Examples"
+pageRef = "/examples"
 weight = 2
 
 [[main]]
-name = "Search"
+name = "Verification"
+pageRef = "/verification"
 weight = 3
+
+[[main]]
+name = "Search"
+weight = 4
 [main.params]
 type = "search"
