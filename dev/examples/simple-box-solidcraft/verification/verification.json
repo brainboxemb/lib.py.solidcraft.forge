@@ -1,0 +1,56 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            20.0,
+            15.0,
+            10.0
+          ],
+          "actual_min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "expected_max": [
+            20.0,
+            15.0,
+            10.0
+          ],
+          "expected_min": [
+            -20.0,
+            -15.0,
+            0.0
+          ],
+          "max_delta_mm": 0.0,
+          "pass": true,
+          "tolerance_mm": 0.001
+        },
+        "volume": {
+          "actual_mm3": 12000.0,
+          "delta_mm3": 0.0,
+          "expected_mm3": 12000.0,
+          "pass": true,
+          "tolerance_mm3": 0.1
+        },
+        "watertight": {
+          "actual": true,
+          "expected": true,
+          "pass": true
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/examples/simple-box-solidcraft/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "simple-box-solidcraft"
+}
