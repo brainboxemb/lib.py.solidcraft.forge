@@ -945,3 +945,83 @@ class Sketch:
             exact_regions,
         )
         return Shape("explicit_sketch_extrusion", data)
+
+    def revolve(
+        self,
+        *,
+        axis,
+        angle=360,
+        sym=False,
+    ):
+        """Revolve one completed closed Sketch profile around a world axis.
+
+        Parameters:
+            axis: World Axis.X, Axis.Y or Axis.Z. The axis must lie in the
+                authored Sketch plane.
+            angle: Positive sweep angle in degrees, up to 360. May be a
+                Parameter so the saved SolidCraft design remains editable.
+                Defaults to 360.
+            sym: When True, split the sweep equally across both sides of the
+                profile plane. Defaults to False.
+
+        Use when:
+            Create native editable SolidCraft revolve history from one profile,
+            such as a rivet, roller, pulley or turned spacer.
+
+        Limits:
+            The first qualified form requires one standalone, unshifted,
+            unrotated world-plane Sketch with exactly one closed profile.
+            Attached/support-face Sketches and sketch-line/custom axes are
+            intentionally deferred until they have a concrete consumer.
+
+        Example:
+            with Sketch(name="Rivet profile", plane="XZ") as profile:
+                Polygon2D(
+                    [(0, 0), (0, 6), (2, 6), (12, 4), (12, 0)],
+                    plane="XZ",
+                )
+            rivet = profile.revolve(axis=Axis.X)
+        """
+        if not self._closed:
+            raise ValueError("leave the Sketch scope before revolving it")
+        if self.on is not None:
+            raise ValueError("revolve() currently requires a standalone Sketch")
+        if self.origin is not None or self.offset is not None or self.rotation is not None:
+            raise ValueError(
+                "revolve() currently requires an unshifted, unrotated world-plane Sketch"
+            )
+        if len(self._profiles) != 1:
+            raise ValueError("revolve() currently requires exactly one closed profile")
+        if not isinstance(axis, Axis) or axis not in (Axis.X, Axis.Y, Axis.Z):
+            raise ValueError("revolve axis must be Axis.X, Axis.Y or Axis.Z")
+
+        plane_axes = {
+            "XY": (Axis.X, Axis.Y),
+            "XZ": (Axis.X, Axis.Z),
+            "YZ": (Axis.Y, Axis.Z),
+        }
+        if self.plane not in plane_axes or axis not in plane_axes[self.plane]:
+            raise ValueError("revolve axis must lie in the Sketch plane")
+        if not isinstance(sym, bool):
+            raise TypeError("Sketch revolve sym must be True or False")
+
+        sweep = pv(angle)
+        if not isfinite(sweep) or sweep <= 0 or sweep > 360:
+            raise ValueError("Sketch revolve angle must be above 0 and at most 360 degrees")
+
+        return Shape(
+            "sketch_base_revolve",
+            (
+                self.name,
+                self.plane,
+                self.origin,
+                self.offset,
+                tuple(self._profiles),
+                angle,
+                axis.value,
+                "symmetric" if sym else None,
+                tuple(self._operations),
+                self.rotation,
+            ),
+        )
+

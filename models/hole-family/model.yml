@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: features
+priority: 20
+title: Native Hole family
+tagline: Four native mechanical hole intents on one plate
+description: >
+  A single plate exercising simple, counterbore, countersink and threaded holes as direct native SolidCraft Hole features.
+parameters: 120 × 40 × 12 mm plate; Ø6 simple, Ø6/Ø12 counterbore, Ø6/Ø12 90° countersink, M6 threaded hole
+stages:
+  - Create one bottom-anchored native Box plate
+  - Add simple, counterbore and countersink Hole features
+  - Add one modeled M6 threaded Hole feature

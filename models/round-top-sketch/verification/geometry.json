@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -50,
+    -50,
+    0
+  ],
+  "bounds_max": [
+    50,
+    50,
+    26
+  ],
+  "bounds_tolerance_mm": 0.5,
+  "volume_mm3": 102868.30984914419,
+  "volume_tolerance_mm3": 800,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "disc radial outside",
+      "point": [
+        55,
+        0,
+        5
+      ],
+      "distance_mm": 5,
+      "tolerance_mm": 0.35
+    },
+    {
+      "label": "hub radial inside step",
+      "point": [
+        30,
+        0,
+        18
+      ],
+      "distance_mm": 8,
+      "tolerance_mm": 0.35
+    }
+  ]
+}

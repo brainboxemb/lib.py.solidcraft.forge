@@ -533,6 +533,49 @@ def compile_base(shape, name, *, operation="new"):
         sketch.append(_command("solid.extrude", **extrude))
         return sketch, meta
 
+    if shape.kind == "sketch_base_revolve":
+        (
+            sketch_name,
+            plane,
+            origin,
+            plane_offset,
+            profiles,
+            angle,
+            axis,
+            direction,
+            operations,
+            rotation,
+        ) = shape.data
+        sweep = pv(angle)
+        if not isfinite(sweep) or sweep <= 0 or sweep > 360:
+            raise ModelError(
+                "sketch revolve angle must be above 0 and at most 360 degrees"
+            )
+        sketch, meta = compile_standalone_sketch(
+            sketch_name,
+            plane,
+            origin,
+            plane_offset,
+            profiles,
+            operations,
+            rotation,
+        )
+        revolve = {
+            "sketch": sketch_name,
+            "axis": axis,
+            "angle": command_value(angle),
+        }
+        if direction is not None:
+            revolve["direction"] = direction
+        if operation == "new":
+            revolve["body_name"] = name
+        else:
+            revolve["operation"] = operation
+            revolve["targets"] = [name]
+        sketch.append(_command("solid.revolve", **revolve))
+        meta["revolve_axis"] = axis
+        return sketch, meta
+
     if shape.kind == "tapered_box":
         # A straight front mask and a long, smoothly tapered rear housing.
         # from_z is always measured from the Box bottom face, while the Box

@@ -1,0 +1,200 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -50,
+    -50,
+    0
+  ],
+  "bounds_max": [
+    50,
+    50,
+    6
+  ],
+  "bounds_tolerance_mm": 0.5,
+  "volume_mm3": 58190.44263153228,
+  "volume_tolerance_mm3": 80,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "hole 1 at z=0.5",
+      "point": [
+        30,
+        0,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 1 at z=3",
+      "point": [
+        30,
+        0,
+        3
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 1 at z=5.5",
+      "point": [
+        30,
+        0,
+        5.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 2 at z=0.5",
+      "point": [
+        15.000000000000004,
+        25.980762113533157,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 2 at z=3",
+      "point": [
+        15.000000000000004,
+        25.980762113533157,
+        3
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 2 at z=5.5",
+      "point": [
+        15.000000000000004,
+        25.980762113533157,
+        5.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 3 at z=0.5",
+      "point": [
+        -14.999999999999993,
+        25.98076211353316,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 3 at z=3",
+      "point": [
+        -14.999999999999993,
+        25.98076211353316,
+        3
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 3 at z=5.5",
+      "point": [
+        -14.999999999999993,
+        25.98076211353316,
+        5.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 4 at z=0.5",
+      "point": [
+        -30,
+        3.67394039744206e-15,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 4 at z=3",
+      "point": [
+        -30,
+        3.67394039744206e-15,
+        3
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 4 at z=5.5",
+      "point": [
+        -30,
+        3.67394039744206e-15,
+        5.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 5 at z=0.5",
+      "point": [
+        -15.000000000000014,
+        -25.980762113533153,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 5 at z=3",
+      "point": [
+        -15.000000000000014,
+        -25.980762113533153,
+        3
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 5 at z=5.5",
+      "point": [
+        -15.000000000000014,
+        -25.980762113533153,
+        5.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 6 at z=0.5",
+      "point": [
+        15.000000000000004,
+        -25.980762113533157,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 6 at z=3",
+      "point": [
+        15.000000000000004,
+        -25.980762113533157,
+        3
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "hole 6 at z=5.5",
+      "point": [
+        15.000000000000004,
+        -25.980762113533157,
+        5.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+schema: 1
+purpose: verification
+section: fundamentals
+priority: 25
+title: Native sketch revolve
+tagline: An editable radial profile creates a native revolved solid
+description: >
+  A rectangular radial profile revolves around the world X axis.
+  Saved-design mutation verifies the radius and sweep remain editable.
+parameters: 10 mm length; 4 mm radius; 360 degree sweep
+stages:
+  - Sketch the closed radial profile on XZ
+  - Revolve around X using native history
+  - Change radius and sweep in the saved design
