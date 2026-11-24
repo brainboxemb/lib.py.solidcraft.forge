@@ -194,12 +194,16 @@ def _joint_anatomy_page(source_root: Path, site: Path) -> None:
 def prepare_verification_special(source_root: Path, site: Path, build_scope: Path | None) -> None:
     _joint_anatomy_page(source_root, site)
     verification = site / "content" / "verification"
-    verification.mkdir(parents=True, exist_ok=True)
-    (verification / "coverage").mkdir(parents=True, exist_ok=True)
-    (verification / "coverage" / "index.md").write_text(
-        _coverage_page(source_root, build_scope), encoding="utf-8"
-    )
-    (verification / "results").mkdir(parents=True, exist_ok=True)
-    (verification / "results" / "index.md").write_text(
-        _results_page(source_root, build_scope), encoding="utf-8"
-    )
+
+    declaration = source_root / "docs" / "verification" / "api-coverage.py"
+    if declaration.is_file():
+        (verification / "coverage").mkdir(parents=True, exist_ok=True)
+        (verification / "coverage" / "index.md").write_text(
+            _coverage_page(source_root, build_scope), encoding="utf-8"
+        )
+
+    if (source_root / "models").is_dir():
+        (verification / "results").mkdir(parents=True, exist_ok=True)
+        (verification / "results" / "index.md").write_text(
+            _results_page(source_root, build_scope), encoding="utf-8"
+        )
