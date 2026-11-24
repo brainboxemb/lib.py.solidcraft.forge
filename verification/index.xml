@@ -1,46 +1,29 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SolidCraft Forge – Verification</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/verification/</link><description>Recent content in Verification on SolidCraft Forge</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/verification/index.xml" rel="self" type="application/rss+xml"/><item><title>Joint anatomy</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/verification/joint-anatomy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/verification/joint-anatomy/</guid><description>
 &lt;h2 data-hextra-search-id="1-start-with-the-real-construction"&gt;1. Start with the real construction&lt;span class="hx:absolute hx:-mt-20" id="1-start-with-the-real-construction"&gt;&lt;/span&gt;
-&lt;a href="#1-start-with-the-real-construction" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The verification use case is an open wooden frame. A neutral
-&lt;code&gt;CornerBracket&lt;/code&gt; connects a side board to the top or bottom board.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;**4 brackets**
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;One bracket at each side-to-top/bottom connection on the front edge.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;**8 brackets**
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Repeat exactly the same four connections at the rear edge.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;**Later: 3D corner**
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;One true corner component on all eight corners of a box.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Front and rear are positions, not boards.&lt;/strong&gt;
-There is no front or rear board in this relationship. They only identify which end of the
-cabinet depth receives the bracket.&lt;/p&gt;
-&lt;h2 data-hextra-search-id="front-view-the-brackets-are-outside-the-wood-frame"&gt;Front view: the brackets are outside the wood frame&lt;span class="hx:absolute hx:-mt-20" id="front-view-the-brackets-are-outside-the-wood-frame"&gt;&lt;/span&gt;
-&lt;a href="#front-view-the-brackets-are-outside-the-wood-frame" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;[
-![Four outside corner brackets around the front edge of an open wood frame](corner-bracket-goal.svg)
-](corner-bracket-goal.svg)
-Four outside brackets. The opening stays free and no bracket is drawn inside the wood.
-[CadCraft source](corner-bracket-goal.cadcraft.json) ·
-[DXF](corner-bracket-goal.dxf)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 data-hextra-search-id="depth-view-four-becomes-eight"&gt;Depth view: four becomes eight&lt;span class="hx:absolute hx:-mt-20" id="depth-view-four-becomes-eight"&gt;&lt;/span&gt;
-&lt;a href="#depth-view-four-becomes-eight" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;[
-![Side view showing front bracket positions and repeated rear bracket positions](corner-bracket-depth.svg)
-](corner-bracket-depth.svg)
-The first verification uses the front row only; the eight-bracket case repeats the same four connections at the rear.
-[CadCraft source](corner-bracket-depth.cadcraft.json) ·
-[DXF](corner-bracket-depth.dxf)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The bracket itself knows only its own local geometry. It does not know left/right,
-top/bottom, front/rear or the dimensions of the cabinet. The assembly chooses those placements.&lt;/p&gt;
+&lt;a href="#1-start-with-the-real-construction" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The verification use case is an open wooden frame. A neutral &lt;code&gt;CornerBracket&lt;/code&gt; connects a side board to the top or bottom board.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;4 brackets&lt;/strong&gt;
+One bracket at each side-to-top/bottom connection on the front edge.
+&lt;strong&gt;8 brackets&lt;/strong&gt;
+Repeat exactly the same four connections at the rear edge.
+&lt;strong&gt;Later: 3D corner&lt;/strong&gt;
+One true corner component on all eight corners of a box.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Front and rear are positions, not boards.&lt;/strong&gt; There is no front or rear board in this relationship. They only identify which end of the cabinet depth receives the bracket.&lt;/p&gt;
+&lt;h3 data-hextra-search-id="front-view-the-brackets-are-outside-the-wood-frame"&gt;Front view: the brackets are outside the wood frame&lt;span class="hx:absolute hx:-mt-20" id="front-view-the-brackets-are-outside-the-wood-frame"&gt;&lt;/span&gt;
+&lt;a href="#front-view-the-brackets-are-outside-the-wood-frame" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;&lt;a href="corner-bracket-goal.svg"&gt;&lt;img src="corner-bracket-goal.svg" alt="Four outside corner brackets around the front edge of an open wood frame" data-zoomable loading="lazy" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Four outside brackets. The opening stays free and no bracket is drawn inside the wood. &lt;a href="corner-bracket-goal.cadcraft.json"&gt;CadCraft source&lt;/a&gt; · &lt;a href="corner-bracket-goal.dxf"&gt;DXF&lt;/a&gt;&lt;/p&gt;
+&lt;h3 data-hextra-search-id="depth-view-four-becomes-eight"&gt;Depth view: four becomes eight&lt;span class="hx:absolute hx:-mt-20" id="depth-view-four-becomes-eight"&gt;&lt;/span&gt;
+&lt;a href="#depth-view-four-becomes-eight" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;&lt;a href="corner-bracket-depth.svg"&gt;&lt;img src="corner-bracket-depth.svg" alt="Side view showing front bracket positions and repeated rear bracket positions" data-zoomable loading="lazy" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The first verification uses the front row only; the eight-bracket case repeats the same four connections at the rear. &lt;a href="corner-bracket-depth.cadcraft.json"&gt;CadCraft source&lt;/a&gt; · &lt;a href="corner-bracket-depth.dxf"&gt;DXF&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The bracket itself knows only its own local geometry. It does not know left/right, top/bottom, front/rear or the dimensions of the cabinet. The assembly chooses those placements.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="2-wat-is-een-joint-origin--what-is-a-joint-origin"&gt;2. Wat is een joint origin? / What is a joint origin?&lt;span class="hx:absolute hx:-mt-20" id="2-wat-is-een-joint-origin--what-is-a-joint-origin"&gt;&lt;/span&gt;
-&lt;a href="#2-wat-is-een-joint-origin--what-is-a-joint-origin" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;h2 data-hextra-search-id="nederlands--eenvoudige-uitleg"&gt;Nederlands — eenvoudige uitleg&lt;span class="hx:absolute hx:-mt-20" id="nederlands--eenvoudige-uitleg"&gt;&lt;/span&gt;
-&lt;a href="#nederlands--eenvoudige-uitleg" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Een joint origin op een bracket (beugel) is het digitale ankerpunt waarmee je het onderdeel vastzet.&lt;/strong&gt;
-Je kunt dit het beste zien als een klein lokaal assenstelsel met een eigen X-, Y- en Z-as.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;1. **Origin (het nulpunt):** het precieze punt op de beugel waar het lokale assenstelsel begint, bijvoorbeeld het midden van een schroefgat.
-1. **Z-as (de normaal):** bepaalt welke kant het bevestigingspunt op wijst.
-1. **X-as (de draaiing):** zodra Z vastligt kan de beugel nog om Z draaien. X legt die klokstand vast.
-1. **Y-as (automatisch):** zodra Z en X bekend zijn volgt de derde loodrechte as automatisch.
-&lt;/code&gt;&lt;/pre&gt;
+&lt;a href="#2-wat-is-een-joint-origin--what-is-a-joint-origin" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;h3 data-hextra-search-id="nederlands--eenvoudige-uitleg"&gt;Nederlands — eenvoudige uitleg&lt;span class="hx:absolute hx:-mt-20" id="nederlands--eenvoudige-uitleg"&gt;&lt;/span&gt;
+&lt;a href="#nederlands--eenvoudige-uitleg" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Een joint origin op een bracket (beugel) is het digitale ankerpunt waarmee je het onderdeel vastzet.&lt;/strong&gt; Je kunt dit het beste zien als een klein lokaal assenstelsel met een eigen X-, Y- en Z-as.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Origin (het nulpunt):&lt;/strong&gt; het precieze punt op de beugel waar het lokale assenstelsel begint, bijvoorbeeld het midden van een schroefgat.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Z-as (de normaal):&lt;/strong&gt; bepaalt welke kant het bevestigingspunt op wijst.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;X-as (de draaiing):&lt;/strong&gt; zodra Z vastligt kan de beugel nog om Z draaien. X legt die klokstand vast.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Y-as (automatisch):&lt;/strong&gt; zodra Z en X bekend zijn volgt de derde loodrechte as automatisch.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;origin&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;waar&lt;/span&gt; &lt;span class="n"&gt;zit&lt;/span&gt; &lt;span class="n"&gt;het&lt;/span&gt; &lt;span class="n"&gt;punt&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;welke&lt;/span&gt; &lt;span class="n"&gt;kant&lt;/span&gt; &lt;span class="n"&gt;kijkt&lt;/span&gt; &lt;span class="n"&gt;het&lt;/span&gt; &lt;span class="n"&gt;punt&lt;/span&gt; &lt;span class="n"&gt;op&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;
@@ -57,14 +40,14 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;h2 data-hextra-search-id="english--simple-explanation"&gt;English — simple explanation&lt;span class="hx:absolute hx:-mt-20" id="english--simple-explanation"&gt;&lt;/span&gt;
-&lt;a href="#english--simple-explanation" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;A joint origin on a bracket is the digital attachment point used to connect the part.&lt;/strong&gt;
-The easiest way to understand it is as a small local coordinate system with its own X, Y and Z axes.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;1. **Origin:** the exact point where the local coordinate system starts, for example the centre of a screw hole.
-1. **Z axis (normal):** defines which way the attachment point faces.
-1. **X axis (clocking):** once Z is fixed, X fixes the remaining rotation around Z.
-1. **Y axis (automatic):** once Z and X are known, the third perpendicular axis follows automatically.
-&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 data-hextra-search-id="english--simple-explanation"&gt;English — simple explanation&lt;span class="hx:absolute hx:-mt-20" id="english--simple-explanation"&gt;&lt;/span&gt;
+&lt;a href="#english--simple-explanation" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;A joint origin on a bracket is the digital attachment point used to connect the part.&lt;/strong&gt; The easiest way to understand it is as a small local coordinate system with its own X, Y and Z axes.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Origin:&lt;/strong&gt; the exact point where the local coordinate system starts, for example the centre of a screw hole.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Z axis (normal):&lt;/strong&gt; defines which way the attachment point faces.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;X axis (clocking):&lt;/strong&gt; once Z is fixed, X fixes the remaining rotation around Z.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Y axis (automatic):&lt;/strong&gt; once Z and X are known, the third perpendicular axis follows automatically.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;origin&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;point&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;which&lt;/span&gt; &lt;span class="n"&gt;way&lt;/span&gt; &lt;span class="n"&gt;does&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="n"&gt;face&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;
@@ -81,15 +64,10 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;pre&gt;&lt;code&gt;[
-![Two SolidCraft joint origins A and B with x and z axes](solidcraft-joint-anatomy.svg)
-](solidcraft-joint-anatomy.svg)
-SolidCraft mates joint origin B to joint origin A.
-[CadCraft source](solidcraft-joint-anatomy.cadcraft.json) ·
-[DXF](solidcraft-joint-anatomy.dxf)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 data-hextra-search-id="conceptual-api-object"&gt;Conceptual API object&lt;span class="hx:absolute hx:-mt-20" id="conceptual-api-object"&gt;&lt;/span&gt;
-&lt;a href="#conceptual-api-object" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;In a generic API the same local frame can be described explicitly with a point and two directions:&lt;/p&gt;
+&lt;p&gt;&lt;a href="solidcraft-joint-anatomy.svg"&gt;&lt;img src="solidcraft-joint-anatomy.svg" alt="Two SolidCraft joint origins A and B with x and z axes" data-zoomable loading="lazy" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;SolidCraft mates joint origin B to joint origin A. &lt;a href="solidcraft-joint-anatomy.cadcraft.json"&gt;CadCraft source&lt;/a&gt; · &lt;a href="solidcraft-joint-anatomy.dxf"&gt;DXF&lt;/a&gt;&lt;/p&gt;
+&lt;h3 data-hextra-search-id="conceptual-api-object"&gt;Conceptual API object&lt;span class="hx:absolute hx:-mt-20" id="conceptual-api-object"&gt;&lt;/span&gt;
+&lt;a href="#conceptual-api-object" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;In a generic API the same local frame can be described explicitly with a point and two directions:&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;joint_origin&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
@@ -118,10 +96,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;origin&lt;/code&gt; is the position. &lt;code&gt;z_direction&lt;/code&gt; tells which way the local frame faces.
-&lt;code&gt;x_direction&lt;/code&gt; fixes the remaining clocking around Z. Y does not need to be authored separately.&lt;/p&gt;
-&lt;h2 data-hextra-search-id="the-same-idea-in-forge"&gt;The same idea in Forge&lt;span class="hx:absolute hx:-mt-20" id="the-same-idea-in-forge"&gt;&lt;/span&gt;
-&lt;a href="#the-same-idea-in-forge" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;For the six main axis directions, Forge uses readable names instead of requiring the vector every time:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;origin&lt;/code&gt; is the position. &lt;code&gt;z_direction&lt;/code&gt; tells which way the local frame faces. &lt;code&gt;x_direction&lt;/code&gt; fixes the remaining clocking around Z. Y does not need to be authored separately.&lt;/p&gt;
+&lt;h3 data-hextra-search-id="the-same-idea-in-forge"&gt;The same idea in Forge&lt;span class="hx:absolute hx:-mt-20" id="the-same-idea-in-forge"&gt;&lt;/span&gt;
+&lt;a href="#the-same-idea-in-forge" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;For the six main axis directions, Forge uses readable names instead of requiring the vector every time:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -180,54 +157,28 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;These names are only readable unit vectors. They do not add a second orientation system.
-Arbitrary XYZ vectors remain valid for genuinely angled frames.&lt;/p&gt;
-&lt;h2 data-hextra-search-id="the-real-solidcraft-relationship-remains-explicit"&gt;The real SolidCraft relationship remains explicit&lt;span class="hx:absolute hx:-mt-20" id="the-real-solidcraft-relationship-remains-explicit"&gt;&lt;/span&gt;
-&lt;a href="#the-real-solidcraft-relationship-remains-explicit" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Forge still lowers the frame to SolidCraft&amp;rsquo;s own joint information. The readable names do not change the native data model.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;**A — frame side**
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;edge + on + corner&lt;/code&gt; can select real topology. SolidCraft keeps that selection associated with changing geometry.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;**B — bracket side**
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;point + z + x&lt;/code&gt; explicitly supplies the child joint origin and its orientation.&lt;/p&gt;
+&lt;p&gt;These names are only readable unit vectors. They do not add a second orientation system. Arbitrary XYZ vectors remain valid for genuinely angled frames.&lt;/p&gt;
+&lt;h3 data-hextra-search-id="the-real-solidcraft-relationship-remains-explicit"&gt;The real SolidCraft relationship remains explicit&lt;span class="hx:absolute hx:-mt-20" id="the-real-solidcraft-relationship-remains-explicit"&gt;&lt;/span&gt;
+&lt;a href="#the-real-solidcraft-relationship-remains-explicit" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Forge still lowers the frame to SolidCraft&amp;rsquo;s own joint information. The readable names do not change the native data model.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;A — frame side&lt;/strong&gt;
+&lt;code&gt;edge + on + corner&lt;/code&gt; can select real topology. SolidCraft keeps that selection associated with changing geometry.
+&lt;strong&gt;B — bracket side&lt;/strong&gt;
+&lt;code&gt;point + z + x&lt;/code&gt; explicitly supplies the child joint origin and its orientation.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="3-where-does-the-joint-origin-frame-come-from"&gt;3. Where does the joint-origin frame come from?&lt;span class="hx:absolute hx:-mt-20" id="3-where-does-the-joint-origin-frame-come-from"&gt;&lt;/span&gt;
-&lt;a href="#3-where-does-the-joint-origin-frame-come-from" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;[
-![Topology-backed joint origin compared with an explicit point-based bracket joint origin](solidcraft-joint-references.svg)
-](solidcraft-joint-references.svg)
-Left: frame topology. Right: explicit child joint origin on the bracket.
-[CadCraft source](solidcraft-joint-references.cadcraft.json) ·
-[DXF](solidcraft-joint-references.dxf)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 data-hextra-search-id="parent-a-topology-backed"&gt;Parent A: topology-backed&lt;span class="hx:absolute hx:-mt-20" id="parent-a-topology-backed"&gt;&lt;/span&gt;
-&lt;a href="#parent-a-topology-backed" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;pre&gt;&lt;code&gt; The frame side can use a real face/edge/corner. For an edge/corner origin SolidCraft
-derives its frame from the selected geometry and keeps the topology by name, so it can follow
-dimension changes.
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 data-hextra-search-id="child-b-explicit-point-frame"&gt;Child B: explicit point frame&lt;span class="hx:absolute hx:-mt-20" id="child-b-explicit-point-frame"&gt;&lt;/span&gt;
-&lt;a href="#child-b-explicit-point-frame" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;pre&gt;&lt;code&gt; The current fixture chooses a point on the bracket and supplies `z` and
-`x`. If a point origin omits `x`, SolidCraft chooses x from z alone,
-so a part that was deliberately spun around z can turn back when joined.
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Calling B a “local reference” is too vague. On this page we use the precise term
-&lt;strong&gt;child joint origin&lt;/strong&gt;.&lt;/p&gt;
+&lt;a href="#3-where-does-the-joint-origin-frame-come-from" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;a href="solidcraft-joint-references.svg"&gt;&lt;img src="solidcraft-joint-references.svg" alt="Topology-backed joint origin compared with an explicit point-based bracket joint origin" data-zoomable loading="lazy" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Left: frame topology. Right: explicit child joint origin on the bracket. &lt;a href="solidcraft-joint-references.cadcraft.json"&gt;CadCraft source&lt;/a&gt; · &lt;a href="solidcraft-joint-references.dxf"&gt;DXF&lt;/a&gt;&lt;/p&gt;
+&lt;h3 data-hextra-search-id="parent-a-topology-backed"&gt;Parent A: topology-backed&lt;span class="hx:absolute hx:-mt-20" id="parent-a-topology-backed"&gt;&lt;/span&gt;
+&lt;a href="#parent-a-topology-backed" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;The frame side can use a real face/edge/corner. For an edge/corner origin SolidCraft derives its frame from the selected geometry and keeps the topology by name, so it can follow dimension changes.&lt;/p&gt;
+&lt;h3 data-hextra-search-id="child-b-explicit-point-frame"&gt;Child B: explicit point frame&lt;span class="hx:absolute hx:-mt-20" id="child-b-explicit-point-frame"&gt;&lt;/span&gt;
+&lt;a href="#child-b-explicit-point-frame" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;The current fixture chooses a point on the bracket and supplies &lt;code&gt;z&lt;/code&gt; and &lt;code&gt;x&lt;/code&gt;. If a point origin omits &lt;code&gt;x&lt;/code&gt;, SolidCraft chooses x from z alone, so a part that was deliberately spun around z can turn back when joined.&lt;/p&gt;
+&lt;p&gt;Calling B a “local reference” is too vague. On this page we use the precise term &lt;strong&gt;child joint origin&lt;/strong&gt;.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="4-zoom-in-what-do-x-and-z-mean-at-the-four-corners"&gt;4. Zoom in: what do x and z mean at the four corners?&lt;span class="hx:absolute hx:-mt-20" id="4-zoom-in-what-do-x-and-z-mean-at-the-four-corners"&gt;&lt;/span&gt;
-&lt;a href="#4-zoom-in-what-do-x-and-z-mean-at-the-four-corners" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The current HUB75 model gives us a concrete example. The bracket geometry has its own
-model axes. The joint origin then defines another local frame on that geometry.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;[
-![Corner bracket local model axes, points A and B, and front/rear joint-frame directions](corner-bracket-local-axes.svg)
-](corner-bracket-local-axes.svg)
-The bracket's model axes and the current assembly-local joint frames.
-[CadCraft source](corner-bracket-local-axes.cadcraft.json) ·
-[DXF](corner-bracket-local-axes.dxf)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;Do not mix these two coordinate systems.&lt;/strong&gt;
-&lt;code&gt;+X/+Y/+Z&lt;/code&gt; describe the bracket model. Lower-case joint
-&lt;code&gt;x&lt;/code&gt; and &lt;code&gt;z&lt;/code&gt; describe the frame SolidCraft uses to mate that bracket.
-For example, &lt;code&gt;joint x = -Z&lt;/code&gt; means that the joint-frame x-axis points in the
-bracket model&amp;rsquo;s negative-Z direction.&lt;/p&gt;
-&lt;h2 data-hextra-search-id="the-two-points-used-by-the-current-hub75-assembly"&gt;The two points used by the current HUB75 assembly&lt;span class="hx:absolute hx:-mt-20" id="the-two-points-used-by-the-current-hub75-assembly"&gt;&lt;/span&gt;
-&lt;a href="#the-two-points-used-by-the-current-hub75-assembly" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The reusable &lt;code&gt;CornerBracket&lt;/code&gt; does not store these as named anchors. The assembly
-currently chooses two points on the neutral bracket geometry:&lt;/p&gt;
+&lt;a href="#4-zoom-in-what-do-x-and-z-mean-at-the-four-corners" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The current HUB75 model gives us a concrete example. The bracket geometry has its own model axes. The joint origin then defines another local frame on that geometry.&lt;/p&gt;
+&lt;p&gt;&lt;a href="corner-bracket-local-axes.svg"&gt;&lt;img src="corner-bracket-local-axes.svg" alt="Corner bracket local model axes, points A and B, and front/rear joint-frame directions" data-zoomable loading="lazy" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The bracket&amp;rsquo;s model axes and the current assembly-local joint frames. &lt;a href="corner-bracket-local-axes.cadcraft.json"&gt;CadCraft source&lt;/a&gt; · &lt;a href="corner-bracket-local-axes.dxf"&gt;DXF&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Do not mix these two coordinate systems.&lt;/strong&gt;&lt;code&gt;+X/+Y/+Z&lt;/code&gt; describe the bracket model. Lower-case joint &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;z&lt;/code&gt; describe the frame SolidCraft uses to mate that bracket. For example, &lt;code&gt;joint x = -Z&lt;/code&gt; means that the joint-frame x-axis points in the bracket model&amp;rsquo;s negative-Z direction.&lt;/p&gt;
+&lt;h3 data-hextra-search-id="the-two-points-used-by-the-current-hub75-assembly"&gt;The two points used by the current HUB75 assembly&lt;span class="hx:absolute hx:-mt-20" id="the-two-points-used-by-the-current-hub75-assembly"&gt;&lt;/span&gt;
+&lt;a href="#the-two-points-used-by-the-current-hub75-assembly" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;The reusable &lt;code&gt;CornerBracket&lt;/code&gt; does not store these as named anchors. The assembly currently chooses two points on the neutral bracket geometry:&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;I&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# inside corner / component origin&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# one arm thickness below I&lt;/span&gt;
@@ -273,14 +224,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;h2 data-hextra-search-id="four-front-corners-one-by-one"&gt;Four front corners, one by one&lt;span class="hx:absolute hx:-mt-20" id="four-front-corners-one-by-one"&gt;&lt;/span&gt;
-&lt;a href="#four-front-corners-one-by-one" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;[
-![Four enlarged front frame corners with bracket point A or B and parent x direction](corner-bracket-front-corners.svg)
-](corner-bracket-front-corners.svg)
-Four enlarged front-corner placements. The parent topology frame rotates around the frame; the current child definition is reused.
-[CadCraft source](corner-bracket-front-corners.cadcraft.json) ·
-[DXF](corner-bracket-front-corners.dxf)
-&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 data-hextra-search-id="four-front-corners-one-by-one"&gt;Four front corners, one by one&lt;span class="hx:absolute hx:-mt-20" id="four-front-corners-one-by-one"&gt;&lt;/span&gt;
+&lt;a href="#four-front-corners-one-by-one" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;&lt;a href="corner-bracket-front-corners.svg"&gt;&lt;img src="corner-bracket-front-corners.svg" alt="Four enlarged front frame corners with bracket point A or B and parent x direction" data-zoomable loading="lazy" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Four enlarged front-corner placements. The parent topology frame rotates around the frame; the current child definition is reused. &lt;a href="corner-bracket-front-corners.cadcraft.json"&gt;CadCraft source&lt;/a&gt; · &lt;a href="corner-bracket-front-corners.dxf"&gt;DXF&lt;/a&gt;&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -327,11 +273,9 @@ Four enlarged front-corner placements. The parent topology frame rotates around 
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Notice what changes: the &lt;strong&gt;parent x-axis&lt;/strong&gt; rotates with the selected corner.
-The raw child-frame definition for the front row does not change. When SolidCraft solves the
-joint, the bracket occurrence rotates so its child frame mates with that parent frame.&lt;/p&gt;
-&lt;h2 data-hextra-search-id="the-rear-row-is-the-same-idea-from-the-other-face"&gt;The rear row is the same idea from the other face&lt;span class="hx:absolute hx:-mt-20" id="the-rear-row-is-the-same-idea-from-the-other-face"&gt;&lt;/span&gt;
-&lt;a href="#the-rear-row-is-the-same-idea-from-the-other-face" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;table&gt;
+&lt;p&gt;Notice what changes: the &lt;strong&gt;parent x-axis&lt;/strong&gt; rotates with the selected corner. The raw child-frame definition for the front row does not change. When SolidCraft solves the joint, the bracket occurrence rotates so its child frame mates with that parent frame.&lt;/p&gt;
+&lt;h3 data-hextra-search-id="the-rear-row-is-the-same-idea-from-the-other-face"&gt;The rear row is the same idea from the other face&lt;span class="hx:absolute hx:-mt-20" id="the-rear-row-is-the-same-idea-from-the-other-face"&gt;&lt;/span&gt;
+&lt;a href="#the-rear-row-is-the-same-idea-from-the-other-face" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
 &lt;th&gt;Corner&lt;/th&gt;
@@ -377,8 +321,7 @@ joint, the bracket occurrence rotates so its child frame mates with that parent 
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;These values describe the &lt;strong&gt;current HUB75 assembly implementation&lt;/strong&gt;;
-they are evidence for understanding the native joint frames, not a proposal for the final Forge API.&lt;/p&gt;
+&lt;p&gt;These values describe the &lt;strong&gt;current HUB75 assembly implementation&lt;/strong&gt;; they are evidence for understanding the native joint frames, not a proposal for the final Forge API.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="5-what-the-current-forge-code-is-doing"&gt;5. What the current Forge code is doing&lt;span class="hx:absolute hx:-mt-20" id="5-what-the-current-forge-code-is-doing"&gt;&lt;/span&gt;
 &lt;a href="#5-what-the-current-forge-code-is-doing" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The current fixture first defines the child joint origin in Python:&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
@@ -417,20 +360,17 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;The low-level vectors are still the real data, but ordinary model code no longer has to spell
-the six principal directions numerically. The readable constants make the intent visible while
-keeping the mapping to SolidCraft direct.&lt;/p&gt;
+&lt;p&gt;The low-level vectors are still the real data, but ordinary model code no longer has to spell the six principal directions numerically. The readable constants make the intent visible while keeping the mapping to SolidCraft direct.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="6-requirements-for-the-forge-api"&gt;6. Requirements for the Forge API&lt;span class="hx:absolute hx:-mt-20" id="6-requirements-for-the-forge-api"&gt;&lt;/span&gt;
-&lt;a href="#6-requirements-for-the-forge-api" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;1. The generated data must map directly to SolidCraft's own joint-origin information. No second orientation solver in Python.
-1. `CornerBracket` must remain independent of the cabinet: no left/right, top/bottom, front/rear or cabinet dimensions.
-1. Forge must not guess orientation from a class name or from bracket geometry.
-1. Normal model code should not require raw vectors such as `z=(0,-1,0)` and `x=(1,0,0)`.
-1. The low-level vector representation may remain available for genuinely low-level use.
-1. The solution is qualified first with four brackets, then eight, then a true 3D corner component.
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;Chosen API:&lt;/strong&gt; keep &lt;code&gt;AnchorFrame(origin, z, x)&lt;/code&gt;,
-use the cardinal &lt;code&gt;Anchor&lt;/code&gt; members as readable direction vectors, and keep arbitrary vectors
-available for non-axis-aligned frames. Forge does not guess any additional orientation.&lt;/p&gt;
+&lt;a href="#6-requirements-for-the-forge-api" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;The generated data must map directly to SolidCraft&amp;rsquo;s own joint-origin information. No second orientation solver in Python.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;CornerBracket&lt;/code&gt; must remain independent of the cabinet: no left/right, top/bottom, front/rear or cabinet dimensions.&lt;/li&gt;
+&lt;li&gt;Forge must not guess orientation from a class name or from bracket geometry.&lt;/li&gt;
+&lt;li&gt;Normal model code should not require raw vectors such as &lt;code&gt;z=(0,-1,0)&lt;/code&gt; and &lt;code&gt;x=(1,0,0)&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;The low-level vector representation may remain available for genuinely low-level use.&lt;/li&gt;
+&lt;li&gt;The solution is qualified first with four brackets, then eight, then a true 3D corner component.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;Chosen API:&lt;/strong&gt; keep &lt;code&gt;AnchorFrame(origin, z, x)&lt;/code&gt;, use the cardinal &lt;code&gt;Anchor&lt;/code&gt; members as readable direction vectors, and keep arbitrary vectors available for non-axis-aligned frames. Forge does not guess any additional orientation.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="7-verification-order"&gt;7. Verification order&lt;span class="hx:absolute hx:-mt-20" id="7-verification-order"&gt;&lt;/span&gt;
 &lt;a href="#7-verification-order" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;table&gt;
 &lt;thead&gt;
@@ -459,9 +399,10 @@ available for non-axis-aligned frames. Forge does not guess any additional orien
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 data-hextra-search-id="native-solidcraft-references"&gt;Native SolidCraft references&lt;span class="hx:absolute hx:-mt-20" id="native-solidcraft-references"&gt;&lt;/span&gt;
-&lt;a href="#native-solidcraft-references" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;1. [Command reference — joint.origin / joint.create](https://docs.solidcraft.io/reference/commands.html)
-1. [Components and joints guide](https://docs.solidcraft.io/guide/assemblies.html)
-&lt;/code&gt;&lt;/pre&gt;</description></item><item><title>Verification coverage</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/verification/coverage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/verification/coverage/</guid><description>
+&lt;a href="#native-solidcraft-references" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://docs.solidcraft.io/reference/commands.html" target="_blank" rel="noopener"&gt;Command reference — joint.origin / joint.create&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.solidcraft.io/guide/assemblies.html" target="_blank" rel="noopener"&gt;Components and joints guide&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Verification coverage</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/verification/coverage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/verification/coverage/</guid><description>
 &lt;p&gt;This page projects the source-owned SCPF coverage declarations onto the current Verification owner graph.
 Linked owner status comes from the current durable build scope when one is available.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="public-python-api-exports"&gt;Public Python API exports&lt;span class="hx:absolute hx:-mt-20" id="public-python-api-exports"&gt;&lt;/span&gt;
@@ -1462,7 +1403,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../anchor-topology-mutation/"&gt;&lt;code&gt;anchor-topology-mutation&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1470,7 +1411,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../anchored-holes/"&gt;&lt;code&gt;anchored-holes&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1478,7 +1419,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../as-built-attach/"&gt;&lt;code&gt;as-built-attach&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1486,7 +1427,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../assembly-decorator/"&gt;&lt;code&gt;assembly-decorator&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1494,7 +1435,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../assembly-owned-anchor/"&gt;&lt;code&gt;assembly-owned-anchor&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1502,7 +1443,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../attach-angle/"&gt;&lt;code&gt;attach-angle&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1510,7 +1451,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../attached-through-all/"&gt;&lt;code&gt;attached-through-all&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
@@ -1518,7 +1459,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../bracket/"&gt;&lt;code&gt;bracket&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1526,7 +1467,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../circle-negative-extrude/"&gt;&lt;code&gt;circle-negative-extrude&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1534,7 +1475,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../circular-feature-pattern/"&gt;&lt;code&gt;circular-feature-pattern&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1542,7 +1483,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../components/"&gt;&lt;code&gt;components&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1550,7 +1491,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../cone-boolean/"&gt;&lt;code&gt;cone-boolean&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
@@ -1558,7 +1499,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../corner-anchor/"&gt;&lt;code&gt;corner-anchor&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1566,7 +1507,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../eight-corner-brackets/"&gt;&lt;code&gt;eight-corner-brackets&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1574,7 +1515,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../eight-flightcase-corners/"&gt;&lt;code&gt;eight-flightcase-corners&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1582,7 +1523,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../exploded-views/"&gt;&lt;code&gt;exploded-views&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
@@ -1590,7 +1531,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../four-corner-l/"&gt;&lt;code&gt;four-corner-l&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1598,7 +1539,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../group-hierarchy/"&gt;&lt;code&gt;group-hierarchy&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1606,7 +1547,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../hole-family/"&gt;&lt;code&gt;hole-family&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1614,7 +1555,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../native-revolve/"&gt;&lt;code&gt;native-revolve&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
@@ -1622,7 +1563,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../parameter-scope/"&gt;&lt;code&gt;parameter-scope&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1630,7 +1571,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../parametric-anchor/"&gt;&lt;code&gt;parametric-anchor&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1638,7 +1579,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../parametric-attach/"&gt;&lt;code&gt;parametric-attach&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1646,7 +1587,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../parametric-move/"&gt;&lt;code&gt;parametric-move&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1654,7 +1595,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../parametric-offset/"&gt;&lt;code&gt;parametric-offset&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1662,7 +1603,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../parametric-placement-pair/"&gt;&lt;code&gt;parametric-placement-pair&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1670,7 +1611,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../parent-derived-child-size/"&gt;&lt;code&gt;parent-derived-child-size&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1678,7 +1619,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../primitive-csg/"&gt;&lt;code&gt;primitive-csg&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1686,7 +1627,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../rectangular-pattern/"&gt;&lt;code&gt;rectangular-pattern&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1694,7 +1635,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../repeated-parent-attachments/"&gt;&lt;code&gt;repeated-parent-attachments&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1702,7 +1643,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../rotated-copy-placement/"&gt;&lt;code&gt;rotated-copy-placement&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1710,7 +1651,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../rotated-sketch-cutter/"&gt;&lt;code&gt;rotated-sketch-cutter&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
@@ -1718,7 +1659,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../round-top-sketch/"&gt;&lt;code&gt;round-top-sketch&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1726,7 +1667,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../rounded-rectangle-sketch/"&gt;&lt;code&gt;rounded-rectangle-sketch&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1734,7 +1675,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../selective-profile-extrude/"&gt;&lt;code&gt;selective-profile-extrude&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1742,7 +1683,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../sheet-contour-flange/"&gt;&lt;code&gt;sheet-contour-flange&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
@@ -1750,7 +1691,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../sheet-edge-flange/"&gt;&lt;code&gt;sheet-edge-flange&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
@@ -1758,7 +1699,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../sheet-fold/"&gt;&lt;code&gt;sheet-fold&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1766,7 +1707,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../sheet-hem/"&gt;&lt;code&gt;sheet-hem&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
@@ -1774,7 +1715,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../sheet-path-flange/"&gt;&lt;code&gt;sheet-path-flange&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
@@ -1782,7 +1723,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../sheet-perforate/"&gt;&lt;code&gt;sheet-perforate&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
 &lt;td style="text-align: right"&gt;1&lt;/td&gt;
@@ -1790,7 +1731,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../simple-box/"&gt;&lt;code&gt;simple-box&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1798,7 +1739,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../sketch-pattern-mirror/"&gt;&lt;code&gt;sketch-pattern-mirror&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1806,7 +1747,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../slot-family/"&gt;&lt;code&gt;slot-family&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1814,7 +1755,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../top-sketch-after-chamfer/"&gt;&lt;code&gt;top-sketch-after-chamfer&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
@@ -1822,7 +1763,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;tr&gt;
 &lt;td&gt;&lt;a href="../xz-anchor/"&gt;&lt;code&gt;xz-anchor&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;pass&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;c5152b7d004b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;9d14959cf0fc&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;scpf&lt;/code&gt;&lt;/td&gt;
 &lt;td style="text-align: right"&gt;5&lt;/td&gt;
 &lt;td style="text-align: right"&gt;7&lt;/td&gt;
