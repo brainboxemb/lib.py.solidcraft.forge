@@ -4,9 +4,9 @@ This file contains unfinished work only.
 
 ## Accepted baseline
 
-The physical Forge model migration is complete on `dev`.
+The Forge migration is complete on `dev`.
 
-The accepted migration baseline now has:
+The accepted baseline now has:
 - 46 physical model owners;
 - SCPF as primary per owner;
 - historically real reference implementations local to the same physical owner;
@@ -19,48 +19,26 @@ The accepted migration baseline now has:
 - exactly four public Examples;
 - all 46 physical owners projected into Verification;
 - durable generated CAD artifacts on `build/<scope>/models/**`, not copied to
-  `gh-pages`.
-
-The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the
-A/B authority until documentation and public-route parity is accepted.
-
-## Now
-
-- #47: align Forge CI/build/Pages workflow roles with the accepted `template.cad.library` / CAD NEW split.
-
-## #31 final integration
-
-PR #34 has been squash-merged into `dev`. It delivered:
-- historical nine-chapter Guide and Cheatsheet projections;
+  `gh-pages`;
+- the historical nine-chapter Guide and Cheatsheet;
 - 44 case-sensitive public SCPF API Reference routes, statically validated
   against `cadlib/src/scpf` without importing or executing the package;
-- the API design-contract compatibility route;
 - Verification `coverage`, `joint-anatomy` and `results` projections from
   source declarations and durable build evidence;
-- the shared Hextra/CAD presentation foundation;
+- the reusable Hextra/CAD presentation foundation from
+  `template.cad.library`;
 - a fixed 63-route OLD-vs-NEW route/content gate;
-- desktop/mobile rendered-layout evidence with zero missing local assets.
+- accepted desktop/mobile rendered-layout evidence, including the corrected
+  rich joint-anatomy diagram presentation;
+- policy-owned merge execution through PR comment `/merge`, with
+  `.github/workflows/merge-policy.yml` choosing and executing the merge
+  method;
+- the accepted library/CAD NEW workflow split: pull requests run central `ci`
+  only, permanent `dev`/`main` runs use one `build` job for qualification and
+  durable publication, and Pages is dispatched as an independent workflow.
 
-Post-merge screenshot review found one remaining Forge-specific rendering
-regression: nested rich HTML in `joint-anatomy` can be projected as literal
-Markdown/code blocks because source indentation is retained outside `<pre>`.
-The correction remains part of #31 on branch
-`issue/31-pages-parity-final`. An earlier `dev -> main` promotion occurred
-before this visual defect was accepted as real, so the corrected `dev` baseline
-must be promoted to `main` once more after this fix is qualified.
-
-Remaining work:
-1. qualify the `joint-anatomy` projection fix with CI, Pages and fresh
-   desktop/mobile screenshots;
-2. squash the fix PR into `dev`;
-3. verify the normal post-merge durable build/Pages chain;
-4. close #31;
-5. promote the corrected `dev` baseline to `main` again with the repository's
-   normal merge-commit policy.
-
-The reusable visual foundation remains template-owned. Forge-specific Guide,
-API Reference, Cheatsheet and Verification explanatory content remain owned
-here.
+The historical `brainboxemb/lib.py.solidcraft.forge` repository is now an
+archival/A-B reference rather than an unfinished migration gate.
 
 ## Later
 
