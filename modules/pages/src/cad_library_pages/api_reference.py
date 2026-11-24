@@ -67,7 +67,8 @@ def _validate_manifest(source_root: Path, manifest: dict) -> None:
             continue
         if "." in name:
             owner, member = name.split(".", 1)
-            if owner not in methods or member not in methods[owner]:
+            implementation_owner = {"Occurrence": "ModelInstance"}.get(owner, owner)
+            if implementation_owner not in methods or member not in methods[implementation_owner]:
                 raise ValueError(f"API reference target missing from source: {name}")
         elif name not in exports and name not in names:
             raise ValueError(f"API reference target missing from source: {name}")
