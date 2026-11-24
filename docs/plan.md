@@ -27,9 +27,12 @@ Target owner:
 - package-owned direct native Box lowering assertion;
 - no engine-specific sibling owners.
 
-The remaining acceptance item is native saved-design/parameter/timeline verification equivalent to historical `verification/verify.py`. That requires generic staged verification across `solidcraft` and `reference`, owned upstream by `template.cad.library#25`. Do not add a Forge-local scheduler workaround.
+The current candidate already proves:
+- OLD and NEW SCPF command JSON are semantically identical;
+- SCPF and all four reference implementations pass the historical geometry contract;
+- the candidate uses exactly the existing `solidcraft` and `reference` runtime roles.
 
-After upstream staged verification is qualified, add the native stage to this owner, record explicit OLD vs NEW evidence, then qualify durable build and Hugo projection.
+Generic staged verification from `template.cad.library#25` is now consumed by this branch. The remaining qualification is to prove the historical native baseline and `length=50` saved-design mutation against the retained OLD machine evidence, then merge to `dev` so durable build and Pages projection can be checked.
 
 Do not expand to five historical models until #6 is accepted.
 

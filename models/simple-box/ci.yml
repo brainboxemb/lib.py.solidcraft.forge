@@ -21,10 +21,18 @@ implementations:
     builder: builder-pybosl2
     source: pybosl2/model.py
 
-verification:
-  module: verification
-  adapter: mesh-geometry
-  definition: verification/geometry.json
+verifications:
+  - id: native
+    module: verification
+    adapter: solidcraft-model
+    definition: verification/solidcraft.py
+    artifact: model.sc
+    implementations: [scpf]
+  - id: geometry
+    module: verification
+    adapter: mesh-geometry
+    definition: verification/geometry.json
+    artifact: model.stl
 
 preview:
   module: preview

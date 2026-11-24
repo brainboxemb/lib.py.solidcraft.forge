@@ -3,5 +3,10 @@ id: verification
 kind: python
 impact: self
 verifier:
-  runtime: reference
-  entrypoint: cad_verification.runtime:run
+  adapters:
+    mesh-geometry:
+      runtime: reference
+      entrypoint: cad_verification.runtime:run
+    solidcraft-model:
+      runtime: solidcraft
+      entrypoint: cad_verification.runtime:run

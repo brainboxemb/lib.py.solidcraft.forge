@@ -18,27 +18,58 @@ class EngineBatchTests(unittest.TestCase):
                 "builder": "test",
                 "engine_python": "/opt/isolated/bin/python",
                 "build_entry": "builder:build",
-                "verify_entry": "verifier:run",
-                "adapter": "mesh",
                 "source": "source",
-                "definition": "definition",
             }
             for impl in ("a", "b")
         ]
+        verify_rows = [
+            {
+                "task_id": row["task_id"],
+                "owner": row["owner"],
+                "implementation": row["implementation"],
+                "builder": "test",
+                "stage_id": "geometry",
+                "verify_entry": "verifier:run",
+                "adapter": "mesh",
+                "artifact": "model.stl",
+                "definition": "definition",
+            }
+            for row in rows
+        ]
+
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
 
             def run(command, **kwargs):
-                self.assertEqual(command[0], "/opt/isolated/bin/python")
-                manifest = json.loads(
-                    Path(command[command.index("--manifest") + 1]).read_text()
+                self.assertEqual(
+                    command[0],
+                    "/opt/isolated/bin/python",
                 )
-                self.assertEqual(len(manifest["items"]), 2)
+                manifest = json.loads(
+                    Path(
+                        command[
+                            command.index("--manifest") + 1
+                        ]
+                    ).read_text()
+                )
+                self.assertEqual(
+                    len(manifest["items"]),
+                    2,
+                )
                 for row in rows:
-                    target = root / "models" / row["owner"] / row["implementation"]
+                    target = (
+                        root
+                        / "models"
+                        / row["owner"]
+                        / row["implementation"]
+                    )
                     target.mkdir(parents=True, exist_ok=True)
                     (target / "model.stl").write_bytes(b"stl")
-                Path(command[command.index("--build-report") + 1]).write_text(
+                Path(
+                    command[
+                        command.index("--build-report") + 1
+                    ]
+                ).write_text(
                     json.dumps({
                         "schema": 1,
                         "results": {
@@ -50,22 +81,29 @@ class EngineBatchTests(unittest.TestCase):
                 return SimpleNamespace(returncode=0)
 
             manifest = {
-                "schema": 3,
+                "schema": 4,
                 "runtime": "reference",
                 "image": "test:1",
                 "build_items": rows,
-                "verify_items": rows,
+                "verify_items": verify_rows,
+                "preview_items": [],
             }
             with patch(
                 "cad_library_ci.runtime.subprocess.run",
                 side_effect=run,
             ) as child, patch(
                 "cad_library_ci.runtime.resolve",
-                return_value=lambda *a, **kw: {"status": "pass"},
+                return_value=lambda *args, **kwargs: {"status": "pass"},
             ) as resolve:
-                self.assertEqual(execute(manifest, root), 0)
+                self.assertEqual(
+                    execute(manifest, root),
+                    0,
+                )
                 child.assert_called_once()
-                self.assertEqual(resolve.call_count, 2)
+                self.assertEqual(
+                    resolve.call_count,
+                    2,
+                )
 
     def test_missing_child_report_fails_batch(self):
         row = {
@@ -75,10 +113,7 @@ class EngineBatchTests(unittest.TestCase):
             "builder": "test",
             "engine_python": "/opt/test/python",
             "build_entry": "builder:build",
-            "verify_entry": "verifier:run",
-            "adapter": "mesh",
             "source": "source",
-            "definition": "definition",
         }
         with tempfile.TemporaryDirectory() as tmp:
             with patch(
@@ -86,13 +121,17 @@ class EngineBatchTests(unittest.TestCase):
                 return_value=SimpleNamespace(returncode=0),
             ):
                 self.assertEqual(
-                    execute({
-                        "schema": 3,
-                        "runtime": "reference",
-                        "image": "test:1",
-                        "build_items": [row],
-                        "verify_items": [row],
-                    }, Path(tmp)),
+                    execute(
+                        {
+                            "schema": 4,
+                            "runtime": "reference",
+                            "image": "test:1",
+                            "build_items": [row],
+                            "verify_items": [],
+                            "preview_items": [],
+                        },
+                        Path(tmp),
+                    ),
                     1,
                 )
 
