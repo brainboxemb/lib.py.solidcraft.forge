@@ -1,0 +1,136 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            100.0,
+            60.0,
+            10.0
+          ],
+          "actual_min": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_max": [
+            100.0,
+            60.0,
+            10.0
+          ],
+          "expected_min": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "max_delta_mm": 0.0,
+          "pass": true,
+          "tolerance_mm": 0.5
+        },
+        "surface_distance_probes": [
+          {
+            "actual_mm": 3.98108473504701,
+            "delta_mm": 0.018915264952990007,
+            "expected_mm": 4.0,
+            "label": "front hole at z=1",
+            "pass": true,
+            "point": [
+              50.0,
+              10.0,
+              1.0
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.981021234259363,
+            "delta_mm": 0.018978765740636838,
+            "expected_mm": 4.0,
+            "label": "front hole at z=5",
+            "pass": true,
+            "point": [
+              50.0,
+              10.0,
+              5.0
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.9812039720664565,
+            "delta_mm": 0.018796027933543513,
+            "expected_mm": 4.0,
+            "label": "front hole at z=9",
+            "pass": true,
+            "point": [
+              50.0,
+              10.0,
+              9.0
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.981084287132012,
+            "delta_mm": 0.018915712867987988,
+            "expected_mm": 4.0,
+            "label": "rear hole at z=1",
+            "pass": true,
+            "point": [
+              50.0,
+              50.0,
+              1.0
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.981021709942645,
+            "delta_mm": 0.018978290057355185,
+            "expected_mm": 4.0,
+            "label": "rear hole at z=5",
+            "pass": true,
+            "point": [
+              50.0,
+              50.0,
+              5.0
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.9817564229969378,
+            "delta_mm": 0.018243577003062228,
+            "expected_mm": 4.0,
+            "label": "rear hole at z=9",
+            "pass": true,
+            "point": [
+              50.0,
+              50.0,
+              9.0
+            ],
+            "tolerance_mm": 0.3
+          }
+        ],
+        "volume": {
+          "actual_mm3": 58998.113062192126,
+          "delta_mm3": 3.42271134085604,
+          "expected_mm3": 58994.69035085127,
+          "pass": true,
+          "tolerance_mm3": 55.0
+        },
+        "watertight": {
+          "actual": true,
+          "expected": true,
+          "pass": true
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/anchored-holes/scpf/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "anchored-holes-scpf-geometry"
+}

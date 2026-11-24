@@ -1,0 +1,74 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "width",
+        "expression": "100",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "depth",
+        "expression": "60",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "thickness",
+        "expression": "10",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "spacing",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "Base"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": [
+          "(width / 2) + (-(width / 2))",
+          "(depth / 2) + (-(depth / 2))"
+        ],
+        "p1": [
+          "(width / 2) + (width / 2)",
+          "(depth / 2) + (depth / 2)"
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": "thickness",
+        "direction": "positive",
+        "body_name": "AnchoredHoles"
+      }
+    },
+    {
+      "command": "model.faces",
+      "params": {
+        "body": "AnchoredHoles"
+      }
+    }
+  ]
+}
