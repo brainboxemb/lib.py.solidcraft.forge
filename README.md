@@ -20,4 +20,4 @@ This repository rebuilds Forge on the qualified `template.cad.library` architect
 
 The migration expands examples deliberately: **1 → 5 → 10 → remaining graph**. The old Forge repository stays authoritative until equivalent package, CAD, verification and site evidence exists here.
 
-Read `AGENTS.md`, `docs/requirements.md`, `docs/design.md`, `docs/plan.md` and `docs/handoff.md` before changing the repository.
+Read `AGENTS.md`, `docs/requirements.md`, `docs/design.md`, `docs/development.md`, `docs/plan.md`, `docs/release.md` and `docs/handoff.md` before changing the repository.

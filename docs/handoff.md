@@ -1,33 +1,42 @@
 # Handoff
 
-Continue work in `brainboxemb/lib.py.solidcraft.forge.NEW`.
+Continue in `brainboxemb/lib.py.solidcraft.forge.NEW`.
 
 Read `AGENTS.md`, `docs/requirements.md`, `docs/design.md` and `docs/plan.md` first.
 
-## Current intent
+## Stable baseline
 
-This is the clean Forge migration target built on `template.cad.library`. Preserve the public package/import name `scpf`. The historical `brainboxemb/lib.py.solidcraft.forge` repository is the known-good A/B reference and must not be modified as part of this migration unless explicitly requested separately.
+`main`: `a556e0c20420ac59e0efecd3e9455eb6bd43ffbb`
 
-Bootstrap issue: #1.
+Bootstrap is accepted:
+- full main CI `45422240513`: success;
+- Pages `45422613383`: success;
+- real SCPF 0.15.0 source lives under `cadlib/src/scpf`;
+- generic template modules/builders/verification/preview/build/Pages are installed;
+- historical Forge remains unchanged as A/B reference.
 
-The technical template baseline is `template.cad.library@f73c3e76066b16751d4bd1eb7f1c221e0f3fc3fe`. SCPF begins from the released 0.15.0 package. Runtime remains `docker.cad.solidcraft v0.3.5` / SolidCraft 0.48.1.
+Normal merge policy is now active from the default branch. Use a short-lived branch from `dev`, then `/merge` to squash into `dev`; promote `dev -> main` with a merge commit after full qualification.
 
-## Repository model
+## Active work
 
-- `cadlib/src/scpf/`: Forge/SCPF product source.
-- `cadlib/tests/`: package-owner tests.
-- `modules/`: generic CI/builders/verification/preview/build/Pages.
-- `examples/`: template qualification fixtures now; real Forge examples migrate later.
-- `site/`: Hugo/Hextra.
+Issue #6 / draft PR #7 is the first real example migration: historical Forge `simple-box`.
 
-Use normal NEW branch policy: short-lived branch -> squash to `dev`; `dev -> main` merge promotion.
+The intended product path is:
 
-## Immediate next action
+```text
+examples/simple-box/scpf/model.py
+        ↓ local scpf compiler
+SolidCraft command JSON
+        ↓ generic builder-solidcraft
+model.sc + model.stl + model.png
+        ↓ reference runtime
+geometry verification
+```
 
-Finish qualifying bootstrap issue #1. Fix only true migration/layout failures. Do not pull old Forge CI/site scripts across to make tests green.
+Do not teach the generic SolidCraft builder Forge/SCPF semantics.
 
-After bootstrap is accepted, create the one-example migration issue. Choose a small real Forge example that has SCPF source, reference implementations and a geometry contract. Migrate that example end-to-end and compare OLD vs NEW. Then expand 1 -> 5 -> 10 -> remaining graph.
+Before #6 can merge, recover the example-owned native command contract and old saved-design parameter/timeline verification, and record an explicit OLD vs NEW comparison. Do not start the five-example expansion first.
 
 ## Handoff message
 
-> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from `docs/plan.md`. This is a clean migration onto `template.cad.library`, not an in-place Forge refactor. Keep `scpf` as the public package. Do not modify the old Forge repo; use it as the A/B baseline. Finish the current bootstrap/qualification first. Then migrate one real Forge example end-to-end and compare source semantics, SolidCraft commands, native/STL geometry, verification, preview and Hugo output before expanding to 5 and 10 examples.
+> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from `docs/plan.md`. Bootstrap is stable on main at `a556e0c20420ac59e0efecd3e9455eb6bd43ffbb`. The active slice is issue #6 / draft PR #7: migrate the historical Forge simple-box end-to-end. Keep `scpf` as the public package and keep the old Forge repo read-only as the A/B baseline. Finish command-contract, saved-design/timeline verification, OLD-vs-NEW evidence, durable build and Hugo projection before expanding 1 -> 5 -> 10.
