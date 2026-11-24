@@ -52,7 +52,7 @@ build/<source-branch>/models/<owner>/
   <implementation>/...
 ```
 
-The owner root exposes canonical artifacts from its configured primary implementation. Pages reads durable build evidence and does not rebuild CAD.
+The owner root exposes canonical artifacts from its configured primary implementation. Pages reads durable build evidence and does not rebuild CAD. For implementations with named verification stages, the model page renders each stage status and links its stage-local durable report while retaining the aggregate verification status.
 
 ## Migration checks
 
