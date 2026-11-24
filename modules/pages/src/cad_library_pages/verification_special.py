@@ -5,8 +5,12 @@ from __future__ import annotations
 import ast
 import json
 from pathlib import Path
+import re
+import shutil
 
 import yaml
+
+from .guides import html_to_markdown
 
 
 _RANK = {"Unit": 1, "Integration": 2, "Native": 3, "Geometry": 4, "Saved design": 5, "Visual": 6}
@@ -146,7 +150,49 @@ def _results_page(source_root: Path, build_scope: Path | None) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
+def _joint_anatomy_page(source_root: Path, site: Path) -> None:
+    source = source_root / "docs" / "verification" / "joint-anatomy"
+    body_path = source / "body.html"
+    if not body_path.is_file():
+        return
+    html = body_path.read_text(encoding="utf-8")
+    panel = html.find('<section class="panel">')
+    if panel >= 0:
+        html = html[panel:]
+    html = html.replace("$solidcraft_version", "0.48.1")
+    html = html.replace("$source_sha", "current source")
+    html = html.replace("$diagram_raw_base/", "")
+    html = html.replace("$diagram_blob_base/", "")
+    html = html.replace("<h3>", "<h2>").replace("</h3>", "</h2>")
+    html = re.sub(r"<br\s*/?>", "\n", html, flags=re.IGNORECASE)
+
+    def image(match):
+        src, alt = match.group(1), match.group(2)
+        return f"<p>![{alt}]({src})</p>"
+
+    html = re.sub(
+        r'<img\s+src="([^"]+)"\s+alt="([^"]*)"\s*/?>',
+        image,
+        html,
+        flags=re.IGNORECASE,
+    )
+    target = site / "content" / "verification" / "joint-anatomy" / "index.md"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(
+        "---\ntitle: Joint anatomy\n---\n\n"
+        + html_to_markdown(html),
+        encoding="utf-8",
+    )
+
+    static = site / "static" / "verification" / "joint-anatomy"
+    static.mkdir(parents=True, exist_ok=True)
+    for asset in sorted(source.iterdir()):
+        if asset.is_file() and asset.name != "body.html":
+            shutil.copyfile(asset, static / asset.name)
+
+
 def prepare_verification_special(source_root: Path, site: Path, build_scope: Path | None) -> None:
+    _joint_anatomy_page(source_root, site)
     verification = site / "content" / "verification"
     verification.mkdir(parents=True, exist_ok=True)
     (verification / "coverage").mkdir(parents=True, exist_ok=True)
