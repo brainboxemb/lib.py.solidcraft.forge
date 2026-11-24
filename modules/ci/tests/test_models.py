@@ -86,18 +86,33 @@ class ModelTests(unittest.TestCase):
                 [impl.id for impl in model.implementations],
                 ["scpf", "cadquery", "build123d", "pythonscad", "pybosl2"],
             )
+            expected_stages = (
+                ["native", "geometry", "visual"]
+                if model_id == "simple-box"
+                else ["native", "geometry"]
+            )
+            expected_runtimes = (
+                ["solidcraft", "reference", "solidcraft"]
+                if model_id == "simple-box"
+                else ["solidcraft", "reference"]
+            )
             self.assertEqual(
                 [stage.id for stage in model.verifications],
-                ["native", "geometry"],
+                expected_stages,
             )
             self.assertEqual(
                 [stage.runtime for stage in model.verifications],
-                ["solidcraft", "reference"],
+                expected_runtimes,
             )
             self.assertEqual(
                 model.verifications[0].implementations,
                 ("scpf",),
             )
+            if model_id == "simple-box":
+                self.assertEqual(
+                    model.verifications[2].implementations,
+                    ("scpf",),
+                )
 
         for model_id in SCPF_ONLY_IDS:
             model = by_id[model_id]
@@ -191,7 +206,9 @@ class ModelTests(unittest.TestCase):
                 (row["implementation"], row["stage_id"])
                 for row in solidcraft["verify_items"]
             ],
-            [("scpf", "native")] * 20,
+            [("scpf", "native")] * 18
+            + [("scpf", "visual")]
+            + [("scpf", "native")] * 2,
         )
 
         reference = manifests[1]
