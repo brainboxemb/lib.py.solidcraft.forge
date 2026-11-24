@@ -51,12 +51,16 @@ All **25 geometry stages pass** in `cad-reference:v0.3.5`.
 
 Owner-local command-contract tests also pass for all five owners before CAD execution.
 
-## Remaining integration acceptance
+## Integration acceptance
 
-This candidate is accepted for integration. The five-owner gate is complete only after:
-1. PR #19 is squash-merged to `dev`;
-2. permanent `build/dev/models/<owner>/` output exists for all five owners;
-3. Pages publishes only owners whose `model.yml.purpose` contains `example` — currently `simple-box` and `anchored-holes`;
-4. the post-merge `dev` CI and Pages runs are green.
+The five-owner gate is complete.
 
-Do not start the 10-owner gate before those checks are complete.
+- PR #19 squash-merged to `dev` as `606f07588c8a41ee4f2ae18aef55ff25d1ceb2fc`.
+- Post-merge dev CI run `45442571279`: pass.
+- Permanent `build/dev/models/` contains all five owners with `source_sha=606f07588c8a41ee4f2ae18aef55ff25d1ceb2fc`.
+- Replay evidence is retained for anchored-holes, assembly-decorator and parametric-attach.
+- Parametric-attach retains durable `gap_30` saved-design evidence.
+- Pages run `45442886388`: pass; platform deployment `45442954257`: pass.
+- `gh-pages/dev/models/` publishes exactly the two public owners: `simple-box` and `anchored-holes`. The three verification-only owners are not public.
+
+The next migration gate is issue #21.
