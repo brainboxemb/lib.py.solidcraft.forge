@@ -1,0 +1,43 @@
+{
+  "id": "simple-box",
+  "implementations": {
+    "build123d": {
+      "build_status": "pass",
+      "builder": "builder-build123d",
+      "preview_status": "pass",
+      "status": "pass",
+      "verification_status": "pass"
+    },
+    "cadquery": {
+      "build_status": "pass",
+      "builder": "builder-cadquery",
+      "preview_status": "pass",
+      "status": "pass",
+      "verification_status": "pass"
+    },
+    "pybosl2": {
+      "build_status": "pass",
+      "builder": "builder-pybosl2",
+      "preview_status": "pass",
+      "status": "pass",
+      "verification_status": "pass"
+    },
+    "pythonscad": {
+      "build_status": "pass",
+      "builder": "builder-pythonscad",
+      "preview_status": "pass",
+      "status": "pass",
+      "verification_status": "pass"
+    },
+    "solidcraft": {
+      "build_status": "pass",
+      "builder": "builder-solidcraft",
+      "preview_status": null,
+      "status": "pass",
+      "verification_status": "pass"
+    }
+  },
+  "primary": "cadquery",
+  "schema": 1,
+  "status": "pass"
+}
