@@ -33,6 +33,12 @@ verifications:
     adapter: mesh-geometry
     definition: verification/geometry.json
     artifact: model.stl
+  - id: visual
+    module: verification
+    adapter: solidcraft-visual
+    definition: verification/visual.json
+    artifact: model.sc
+    implementations: [scpf]
 
 preview:
   module: preview

@@ -10,3 +10,6 @@ verifier:
     solidcraft-model:
       runtime: solidcraft
       entrypoint: cad_verification.runtime:run
+    solidcraft-visual:
+      runtime: solidcraft
+      entrypoint: cad_verification.runtime:run
