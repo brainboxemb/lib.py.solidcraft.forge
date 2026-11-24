@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/50-idempotent-merge
-modules: [merge-policy]
-library: false
+branch: issue/52-release-mechanics
+modules: [ci, release]
+library: true
 models: []
 tasks: [test]
