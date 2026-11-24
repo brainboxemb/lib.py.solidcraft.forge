@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -40,
+    -20,
+    0
+  ],
+  "bounds_max": [
+    21.64380551,
+    20,
+    21.64380551
+  ],
+  "bounds_tolerance_mm": 0.5,
+  "volume_mm3": 6343.451332235384,
+  "volume_tolerance_mm3": 5,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "fixed-flat hole at z=0.5",
+      "point": [
+        -20,
+        0,
+        0.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "fixed-flat hole at z=1.5",
+      "point": [
+        -20,
+        0,
+        1.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    }
+  ]
+}
