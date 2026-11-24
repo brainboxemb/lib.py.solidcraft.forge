@@ -1,0 +1,23 @@
+{{ define "main" }}
+<main class="cad-page-shell cad-home">
+  <section class="cad-hero">
+    <p class="cad-eyebrow">CAD library</p>
+    <h1>{{ site.Title }}</h1>
+    <p>Explore the library documentation, practical examples and verification evidence, including model source and built CAD geometry.</p>
+    <div class="cad-actions">
+      <a class="cad-button" href="{{ "docs/" | relURL }}">Documentation</a>
+      <a class="cad-button cad-button-secondary" href="{{ "examples/" | relURL }}">Browse examples</a>
+      <a class="cad-button cad-button-secondary" href="{{ "verification/" | relURL }}">Verification</a>
+    </div>
+  </section>
+  {{ $examples := where site.RegularPages "Section" "examples" }}
+  {{ if $examples }}
+  <section class="cad-section">
+    <div class="cad-section-heading"><h2>Examples</h2><p>Source-owned examples and published build evidence.</p></div>
+    <div class="cad-model-grid">
+      {{ range $examples.ByWeight }}{{ partial "cad/model-card.html" . }}{{ end }}
+    </div>
+  </section>
+  {{ end }}
+</main>
+{{ end }}
