@@ -1,0 +1,9 @@
+{{ range .reports }}
+<details class="cad-collapsible">
+  <summary><strong>{{ .name }} — expected versus measured evidence</strong></summary>
+  <div class="cad-collapsible-body">
+    <p><a href="{{ .url }}">Open published verification report</a></p>
+    {{ partial "cad/codeblock.html" (dict "lang" "json" "content" .json "label" "verification.json") }}
+  </div>
+</details>
+{{ end }}

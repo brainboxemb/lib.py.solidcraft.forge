@@ -33,6 +33,11 @@ jobs:
           hugo-version: "0.169.0"
           extended: true
       - run: python -m pip install PyYAML==6.0.2
+      - name: Read matching durable build scope
+        run: |
+          mkdir -p prepared-build
+          git fetch --no-tags --depth=1 origin build
+          git archive FETCH_HEAD | tar -x -C prepared-build
       - name: Build and verify site
         env:
           PYTHONPATH: modules/pages/src
@@ -40,7 +45,29 @@ jobs:
           python -m cad_library_pages.build
           --source-root .
           --destination generated-site
-          --base-url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          --build-scope prepared-build/${{ github.base_ref }}
+          --base-url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.base_ref == 'dev' && 'dev/' || '' }}"
+      - name: Check rendered routes and evidence links
+        env:
+          PYTHONPATH: modules/pages/src
+        run: >-
+          python -m cad_library_pages.verify
+          --source-root .
+          --site generated-site
+          --build-scope prepared-build/${{ github.base_ref }}
+      - name: Capture rendered layout
+        env:
+          PYTHONPATH: modules/pages/src
+        run: >-
+          python -m cad_library_pages.capture
+          --site generated-site
+          --base-path "/${{ github.event.repository.name }}/${{ github.base_ref == 'dev' && 'dev/' || '' }}"
+          --output layout-evidence
+      - uses: actions/upload-artifact@v7
+        with:
+          name: layout-evidence
+          path: layout-evidence
+          if-no-files-found: error
 
   assemble:
     name: pages-build

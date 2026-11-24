@@ -1,13 +1,17 @@
 ---
 title: Documentation
+cascade:
+  type: docs
 ---
 
-SolidCraft Forge exposes the `scpf` Python authoring API under `cadlib/src/scpf/`.
+SolidCraft Forge exposes the `scpf` Python authoring API under `cadlib/src/scpf/`. Authored documentation and generated reference views remain source-owned here; CAD evidence remains on the durable `build` branch.
 
-The NEW repository is migrating product documentation from the historical Forge repository onto Hugo/Hextra.
-
-- [External engineering references](reference/) are projected from source-owned files under `docs/reference/`.
-- Examples and Verification are projected from physical model owners according to `model.yml.purpose`.
-- Guide, API Reference and Cheatsheet remain part of the #31 historical Pages parity gate and are not considered migrated until their authored content and route contracts are qualified.
-
-Repository architecture and migration status remain source-owned under `docs/`; generated CAD evidence remains on the `build` branch.
+{{< cards >}}
+  {{< card link="../../guide/" title="Guide" subtitle="The authored SCPF guide, projected from docs/guide/." >}}
+  {{< card link="../../reference/" title="API Reference" subtitle="The public SCPF API contract, statically checked against cadlib/src/scpf." >}}
+  {{< card link="../../cheatsheet/" title="Cheatsheet" subtitle="Compact SCPF syntax and usage reference." >}}
+  {{< card link="reference/" title="SolidCraft references" subtitle="Retained versioned external engineering references." >}}
+  {{< card link="model-pages/" title="Reading model pages" subtitle="Understand source, expected setup, native results and verification evidence." >}}
+  {{< card link="../../examples/" title="Examples" subtitle="Learn from selected physical model owners and their built geometry." >}}
+  {{< card link="../../verification/" title="Verification" subtitle="Inspect model qualification and special coverage/results views." >}}
+{{< /cards >}}

@@ -1,0 +1,88 @@
+<h2 id="features">A feature changes an existing body</h2>
+<p>A native feature is different from subtracting arbitrary CSG geometry.
+SCPF can retain named sketches and operations in SolidCraft history.
+For exact results, supported body types and selection constraints matter.</p>
+<h2 id="hole">Holes</h2>
+<pre class="code-block"><code>from scpf import Box, Hole, Depth, Faces
+
+plate = Box(100, 60, 10)
+hole = Hole(d=8, depth=Depth.THROUGH_ALL)
+plate = plate + hole.on(plate, face=Faces.TOP)</code></pre>
+<p>A <code>Hole</code> is a native hole feature: adding it to the shape
+means adding the operation that <em>removes</em> material.
+<a href="../../reference/Faces/"><code>Faces.TOP</code></a> selects its entry face. Simple feature placement
+uses <code>on()</code>; assembly attachment uses explicit anchors.</p>
+<h2 id="feature-patterns">Native feature patterns</h2>
+<p>Pattern an already-applied native feature when the copies should remain one
+editable SolidCraft history operation. Rectangular and circular patterns share
+the same source-feature rules: pass the same Forge <code>Shape</code> object
+that was applied to the body. Forge resolves that object to its native history
+feature; callers never manage SolidCraft timeline-name strings. Direct native
+Hole-family and primitive features are supported alongside the existing
+<code>Sketch.extrude()</code> path, and a direct count Parameter remains
+editable in the saved design.</p>
+<pre class="code-block"><code>from scpf import Anchor, Axis, Box, Hole
+
+plate = Box(100, 80, 6, anchor=Anchor.BOTTOM)
+bolt_hole = Hole(
+    d=8,
+    direction=(0, 0, -1),
+).at(30, 0, 6)
+plate = plate + bolt_hole
+
+bolt_circle = plate.circular_pattern(
+    bolt_hole,
+    count=6,
+    axis=Axis.Z,
+)</code></pre>
+<p><code>circular_pattern()</code> omits <code>angle</code> by default so
+SolidCraft uses its native 360-degree full-circle behaviour. Supply a fixed
+degree value or direct Parameter for a partial arc. <code>origin=(x, y, z)</code>
+moves a fixed axis; a fixed non-zero XYZ vector can be used instead of
+<code>Axis.X/Y/Z</code>. Construction-axis and geometry-axis selectors are not
+yet exposed by Forge.</p>
+<pre class="code-block"><code>grid = plate.rectangular_pattern(
+    bolt_hole,
+    count=4,
+    spacing=20,
+    direction=Axis.X,
+    count2=3,
+    spacing2=18,
+    direction2=Axis.Y,
+)</code></pre>
+<p><code>rectangular_pattern()</code> and <code>circular_pattern()</code> both
+emit one native feature-pattern command rather than expanding independent
+copies in Python.</p>
+<h2 id="fillet">Fillets and chamfers</h2>
+<pre class="code-block"><code>from scpf import FRONT, LEFT, Box, Edges
+
+body = Box(80, 50, 15)
+rounded = body.fillet(3, edges=Edges.VERTICAL)
+bevelled = body.chamfer(3, edges=Edges.VERTICAL)
+one_edge = body.chamfer(3, edges=FRONT + LEFT)</code></pre>
+<p><code>fillet()</code> and <code>chamfer()</code> use the same edge-selection
+forms. Use <code>Edges.VERTICAL</code> for all vertical edges of a supported
+rectangular body, a two-direction selector such as <code>FRONT + LEFT</code>
+for one Box edge, <code>Edges.from_profile(...)</code> or
+<code>Edges.from_vertices(...)</code> for named Polygon2D geometry, or explicit
+XYZ pick coordinates. Both methods default to <code>Edges.VERTICAL</code>.
+A topological edge cannot always be inferred reliably from a visual camera
+position.</p>
+<h2 id="shell">Shells</h2>
+<pre class="code-block"><code>from scpf import Box, Faces
+case = Box(80, 50, 30).shell(2, open=Faces.TOP)</code></pre>
+<p><a href="../../reference/Faces/"><code>Faces.TOP</code></a> chooses the face to open and is also the same
+surface-selection vocabulary used by <code>feature.on(...)</code>.
+<a href="../../reference/Anchor/"><code>Anchor</code></a> is reserved for explicit component attachment in
+assemblies. See the source and regression tests for supported feature chains.</p>
+<h2 id="anchors">Feature placement without hard-coded global offsets</h2>
+<pre class="code-block"><code>from scpf import X, Y, Boss, Anchor
+
+boss = Boss(d=7, h=12, hole_d=2.5).attach(
+    case, parent=Anchor.INNER_BOTTOM,
+    offset=(X.MIN + 10, Y.MAX - 10),
+)</code></pre>
+<p><code>X.MIN</code> and <code>Y.MAX</code> refer to the parent
+bounds and are not rotation-axis constants. Anchoring support
+currently focuses on rectangular bases and a documented set of faces.
+Do not assume every curved or lofted surface supports it.</p>

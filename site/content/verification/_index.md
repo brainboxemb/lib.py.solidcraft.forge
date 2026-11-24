@@ -1,7 +1,9 @@
 ---
 title: Verification
+type: models
+description: Model-based qualification and verification evidence across Forge CAD implementations.
 ---
 
-Verification catalogue for every physical owner whose `model.yml.purpose` contains `verification`.
+Every physical owner whose `model.yml.purpose` contains `verification` is projected here from the same source owner and durable build evidence.
 
-Entries link the durable multi-engine build and verification evidence from the generated `build` branch.
+Special views: [Coverage](coverage/) · [Results](results/) · [Joint anatomy](joint-anatomy/)

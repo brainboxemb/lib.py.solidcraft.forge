@@ -90,6 +90,25 @@ Pages reads the durable scope and links generated files on the build branch. Gen
 
 The two routes are presentation views over the same owner and durable `build/<scope>/models/<id>/` evidence. They are not separate model owners and do not duplicate CAD artifacts into `gh-pages`.
 
+The reusable Hextra model presentation is consumed from the accepted `template.cad.library` design: expected setup, featured native/primary result, primary source and generated commands, independent reference source/result pairs, image/check overviews and raw verification evidence.
+
+Forge-specific documentation is projected separately:
+
+```text
+docs/guide/                         authored Guide chapters
+docs/cheatsheet.yml                authored Cheatsheet data
+docs/api-reference.json            retained rich public API reference contract
+docs/api.md                        API design contract
+docs/verification/                 coverage + joint-anatomy authored sources
+docs/pages-parity.json             fixed historical route/content gate
+        ↓ modules/pages
+site/content/...                    temporary Hugo projection
+        ↓ Hugo
+rendered Pages
+```
+
+`api_reference.py` uses Python AST to validate the retained public reference contract against `cadlib/src/scpf` without importing the package. `verification_special.py` reads authored coverage/joint documentation and durable build evidence without executing CAD. The final Pages verifier consumes `docs/pages-parity.json` so route and identifying-content regressions fail CI before publication.
+
 ## Migration comparison
 
 Before moving historical code, classify it as:

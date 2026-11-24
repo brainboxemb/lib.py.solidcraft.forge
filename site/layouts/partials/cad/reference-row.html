@@ -1,0 +1,15 @@
+<section class="cad-panel cad-reference-comparison" data-implementation="{{ .id }}">
+  <h3 class="cad-section-subtitle">{{ .id }} source · {{ .status | default "unavailable" }}</h3>
+  <div class="cad-reference-grid">
+    <div class="cad-reference-source">
+      {{ partial "cad/codeblock.html" (dict "lang" .lang "content" .content "label" .path) }}
+    </div>
+    <div class="cad-reference-output">
+      <div class="cad-preview">
+        {{ with .previewurl }}<a href="{{ . }}" class="cad-preview-link"><img src="{{ . }}" alt="Published reference result"></a>{{ else }}<div class="cad-preview-empty">No published reference preview.</div>{{ end }}
+      </div>
+      <p class="cad-section-help">Independent implementation result.</p>
+      <div class="cad-links">{{ range .files }}<a href="{{ .url }}">{{ .label }}</a>{{ end }}</div>
+    </div>
+  </div>
+</section>

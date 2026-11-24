@@ -1,7 +1,8 @@
 ---
 title: Examples
+type: models
+description: Practical Forge examples selected from physical model owners.
+aliases: ["/models/"]
 ---
 
-Forge examples selected by `model.yml.purpose: example`.
-
-Each entry is a view of the same physical owner under `models/<id>/`; Pages does not duplicate CAD source or generated artifacts.
+Examples are a presentation of owners whose `model.yml.purpose` contains `example`; Pages does not duplicate CAD ownership or generated artifacts.
