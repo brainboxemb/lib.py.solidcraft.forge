@@ -34,16 +34,17 @@ The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the A/B 
 
 ## Now — #29 core feature slice
 
-Migrate the ten remaining owners from the first two historical Verification groups:
+The twenty-owner candidate is technically accepted on `553033bdd2ccf0e5612e8f12d2a95c51a51ec462` by CI run **45456265226** with qualification artifact **14950656646**. OLD vs NEW evidence is recorded in `docs/acceptance/twenty-owner-gate.md`.
 
+The ten added owners are:
 - basic geometry: `round-top-sketch`, `native-revolve`, `circle-negative-extrude`, `bracket`;
 - parent/child features and faces: `hole-family`, `top-sketch-after-chamfer`, `circular-feature-pattern`, `rounded-rectangle-sketch`, `attached-through-all`, `cone-boolean`.
 
 All ten remain `purpose: verification`. `native-revolve`, `attached-through-all` and `cone-boolean` are intentionally SCPF-only; the other seven retain all four historical reference implementations.
 
-Acceptance requires owner-local command contracts, native verification, every historically applicable reference geometry stage, durable build output and Verification Pages projection against OLD evidence.
+The candidate restored the historical public `Sketch.revolve()` contract in `cadlib/scpf` because the migration exposed that NEW had lost it. No model-local workaround was introduced.
 
-Do not create sibling owners for CAD engines and do not synthesize reference implementations that did not historically exist.
+Remaining work for #29 is integration acceptance only: squash PR #30 to `dev`, verify durable build and Pages output for twenty owners, then complete a full `dev -> main` promotion with a merge commit and stable post-merge checks.
 
 ## After #29
 
