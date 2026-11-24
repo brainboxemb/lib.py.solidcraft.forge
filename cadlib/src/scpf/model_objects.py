@@ -1,0 +1,1041 @@
+"""Internal reusable-model and assembly nodes.
+
+User scripts keep ordinary class names such as Block() and Enclosure().
+These nodes are the compiler-facing representation; users do not need to
+construct Component or Occurrence objects explicitly.
+"""
+from dataclasses import dataclass, field, replace
+from itertools import count
+from math import isfinite
+
+from .core import (
+    Anchor,
+    AnchorFrame,
+    AnchorTopology,
+    Axis,
+    Shape,
+    _DirectionSelector,
+    _selector_anchor,
+    _dim_add,
+    _dim_sub,
+    half,
+    midpoint,
+    parameters_in,
+    _pv as pv,
+)
+
+
+_OCCURRENCE_IDS = count(1)
+
+
+def _next_occurrence_id():
+    """Return one process-local id for a Forge occurrence."""
+    return next(_OCCURRENCE_IDS)
+
+
+
+@dataclass(frozen=True)
+class ModelDefinition:
+    """One reusable user-model definition before SolidCraft lowering."""
+
+    class_name: str
+    parameters: tuple[tuple[str, float], ...]
+    shape: Shape
+    fixed_inputs: tuple[tuple[str, object], ...] = ()
+    external_parameters: tuple[tuple[str, float], ...] = ()
+    input_bindings: tuple[tuple[str, str], ...] = ()
+    anchors: tuple[tuple[str, AnchorFrame | AnchorTopology], ...] = ()
+
+    @property
+    def key(self):
+        return (
+            self.class_name,
+            self.parameters,
+            self.fixed_inputs,
+            self.external_parameters,
+            self.input_bindings,
+            self.anchors,
+        )
+
+
+@dataclass(frozen=True)
+class Attachment:
+    """Associative face-to-face relationship between two model occurrences."""
+
+    target: "ModelInstance"
+    parent: Anchor | str | AnchorFrame | AnchorTopology | None
+    child: Anchor | str | AnchorFrame | AnchorTopology | None
+    offset: tuple[object, object]
+    gap: object = 0
+    angle: float | None = None
+    as_built: bool = False
+
+
+def _custom_anchor(instance, name):
+    try:
+        return dict(instance.definition.anchors)[name]
+    except KeyError as exc:
+        raise ValueError(
+            f"{instance.definition.class_name} has no component anchor {name!r}"
+        ) from exc
+
+
+def _resolve_anchor_reference(instance, value):
+    """Resolve a standard, composed, named, or direct attachment frame."""
+    if isinstance(value, _DirectionSelector):
+        return _selector_anchor(value)
+    if isinstance(value, (Anchor, AnchorFrame, AnchorTopology)):
+        return value
+    if isinstance(value, str):
+        try:
+            return Anchor(value)
+        except ValueError:
+            _custom_anchor(instance, value)
+            return value
+    raise ValueError(
+        "component attach requires a cardinal selector, Anchor, AnchorFrame, "
+        "AnchorTopology or anchor name"
+    )
+
+
+def _anchor_local_point(instance, anchor):
+    if isinstance(anchor, Anchor):
+        return _anchor_point(instance, anchor)
+    if isinstance(anchor, AnchorFrame):
+        return anchor.origin
+    if isinstance(anchor, AnchorTopology):
+        return anchor.corner if anchor.corner is not None else anchor.edge
+    custom = _custom_anchor(instance, anchor)
+    if isinstance(custom, AnchorFrame):
+        return custom.origin
+    return custom.corner if custom.corner is not None else custom.edge
+
+
+def _unwrap_rectangular_shape(shape):
+    """Follow modifiers that retain the base component's nominal bounds."""
+    while shape.kind in (
+        "material_assignment",
+        "fillet",
+        "chamfer",
+        "shell",
+        "union",
+        "difference",
+    ):
+        shape = shape.data[0]
+    return shape
+
+
+def _xz_polygon_rectangle_bounds(shape):
+    """Bounds for one rectangular XZ polygon extrusion.
+
+    Polygon2D stores XZ sketch-local coordinates as (x, -z). The explicit
+    Sketch may shift its XZ plane along world Y through Sketch(offset=...).
+    This helper validates the four corners instead of treating an arbitrary
+    polygon bbox as a rectangular attachment target.
+    """
+    shape = _unwrap_rectangular_shape(shape)
+    if shape.kind != "sketch_base_extrusion":
+        raise ValueError("not an XZ Sketch extrusion")
+
+    (
+        _, plane, origin, plane_offset, profiles, distance, direction,
+        _operations, _profile_picks, _exact_regions, rotation,
+    ) = shape.data
+    if plane != "XZ" or origin is not None or rotation is not None:
+        raise ValueError("not a supported XZ Sketch extrusion")
+    if len(profiles) != 1:
+        raise ValueError("XZ attachment rectangle requires one profile")
+
+    profile, profile_anchor, profile_offset = profiles[0]
+    if profile.kind != "polygon" or profile.data[1] != "XZ":
+        raise ValueError("not an XZ polygon")
+    if profile_anchor is not None:
+        raise ValueError("XZ attachment polygon uses authored coordinates")
+    if any(pv(value) != 0 for value in profile_offset):
+        raise ValueError("XZ attachment polygon must use the Sketch origin")
+    plane_y = 0.0 if plane_offset is None else pv(plane_offset)
+
+    points = profile.data[0]
+    if len(points) != 4:
+        raise ValueError("XZ attachment rectangle requires four vertices")
+    world_points = [(pv(u), -pv(v)) for u, v in points]
+    xs = [point[0] for point in world_points]
+    zs = [point[1] for point in world_points]
+    xmin, xmax = min(xs), max(xs)
+    zmin, zmax = min(zs), max(zs)
+    if xmin == xmax or zmin == zmax:
+        raise ValueError("degenerate XZ attachment rectangle")
+    expected = {
+        (xmin, zmin), (xmin, zmax), (xmax, zmin), (xmax, zmax)
+    }
+    if set(world_points) != expected:
+        raise ValueError("XZ polygon is not an axis-aligned rectangle")
+
+    depth = pv(distance)
+    if depth <= 0:
+        raise ValueError("attachment extrusion distance must be positive")
+    if direction == "positive":
+        ymin, ymax = plane_y, plane_y + depth
+    elif direction == "negative":
+        ymin, ymax = plane_y - depth, plane_y
+    elif direction == "symmetric":
+        ymin, ymax = plane_y - half(depth), plane_y + half(depth)
+    else:
+        raise ValueError("unsupported extrusion direction")
+
+    return ((xmin, xmax), (ymin, ymax), (zmin, zmax))
+
+
+def _rectangular_bounds(instance):
+    """Return local axis-aligned bounds for a supported rectangular component."""
+    from .placement import _base_rectangle
+
+    shape = _unwrap_rectangular_shape(instance.definition.shape)
+    try:
+        (width, depth), (x, y, z), height = _base_rectangle(shape)
+    except ValueError:
+        try:
+            return _xz_polygon_rectangle_bounds(shape)
+        except ValueError as exc:
+            raise ValueError(
+                "component attach requires a supported rectangular model"
+            ) from exc
+
+    return (
+        (x, _dim_add(x, width)),
+        (y, _dim_add(y, depth)),
+        (z, _dim_add(z, height)),
+    )
+
+
+_CORNER_ANCHORS = {
+    Anchor.FRONT_TOP_LEFT,
+    Anchor.FRONT_TOP_RIGHT,
+    Anchor.FRONT_BOTTOM_LEFT,
+    Anchor.FRONT_BOTTOM_RIGHT,
+    Anchor.BACK_TOP_LEFT,
+    Anchor.BACK_TOP_RIGHT,
+    Anchor.BACK_BOTTOM_LEFT,
+    Anchor.BACK_BOTTOM_RIGHT,
+}
+
+
+def _anchor_point(instance, anchor):
+    """Local point represented by one reusable-component anchor."""
+    bounds = _rectangular_bounds(instance)
+    (xmin, xmax), (ymin, ymax), (zmin, zmax) = bounds
+    xmid = midpoint(xmin, xmax)
+    ymid = midpoint(ymin, ymax)
+    zmid = midpoint(zmin, zmax)
+    points = {
+        Anchor.CENTER: (xmid, ymid, zmid),
+        Anchor.LEFT: (xmin, ymid, zmid),
+        Anchor.RIGHT: (xmax, ymid, zmid),
+        Anchor.FRONT: (xmid, ymin, zmid),
+        Anchor.BACK: (xmid, ymax, zmid),
+        Anchor.BOTTOM: (xmid, ymid, zmin),
+        Anchor.TOP: (xmid, ymid, zmax),
+        Anchor.FRONT_TOP_LEFT: (xmin, ymin, zmax),
+        Anchor.FRONT_TOP_RIGHT: (xmax, ymin, zmax),
+        Anchor.FRONT_BOTTOM_LEFT: (xmin, ymin, zmin),
+        Anchor.FRONT_BOTTOM_RIGHT: (xmax, ymin, zmin),
+        Anchor.BACK_TOP_LEFT: (xmin, ymax, zmax),
+        Anchor.BACK_TOP_RIGHT: (xmax, ymax, zmax),
+        Anchor.BACK_BOTTOM_LEFT: (xmin, ymax, zmin),
+        Anchor.BACK_BOTTOM_RIGHT: (xmax, ymax, zmin),
+    }
+    if anchor not in points:
+        raise ValueError(f"{anchor} is not a supported assembly anchor")
+    return points[anchor]
+
+
+def _corner_origin_points(instance, anchor):
+    """Return edge, face and corner picks for a native SolidCraft corner origin.
+
+    The chosen edge is the vertical left/right edge of the front/back face.
+    Its topology stays the same when height changes; SolidCraft stores that
+    edge, the face and the second corner edge by name, so the origin follows
+    saved-design dimension changes symmetrically on both sides.
+    """
+    if anchor not in _CORNER_ANCHORS:
+        raise ValueError("corner origin requires a corner Anchor")
+    (xmin, xmax), (ymin, ymax), (zmin, zmax) = _rectangular_bounds(instance)
+    xmid = midpoint(xmin, xmax)
+    zmid = midpoint(zmin, zmax)
+
+    front = anchor.value.startswith("front_")
+    left = anchor.value.endswith("_left")
+    top = "_top_" in anchor.value
+    y = ymin if front else ymax
+    x = xmin if left else xmax
+    z = zmax if top else zmin
+    edge = (x, y, zmid)
+    on = (xmid, y, zmid)
+    corner = (x, y, z)
+    return edge, on, corner
+
+
+def _corner_native_x(anchor):
+    """Native SolidCraft clocking axis for one standard corner anchor."""
+    mapping = {
+        Anchor.FRONT_TOP_LEFT: (0.0, 0.0, -1.0),
+        Anchor.FRONT_TOP_RIGHT: (-1.0, 0.0, 0.0),
+        Anchor.FRONT_BOTTOM_RIGHT: (0.0, 0.0, 1.0),
+        Anchor.FRONT_BOTTOM_LEFT: (1.0, 0.0, 0.0),
+        Anchor.BACK_TOP_LEFT: (1.0, 0.0, 0.0),
+        Anchor.BACK_TOP_RIGHT: (0.0, 0.0, -1.0),
+        Anchor.BACK_BOTTOM_RIGHT: (-1.0, 0.0, 0.0),
+        Anchor.BACK_BOTTOM_LEFT: (0.0, 0.0, 1.0),
+    }
+    try:
+        return mapping[anchor]
+    except KeyError as exc:
+        raise ValueError("corner clocking requires a corner Anchor") from exc
+
+
+def _corner_normal(anchor):
+    """Outward normal of the front/back face owning a corner anchor."""
+    if anchor not in _CORNER_ANCHORS:
+        raise ValueError("corner normal requires a corner Anchor")
+    return (
+        (0.0, -1.0, 0.0)
+        if anchor.value.startswith("front_")
+        else (0.0, 1.0, 0.0)
+    )
+
+
+def _anchor_origin(instance, anchor, occurrence, *, position=None):
+    """Build one SolidCraft joint-origin reference for one known occurrence."""
+    if position is None:
+        position = instance.placement.position
+
+    def world(point):
+        return [
+            point[i] + position[i]
+            for i in range(3)
+        ]
+
+    if anchor in _CORNER_ANCHORS:
+        edge, on, corner = _corner_origin_points(instance, anchor)
+        result = {
+            "edge": world(edge),
+            "on": world(on),
+            "corner": world(corner),
+        }
+    else:
+        result = {
+            "face": world(_anchor_point(instance, anchor)),
+        }
+
+    result["occurrence"] = occurrence
+    return result
+
+
+def _face_offset(anchor, offset):
+    """Map a two-value face offset into XYZ."""
+    u, v = offset
+    if anchor in (Anchor.LEFT, Anchor.RIGHT):
+        return (0.0, u, v)
+    if anchor in (Anchor.FRONT, Anchor.BACK):
+        return (u, 0.0, v)
+    if anchor in (Anchor.TOP, Anchor.BOTTOM):
+        return (u, v, 0.0)
+    if anchor is Anchor.CENTER:
+        return (u, v, 0.0)
+    if anchor in _CORNER_ANCHORS and u == 0 and v == 0:
+        return (0.0, 0.0, 0.0)
+    raise ValueError("unsupported assembly anchor")
+
+
+def _normalize_rotation(axis, degrees):
+    """Return one validated numeric axis-angle placement."""
+    if degrees is None:
+        raise ValueError("placement rotation requires an angle in degrees")
+    if isinstance(axis, Axis):
+        axis = axis.value
+    if isinstance(axis, str):
+        named_axes = {
+            "X": (1, 0, 0),
+            "Y": (0, 1, 0),
+            "Z": (0, 0, 1),
+        }
+        try:
+            axis = named_axes[axis]
+        except KeyError as exc:
+            raise ValueError(
+                "placement rotation named axis must be X, Y or Z"
+            ) from exc
+    if not isinstance(axis, (tuple, list)) or len(axis) != 3:
+        raise ValueError(
+            "placement rotation axis must be X, Y, Z or an XYZ triple"
+        )
+    try:
+        values = tuple(float(pv(value)) for value in axis)
+        angle = float(pv(degrees))
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            "placement rotation requires numeric axis and degrees"
+        ) from exc
+    if not all(isfinite(value) for value in (*values, angle)):
+        raise ValueError("placement rotation requires finite values")
+    if sum(value * value for value in values) <= 0:
+        raise ValueError("placement rotation axis must be non-zero")
+    return values, angle
+
+
+@dataclass(frozen=True)
+class Placement:
+    """Absolute pose of one occurrence in its parent coordinate frame.
+
+    Parameters:
+        x: Absolute X position in mm. May be numeric, Parameter or Expression.
+        y: Absolute Y position in mm. May be numeric, Parameter or Expression.
+        z: Absolute Z position in mm. May be numeric, Parameter or Expression.
+        rotation: Optional (axis, degrees) absolute rotation. axis may be X/Y/Z, Axis, or a non-zero XYZ vector.
+
+    Use when:
+        Declare the pose of a component occurrence at creation or copy time.
+
+    Limits:
+        Placement is occurrence creation state, not a relative move action.
+        Coordinates, rotation axis and angle must evaluate to finite values.
+
+    Example:
+        Placement(x=160, z=20, rotation=(Axis.Z, 90))
+    """
+
+    x: object = 0
+    y: object = 0
+    z: object = 0
+    rotation: tuple[object, object] | None = None
+
+    def __post_init__(self):
+        concrete = tuple(pv(value) for value in self.position)
+        if not all(isfinite(value) for value in concrete):
+            raise ValueError("placement requires finite coordinates")
+        if self.rotation is not None:
+            if (
+                not isinstance(self.rotation, (tuple, list))
+                or len(self.rotation) != 2
+            ):
+                raise ValueError(
+                    "placement rotation must be an (axis, degrees) pair"
+                )
+            axis, degrees = self.rotation
+            object.__setattr__(
+                self,
+                "rotation",
+                _normalize_rotation(axis, degrees),
+            )
+
+    @property
+    def position(self):
+        """Return the absolute XYZ coordinates as a tuple."""
+        return (self.x, self.y, self.z)
+
+    @property
+    def values(self):
+        """Return the absolute XYZ coordinates as a tuple."""
+        return self.position
+
+    def __iter__(self):
+        return iter(self.position)
+
+    def __len__(self):
+        return 3
+
+    def __getitem__(self, index):
+        return self.position[index]
+
+
+@dataclass(frozen=True)
+class ModelInstance:
+    """One placed occurrence of a reusable model definition."""
+
+    definition: ModelDefinition
+    placement: Placement = Placement()
+    attachment: Attachment | None = None
+    group_name: str | None = None
+    name: str | None = None
+    flattened_parameters: tuple[str, ...] = ()
+    _occurrence_id: int = field(
+        default_factory=_next_occurrence_id,
+        repr=False,
+        compare=False,
+    )
+
+    @property
+    def occurrence_id(self):
+        """Internal Forge id for this physical occurrence."""
+        return self._occurrence_id
+
+    def group(self, name):
+        """Place this occurrence in a named native subassembly component.
+
+        Parameters:
+            name: Native group/subassembly name.
+
+        Use when:
+            Give one occurrence a useful native browser/subassembly parent.
+
+        Limits:
+            Grouping changes hierarchy only. It does not align, attach or
+            otherwise create a mechanical relationship. One occurrence cannot
+            belong to several different groups.
+
+        Example:
+            grouped = bracket.group("Mounting brackets")
+        """
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("group name must be non-empty text")
+        if self.group_name is not None and self.group_name != name:
+            raise ValueError("an occurrence cannot belong to multiple groups")
+        return replace(self, group_name=name)
+
+    def copy(self, *, name=None, placement=None):
+        """Create another occurrence of the same reusable definition.
+
+        Parameters:
+            name: Optional explicit Forge name for the new occurrence.
+            placement: Optional absolute Placement for the new occurrence. When omitted, the source placement is inherited.
+
+        Use when:
+            Reuse one component definition for another physical occurrence.
+
+        Limits:
+            Attachment state is occurrence-specific and is not copied.
+
+        Example:
+            right = left.copy(name="right", placement=Placement(x=160))
+        """
+        if placement is not None and not isinstance(placement, Placement):
+            raise TypeError("copy placement must be a Placement")
+        return replace(
+            self,
+            placement=self.placement if placement is None else placement,
+            attachment=None,
+            name=name,
+            _occurrence_id=_next_occurrence_id(),
+        )
+
+    def attach(self, target, *, parent=Anchor.RIGHT, child=Anchor.LEFT,
+               offset=(0, 0), gap=0, angle=None, as_built=False):
+        """Create a rigid or planar relationship from this occurrence to another component.
+
+        Parameters:
+            target: Parent component occurrence to attach to.
+            parent: Attachment reference on target. Defaults to Anchor.RIGHT.
+            child: Attachment reference on this occurrence. Defaults to Anchor.LEFT.
+            offset: In-plane (u, v) offset on the parent attachment plane, in mm. Defaults to (0, 0).
+            gap: Separation along the parent anchor normal, in mm. Defaults to 0.
+            angle: Optional joint rotation in degrees.
+            as_built: When True, keep the occurrences at their existing poses and create an as-built rigid joint.
+
+        Use when:
+            Placement should be expressed semantically between component
+            references, such as left face to right face or one mounting frame
+            to another, rather than as a calculated global XYZ position.
+
+        Limits:
+            The target must be another component occurrence. Supported standard
+            anchors currently focus on rectangular component geometry; custom
+            AnchorFrame/AnchorTopology references cover more specific datums.
+            as_built=True requires all other relationship arguments to remain
+            at their defaults.
+
+        Example:
+            right = right.attach(left, parent=Anchor.RIGHT, child=Anchor.LEFT, gap=2)
+        """
+        if not isinstance(target, ModelInstance):
+            raise TypeError("component attach target must be another model object")
+        if as_built:
+            if (
+                parent != Anchor.RIGHT
+                or child != Anchor.LEFT
+                or tuple(offset) != (0, 0)
+                or gap != 0
+                or angle is not None
+            ):
+                raise ValueError(
+                    "as-built attach does not take anchors, offset, gap or angle"
+                )
+            return replace(
+                self,
+                attachment=Attachment(
+                    target=target,
+                    parent=None,
+                    child=None,
+                    offset=(0.0, 0.0),
+                    as_built=True,
+                ),
+            )
+        parent = _resolve_anchor_reference(target, parent)
+        child = _resolve_anchor_reference(self, child)
+        if parent is Anchor.INNER_BOTTOM or child is Anchor.INNER_BOTTOM:
+            raise ValueError("Anchor.INNER_BOTTOM is not an assembly face anchor")
+        if not isinstance(offset, (tuple, list)) or len(offset) != 2:
+            raise ValueError("component attach offset must be an (u, v) pair")
+        face_offset = tuple(offset)
+        face_offset_values = tuple(pv(value) for value in face_offset)
+        if not all(isfinite(value) for value in face_offset_values):
+            raise ValueError("component attach offset must be finite")
+
+        gap_value = pv(gap)
+        if not isfinite(gap_value):
+            raise ValueError("component attach gap must be finite")
+
+        target_local = _anchor_local_point(target, parent)
+        child_local = _anchor_local_point(self, child)
+
+        tangent = (0.0, 0.0, 0.0)
+        normal = (0.0, 0.0, 0.0)
+        if parent in (
+            Anchor.LEFT,
+            Anchor.RIGHT,
+            Anchor.FRONT,
+            Anchor.BACK,
+            Anchor.TOP,
+            Anchor.BOTTOM,
+            Anchor.CENTER,
+        ):
+            # Validation above reads concrete values, but the seed Placement
+            # itself must retain Parameter/Expression dependencies.
+            tangent = _face_offset(parent, face_offset)
+            if parent is not Anchor.CENTER:
+                normal = parent.vector
+
+        normal_offset = tuple(
+            0
+            if component == 0
+            else gap
+            if component > 0
+            else -gap
+            for component in normal
+        )
+        target_world = tuple(
+            _dim_add(
+                _dim_add(
+                    _dim_add(target_local[i], target.placement.position[i]),
+                    tangent[i],
+                ),
+                normal_offset[i],
+            )
+            for i in range(3)
+        )
+        translation = tuple(
+            _dim_sub(target_world[i], child_local[i])
+            for i in range(3)
+        )
+        angle_value = None
+        if angle is not None:
+            angle_value = pv(angle)
+            if not isfinite(angle_value):
+                raise ValueError("component attach angle must be finite")
+
+        return replace(
+            self,
+            placement=replace(
+                self.placement,
+                x=translation[0],
+                y=translation[1],
+                z=translation[2],
+            ),
+            attachment=Attachment(
+                target=target,
+                parent=parent,
+                child=child,
+                offset=face_offset,
+                gap=gap,
+                angle=angle_value,
+            ),
+        )
+
+    def __add__(self, other):
+        return Assembly((self,)) + other
+
+    __or__ = __add__
+
+
+@dataclass(frozen=True)
+class AssemblyAnchor:
+    """Named attachment reference owned by an assembly.
+
+    The target occurrence remains the real SolidCraft attachment target; the
+    reference is a standard/direct component anchor interpreted in that
+    occurrence. This lets an assembly expose semantic datums without putting
+    application-specific anchors on the reusable component definition.
+    """
+
+    target: ModelInstance
+    reference: Anchor | str | AnchorFrame | AnchorTopology
+    offset: tuple[object, object] = (0, 0)
+
+
+@dataclass(frozen=True)
+class ExplodedView:
+    """One persistent native exploded presentation owned by an Assembly."""
+
+    name: str
+    scale: float | None = None
+    moves: tuple[tuple[int, tuple[float, float, float]], ...] = ()
+
+
+@dataclass(frozen=True)
+class Assembly:
+    """Ordered collection of reusable model occurrences."""
+
+    instances: tuple[ModelInstance, ...]
+    anchors: tuple[tuple[str, AssemblyAnchor], ...] = ()
+    exploded_views: tuple[ExplodedView, ...] = ()
+    exploded_display: str | None = None
+    exploded_display_set: bool = False
+
+    def group(self, name):
+        """Wrap these assembly occurrences in a real nested native component.
+
+        Parameters:
+            name: Native subassembly/browser component name.
+
+        Use when:
+            The collection should appear as one named subassembly/browser unit
+            in SolidCraft.
+
+        Limits:
+            Grouping changes native hierarchy, not placement or relationships.
+            Use attach() for mechanical relationships between occurrences.
+
+        Example:
+            frame = (left + right).group("Frame")
+        """
+        grouped = tuple(instance.group(name) for instance in self.instances)
+        remap = {
+            original.occurrence_id: replacement
+            for original, replacement in zip(self.instances, grouped)
+        }
+
+        # Direct attachments keep pointing at the same physical Forge
+        # occurrence, but use the grouped replacement object when that target is
+        # part of this Assembly. Chained attachments remain unsupported by the
+        # compiler and are not rebuilt here.
+        grouped = tuple(
+            replace(
+                instance,
+                attachment=replace(
+                    instance.attachment,
+                    target=remap.get(
+                        instance.attachment.target.occurrence_id,
+                        instance.attachment.target,
+                    ),
+                ),
+            )
+            if instance.attachment is not None
+            else instance
+            for instance in grouped
+        )
+        remap = {
+            instance.occurrence_id: instance
+            for instance in grouped
+        }
+
+        anchors = tuple(
+            (
+                anchor_name,
+                AssemblyAnchor(
+                    target=remap[anchor.target.occurrence_id],
+                    reference=anchor.reference,
+                    offset=anchor.offset,
+                ),
+            )
+            for anchor_name, anchor in self.anchors
+        )
+        return replace(
+            self,
+            instances=grouped,
+            anchors=anchors,
+        )
+
+    def with_exploded_view(self, name, *, scale=None, moves=None):
+        """Add one native SolidCraft exploded presentation to this Assembly.
+
+        Define exploded views after composing the final Assembly. Use either
+        automatic scale mode or explicit occurrence translations.
+        """
+        if len(self.instances) < 2:
+            raise ValueError("exploded view requires at least two occurrences")
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("exploded view name must be non-empty text")
+        name = name.strip()
+        if any(view.name == name for view in self.exploded_views):
+            raise ValueError(f"exploded view {name!r} already exists")
+        if moves is not None and scale is not None:
+            raise ValueError("exploded view uses either scale or explicit moves")
+
+        normalized_scale = None
+        if scale is not None:
+            if (
+                isinstance(scale, bool)
+                or not isinstance(scale, (int, float))
+                or not isfinite(scale)
+                or scale <= 0
+            ):
+                raise ValueError(
+                    "exploded view scale must be a positive finite number"
+                )
+            normalized_scale = float(scale)
+
+        normalized_moves = ()
+        if moves is not None:
+            if not isinstance(moves, (tuple, list)) or not moves:
+                raise ValueError(
+                    "exploded view moves must be a non-empty sequence"
+                )
+            owned = {instance.occurrence_id for instance in self.instances}
+            seen = set()
+            result = []
+            for item in moves:
+                if not isinstance(item, (tuple, list)) or len(item) != 2:
+                    raise ValueError(
+                        "each exploded move must be "
+                        "(model_instance, (dx, dy, dz))"
+                    )
+                instance, translation = item
+                if not isinstance(instance, ModelInstance):
+                    raise TypeError(
+                        "exploded move target must be a model object"
+                    )
+                if instance.occurrence_id not in owned:
+                    raise ValueError(
+                        "exploded move target must belong to this assembly"
+                    )
+                if instance.occurrence_id in seen:
+                    raise ValueError(
+                        "one occurrence cannot have two moves in one "
+                        "exploded view"
+                    )
+                if (
+                    not isinstance(translation, (tuple, list))
+                    or len(translation) != 3
+                ):
+                    raise ValueError(
+                        "exploded move translation must be an XYZ triple"
+                    )
+                values = []
+                for value in translation:
+                    if (
+                        isinstance(value, bool)
+                        or not isinstance(value, (int, float))
+                        or not isfinite(value)
+                    ):
+                        raise ValueError(
+                            "exploded move translation must contain fixed "
+                            "finite numbers"
+                        )
+                    values.append(float(value))
+                if not any(values):
+                    raise ValueError(
+                        "exploded move translation must be non-zero"
+                    )
+                seen.add(instance.occurrence_id)
+                result.append((instance.occurrence_id, tuple(values)))
+            normalized_moves = tuple(result)
+
+        return replace(
+            self,
+            exploded_views=self.exploded_views + (
+                ExplodedView(
+                    name=name,
+                    scale=normalized_scale,
+                    moves=normalized_moves,
+                ),
+            ),
+        )
+
+    def show_exploded(self, name):
+        """Show one named exploded view after the assembly is built."""
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("exploded view name must be non-empty text")
+        name = name.strip()
+        if not any(view.name == name for view in self.exploded_views):
+            raise KeyError(
+                f"assembly has no exploded view named {name!r}"
+            )
+        return replace(
+            self,
+            exploded_display=name,
+            exploded_display_set=True,
+        )
+
+    def show_assembled(self):
+        """Explicitly show the normal assembled placement."""
+        return replace(
+            self,
+            exploded_display=None,
+            exploded_display_set=True,
+        )
+
+    def with_anchor(self, name, target, reference, *, offset=(0, 0)):
+        """Expose one named attachment datum owned by this assembly.
+
+        Parameters:
+            name: Public name for the assembly-owned attachment datum.
+            target: Component occurrence in this Assembly that owns the real attachment reference.
+            reference: Anchor, named component anchor, AnchorFrame or AnchorTopology on target.
+            offset: Optional in-plane (u, v) correction passed through when attaching, in mm.
+
+        Use when:
+            A mounting/reference name belongs to the meaning of the larger
+            assembly rather than to the generic reusable component itself.
+
+        Limits:
+            target must already belong to this Assembly. with_anchor() exposes a
+            reference; it does not create an attachment by itself.
+
+        Example:
+            frame = (left + right).with_anchor("front_mount", left, Anchor.FRONT_TOP_LEFT)
+        """
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("assembly anchor name must be non-empty text")
+        if any(existing == name for existing, _ in self.anchors):
+            raise ValueError(f"assembly anchor {name!r} already exists")
+        if not isinstance(target, ModelInstance):
+            raise TypeError("assembly anchor target must be a model object")
+        if not any(instance is target for instance in self.instances):
+            raise ValueError("assembly anchor target must belong to this assembly")
+        if not isinstance(offset, (tuple, list)) or len(offset) != 2:
+            raise ValueError("assembly anchor offset must be an (u, v) pair")
+        if not all(isfinite(pv(value)) for value in offset):
+            raise ValueError("assembly anchor offset must be finite")
+        resolved = _resolve_anchor_reference(target, reference)
+        return replace(
+            self,
+            anchors=self.anchors + (
+                (
+                    name,
+                    AssemblyAnchor(
+                        target=target,
+                        reference=resolved,
+                        offset=tuple(offset),
+                    ),
+                ),
+            ),
+        )
+
+    def anchor(self, name):
+        """Return one named assembly-owned attachment datum.
+
+        Parameters:
+            name: Name previously registered with with_anchor().
+
+        Use when:
+            A consumer needs the target/reference pair previously exposed with
+            with_anchor() in order to create an attachment.
+
+        Limits:
+            The name must resolve to exactly one assembly-owned anchor.
+
+        Example:
+            mount = frame.anchor("front_mount")
+        """
+        matches = [anchor for anchor_name, anchor in self.anchors
+                   if anchor_name == name]
+        if len(matches) != 1:
+            raise KeyError(f"assembly has no unique anchor named {name!r}")
+        return matches[0]
+
+    def resolve(self, name):
+        """Return one explicitly named occurrence."""
+        matches = [instance for instance in self.instances if instance.name == name]
+        if len(matches) != 1:
+            raise KeyError(f"assembly has no unique object named {name!r}")
+        return matches[0]
+
+    def __getattr__(self, name):
+        matches = [instance for instance in self.instances if instance.name == name]
+        if len(matches) == 1:
+            return matches[0]
+        raise AttributeError(name)
+
+    def __post_init__(self):
+        if not self.instances:
+            raise ValueError("assembly must contain at least one model instance")
+        if not all(isinstance(item, ModelInstance) for item in self.instances):
+            raise TypeError("assembly items must be model instances")
+
+        occurrence_ids = [instance.occurrence_id for instance in self.instances]
+        if len(set(occurrence_ids)) != len(occurrence_ids):
+            raise ValueError(
+                "the same Forge occurrence cannot appear twice in one assembly; "
+                "use .copy() for another physical occurrence"
+            )
+
+        names = [instance.name for instance in self.instances if instance.name is not None]
+        duplicates = sorted({name for name in names if names.count(name) > 1})
+        if duplicates:
+            raise ValueError(
+                "assembly object names must be unique: " + ", ".join(duplicates)
+            )
+
+        anchor_names = [name for name, _ in self.anchors]
+        duplicate_anchors = sorted({
+            name for name in anchor_names if anchor_names.count(name) > 1
+        })
+        if duplicate_anchors:
+            raise ValueError(
+                "assembly anchor names must be unique: "
+                + ", ".join(duplicate_anchors)
+            )
+        for name, anchor in self.anchors:
+            if not isinstance(anchor, AssemblyAnchor):
+                raise TypeError(f"assembly anchor {name!r} is invalid")
+            if not any(instance is anchor.target for instance in self.instances):
+                raise ValueError(
+                    f"assembly anchor {name!r} target is not in this assembly"
+                )
+
+        view_names = [view.name for view in self.exploded_views]
+        duplicate_views = sorted({
+            name for name in view_names if view_names.count(name) > 1
+        })
+        if duplicate_views:
+            raise ValueError(
+                "exploded view names must be unique: "
+                + ", ".join(duplicate_views)
+            )
+        owned_occurrences = {
+            instance.occurrence_id for instance in self.instances
+        }
+        for view in self.exploded_views:
+            if not isinstance(view, ExplodedView):
+                raise TypeError("assembly exploded view is invalid")
+            for occurrence_id, _translation in view.moves:
+                if occurrence_id not in owned_occurrences:
+                    raise ValueError(
+                        f"exploded view {view.name!r} references an "
+                        "occurrence outside this assembly"
+                    )
+        if self.exploded_display_set and self.exploded_display is not None:
+            if self.exploded_display not in view_names:
+                raise ValueError(
+                    f"shown exploded view {self.exploded_display!r} "
+                    "is not defined"
+                )
+
+    def __add__(self, other):
+        if self.exploded_views or self.exploded_display_set:
+            raise ValueError(
+                "compose the final assembly before defining exploded views"
+            )
+        if isinstance(other, ModelInstance):
+            return Assembly(self.instances + (other,), self.anchors)
+        if isinstance(other, Assembly):
+            if other.exploded_views or other.exploded_display_set:
+                raise ValueError(
+                    "compose the final assembly before defining exploded views"
+                )
+            return Assembly(
+                self.instances + other.instances,
+                self.anchors + other.anchors,
+            )
+        return NotImplemented
+
+    __or__ = __add__
