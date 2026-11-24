@@ -80,6 +80,16 @@ Owner-level canonical artifacts come from the configured primary implementation.
 
 Pages reads the durable scope and links generated files on the build branch. Generated CAD artifacts are not copied into `gh-pages`.
 
+## Pages projection
+
+`models/<id>/` remains the single physical owner. Pages creates views from that owner according to `model.yml.purpose`:
+
+- `example` → `/examples/<id>/`;
+- `verification` → `/verification/<id>/`;
+- `[example, verification]` → both routes.
+
+The two routes are presentation views over the same owner and durable `build/<scope>/models/<id>/` evidence. They are not separate model owners and do not duplicate CAD artifacts into `gh-pages`.
+
 ## Migration comparison
 
 Before moving historical code, classify it as:
