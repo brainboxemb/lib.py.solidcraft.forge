@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "guides": [
+    {
+      "slug": "getting-started",
+      "title": "Getting started",
+      "summary": "From a Python class to editable SolidCraft geometry.",
+      "body": "guides/getting-started.html"
+    },
+    {
+      "slug": "model-objects",
+      "title": "Model objects and parameters",
+      "summary": "What a class, Shape, component and occurrence mean.",
+      "body": "guides/model-objects.html"
+    },
+    {
+      "slug": "transformations",
+      "title": "Positioning and orientation",
+      "summary": "Where geometry and component occurrences go, and when to use at(), on(), attach() or Placement.",
+      "body": "guides/transformations.html"
+    },
+    {
+      "slug": "assembly-basics",
+      "title": "From one component to an assembly",
+      "summary": "When to use a Shape, component, occurrence, anchor, relationship or group.",
+      "body": "guides/assembly-basics.html"
+    },
+    {
+      "slug": "geometry",
+      "title": "Geometry, sketches and Boolean operations",
+      "summary": "Solids, 2D profiles, extrusions and the CSG operators.",
+      "body": "guides/geometry.html"
+    },
+    {
+      "slug": "features",
+      "title": "Features and references",
+      "summary": "Native holes, fillets, shells and relative positioning.",
+      "body": "guides/features.html"
+    },
+    {
+      "slug": "sheet-metal",
+      "title": "Sheet metal",
+      "summary": "Native sheet rules, folds, flanges, hems, paths and recoverable flat patterns.",
+      "body": "guides/sheet-metal.html"
+    },
+    {
+      "slug": "components",
+      "title": "Components and assemblies",
+      "summary": "Reusable definitions, occurrence transforms, grouping and attachments.",
+      "body": "guides/components.html"
+    },
+    {
+      "slug": "verification",
+      "title": "Verification and API boundaries",
+      "summary": "Python unit tests, native JSON plans and mechanical evidence.",
+      "body": "guides/verification.html"
+    }
+  ]
+}

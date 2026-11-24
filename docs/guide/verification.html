@@ -1,0 +1,25 @@
+<h2 id="unit">Unit tests for Python behavior</h2>
+<p>The library's tests under <code>scpf/tests/</code> cover model
+objects, feature compilation, reusable components and rotation validation.
+For example, an occurrence rotation test checks that the compiler emits
+one <code>occurrence.move</code> with the expected native parameters.</p>
+<pre class="code-block"><code>python -m unittest discover -s scpf/tests -v</code></pre>
+<h2 id="json">Test compiled native commands</h2>
+<p>Compare the generated command structure with explicit expectations,
+not only with a count of operations. Tests should check component names,
+requested positions, the orientation axis and angle, and feature ordering.
+A regression can preserve a known good JSON fixture when command ordering
+is part of the contract.</p>
+<h2 id="native">Native geometric verification</h2>
+<p>The CAD model repository runs a separate SolidCraft CLI workflow for
+native geometry, editable history, STEP output, measurements and screenshots.
+Read the <strong>saved SolidCraft occurrence transforms</strong>, not just
+whether a command ran successfully. A valid Python object or syntactically valid command plan is not evidence
+that the final solid occupies the correct plane or has no collision.</p>
+<h2 id="changes">Keep implementation and docs in sync</h2>
+<p>When placement syntax changes, add tests for the exact generated native
+commands before documenting it as supported. Named principal-axis rotation
+is supported; chained rotations are still not.</p>
+<p>For a plain-language explanation of the implementation and its
+boundaries, read
+<a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/main/scpf/docs/architecture.md">How SCPF works (without building a second CAD engine)</a>.</p>
