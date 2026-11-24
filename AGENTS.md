@@ -12,19 +12,23 @@ Read `docs/requirements.md`, `docs/design.md`, `docs/plan.md` and `docs/handoff.
 - do not back-merge `main -> dev` unless there is a real stable-only change.
 - never delete `main`, `dev`, `build` or `gh-pages`.
 
-Matching work-branch `build.yml` controls explicit selection. `dev` uses incremental selection since the last successful integration run. `main` and promotion PRs run full.
+Matching work-branch `build.yml` controls explicit library/module/model selection. `dev` uses incremental selection since the last successful integration run. `main` and promotion PRs run full.
 
 ## Ownership
 
 `cadlib/` owns the public `scpf` package. Do not rename the import, distribution or public API merely to fit the template.
 
+`models/<id>/` is the physical CAD owner, matching `template.cad.model-project`. One owner may contain multiple engine implementations. Never create sibling owners merely to represent CadQuery, build123d, PythonSCAD, pyBOSL2, SolidCraft or SCPF.
+
+`model.yml.purpose` may contain `example`, `verification`, or both. `[example, verification]` is valid.
+
 Keep generic mechanics in their owning modules:
-- builders build one explicit source;
-- verification checks explicit artifacts against explicit expectations;
+- builders build one explicit implementation source;
+- verification checks explicit artifacts against owner-local expectations;
 - preview renders already-built artifacts;
 - Pages reads durable evidence and never executes CAD.
 
-Central CI schedules capabilities and runtime roles but must not contain engine-specific CadQuery/build123d/PythonSCAD/pyBOSL2/SolidCraft branches.
+Central CI schedules model owners, implementations and runtime roles but must not contain engine-specific branches.
 
 ## Runtime policy
 
@@ -36,8 +40,12 @@ SolidCraft builds in the lightweight SolidCraft role; generic mesh verification 
 
 ## Migration discipline
 
-The old `lib.py.solidcraft.forge` repository is a read-only migration reference during this work. Do not make compensating changes there from this repository task.
+The old `lib.py.solidcraft.forge` repository is a read-only migration reference during this work.
 
-Migrate examples in controlled slices: one, then five, then ten, then the remaining graph. At each slice compare source behavior, generated commands, native/STL output, verification evidence and presentation before expanding.
+Migrate physical models in controlled slices: one, then five, then ten, then the remaining graph. At each slice compare SCPF behavior, generated commands, native/STL output, verification evidence and presentation before expanding.
 
-Do not bulk-copy old Forge CI/scripts/site machinery. First determine whether the new template capability replaces it. Preserve only Forge-specific behavior that still has an owner after that comparison.
+Reference-engine implementations belong inside the same model owner as the SCPF/SolidCraft path.
+
+Do not bulk-copy old Forge CI/scripts/site machinery. First determine whether a corrected template capability replaces it.
+
+Generated CAD artifacts remain owned by `build/<scope>/models/...`. Pages links them; it must not duplicate generated STL/PNG/SC/command evidence into `gh-pages`.
