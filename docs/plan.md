@@ -4,54 +4,46 @@ This file contains unfinished work only.
 
 ## Accepted baseline
 
-The five-owner migration gate is accepted on `dev@606f07588c8a41ee4f2ae18aef55ff25d1ceb2fc`.
+The ten-owner migration gate is accepted and promoted on `main@378b5051cc2accc98e4774af3189d377be52ab1c`.
 
 Accepted physical owners:
 1. `simple-box`;
 2. `primitive-csg`;
 3. `anchored-holes`;
 4. `assembly-decorator`;
-5. `parametric-attach`.
+5. `parametric-attach`;
+6. `corner-anchor`;
+7. `rectangular-pattern`;
+8. `rotated-sketch-cutter`;
+9. `slot-family`;
+10. `sheet-fold`.
 
-For the gate:
+For the baseline:
 - SCPF is primary per owner;
 - historical reference implementations are local implementations only where they existed;
 - owner-local command contracts pass;
-- all five native stages pass;
-- all 25 applicable geometry stages pass;
-- historical saved-design mutations are retained;
-- SCPF replay semantics are preserved through `scpf.headless.run_document()`;
-- OLD vs NEW evidence is recorded in `docs/acceptance/five-owner-gate.md`;
-- durable `build/dev/models` output is published;
-- Pages projects owners by purpose: `example` owners under Examples and `verification` owners under Verification; owners with both purposes appear in both views.
+- all 10 native SCPF stages pass;
+- all 45 applicable geometry stages pass;
+- historical saved-design and inspection behavior is retained;
+- SCPF replay semantics remain consumer-owned through `scpf.headless.run_document()`;
+- OLD vs NEW evidence is recorded in `docs/acceptance/five-owner-gate.md` and `docs/acceptance/ten-owner-gate.md`;
+- `build/main/models` and `build/dev/models` contain all ten owners;
+- Pages projects owners by purpose without creating duplicate owners: Examples contains `simple-box`, `anchored-holes` and `corner-anchor`; Verification contains all ten owners.
 
-The historical Forge repository remains the A/B authority.
+The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the A/B authority until remaining-graph parity is demonstrated.
 
-## Now — #21 ten-owner gate
+## Now — remaining graph
 
-Candidate PR #24 is technically qualified by CI run `45445906212` at `bcee6f2f9eab9e7429a06f5a219ae3e045fa87ba`. See `docs/acceptance/ten-owner-gate.md`. PR #24 is squash-merged to `dev@8f28cbb46acd894554a2152611aec5d161a9ab38`; post-merge CI `45448096247` is green and permanent `build/dev/models` contains all ten owners. Remaining work is to correct and qualify the purpose-driven Pages projection, then run the full promotion to main.
+1. classify the remaining historical model graph by physical owner and historical purpose;
+2. migrate owners in controlled groups while preserving only historical implementations and owner-local expectations;
+3. keep SCPF primary and keep generic scheduling/building/verification outside Forge-specific code;
+4. compare each migrated owner against retained OLD durable build evidence;
+5. extend Pages through the same purpose-driven Examples/Verification projection.
 
-Add five representative physical owners:
+Do not create sibling owners for CAD engines and do not synthesize reference implementations that did not historically exist.
 
-6. `corner-anchor` — topology-backed anchor + parent-resize saved design; public example + verification;
-7. `rectangular-pattern` — two-direction native feature pattern + saved-design mutation;
-8. `rotated-sketch-cutter` — rotated local Sketch frames and Boolean cutters; migrate only the historical SCPF implementation;
-9. `slot-family` — five native Slot constructions + saved-design width/length/position mutation;
-10. `sheet-fold` — native sheet-metal fold + flat-pattern inspection.
+## Later
 
-For each owner:
-- preserve historical `model.yml.purpose` exactly;
-- migrate only reference implementations that actually existed;
-- preserve owner-local source/compiler contract tests;
-- migrate native/saved-design/inspection expectations exactly;
-- reuse the generic two-runtime/staged-verification architecture;
-- compare against retained OLD `build/dev-cad/examples/<id>/` evidence.
-
-Do not start the remaining graph until the ten-owner gate is accepted, durably published, correctly projected by Pages and promoted through a full `dev -> main` run.
-
-## After the ten-owner gate
-
-1. classify and migrate the remaining graph;
-2. migrate API/guides/reference documentation;
-3. qualify NEW release/version mechanics;
-4. retire duplicated historical orchestration only after parity.
+1. migrate remaining API/guide/reference documentation;
+2. qualify NEW release/version mechanics;
+3. retire duplicated historical orchestration only after all real consumers have equivalent coverage.

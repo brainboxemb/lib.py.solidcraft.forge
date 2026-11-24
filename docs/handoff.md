@@ -6,41 +6,43 @@ Read `AGENTS.md`, `docs/requirements.md`, `docs/design.md` and `docs/plan.md` fi
 
 ## Accepted baseline
 
-The five-owner gate is accepted on `dev@606f07588c8a41ee4f2ae18aef55ff25d1ceb2fc`.
+The ten-owner migration gate is accepted and promoted on `main@378b5051cc2accc98e4774af3189d377be52ab1c`.
 
-Accepted owners:
+Accepted physical owners:
 - `simple-box`;
 - `primitive-csg`;
 - `anchored-holes`;
 - `assembly-decorator`;
-- `parametric-attach`.
+- `parametric-attach`;
+- `corner-anchor`;
+- `rectangular-pattern`;
+- `rotated-sketch-cutter`;
+- `slot-family`;
+- `sheet-fold`.
 
-All owner-local command contracts, native stages and applicable geometry stages pass. SCPF replay documents retain historical multi-phase semantics through `scpf.headless.run_document()`. The A/B evidence and historical bundle hashes are recorded in `docs/acceptance/five-owner-gate.md`.
+All owner-local command contracts pass. All 10 native SCPF stages and all 45 applicable geometry stages pass. Historical saved-design/inspection behavior and SCPF multi-phase replay semantics are retained. A/B evidence is recorded in `docs/acceptance/five-owner-gate.md` and `docs/acceptance/ten-owner-gate.md`.
 
-Permanent `build/dev/models` output exists for all five owners. Pages semantics are purpose-driven: owners with `example` appear under Examples; owners with `verification` appear under Verification; owners with both appear in both views.
+Permanent `build/main/models` and `build/dev/models` output exists for all ten owners.
 
-## Active work — #21
+Pages uses `model.yml.purpose` as a presentation projection, not as a visibility filter:
+- Examples contains `simple-box`, `anchored-holes` and `corner-anchor`;
+- Verification contains all ten owners;
+- an owner with `[example, verification]` appears in both views while remaining one physical owner;
+- generated CAD artifacts remain on `build`, not `gh-pages`.
 
-PR #24 is squash-merged to `dev@8f28cbb46acd894554a2152611aec5d161a9ab38`. Post-merge CI `45448096247` is green and `build/dev/models` contains all ten owners. A/B evidence is recorded in `docs/acceptance/ten-owner-gate.md`. The remaining blocker is the Pages migration: the current implementation incorrectly publishes only `example` owners. Fix the projection so Examples contains the three example owners and Verification contains all ten verification owners, then qualify Pages and promote the full ten-owner baseline to main.
+## Active work
 
-Move from five accepted owners to ten total:
+Continue with the remaining historical model graph.
 
-6. `corner-anchor`;
-7. `rectangular-pattern`;
-8. `rotated-sketch-cutter`;
-9. `slot-family`;
-10. `sheet-fold`.
-
-Keep the same migration discipline:
+Keep the established migration discipline:
 - one physical owner;
 - SCPF primary;
 - only historical reference implementations that actually existed;
-- historical model-local tests and verification definitions;
-- OLD build evidence as A/B authority;
-- no Forge-specific scheduler logic.
-
-Before starting the owner migration, promote the accepted five-owner `dev` baseline to `main` with a full promotion run.
+- preserve historical `model.yml.purpose`;
+- preserve model-local source/compiler tests and native/saved-design/inspection expectations;
+- use OLD durable build evidence as A/B authority;
+- keep scheduler/builders/verification generic and do not add Forge-specific orchestration.
 
 ## Handoff message
 
-> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from issue #21. The five-owner gate is accepted and durably published on `dev@606f07588c8a41ee4f2ae18aef55ff25d1ceb2fc`; see `docs/acceptance/five-owner-gate.md`. First promote this baseline from dev to main with a full run. Then migrate `corner-anchor`, `rectangular-pattern`, `rotated-sketch-cutter`, `slot-family` and `sheet-fold` as physical owners, preserving historical purposes, only existing reference implementations, model-local tests and native/saved-design/inspection evidence.
+> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from the accepted ten-owner baseline on `main@378b5051cc2accc98e4774af3189d377be52ab1c`; see `docs/acceptance/ten-owner-gate.md`. Classify and migrate the remaining historical physical owners in controlled groups. Preserve each owner's historical purpose, only existing reference implementations, model-local tests and native/saved-design/inspection evidence. Keep one physical owner across engines, SCPF primary, generic CI mechanics outside Forge-specific code, and compare against the OLD durable build evidence before accepting each group.
