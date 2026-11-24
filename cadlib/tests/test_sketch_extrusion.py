@@ -3,6 +3,7 @@ import unittest
 
 from scpf import (
     Anchor,
+    Axis,
     Box,
     CENTER,
     Rectangle2D,
@@ -12,6 +13,7 @@ from scpf import (
     Edges,
     Sketch,
     Parameter,
+    Polygon2D,
 )
 from scpf.compiler import ModelError, compile_model
 
@@ -138,6 +140,92 @@ class SketchExtrusionTests(unittest.TestCase):
         self.assertEqual(extrude["body_name"], "Standalone")
         self.assertNotIn("operation", extrude)
         self.assertNotIn("targets", extrude)
+
+    def test_root_standalone_sketch_revolve_is_native_new_body(self):
+        sweep = Parameter("sweep", 180)
+        with Sketch(name="RivetProfile", plane="XZ") as sketch:
+            Polygon2D(
+                [(0, 0), (0, 2), (6, 2), (6, 0)],
+                plane="XZ",
+            )
+
+        commands = compile_model(
+            sketch.revolve(axis=Axis.X, angle=sweep),
+            "Rivet",
+        )["commands"]
+
+        units = {
+            row["params"]["name"]: row["params"]["unit"]
+            for row in commands
+            if row["command"] == "parameters.add"
+        }
+        self.assertEqual(units["sweep"], "deg")
+
+        revolve = commands[-1]
+        self.assertEqual(revolve["command"], "solid.revolve")
+        self.assertEqual(
+            revolve["params"],
+            {
+                "sketch": "RivetProfile",
+                "axis": "X",
+                "angle": "sweep",
+                "body_name": "Rivet",
+            },
+        )
+
+    def test_standalone_sketch_revolve_is_native_boolean_operand(self):
+        base = Box(40, 40, 20)
+        with Sketch(name="TurnedFeature", plane="XZ") as sketch:
+            Polygon2D(
+                [(0, 0), (0, 2), (8, 2), (8, 0)],
+                plane="XZ",
+            )
+        operand = sketch.revolve(axis=Axis.X, angle=120, sym=True)
+
+        for expression, expected_operation in (
+            (base + operand, "join"),
+            (base - operand, "cut"),
+            (base & operand, "intersect"),
+        ):
+            with self.subTest(operation=expected_operation):
+                commands = compile_model(
+                    expression,
+                    f"Revolve_{expected_operation}",
+                )["commands"]
+                revolve = [
+                    row for row in commands
+                    if row["command"] == "solid.revolve"
+                ][-1]
+                self.assertEqual(
+                    revolve["params"]["operation"],
+                    expected_operation,
+                )
+                self.assertEqual(
+                    revolve["params"]["targets"],
+                    [f"Revolve_{expected_operation}"],
+                )
+                self.assertEqual(revolve["params"]["axis"], "X")
+                self.assertEqual(revolve["params"]["angle"], 120)
+                self.assertEqual(revolve["params"]["direction"], "symmetric")
+                self.assertNotIn("body_name", revolve["params"])
+
+    def test_sketch_revolve_validates_world_axis_plane_and_sweep(self):
+        with Sketch(name="Profile", plane="XZ") as sketch:
+            Polygon2D(
+                [(0, 0), (0, 2), (6, 2), (6, 0)],
+                plane="XZ",
+            )
+
+        with self.assertRaisesRegex(ValueError, "lie in the Sketch plane"):
+            sketch.revolve(axis=Axis.Y)
+        with self.assertRaisesRegex(ValueError, "above 0 and at most 360"):
+            sketch.revolve(axis=Axis.X, angle=0)
+        with self.assertRaisesRegex(ValueError, "above 0 and at most 360"):
+            sketch.revolve(axis=Axis.X, angle=361)
+        with self.assertRaisesRegex(TypeError, "True or False"):
+            sketch.revolve(axis=Axis.X, sym="yes")
+        with self.assertRaisesRegex(ValueError, "Axis.X, Axis.Y or Axis.Z"):
+            sketch.revolve(axis="X")
 
     def test_sketch_extrude_default_keeps_all_profiles(self):
         with Sketch(plane="XY") as sketch:

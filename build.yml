@@ -2,5 +2,5 @@ schema: 1
 branch: issue/31-pages-reference-parity
 modules: [ci, builder-scpf, builder-solidcraft, verification, preview, pages]
 library: true
-models: [simple-box, primitive-csg, anchored-holes, assembly-decorator, parametric-attach, corner-anchor, rectangular-pattern, rotated-sketch-cutter, slot-family, sheet-fold]
+models: [anchored-holes, assembly-decorator, attached-through-all, bracket, circle-negative-extrude, circular-feature-pattern, cone-boolean, corner-anchor, hole-family, native-revolve, parametric-attach, primitive-csg, rectangular-pattern, rotated-sketch-cutter, round-top-sketch, rounded-rectangle-sketch, sheet-fold, simple-box, slot-family, top-sketch-after-chamfer]
 tasks: [test]

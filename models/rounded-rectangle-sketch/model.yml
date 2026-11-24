@@ -1,0 +1,14 @@
+schema: 1
+purpose: verification
+section: features
+priority: 80
+title: Rounded Sketch pad and standalone world-plane cut
+tagline: Attached and standalone Sketch extrusions remain native editable features
+description: >
+  A named face-attached RoundedRectangle2D joins a pad to the base, then a second standalone YZ Sketch cuts an internal tunnel through the body with a symmetric native extrusion.
+parameters: 80 × 60 × 5 mm base; 40 × 30 × 8 mm rounded pad; 10 × 2 mm world-plane cut; 100 mm symmetric cut extrusion
+stages:
+  - Create the native Box base
+  - Create and join the TOP-face rounded-rectangle Sketch
+  - Create an independent YZ world-plane Sketch
+  - Cut that standalone Sketch through the existing body with one native symmetric extrusion

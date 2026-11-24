@@ -30,19 +30,23 @@ Pages uses `model.yml.purpose` as a presentation projection, not as a visibility
 - an owner with `[example, verification]` appears in both views while remaining one physical owner;
 - generated CAD artifacts remain on `build`, not `gh-pages`.
 
-## Active work
+## Active work — #29
 
-Continue with the remaining historical model graph.
+The twenty-owner candidate is technically accepted:
+- candidate source: `553033bdd2ccf0e5612e8f12d2a95c51a51ec462`;
+- CI run: **45456265226**;
+- qualification artifact: **14950656646**;
+- evidence: `docs/acceptance/twenty-owner-gate.md`.
 
-Keep the established migration discipline:
-- one physical owner;
-- SCPF primary;
-- only historical reference implementations that actually existed;
-- preserve historical `model.yml.purpose`;
-- preserve model-local source/compiler tests and native/saved-design/inspection expectations;
-- use OLD durable build evidence as A/B authority;
-- keep scheduler/builders/verification generic and do not add Forge-specific orchestration.
+PR #30 adds the ten remaining owners from historical Basic geometry and Parent/child features and faces. The migration also restores the historical public `Sketch.revolve()` SCPF contract in `cadlib/scpf`; do not replace this with a model workaround.
+
+Remaining #29 work:
+- squash PR #30 to `dev`;
+- verify all twenty durable owners and the purpose-driven Pages projection;
+- promote `dev -> main` only after the full promotion gate passes;
+- use a merge commit for that promotion;
+- close #29 only after stable post-merge CI/build/Pages/deployment pass.
 
 ## Handoff message
 
-> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from the accepted ten-owner baseline on `main@378b5051cc2accc98e4774af3189d377be52ab1c`; see `docs/acceptance/ten-owner-gate.md`. Classify and migrate the remaining historical physical owners in controlled groups. Preserve each owner's historical purpose, only existing reference implementations, model-local tests and native/saved-design/inspection evidence. Keep one physical owner across engines, SCPF primary, generic CI mechanics outside Forge-specific code, and compare against the OLD durable build evidence before accepting each group.
+> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from issue #29 / PR #30. The twenty-owner candidate is qualified at `553033bdd2ccf0e5612e8f12d2a95c51a51ec462` by CI `45456265226`; see `docs/acceptance/twenty-owner-gate.md`. Finish the integration gate: squash PR #30 to dev, verify `build/dev/models` has all twenty owners and Pages has exactly three Examples plus all twenty Verification entries, then run the full dev-to-main promotion and merge it with a merge commit. Close #29 only after stable post-merge CI/build/Pages/deployment pass.

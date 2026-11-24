@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: features
+priority: 50
+title: Native circular feature pattern
+tagline: One direct Hole feature is repeated by a native circular History pattern
+description: >
+  A plate receives one direct native Hole feature and SolidCraft repeats that history feature around a pitch circle as one editable circular pattern.
+parameters: 100 × 100 × 6 mm plate; six Ø8 holes on 60 mm PCD
+stages:
+  - Create the plate and one direct native Hole source
+  - Resolve the applied Hole as native history feature Hole1
+  - Repeat that Hole with one native circular feature pattern

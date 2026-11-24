@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: features
+priority: 110
+title: Cone as a native Boolean feature
+tagline: A placed Cone joins an existing featured body without a temporary solid
+description: >
+  A filleted Box receives a placed tapered Cone through native solid.cone join lowering, proving Cone participates in ordered feature compilation.
+parameters: 50 × 40 × 20 mm Box; R2 vertical fillet; Ø18→Ø10 × 8 mm Cone at Z18
+stages:
+  - Create the Box and add an ordered native fillet
+  - Place a tapered Cone so it overlaps the top face
+  - Join the Cone natively to the existing featured body

@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: features
+priority: 90
+title: Attached Polygon through-all cutter
+tagline: Polygon2D works inside an explicit face-attached Sketch
+description: >
+  A face-attached explicit Sketch contains an authored Polygon2D profile and cuts through the parent Box with native THROUGH_ALL depth.
+parameters: 80 × 60 × 5 mm Box; 20 × 16 mm Polygon2D cutter
+stages:
+  - Create the bottom-anchored Box
+  - Attach a named Sketch to the top face and add Polygon2D
+  - Cut the parent with native THROUGH_ALL extrusion
