@@ -1,0 +1,34 @@
+{
+  "commands": [
+    {
+      "command": "explode.create",
+      "params": {
+        "name": "Instructions",
+        "moves": [
+          {
+            "occurrence": 4,
+            "translate": [
+              0.0,
+              25.0,
+              0.0
+            ]
+          },
+          {
+            "occurrence": 5,
+            "translate": [
+              0.0,
+              50.0,
+              10.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "command": "explode.show",
+      "params": {
+        "view": null
+      }
+    }
+  ]
+}

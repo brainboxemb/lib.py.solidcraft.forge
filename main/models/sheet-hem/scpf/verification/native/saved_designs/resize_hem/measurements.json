@@ -1,0 +1,165 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 8769.628240191627,
+      "bbox": {
+        "max": [
+          44.5,
+          20.000000000000004,
+          2.0
+        ],
+        "min": [
+          -40.0,
+          -20.000000000000004,
+          -7.000000000000002
+        ]
+      },
+      "center_of_mass": [
+        8.379529010378068,
+        -5.8124009074083336e-18,
+        -0.16087461176804885
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 24,
+      "face_types": {
+        "cylinder": 2,
+        "plane": 8
+      },
+      "faces": 10,
+      "kernel": {
+        "edges": 28,
+        "faces": 14,
+        "shells": 1,
+        "vertices": 16
+      },
+      "mass_g": 10.577543266521602,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "SheetHem",
+      "notes": [],
+      "sheet_metal": true,
+      "vertices": 16,
+      "volume_mm3": 8199.645943040001
+    }
+  ],
+  "body_count": 1,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "80",
+      "model": false,
+      "name": "width",
+      "unit": "mm",
+      "value": 80.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "40",
+      "model": false,
+      "name": "depth",
+      "unit": "mm",
+      "value": 40.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "2",
+      "model": false,
+      "name": "thickness",
+      "unit": "mm",
+      "value": 2.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "2",
+      "model": false,
+      "name": "bend_radius",
+      "unit": "mm",
+      "value": 2.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "0.5",
+      "model": false,
+      "name": "k_factor",
+      "unit": "",
+      "value": 0.5
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "16 mm",
+      "model": false,
+      "name": "hem_length",
+      "unit": "mm",
+      "value": 16.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "5 mm",
+      "model": false,
+      "name": "hem_gap",
+      "unit": "mm",
+      "value": 5.0
+    }
+  ],
+  "sketches": [
+    {
+      "curves": 4,
+      "dof": 0,
+      "id": 1,
+      "name": "Blank",
+      "profiles": 1,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 0.174467,
+      "name": "Blank",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 1.7971059999999999,
+      "name": "BaseFlange1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BaseFlangeFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 6.739299,
+      "name": "Hem1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "HemFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 8769.628240191627,
+    "edges": 24,
+    "faces": 10,
+    "mass_g": 10.577543266521602,
+    "open_bodies_skipped": 0,
+    "vertices": 16,
+    "volume_mm3": 8199.645943040001
+  }
+}

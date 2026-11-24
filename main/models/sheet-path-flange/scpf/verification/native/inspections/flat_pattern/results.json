@@ -1,0 +1,68 @@
+[
+  {
+    "bend_zones": [
+      [
+        35.0,
+        41.283185307179586,
+        -20.0,
+        20.0
+      ]
+    ],
+    "bends": [
+      {
+        "allowance": 6.283185307179586,
+        "angle_deg": 90.0,
+        "bend": 1,
+        "direction": "down",
+        "end": [
+          38.1415926535898,
+          20.0
+        ],
+        "included_angle_deg": 90.0,
+        "length": 40.0,
+        "radius": 3.0,
+        "start": [
+          38.1415926535898,
+          -20.0
+        ]
+      }
+    ],
+    "body": "SheetPathFlange",
+    "cutout_shapes": [],
+    "cutouts": [],
+    "flat_size_mm": [
+      88.283185307,
+      40.0,
+      2.0
+    ],
+    "k_factor": 0.5,
+    "outline": [
+      [
+        [
+          -40.0,
+          20.0
+        ],
+        [
+          -40.0,
+          -20.0
+        ],
+        [
+          48.283185307,
+          -20.0
+        ],
+        [
+          48.28318530699998,
+          20.0
+        ]
+      ]
+    ],
+    "perforations": [],
+    "pockets": [],
+    "roll_lines": [],
+    "roll_table": [],
+    "rolls": 0,
+    "rule": "Path Flange Rule",
+    "thickness": 2.0,
+    "unfolded": false
+  }
+]

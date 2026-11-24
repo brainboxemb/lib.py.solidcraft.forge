@@ -1,0 +1,44 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            30.0,
+            30.0,
+            16.0
+          ],
+          "actual_min": [
+            -30.0,
+            -30.0,
+            0.0
+          ],
+          "expected_max": [
+            30.0,
+            30.0,
+            16.0
+          ],
+          "expected_min": [
+            -30.0,
+            -30.0,
+            0.0
+          ],
+          "max_delta_mm": 0.0,
+          "pass": true,
+          "tolerance_mm": 0.5
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/attach-angle/pybosl2/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "attach-angle-pybosl2-geometry"
+}

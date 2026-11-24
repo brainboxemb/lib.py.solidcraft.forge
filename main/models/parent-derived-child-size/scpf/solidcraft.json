@@ -1,0 +1,83 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "120",
+        "name": "base_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "80",
+        "name": "base_depth",
+        "unit": "mm"
+      }
+    },
+    {
+      "bind": {
+        "$parent": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "ParentBlock"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "ParentBlock",
+        "corner": [
+          "-base_width / 2",
+          "-base_depth / 2",
+          0
+        ],
+        "height": 10.0,
+        "length": "base_width",
+        "width": "base_depth"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$child": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "DerivedChild"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "DerivedChild",
+        "corner": [
+          "-((base_width / 2) / 2)",
+          "-((base_depth / 2) / 2)",
+          20.0
+        ],
+        "height": 6.0,
+        "length": "base_width / 2",
+        "operation": "new",
+        "width": "base_depth / 2"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

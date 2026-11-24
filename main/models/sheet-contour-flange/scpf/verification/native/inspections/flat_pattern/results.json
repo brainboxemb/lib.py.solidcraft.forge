@@ -1,0 +1,89 @@
+[
+  {
+    "bend_zones": [],
+    "bends": [],
+    "body": "SheetContourFlange",
+    "cutout_shapes": [],
+    "cutouts": [],
+    "flat_size_mm": [
+      69.817477042,
+      50.0,
+      2.5
+    ],
+    "k_factor": 0.44,
+    "outline": [
+      [
+        [
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          -50.0
+        ],
+        [
+          69.817477042,
+          -50.0
+        ],
+        [
+          69.817477042,
+          -0.0
+        ]
+      ]
+    ],
+    "perforations": [],
+    "pockets": [],
+    "roll_lines": [
+      {
+        "end": [
+          44.817477042468106,
+          -50.0
+        ],
+        "line": "start",
+        "panel": 1,
+        "start": [
+          44.817477042468106,
+          -0.0
+        ]
+      },
+      {
+        "end": [
+          35.0,
+          -50.0
+        ],
+        "line": "end",
+        "panel": 1,
+        "start": [
+          35.0,
+          -0.0
+        ]
+      },
+      {
+        "end": [
+          39.908738521234056,
+          -50.0
+        ],
+        "line": "middle",
+        "panel": 1,
+        "start": [
+          39.908738521234056,
+          -0.0
+        ]
+      }
+    ],
+    "roll_table": [
+      {
+        "angle_deg": 90.0,
+        "length": 50.0,
+        "panel": 1,
+        "radius": 5.0,
+        "roll": 1,
+        "width": 9.817477042468106
+      }
+    ],
+    "rolls": 1,
+    "rule": "Contour Flange Rule",
+    "thickness": 2.5,
+    "unfolded": false
+  }
+]

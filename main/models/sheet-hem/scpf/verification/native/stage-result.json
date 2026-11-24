@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-model",
+  "id": "sheet-hem--scpf",
+  "implementation": "scpf",
+  "owner": "sheet-hem",
+  "schema": 1,
+  "stage_id": "native",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.5"
+}

@@ -1,0 +1,139 @@
+{
+  "commands": [
+    {
+      "bind": {
+        "$base": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Base"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Base",
+        "corner": [
+          -20.0,
+          -15.0,
+          0
+        ],
+        "height": 20,
+        "length": 40,
+        "width": 30
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$marker": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "Marker"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Marker",
+        "corner": [
+          -5.0,
+          -5.0,
+          0
+        ],
+        "height": 10,
+        "length": 10,
+        "width": 10
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$marker",
+        "translate": [
+          15.0,
+          -20.0,
+          10
+        ]
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "5 mm",
+        "name": "shift"
+      }
+    },
+    {
+      "command": "joint.create",
+      "params": {
+        "a": {
+          "corner": [
+            20.0,
+            -15.0,
+            20.0
+          ],
+          "edge": [
+            20.0,
+            -15.0,
+            10.0
+          ],
+          "occurrence": "$base",
+          "on": [
+            0.0,
+            -15.0,
+            10.0
+          ]
+        },
+        "b": {
+          "occurrence": "$marker",
+          "point": [
+            20.0,
+            -15.0,
+            20.0
+          ],
+          "x": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "z": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        },
+        "name": "Attach Marker to Base",
+        "type": "planar",
+        "values": [
+          0,
+          "-(shift)",
+          0.0
+        ]
+      }
+    },
+    {
+      "command": "browser.visibility",
+      "params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

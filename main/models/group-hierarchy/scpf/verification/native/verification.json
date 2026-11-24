@@ -1,0 +1,400 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "c775df9732cb5665915065863b9fc0b4419b722919ae28f0fce6269cb299459b",
+          "size": 2843
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 3,
+          "expected": 3,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 3,
+          "expected_count": 3,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Panel",
+                "max": [
+                  5.0,
+                  1.0,
+                  20.0
+                ],
+                "min": [
+                  -5.0,
+                  -1.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  5.0,
+                  1.0,
+                  20.0
+                ],
+                "min": [
+                  -5.0,
+                  -1.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Panel (PanelGroup:1/Panel:2)",
+                "max": [
+                  16.0,
+                  1.0,
+                  20.0
+                ],
+                "min": [
+                  6.0,
+                  -1.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  16.0,
+                  1.0,
+                  20.0
+                ],
+                "min": [
+                  6.0,
+                  -1.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Frame",
+                "max": [
+                  17.5,
+                  25.0,
+                  40.0
+                ],
+                "min": [
+                  -17.5,
+                  15.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  17.5,
+                  25.0,
+                  40.0
+                ],
+                "min": [
+                  -17.5,
+                  15.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/hierarchy/results.json",
+          "sha256": "a7635c22d095adba1d26904c98aa5f294579baf218f5f3579138df3d191dc773",
+          "size": 8268
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 3,
+              "expected": 3,
+              "label": "SolidCraft inspection check result_count",
+              "pass": true
+            },
+            "id": "result_count",
+            "path": []
+          },
+          {
+            "comparison": {
+              "actual": "top",
+              "expected": "top",
+              "label": "SolidCraft inspection check top_levels",
+              "pass": true
+            },
+            "id": "top_levels",
+            "path": [
+              0,
+              "levels"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2,
+              "expected": 2,
+              "label": "SolidCraft inspection check top_row_count",
+              "pass": true
+            },
+            "id": "top_row_count",
+            "path": [
+              0,
+              "rows"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check top_frame_count",
+              "pass": true
+            },
+            "id": "top_frame_count",
+            "path": [
+              0,
+              "rows",
+              {
+                "select": {
+                  "field": "definition",
+                  "value": "Frame"
+                }
+              },
+              "count"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check top_group_count",
+              "pass": true
+            },
+            "id": "top_group_count",
+            "path": [
+              0,
+              "rows",
+              {
+                "select": {
+                  "field": "definition",
+                  "value": "PanelGroup"
+                }
+              },
+              "count"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2,
+              "expected": 2,
+              "label": "SolidCraft inspection check top_total",
+              "pass": true
+            },
+            "id": "top_total",
+            "path": [
+              0,
+              "total_occurrences"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "flat",
+              "expected": "flat",
+              "label": "SolidCraft inspection check flat_levels",
+              "pass": true
+            },
+            "id": "flat_levels",
+            "path": [
+              1,
+              "levels"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2,
+              "expected": 2,
+              "label": "SolidCraft inspection check flat_row_count",
+              "pass": true
+            },
+            "id": "flat_row_count",
+            "path": [
+              1,
+              "rows"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check flat_frame_count",
+              "pass": true
+            },
+            "id": "flat_frame_count",
+            "path": [
+              1,
+              "rows",
+              {
+                "select": {
+                  "field": "definition",
+                  "value": "Frame"
+                }
+              },
+              "count"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2,
+              "expected": 2,
+              "label": "SolidCraft inspection check flat_panel_count",
+              "pass": true
+            },
+            "id": "flat_panel_count",
+            "path": [
+              1,
+              "rows",
+              {
+                "select": {
+                  "field": "definition",
+                  "value": "Panel"
+                }
+              },
+              "count"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 3,
+              "expected": 3,
+              "label": "SolidCraft inspection check flat_total",
+              "pass": true
+            },
+            "id": "flat_total",
+            "path": [
+              1,
+              "total_occurrences"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check panel_group_occurrence_count",
+              "pass": true
+            },
+            "id": "panel_group_occurrence_count",
+            "path": [
+              2,
+              "components",
+              {
+                "select": {
+                  "field": "name",
+                  "value": "PanelGroup"
+                }
+              },
+              "occurrences"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": false,
+              "expected": false,
+              "label": "SolidCraft inspection check panel_group_grounded",
+              "pass": true
+            },
+            "id": "panel_group_grounded",
+            "path": [
+              2,
+              "components",
+              {
+                "select": {
+                  "field": "name",
+                  "value": "PanelGroup"
+                }
+              },
+              "occurrences",
+              0,
+              "grounded"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2,
+              "expected": 2,
+              "label": "SolidCraft inspection check panel_occurrence_count",
+              "pass": true
+            },
+            "id": "panel_occurrence_count",
+            "path": [
+              2,
+              "components",
+              {
+                "select": {
+                  "field": "name",
+                  "value": "Panel"
+                }
+              },
+              "occurrences"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": true,
+              "expected": true,
+              "label": "SolidCraft inspection check panel_first_grounded",
+              "pass": true
+            },
+            "id": "panel_first_grounded",
+            "path": [
+              2,
+              "components",
+              {
+                "select": {
+                  "field": "name",
+                  "value": "Panel"
+                }
+              },
+              "occurrences",
+              0,
+              "grounded"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_hierarchy",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/group-hierarchy/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "group-hierarchy"
+}

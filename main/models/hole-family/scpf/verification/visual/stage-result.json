@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-visual",
+  "id": "hole-family--scpf",
+  "implementation": "scpf",
+  "owner": "hole-family",
+  "schema": 1,
+  "stage_id": "visual",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.5"
+}

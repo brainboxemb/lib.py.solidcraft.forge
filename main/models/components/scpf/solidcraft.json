@@ -1,0 +1,50 @@
+{
+  "commands": [
+    {
+      "bind": {
+        "$block_occurrence_1": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Block"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Block",
+        "corner": [
+          -20.0,
+          -15.0,
+          0
+        ],
+        "height": 10.0,
+        "length": 40.0,
+        "width": 30.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$block_occurrence_2": "occurrence"
+      },
+      "command": "occurrence.copy",
+      "params": {
+        "component": "Block",
+        "translate": [
+          40.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

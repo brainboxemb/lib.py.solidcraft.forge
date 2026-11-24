@@ -1,0 +1,44 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            20.0,
+            15.0,
+            25.0
+          ],
+          "actual_min": [
+            -20.0,
+            -25.0,
+            0.0
+          ],
+          "expected_max": [
+            20.0,
+            15.0,
+            25.0
+          ],
+          "expected_min": [
+            -20.0,
+            -25.0,
+            0.0
+          ],
+          "max_delta_mm": 0.0,
+          "pass": true,
+          "tolerance_mm": 0.5
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/parametric-offset/pybosl2/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "parametric-offset-pybosl2-geometry"
+}

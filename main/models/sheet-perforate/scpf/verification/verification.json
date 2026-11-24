@@ -1,0 +1,355 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "5c61551185fff070071d50445d2bbd7924b81d390440be47dfcf647e4af4d7c2",
+          "size": 3276
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole",
+            "sheet_metal": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body sheet_metal",
+              "pass": true
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "bend_radius": 2.0,
+            "depth": 40.0,
+            "k_factor": 0.5,
+            "perforation_diameter": 5.0,
+            "perforation_margin": 5.0,
+            "perforation_pitch": 10.0,
+            "thickness": 2.0,
+            "width": 60.0
+          },
+          "expected": {
+            "bend_radius": 2.0,
+            "depth": 40.0,
+            "k_factor": 0.5,
+            "perforation_diameter": 5.0,
+            "perforation_margin": 5.0,
+            "perforation_pitch": 10.0,
+            "thickness": 2.0,
+            "width": 60.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Blank sketch",
+            "pass": true
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/resize_perforation/model.sc",
+          "sha256": "9b77773ce1763262568f9fc3d55d56a515a1295710d51feb9b775efee67650b3",
+          "size": 5444
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/resize_perforation/measurements.json",
+          "sha256": "19852e0dfc292471f5a2d8b0404e36e375e966141e9a4ba2fc435285271d3d9a",
+          "size": 3300
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole",
+            "sheet_metal": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body sheet_metal",
+              "pass": true
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "perforation_diameter": 6.0,
+            "perforation_margin": 6.0,
+            "perforation_pitch": 12.0
+          },
+          "expected": {
+            "perforation_diameter": 6.0,
+            "perforation_margin": 6.0,
+            "perforation_pitch": 12.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Blank sketch",
+            "pass": true
+          }
+        ]
+      },
+      "id": "saved_design_resize_perforation",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/flat_pattern/results.json",
+          "sha256": "d04a558a81be9afb1832b11dddb614519b4692da48c30b69ce19448aa84a014e",
+          "size": 846
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check result_count",
+              "pass": true
+            },
+            "id": "result_count",
+            "path": []
+          },
+          {
+            "comparison": {
+              "actual": 15,
+              "expected": 15,
+              "label": "SolidCraft inspection check perforation_count",
+              "pass": true
+            },
+            "id": "perforation_count",
+            "path": [
+              0,
+              "perforations",
+              0,
+              "count"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 5.0,
+              "delta": 0.0,
+              "expected": 5.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check perforation_diameter",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "perforation_diameter",
+            "path": [
+              0,
+              "perforations",
+              0,
+              "diameter"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 10.0,
+              "delta": 0.0,
+              "expected": 10.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check perforation_pitch",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "perforation_pitch",
+            "path": [
+              0,
+              "perforations",
+              0,
+              "pitch"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 5.0,
+              "delta": 0.0,
+              "expected": 5.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check perforation_margin",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "perforation_margin",
+            "path": [
+              0,
+              "perforations",
+              0,
+              "margin"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "square",
+              "expected": "square",
+              "label": "SolidCraft inspection check perforation_pattern",
+              "pass": true
+            },
+            "id": "perforation_pattern",
+            "path": [
+              0,
+              "perforations",
+              0,
+              "pattern"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 294.5243112740431,
+              "delta": 0.0,
+              "expected": 294.5243112740431,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check perforation_open_area",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "perforation_open_area",
+            "path": [
+              0,
+              "perforations",
+              0,
+              "open_area_mm2"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Perforation Rule",
+              "expected": "Perforation Rule",
+              "label": "SolidCraft inspection check sheet_rule",
+              "pass": true
+            },
+            "id": "sheet_rule",
+            "path": [
+              0,
+              "rule"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2.0,
+              "delta": 0.0,
+              "expected": 2.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check sheet_thickness",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "sheet_thickness",
+            "path": [
+              0,
+              "thickness"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 0.5,
+              "delta": 0.0,
+              "expected": 0.5,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check sheet_k_factor",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "sheet_k_factor",
+            "path": [
+              0,
+              "k_factor"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_flat_pattern",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sheet-perforate/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sheet-perforate"
+}

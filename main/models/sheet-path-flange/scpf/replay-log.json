@@ -1,0 +1,179 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "a211b766c7400dd8d01e17fd0dbff58f8d702d210f70cd1393579deac5a84b10",
+  "variables": {
+    "$contour_curves_1": [
+      "l1"
+    ]
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "width",
+        "expression": "80",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "depth",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "thickness",
+        "expression": "2",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 3,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "bend_radius",
+        "expression": "2",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 4,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "k_factor",
+        "expression": "0.5",
+        "unit": ""
+      }
+    },
+    {
+      "index": 5,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "path_height",
+        "expression": "14",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 6,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "path_radius",
+        "expression": "3",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 7,
+      "command": "sheet.manage_rules",
+      "resolved_params": {
+        "name": "Path Flange Rule",
+        "thickness": "thickness",
+        "k_factor": "k_factor",
+        "bend_radius": "bend_radius",
+        "active": true
+      }
+    },
+    {
+      "index": 8,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": "XY",
+        "name": "Blank"
+      }
+    },
+    {
+      "index": 9,
+      "command": "sketch.rectangle.two_point",
+      "resolved_params": {
+        "p0": [
+          "-(width / 2)",
+          "-(depth / 2)"
+        ],
+        "p1": [
+          "width / 2",
+          "depth / 2"
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 11,
+      "command": "sheet.flange",
+      "resolved_params": {
+        "type": "base",
+        "sketch": "Blank",
+        "rule": "Path Flange Rule",
+        "body_name": "SheetPathFlange"
+      }
+    },
+    {
+      "index": 12,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": "XZ",
+        "name": "Path"
+      }
+    },
+    {
+      "index": 13,
+      "command": "sketch.line",
+      "resolved_params": {
+        "points": [
+          [
+            40,
+            2
+          ],
+          [
+            40,
+            "path_height"
+          ]
+        ],
+        "ids": [
+          "l1"
+        ],
+        "connect": true
+      },
+      "bindings": {
+        "$contour_curves_1": [
+          "l1"
+        ]
+      }
+    },
+    {
+      "index": 14,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 15,
+      "command": "sheet.path_flange",
+      "resolved_params": {
+        "edge": [
+          40.0,
+          0.0,
+          2.0
+        ],
+        "sketch": "Path",
+        "curves": [
+          "l1"
+        ],
+        "body": "SheetPathFlange",
+        "radius": "path_radius"
+      }
+    }
+  ],
+  "completed": 16
+}

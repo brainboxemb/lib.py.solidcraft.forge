@@ -1,0 +1,233 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/front/camera.json",
+          "sha256": "1ac684a05c3a5d4c2fcb0ba880d67e265644d01d486a79e797c2455536af4683",
+          "size": 128
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/actual.png",
+          "sha256": "91a6b73e3ae841324dabb50cd68aa7ec60be8e3d9c0b28e45f129aed456939c5",
+          "size": 9648
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/diff.png",
+          "sha256": "1c2acf75521b890b1fad59f9815291088ff8a18af976e064cb7a755f54afcfe4",
+          "size": 475
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/front/actual.png",
+        "baseline": "baselines/front.json",
+        "baseline_status": "pass",
+        "camera": "visual/front/camera.json",
+        "diff_image": "visual/front/diff.png",
+        "expected_shape_required": false,
+        "expected_shape_status": "missing",
+        "goal_image": null,
+        "overlay_image": null,
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.022714,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "front"
+      },
+      "id": "front",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/right/camera.json",
+          "sha256": "629ad6fabde36db2f27a4d3a18a2fe1f3a89bfdfae34d48c5f1e6456ce53c244",
+          "size": 144
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/actual.png",
+          "sha256": "5c2be47c69233b64cab571d93d1c51f8306f708809985fe7d111a3df50456b33",
+          "size": 9532
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/goal.png",
+          "sha256": "d6ac899c985788529989eae80ed15e3a8d9b410de018d54f6171a461cb3692bc",
+          "size": 2006
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/overlay.png",
+          "sha256": "97d3d7c73f1f3304fd329e68a42eb57e0d90b3615a73ea7d38c60dfc53eee2ba",
+          "size": 2522
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/diff.png",
+          "sha256": "f4c2ad8d2bfd2bda33ece8345ac38508b24cca9899cf40b234a8740c72ae978e",
+          "size": 440
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/right/actual.png",
+        "baseline": "baselines/right.json",
+        "baseline_status": "pass",
+        "camera": "visual/right/camera.json",
+        "diff_image": "visual/right/diff.png",
+        "expected_shape_required": true,
+        "expected_shape_status": "pass",
+        "goal_image": "visual/right/goal.png",
+        "overlay_image": "visual/right/overlay.png",
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.007089,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "right"
+      },
+      "id": "right",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/iso/camera.json",
+          "sha256": "2c896834eba5cc5fd0227375d3d27947af497658f0329b42b5e3ce2084b6997e",
+          "size": 159
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/actual.png",
+          "sha256": "c837b2147d578a1378b6e8b3060e8c2e600ce487eaff7cc263e3277d13ea566a",
+          "size": 42059
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/goal.png",
+          "sha256": "b0e4c4b9fc79eee2938e3f76af0832a356c8ac07c1d29bb26aefb468dbf28a9c",
+          "size": 4971
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/overlay.png",
+          "sha256": "7ada87209c3b9a64ca61423ec24cdec501eff4a356726d442548679993d8a17f",
+          "size": 26348
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/diff.png",
+          "sha256": "47ff4d9595d10424e50447655cc07f8b255c230da4b2993066f4e042e447da81",
+          "size": 2995
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/iso/actual.png",
+        "baseline": "baselines/iso.json",
+        "baseline_status": "pass",
+        "camera": "visual/iso/camera.json",
+        "diff_image": "visual/iso/diff.png",
+        "expected_shape_required": true,
+        "expected_shape_status": "pass",
+        "goal_image": "visual/iso/goal.png",
+        "overlay_image": "visual/iso/overlay.png",
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.017506,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "iso"
+      },
+      "id": "iso",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/top/camera.json",
+          "sha256": "e1ef2456946d107cf5b96b9c1884c63a0d6480a5b106d87a5876985c79d8c1e2",
+          "size": 143
+        },
+        {
+          "kind": "file",
+          "path": "visual/top/actual.png",
+          "sha256": "2f0deb20d537d97b1c9984266feb3b900d992d1fc86b91de17888bcd6629df65",
+          "size": 17266
+        },
+        {
+          "kind": "file",
+          "path": "visual/top/goal.png",
+          "sha256": "e1584fe2ce76ffc14a00d0e73e734b0abb225b993c1ce41953af015964bbccf2",
+          "size": 2357
+        },
+        {
+          "kind": "file",
+          "path": "visual/top/overlay.png",
+          "sha256": "5b556d020de3cb4be4f792fad52b3e5e4962955b268ce752bd800a86efa08bbb",
+          "size": 8842
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/top/actual.png",
+        "baseline": null,
+        "baseline_status": "missing",
+        "camera": "visual/top/camera.json",
+        "diff_image": null,
+        "expected_shape_required": true,
+        "expected_shape_status": "pass",
+        "goal_image": "visual/top/goal.png",
+        "overlay_image": "visual/top/overlay.png",
+        "regression": null,
+        "regression_required": false,
+        "view": "top"
+      },
+      "id": "top",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/rectangular-pattern/scpf/model.sc",
+  "metadata": {
+    "baseline_provenance": {
+      "approval": "approved",
+      "historical_manifest_solidcraft_version": "0.30.1",
+      "migrated_from": "qualification/visual_baselines.json",
+      "migrated_without_reencoding": true,
+      "source_commit": "56a1ce684d586a98158013c3ad0b117c8f5b58b3",
+      "verified_during_solidcraft_0_42_0_qualification": true
+    },
+    "kind": "solidcraft-visual",
+    "measurements": "measurements.json",
+    "visual_report": "visual.json"
+  },
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "rectangular-pattern-scpf-visual"
+}

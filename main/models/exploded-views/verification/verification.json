@@ -1,0 +1,412 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "02642b1d6f531d9881935fb7f306b39771b8b75620b1c0c2593d01249c4b5e0a",
+          "size": 2717
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_groups": [
+          {
+            "body_envelopes": {
+              "actual_count": 3,
+              "expected_count": 3,
+              "kind": "body_envelopes",
+              "matched_pairs": [
+                {
+                  "actual": {
+                    "label": "ExplodeBlock",
+                    "max": [
+                      15.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      -15.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      15.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      -15.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "ExplodeBlock (ExplodeBlock:2)",
+                    "max": [
+                      55.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      25.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      55.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      25.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "ExplodeBlock (ExplodeBlock:3)",
+                    "max": [
+                      95.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      65.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      95.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      65.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                }
+              ],
+              "pass": true,
+              "tolerance": 0.001,
+              "unmatched_actual": [],
+              "unmatched_expected": []
+            },
+            "count": {
+              "actual": 3,
+              "expected": 3,
+              "label": "ExplodeBlock body group count",
+              "pass": true
+            },
+            "matched_names": [
+              "ExplodeBlock",
+              "ExplodeBlock (ExplodeBlock:2)",
+              "ExplodeBlock (ExplodeBlock:3)"
+            ],
+            "name_prefix": "ExplodeBlock"
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/show_automatic/model.sc",
+          "sha256": "2bd8c8f92d1b46dcca3e90ebe3b81c3be0007eaa702594af756446029f52277a",
+          "size": 840
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/show_automatic/measurements.json",
+          "sha256": "a0bf18bce41ea16c008ae347adb78f1a89bdefe5e23cee8487fb13b8368a469f",
+          "size": 2717
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_groups": [
+          {
+            "body_envelopes": {
+              "actual_count": 3,
+              "expected_count": 3,
+              "kind": "body_envelopes",
+              "matched_pairs": [
+                {
+                  "actual": {
+                    "label": "ExplodeBlock",
+                    "max": [
+                      15.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      -15.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      15.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      -15.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "ExplodeBlock (ExplodeBlock:2)",
+                    "max": [
+                      55.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      25.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      55.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      25.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "ExplodeBlock (ExplodeBlock:3)",
+                    "max": [
+                      95.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      65.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      95.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      65.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                }
+              ],
+              "pass": true,
+              "tolerance": 0.001,
+              "unmatched_actual": [],
+              "unmatched_expected": []
+            },
+            "count": {
+              "actual": 3,
+              "expected": 3,
+              "label": "ExplodeBlock body group count",
+              "pass": true
+            },
+            "matched_names": [
+              "ExplodeBlock",
+              "ExplodeBlock (ExplodeBlock:2)",
+              "ExplodeBlock (ExplodeBlock:3)"
+            ],
+            "name_prefix": "ExplodeBlock"
+          }
+        ]
+      },
+      "id": "saved_design_show_automatic",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/show_instructions_then_assembled/model.sc",
+          "sha256": "645e89529dec0b32c7ddb1aedc9cf7726f6a208a7a4810fd97e4a1ae8147b270",
+          "size": 4319
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/show_instructions_then_assembled/measurements.json",
+          "sha256": "02642b1d6f531d9881935fb7f306b39771b8b75620b1c0c2593d01249c4b5e0a",
+          "size": 2717
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_groups": [
+          {
+            "body_envelopes": {
+              "actual_count": 3,
+              "expected_count": 3,
+              "kind": "body_envelopes",
+              "matched_pairs": [
+                {
+                  "actual": {
+                    "label": "ExplodeBlock",
+                    "max": [
+                      15.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      -15.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      15.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      -15.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "ExplodeBlock (ExplodeBlock:2)",
+                    "max": [
+                      55.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      25.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      55.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      25.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "ExplodeBlock (ExplodeBlock:3)",
+                    "max": [
+                      95.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      65.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      95.0,
+                      10.0,
+                      10.0
+                    ],
+                    "min": [
+                      65.0,
+                      -10.0,
+                      0.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                }
+              ],
+              "pass": true,
+              "tolerance": 0.001,
+              "unmatched_actual": [],
+              "unmatched_expected": []
+            },
+            "count": {
+              "actual": 3,
+              "expected": 3,
+              "label": "ExplodeBlock body group count",
+              "pass": true
+            },
+            "matched_names": [
+              "ExplodeBlock",
+              "ExplodeBlock (ExplodeBlock:2)",
+              "ExplodeBlock (ExplodeBlock:3)"
+            ],
+            "name_prefix": "ExplodeBlock"
+          }
+        ]
+      },
+      "id": "saved_design_show_instructions_then_assembled",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/exploded-views/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "exploded-views"
+}

@@ -1,0 +1,60 @@
+{
+  "commands": [
+    {
+      "command": "component.create",
+      "params": {
+        "name": "ExplodeBlock",
+        "grounded": true
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": 30.0,
+        "width": 20.0,
+        "height": 10.0,
+        "corner": [
+          -15.0,
+          -10.0,
+          0
+        ],
+        "body_name": "ExplodeBlock"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "ExplodeBlock",
+        "translate": [
+          40.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "ExplodeBlock",
+        "translate": [
+          80.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "command": "explode.create",
+      "params": {
+        "name": "Automatic",
+        "scale": 1.25
+      }
+    }
+  ]
+}

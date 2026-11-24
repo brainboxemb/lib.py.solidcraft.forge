@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-visual",
+  "id": "attach-angle--scpf",
+  "implementation": "scpf",
+  "owner": "attach-angle",
+  "schema": 1,
+  "stage_id": "visual",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.5"
+}

@@ -1,0 +1,262 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "92d65bcae289b0c621a86c95621967f85f026a7e13ed5b600cb5c5537f7232b8",
+          "size": 3184
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole",
+            "sheet_metal": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body sheet_metal",
+              "pass": true
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "bend_radius": 2.0,
+            "depth": 40.0,
+            "hem_gap": 4.0,
+            "hem_length": 12.0,
+            "k_factor": 0.5,
+            "thickness": 2.0,
+            "width": 80.0
+          },
+          "expected": {
+            "bend_radius": 2.0,
+            "depth": 40.0,
+            "hem_gap": 4.0,
+            "hem_length": 12.0,
+            "k_factor": 0.5,
+            "thickness": 2.0,
+            "width": 80.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Blank sketch",
+            "pass": true
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/resize_hem/model.sc",
+          "sha256": "2c0007b71e3780259e3e226be4e8ce8f7891cb7da218c63ae95edbb2c6f55faf",
+          "size": 10538
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/resize_hem/measurements.json",
+          "sha256": "a4cb7da38b1f57932591b66465bb2344486d3cd43543b2c0595444a491992204",
+          "size": 3173
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole",
+            "sheet_metal": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body sheet_metal",
+              "pass": true
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "hem_gap": 5.0,
+            "hem_length": 16.0
+          },
+          "expected": {
+            "hem_gap": 5.0,
+            "hem_length": 16.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Blank sketch",
+            "pass": true
+          }
+        ]
+      },
+      "id": "saved_design_resize_hem",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/flat_pattern/results.json",
+          "sha256": "5065e91f2a0dc12d1a4e1a0b181cb7011a72f2b693d63c005d01b2e8cf5af4b7",
+          "size": 1114
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check result_count",
+              "pass": true
+            },
+            "id": "result_count",
+            "path": []
+          },
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check bend_count",
+              "pass": true
+            },
+            "id": "bend_count",
+            "path": [
+              0,
+              "bends"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Hem Rule",
+              "expected": "Hem Rule",
+              "label": "SolidCraft inspection check sheet_rule",
+              "pass": true
+            },
+            "id": "sheet_rule",
+            "path": [
+              0,
+              "rule"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2.0,
+              "delta": 0.0,
+              "expected": 2.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check sheet_thickness",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "sheet_thickness",
+            "path": [
+              0,
+              "thickness"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 0.5,
+              "delta": 0.0,
+              "expected": 0.5,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check sheet_k_factor",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "sheet_k_factor",
+            "path": [
+              0,
+              "k_factor"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_flat_pattern",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sheet-hem/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sheet-hem"
+}
