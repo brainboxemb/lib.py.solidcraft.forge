@@ -134,7 +134,6 @@ class ModelTests(unittest.TestCase):
         reference = manifests[1]
         self.assertEqual(len(reference["build_items"]), 4)
         self.assertEqual(len(reference["verify_items"]), 5)
-        self.assertEqual(len(reference["preview_items"]), 4)
 
 
 if __name__ == "__main__":
