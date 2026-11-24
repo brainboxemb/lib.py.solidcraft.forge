@@ -63,6 +63,8 @@ Durable working rules:
 - execute every source-branch integration by posting `/merge` on the pull
   request and letting `.github/workflows/merge-policy.yml` choose the merge
   method; never use direct merge API, auto-merge or manual merge fallback;
+- repeated `/merge` after a pull request is already merged is an idempotent
+  successful no-op; a closed but unmerged pull request remains an error;
 - preserve the two released CAD runtime roles, `reference` and `solidcraft`,
   unless a separately qualified change updates that contract;
 - use the historical Forge repository as the A/B migration reference until the
