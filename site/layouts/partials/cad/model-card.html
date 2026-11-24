@@ -1,0 +1,12 @@
+{{ $page := . }}
+{{ $m := $page.Params.model }}
+<a class="cad-model-card cad-model-card-has-section" href="{{ $page.RelPermalink }}">
+  <span class="cad-card-picture">
+    {{ with $page.Params.previewurl }}<img src="{{ . }}" alt="{{ $page.Title }} preview">{{ else }}<span class="cad-muted">Preview not available</span>{{ end }}
+  </span>
+  <span class="cad-card-section">{{ $page.Params.primary }}</span>
+  <strong class="cad-card-title">{{ $page.Title }}</strong>
+  <span class="cad-card-tagline">{{ $m.tagline }}</span>
+  <small class="cad-card-parameters">{{ $m.parameters }}</small>
+  {{ if eq $page.Params.status "pass" }}<b class="cad-card-state cad-card-ok">Verified</b>{{ else }}<b class="cad-card-state cad-card-pending">No build evidence</b>{{ end }}
+</a>
