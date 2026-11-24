@@ -1,0 +1,157 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "100",
+        "name": "width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "60",
+        "name": "depth",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "10",
+        "name": "thickness",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "40",
+        "name": "spacing",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Base",
+        "plane": "XY"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": [
+          "(width / 2) + (-(width / 2))",
+          "(depth / 2) + (-(depth / 2))"
+        ],
+        "p1": [
+          "(width / 2) + (width / 2)",
+          "(depth / 2) + (depth / 2)"
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "body_name": "AnchoredHoles",
+        "direction": "positive",
+        "distance": "thickness"
+      }
+    },
+    {
+      "bind": {
+        "$face_index_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$face_point_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "AnchoredHoles"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Hole",
+        "plane": {
+          "body": "AnchoredHoles",
+          "face": "$face_point_1",
+          "index": "$face_index_1"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          "(width / 2)",
+          "((depth - (spacing)) / 2)"
+        ],
+        "diameter": 8
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "negative",
+        "name": "Hole",
+        "operation": "cut",
+        "targets": [
+          "AnchoredHoles"
+        ],
+        "through_all": true
+      }
+    },
+    {
+      "command": "solid.pattern.rectangular",
+      "params": {
+        "alignment": "right",
+        "count1": 2,
+        "dir1": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "features": [
+          "Hole"
+        ],
+        "reversed": false,
+        "spacing1": "spacing"
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

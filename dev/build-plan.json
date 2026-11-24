@@ -1,9 +1,70 @@
 {
   "active": [
+    "anchored-holes",
+    "assembly-decorator",
+    "parametric-attach",
+    "primitive-csg",
     "simple-box"
   ],
-  "full": false,
+  "full": true,
   "models": [
+    {
+      "id": "anchored-holes",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
+      "id": "assembly-decorator",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "parametric-attach",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "primitive-csg",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
     {
       "id": "simple-box",
       "implementations": [
@@ -21,6 +82,12 @@
     }
   ],
   "schema": 2,
-  "selected": [],
-  "source_sha": "60bf5c1012e3bbbd5e312d036fb8412e066b138f"
+  "selected": [
+    "anchored-holes",
+    "assembly-decorator",
+    "parametric-attach",
+    "primitive-csg",
+    "simple-box"
+  ],
+  "source_sha": "606f07588c8a41ee4f2ae18aef55ff25d1ceb2fc"
 }

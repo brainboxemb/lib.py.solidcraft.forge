@@ -1,0 +1,68 @@
+{
+  "commands": [
+    {
+      "command": "solid.sphere",
+      "params": {
+        "body_name": "PrimitiveCsg",
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "operation": "new",
+        "radius": 20
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          18.0,
+          0.0,
+          10.0
+        ],
+        "height": 20,
+        "length": 30,
+        "operation": "join",
+        "targets": [
+          "PrimitiveCsg"
+        ],
+        "width": 30
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "axis": "X",
+        "base": [
+          -30.0,
+          0,
+          0
+        ],
+        "diameter": 8,
+        "height": 60,
+        "operation": "cut",
+        "targets": [
+          "PrimitiveCsg"
+        ]
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          0.0,
+          0.0,
+          15.0
+        ],
+        "height": 30,
+        "length": 50,
+        "operation": "intersect",
+        "targets": [
+          "PrimitiveCsg"
+        ],
+        "width": 50
+      }
+    }
+  ]
+}

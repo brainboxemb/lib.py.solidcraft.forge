@@ -1,0 +1,19 @@
+{
+  "build_status": "pass",
+  "builder": "builder-build123d",
+  "id": "parametric-attach--build123d",
+  "implementation": "build123d",
+  "owner": "parametric-attach",
+  "preview_status": "pass",
+  "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+  "schema": 2,
+  "status": "pass",
+  "verification_stages": {
+    "geometry": {
+      "adapter": "mesh-geometry",
+      "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+      "status": "pass"
+    }
+  },
+  "verification_status": "pass"
+}

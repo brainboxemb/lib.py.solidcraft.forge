@@ -1,0 +1,89 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "b9778c9253ab81ecdf10fa18f4f5e9f5bb79fd19c4f16798a1062f24a8c61f55",
+          "size": 2015
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "PrimitiveCsg",
+                "max": [
+                  25.000000000000004,
+                  20.0,
+                  20.0
+                ],
+                "min": [
+                  -19.595917942265448,
+                  -20.0,
+                  -2.4919302732406834e-15
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  25.0,
+                  20.0,
+                  20.0
+                ],
+                "min": [
+                  -19.595917942265423,
+                  -20.0,
+                  0.0
+                ]
+              },
+              "max_delta": 2.4868995751603507e-14
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 1,
+                "sphere": 1
+              },
+              "expected": {
+                "cylinder": 1,
+                "sphere": 1
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole"
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/primitive-csg/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "primitive-csg"
+}
