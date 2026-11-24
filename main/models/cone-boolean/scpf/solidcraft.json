@@ -1,0 +1,65 @@
+{
+  "commands": [
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "ConeBoolean",
+        "corner": [
+          -25.0,
+          -20.0,
+          0
+        ],
+        "height": 20,
+        "length": 50,
+        "width": 40
+      }
+    },
+    {
+      "command": "solid.fillet",
+      "params": {
+        "body": "ConeBoolean",
+        "edges": [
+          [
+            -25.0,
+            -20.0,
+            10.0
+          ],
+          [
+            25.0,
+            -20.0,
+            10.0
+          ],
+          [
+            25.0,
+            20.0,
+            10.0
+          ],
+          [
+            -25.0,
+            20.0,
+            10.0
+          ]
+        ],
+        "radius": 2
+      }
+    },
+    {
+      "command": "solid.cone",
+      "params": {
+        "axis": "Z",
+        "base": [
+          0,
+          0,
+          18
+        ],
+        "diameter": 18,
+        "height": 8,
+        "operation": "join",
+        "targets": [
+          "ConeBoolean"
+        ],
+        "top_diameter": 10
+      }
+    }
+  ]
+}

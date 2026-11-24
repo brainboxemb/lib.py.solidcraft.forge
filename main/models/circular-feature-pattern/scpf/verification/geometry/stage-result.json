@@ -1,0 +1,10 @@
+{
+  "adapter": "mesh-geometry",
+  "id": "circular-feature-pattern--scpf",
+  "implementation": "scpf",
+  "owner": "circular-feature-pattern",
+  "schema": 1,
+  "stage_id": "geometry",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5"
+}

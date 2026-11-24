@@ -1,0 +1,49 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "20",
+        "name": "diameter",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "30",
+        "name": "height",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Profile",
+        "plane": "XY"
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          0,
+          0
+        ],
+        "diameter": "diameter"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "body_name": "NegativeCircleExtrude",
+        "direction": "negative",
+        "distance": "height"
+      }
+    }
+  ]
+}

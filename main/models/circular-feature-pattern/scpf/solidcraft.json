@@ -1,0 +1,65 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "60",
+        "name": "pcd",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "6",
+        "name": "bolts",
+        "unit": ""
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "CircularFeaturePattern",
+        "corner": [
+          -50.0,
+          -50.0,
+          0
+        ],
+        "height": 6,
+        "length": 100,
+        "width": 100
+      }
+    },
+    {
+      "command": "solid.hole",
+      "params": {
+        "diameter": 8,
+        "direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "position": [
+          "pcd / 2",
+          0,
+          6
+        ],
+        "targets": [
+          "CircularFeaturePattern"
+        ]
+      }
+    },
+    {
+      "command": "solid.pattern.circular",
+      "params": {
+        "alignment": "right",
+        "axis": "Z",
+        "count": "bolts",
+        "features": [
+          "Hole1"
+        ],
+        "reversed": false
+      }
+    }
+  ]
+}

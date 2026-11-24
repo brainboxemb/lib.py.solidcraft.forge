@@ -1,0 +1,105 @@
+{
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Disc",
+        "plane": "XY"
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 100
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "body_name": "RoundTopSketch",
+        "direction": "positive",
+        "distance": 10
+      }
+    },
+    {
+      "bind": {
+        "$face_index_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$face_point_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "RoundTopSketch"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Hub",
+        "plane": {
+          "body": "RoundTopSketch",
+          "face": "$face_point_1",
+          "index": "$face_index_1"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          0.0,
+          0.0
+        ],
+        "diameter": 44
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "positive",
+        "distance": 16,
+        "name": "Hub",
+        "operation": "join",
+        "targets": [
+          "RoundTopSketch"
+        ]
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

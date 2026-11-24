@@ -1,0 +1,225 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "80",
+        "name": "base_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "60",
+        "name": "base_depth",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "5",
+        "name": "base_height",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "40",
+        "name": "pad_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "30",
+        "name": "pad_depth",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "5",
+        "name": "radius",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "8",
+        "name": "pad_height",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "10",
+        "name": "cut_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "2",
+        "name": "cut_height",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "22",
+        "name": "cut_y",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "2.5",
+        "name": "cut_z",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "100",
+        "name": "cut_length",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "RoundedRectangleSketch",
+        "corner": [
+          "-base_width / 2",
+          "-base_depth / 2",
+          0
+        ],
+        "height": "base_height",
+        "length": "base_width",
+        "width": "base_depth"
+      }
+    },
+    {
+      "bind": {
+        "$face_index_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$face_point_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "RoundedRectangleSketch"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Rounded pad",
+        "plane": {
+          "body": "RoundedRectangleSketch",
+          "face": "$face_point_1",
+          "index": "$face_index_1"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "command": "sketch.rectangle.rounded",
+      "params": {
+        "p0": [
+          "(-(pad_width / 2))",
+          "(-(pad_depth / 2))"
+        ],
+        "p1": [
+          "(pad_width / 2)",
+          "(pad_depth / 2)"
+        ],
+        "radius": "radius"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "positive",
+        "distance": "pad_height",
+        "name": "Rounded pad",
+        "operation": "join",
+        "targets": [
+          "RoundedRectangleSketch"
+        ]
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "World cut",
+        "plane": "YZ"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": [
+          "(cut_y) + (-(cut_width / 2))",
+          "(cut_z) + (-(cut_height / 2))"
+        ],
+        "p1": [
+          "(cut_y) + (cut_width / 2)",
+          "(cut_z) + (cut_height / 2)"
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "symmetric",
+        "distance": "cut_length",
+        "operation": "cut",
+        "targets": [
+          "RoundedRectangleSketch"
+        ]
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

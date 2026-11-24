@@ -1,0 +1,71 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            10.0,
+            9.996891975402832,
+            0.0
+          ],
+          "actual_min": [
+            -10.0,
+            -9.996891975402832,
+            -30.0
+          ],
+          "expected_max": [
+            10.0,
+            10.0,
+            0.0
+          ],
+          "expected_min": [
+            -10.0,
+            -10.0,
+            -30.0
+          ],
+          "max_delta_mm": 0.0031080245971679688,
+          "pass": true,
+          "tolerance_mm": 0.5
+        },
+        "surface_distance_probes": [
+          {
+            "actual_mm": 1.3159376223469696,
+            "delta_mm": 0.002229123362208485,
+            "expected_mm": 1.3137084989847612,
+            "label": "circular side outside the diagonal",
+            "pass": true,
+            "point": [
+              8.0,
+              8.0,
+              -15.0
+            ],
+            "tolerance_mm": 0.3
+          }
+        ],
+        "volume": {
+          "actual_mm3": 9420.87236331797,
+          "delta_mm3": 3.905597451408539,
+          "expected_mm3": 9424.77796076938,
+          "pass": true,
+          "tolerance_mm3": 100.0
+        },
+        "watertight": {
+          "actual": true,
+          "expected": true,
+          "pass": true
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/circle-negative-extrude/cadquery/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "circle-negative-extrude-cadquery-geometry"
+}

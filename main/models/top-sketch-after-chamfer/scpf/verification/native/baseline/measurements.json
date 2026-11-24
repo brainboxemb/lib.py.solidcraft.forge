@@ -1,0 +1,110 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 17107.344787331705,
+      "bbox": {
+        "max": [
+          50.0,
+          35.00000000000001,
+          10.0
+        ],
+        "min": [
+          -50.0,
+          -35.0,
+          -3.9619130284537425e-32
+        ]
+      },
+      "center_of_mass": [
+        -1.9039794678866727e-15,
+        -1.839140997121773e-15,
+        5.0
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 27,
+      "face_types": {
+        "cylinder": 1,
+        "plane": 10
+      },
+      "faces": 11,
+      "kernel": {
+        "edges": 27,
+        "faces": 11,
+        "shells": 1,
+        "vertices": 18
+      },
+      "mass_g": 87.18984437167292,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "TopSketchAfterChamfer",
+      "notes": [],
+      "vertices": 18,
+      "volume_mm3": 67589.02664470769
+    }
+  ],
+  "body_count": 1,
+  "params": [],
+  "sketches": [
+    {
+      "curves": 1,
+      "dof": 1,
+      "id": 3,
+      "name": "Top hole",
+      "profiles": 1,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 3.382484,
+      "name": "Box1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 26.120645,
+      "name": "Chamfer1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ChamferFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 0.089035,
+      "name": "Top hole",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 4,
+      "ms": 16.608795,
+      "name": "Top hole",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 17107.344787331705,
+    "edges": 27,
+    "faces": 11,
+    "mass_g": 87.18984437167292,
+    "open_bodies_skipped": 0,
+    "vertices": 18,
+    "volume_mm3": 67589.02664470769
+  }
+}
