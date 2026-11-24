@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/45-mandatory-merge-policy
-modules: [merge-policy]
+branch: issue/47-align-ci-build-pages
+modules: [ci, build]
 library: false
 models: []
 tasks: [test]
