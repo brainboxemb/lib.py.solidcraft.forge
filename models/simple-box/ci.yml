@@ -1,9 +1,13 @@
 schema: 1
 id: simple-box
 process: true
-primary: cadquery
+primary: scpf
 
 implementations:
+  - id: scpf
+    builder: builder-scpf
+    source: scpf/model.py
+    preview: false
   - id: cadquery
     builder: builder-cadquery
     source: cadquery/model.py
@@ -16,19 +20,23 @@ implementations:
   - id: pybosl2
     builder: builder-pybosl2
     source: pybosl2/model.py
-  - id: solidcraft
-    builder: builder-solidcraft
-    source: solidcraft/commands.json
-    preview: false
 
-verification:
-  module: verification
-  adapter: mesh-geometry
-  definition: verification/geometry.json
+verifications:
+  - id: native
+    module: verification
+    adapter: solidcraft-model
+    definition: verification/solidcraft.py
+    artifact: model.sc
+    implementations: [scpf]
+  - id: geometry
+    module: verification
+    adapter: mesh-geometry
+    definition: verification/geometry.json
+    artifact: model.stl
 
 preview:
   module: preview
   adapter: mesh
 
 dependencies: []
-needs: []
+needs: [cadlib]

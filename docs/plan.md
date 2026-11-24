@@ -2,40 +2,37 @@
 
 This file contains unfinished work only.
 
-## Accepted bootstrap
+## Stable baseline
 
-Current stable bootstrap is `main@2594ff03b5dbae0e558e8ee65ce0a558292add6f`.
+Current stable architecture is `main@cf8bd232065279fad69e711ce46787612fa62ad7`.
 
-It already contains:
+It contains:
 - the real `scpf` package under `cadlib/src/scpf`;
-- package-owner tests separated from unmigrated model fixtures;
-- generic CAD library modules/builders/verification/preview/build/Pages;
-- normal branch/merge/release/development guidance.
+- package-owner tests separated from model fixtures;
+- corrected `models/` physical owner structure;
+- five standard template implementations under one owner;
+- generic CAD modules/builders/verification/preview/build/Pages;
+- durable owner-grouped build output.
 
 The historical Forge repository remains the known-good A/B source.
 
-## Now — #11 corrected model-owner template sync
+## Now — #6 historical Forge simple-box
 
-Sync Forge NEW from `template.cad.library@1d9cddfe975d508e2aaa03cb140cbf61e2fdff82`.
+Draft PR #7 migrates the historical Parameterized Box into `models/simple-box/`.
 
-Acceptance:
-- source root is `models/`, not `examples/`;
-- one physical owner expands multiple engine implementations;
-- `build.yml` selects models;
-- durable `build/<scope>/models/<owner>/` publication works;
-- five standard qualification implementations pass under one `simple-box` owner;
-- no legacy `build/<scope>/examples/` remains;
-- Pages links generated CAD artifacts from `build` and does not duplicate them to `gh-pages`.
+Target owner:
+- primary SCPF implementation using local `cadlib/src/scpf`;
+- CadQuery, build123d, PythonSCAD and pyBOSL2 historical references;
+- historical geometry contract and model documentation;
+- package-owned direct native Box lowering assertion;
+- no engine-specific sibling owners.
 
-## Then — #6 historical Forge simple-box
+The current candidate already proves:
+- OLD and NEW SCPF command JSON are semantically identical;
+- SCPF and all four reference implementations pass the historical geometry contract;
+- the candidate uses exactly the existing `solidcraft` and `reference` runtime roles.
 
-Rework draft PR #7 onto the accepted owner contract.
-
-The historical Parameterized Box becomes one physical owner. Its SCPF/SolidCraft path and historical reference-engine implementations live inside that owner. Recover:
-- example/model-owned command-lowering contract;
-- saved-design parameter/timeline verification equivalent to historical `verification/verify.py`;
-- explicit OLD vs NEW command/geometry evidence;
-- durable build and Hugo evidence.
+Generic staged verification from `template.cad.library#25` is now consumed by this branch. The remaining qualification is to prove the historical native baseline and `length=50` saved-design mutation against the retained OLD machine evidence, then merge to `dev` so durable build and Pages projection can be checked.
 
 Do not expand to five historical models until #6 is accepted.
 

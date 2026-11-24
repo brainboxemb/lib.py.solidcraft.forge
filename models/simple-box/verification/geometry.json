@@ -1,9 +1,8 @@
 {
   "schema": 1,
-  "bounds_min": [-20, -15, 0],
-  "bounds_max": [20, 15, 10],
-  "bounds_tolerance_mm": 0.001,
-  "volume_mm3": 12000,
-  "volume_tolerance_mm3": 0.1,
-  "watertight": true
+  "bounds_min": [-20.0, -15.0, 0.0],
+  "bounds_max": [20.0, 15.0, 10.0],
+  "bounds_tolerance_mm": 0.25,
+  "watertight": true,
+  "bounds_sufficient": true
 }

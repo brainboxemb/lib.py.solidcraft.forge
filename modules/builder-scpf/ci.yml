@@ -1,0 +1,7 @@
+schema: 1
+id: builder-scpf
+kind: python
+builder:
+  runtime: solidcraft
+  entrypoint: cad_library_builder_scpf:build
+  needs: [builder-solidcraft]

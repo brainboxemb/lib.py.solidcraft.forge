@@ -1,4 +1,13 @@
-"""40 x 30 x 10 mm box centered in XY and based at Z=0."""
-from build123d import Align, Box
+"""build123d reference for the original bottom-based SimpleBox intent."""
+from build123d import Align, Box, BuildPart
 
-model = Box(40, 30, 10, align=(Align.CENTER, Align.CENTER, Align.MIN))
+
+length, width, height = 40.0, 30.0, 10.0
+
+with BuildPart() as model:
+    Box(
+        length,
+        width,
+        height,
+        align=(Align.CENTER, Align.CENTER, Align.MIN),
+    )

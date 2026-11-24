@@ -6,23 +6,25 @@ Read `AGENTS.md`, `docs/requirements.md`, `docs/design.md` and `docs/plan.md` fi
 
 ## Stable baseline
 
-`main@2594ff03b5dbae0e558e8ee65ce0a558292add6f` is the accepted pre-model-owner bootstrap.
+`main@cf8bd232065279fad69e711ce46787612fa62ad7` is the accepted corrected physical model-owner baseline.
 
-The public package is already migrated as `cadlib/src/scpf`. Historical Forge remains unchanged as the A/B reference.
+The public package is migrated as `cadlib/src/scpf`. The historical Forge repository remains unchanged as the A/B reference.
 
 ## Active work
 
-Issue #11 / branch `issue/11-model-owner-sync` aligns NEW with the corrected stable library template `template.cad.library@1d9cddfe975d508e2aaa03cb140cbf61e2fdff82`.
+Issue #6 / draft PR #7 owns the first real historical model migration.
 
-Required result:
-- `models/` physical owner root;
-- one simple-box owner with five standard engine implementations;
-- owner-level selection/publication;
-- durable model output only on `build`;
-- Pages links build artifacts instead of duplicating them.
+`models/simple-box` is the single physical Parameterized Box owner:
+- SCPF is the primary implementation;
+- historical CadQuery/build123d/PythonSCAD/pyBOSL2 sources are reference implementations;
+- `builder-scpf` compiles local SCPF and delegates native execution to generic `builder-solidcraft`;
+- geometry verification runs for all five implementations in `reference`;
+- native saved-design/timeline verification runs only for SCPF in `solidcraft`.
 
-Only after #11 is promoted should issue #6 / draft PR #7 be reshaped from the old example-owner layout into `models/simple-box/`.
+The branch consumes the generic staged-verification contract from `template.cad.library#25`; do not replace it with Forge-local scheduler logic.
+
+OLD machine evidence is retained on `brainboxemb/lib.py.solidcraft.forge:build` under `dev-cad/examples/simple-box/`. Compare NEW native baseline and `length_50` evidence directly against those files.
 
 ## Handoff message
 
-> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from `docs/plan.md`. Finish issue #11 first: sync the corrected physical model-owner contract from `template.cad.library@1d9cddfe975d508e2aaa03cb140cbf61e2fdff82`. Preserve `cadlib/src/scpf` and Forge-specific docs. Qualify one owner with five implementations and durable `build/<scope>/models` output. Then rework issue #6 / draft PR #7 for the historical Forge simple-box and continue 1 -> 5 -> 10.
+> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from `docs/plan.md`. Finish issue #6 only. Qualify the staged native + geometry run for the one `models/simple-box` owner. Compare NEW baseline parameters/timeline/bounds and the saved `length=50` mutation directly with OLD `build/dev-cad/examples/simple-box` machine evidence. Then merge #7 to dev, verify durable `build/dev/models/simple-box` and Hugo projection, and only then start the five-model migration.

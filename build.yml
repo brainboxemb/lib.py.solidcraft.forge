@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/11-model-owner-sync
-modules: [ci, build, pages]
-library: false
+branch: issue/6-simple-box
+modules: [ci, builder-scpf, builder-solidcraft, verification, preview]
+library: true
 models: [simple-box]
 tasks: [test]
