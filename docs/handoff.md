@@ -6,37 +6,23 @@ Read `AGENTS.md`, `docs/requirements.md`, `docs/design.md` and `docs/plan.md` fi
 
 ## Stable baseline
 
-`main`: `a556e0c20420ac59e0efecd3e9455eb6bd43ffbb`
+`main@2594ff03b5dbae0e558e8ee65ce0a558292add6f` is the accepted pre-model-owner bootstrap.
 
-Bootstrap is accepted:
-- full main CI `45422240513`: success;
-- Pages `45422613383`: success;
-- real SCPF 0.15.0 source lives under `cadlib/src/scpf`;
-- generic template modules/builders/verification/preview/build/Pages are installed;
-- historical Forge remains unchanged as A/B reference.
-
-Normal merge policy is now active from the default branch. Use a short-lived branch from `dev`, then `/merge` to squash into `dev`; promote `dev -> main` with a merge commit after full qualification.
+The public package is already migrated as `cadlib/src/scpf`. Historical Forge remains unchanged as the A/B reference.
 
 ## Active work
 
-Issue #6 / draft PR #7 is the first real example migration: historical Forge `simple-box`.
+Issue #11 / branch `issue/11-model-owner-sync` aligns NEW with the corrected stable library template `template.cad.library@1d9cddfe975d508e2aaa03cb140cbf61e2fdff82`.
 
-The intended product path is:
+Required result:
+- `models/` physical owner root;
+- one simple-box owner with five standard engine implementations;
+- owner-level selection/publication;
+- durable model output only on `build`;
+- Pages links build artifacts instead of duplicating them.
 
-```text
-examples/simple-box/scpf/model.py
-        ↓ local scpf compiler
-SolidCraft command JSON
-        ↓ generic builder-solidcraft
-model.sc + model.stl + model.png
-        ↓ reference runtime
-geometry verification
-```
-
-Do not teach the generic SolidCraft builder Forge/SCPF semantics.
-
-Before #6 can merge, recover the example-owned native command contract and old saved-design parameter/timeline verification, and record an explicit OLD vs NEW comparison. Do not start the five-example expansion first.
+Only after #11 is promoted should issue #6 / draft PR #7 be reshaped from the old example-owner layout into `models/simple-box/`.
 
 ## Handoff message
 
-> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from `docs/plan.md`. Bootstrap is stable on main at `a556e0c20420ac59e0efecd3e9455eb6bd43ffbb`. The active slice is issue #6 / draft PR #7: migrate the historical Forge simple-box end-to-end. Keep `scpf` as the public package and keep the old Forge repo read-only as the A/B baseline. Finish command-contract, saved-design/timeline verification, OLD-vs-NEW evidence, durable build and Hugo projection before expanding 1 -> 5 -> 10.
+> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from `docs/plan.md`. Finish issue #11 first: sync the corrected physical model-owner contract from `template.cad.library@1d9cddfe975d508e2aaa03cb140cbf61e2fdff82`. Preserve `cadlib/src/scpf` and Forge-specific docs. Qualify one owner with five implementations and durable `build/<scope>/models` output. Then rework issue #6 / draft PR #7 for the historical Forge simple-box and continue 1 -> 5 -> 10.

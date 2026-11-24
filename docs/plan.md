@@ -1,51 +1,49 @@
 # Forge NEW plan
 
-This file is the source of truth for unfinished work in `lib.py.solidcraft.forge.NEW`.
+This file contains unfinished work only.
 
-## Accepted baseline
+## Accepted bootstrap
 
-Bootstrap is accepted on stable `main` at:
+Current stable bootstrap is `main@2594ff03b5dbae0e558e8ee65ce0a558292add6f`.
 
-`a556e0c20420ac59e0efecd3e9455eb6bd43ffbb`
+It already contains:
+- the real `scpf` package under `cadlib/src/scpf`;
+- package-owner tests separated from unmigrated model fixtures;
+- generic CAD library modules/builders/verification/preview/build/Pages;
+- normal branch/merge/release/development guidance.
 
-Qualification:
-- full main CI run `45422240513`: success;
-- Pages run `45422613383`: success;
-- SCPF package-owner suite: 145 tests in the promotion baseline;
-- five standard template CAD qualification examples: pass;
-- runtimes: `docker.cad.solidcraft v0.3.5` / SolidCraft 0.48.1.
+The historical Forge repository remains the known-good A/B source.
 
-The public package/import name is `scpf`. The historical Forge repository remains the known-good A/B source.
+## Now — #11 corrected model-owner template sync
 
-## Now — #6 historical simple-box
+Sync Forge NEW from `template.cad.library@1d9cddfe975d508e2aaa03cb140cbf61e2fdff82`.
 
-Migrate one real Forge example end-to-end before expanding the graph.
+Acceptance:
+- source root is `models/`, not `examples/`;
+- one physical owner expands multiple engine implementations;
+- `build.yml` selects models;
+- durable `build/<scope>/models/<owner>/` publication works;
+- five standard qualification implementations pass under one `simple-box` owner;
+- no legacy `build/<scope>/examples/` remains;
+- Pages links generated CAD artifacts from `build` and does not duplicate them to `gh-pages`.
 
-Current draft PR #7 adds:
-- Forge-specific `builder-scpf`;
-- historical Parameterized Box SCPF source and metadata;
-- exact historical four reference-engine sources;
-- SCPF -> generic SolidCraft builder composition;
-- reference-runtime STL verification.
+## Then — #6 historical Forge simple-box
 
-Still required before accepting #6:
-- example-owned command-lowering test;
-- saved-design parameter/timeline verification equivalent to old `verification/verify.py`;
-- explicit OLD vs NEW command/geometry comparison;
-- durable build and Hugo evidence from the completed candidate.
+Rework draft PR #7 onto the accepted owner contract.
 
-Do not expand to five examples before #6 is accepted.
+The historical Parameterized Box becomes one physical owner. Its SCPF/SolidCraft path and historical reference-engine implementations live inside that owner. Recover:
+- example/model-owned command-lowering contract;
+- saved-design parameter/timeline verification equivalent to historical `verification/verify.py`;
+- explicit OLD vs NEW command/geometry evidence;
+- durable build and Hugo evidence.
 
-## Then
+Do not expand to five historical models until #6 is accepted.
 
-1. migrate five representative Forge examples;
-2. migrate ten examples;
+## After #6
+
+1. migrate five representative physical models;
+2. migrate ten;
 3. classify and migrate the remaining graph;
-4. migrate API/guides/reference documentation to Hugo/Hextra;
-5. qualify release/version mechanics in NEW;
-6. retire duplicated historical CI/site/scripts only after equivalent behavior is stable;
-7. only then consider retirement of old repository/external verification ownership.
-
-## Deferred historical tests
-
-See `docs/migration-tests.md`. Deferred tests are ownership work, not discarded coverage.
+4. migrate API/guides/reference documentation;
+5. qualify NEW release/version mechanics;
+6. retire duplicated historical orchestration only after parity.

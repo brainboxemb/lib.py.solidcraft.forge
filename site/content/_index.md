@@ -2,7 +2,7 @@
 title: SolidCraft Forge
 ---
 
-SCPF documentation, examples and qualified CAD build evidence.
+SCPF documentation, models and qualified multi-engine CAD build evidence.
 
 - [Documentation](docs/)
-- [Examples](examples/)
+- [Models](models/)

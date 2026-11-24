@@ -1,6 +1,7 @@
-"""Translate changed paths into execution selection."""
+"""Translate changed paths into module/library execution selection."""
 from fnmatch import fnmatchcase
 from .config import BuildSelection, full_selection
+
 
 def changed_selection(*, branch, paths, modules):
     if "ci.yml" in paths:
@@ -11,4 +12,9 @@ def changed_selection(*, branch, paths, modules):
             if module.impact == "full":
                 return full_selection(branch)
             selected.append(module.id)
-    return BuildSelection(branch, tuple(sorted(selected)), library=any(path.startswith("cadlib/") for path in paths))
+    return BuildSelection(
+        branch,
+        tuple(sorted(selected)),
+        (),
+        library=any(path.startswith("cadlib/") for path in paths),
+    )
