@@ -7,13 +7,13 @@
     {
       "id": "simple-box",
       "implementations": [
+        "scpf",
         "cadquery",
         "build123d",
         "pythonscad",
-        "pybosl2",
-        "solidcraft"
+        "pybosl2"
       ],
-      "primary": "cadquery",
+      "primary": "scpf",
       "purpose": [
         "example",
         "verification"
@@ -24,5 +24,5 @@
   "selected": [
     "simple-box"
   ],
-  "source_sha": "cf8bd232065279fad69e711ce46787612fa62ad7"
+  "source_sha": "8c42dfbd54fae7b950b464c8a723bc848068ee0e"
 }

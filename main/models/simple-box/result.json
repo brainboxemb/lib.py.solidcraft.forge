@@ -6,6 +6,13 @@
       "builder": "builder-build123d",
       "preview_status": "pass",
       "status": "pass",
+      "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+          "status": "pass"
+        }
+      },
       "verification_status": "pass"
     },
     "cadquery": {
@@ -13,6 +20,13 @@
       "builder": "builder-cadquery",
       "preview_status": "pass",
       "status": "pass",
+      "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+          "status": "pass"
+        }
+      },
       "verification_status": "pass"
     },
     "pybosl2": {
@@ -20,6 +34,13 @@
       "builder": "builder-pybosl2",
       "preview_status": "pass",
       "status": "pass",
+      "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+          "status": "pass"
+        }
+      },
       "verification_status": "pass"
     },
     "pythonscad": {
@@ -27,17 +48,36 @@
       "builder": "builder-pythonscad",
       "preview_status": "pass",
       "status": "pass",
+      "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+          "status": "pass"
+        }
+      },
       "verification_status": "pass"
     },
-    "solidcraft": {
+    "scpf": {
       "build_status": "pass",
-      "builder": "builder-solidcraft",
+      "builder": "builder-scpf",
       "preview_status": null,
       "status": "pass",
+      "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+          "status": "pass"
+        },
+        "native": {
+          "adapter": "solidcraft-model",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.5",
+          "status": "pass"
+        }
+      },
       "verification_status": "pass"
     }
   },
-  "primary": "cadquery",
-  "schema": 1,
+  "primary": "scpf",
+  "schema": 2,
   "status": "pass"
 }
