@@ -14,14 +14,24 @@ from cad_library_ci.models import discover_models, select_models
 EXPECTED_IDS = [
     "anchored-holes",
     "assembly-decorator",
+    "attached-through-all",
+    "bracket",
+    "circle-negative-extrude",
+    "circular-feature-pattern",
+    "cone-boolean",
     "corner-anchor",
+    "hole-family",
+    "native-revolve",
     "parametric-attach",
     "primitive-csg",
     "rectangular-pattern",
     "rotated-sketch-cutter",
+    "round-top-sketch",
+    "rounded-rectangle-sketch",
     "sheet-fold",
     "simple-box",
     "slot-family",
+    "top-sketch-after-chamfer",
 ]
 
 
@@ -36,7 +46,7 @@ class ModelTests(unittest.TestCase):
             self.modules,
         )
 
-    def test_ten_historical_owners_preserve_real_implementation_sets(self):
+    def test_twenty_historical_owners_preserve_real_implementation_sets(self):
         self.assertEqual(
             [model.id for model in self.models],
             EXPECTED_IDS,
@@ -62,7 +72,8 @@ class ModelTests(unittest.TestCase):
                 ("verification",),
             )
 
-        for model_id in set(EXPECTED_IDS) - {"rotated-sketch-cutter"}:
+        scpf_only = ["attached-through-all","cone-boolean","native-revolve","rotated-sketch-cutter"]
+        for model_id in set(EXPECTED_IDS) - set(scpf_only):
             model = by_id[model_id]
             self.assertEqual(
                 [impl.id for impl in model.implementations],
@@ -81,19 +92,20 @@ class ModelTests(unittest.TestCase):
                 ("scpf",),
             )
 
-        rotated = by_id["rotated-sketch-cutter"]
-        self.assertEqual(
-            [impl.id for impl in rotated.implementations],
-            ["scpf"],
-        )
-        self.assertEqual(
-            [stage.id for stage in rotated.verifications],
-            ["native"],
-        )
-        self.assertEqual(
-            [stage.runtime for stage in rotated.verifications],
-            ["solidcraft"],
-        )
+        for model_id in scpf_only:
+            model = by_id[model_id]
+            self.assertEqual(
+                [impl.id for impl in model.implementations],
+                ["scpf"],
+            )
+            self.assertEqual(
+                [stage.id for stage in model.verifications],
+                ["native"],
+            )
+            self.assertEqual(
+                [stage.runtime for stage in model.verifications],
+                ["solidcraft"],
+            )
 
         for model in self.models:
             self.assertEqual(model.primary, "scpf")
@@ -165,23 +177,23 @@ class ModelTests(unittest.TestCase):
         solidcraft = manifests[0]
         self.assertEqual(
             [row["implementation"] for row in solidcraft["build_items"]],
-            ["scpf"] * 10,
+            ["scpf"] * 20,
         )
         self.assertEqual(
             [
                 (row["implementation"], row["stage_id"])
                 for row in solidcraft["verify_items"]
             ],
-            [("scpf", "native")] * 10,
+            [("scpf", "native")] * 20,
         )
 
         reference = manifests[1]
-        self.assertEqual(len(reference["build_items"]), 36)
-        self.assertEqual(len(reference["verify_items"]), 45)
-        self.assertEqual(len(reference["preview_items"]), 36)
+        self.assertEqual(len(reference["build_items"]), 64)
+        self.assertEqual(len(reference["verify_items"]), 80)
+        self.assertEqual(len(reference["preview_items"]), 64)
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
-            set(EXPECTED_IDS) - {"rotated-sketch-cutter"},
+            set(EXPECTED_IDS) - set(scpf_only),
         )
         self.assertEqual(
             {
