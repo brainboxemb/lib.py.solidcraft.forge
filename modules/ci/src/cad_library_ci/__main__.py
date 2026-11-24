@@ -64,6 +64,27 @@ def selection(repo, project, branch, modules):
     return plan, None, _is_full(plan)
 
 
+
+def qualification_plan(*, models, selected, source_sha, full, library):
+    return {
+        "schema": 2,
+        "source_sha": source_sha,
+        "library": bool(library),
+        "active": [model.id for model in models],
+        "selected": [model.id for model in selected],
+        "full": bool(full),
+        "models": [
+            {
+                "id": model.id,
+                "primary": model.primary,
+                "implementations": [item.id for item in model.implementations],
+                "purpose": list(model.purposes),
+            }
+            for model in models
+        ],
+    }
+
+
 def main():
     repo = Path.cwd()
     project = load_project(repo)
@@ -106,22 +127,13 @@ def main():
     source_sha = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], text=True
     ).strip()
-    build_plan = {
-        "schema": 2,
-        "source_sha": source_sha,
-        "active": [model.id for model in models],
-        "selected": [model.id for model in selected],
-        "full": full,
-        "models": [
-            {
-                "id": model.id,
-                "primary": model.primary,
-                "implementations": [item.id for item in model.implementations],
-                "purpose": list(model.purposes),
-            }
-            for model in models
-        ],
-    }
+    build_plan = qualification_plan(
+        models=models,
+        selected=selected,
+        source_sha=source_sha,
+        full=full,
+        library=plan.library,
+    )
     (output / "build-plan.json").write_text(
         json.dumps(build_plan, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
