@@ -1,0 +1,89 @@
+[
+  {
+    "attachment": "exact_face",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Slot family",
+    "projected": null,
+    "sketch": 2,
+    "sketching_view": 1
+  },
+  {
+    "centre_line": "l3",
+    "constraints": [
+      "k1",
+      "k2",
+      "k3",
+      "k4",
+      "k5",
+      "k6",
+      "k7"
+    ],
+    "created": {
+      "constraints": [
+        "k1",
+        "k2",
+        "k3",
+        "k4",
+        "k5",
+        "k6"
+      ],
+      "curves": [
+        "l1",
+        "a1",
+        "l2",
+        "a2",
+        "l3"
+      ],
+      "dimensions": [
+        "k7",
+        "k8"
+      ],
+      "points": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "a1.center",
+        "a2.center",
+        "p5"
+      ]
+    },
+    "curves": [
+      "l1",
+      "a1",
+      "l2",
+      "a2"
+    ],
+    "dimensions": {
+      "length": {
+        "created": {
+          "constraints": [],
+          "curves": [],
+          "dimensions": [
+            "k8"
+          ],
+          "points": []
+        },
+        "expression": "abs(((c2c_end_x)) - ((c2c_start_x)))",
+        "measured": 20.0,
+        "param": "d5",
+        "sketch": {
+          "dof": 3,
+          "solved": true
+        },
+        "type": "LinearDimension",
+        "unit": "mm"
+      }
+    },
+    "middle": "p5",
+    "sketch": {
+      "dof": 3,
+      "solved": true
+    }
+  }
+]

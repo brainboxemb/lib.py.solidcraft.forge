@@ -2,11 +2,16 @@
   "active": [
     "anchored-holes",
     "assembly-decorator",
+    "corner-anchor",
     "parametric-attach",
     "primitive-csg",
-    "simple-box"
+    "rectangular-pattern",
+    "rotated-sketch-cutter",
+    "sheet-fold",
+    "simple-box",
+    "slot-family"
   ],
-  "full": false,
+  "full": true,
   "models": [
     {
       "id": "anchored-holes",
@@ -34,6 +39,21 @@
       ],
       "primary": "scpf",
       "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "corner-anchor",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
         "verification"
       ]
     },
@@ -66,6 +86,44 @@
       ]
     },
     {
+      "id": "rectangular-pattern",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "rotated-sketch-cutter",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "sheet-fold",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
       "id": "simple-box",
       "implementations": [
         "scpf",
@@ -79,9 +137,34 @@
         "example",
         "verification"
       ]
+    },
+    {
+      "id": "slot-family",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
     }
   ],
   "schema": 2,
-  "selected": [],
-  "source_sha": "033ccf5e157d37e371884ec80246097ba82202e2"
+  "selected": [
+    "anchored-holes",
+    "assembly-decorator",
+    "corner-anchor",
+    "parametric-attach",
+    "primitive-csg",
+    "rectangular-pattern",
+    "rotated-sketch-cutter",
+    "sheet-fold",
+    "simple-box",
+    "slot-family"
+  ],
+  "source_sha": "8f28cbb46acd894554a2152611aec5d161a9ab38"
 }

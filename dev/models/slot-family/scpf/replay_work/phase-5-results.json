@@ -1,0 +1,188 @@
+[
+  {
+    "name": "Slot family",
+    "sketch": 2,
+    "sketching_view": 1
+  },
+  {
+    "constraint": "k31",
+    "created": {
+      "constraints": [
+        "k31"
+      ],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "sketch": {
+      "dof": 2,
+      "solved": true
+    }
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k32"
+      ],
+      "points": []
+    },
+    "expression": "abs((center_point_x))",
+    "measured": 55.0,
+    "param": "d14",
+    "sketch": {
+      "dof": 1,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k33"
+      ],
+      "points": []
+    },
+    "expression": "abs((straight_y))",
+    "measured": 35.0,
+    "param": "d15",
+    "sketch": {
+      "dof": 0,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "centre_arc": "a11",
+    "constraints": [
+      "k34",
+      "k35",
+      "k36",
+      "k37",
+      "k38",
+      "k39",
+      "k40"
+    ],
+    "created": {
+      "constraints": [
+        "k34",
+        "k35",
+        "k36",
+        "k37",
+        "k38",
+        "k39"
+      ],
+      "curves": [
+        "a7",
+        "a8",
+        "a9",
+        "a10",
+        "a11",
+        "l10",
+        "l11"
+      ],
+      "dimensions": [
+        "k40"
+      ],
+      "points": [
+        "p16",
+        "p17",
+        "p18",
+        "p19",
+        "p20",
+        "p21",
+        "p22",
+        "p23"
+      ]
+    },
+    "curves": [
+      "a7",
+      "a9",
+      "a8",
+      "a10"
+    ],
+    "middle": "p19",
+    "sketch": {
+      "dof": 5,
+      "solved": true
+    }
+  },
+  {
+    "centre_arc": "a16",
+    "constraints": [
+      "k41",
+      "k42",
+      "k43",
+      "k44",
+      "k45",
+      "k46",
+      "k47"
+    ],
+    "created": {
+      "constraints": [
+        "k41",
+        "k42",
+        "k43",
+        "k44",
+        "k45",
+        "k46"
+      ],
+      "curves": [
+        "a12",
+        "a13",
+        "a14",
+        "a15",
+        "a16",
+        "l12",
+        "l13"
+      ],
+      "dimensions": [
+        "k47"
+      ],
+      "points": [
+        "p24",
+        "p25",
+        "p26",
+        "p27",
+        "p28",
+        "p29",
+        "p30",
+        "p31"
+      ]
+    },
+    "curves": [
+      "a12",
+      "a14",
+      "a13",
+      "a15"
+    ],
+    "middle": "p27",
+    "sketch": {
+      "dof": 10,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 5,
+    "sketch": 2
+  },
+  {
+    "bodies": [
+      "SlotFamily"
+    ],
+    "changed_bodies": [
+      "SlotFamily"
+    ],
+    "created_bodies": [],
+    "feature": 3,
+    "ms": 80.294545,
+    "name": "Slot family",
+    "removed_bodies": [],
+    "warning": null
+  }
+]
