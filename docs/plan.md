@@ -4,7 +4,7 @@ This file contains unfinished work only.
 
 ## Accepted baseline
 
-The Forge migration is complete on `dev`.
+The Forge migration is complete and promoted to stable `main`.
 
 The accepted baseline now has:
 - 46 physical model owners;
@@ -40,8 +40,11 @@ The accepted baseline now has:
 The historical `brainboxemb/lib.py.solidcraft.forge` repository is now an
 archival/A-B reference rather than an unfinished migration gate.
 
+## Now
+
+- #52: qualify NEW release/version mechanics on the generic library release contract. No tag or GitHub Release is created by this qualification.
+
 ## Later
 
-1. qualify NEW release/version mechanics;
-2. retire duplicated historical orchestration only after all real consumers
-   and public documentation have equivalent coverage.
+1. publish the first actual Forge NEW release only after an explicit version bump above `0.15.0` and a dated changelog section;
+2. retire duplicated historical orchestration only after all real consumers and public documentation have equivalent coverage.
