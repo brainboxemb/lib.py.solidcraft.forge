@@ -2,54 +2,50 @@
 
 This file is the source of truth for unfinished work in `lib.py.solidcraft.forge.NEW`.
 
-## Baseline
+## Accepted baseline
 
-- template architecture: `template.cad.library@f73c3e76066b16751d4bd1eb7f1c221e0f3fc3fe`;
-- old Forge is the known-good A/B source;
-- SCPF source baseline: released 0.15.0 package;
+Bootstrap is accepted on stable `main` at:
+
+`a556e0c20420ac59e0efecd3e9455eb6bd43ffbb`
+
+Qualification:
+- full main CI run `45422240513`: success;
+- Pages run `45422613383`: success;
+- SCPF package-owner suite: 145 tests in the promotion baseline;
+- five standard template CAD qualification examples: pass;
 - runtimes: `docker.cad.solidcraft v0.3.5` / SolidCraft 0.48.1.
 
-## Now — bootstrap
+The public package/import name is `scpf`. The historical Forge repository remains the known-good A/B source.
 
-Issue #1.
+## Now — #6 historical simple-box
 
-- install the complete technical template baseline;
-- migrate the real `scpf` source to `cadlib/src/scpf`;
-- migrate package-focused unit tests;
-- establish AGENTS, requirements, design, manual, plan and handoff;
-- qualify the repository on a temporary branch;
-- merge bootstrap to `dev`, then promote a full-green `dev` to `main`.
+Migrate one real Forge example end-to-end before expanding the graph.
 
-The historical Forge repository remains unchanged.
+Current draft PR #7 adds:
+- Forge-specific `builder-scpf`;
+- historical Parameterized Box SCPF source and metadata;
+- exact historical four reference-engine sources;
+- SCPF -> generic SolidCraft builder composition;
+- reference-runtime STL verification.
 
-## Next — first real example
+Still required before accepting #6:
+- example-owned command-lowering test;
+- saved-design parameter/timeline verification equivalent to old `verification/verify.py`;
+- explicit OLD vs NEW command/geometry comparison;
+- durable build and Hugo evidence from the completed candidate.
 
-Create a separate issue after bootstrap. Select one small genuine Forge example from the old repository and migrate it end-to-end. Keep the old build authoritative and compare:
-- SCPF source semantics;
-- generated SolidCraft command JSON;
-- native SolidCraft output;
-- STL geometry;
-- verification result/evidence;
-- preview;
-- Hugo example page.
-
-Do not migrate five examples until the one-example slice is accepted.
+Do not expand to five examples before #6 is accepted.
 
 ## Then
 
-1. migrate five representative examples;
+1. migrate five representative Forge examples;
 2. migrate ten examples;
 3. classify and migrate the remaining graph;
-4. migrate API/guide/reference content into Hugo/Hextra;
-5. add release/version behavior after package and CAD parity;
-6. retire duplicated old Forge CI/site/scripts only after equivalent NEW behavior is stable;
-7. only then plan retirement of the old repository/external verification ownership.
+4. migrate API/guides/reference documentation to Hugo/Hextra;
+5. qualify release/version mechanics in NEW;
+6. retire duplicated historical CI/site/scripts only after equivalent behavior is stable;
+7. only then consider retirement of old repository/external verification ownership.
 
-## Explicit non-goals for bootstrap
+## Deferred historical tests
 
-- no new Forge API;
-- no runtime upgrade;
-- no release;
-- no mass example migration;
-- no edits to old Forge;
-- no attempt to preserve historical CI directory layout.
+See `docs/migration-tests.md`. Deferred tests are ownership work, not discarded coverage.
