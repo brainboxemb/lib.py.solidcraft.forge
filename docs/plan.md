@@ -27,12 +27,12 @@ Target owner:
 - package-owned direct native Box lowering assertion;
 - no engine-specific sibling owners.
 
-The current candidate already proves:
+The current candidate and permanent dev integration already prove:
 - OLD and NEW SCPF command JSON are semantically identical;
 - SCPF and all four reference implementations pass the historical geometry contract;
 - the candidate uses exactly the existing `solidcraft` and `reference` runtime roles.
 
-Generic staged verification from `template.cad.library#25` is now consumed by this branch. The remaining qualification is to prove the historical native baseline and `length=50` saved-design mutation against the retained OLD machine evidence, then merge to `dev` so durable build and Pages projection can be checked.
+Generic staged verification from `template.cad.library#25` is now consumed and the historical native baseline plus `length=50` saved-design mutation match the retained OLD machine evidence. PR #7 is merged to `dev`; durable `build/dev/models/simple-box` is published and Pages deployment succeeded. The final #6 acceptance item is #14: expose the retained `native` and `geometry` stages explicitly on the model page, then close #6.
 
 Do not expand to five historical models until #6 is accepted.
 
