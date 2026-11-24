@@ -1,0 +1,10 @@
+baseURL = "https://brainboxemb.github.io/template.cad.library/"
+defaultContentLanguage = "en"
+title = "CAD library"
+enableRobotsTXT = false
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[markup.highlight]
+  noClasses = false
