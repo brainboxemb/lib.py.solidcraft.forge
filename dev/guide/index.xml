@@ -31,18 +31,10 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;@component&lt;/code&gt; marks one reusable physical part. Its
-&lt;code&gt;build()&lt;/code&gt; returns the complete geometry/feature tree for that part;
-that tree may be made from many primitives and features. &lt;code&gt;@assembly&lt;/code&gt;
-marks a class whose &lt;code&gt;build()&lt;/code&gt; composes separate component occurrences. Both decorators
-return callable model objects, so normal model code stays readable as
-&lt;code&gt;Beam()&lt;/code&gt; and &lt;code&gt;BeamPair()&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;SolidCraft receives one reusable definition and multiple occurrences.
-A group is a native parent component in the browser, not a Boolean
-fusion of its children.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;@component&lt;/code&gt; marks one reusable physical part. Its &lt;code&gt;build()&lt;/code&gt; returns the complete geometry/feature tree for that part; that tree may be made from many primitives and features. &lt;code&gt;@assembly&lt;/code&gt; marks a class whose &lt;code&gt;build()&lt;/code&gt; composes separate component occurrences. Both decorators return callable model objects, so normal model code stays readable as &lt;code&gt;Beam()&lt;/code&gt; and &lt;code&gt;BeamPair()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;SolidCraft receives one reusable definition and multiple occurrences. A group is a native parent component in the browser, not a Boolean fusion of its children.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="component-parameter-visibility"&gt;Component parameter visibility&lt;span class="hx:absolute hx:-mt-20" id="component-parameter-visibility"&gt;&lt;/span&gt;
-&lt;a href="#component-parameter-visibility" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Reusable component defaults are fixed by default. Publish selected child
-parameters explicitly with &lt;code&gt;include=&lt;/code&gt;:&lt;/p&gt;
+&lt;a href="#component-parameter-visibility" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Reusable component defaults are fixed by default. Publish selected child parameters explicitly with &lt;code&gt;include=&lt;/code&gt;:&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@component&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;include&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;inside_corner_radius&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,))&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;CornerBracket&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
@@ -62,17 +54,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;When a parent &lt;code&gt;Parameter&lt;/code&gt; or expression is passed into a child
-input, that existing dependency stays symbolic. For example,
-&lt;code&gt;CornerBracket(inside_corner_radius=self.corner_radius)&lt;/code&gt; reuses the
-parent design&amp;rsquo;s &lt;code&gt;corner_radius&lt;/code&gt;; it does not create a separate
-&lt;code&gt;CornerBracket_inside_corner_radius&lt;/code&gt; parameter.&lt;/p&gt;
+&lt;p&gt;When a parent &lt;code&gt;Parameter&lt;/code&gt; or expression is passed into a child input, that existing dependency stays symbolic. For example, &lt;code&gt;CornerBracket(inside_corner_radius=self.corner_radius)&lt;/code&gt; reuses the parent design&amp;rsquo;s &lt;code&gt;corner_radius&lt;/code&gt;; it does not create a separate &lt;code&gt;CornerBracket_inside_corner_radius&lt;/code&gt; parameter.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="occurrence-placement"&gt;Occurrence placement&lt;span class="hx:absolute hx:-mt-20" id="occurrence-placement"&gt;&lt;/span&gt;
-&lt;a href="#occurrence-placement" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;copy()&lt;/code&gt; retains the source Placement when no override is
-supplied. &lt;code&gt;copy(placement=Placement(...))&lt;/code&gt; creates the new occurrence
-with the supplied absolute pose in the parent coordinate frame. The compiler
-uses creation-time copy translation where SolidCraft can represent it and a
-native fallback only where required.&lt;/p&gt;
+&lt;a href="#occurrence-placement" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;copy()&lt;/code&gt; retains the source Placement when no override is supplied. &lt;code&gt;copy(placement=Placement(...))&lt;/code&gt; creates the new occurrence with the supplied absolute pose in the parent coordinate frame. The compiler uses creation-time copy translation where SolidCraft can represent it and a native fallback only where required.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;center&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;BeamComponent&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;array&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;center&lt;/span&gt;
@@ -111,17 +95,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;attach()&lt;/code&gt; is the public Forge relationship between reusable
-components. &lt;a href="../../reference/Anchor/"&gt;&lt;code&gt;Anchor&lt;/code&gt;&lt;/a&gt; selects the attachment reference: a supported
-face, or one of the eight rectangular corners such as
-&lt;code&gt;FRONT_TOP_RIGHT&lt;/code&gt;. Corner anchors compile to native SolidCraft
-edge/corner origins, so they follow dimension changes in a saved design.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;attach()&lt;/code&gt; is the public Forge relationship between reusable components. &lt;a href="../../reference/Anchor/"&gt;&lt;code&gt;Anchor&lt;/code&gt;&lt;/a&gt; selects the attachment reference: a supported face, or one of the eight rectangular corners such as &lt;code&gt;FRONT_TOP_RIGHT&lt;/code&gt;. Corner anchors compile to native SolidCraft edge/corner origins, so they follow dimension changes in a saved design.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="associative-in-plane-attachment-offset"&gt;Associative in-plane attachment offset&lt;span class="hx:absolute hx:-mt-20" id="associative-in-plane-attachment-offset"&gt;&lt;/span&gt;
-&lt;a href="#associative-in-plane-attachment-offset" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;attach(offset=(u, v))&lt;/code&gt; moves the child within the attachment
-plane. Numeric values and parameter expressions are both supported. Forge
-lowers a non-zero or symbolic in-plane offset to a native planar joint and
-keeps &lt;code&gt;u&lt;/code&gt; and &lt;code&gt;v&lt;/code&gt; as SolidCraft joint values, so they are
-re-evaluated when their parameters change.&lt;/p&gt;
+&lt;a href="#associative-in-plane-attachment-offset" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;attach(offset=(u, v))&lt;/code&gt; moves the child within the attachment plane. Numeric values and parameter expressions are both supported. Forge lowers a non-zero or symbolic in-plane offset to a native planar joint and keeps &lt;code&gt;u&lt;/code&gt; and &lt;code&gt;v&lt;/code&gt; as SolidCraft joint values, so they are re-evaluated when their parameters change.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;wood&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Parameter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;wood_thickness&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;18&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -143,16 +119,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;offset&lt;/code&gt; is independent of &lt;code&gt;gap&lt;/code&gt;: the two offset
-values move in the attachment plane, while &lt;code&gt;gap&lt;/code&gt; remains the normal
-distance between the two references. On a rectangular corner origin, the
-second planar value follows the selected vertical corner edge; its sign is
-defined by that corner frame rather than by world Z.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;offset&lt;/code&gt; is independent of &lt;code&gt;gap&lt;/code&gt;: the two offset values move in the attachment plane, while &lt;code&gt;gap&lt;/code&gt; remains the normal distance between the two references. On a rectangular corner origin, the second planar value follows the selected vertical corner edge; its sign is defined by that corner frame rather than by world Z.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="assembly-owned-named-anchors"&gt;Assembly-owned named anchors&lt;span class="hx:absolute hx:-mt-20" id="assembly-owned-named-anchors"&gt;&lt;/span&gt;
-&lt;a href="#assembly-owned-named-anchors" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;When a datum belongs to the meaning of an assembly rather than to a generic
-component, keep it on the assembly with &lt;code&gt;with_anchor()&lt;/code&gt;. The anchor
-stores the target occurrence plus its attachment reference. Consumers resolve
-it by name with &lt;code&gt;anchor()&lt;/code&gt;.&lt;/p&gt;
+&lt;a href="#assembly-owned-named-anchors" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;When a datum belongs to the meaning of an assembly rather than to a generic component, keep it on the assembly with &lt;code&gt;with_anchor()&lt;/code&gt;. The anchor stores the target occurrence plus its attachment reference. Consumers resolve it by name with &lt;code&gt;anchor()&lt;/code&gt;.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;frame&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;left&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;right&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;bottom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;with_anchor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;front_top_left&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
@@ -183,20 +152,10 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;This keeps a generic &lt;code&gt;Board&lt;/code&gt; or &lt;code&gt;CornerBracket&lt;/code&gt; free
-of application-specific anchor names while a higher-level frame can expose
-semantic datums such as &lt;code&gt;front_top_left&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;An assembly anchor may also carry its own symbolic
-&lt;code&gt;offset=(u, v)&lt;/code&gt;. Consumers can combine that semantic offset with a
-fixed local correction and pass the result to &lt;code&gt;attach(offset=...)&lt;/code&gt;.
-This is useful when an assembly datum follows a frame parameter such as wall
-thickness while the reusable part keeps a fixed mounting correction.&lt;/p&gt;
+&lt;p&gt;This keeps a generic &lt;code&gt;Board&lt;/code&gt; or &lt;code&gt;CornerBracket&lt;/code&gt; free of application-specific anchor names while a higher-level frame can expose semantic datums such as &lt;code&gt;front_top_left&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;An assembly anchor may also carry its own symbolic &lt;code&gt;offset=(u, v)&lt;/code&gt;. Consumers can combine that semantic offset with a fixed local correction and pass the result to &lt;code&gt;attach(offset=...)&lt;/code&gt;. This is useful when an assembly datum follows a frame parameter such as wall thickness while the reusable part keeps a fixed mounting correction.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="anchorframe-point-plus-orientation"&gt;AnchorFrame: point plus orientation&lt;span class="hx:absolute hx:-mt-20" id="anchorframe-point-plus-orientation"&gt;&lt;/span&gt;
-&lt;a href="#anchorframe-point-plus-orientation" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;An &lt;a href="../../reference/attachment-references/#AnchorFrame"&gt;&lt;code&gt;AnchorFrame&lt;/code&gt;&lt;/a&gt; describes one local attachment coordinate frame.
-&lt;code&gt;origin&lt;/code&gt; gives the local point; &lt;code&gt;z&lt;/code&gt; gives the attachment
-normal and &lt;code&gt;x&lt;/code&gt; fixes the rotation around that normal. Use it when a
-single point or rectangular &lt;code&gt;Anchor&lt;/code&gt; is not enough to describe how
-the occurrence must be oriented.&lt;/p&gt;
+&lt;a href="#anchorframe-point-plus-orientation" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;An &lt;a href="../../reference/attachment-references/#AnchorFrame"&gt;&lt;code&gt;AnchorFrame&lt;/code&gt;&lt;/a&gt; describes one local attachment coordinate frame. &lt;code&gt;origin&lt;/code&gt; gives the local point; &lt;code&gt;z&lt;/code&gt; gives the attachment normal and &lt;code&gt;x&lt;/code&gt; fixes the rotation around that normal. Use it when a single point or rectangular &lt;code&gt;Anchor&lt;/code&gt; is not enough to describe how the occurrence must be oriented.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Anchor&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;AnchorFrame&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -222,12 +181,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;There are two ownership patterns. If the datum is an intrinsic part of a
-reusable component, expose it with &lt;code&gt;anchors()&lt;/code&gt; and refer to it by
-name. If the frame exists only because of a particular assembly or mounting
-choice, construct the &lt;a href="../../reference/attachment-references/#AnchorFrame"&gt;&lt;code&gt;AnchorFrame&lt;/code&gt;&lt;/a&gt; in that assembly and pass it
-directly to &lt;code&gt;attach()&lt;/code&gt;. This keeps application knowledge out of the
-generic component definition.&lt;/p&gt;
+&lt;p&gt;There are two ownership patterns. If the datum is an intrinsic part of a reusable component, expose it with &lt;code&gt;anchors()&lt;/code&gt; and refer to it by name. If the frame exists only because of a particular assembly or mounting choice, construct the &lt;a href="../../reference/attachment-references/#AnchorFrame"&gt;&lt;code&gt;AnchorFrame&lt;/code&gt;&lt;/a&gt; in that assembly and pass it directly to &lt;code&gt;attach()&lt;/code&gt;. This keeps application knowledge out of the generic component definition.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@component&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Sensor&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
@@ -255,13 +209,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;For an unrotated occurrence, Forge lowers an &lt;a href="../../reference/attachment-references/#AnchorFrame"&gt;&lt;code&gt;AnchorFrame&lt;/code&gt;&lt;/a&gt;
-directly into the native &lt;code&gt;joint.create&lt;/code&gt; reference as
-&lt;code&gt;point&lt;/code&gt;, &lt;code&gt;z&lt;/code&gt; and &lt;code&gt;x&lt;/code&gt;; it does not create a
-persistent visible &lt;code&gt;joint.origin&lt;/code&gt;. Named frames on explicitly
-rotated occurrences currently use the native origin fallback so SolidCraft
-owns the transform. A direct &lt;code&gt;AnchorFrame&lt;/code&gt; on an explicitly rotated
-occurrence is not supported yet.&lt;/p&gt;
+&lt;p&gt;For an unrotated occurrence, Forge lowers an &lt;a href="../../reference/attachment-references/#AnchorFrame"&gt;&lt;code&gt;AnchorFrame&lt;/code&gt;&lt;/a&gt; directly into the native &lt;code&gt;joint.create&lt;/code&gt; reference as &lt;code&gt;point&lt;/code&gt;, &lt;code&gt;z&lt;/code&gt; and &lt;code&gt;x&lt;/code&gt;; it does not create a persistent visible &lt;code&gt;joint.origin&lt;/code&gt;. Named frames on explicitly rotated occurrences currently use the native origin fallback so SolidCraft owns the transform. A direct &lt;code&gt;AnchorFrame&lt;/code&gt; on an explicitly rotated occurrence is not supported yet.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="anchortopology-follow-an-edge-or-corner"&gt;AnchorTopology: follow an edge or corner&lt;span class="hx:absolute hx:-mt-20" id="anchortopology-follow-an-edge-or-corner"&gt;&lt;/span&gt;
 &lt;a href="#anchortopology-follow-an-edge-or-corner" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;AnchorTopology&lt;/code&gt; is a named component datum that stays attached to native SolidCraft topology. &lt;code&gt;edge&lt;/code&gt; picks an edge, &lt;code&gt;on&lt;/code&gt; selects its adjacent planar face and &lt;code&gt;corner&lt;/code&gt; optionally chooses one endpoint. The coordinates are selection picks; SolidCraft keeps the selected edge, face and endpoint by topology name as the design changes.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
@@ -294,18 +242,11 @@ data-copied-label="Copied!"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;This is useful for references such as the straight tangent edge beside a fillet: if dimensions move that edge, the joint can follow it without freezing the original XYZ point. The current implementation supports named or direct &lt;code&gt;AnchorTopology&lt;/code&gt; values on non-rotated occurrences. A direct topology anchor is useful when the datum belongs only to one assembly rather than to the reusable component. SCPF deliberately does not transform topology picks itself.&lt;/p&gt;
-&lt;p&gt;SolidCraft joints remain an internal implementation detail; Forge does not
-expose a separate public Joint object.&lt;/p&gt;
+&lt;p&gt;SolidCraft joints remain an internal implementation detail; Forge does not expose a separate public Joint object.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="what-to-test-in-an-assembly"&gt;What to test in an assembly&lt;span class="hx:absolute hx:-mt-20" id="what-to-test-in-an-assembly"&gt;&lt;/span&gt;
-&lt;a href="#what-to-test-in-an-assembly" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Check the native command list for one &lt;code&gt;component.create&lt;/code&gt;
-per shared definition, expected &lt;code&gt;occurrence.copy&lt;/code&gt; counts,
-and native &lt;code&gt;translate&lt;/code&gt;, &lt;code&gt;axis&lt;/code&gt; and &lt;code&gt;angle&lt;/code&gt;
-parameters for rotated occurrences. Separately verify native SolidCraft
-geometry and its bounding dimensions before trusting an assembly image.&lt;/p&gt;</description></item><item><title>Features and references</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/features/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/features/</guid><description>
+&lt;a href="#what-to-test-in-an-assembly" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Check the native command list for one &lt;code&gt;component.create&lt;/code&gt; per shared definition, expected &lt;code&gt;occurrence.copy&lt;/code&gt; counts, and native &lt;code&gt;translate&lt;/code&gt;, &lt;code&gt;axis&lt;/code&gt; and &lt;code&gt;angle&lt;/code&gt; parameters for rotated occurrences. Separately verify native SolidCraft geometry and its bounding dimensions before trusting an assembly image.&lt;/p&gt;</description></item><item><title>Features and references</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/features/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/features/</guid><description>
 &lt;h2 data-hextra-search-id="a-feature-changes-an-existing-body"&gt;A feature changes an existing body&lt;span class="hx:absolute hx:-mt-20" id="a-feature-changes-an-existing-body"&gt;&lt;/span&gt;
-&lt;a href="#a-feature-changes-an-existing-body" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;A native feature is different from subtracting arbitrary CSG geometry.
-SCPF can retain named sketches and operations in SolidCraft history.
-For exact results, supported body types and selection constraints matter.&lt;/p&gt;
+&lt;a href="#a-feature-changes-an-existing-body" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;A native feature is different from subtracting arbitrary CSG geometry. SCPF can retain named sketches and operations in SolidCraft history. For exact results, supported body types and selection constraints matter.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="holes"&gt;Holes&lt;span class="hx:absolute hx:-mt-20" id="holes"&gt;&lt;/span&gt;
 &lt;a href="#holes" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Hole&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Depth&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Faces&lt;/span&gt;
@@ -324,19 +265,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;A &lt;code&gt;Hole&lt;/code&gt; is a native hole feature: adding it to the shape
-means adding the operation that &lt;em&gt;removes&lt;/em&gt; material.
-&lt;a href="../../reference/Faces/"&gt;&lt;code&gt;Faces.TOP&lt;/code&gt;&lt;/a&gt; selects its entry face. Simple feature placement
-uses &lt;code&gt;on()&lt;/code&gt;; assembly attachment uses explicit anchors.&lt;/p&gt;
+&lt;p&gt;A &lt;code&gt;Hole&lt;/code&gt; is a native hole feature: adding it to the shape means adding the operation that &lt;em&gt;removes&lt;/em&gt; material. &lt;a href="../../reference/Faces/"&gt;&lt;code&gt;Faces.TOP&lt;/code&gt;&lt;/a&gt; selects its entry face. Simple feature placement uses &lt;code&gt;on()&lt;/code&gt;; assembly attachment uses explicit anchors.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="native-feature-patterns"&gt;Native feature patterns&lt;span class="hx:absolute hx:-mt-20" id="native-feature-patterns"&gt;&lt;/span&gt;
-&lt;a href="#native-feature-patterns" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Pattern an already-applied native feature when the copies should remain one
-editable SolidCraft history operation. Rectangular and circular patterns share
-the same source-feature rules: pass the same Forge &lt;code&gt;Shape&lt;/code&gt; object
-that was applied to the body. Forge resolves that object to its native history
-feature; callers never manage SolidCraft timeline-name strings. Direct native
-Hole-family and primitive features are supported alongside the existing
-&lt;code&gt;Sketch.extrude()&lt;/code&gt; path, and a direct count Parameter remains
-editable in the saved design.&lt;/p&gt;
+&lt;a href="#native-feature-patterns" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Pattern an already-applied native feature when the copies should remain one editable SolidCraft history operation. Rectangular and circular patterns share the same source-feature rules: pass the same Forge &lt;code&gt;Shape&lt;/code&gt; object that was applied to the body. Forge resolves that object to its native history feature; callers never manage SolidCraft timeline-name strings. Direct native Hole-family and primitive features are supported alongside the existing &lt;code&gt;Sketch.extrude()&lt;/code&gt; path, and a direct count Parameter remains editable in the saved design.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Anchor&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Axis&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Hole&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -363,12 +294,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;circular_pattern()&lt;/code&gt; omits &lt;code&gt;angle&lt;/code&gt; by default so
-SolidCraft uses its native 360-degree full-circle behaviour. Supply a fixed
-degree value or direct Parameter for a partial arc. &lt;code&gt;origin=(x, y, z)&lt;/code&gt;
-moves a fixed axis; a fixed non-zero XYZ vector can be used instead of
-&lt;code&gt;Axis.X/Y/Z&lt;/code&gt;. Construction-axis and geometry-axis selectors are not
-yet exposed by Forge.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;circular_pattern()&lt;/code&gt; omits &lt;code&gt;angle&lt;/code&gt; by default so SolidCraft uses its native 360-degree full-circle behaviour. Supply a fixed degree value or direct Parameter for a partial arc. &lt;code&gt;origin=(x, y, z)&lt;/code&gt; moves a fixed axis; a fixed non-zero XYZ vector can be used instead of &lt;code&gt;Axis.X/Y/Z&lt;/code&gt;. Construction-axis and geometry-axis selectors are not yet exposed by Forge.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;grid&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;plate&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rectangular_pattern&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;bolt_hole&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
@@ -390,9 +316,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;rectangular_pattern()&lt;/code&gt; and &lt;code&gt;circular_pattern()&lt;/code&gt; both
-emit one native feature-pattern command rather than expanding independent
-copies in Python.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;rectangular_pattern()&lt;/code&gt; and &lt;code&gt;circular_pattern()&lt;/code&gt; both emit one native feature-pattern command rather than expanding independent copies in Python.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="fillets-and-chamfers"&gt;Fillets and chamfers&lt;span class="hx:absolute hx:-mt-20" id="fillets-and-chamfers"&gt;&lt;/span&gt;
 &lt;a href="#fillets-and-chamfers" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;FRONT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;LEFT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Edges&lt;/span&gt;
@@ -412,14 +336,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;fillet()&lt;/code&gt; and &lt;code&gt;chamfer()&lt;/code&gt; use the same edge-selection
-forms. Use &lt;code&gt;Edges.VERTICAL&lt;/code&gt; for all vertical edges of a supported
-rectangular body, a two-direction selector such as &lt;code&gt;FRONT + LEFT&lt;/code&gt;
-for one Box edge, &lt;code&gt;Edges.from_profile(...)&lt;/code&gt; or
-&lt;code&gt;Edges.from_vertices(...)&lt;/code&gt; for named Polygon2D geometry, or explicit
-XYZ pick coordinates. Both methods default to &lt;code&gt;Edges.VERTICAL&lt;/code&gt;.
-A topological edge cannot always be inferred reliably from a visual camera
-position.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;fillet()&lt;/code&gt; and &lt;code&gt;chamfer()&lt;/code&gt; use the same edge-selection forms. Use &lt;code&gt;Edges.VERTICAL&lt;/code&gt; for all vertical edges of a supported rectangular body, a two-direction selector such as &lt;code&gt;FRONT + LEFT&lt;/code&gt; for one Box edge, &lt;code&gt;Edges.from_profile(...)&lt;/code&gt; or &lt;code&gt;Edges.from_vertices(...)&lt;/code&gt; for named Polygon2D geometry, or explicit XYZ pick coordinates. Both methods default to &lt;code&gt;Edges.VERTICAL&lt;/code&gt;. A topological edge cannot always be inferred reliably from a visual camera position.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="shells"&gt;Shells&lt;span class="hx:absolute hx:-mt-20" id="shells"&gt;&lt;/span&gt;
 &lt;a href="#shells" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Faces&lt;/span&gt;
@@ -435,10 +352,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;a href="../../reference/Faces/"&gt;&lt;code&gt;Faces.TOP&lt;/code&gt;&lt;/a&gt; chooses the face to open and is also the same
-surface-selection vocabulary used by &lt;code&gt;feature.on(...)&lt;/code&gt;.
-&lt;a href="../../reference/Anchor/"&gt;&lt;code&gt;Anchor&lt;/code&gt;&lt;/a&gt; is reserved for explicit component attachment in
-assemblies. See the source and regression tests for supported feature chains.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../reference/Faces/"&gt;&lt;code&gt;Faces.TOP&lt;/code&gt;&lt;/a&gt; chooses the face to open and is also the same surface-selection vocabulary used by &lt;code&gt;feature.on(...)&lt;/code&gt;. &lt;a href="../../reference/Anchor/"&gt;&lt;code&gt;Anchor&lt;/code&gt;&lt;/a&gt; is reserved for explicit component attachment in assemblies. See the source and regression tests for supported feature chains.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="feature-placement-without-hard-coded-global-offsets"&gt;Feature placement without hard-coded global offsets&lt;span class="hx:absolute hx:-mt-20" id="feature-placement-without-hard-coded-global-offsets"&gt;&lt;/span&gt;
 &lt;a href="#feature-placement-without-hard-coded-global-offsets" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Boss&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Anchor&lt;/span&gt;
@@ -458,14 +372,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;X.MIN&lt;/code&gt; and &lt;code&gt;Y.MAX&lt;/code&gt; refer to the parent
-bounds and are not rotation-axis constants. Anchoring support
-currently focuses on rectangular bases and a documented set of faces.
-Do not assume every curved or lofted surface supports it.&lt;/p&gt;</description></item><item><title>From one component to an assembly</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/assembly-basics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/assembly-basics/</guid><description>
+&lt;p&gt;&lt;code&gt;X.MIN&lt;/code&gt; and &lt;code&gt;Y.MAX&lt;/code&gt; refer to the parent bounds and are not rotation-axis constants. Anchoring support currently focuses on rectangular bases and a documented set of faces. Do not assume every curved or lofted surface supports it.&lt;/p&gt;</description></item><item><title>From one component to an assembly</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/assembly-basics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/assembly-basics/</guid><description>
 &lt;h2 data-hextra-search-id="start-with-the-mental-model"&gt;Start with the mental model&lt;span class="hx:absolute hx:-mt-20" id="start-with-the-mental-model"&gt;&lt;/span&gt;
-&lt;a href="#start-with-the-mental-model" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Forge separates &lt;strong&gt;geometry&lt;/strong&gt; from &lt;strong&gt;physical parts&lt;/strong&gt;
-and from &lt;strong&gt;relationships between parts&lt;/strong&gt;. Most assembly code becomes
-much easier once those three levels are kept separate.&lt;/p&gt;
+&lt;a href="#start-with-the-mental-model" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Forge separates &lt;strong&gt;geometry&lt;/strong&gt; from &lt;strong&gt;physical parts&lt;/strong&gt; and from &lt;strong&gt;relationships between parts&lt;/strong&gt;. Most assembly code becomes much easier once those three levels are kept separate.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -518,10 +427,7 @@ much easier once those three levels are kept separate.&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 data-hextra-search-id="1-a-component-means-one-physical-part"&gt;1. A component means one physical part&lt;span class="hx:absolute hx:-mt-20" id="1-a-component-means-one-physical-part"&gt;&lt;/span&gt;
-&lt;a href="#1-a-component-means-one-physical-part" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;A component is &lt;strong&gt;not&lt;/strong&gt; limited to one primitive. It is the
-definition of one physical manufactured item. Its &lt;code&gt;build()&lt;/code&gt; may
-contain several primitives, sketches, holes, bosses, fillets and other features
-as long as they together describe that one part.&lt;/p&gt;
+&lt;a href="#1-a-component-means-one-physical-part" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;A component is &lt;strong&gt;not&lt;/strong&gt; limited to one primitive. It is the definition of one physical manufactured item. Its &lt;code&gt;build()&lt;/code&gt; may contain several primitives, sketches, holes, bosses, fillets and other features as long as they together describe that one part.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Cylinder&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;component&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -546,17 +452,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;The plate and cylindrical boss are geometry/features inside
-&lt;strong&gt;one component&lt;/strong&gt;. They do not need an assembly joint because
-they are not separate physical parts.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Physical-part test:&lt;/strong&gt; if the boss is machined,
-printed or moulded as part of the plate, keep it inside one component. If it is
-actually a separate brass insert pressed into the plate, make a second component
-and relate the two occurrences in an assembly.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;MountingPlate&lt;/code&gt; is the reusable definition. Calling
-&lt;code&gt;MountingPlate()&lt;/code&gt; creates one occurrence; &lt;code&gt;copy()&lt;/code&gt;
-creates another occurrence of the same definition without duplicating the
-feature history.&lt;/p&gt;
+&lt;p&gt;The plate and cylindrical boss are geometry/features inside &lt;strong&gt;one component&lt;/strong&gt;. They do not need an assembly joint because they are not separate physical parts.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Physical-part test:&lt;/strong&gt; if the boss is machined, printed or moulded as part of the plate, keep it inside one component. If it is actually a separate brass insert pressed into the plate, make a second component and relate the two occurrences in an assembly.
+&lt;code&gt;MountingPlate&lt;/code&gt; is the reusable definition. Calling &lt;code&gt;MountingPlate()&lt;/code&gt; creates one occurrence; &lt;code&gt;copy()&lt;/code&gt; creates another occurrence of the same definition without duplicating the feature history.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="2-put-components-in-one-assembly"&gt;2. Put components in one assembly&lt;span class="hx:absolute hx:-mt-20" id="2-put-components-in-one-assembly"&gt;&lt;/span&gt;
 &lt;a href="#2-put-components-in-one-assembly" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;first&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Block&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;placement&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;Placement&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;=-&lt;/span&gt;&lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
@@ -574,18 +472,11 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;Here &lt;code&gt;first + second&lt;/code&gt; means “these two component occurrences
-belong to one assembly”. It does &lt;strong&gt;not&lt;/strong&gt; Boolean-union their solids.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Same operator, different level:&lt;/strong&gt;
-&lt;code&gt;Shape + Shape&lt;/code&gt; describes supported geometric union;
-&lt;code&gt;occurrence + occurrence&lt;/code&gt; builds an assembly of physical parts.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;placement=Placement(...)&lt;/code&gt; declares the pose when an occurrence
-is created or copied. It does not create a mechanical relationship; use
-&lt;code&gt;attach()&lt;/code&gt; when another occurrence owns the relationship.&lt;/p&gt;
+&lt;p&gt;Here &lt;code&gt;first + second&lt;/code&gt; means “these two component occurrences belong to one assembly”. It does &lt;strong&gt;not&lt;/strong&gt; Boolean-union their solids.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Same operator, different level:&lt;/strong&gt;&lt;code&gt;Shape + Shape&lt;/code&gt; describes supported geometric union; &lt;code&gt;occurrence + occurrence&lt;/code&gt; builds an assembly of physical parts.
+&lt;code&gt;placement=Placement(...)&lt;/code&gt; declares the pose when an occurrence is created or copied. It does not create a mechanical relationship; use &lt;code&gt;attach()&lt;/code&gt; when another occurrence owns the relationship.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="exploded-views-are-presentation-not-placement"&gt;Exploded views are presentation, not placement&lt;span class="hx:absolute hx:-mt-20" id="exploded-views-are-presentation-not-placement"&gt;&lt;/span&gt;
-&lt;a href="#exploded-views-are-presentation-not-placement" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Define an exploded view after composing the final assembly. Forge stores the
-view in SolidCraft without changing the occurrences&amp;rsquo; normal
-&lt;code&gt;Placement&lt;/code&gt; or joints.&lt;/p&gt;
+&lt;a href="#exploded-views-are-presentation-not-placement" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Define an exploded view after composing the final assembly. Forge stores the view in SolidCraft without changing the occurrences&amp;rsquo; normal &lt;code&gt;Placement&lt;/code&gt; or joints.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;assembly&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;first&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;second&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;third&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;assembly&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;assembly&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;with_exploded_view&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Service&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;scale&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;1.25&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -608,16 +499,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;Automatic mode uses SolidCraft&amp;rsquo;s native scale-based explosion. Explicit mode
-takes occurrence objects and fixed XYZ translations; Forge resolves those
-objects to native occurrence ids during replay. Use
-&lt;code&gt;show_exploded(&amp;quot;Service&amp;quot;)&lt;/code&gt; to display one stored view and
-&lt;code&gt;show_assembled()&lt;/code&gt; to return to normal presentation. Do not model an
-explosion with ordinary occurrence moves.&lt;/p&gt;
+&lt;p&gt;Automatic mode uses SolidCraft&amp;rsquo;s native scale-based explosion. Explicit mode takes occurrence objects and fixed XYZ translations; Forge resolves those objects to native occurrence ids during replay. Use &lt;code&gt;show_exploded(&amp;quot;Service&amp;quot;)&lt;/code&gt; to display one stored view and &lt;code&gt;show_assembled()&lt;/code&gt; to return to normal presentation. Do not model an explosion with ordinary occurrence moves.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="3-use-assembly-when-the-composition-itself-is-reusable"&gt;3. Use @assembly when the composition itself is reusable&lt;span class="hx:absolute hx:-mt-20" id="3-use-assembly-when-the-composition-itself-is-reusable"&gt;&lt;/span&gt;
-&lt;a href="#3-use-assembly-when-the-composition-itself-is-reusable" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;You do not need &lt;code&gt;@assembly&lt;/code&gt; merely because a script contains
-several components. Use it when the &lt;em&gt;composition itself&lt;/em&gt; is a reusable
-model object that you want to import or instantiate as a subassembly.&lt;/p&gt;
+&lt;a href="#3-use-assembly-when-the-composition-itself-is-reusable" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;You do not need &lt;code&gt;@assembly&lt;/code&gt; merely because a script contains several components. Use it when the &lt;em&gt;composition itself&lt;/em&gt; is a reusable model object that you want to import or instantiate as a subassembly.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Anchor&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;assembly&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -644,14 +528,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;The component definitions remain the physical parts. &lt;code&gt;BlockPair&lt;/code&gt;
-describes how those occurrences are composed. This is different from
-&lt;code&gt;group()&lt;/code&gt;: an assembly expresses the model composition; grouping
-controls the native nested hierarchy/browser unit.&lt;/p&gt;
+&lt;p&gt;The component definitions remain the physical parts. &lt;code&gt;BlockPair&lt;/code&gt; describes how those occurrences are composed. This is different from &lt;code&gt;group()&lt;/code&gt;: an assembly expresses the model composition; grouping controls the native nested hierarchy/browser unit.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="4-use-attach-when-the-relationship-is-the-intent"&gt;4. Use attach() when the relationship is the intent&lt;span class="hx:absolute hx:-mt-20" id="4-use-attach-when-the-relationship-is-the-intent"&gt;&lt;/span&gt;
-&lt;a href="#4-use-attach-when-the-relationship-is-the-intent" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;If the real rule is “the left side of this part belongs on the right side of
-that part”, encode that relationship instead of calculating a replacement XYZ
-coordinate yourself.&lt;/p&gt;
+&lt;a href="#4-use-attach-when-the-relationship-is-the-intent" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;If the real rule is “the left side of this part belongs on the right side of that part”, encode that relationship instead of calculating a replacement XYZ coordinate yourself.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Anchor&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -674,13 +553,8 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;Forge records an associative attachment between the two occurrences and
-lowers that to the native SolidCraft relationship mechanism. The anchors say
-&lt;strong&gt;which references are related&lt;/strong&gt;; they are not just prettier names
-for a hard-coded XYZ point.&lt;/p&gt;
-&lt;p&gt;This is the important rule: &lt;strong&gt;use an anchor when you need to describe a
-relationship or semantic mounting reference&lt;/strong&gt;. Do not add anchors to every
-component pre-emptively.&lt;/p&gt;
+&lt;p&gt;Forge records an associative attachment between the two occurrences and lowers that to the native SolidCraft relationship mechanism. The anchors say &lt;strong&gt;which references are related&lt;/strong&gt;; they are not just prettier names for a hard-coded XYZ point.&lt;/p&gt;
+&lt;p&gt;This is the important rule: &lt;strong&gt;use an anchor when you need to describe a relationship or semantic mounting reference&lt;/strong&gt;. Do not add anchors to every component pre-emptively.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="5-which-kind-of-anchor"&gt;5. Which kind of anchor?&lt;span class="hx:absolute hx:-mt-20" id="5-which-kind-of-anchor"&gt;&lt;/span&gt;
 &lt;a href="#5-which-kind-of-anchor" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;table&gt;
 &lt;thead&gt;
@@ -708,24 +582,11 @@ component pre-emptively.&lt;/p&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Start with the simplest standard &lt;code&gt;Anchor&lt;/code&gt;. Move to
-&lt;code&gt;AnchorFrame&lt;/code&gt; or &lt;code&gt;AnchorTopology&lt;/code&gt; only when a face/corner
-reference cannot express the actual mounting intent.&lt;/p&gt;
+&lt;p&gt;Start with the simplest standard &lt;code&gt;Anchor&lt;/code&gt;. Move to &lt;code&gt;AnchorFrame&lt;/code&gt; or &lt;code&gt;AnchorTopology&lt;/code&gt; only when a face/corner reference cannot express the actual mounting intent.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="6-let-solidcraft-own-the-native-relationship"&gt;6. Let SolidCraft own the native relationship&lt;span class="hx:absolute hx:-mt-20" id="6-let-solidcraft-own-the-native-relationship"&gt;&lt;/span&gt;
-&lt;a href="#6-let-solidcraft-own-the-native-relationship" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Forge describes the relationship; SolidCraft owns the resulting native
-geometry, occurrence hierarchy and joint data. Forge is not intended to grow a
-second general mating solver. That is also why a meaningful
-&lt;code&gt;attach()&lt;/code&gt; is preferable to Forge inventing increasingly clever
-coordinate corrections.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;offset=(u, v)&lt;/code&gt; moves within the attachment plane,
-&lt;code&gt;gap&lt;/code&gt; is normal distance between references, and &lt;code&gt;angle&lt;/code&gt;
-is the relative turn around the attachment normal. These are relationship
-values, not a replacement global XYZ transform.&lt;/p&gt;
-&lt;p&gt;There are two useful attachment modes. Normal &lt;code&gt;attach()&lt;/code&gt; uses the
-chosen references to determine the relationship and placement. Use
-&lt;code&gt;attach(..., as_built=True)&lt;/code&gt; when both occurrences are already in the
-intended pose and SolidCraft should record that existing pose as a fixed
-assembly relationship instead of repositioning them.&lt;/p&gt;
+&lt;a href="#6-let-solidcraft-own-the-native-relationship" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Forge describes the relationship; SolidCraft owns the resulting native geometry, occurrence hierarchy and joint data. Forge is not intended to grow a second general mating solver. That is also why a meaningful &lt;code&gt;attach()&lt;/code&gt; is preferable to Forge inventing increasingly clever coordinate corrections.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;offset=(u, v)&lt;/code&gt; moves within the attachment plane, &lt;code&gt;gap&lt;/code&gt; is normal distance between references, and &lt;code&gt;angle&lt;/code&gt; is the relative turn around the attachment normal. These are relationship values, not a replacement global XYZ transform.&lt;/p&gt;
+&lt;p&gt;There are two useful attachment modes. Normal &lt;code&gt;attach()&lt;/code&gt; uses the chosen references to determine the relationship and placement. Use &lt;code&gt;attach(..., as_built=True)&lt;/code&gt; when both occurrences are already in the intended pose and SolidCraft should record that existing pose as a fixed assembly relationship instead of repositioning them.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="7-a-group-is-organisation-not-a-relationship"&gt;7. A group is organisation, not a relationship&lt;span class="hx:absolute hx:-mt-20" id="7-a-group-is-organisation-not-a-relationship"&gt;&lt;/span&gt;
 &lt;a href="#7-a-group-is-organisation-not-a-relationship" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;frame&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;left&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;right&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;group&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Frame&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"&gt;
@@ -740,42 +601,20 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;group(&amp;quot;Frame&amp;quot;)&lt;/code&gt; creates a real nested native component so the
-occurrences appear together in the SolidCraft browser hierarchy. Grouping does
-not mate, align or rotate the parts and does not replace &lt;code&gt;attach()&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Use a group when the collection itself is a useful named subassembly or
-browser unit. Do not create a group merely because two components touch.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;group(&amp;quot;Frame&amp;quot;)&lt;/code&gt; creates a real nested native component so the occurrences appear together in the SolidCraft browser hierarchy. Grouping does not mate, align or rotate the parts and does not replace &lt;code&gt;attach()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Use a group when the collection itself is a useful named subassembly or browser unit. Do not create a group merely because two components touch.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="a-practical-decision-sequence"&gt;A practical decision sequence&lt;span class="hx:absolute hx:-mt-20" id="a-practical-decision-sequence"&gt;&lt;/span&gt;
 &lt;a href="#a-practical-decision-sequence" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Will these features be manufactured as one physical item? Keep them in one component, even if the geometry is complex.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Is something installed or manufactured separately? Give it its own component occurrence.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Do you only need a deliberate occurrence pose? Supply &lt;code&gt;placement=Placement(...)&lt;/code&gt; when creating or copying it.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Should one separate part follow another semantically? Use &lt;code&gt;attach()&lt;/code&gt; and the simplest suitable anchor.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Is a standard face/corner insufficient? Define an &lt;code&gt;AnchorFrame&lt;/code&gt; or topology-backed reference at the level that owns that meaning.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Do several occurrences form a useful named subassembly/browser unit? Then use &lt;code&gt;group()&lt;/code&gt;.&lt;/p&gt;
-&lt;/li&gt;
+&lt;li&gt;Will these features be manufactured as one physical item? Keep them in one component, even if the geometry is complex.&lt;/li&gt;
+&lt;li&gt;Is something installed or manufactured separately? Give it its own component occurrence.&lt;/li&gt;
+&lt;li&gt;Do you only need a deliberate occurrence pose? Supply &lt;code&gt;placement=Placement(...)&lt;/code&gt; when creating or copying it.&lt;/li&gt;
+&lt;li&gt;Should one separate part follow another semantically? Use &lt;code&gt;attach()&lt;/code&gt; and the simplest suitable anchor.&lt;/li&gt;
+&lt;li&gt;Is a standard face/corner insufficient? Define an &lt;code&gt;AnchorFrame&lt;/code&gt; or topology-backed reference at the level that owns that meaning.&lt;/li&gt;
+&lt;li&gt;Do several occurrences form a useful named subassembly/browser unit? Then use &lt;code&gt;group()&lt;/code&gt;.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;After this page, the &lt;a href="../components/"&gt;Components and assemblies&lt;/a&gt;
-chapter covers parameter sharing, offsets, custom frames, topology anchors and
-assembly-owned datums in detail.&lt;/p&gt;</description></item><item><title>Geometry, sketches and Boolean operations</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/geometry/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/geometry/</guid><description>
+&lt;p&gt;After this page, the &lt;a href="../components/"&gt;Components and assemblies&lt;/a&gt; chapter covers parameter sharing, offsets, custom frames, topology anchors and assembly-owned datums in detail.&lt;/p&gt;</description></item><item><title>Geometry, sketches and Boolean operations</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/geometry/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/geometry/</guid><description>
 &lt;h2 data-hextra-search-id="start-with-a-solid"&gt;Start with a solid&lt;span class="hx:absolute hx:-mt-20" id="start-with-a-solid"&gt;&lt;/span&gt;
-&lt;a href="#start-with-a-solid" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;Box&lt;/code&gt;, &lt;code&gt;Cylinder&lt;/code&gt; and &lt;code&gt;Sphere&lt;/code&gt; are centred
-on their geometric CENTER by default. Use &lt;code&gt;anchor=...&lt;/code&gt; when a face,
-axial end or tangent datum should lie at the origin. For Cylinder the anchor is
-resolved after choosing &lt;code&gt;Axis.X&lt;/code&gt;, &lt;code&gt;Axis.Y&lt;/code&gt; or
-&lt;code&gt;Axis.Z&lt;/code&gt;; for example LEFT/RIGHT are the axial ends of an X-axis
-cylinder and BOTTOM/TOP are the axial ends of a Z-axis cylinder.&lt;/p&gt;
+&lt;a href="#start-with-a-solid" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;Box&lt;/code&gt;, &lt;code&gt;Cylinder&lt;/code&gt; and &lt;code&gt;Sphere&lt;/code&gt; are centred on their geometric CENTER by default. Use &lt;code&gt;anchor=...&lt;/code&gt; when a face, axial end or tangent datum should lie at the origin. For Cylinder the anchor is resolved after choosing &lt;code&gt;Axis.X&lt;/code&gt;, &lt;code&gt;Axis.Y&lt;/code&gt; or &lt;code&gt;Axis.Z&lt;/code&gt;; for example LEFT/RIGHT are the axial ends of an X-axis cylinder and BOTTOM/TOP are the axial ends of a Z-axis cylinder.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;BOTTOM&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;FRONT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;LEFT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;RIGHT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
@@ -810,11 +649,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;at(x, y, z)&lt;/code&gt; places CENTER at those coordinates unless another
-&lt;code&gt;anchor=...&lt;/code&gt; is supplied. Passing another Shape instead uses
-shape-relative CENTER-to-CENTER placement. Forge derives the native Box corner,
-Cylinder base or Sphere center from the selected datum; callers do not add
-manual half-size corrections.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;at(x, y, z)&lt;/code&gt; places CENTER at those coordinates unless another &lt;code&gt;anchor=...&lt;/code&gt; is supplied. Passing another Shape instead uses shape-relative CENTER-to-CENTER placement. Forge derives the native Box corner, Cylinder base or Sphere center from the selected datum; callers do not add manual half-size corrections.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="draw-a-2d-profile-then-extrude-it"&gt;Draw a 2D profile, then extrude it&lt;span class="hx:absolute hx:-mt-20" id="draw-a-2d-profile-then-extrude-it"&gt;&lt;/span&gt;
 &lt;a href="#draw-a-2d-profile-then-extrude-it" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;A &lt;code&gt;Rectangle2D&lt;/code&gt; is a planar profile rather than a 3D body. 2D geometry is authored inside an explicit &lt;code&gt;Sketch&lt;/code&gt; scope. &lt;code&gt;Polygon2D&lt;/code&gt; can be created on the XY, XZ or YZ plane.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
@@ -847,17 +682,9 @@ data-copied-label="Copied!"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;A sketch plane affects where its axes go; changing the camera does not rotate its geometry. Leave the &lt;code&gt;with Sketch(...)&lt;/code&gt; scope, then call &lt;code&gt;sketch.extrude(...)&lt;/code&gt; to create 3D material. A positive distance follows the sketch-plane normal, a negative distance goes the other way, and &lt;code&gt;sym=True&lt;/code&gt; divides a positive distance equally over both sides. Direct &lt;code&gt;Rectangle2D(...).extrude(...)&lt;/code&gt; syntax is intentionally not supported.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;Polygon2D&lt;/code&gt; works in standalone explicit Sketches and in
-face-attached explicit Sketches; its authored vertices stay sketch-local.
-Standalone Sketches may also use an explicit &lt;code&gt;origin=&lt;/code&gt; and
-&lt;code&gt;rotation=(rx, ry, rz)&lt;/code&gt;. An extrusion from that rotated local frame
-can participate directly in &lt;code&gt;+&lt;/code&gt;, &lt;code&gt;-&lt;/code&gt; or &lt;code&gt;&amp;amp;&lt;/code&gt;
-CSG, including non-axis-aligned cutters.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Polygon2D&lt;/code&gt; works in standalone explicit Sketches and in face-attached explicit Sketches; its authored vertices stay sketch-local. Standalone Sketches may also use an explicit &lt;code&gt;origin=&lt;/code&gt; and &lt;code&gt;rotation=(rx, ry, rz)&lt;/code&gt;. An extrusion from that rotated local frame can participate directly in &lt;code&gt;+&lt;/code&gt;, &lt;code&gt;-&lt;/code&gt; or &lt;code&gt;&amp;amp;&lt;/code&gt; CSG, including non-axis-aligned cutters.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="select-profiles-when-extruding-a-sketch"&gt;Select profiles when extruding a Sketch&lt;span class="hx:absolute hx:-mt-20" id="select-profiles-when-extruding-a-sketch"&gt;&lt;/span&gt;
-&lt;a href="#select-profiles-when-extruding-a-sketch" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;By default &lt;code&gt;Sketch.extrude()&lt;/code&gt; uses every closed profile in the
-Sketch. Use &lt;code&gt;profiles=[(x, y), ...]&lt;/code&gt; when only some closed regions
-should be extruded or cut. The points are fixed coordinates in the Sketch
-itself; users do not need SolidCraft profile indices or curve ids.&lt;/p&gt;
+&lt;a href="#select-profiles-when-extruding-a-sketch" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;By default &lt;code&gt;Sketch.extrude()&lt;/code&gt; uses every closed profile in the Sketch. Use &lt;code&gt;profiles=[(x, y), ...]&lt;/code&gt; when only some closed regions should be extruded or cut. The points are fixed coordinates in the Sketch itself; users do not need SolidCraft profile indices or curve ids.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Anchor&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Axis&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Circle2D&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Depth&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Sketch&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -887,12 +714,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;SolidCraft 0.42 stores a successful point selection using the curves around
-the selected profile where possible. That lets the selection follow the profile
-when the saved design recomputes. &lt;code&gt;exact_regions=True&lt;/code&gt; asks
-SolidCraft to use exactly the region containing each point. Profile points must
-be fixed finite numbers; Forge Parameters and expressions are not accepted in
-this field.&lt;/p&gt;
+&lt;p&gt;SolidCraft 0.42 stores a successful point selection using the curves around the selected profile where possible. That lets the selection follow the profile when the saved design recomputes. &lt;code&gt;exact_regions=True&lt;/code&gt; asks SolidCraft to use exactly the region containing each point. Profile points must be fixed finite numbers; Forge Parameters and expressions are not accepted in this field.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="repeat-and-mirror-profiles-inside-one-sketch"&gt;Repeat and mirror profiles inside one Sketch&lt;span class="hx:absolute hx:-mt-20" id="repeat-and-mirror-profiles-inside-one-sketch"&gt;&lt;/span&gt;
 &lt;a href="#repeat-and-mirror-profiles-inside-one-sketch" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;Sketch.rectangular_pattern()&lt;/code&gt; makes a native SolidCraft sketch pattern from a profile that already belongs to the Sketch. &lt;code&gt;Sketch.mirror()&lt;/code&gt; mirrors a profile, a pattern result or an earlier mirror result. Both methods return a Sketch result that can be passed to another supported Sketch operation.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
@@ -967,15 +789,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;The supported compiler path depends on the operands. Native feature
-history and CSG trees are not interchangeable for every operation.
-For manufacturing features such as holes, prefer the native
-&lt;a href="../features/"&gt;feature operations&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Getting started</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/getting-started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/getting-started/</guid><description>
+&lt;p&gt;The supported compiler path depends on the operands. Native feature history and CSG trees are not interchangeable for every operation. For manufacturing features such as holes, prefer the native &lt;a href="../features/"&gt;feature operations&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Getting started</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/getting-started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/getting-started/</guid><description>
 &lt;h2 data-hextra-search-id="what-scpf-does"&gt;What SCPF does&lt;span class="hx:absolute hx:-mt-20" id="what-scpf-does"&gt;&lt;/span&gt;
-&lt;a href="#what-scpf-does" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;SCPF is a Python interface and compiler for &lt;strong&gt;native SolidCraft commands&lt;/strong&gt;.
-It is not a replacement CAD kernel. You describe a model using ordinary Python;
-SolidCraft executes the generated commands and owns the final geometry and
-feature history.&lt;/p&gt;
+&lt;a href="#what-scpf-does" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;SCPF is a Python interface and compiler for &lt;strong&gt;native SolidCraft commands&lt;/strong&gt;. It is not a replacement CAD kernel. You describe a model using ordinary Python; SolidCraft executes the generated commands and owns the final geometry and feature history.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="install-the-library"&gt;Install the library&lt;span class="hx:absolute hx:-mt-20" id="install-the-library"&gt;&lt;/span&gt;
 &lt;a href="#install-the-library" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;In the &lt;code&gt;lib.py.solidcraft.forge&lt;/code&gt; repository and an active Python environment:&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
@@ -993,8 +809,7 @@ data-copied-label="Copied!"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;h2 data-hextra-search-id="your-first-model"&gt;Your first model&lt;span class="hx:absolute hx:-mt-20" id="your-first-model"&gt;&lt;/span&gt;
-&lt;a href="#your-first-model" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Define one class, give it numeric dimensions, and return the body from
-&lt;code&gt;build()&lt;/code&gt;. No &lt;code&gt;main()&lt;/code&gt; or &lt;code&gt;show()&lt;/code&gt; is necessary.&lt;/p&gt;
+&lt;a href="#your-first-model" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Define one class, give it numeric dimensions, and return the body from &lt;code&gt;build()&lt;/code&gt;. No &lt;code&gt;main()&lt;/code&gt; or &lt;code&gt;show()&lt;/code&gt; is necessary.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Edges&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -1020,8 +835,7 @@ data-copied-label="Copied!"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;h2 data-hextra-search-id="compile-inspect-then-execute"&gt;Compile, inspect, then execute&lt;span class="hx:absolute hx:-mt-20" id="compile-inspect-then-execute"&gt;&lt;/span&gt;
-&lt;a href="#compile-inspect-then-execute" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Save the model as &lt;code&gt;model.py&lt;/code&gt;. Compilation alone does not open SolidCraft.
-The JSON is a native command plan, not a mesh or STEP file.&lt;/p&gt;
+&lt;a href="#compile-inspect-then-execute" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Save the model as &lt;code&gt;model.py&lt;/code&gt;. Compilation alone does not open SolidCraft. The JSON is a native command plan, not a mesh or STEP file.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;python&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="n"&gt;scpf&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;out&lt;/span&gt; &lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;json&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;python&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tool&lt;/span&gt; &lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;json&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"&gt;
@@ -1036,8 +850,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;For a live GUI run, open SolidCraft, enable
-&lt;em&gt;Preferences → Assistant → Let AI agents connect&lt;/em&gt;, and use:&lt;/p&gt;
+&lt;p&gt;For a live GUI run, open SolidCraft, enable &lt;em&gt;Preferences → Assistant → Let AI agents connect&lt;/em&gt;, and use:&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;python&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="n"&gt;scpf&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;connect&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;new&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"&gt;
 &lt;button
@@ -1051,23 +864,11 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;--new&lt;/code&gt; asks SolidCraft to replace the active design with a new,
-empty one before the model batch is sent. Leave it off when you deliberately
-want to add commands to the current design. Neither form saves the design.
-The CAD project also provides a separate native CLI qualification workflow.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;--new&lt;/code&gt; asks SolidCraft to replace the active design with a new, empty one before the model batch is sent. Leave it off when you deliberately want to add commands to the current design. Neither form saves the design. The CAD project also provides a separate native CLI qualification workflow.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="where-to-continue"&gt;Where to continue&lt;span class="hx:absolute hx:-mt-20" id="where-to-continue"&gt;&lt;/span&gt;
-&lt;a href="#where-to-continue" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Read &lt;a href="../model-objects/"&gt;Model objects&lt;/a&gt; first. Then read
-&lt;a href="../transformations/"&gt;Positioning and orientation&lt;/a&gt;. That chapter explains
-the practical difference between &lt;code&gt;at()&lt;/code&gt;, &lt;code&gt;on()&lt;/code&gt;,
-&lt;code&gt;Shape.attach()&lt;/code&gt;, &lt;code&gt;Placement&lt;/code&gt; and
-&lt;code&gt;Occurrence.attach()&lt;/code&gt;. After that,
-&lt;a href="../assembly-basics/"&gt;From one component to an assembly&lt;/a&gt; shows how
-separate physical parts are combined.&lt;/p&gt;</description></item><item><title>Model objects and parameters</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/model-objects/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/model-objects/</guid><description>
+&lt;a href="#where-to-continue" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Read &lt;a href="../model-objects/"&gt;Model objects&lt;/a&gt; first. Then read &lt;a href="../transformations/"&gt;Positioning and orientation&lt;/a&gt;. That chapter explains the practical difference between &lt;code&gt;at()&lt;/code&gt;, &lt;code&gt;on()&lt;/code&gt;, &lt;code&gt;Shape.attach()&lt;/code&gt;, &lt;code&gt;Placement&lt;/code&gt; and &lt;code&gt;Occurrence.attach()&lt;/code&gt;. After that, &lt;a href="../assembly-basics/"&gt;From one component to an assembly&lt;/a&gt; shows how separate physical parts are combined.&lt;/p&gt;</description></item><item><title>Model objects and parameters</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/model-objects/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/model-objects/</guid><description>
 &lt;h2 data-hextra-search-id="a-model-is-a-normal-python-class"&gt;A model is a normal Python class&lt;span class="hx:absolute hx:-mt-20" id="a-model-is-a-normal-python-class"&gt;&lt;/span&gt;
-&lt;a href="#a-model-is-a-normal-python-class" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Numeric class attributes become editable SolidCraft parameters when SCPF
-compiles a plain model class. &lt;code&gt;build()&lt;/code&gt; returns geometry. If a file
-contains exactly one public class with &lt;code&gt;build()&lt;/code&gt;, that class is the
-root automatically; no trailing constructor call or launcher file is needed.&lt;/p&gt;
+&lt;a href="#a-model-is-a-normal-python-class" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Numeric class attributes become editable SolidCraft parameters when SCPF compiles a plain model class. &lt;code&gt;build()&lt;/code&gt; returns geometry. If a file contains exactly one public class with &lt;code&gt;build()&lt;/code&gt;, that class is the root automatically; no trailing constructor call or launcher file is needed.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -1089,20 +890,10 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;Run that source file directly with
-&lt;code&gt;python -m scpf plate.py --connect&lt;/code&gt;. The same rule lets a reusable
-component file serve as its standalone model while assemblies import the exact
-same class. If a file contains several public model classes, SCPF deliberately
-does not guess: finish the script with an explicit call such as
-&lt;code&gt;Assembly()&lt;/code&gt; to choose the root.&lt;/p&gt;
-&lt;p&gt;An explicit final call is also how you override root parameters for a
-particular run, for example &lt;code&gt;Plate(width=80)&lt;/code&gt;. Arithmetic such as
-&lt;code&gt;self.length / 2&lt;/code&gt; is preserved symbolically for supported
-expressions; general Python computations are not automatically made
-parametric.&lt;/p&gt;
+&lt;p&gt;Run that source file directly with &lt;code&gt;python -m scpf plate.py --connect&lt;/code&gt;. The same rule lets a reusable component file serve as its standalone model while assemblies import the exact same class. If a file contains several public model classes, SCPF deliberately does not guess: finish the script with an explicit call such as &lt;code&gt;Assembly()&lt;/code&gt; to choose the root.&lt;/p&gt;
+&lt;p&gt;An explicit final call is also how you override root parameters for a particular run, for example &lt;code&gt;Plate(width=80)&lt;/code&gt;. Arithmetic such as &lt;code&gt;self.length / 2&lt;/code&gt; is preserved symbolically for supported expressions; general Python computations are not automatically made parametric.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="parameter-intent-is-visible-in-the-name"&gt;Parameter intent is visible in the name&lt;span class="hx:absolute hx:-mt-20" id="parameter-intent-is-visible-in-the-name"&gt;&lt;/span&gt;
-&lt;a href="#parameter-intent-is-visible-in-the-name" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;SCPF distinguishes three kinds of numeric class attributes. This keeps a
-Python build setting from looking like a native editable CAD parameter.&lt;/p&gt;
+&lt;a href="#parameter-intent-is-visible-in-the-name" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;SCPF distinguishes three kinds of numeric class attributes. This keeps a Python build setting from looking like a native editable CAD parameter.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Display&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;PANEL_COUNT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="c1"&gt;# fixed constant&lt;/span&gt;
@@ -1145,17 +936,9 @@ data-copied-label="Copied!"
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;If a public lower-case parameter is consumed only as a concrete Python
-value—for example through &lt;code&gt;pv()&lt;/code&gt;—Forge emits a
-&lt;code&gt;ModelParameterWarning&lt;/code&gt;. The same warning is emitted when a
-parameter remains native in some geometry but is also flattened into concrete
-occurrence placement. Such a parameter is only partly associative: editing it
-in SolidCraft would update only part of the model. Keep
-&lt;code&gt;Placement&lt;/code&gt; coordinates symbolic or rename an intentionally
-build-time input with a leading underscore.&lt;/p&gt;
+&lt;p&gt;If a public lower-case parameter is consumed only as a concrete Python value—for example through &lt;code&gt;pv()&lt;/code&gt;—Forge emits a &lt;code&gt;ModelParameterWarning&lt;/code&gt;. The same warning is emitted when a parameter remains native in some geometry but is also flattened into concrete occurrence placement. Such a parameter is only partly associative: editing it in SolidCraft would update only part of the model. Keep &lt;code&gt;Placement&lt;/code&gt; coordinates symbolic or rename an intentionally build-time input with a leading underscore.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="share-one-model-parameter-across-child-components"&gt;Share one model parameter across child components&lt;span class="hx:absolute hx:-mt-20" id="share-one-model-parameter-across-child-components"&gt;&lt;/span&gt;
-&lt;a href="#share-one-model-parameter-across-child-components" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Passing a parent parameter into several component inputs keeps one native
-SolidCraft parameter instead of creating component-specific duplicates.&lt;/p&gt;
+&lt;a href="#share-one-model-parameter-across-child-components" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Passing a parent parameter into several component inputs keeps one native SolidCraft parameter instead of creating component-specific duplicates.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;bottom&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;BottomBoard&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;corner_radius&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;corner_radius&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;roof&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;RoofBoard&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;corner_radius&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;corner_radius&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -1174,13 +957,8 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;Here the wooden fillets and bracket inside fillet all depend on the same
-&lt;code&gt;corner_radius&lt;/code&gt;. Passing the parent parameter into the child input
-reuses that existing native dependency rather than creating a duplicate child
-parameter.&lt;/p&gt;
-&lt;p&gt;Reusable component defaults stay fixed unless they are explicitly
-published with &lt;code&gt;include=&lt;/code&gt;. Parent Parameters/Expressions passed into
-child inputs always stay symbolic and reuse the existing parent dependency.&lt;/p&gt;
+&lt;p&gt;Here the wooden fillets and bracket inside fillet all depend on the same &lt;code&gt;corner_radius&lt;/code&gt;. Passing the parent parameter into the child input reuses that existing native dependency rather than creating a duplicate child parameter.&lt;/p&gt;
+&lt;p&gt;Reusable component defaults stay fixed unless they are explicitly published with &lt;code&gt;include=&lt;/code&gt;. Parent Parameters/Expressions passed into child inputs always stay symbolic and reuse the existing parent dependency.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Bracket&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;component&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;CornerBracket&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
@@ -1200,13 +978,9 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;This publication rule is recorded in
-&lt;a href="../../changes/0003-explicit-component-parameter-publication/"&gt;change 0003&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This publication rule is recorded in &lt;a href="../../changes/0003-explicit-component-parameter-publication/"&gt;change 0003&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="shape-versus-component-occurrence"&gt;Shape versus component occurrence&lt;span class="hx:absolute hx:-mt-20" id="shape-versus-component-occurrence"&gt;&lt;/span&gt;
-&lt;a href="#shape-versus-component-occurrence" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Shape&lt;/strong&gt; describes geometry or a feature expression
-(&lt;code&gt;Box&lt;/code&gt;, &lt;code&gt;Hole&lt;/code&gt;, an extrusion). A &lt;strong&gt;component
-occurrence&lt;/strong&gt; is one placed instance of a shared, editable model definition.
-Do not confuse a new occurrence with a new feature history.&lt;/p&gt;
+&lt;a href="#shape-versus-component-occurrence" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Shape&lt;/strong&gt; describes geometry or a feature expression (&lt;code&gt;Box&lt;/code&gt;, &lt;code&gt;Hole&lt;/code&gt;, an extrusion). A &lt;strong&gt;component occurrence&lt;/strong&gt; is one placed instance of a shared, editable model definition. Do not confuse a new occurrence with a new feature history.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Placement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;component&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -1229,10 +1003,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;The two occurrences share the same &lt;code&gt;Block&lt;/code&gt; definition.
-&lt;code&gt;Placement&lt;/code&gt; is occurrence creation metadata: XYZ is absolute in the
-parent coordinate frame and optional rotation adds orientation. The component
-definition never receives &lt;code&gt;placement&lt;/code&gt; as a model parameter.&lt;/p&gt;
+&lt;p&gt;The two occurrences share the same &lt;code&gt;Block&lt;/code&gt; definition. &lt;code&gt;Placement&lt;/code&gt; is occurrence creation metadata: XYZ is absolute in the parent coordinate frame and optional rotation adds orientation. The component definition never receives &lt;code&gt;placement&lt;/code&gt; as a model parameter.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="groups-are-actual-native-parent-components"&gt;Groups are actual native parent components&lt;span class="hx:absolute hx:-mt-20" id="groups-are-actual-native-parent-components"&gt;&lt;/span&gt;
 &lt;a href="#groups-are-actual-native-parent-components" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;blocks&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;first&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;second&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;group&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Blocks&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"&gt;
@@ -1247,18 +1018,12 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;Grouping changes the browser hierarchy, not the geometry&amp;rsquo;s orientation.
-At present one shared definition cannot be split among different groups.&lt;/p&gt;
+&lt;p&gt;Grouping changes the browser hierarchy, not the geometry&amp;rsquo;s orientation. At present one shared definition cannot be split among different groups.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="important-boundaries"&gt;Important boundaries&lt;span class="hx:absolute hx:-mt-20" id="important-boundaries"&gt;&lt;/span&gt;
-&lt;a href="#important-boundaries" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Associative attachment is supported for a limited set of rectangular
-component faces. General mates, arbitrary face queries and rotational
-constraints are not implemented as a complete assembly solver.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Next:&lt;/strong&gt; &lt;a href="../transformations/"&gt;Positioning and orientation&lt;/a&gt;
-explains how to place geometry and component occurrences, and when
-&lt;code&gt;at()&lt;/code&gt;, &lt;code&gt;on()&lt;/code&gt; or &lt;code&gt;attach()&lt;/code&gt; is the right choice.&lt;/p&gt;</description></item><item><title>Positioning and orientation</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/transformations/</guid><description>
+&lt;a href="#important-boundaries" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Associative attachment is supported for a limited set of rectangular component faces. General mates, arbitrary face queries and rotational constraints are not implemented as a complete assembly solver.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Next:&lt;/strong&gt;&lt;a href="../transformations/"&gt;Positioning and orientation&lt;/a&gt; explains how to place geometry and component occurrences, and when &lt;code&gt;at()&lt;/code&gt;, &lt;code&gt;on()&lt;/code&gt; or &lt;code&gt;attach()&lt;/code&gt; is the right choice.&lt;/p&gt;</description></item><item><title>Positioning and orientation</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/transformations/</guid><description>
 &lt;h2 data-hextra-search-id="which-one-do-i-use"&gt;Which one do I use?&lt;span class="hx:absolute hx:-mt-20" id="which-one-do-i-use"&gt;&lt;/span&gt;
-&lt;a href="#which-one-do-i-use" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;These APIs all affect where something ends up, but they mean different things.
-Choose the one that matches the rule in the model.&lt;/p&gt;
+&lt;a href="#which-one-do-i-use" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;These APIs all affect where something ends up, but they mean different things. Choose the one that matches the rule in the model.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -1295,16 +1060,10 @@ Choose the one that matches the rule in the model.&lt;/p&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;&lt;strong&gt;The important distinction:&lt;/strong&gt;
-&lt;code&gt;Shape.attach()&lt;/code&gt; and &lt;code&gt;Occurrence.attach()&lt;/code&gt; have the same
-verb but work at different levels. The first places a feature inside one part.
-The second relates two separate component occurrences.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The important distinction:&lt;/strong&gt;&lt;code&gt;Shape.attach()&lt;/code&gt; and &lt;code&gt;Occurrence.attach()&lt;/code&gt; have the same verb but work at different levels. The first places a feature inside one part. The second relates two separate component occurrences.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="start-with-the-coordinate-system"&gt;Start with the coordinate system&lt;span class="hx:absolute hx:-mt-20" id="start-with-the-coordinate-system"&gt;&lt;/span&gt;
-&lt;a href="#start-with-the-coordinate-system" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;X, Y and Z are model axes. A normal &lt;code&gt;Box&lt;/code&gt; has its large base in
-XY and thickness along Z. A camera rotation changes only the view. It does not
-change the model coordinates.&lt;/p&gt;
-&lt;p&gt;Also separate two levels: geometry inside one part has its own coordinates;
-a component occurrence has a pose in the assembly.&lt;/p&gt;
+&lt;a href="#start-with-the-coordinate-system" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;X, Y and Z are model axes. A normal &lt;code&gt;Box&lt;/code&gt; has its large base in XY and thickness along Z. A camera rotation changes only the view. It does not change the model coordinates.&lt;/p&gt;
+&lt;p&gt;Also separate two levels: geometry inside one part has its own coordinates; a component occurrence has a pose in the assembly.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="use-at-to-place-or-align-geometry"&gt;Use at() to place or align geometry&lt;span class="hx:absolute hx:-mt-20" id="use-at-to-place-or-align-geometry"&gt;&lt;/span&gt;
 &lt;a href="#use-at-to-place-or-align-geometry" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Anchor&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Axis&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Cylinder&lt;/span&gt;
@@ -1327,12 +1086,8 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;shape.at(x, y, z)&lt;/code&gt; places supported geometry at an absolute
-model coordinate. A primitive can use &lt;code&gt;anchor=...&lt;/code&gt; to say which of
-its own datums belongs at that coordinate.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;shape.at(target)&lt;/code&gt; currently aligns CENTER to CENTER. It does
-&lt;strong&gt;not&lt;/strong&gt; mean “put this on the top face”. For a feature on a face,
-use &lt;code&gt;on()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;shape.at(x, y, z)&lt;/code&gt; places supported geometry at an absolute model coordinate. A primitive can use &lt;code&gt;anchor=...&lt;/code&gt; to say which of its own datums belongs at that coordinate.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;shape.at(target)&lt;/code&gt; currently aligns CENTER to CENTER. It does &lt;strong&gt;not&lt;/strong&gt; mean “put this on the top face”. For a feature on a face, use &lt;code&gt;on()&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="use-on-for-a-feature-on-a-face"&gt;Use on() for a feature on a face&lt;span class="hx:absolute hx:-mt-20" id="use-on-for-a-feature-on-a-face"&gt;&lt;/span&gt;
 &lt;a href="#use-on-for-a-feature-on-a-face" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Depth&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Faces&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Hole&lt;/span&gt;
@@ -1355,12 +1110,8 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;on()&lt;/code&gt; is for a feature that belongs to an existing shape.
-&lt;code&gt;Faces.TOP&lt;/code&gt; or &lt;code&gt;Faces.BOTTOM&lt;/code&gt; selects the face where the
-feature starts or is supported. The offset is measured in that face.&lt;/p&gt;
-&lt;p&gt;A sketch has the same idea in explicit form:
-&lt;code&gt;Sketch(on=body, parent=Anchor.TOP)&lt;/code&gt; creates a named sketch on a
-selected body face.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;on()&lt;/code&gt; is for a feature that belongs to an existing shape. &lt;code&gt;Faces.TOP&lt;/code&gt; or &lt;code&gt;Faces.BOTTOM&lt;/code&gt; selects the face where the feature starts or is supported. The offset is measured in that face.&lt;/p&gt;
+&lt;p&gt;A sketch has the same idea in explicit form: &lt;code&gt;Sketch(on=body, parent=Anchor.TOP)&lt;/code&gt; creates a named sketch on a selected body face.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="shapeattach-is-lower-level-within-part-placement"&gt;Shape.attach() is lower-level within-part placement&lt;span class="hx:absolute hx:-mt-20" id="shapeattach-is-lower-level-within-part-placement"&gt;&lt;/span&gt;
 &lt;a href="#shapeattach-is-lower-level-within-part-placement" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Anchor&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Boss&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Y&lt;/span&gt;
@@ -1381,11 +1132,8 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;Use &lt;code&gt;Shape.attach()&lt;/code&gt; only when a simple &lt;code&gt;on()&lt;/code&gt; face
-does not express the required feature reference. It lets you choose explicit
-parent and child anchors.&lt;/p&gt;
-&lt;p&gt;This does &lt;strong&gt;not&lt;/strong&gt; create an assembly joint. The feature and
-target are still geometry inside one part.&lt;/p&gt;
+&lt;p&gt;Use &lt;code&gt;Shape.attach()&lt;/code&gt; only when a simple &lt;code&gt;on()&lt;/code&gt; face does not express the required feature reference. It lets you choose explicit parent and child anchors.&lt;/p&gt;
+&lt;p&gt;This does &lt;strong&gt;not&lt;/strong&gt; create an assembly joint. The feature and target are still geometry inside one part.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="use-placement-for-a-component-occurrence"&gt;Use Placement for a component occurrence&lt;span class="hx:absolute hx:-mt-20" id="use-placement-for-a-component-occurrence"&gt;&lt;/span&gt;
 &lt;a href="#use-placement-for-a-component-occurrence" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Placement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;component&lt;/span&gt;
@@ -1421,11 +1169,8 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;Placement&lt;/code&gt; describes the complete pose of one component
-occurrence in its parent coordinate frame. XYZ is absolute. The optional
-rotation is one axis-angle orientation.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;Placement&lt;/code&gt; does not say that one component depends on another.
-It only says where this occurrence is.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Placement&lt;/code&gt; describes the complete pose of one component occurrence in its parent coordinate frame. XYZ is absolute. The optional rotation is one axis-angle orientation.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Placement&lt;/code&gt; does not say that one component depends on another. It only says where this occurrence is.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="use-occurrenceattach-for-separate-physical-parts"&gt;Use Occurrence.attach() for separate physical parts&lt;span class="hx:absolute hx:-mt-20" id="use-occurrenceattach-for-separate-physical-parts"&gt;&lt;/span&gt;
 &lt;a href="#use-occurrenceattach-for-separate-physical-parts" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scpf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Anchor&lt;/span&gt;
@@ -1449,14 +1194,8 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;Here &lt;code&gt;right&lt;/code&gt; is a separate physical part. Its rule is not an
-absolute XYZ position; its left side belongs on the right side of
-&lt;code&gt;left&lt;/code&gt;. That is an assembly relationship, so use
-&lt;code&gt;Occurrence.attach()&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;SolidCraft stores this as a native joint. If the parent changes size, the
-relationship can still express which references belong together. The next
-chapter, &lt;a href="../assembly-basics/"&gt;From one component to an assembly&lt;/a&gt;,
-builds on this distinction.&lt;/p&gt;
+&lt;p&gt;Here &lt;code&gt;right&lt;/code&gt; is a separate physical part. Its rule is not an absolute XYZ position; its left side belongs on the right side of &lt;code&gt;left&lt;/code&gt;. That is an assembly relationship, so use &lt;code&gt;Occurrence.attach()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;SolidCraft stores this as a native joint. If the parent changes size, the relationship can still express which references belong together. The next chapter, &lt;a href="../assembly-basics/"&gt;From one component to an assembly&lt;/a&gt;, builds on this distinction.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="shapemove-is-a-local-geometry-translation"&gt;Shape.move() is a local geometry translation&lt;span class="hx:absolute hx:-mt-20" id="shapemove-is-a-local-geometry-translation"&gt;&lt;/span&gt;
 &lt;a href="#shapemove-is-a-local-geometry-translation" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;body&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Box&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;40&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -1472,9 +1211,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;move()&lt;/code&gt; translates supported geometry inside its current shape
-expression. It is not the normal way to position a component occurrence.
-Use &lt;code&gt;Placement&lt;/code&gt; for occurrences.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;move()&lt;/code&gt; translates supported geometry inside its current shape expression. It is not the normal way to position a component occurrence. Use &lt;code&gt;Placement&lt;/code&gt; for occurrences.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="copies-can-have-different-placements"&gt;Copies can have different placements&lt;span class="hx:absolute hx:-mt-20" id="copies-can-have-different-placements"&gt;&lt;/span&gt;
 &lt;a href="#copies-can-have-different-placements" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;first&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Panel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
@@ -1495,9 +1232,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;The two occurrences reuse one component definition but have different
-placements. &lt;code&gt;copy()&lt;/code&gt; without a placement override keeps the source
-Placement.&lt;/p&gt;
+&lt;p&gt;The two occurrences reuse one component definition but have different placements. &lt;code&gt;copy()&lt;/code&gt; without a placement override keeps the source Placement.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="current-limits"&gt;Current limits&lt;span class="hx:absolute hx:-mt-20" id="current-limits"&gt;&lt;/span&gt;
 &lt;a href="#current-limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;table&gt;
 &lt;thead&gt;
@@ -1530,16 +1265,9 @@ Placement.&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;</description></item><item><title>Sheet metal</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/sheet-metal/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/sheet-metal/</guid><description>
 &lt;h2 data-hextra-search-id="sheet-metal-is-native-editable-history"&gt;Sheet metal is native editable history&lt;span class="hx:absolute hx:-mt-20" id="sheet-metal-is-native-editable-history"&gt;&lt;/span&gt;
-&lt;a href="#sheet-metal-is-native-editable-history" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Forge sheet-metal operations lower to SolidCraft sheet rules and native sheet
-features. Use them when the saved design must keep material thickness, bend
-allowance and a recoverable flat pattern. Do not replace these operations with
-fused solid envelopes when native history matters.&lt;/p&gt;
+&lt;a href="#sheet-metal-is-native-editable-history" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Forge sheet-metal operations lower to SolidCraft sheet rules and native sheet features. Use them when the saved design must keep material thickness, bend allowance and a recoverable flat pattern. Do not replace these operations with fused solid envelopes when native history matters.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="one-sheet-rule-owns-the-material"&gt;One sheet rule owns the material&lt;span class="hx:absolute hx:-mt-20" id="one-sheet-rule-owns-the-material"&gt;&lt;/span&gt;
-&lt;a href="#one-sheet-rule-owns-the-material" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;A sheet body has one active rule. That rule owns
-&lt;code&gt;thickness&lt;/code&gt;, &lt;code&gt;k_factor&lt;/code&gt; and the default
-&lt;code&gt;bend_radius&lt;/code&gt;. Operations on an existing sheet inherit those values
-instead of restating them. Feature-specific dimensions such as flange height,
-hem length or a path-flange radius override remain on the feature.&lt;/p&gt;
+&lt;a href="#one-sheet-rule-owns-the-material" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;A sheet body has one active rule. That rule owns &lt;code&gt;thickness&lt;/code&gt;, &lt;code&gt;k_factor&lt;/code&gt; and the default &lt;code&gt;bend_radius&lt;/code&gt;. Operations on an existing sheet inherit those values instead of restating them. Feature-specific dimensions such as flange height, hem length or a path-flange radius override remain on the feature.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="create-a-flat-sheet-body"&gt;Create a flat sheet body&lt;span class="hx:absolute hx:-mt-20" id="create-a-flat-sheet-body"&gt;&lt;/span&gt;
 &lt;a href="#create-a-flat-sheet-body" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;Sketch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Blank&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;plane&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;XY&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;sketch&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
@@ -1562,9 +1290,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;a href="../../reference/Sketch.sheet_metal/"&gt;&lt;code&gt;Sketch.sheet_metal()&lt;/code&gt;&lt;/a&gt;
-creates a new sheet body from one closed Sketch. It is a body-creation operation,
-not a feature applied to an existing sheet.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../reference/Sketch.sheet_metal/"&gt;&lt;code&gt;Sketch.sheet_metal()&lt;/code&gt;&lt;/a&gt; creates a new sheet body from one closed Sketch. It is a body-creation operation, not a feature applied to an existing sheet.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="fold-existing-material"&gt;Fold existing material&lt;span class="hx:absolute hx:-mt-20" id="fold-existing-material"&gt;&lt;/span&gt;
 &lt;a href="#fold-existing-material" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;sheet&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sheet&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fold&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
@@ -1583,10 +1309,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;a href="../../reference/Shape.fold/"&gt;&lt;code&gt;Shape.fold()&lt;/code&gt;&lt;/a&gt; bends
-material that already belongs to the sheet. The initial contract uses one
-straight fixed-coordinate fold line. Thickness, K-factor and bend radius come
-from the active rule.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../reference/Shape.fold/"&gt;&lt;code&gt;Shape.fold()&lt;/code&gt;&lt;/a&gt; bends material that already belongs to the sheet. The initial contract uses one straight fixed-coordinate fold line. Thickness, K-factor and bend radius come from the active rule.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="grow-an-edge-flange"&gt;Grow an edge flange&lt;span class="hx:absolute hx:-mt-20" id="grow-an-edge-flange"&gt;&lt;/span&gt;
 &lt;a href="#grow-an-edge-flange" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;sheet&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sheet&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;flange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
@@ -1605,10 +1328,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;a href="../../reference/Shape.flange/"&gt;&lt;code&gt;Shape.flange()&lt;/code&gt;&lt;/a&gt;
-adds material to explicit existing sheet edges. Height and angle may remain
-parameterized. Edge selection is currently a non-empty set of fixed XYZ pick
-points; generic topology selectors are not yet part of this API.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../reference/Shape.flange/"&gt;&lt;code&gt;Shape.flange()&lt;/code&gt;&lt;/a&gt; adds material to explicit existing sheet edges. Height and angle may remain parameterized. Edge selection is currently a non-empty set of fixed XYZ pick points; generic topology selectors are not yet part of this API.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="create-a-sheet-from-an-open-contour"&gt;Create a sheet from an open contour&lt;span class="hx:absolute hx:-mt-20" id="create-a-sheet-from-an-open-contour"&gt;&lt;/span&gt;
 &lt;a href="#create-a-sheet-from-an-open-contour" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;Sketch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Contour&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;plane&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;XZ&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;sketch&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
@@ -1635,10 +1355,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;a href="../../reference/Shape.contour_flange/"&gt;&lt;code&gt;Shape.contour_flange()&lt;/code&gt;&lt;/a&gt;
-is the other body-creation operation. Its receiver is a finished connected open
-Sketch chain. Forge preserves chain order and replay-bound native curve identity;
-callers do not pass SolidCraft curve ids.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../reference/Shape.contour_flange/"&gt;&lt;code&gt;Shape.contour_flange()&lt;/code&gt;&lt;/a&gt; is the other body-creation operation. Its receiver is a finished connected open Sketch chain. Forge preserves chain order and replay-bound native curve identity; callers do not pass SolidCraft curve ids.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="hem-an-existing-edge"&gt;Hem an existing edge&lt;span class="hx:absolute hx:-mt-20" id="hem-an-existing-edge"&gt;&lt;/span&gt;
 &lt;a href="#hem-an-existing-edge" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;sheet&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sheet&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hem&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
@@ -1657,10 +1374,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;a href="../../reference/Shape.hem/"&gt;&lt;code&gt;Shape.hem()&lt;/code&gt;&lt;/a&gt; folds an
-existing edge back onto the sheet while inheriting the active material rule.
-The first contract uses fixed XYZ edge picks. Length and optional gap are
-feature dimensions and may be parameterized.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../reference/Shape.hem/"&gt;&lt;code&gt;Shape.hem()&lt;/code&gt;&lt;/a&gt; folds an existing edge back onto the sheet while inheriting the active material rule. The first contract uses fixed XYZ edge picks. Length and optional gap are feature dimensions and may be parameterized.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="follow-a-reusable-path"&gt;Follow a reusable path&lt;span class="hx:absolute hx:-mt-20" id="follow-a-reusable-path"&gt;&lt;/span&gt;
 &lt;a href="#follow-a-reusable-path" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;Sketch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Path&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;plane&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;XZ&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;sketch&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
@@ -1684,11 +1398,7 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;a href="../../reference/Shape.path_flange/"&gt;&lt;code&gt;Shape.path_flange()&lt;/code&gt;&lt;/a&gt;
-adds a native flange to an existing edge using a finished open Sketch path. The
-qualified SolidCraft 0.45 contract is line-only. Omitting &lt;code&gt;radius&lt;/code&gt;
-inherits the active rule; supplying it overrides only this feature&amp;rsquo;s bend
-radius.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../reference/Shape.path_flange/"&gt;&lt;code&gt;Shape.path_flange()&lt;/code&gt;&lt;/a&gt; adds a native flange to an existing edge using a finished open Sketch path. The qualified SolidCraft 0.45 contract is line-only. Omitting &lt;code&gt;radius&lt;/code&gt; inherits the active rule; supplying it overrides only this feature&amp;rsquo;s bend radius.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="apply-a-whole-sheet-perforation-field"&gt;Apply a whole-sheet perforation field&lt;span class="hx:absolute hx:-mt-20" id="apply-a-whole-sheet-perforation-field"&gt;&lt;/span&gt;
 &lt;a href="#apply-a-whole-sheet-perforation-field" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;sheet&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sheet&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;perforate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
@@ -1708,32 +1418,14 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;a href="../../reference/Shape.perforate/"&gt;&lt;code&gt;Shape.perforate()&lt;/code&gt;&lt;/a&gt;
-adds native manufacturing perforation semantics to existing sheet material.
-Diameter and pitch are positive millimetre dimensions. &lt;code&gt;margin&lt;/code&gt; is
-optional; omitting it leaves SolidCraft&amp;rsquo;s native diameter-sized margin default
-in control. &lt;code&gt;pattern&lt;/code&gt; is &lt;code&gt;staggered&lt;/code&gt; by default or may be
-&lt;code&gt;square&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;The first Forge contract applies to the whole sheet. It deliberately does not
-expose SolidCraft&amp;rsquo;s Sketch/profile-bounded region fields. Perforations remain
-flat-pattern/DXF/measurement semantics rather than repeated B-rep holes.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../reference/Shape.perforate/"&gt;&lt;code&gt;Shape.perforate()&lt;/code&gt;&lt;/a&gt; adds native manufacturing perforation semantics to existing sheet material. Diameter and pitch are positive millimetre dimensions. &lt;code&gt;margin&lt;/code&gt; is optional; omitting it leaves SolidCraft&amp;rsquo;s native diameter-sized margin default in control. &lt;code&gt;pattern&lt;/code&gt; is &lt;code&gt;staggered&lt;/code&gt; by default or may be &lt;code&gt;square&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The first Forge contract applies to the whole sheet. It deliberately does not expose SolidCraft&amp;rsquo;s Sketch/profile-bounded region fields. Perforations remain flat-pattern/DXF/measurement semantics rather than repeated B-rep holes.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="editable-dimensions-versus-topology-picks"&gt;Editable dimensions versus topology picks&lt;span class="hx:absolute hx:-mt-20" id="editable-dimensions-versus-topology-picks"&gt;&lt;/span&gt;
-&lt;a href="#editable-dimensions-versus-topology-picks" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Keep design dimensions symbolic when the method accepts
-&lt;code&gt;Parameter&lt;/code&gt;/&lt;code&gt;Expression&lt;/code&gt; values. Current edge picks and
-straight fold-line coordinates are intentionally fixed finite coordinates.
-Forge rejects unsupported associative selectors instead of pretending a numeric
-pick is a stable topology reference.&lt;/p&gt;
+&lt;a href="#editable-dimensions-versus-topology-picks" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Keep design dimensions symbolic when the method accepts &lt;code&gt;Parameter&lt;/code&gt;/&lt;code&gt;Expression&lt;/code&gt; values. Current edge picks and straight fold-line coordinates are intentionally fixed finite coordinates. Forge rejects unsupported associative selectors instead of pretending a numeric pick is a stable topology reference.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="verification-and-flat-patterns"&gt;Verification and flat patterns&lt;span class="hx:absolute hx:-mt-20" id="verification-and-flat-patterns"&gt;&lt;/span&gt;
-&lt;a href="#verification-and-flat-patterns" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Native sheet-metal verification is stronger than matching a formed bounding
-box. Verification cases inspect sheet-rule values, native bend/history records,
-saved-design parameter edits and the recoverable flat pattern. See the
-&lt;a href="../../verification/"&gt;Verification catalog&lt;/a&gt;, especially the
-&lt;strong&gt;Sheet metal&lt;/strong&gt; group.&lt;/p&gt;</description></item><item><title>Verification and API boundaries</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/verification/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/verification/</guid><description>
+&lt;a href="#verification-and-flat-patterns" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Native sheet-metal verification is stronger than matching a formed bounding box. Verification cases inspect sheet-rule values, native bend/history records, saved-design parameter edits and the recoverable flat pattern. See the &lt;a href="../../verification/"&gt;Verification catalog&lt;/a&gt;, especially the &lt;strong&gt;Sheet metal&lt;/strong&gt; group.&lt;/p&gt;</description></item><item><title>Verification and API boundaries</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/verification/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/guide/verification/</guid><description>
 &lt;h2 data-hextra-search-id="unit-tests-for-python-behavior"&gt;Unit tests for Python behavior&lt;span class="hx:absolute hx:-mt-20" id="unit-tests-for-python-behavior"&gt;&lt;/span&gt;
-&lt;a href="#unit-tests-for-python-behavior" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The library&amp;rsquo;s tests under &lt;code&gt;scpf/tests/&lt;/code&gt; cover model
-objects, feature compilation, reusable components and rotation validation.
-For example, an occurrence rotation test checks that the compiler emits
-one &lt;code&gt;occurrence.move&lt;/code&gt; with the expected native parameters.&lt;/p&gt;
+&lt;a href="#unit-tests-for-python-behavior" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The library&amp;rsquo;s tests under &lt;code&gt;scpf/tests/&lt;/code&gt; cover model objects, feature compilation, reusable components and rotation validation. For example, an occurrence rotation test checks that the compiler emits one &lt;code&gt;occurrence.move&lt;/code&gt; with the expected native parameters.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;python&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="n"&gt;unittest&lt;/span&gt; &lt;span class="n"&gt;discover&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="n"&gt;scpf&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;tests&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"&gt;
 &lt;button
@@ -1748,21 +1440,9 @@ data-copied-label="Copied!"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;h2 data-hextra-search-id="test-compiled-native-commands"&gt;Test compiled native commands&lt;span class="hx:absolute hx:-mt-20" id="test-compiled-native-commands"&gt;&lt;/span&gt;
-&lt;a href="#test-compiled-native-commands" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Compare the generated command structure with explicit expectations,
-not only with a count of operations. Tests should check component names,
-requested positions, the orientation axis and angle, and feature ordering.
-A regression can preserve a known good JSON fixture when command ordering
-is part of the contract.&lt;/p&gt;
+&lt;a href="#test-compiled-native-commands" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Compare the generated command structure with explicit expectations, not only with a count of operations. Tests should check component names, requested positions, the orientation axis and angle, and feature ordering. A regression can preserve a known good JSON fixture when command ordering is part of the contract.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="native-geometric-verification"&gt;Native geometric verification&lt;span class="hx:absolute hx:-mt-20" id="native-geometric-verification"&gt;&lt;/span&gt;
-&lt;a href="#native-geometric-verification" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The CAD model repository runs a separate SolidCraft CLI workflow for
-native geometry, editable history, STEP output, measurements and screenshots.
-Read the &lt;strong&gt;saved SolidCraft occurrence transforms&lt;/strong&gt;, not just
-whether a command ran successfully. A valid Python object or syntactically valid command plan is not evidence
-that the final solid occupies the correct plane or has no collision.&lt;/p&gt;
+&lt;a href="#native-geometric-verification" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The CAD model repository runs a separate SolidCraft CLI workflow for native geometry, editable history, STEP output, measurements and screenshots. Read the &lt;strong&gt;saved SolidCraft occurrence transforms&lt;/strong&gt;, not just whether a command ran successfully. A valid Python object or syntactically valid command plan is not evidence that the final solid occupies the correct plane or has no collision.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="keep-implementation-and-docs-in-sync"&gt;Keep implementation and docs in sync&lt;span class="hx:absolute hx:-mt-20" id="keep-implementation-and-docs-in-sync"&gt;&lt;/span&gt;
-&lt;a href="#keep-implementation-and-docs-in-sync" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;When placement syntax changes, add tests for the exact generated native
-commands before documenting it as supported. Named principal-axis rotation
-is supported; chained rotations are still not.&lt;/p&gt;
-&lt;p&gt;For a plain-language explanation of the implementation and its
-boundaries, read
-&lt;a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/main/scpf/docs/architecture.md" target="_blank" rel="noopener"&gt;How SCPF works (without building a second CAD engine)&lt;/a&gt;.&lt;/p&gt;</description></item></channel></rss>
+&lt;a href="#keep-implementation-and-docs-in-sync" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;When placement syntax changes, add tests for the exact generated native commands before documenting it as supported. Named principal-axis rotation is supported; chained rotations are still not.&lt;/p&gt;
+&lt;p&gt;For a plain-language explanation of the implementation and its boundaries, read &lt;a href="https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/main/scpf/docs/architecture.md" target="_blank" rel="noopener"&gt;How SCPF works (without building a second CAD engine)&lt;/a&gt;.&lt;/p&gt;</description></item></channel></rss>
