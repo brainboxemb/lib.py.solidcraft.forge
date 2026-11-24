@@ -1,0 +1,385 @@
+{
+  "schema": 1,
+  "historical_reference": "brainboxemb/lib.py.solidcraft.forge",
+  "purpose": "Final fixed-route/content parity gate for the Forge NEW migration.",
+  "routes": [
+    {
+      "path": "guide/",
+      "contains": [
+        "Guide"
+      ]
+    },
+    {
+      "path": "guide/getting-started/",
+      "contains": [
+        "Getting started"
+      ]
+    },
+    {
+      "path": "guide/model-objects/",
+      "contains": [
+        "Model objects and parameters"
+      ]
+    },
+    {
+      "path": "guide/transformations/",
+      "contains": [
+        "Positioning and orientation"
+      ]
+    },
+    {
+      "path": "guide/assembly-basics/",
+      "contains": [
+        "From one component to an assembly"
+      ]
+    },
+    {
+      "path": "guide/geometry/",
+      "contains": [
+        "Geometry, sketches and Boolean operations"
+      ]
+    },
+    {
+      "path": "guide/features/",
+      "contains": [
+        "Features and references"
+      ]
+    },
+    {
+      "path": "guide/sheet-metal/",
+      "contains": [
+        "Sheet metal"
+      ]
+    },
+    {
+      "path": "guide/components/",
+      "contains": [
+        "Components and assemblies"
+      ]
+    },
+    {
+      "path": "guide/verification/",
+      "contains": [
+        "Verification and API boundaries"
+      ]
+    },
+    {
+      "path": "reference/",
+      "contains": [
+        "SCPF API Reference"
+      ]
+    },
+    {
+      "path": "reference/Faces/",
+      "contains": [
+        "Faces"
+      ]
+    },
+    {
+      "path": "reference/Anchor/",
+      "contains": [
+        "Anchor"
+      ]
+    },
+    {
+      "path": "reference/Axis/",
+      "contains": [
+        "Axis"
+      ]
+    },
+    {
+      "path": "reference/Depth/",
+      "contains": [
+        "Depth"
+      ]
+    },
+    {
+      "path": "reference/Edges/",
+      "contains": [
+        "Edges"
+      ]
+    },
+    {
+      "path": "reference/Shape/",
+      "contains": [
+        "Shape"
+      ]
+    },
+    {
+      "path": "reference/component/",
+      "contains": [
+        "component"
+      ]
+    },
+    {
+      "path": "reference/assembly/",
+      "contains": [
+        "assembly"
+      ]
+    },
+    {
+      "path": "reference/Occurrence.copy/",
+      "contains": [
+        "Occurrence.copy"
+      ]
+    },
+    {
+      "path": "reference/Occurrence.attach/",
+      "contains": [
+        "Occurrence.attach"
+      ]
+    },
+    {
+      "path": "reference/Occurrence.group/",
+      "contains": [
+        "Occurrence.group"
+      ]
+    },
+    {
+      "path": "reference/Assembly.group/",
+      "contains": [
+        "Assembly.group"
+      ]
+    },
+    {
+      "path": "reference/Assembly.with_exploded_view/",
+      "contains": [
+        "Assembly.with_exploded_view"
+      ]
+    },
+    {
+      "path": "reference/Assembly.show_exploded/",
+      "contains": [
+        "Assembly.show_exploded"
+      ]
+    },
+    {
+      "path": "reference/Assembly.show_assembled/",
+      "contains": [
+        "Assembly.show_assembled"
+      ]
+    },
+    {
+      "path": "reference/Assembly.with_anchor/",
+      "contains": [
+        "Assembly.with_anchor"
+      ]
+    },
+    {
+      "path": "reference/Assembly.anchor/",
+      "contains": [
+        "Assembly.anchor"
+      ]
+    },
+    {
+      "path": "reference/Shape.at/",
+      "contains": [
+        "Shape.at"
+      ]
+    },
+    {
+      "path": "reference/Shape.on/",
+      "contains": [
+        "Shape.on"
+      ]
+    },
+    {
+      "path": "reference/Shape.attach/",
+      "contains": [
+        "Shape.attach"
+      ]
+    },
+    {
+      "path": "reference/Shape.fillet/",
+      "contains": [
+        "Shape.fillet"
+      ]
+    },
+    {
+      "path": "reference/Shape.chamfer/",
+      "contains": [
+        "Shape.chamfer"
+      ]
+    },
+    {
+      "path": "reference/Shape.shell/",
+      "contains": [
+        "Shape.shell"
+      ]
+    },
+    {
+      "path": "reference/Shape.fold/",
+      "contains": [
+        "Shape.fold"
+      ]
+    },
+    {
+      "path": "reference/Shape.flange/",
+      "contains": [
+        "Shape.flange"
+      ]
+    },
+    {
+      "path": "reference/Shape.contour_flange/",
+      "contains": [
+        "Shape.contour_flange"
+      ]
+    },
+    {
+      "path": "reference/Shape.hem/",
+      "contains": [
+        "Shape.hem"
+      ]
+    },
+    {
+      "path": "reference/Shape.path_flange/",
+      "contains": [
+        "Shape.path_flange"
+      ]
+    },
+    {
+      "path": "reference/Shape.perforate/",
+      "contains": [
+        "Shape.perforate"
+      ]
+    },
+    {
+      "path": "reference/Shape.rectangular_pattern/",
+      "contains": [
+        "Shape.rectangular_pattern"
+      ]
+    },
+    {
+      "path": "reference/Shape.circular_pattern/",
+      "contains": [
+        "Shape.circular_pattern"
+      ]
+    },
+    {
+      "path": "reference/Sketch/",
+      "contains": [
+        "Sketch"
+      ]
+    },
+    {
+      "path": "reference/Sketch.add/",
+      "contains": [
+        "Sketch.add"
+      ]
+    },
+    {
+      "path": "reference/Sketch.rectangular_pattern/",
+      "contains": [
+        "Sketch.rectangular_pattern"
+      ]
+    },
+    {
+      "path": "reference/Sketch.mirror/",
+      "contains": [
+        "Sketch.mirror"
+      ]
+    },
+    {
+      "path": "reference/Sketch.sheet_metal/",
+      "contains": [
+        "Sketch.sheet_metal"
+      ]
+    },
+    {
+      "path": "reference/Sketch.extrude/",
+      "contains": [
+        "Sketch.extrude"
+      ]
+    },
+    {
+      "path": "reference/geometry-constructors/",
+      "contains": [
+        "geometry-constructors"
+      ]
+    },
+    {
+      "path": "reference/sketch-slot-constructors/",
+      "contains": [
+        "sketch-slot-constructors"
+      ]
+    },
+    {
+      "path": "reference/feature-constructors/",
+      "contains": [
+        "feature-constructors"
+      ]
+    },
+    {
+      "path": "reference/parameters-positioning/",
+      "contains": [
+        "parameters-positioning"
+      ]
+    },
+    {
+      "path": "reference/attachment-references/",
+      "contains": [
+        "attachment-references"
+      ]
+    },
+    {
+      "path": "reference/execution-api/",
+      "contains": [
+        "execution-api"
+      ]
+    },
+    {
+      "path": "reference/diagnostics/",
+      "contains": [
+        "diagnostics"
+      ]
+    },
+    {
+      "path": "cheatsheet/",
+      "contains": [
+        "Cheatsheet"
+      ]
+    },
+    {
+      "path": "verification/coverage/",
+      "contains": [
+        "Public Python API exports"
+      ]
+    },
+    {
+      "path": "verification/results/",
+      "contains": [
+        "One current row per Verification owner"
+      ]
+    },
+    {
+      "path": "verification/joint-anatomy/",
+      "contains": [
+        "joint origin"
+      ]
+    },
+    {
+      "path": "api-design-contract.html",
+      "contains": [
+        "API"
+      ]
+    },
+    {
+      "path": "docs/reference/solidcraft/0.42.0/",
+      "contains": [
+        "SolidCraft"
+      ]
+    },
+    {
+      "path": "docs/reference/solidcraft/0.45.0/",
+      "contains": [
+        "SolidCraft"
+      ]
+    },
+    {
+      "path": "docs/reference/solidcraft/0.48.1/",
+      "contains": [
+        "SolidCraft"
+      ]
+    }
+  ]
+}
