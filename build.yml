@@ -2,5 +2,5 @@ schema: 1
 branch: issue/38-visual-verification
 modules: [verification, builder-scpf, builder-solidcraft]
 library: true
-models: [simple-box]
+models: [anchored-holes, assembly-decorator, bracket, circle-negative-extrude, circular-feature-pattern, corner-anchor, hole-family, parametric-attach, primitive-csg, rectangular-pattern, round-top-sketch, rounded-rectangle-sketch, sheet-fold, simple-box, slot-family, top-sketch-after-chamfer]
 tasks: [test]

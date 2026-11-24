@@ -86,16 +86,8 @@ class ModelTests(unittest.TestCase):
                 [impl.id for impl in model.implementations],
                 ["scpf", "cadquery", "build123d", "pythonscad", "pybosl2"],
             )
-            expected_stages = (
-                ["native", "geometry", "visual"]
-                if model_id == "simple-box"
-                else ["native", "geometry"]
-            )
-            expected_runtimes = (
-                ["solidcraft", "reference", "solidcraft"]
-                if model_id == "simple-box"
-                else ["solidcraft", "reference"]
-            )
+            expected_stages = ["native", "geometry", "visual"]
+            expected_runtimes = ["solidcraft", "reference", "solidcraft"]
             self.assertEqual(
                 [stage.id for stage in model.verifications],
                 expected_stages,
@@ -108,11 +100,10 @@ class ModelTests(unittest.TestCase):
                 model.verifications[0].implementations,
                 ("scpf",),
             )
-            if model_id == "simple-box":
-                self.assertEqual(
-                    model.verifications[2].implementations,
-                    ("scpf",),
-                )
+            self.assertEqual(
+                model.verifications[2].implementations,
+                ("scpf",),
+            )
 
         for model_id in SCPF_ONLY_IDS:
             model = by_id[model_id]
@@ -206,9 +197,15 @@ class ModelTests(unittest.TestCase):
                 (row["implementation"], row["stage_id"])
                 for row in solidcraft["verify_items"]
             ],
-            [("scpf", "native")] * 18
-            + [("scpf", "visual")]
-            + [("scpf", "native")] * 2,
+            [
+                pair
+                for model in self.models
+                for pair in (
+                    [("scpf", "native")]
+                    if model.id in SCPF_ONLY_IDS
+                    else [("scpf", "native"), ("scpf", "visual")]
+                )
+            ],
         )
 
         reference = manifests[1]
