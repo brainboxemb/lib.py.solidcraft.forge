@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/1-bootstrap
-modules: all
+branch: issue/6-simple-box
+modules: [ci, builder-scpf, builder-solidcraft]
 library: true
 examples: all
 tasks: [test]

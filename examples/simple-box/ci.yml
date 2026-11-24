@@ -1,13 +1,10 @@
 schema: 1
 id: simple-box
 kind: example
-builder: builder-cadquery
-source: cadquery/model.py
+builder: builder-scpf
+source: scpf/model.py
+needs: [cadlib]
 verification:
   module: verification
   adapter: mesh-geometry
   definition: verification/geometry.json
-
-preview:
-  module: preview
-  adapter: mesh

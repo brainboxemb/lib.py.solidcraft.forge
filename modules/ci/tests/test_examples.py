@@ -23,8 +23,8 @@ class ExampleTests(unittest.TestCase):
             "simple-box-pythonscad", "simple-box-solidcraft",
         ])
         self.assertEqual(len(select_examples(self.examples, explicit=["simple-box"])), 1)
-        self.assertEqual(len(select_examples(self.examples, paths=("docs/plan.md",), selected_modules=("verification",))), 5)
-        self.assertEqual(len(select_examples(self.examples, paths=("examples/simple-box/cadquery/model.py",))), 1)
+        self.assertEqual(len(select_examples(self.examples, paths=("docs/plan.md",), selected_modules=("verification",))), 6)
+        self.assertEqual(len(select_examples(self.examples, paths=("examples/simple-box/scpf/model.py",))), 1)
         self.assertEqual(select_examples(self.examples, paths=("docs/plan.md",)), ())
         self.assertEqual([x.id for x in select_examples(self.examples, paths=(), selected_modules=("builder-build123d",))], ["simple-box-build123d"])
         self.assertEqual([x.id for x in select_examples(self.examples, paths=(), selected_modules=("builder-pythonscad",))], ["simple-box-pybosl2", "simple-box-pythonscad"])
@@ -42,6 +42,6 @@ class ExampleTests(unittest.TestCase):
             self.assertEqual([m["runtime"] for m in manifests], ["solidcraft", "reference"])
             reference = manifests[1]
             self.assertEqual(len(reference["build_examples"]), 4)
-            self.assertEqual(len(reference["verify_examples"]), 5)
+            self.assertEqual(len(reference["verify_examples"]), 6)
             build123d = next(x for x in reference["build_examples"] if x["id"] == "simple-box-build123d")
             self.assertEqual(build123d["engine_python"], "/opt/build123d/bin/python")

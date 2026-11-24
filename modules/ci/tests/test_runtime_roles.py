@@ -18,7 +18,7 @@ class RuntimeRoleTests(unittest.TestCase):
         modules = discover_modules(repo, project)
         examples = discover_examples(repo, modules)
         solidcraft = next(e for e in examples if e.id == "simple-box-solidcraft")
-        cadquery = next(e for e in examples if e.id == "simple-box")
+        cadquery = next(e for e in examples if e.id == "simple-box-cadquery")
         self.assertEqual(runtime_order((solidcraft, cadquery)), ("solidcraft", "reference"))
         with tempfile.TemporaryDirectory() as tmp:
             calls = []
@@ -32,5 +32,5 @@ class RuntimeRoleTests(unittest.TestCase):
             self.assertEqual([m["runtime"] for m in calls], ["solidcraft", "reference"])
             self.assertEqual([r["id"] for r in calls[0]["build_examples"]], ["simple-box-solidcraft"])
             self.assertEqual([r["id"] for r in calls[0]["verify_examples"]], [])
-            self.assertEqual({r["id"] for r in calls[1]["build_examples"]}, {"simple-box"})
-            self.assertEqual({r["id"] for r in calls[1]["verify_examples"]}, {"simple-box", "simple-box-solidcraft"})
+            self.assertEqual({r["id"] for r in calls[1]["build_examples"]}, {"simple-box-cadquery"})
+            self.assertEqual({r["id"] for r in calls[1]["verify_examples"]}, {"simple-box-cadquery", "simple-box-solidcraft"})
