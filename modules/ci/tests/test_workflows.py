@@ -5,6 +5,7 @@ class WorkflowTests(unittest.TestCase):
     def test_ci_and_pages_boundaries(self):
         ci = Path(".github/workflows/ci.yml").read_text()
         pages = Path(".github/workflows/pages.yml").read_text()
+        release = Path(".github/workflows/release.yml").read_text()
         self.assertIn("cancel-in-progress: true", ci)
         self.assertIn("gh workflow run pages.yml --ref main", ci)
         self.assertIn("branches: [dev, main]", ci)
@@ -13,3 +14,11 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn("cad_library_pages.publish", pages)
         self.assertIn("source-dev", pages)
         self.assertNotIn("actions/deploy-pages", pages)
+        self.assertIn("issue_comment:", release)
+        self.assertIn("python -m cad_library_release", release)
+        self.assertIn(
+            "tool.py.lib.ci/.github/workflows/reusable-release.yml@58ead6897a4ac8cafef22a3c1f834491bf61568d",
+            release,
+        )
+        self.assertIn("validator_path: cadlib/release.py", release)
+        self.assertNotIn("tool.cad.ci", release)
