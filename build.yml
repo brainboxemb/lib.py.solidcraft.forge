@@ -2,5 +2,5 @@ schema: 1
 branch: issue/21-ten-owner-gate
 modules: [ci, builder-scpf, builder-solidcraft, verification, preview]
 library: true
-models: [simple-box, primitive-csg, anchored-holes, assembly-decorator, parametric-attach, corner-anchor, rectangular-pattern, rotated-sketch-cutter]
+models: [simple-box, primitive-csg, anchored-holes, assembly-decorator, parametric-attach, corner-anchor, rectangular-pattern, rotated-sketch-cutter, slot-family]
 tasks: [test]
