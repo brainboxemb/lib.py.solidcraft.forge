@@ -6,7 +6,14 @@
   "owner": "simple-box",
   "preview_status": "pass",
   "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+  "schema": 2,
   "status": "pass",
-  "verification_runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+  "verification_stages": {
+    "geometry": {
+      "adapter": "mesh-geometry",
+      "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+      "status": "pass"
+    }
+  },
   "verification_status": "pass"
 }

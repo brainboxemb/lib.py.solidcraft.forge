@@ -27,14 +27,7 @@
           ],
           "max_delta_mm": 0.0,
           "pass": true,
-          "tolerance_mm": 0.001
-        },
-        "volume": {
-          "actual_mm3": 12000.0,
-          "delta_mm3": 0.0,
-          "expected_mm3": 12000.0,
-          "pass": true,
-          "tolerance_mm3": 0.1
+          "tolerance_mm": 0.25
         },
         "watertight": {
           "actual": true,
@@ -47,10 +40,10 @@
       "status": "pass"
     }
   ],
-  "input": "/output/models/simple-box/solidcraft/model.stl",
+  "input": "/output/models/simple-box/build123d/model.stl",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,
   "status": "pass",
-  "verification_id": "simple-box--solidcraft"
+  "verification_id": "simple-box-build123d-geometry"
 }
