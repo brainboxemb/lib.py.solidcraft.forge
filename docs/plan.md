@@ -29,6 +29,8 @@ The historical Forge repository remains the A/B authority.
 
 ## Now — #21 ten-owner gate
 
+Candidate PR #24 is technically qualified by CI run `45445906212` at `bcee6f2f9eab9e7429a06f5a219ae3e045fa87ba`. See `docs/acceptance/ten-owner-gate.md`. Remaining work is permanent dev publication, purpose-driven Pages verification and a full promotion to main.
+
 Add five representative physical owners:
 
 6. `corner-anchor` — topology-backed anchor + parent-resize saved design; public example + verification;
