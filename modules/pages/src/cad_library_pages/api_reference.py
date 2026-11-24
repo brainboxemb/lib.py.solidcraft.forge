@@ -114,7 +114,30 @@ def _render_reference(row: dict) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
+def _prepare_api_design_contract(source_root: Path, site: Path) -> None:
+    source = source_root / "docs" / "api.md"
+    if not source.is_file():
+        return
+    text = source.read_text(encoding="utf-8")
+    lines = text.splitlines()
+    title = "Forge API"
+    if lines and lines[0].startswith("# "):
+        title = lines[0][2:].strip() or title
+        text = "\n".join(lines[1:]).lstrip("\n")
+    target = site / "content" / "api-design-contract.md"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(
+        "---\n"
+        f"title: {json.dumps(title)}\n"
+        "url: /api-design-contract.html\n"
+        "---\n\n"
+        + text.rstrip() + "\n",
+        encoding="utf-8",
+    )
+
+
 def prepare_api_reference(source_root: Path, site: Path) -> None:
+    _prepare_api_design_contract(source_root, site)
     manifest_path = source_root / "docs" / "api-reference.json"
     if not manifest_path.is_file():
         return
