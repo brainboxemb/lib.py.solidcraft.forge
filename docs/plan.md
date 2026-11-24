@@ -41,8 +41,9 @@ Post-merge screenshot review found one remaining Forge-specific rendering
 regression: nested rich HTML in `joint-anatomy` can be projected as literal
 Markdown/code blocks because source indentation is retained outside `<pre>`.
 The correction remains part of #31 on branch
-`issue/31-pages-parity-final`; do not promote `dev` to `main` until it is
-qualified.
+`issue/31-pages-parity-final`. An earlier `dev -> main` promotion occurred
+before this visual defect was accepted as real, so the corrected `dev` baseline
+must be promoted to `main` once more after this fix is qualified.
 
 Remaining work:
 1. qualify the `joint-anatomy` projection fix with CI, Pages and fresh
@@ -50,7 +51,7 @@ Remaining work:
 2. squash the fix PR into `dev`;
 3. verify the normal post-merge durable build/Pages chain;
 4. close #31;
-5. promote the accepted `dev` baseline to `main` with the repository's
+5. promote the corrected `dev` baseline to `main` again with the repository's
    normal merge-commit policy.
 
 The reusable visual foundation remains template-owned. Forge-specific Guide,
