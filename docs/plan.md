@@ -4,9 +4,9 @@ This file contains unfinished work only.
 
 ## Accepted baseline
 
-The physical Forge model migration is complete on `dev`.
+The Forge migration is complete on `dev`.
 
-The accepted migration baseline now has:
+The accepted baseline now has:
 - 46 physical model owners;
 - SCPF as primary per owner;
 - historically real reference implementations local to the same physical owner;
@@ -19,39 +19,26 @@ The accepted migration baseline now has:
 - exactly four public Examples;
 - all 46 physical owners projected into Verification;
 - durable generated CAD artifacts on `build/<scope>/models/**`, not copied to
-  `gh-pages`.
-
-The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the
-A/B authority until documentation and public-route parity is accepted.
-
-## Now — #31 final integration
-
-PR #34 is the single remaining migration lane.
-
-Implemented and qualified on the PR branch:
-- historical nine-chapter Guide and Cheatsheet projections;
+  `gh-pages`;
+- the historical nine-chapter Guide and Cheatsheet;
 - 44 case-sensitive public SCPF API Reference routes, statically validated
   against `cadlib/src/scpf` without importing or executing the package;
-- the API design-contract compatibility route;
 - Verification `coverage`, `joint-anatomy` and `results` projections from
   source declarations and durable build evidence;
-- the accepted reusable Hextra/CAD presentation foundation from
+- the reusable Hextra/CAD presentation foundation from
   `template.cad.library`;
 - a fixed 63-route OLD-vs-NEW route/content gate;
-- desktop/mobile rendered-layout evidence with zero missing local assets.
+- accepted desktop/mobile rendered-layout evidence, including the corrected
+  rich joint-anatomy diagram presentation;
+- policy-owned merge execution through PR comment `/merge`, with
+  `.github/workflows/merge-policy.yml` choosing and executing the merge
+  method;
+- the accepted library/CAD NEW workflow split: pull requests run central `ci`
+  only, permanent `dev`/`main` runs use one `build` job for qualification and
+  durable publication, and Pages is dispatched as an independent workflow.
 
-Remaining work:
-1. require final CI and Pages checks on the current PR head;
-2. inspect the Forge-specific documentation screenshots produced by the final
-   Pages run;
-3. squash PR #34 into `dev`;
-4. verify the post-merge durable build/Pages chain and close #31;
-5. promote the accepted `dev` baseline to `main` with the repository's
-   normal merge-commit policy.
-
-The reusable visual foundation remains template-owned. Forge-specific Guide,
-API Reference, Cheatsheet and Verification explanatory content remain owned
-here.
+The historical `brainboxemb/lib.py.solidcraft.forge` repository is now an
+archival/A-B reference rather than an unfinished migration gate.
 
 ## Later
 

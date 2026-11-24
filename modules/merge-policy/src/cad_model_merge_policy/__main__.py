@@ -72,6 +72,14 @@ def require_green_ci(
         raise MergePolicyError("central ci check is not green")
 
 
+def merge_required(pr: dict) -> bool:
+    if pr.get("merged"):
+        return False
+    if pr.get("state") != "open":
+        raise MergePolicyError("pull request is closed without merge")
+    return True
+
+
 def dispatch_workflow(repository: str, workflow: str, ref: str, token: str) -> None:
     api(
         repository,
@@ -97,6 +105,10 @@ def main() -> None:
         raise MergePolicyError("only the repository owner may execute /merge")
 
     pr = api(args.repository, f"pulls/{args.pull_request_number}", token)
+    if not merge_required(pr):
+        print(pr.get("merge_commit_sha") or "already merged")
+        return
+
     base = pr["base"]["ref"]
     method = merge_method(head=pr["head"]["ref"], base=base)
     head_sha = pr["head"]["sha"]

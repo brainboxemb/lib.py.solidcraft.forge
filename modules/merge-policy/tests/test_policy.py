@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 from cad_model_merge_policy.__main__ import (
     dispatch_workflow,
+    merge_required,
     require_green_ci,
 )
 from cad_model_merge_policy.policy import MergePolicyError, merge_method
@@ -18,6 +19,24 @@ def check(name, status, conclusion, *prs):
 
 
 class MergePolicyTests(unittest.TestCase):
+    def test_open_pull_request_requires_merge(self):
+        self.assertTrue(merge_required({"state": "open", "merged": False}))
+
+    def test_already_merged_pull_request_is_idempotent_noop(self):
+        self.assertFalse(
+            merge_required(
+                {
+                    "state": "closed",
+                    "merged": True,
+                    "merge_commit_sha": "abc123",
+                }
+            )
+        )
+
+    def test_closed_unmerged_pull_request_is_rejected(self):
+        with self.assertRaisesRegex(MergePolicyError, "closed without merge"):
+            merge_required({"state": "closed", "merged": False})
+
     def test_feature_to_dev_is_squash(self):
         self.assertEqual(merge_method(head="issue/10-change", base="dev"), "squash")
 

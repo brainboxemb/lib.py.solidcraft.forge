@@ -12,6 +12,29 @@ Read `docs/requirements.md`, `docs/design.md`, `docs/plan.md` and `docs/handoff.
 - do not back-merge `main -> dev` unless there is a real stable-only change.
 - never delete `main`, `dev`, `build` or `gh-pages`.
 
+### Mandatory merge execution rule
+
+This repository deliberately does **not** let an agent choose the merge method.
+
+For every source-branch integration:
+
+- short-lived branch -> `dev`;
+- `dev` -> `main`;
+- exceptional `main` -> `dev`;
+
+an agent MUST post `/merge` on the pull request and let
+`.github/workflows/merge-policy.yml` choose and execute the merge.
+
+An agent MUST NOT:
+
+- call GitHub's direct merge API;
+- enable or use auto-merge;
+- use a UI/manual merge fallback;
+- manually choose squash, merge or rebase.
+
+If `/merge` fails, stop the integration and repair the merge-policy path.
+Never bypass the policy.
+
 Matching work-branch `build.yml` controls explicit library/module/model selection. `dev` uses incremental selection since the last successful integration run. `main` and promotion PRs run full.
 
 ## Ownership
@@ -29,6 +52,8 @@ Keep generic mechanics in their owning modules:
 - Pages reads durable evidence and never executes CAD.
 
 Central CI schedules model owners, implementations and runtime roles but must not contain engine-specific branches.
+
+Pull requests run central `ci` only. Permanent `dev`/`main` events run one `build` job that performs qualification and durable publication, then dispatches the independent Pages workflow without waiting for it. Do not reintroduce separate permanent-branch `publish-build` or `dispatch-pages` jobs inside CI.
 
 ## Runtime policy
 
