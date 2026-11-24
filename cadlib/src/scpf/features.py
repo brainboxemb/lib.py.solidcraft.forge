@@ -84,6 +84,7 @@ def _is_feature_tree(shape):
         "placed_box",
         "tapered_box",
         "sketch_base_extrusion",
+        "sketch_base_revolve",
         "sketch_open_chain",
         "sheet_base",
         "sheet_contour_flange",
@@ -1221,6 +1222,34 @@ def _non_count_parameter_names(node, found=None):
             _non_count_parameter_names(original, found)
             _non_count_parameter_names((axis, alignment, reversed), found)
             return found
+        if node.kind == "sketch_base_revolve":
+            (
+                sketch_name,
+                plane,
+                origin,
+                plane_offset,
+                profiles,
+                _angle,
+                axis,
+                direction,
+                operations,
+                rotation,
+            ) = node.data
+            _non_count_parameter_names(
+                (
+                    sketch_name,
+                    plane,
+                    origin,
+                    plane_offset,
+                    profiles,
+                    axis,
+                    direction,
+                    operations,
+                    rotation,
+                ),
+                found,
+            )
+            return found
         if node.kind == "sheet_base":
             (
                 sketch_name,
@@ -1272,6 +1301,21 @@ def _non_count_parameter_names(node, found=None):
                 ),
                 found,
             )
+            return found
+        if node.kind == "sketch_base_revolve":
+            (
+                _sketch_name,
+                _plane,
+                _origin,
+                _plane_offset,
+                _profiles,
+                angle,
+                _axis,
+                _direction,
+                _operations,
+                _rotation,
+            ) = node.data
+            found.update(param.name for param in parameters_in(angle))
             return found
         if node.kind == "sheet_edge_flange":
             original, edges, height, _angle, height_from, position, flip = node.data
@@ -1402,6 +1446,7 @@ _AUTO_HISTORY_FEATURE_NAMES = {
     "solid.sphere": "Sphere",
     "solid.cylinder": "Cylinder",
     "solid.cone": "Cone",
+    "solid.revolve": "Revolve",
     "solid.hole": "Hole",
 }
 
@@ -1684,7 +1729,7 @@ def _to_commands(shape, name):
             params["fixed"] = [command_value(v) for v in fixed]
         return steps + [_command("sheet.fold", **params)], base
 
-    if shape.kind in ("box", "placed_box", "tapered_box", "sketch_base_extrusion"):
+    if shape.kind in ("box", "placed_box", "tapered_box", "sketch_base_extrusion", "sketch_base_revolve"):
         return compile_base(shape, name)
     if _is_pure_csg_tree(shape):
         from .csg import _csg_new
@@ -1790,7 +1835,7 @@ def _to_commands(shape, name):
         if added.kind == "anchored":
             return steps + _attached_commands(
                 shape, original, added, name, feature_name=feature_name), base
-        if added.kind == "sketch_base_extrusion":
+        if added.kind in ("sketch_base_extrusion", "sketch_base_revolve"):
             operation = {
                 "union": "join",
                 "difference": "cut",
