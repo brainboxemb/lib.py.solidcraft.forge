@@ -10,6 +10,7 @@ from .cheatsheet import prepare_cheatsheet
 from .documentation import prepare_documentation
 from .guides import prepare_guides
 from .models import prepare_models
+from .verification_special import prepare_verification_special
 
 
 def build(*, source_root: Path, destination: Path, base_url: str, build_scope: Path | None = None):
@@ -25,6 +26,7 @@ def build(*, source_root: Path, destination: Path, base_url: str, build_scope: P
         prepare_guides(source_root, source)
         prepare_cheatsheet(source_root, source)
         prepare_models(source_root, source, build_scope)
+        prepare_verification_special(source_root, source, build_scope)
         subprocess.run(
             [
                 "hugo",
