@@ -17,9 +17,11 @@ Accepted owners:
 
 All owner-local command contracts, native stages and applicable geometry stages pass. SCPF replay documents retain historical multi-phase semantics through `scpf.headless.run_document()`. The A/B evidence and historical bundle hashes are recorded in `docs/acceptance/five-owner-gate.md`.
 
-Permanent `build/dev/models` output exists for all five owners. Pages publishes only `simple-box` and `anchored-holes`, matching historical purposes.
+Permanent `build/dev/models` output exists for all five owners. Pages semantics are purpose-driven: owners with `example` appear under Examples; owners with `verification` appear under Verification; owners with both appear in both views.
 
 ## Active work — #21
+
+PR #24 is squash-merged to `dev@8f28cbb46acd894554a2152611aec5d161a9ab38`. Post-merge CI `45448096247` is green and `build/dev/models` contains all ten owners. A/B evidence is recorded in `docs/acceptance/ten-owner-gate.md`. The remaining blocker is the Pages migration: the current implementation incorrectly publishes only `example` owners. Fix the projection so Examples contains the three example owners and Verification contains all ten verification owners, then qualify Pages and promote the full ten-owner baseline to main.
 
 Move from five accepted owners to ten total:
 

@@ -1,0 +1,200 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -60,
+    -40,
+    0
+  ],
+  "bounds_max": [
+    60,
+    40,
+    4
+  ],
+  "bounds_tolerance_mm": 0.5,
+  "volume_mm3": 36281.415986824606,
+  "volume_tolerance_mm3": 50,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "slot 1,1 at z=0.5",
+      "point": [
+        0,
+        0,
+        0.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 1,1 at z=2",
+      "point": [
+        0,
+        0,
+        2
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 1,1 at z=3.5",
+      "point": [
+        0,
+        0,
+        3.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,1 at z=0.5",
+      "point": [
+        24,
+        0,
+        0.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,1 at z=2",
+      "point": [
+        24,
+        0,
+        2
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,1 at z=3.5",
+      "point": [
+        24,
+        0,
+        3.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,1 at z=0.5",
+      "point": [
+        48,
+        0,
+        0.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,1 at z=2",
+      "point": [
+        48,
+        0,
+        2
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,1 at z=3.5",
+      "point": [
+        48,
+        0,
+        3.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 1,2 at z=0.5",
+      "point": [
+        0,
+        28,
+        0.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 1,2 at z=2",
+      "point": [
+        0,
+        28,
+        2
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 1,2 at z=3.5",
+      "point": [
+        0,
+        28,
+        3.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,2 at z=0.5",
+      "point": [
+        24,
+        28,
+        0.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,2 at z=2",
+      "point": [
+        24,
+        28,
+        2
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 2,2 at z=3.5",
+      "point": [
+        24,
+        28,
+        3.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,2 at z=0.5",
+      "point": [
+        48,
+        28,
+        0.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,2 at z=2",
+      "point": [
+        48,
+        28,
+        2
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "slot 3,2 at z=3.5",
+      "point": [
+        48,
+        28,
+        3.5
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    }
+  ]
+}
