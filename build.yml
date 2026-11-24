@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/8-bootstrap-record
-modules: [ci, pages]
+branch: issue/11-model-owner-sync
+modules: [ci, build, pages]
 library: false
-examples: []
+models: [simple-box]
 tasks: [test]

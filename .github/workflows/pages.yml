@@ -7,8 +7,6 @@ on:
       - ".github/workflows/pages.yml"
       - "site/**"
       - "modules/pages/**"
-      - "docs/**"
-      - "examples/**"
   workflow_dispatch:
 
 concurrency:

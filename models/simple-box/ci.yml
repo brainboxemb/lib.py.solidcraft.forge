@@ -1,0 +1,34 @@
+schema: 1
+id: simple-box
+process: true
+primary: cadquery
+
+implementations:
+  - id: cadquery
+    builder: builder-cadquery
+    source: cadquery/model.py
+  - id: build123d
+    builder: builder-build123d
+    source: build123d/model.py
+  - id: pythonscad
+    builder: builder-pythonscad
+    source: pythonscad/model.py
+  - id: pybosl2
+    builder: builder-pybosl2
+    source: pybosl2/model.py
+  - id: solidcraft
+    builder: builder-solidcraft
+    source: solidcraft/commands.json
+    preview: false
+
+verification:
+  module: verification
+  adapter: mesh-geometry
+  definition: verification/geometry.json
+
+preview:
+  module: preview
+  adapter: mesh
+
+dependencies: []
+needs: []
