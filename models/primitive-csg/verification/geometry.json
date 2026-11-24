@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -19.595917942265423,
+    -20,
+    0
+  ],
+  "bounds_max": [
+    25,
+    20,
+    20
+  ],
+  "bounds_tolerance_mm": 0.5,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "surviving sphere interior",
+      "point": [
+        -10,
+        0,
+        10
+      ],
+      "distance_mm": 5.857864376269049,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "cylindrical bore",
+      "point": [
+        0,
+        0,
+        1
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "clip plane at x=25",
+      "point": [
+        27,
+        10,
+        10
+      ],
+      "distance_mm": 2,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "unioned box extension",
+      "point": [
+        23,
+        14,
+        10
+      ],
+      "distance_mm": 1,
+      "tolerance_mm": 0.3
+    }
+  ]
+}

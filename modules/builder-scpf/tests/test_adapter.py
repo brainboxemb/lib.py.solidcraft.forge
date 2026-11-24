@@ -10,13 +10,28 @@ from cad_library_builder_scpf import build
 
 
 class SCPFBuilderTests(unittest.TestCase):
-    def test_compiles_then_delegates_to_generic_solidcraft_builder(self):
-        run_script = Mock(
-            return_value={
-                "commands": [
-                    {"command": "solid.box", "params": {}}
-                ]
-            }
+    def _scpf_modules(self, document, *, replay):
+        run_script = Mock(return_value=document)
+        runner = ModuleType("scpf.runner")
+        runner.run_script = run_script
+
+        replay_module = ModuleType("scpf.replay")
+        replay_module.is_replay_document = Mock(return_value=replay)
+
+        scpf = ModuleType("scpf")
+        scpf.runner = runner
+        scpf.replay = replay_module
+        return scpf, runner, replay_module, run_script
+
+    def test_plain_document_delegates_to_generic_solidcraft_builder(self):
+        document = {
+            "commands": [
+                {"command": "solid.box", "params": {}}
+            ]
+        }
+        scpf, runner, replay, run_script = self._scpf_modules(
+            document,
+            replay=False,
         )
         captured = {}
 
@@ -25,11 +40,6 @@ class SCPFBuilderTests(unittest.TestCase):
                 commands.read_text()
             )
             captured["output"] = output
-
-        scpf = ModuleType("scpf")
-        runner = ModuleType("scpf.runner")
-        runner.run_script = run_script
-        scpf.runner = runner
 
         solidcraft = ModuleType(
             "cad_library_builder_solidcraft"
@@ -46,6 +56,7 @@ class SCPFBuilderTests(unittest.TestCase):
                 {
                     "scpf": scpf,
                     "scpf.runner": runner,
+                    "scpf.replay": replay,
                     "cad_library_builder_solidcraft": solidcraft,
                 },
             ):
@@ -57,6 +68,104 @@ class SCPFBuilderTests(unittest.TestCase):
             captured["document"]["commands"][0]["command"],
             "solid.box",
         )
+
+    def test_replay_document_uses_scpf_headless_executor_and_retains_evidence(self):
+        document = {
+            "format": "scpf-replay",
+            "version": 2,
+            "commands": [
+                {
+                    "command": "component.create",
+                    "params": {"name": "Part"},
+                    "bind": {"$part": "occurrence"},
+                },
+                {
+                    "command": "occurrence.move",
+                    "params": {
+                        "occurrence": "$part",
+                        "translate": [10, 0, 0],
+                    },
+                },
+            ],
+        }
+        scpf, runner, replay, run_script = self._scpf_modules(
+            document,
+            replay=True,
+        )
+        headless = ModuleType("scpf.headless")
+        calls = {}
+
+        def run_document(
+            value,
+            *,
+            save,
+            export,
+            results_out,
+            replay_log_out,
+            work_dir,
+        ):
+            calls["document"] = value
+            calls["work_dir"] = work_dir
+            save.parent.mkdir(parents=True, exist_ok=True)
+            save.write_bytes(b"sc")
+            export.write_bytes(b"stl")
+            results_out.write_text("[]")
+            replay_log_out.write_text('{"completed": 2}')
+            work_dir.mkdir(parents=True, exist_ok=True)
+
+        headless.run_document = run_document
+        scpf.headless = headless
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "model.py"
+            source.write_text("model")
+            output = root / "out/model.stl"
+
+            def command(args, **kwargs):
+                if args[1] == "snapshot":
+                    Path(args[args.index("--out") + 1]).write_bytes(b"png")
+                return Mock(returncode=0)
+
+            with patch.dict(
+                sys.modules,
+                {
+                    "scpf": scpf,
+                    "scpf.runner": runner,
+                    "scpf.replay": replay,
+                    "scpf.headless": headless,
+                },
+            ), patch(
+                "cad_library_builder_scpf.subprocess.run",
+                side_effect=command,
+            ):
+                build(source, output)
+
+            self.assertEqual(calls["document"], document)
+            self.assertEqual(
+                json.loads(
+                    (output.parent / "solidcraft.json").read_text()
+                ),
+                document,
+            )
+            self.assertEqual(
+                (output.parent / "model.sc").read_bytes(),
+                b"sc",
+            )
+            self.assertEqual(
+                (output.parent / "model.png").read_bytes(),
+                b"png",
+            )
+            self.assertTrue(
+                (output.parent / "replay-log.json").is_file()
+            )
+            self.assertTrue(
+                (output.parent / "replay-results.json").is_file()
+            )
+            self.assertEqual(
+                calls["work_dir"],
+                output.parent / "replay_work",
+            )
 
 
 if __name__ == "__main__":

@@ -2,52 +2,54 @@
 
 This file contains unfinished work only.
 
-## Stable baseline
+## Accepted baseline
 
-The corrected repository architecture is already qualified on `dev`; promotion to `main` is the next integration step.
+The five-owner migration gate is accepted on `dev@606f07588c8a41ee4f2ae18aef55ff25d1ceb2fc`.
 
-Accepted 1-owner migration:
-- `simple-box` is one physical owner;
-- SCPF is primary;
-- historical CadQuery/build123d/PythonSCAD/pyBOSL2 references are local implementations;
-- OLD and NEW SCPF command documents match semantically;
-- historical native baseline and `length=50` saved-design mutation match retained OLD machine evidence;
-- all five implementations pass their geometry contract;
-- durable `build/dev/models/simple-box` is published;
-- Pages exposes both `native` and `geometry` stages with durable report links.
+Accepted physical owners:
+1. `simple-box`;
+2. `primitive-csg`;
+3. `anchored-holes`;
+4. `assembly-decorator`;
+5. `parametric-attach`.
 
-Issues #6 and #14 are closed.
+For the gate:
+- SCPF is primary per owner;
+- historical reference implementations are local implementations only where they existed;
+- owner-local command contracts pass;
+- all five native stages pass;
+- all 25 applicable geometry stages pass;
+- historical saved-design mutations are retained;
+- SCPF replay semantics are preserved through `scpf.headless.run_document()`;
+- OLD vs NEW evidence is recorded in `docs/acceptance/five-owner-gate.md`;
+- durable `build/dev/models` output is published;
+- Pages exposes only owners whose `purpose` contains `example`.
 
-The historical Forge repository remains the known-good A/B source.
+The historical Forge repository remains the A/B authority.
 
-## Now — #16 five-owner gate
+## Now — #21 ten-owner gate
 
-Qualify **five total physical model owners** before expanding further.
+Add five representative physical owners:
 
-Already accepted:
-1. `simple-box` — fundamentals / editable parameters / native Box.
+6. `corner-anchor` — topology-backed anchor + parent-resize saved design; public example + verification;
+7. `rectangular-pattern` — two-direction native feature pattern + saved-design mutation;
+8. `rotated-sketch-cutter` — rotated local Sketch frames and Boolean cutters; migrate only the historical SCPF implementation;
+9. `slot-family` — five native Slot constructions + saved-design width/length/position mutation;
+10. `sheet-fold` — native sheet-metal fold + flat-pattern inspection.
 
-Add:
-2. `primitive-csg` — primitives and Boolean composition;
-3. `anchored-holes` — face-relative Hole plus native rectangular pattern;
-4. `assembly-decorator` — component definition, imported assembly and occurrences;
-5. `parametric-attach` — symbolic attachment gap and saved-design mutation.
-
-For every new owner:
-- keep one `models/<id>/` owner;
+For each owner:
 - preserve historical `model.yml.purpose` exactly;
-- use SCPF as the Forge implementation and migrate historical reference implementations that existed;
-- reuse generic template builders, staged verification and two runtime roles;
-- migrate owner-local native/geometry/saved-design expectations;
-- compare NEW evidence directly against retained OLD build artifacts;
-- qualify candidate before permanent integration.
+- migrate only reference implementations that actually existed;
+- preserve owner-local source/compiler contract tests;
+- migrate native/saved-design/inspection expectations exactly;
+- reuse the generic two-runtime/staged-verification architecture;
+- compare against retained OLD `build/dev-cad/examples/<id>/` evidence.
 
-Do not expand to the 10-owner gate until all five owners are accepted, durably published and correctly projected by Pages.
+Do not start the remaining graph until the ten-owner gate is accepted, durably published, correctly projected by Pages and promoted through a full `dev -> main` run.
 
-## After the five-owner gate
+## After the ten-owner gate
 
-1. migrate to ten representative physical owners;
-2. classify and migrate the remaining graph;
-3. migrate API/guides/reference documentation;
-4. qualify NEW release/version mechanics;
-5. retire duplicated historical orchestration only after parity.
+1. classify and migrate the remaining graph;
+2. migrate API/guides/reference documentation;
+3. qualify NEW release/version mechanics;
+4. retire duplicated historical orchestration only after parity.

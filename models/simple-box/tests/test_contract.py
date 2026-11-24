@@ -1,38 +1,30 @@
-"""Package-owned contract for direct parameterized Box lowering."""
-from pathlib import Path
-import tempfile
+"""Integration contract for native parameterized Box lowering."""
+
 import unittest
+from pathlib import Path
 
 from scpf.runner import run_script
 
 
-MODEL = """class SimpleBox:
-    length = 40.0
-    width = 30.0
-    height = 10.0
-
-    def build(self):
-        return Box(self.length, self.width, self.height, anchor=Anchor.BOTTOM)
+ROOT = Path(__file__).resolve().parents[3]
+MODEL = ROOT / "models/simple-box/scpf/model.py"
 
 
-SimpleBox()
-"""
+class SimpleBoxCommandTests(unittest.TestCase):
+    def test_box_lowers_directly_to_native_solid_box(self):
+        """Keep the representative simple-box lowering contract explicit."""
 
-
-class NativeBoxLoweringTests(unittest.TestCase):
-    def test_parameterized_box_lowers_directly_to_native_solid_box(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            source = Path(tmp) / "model.py"
-            source.write_text(MODEL, encoding="utf-8")
-            commands = run_script(source)["commands"]
+        commands = run_script(MODEL)["commands"]
 
         feature_commands = [
-            row for row in commands if row["command"] != "parameters.add"
+            row for row in commands
+            if row["command"] != "parameters.add"
         ]
         self.assertEqual(
             [row["command"] for row in feature_commands],
             ["solid.box"],
         )
+
         box = feature_commands[0]["params"]
         self.assertEqual(box["length"], "length")
         self.assertEqual(box["width"], "width")
@@ -41,6 +33,7 @@ class NativeBoxLoweringTests(unittest.TestCase):
             box["corner"],
             ["-length / 2", "-width / 2", 0],
         )
+
         self.assertFalse(
             any(row["command"].startswith("sketch.") for row in commands)
         )

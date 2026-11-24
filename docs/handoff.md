@@ -6,35 +6,39 @@ Read `AGENTS.md`, `docs/requirements.md`, `docs/design.md` and `docs/plan.md` fi
 
 ## Accepted baseline
 
-The corrected physical model-owner architecture is qualified.
+The five-owner gate is accepted on `dev@606f07588c8a41ee4f2ae18aef55ff25d1ceb2fc`.
 
-`simple-box` is the first accepted historical Forge owner:
+Accepted owners:
+- `simple-box`;
+- `primitive-csg`;
+- `anchored-holes`;
+- `assembly-decorator`;
+- `parametric-attach`.
+
+All owner-local command contracts, native stages and applicable geometry stages pass. SCPF replay documents retain historical multi-phase semantics through `scpf.headless.run_document()`. The A/B evidence and historical bundle hashes are recorded in `docs/acceptance/five-owner-gate.md`.
+
+Permanent `build/dev/models` output exists for all five owners. Pages publishes only `simple-box` and `anchored-holes`, matching historical purposes.
+
+## Active work — #21
+
+Move from five accepted owners to ten total:
+
+6. `corner-anchor`;
+7. `rectangular-pattern`;
+8. `rotated-sketch-cutter`;
+9. `slot-family`;
+10. `sheet-fold`.
+
+Keep the same migration discipline:
+- one physical owner;
 - SCPF primary;
-- historical CadQuery/build123d/PythonSCAD/pyBOSL2 references;
-- native SolidCraft baseline + saved-design verification in `solidcraft`;
-- geometry verification for all implementations in `reference`;
-- OLD/NEW command and measurement parity;
-- durable owner-grouped build output;
-- Pages shows named `native` and `geometry` evidence.
+- only historical reference implementations that actually existed;
+- historical model-local tests and verification definitions;
+- OLD build evidence as A/B authority;
+- no Forge-specific scheduler logic.
 
-Issues #6 and #14 are closed. Do not reopen engine-specific sibling owners.
-
-## Active work — #16
-
-Move from one accepted owner to five total:
-
-1. `simple-box` — already accepted;
-2. `primitive-csg`;
-3. `anchored-holes`;
-4. `assembly-decorator`;
-5. `parametric-attach`.
-
-The old repository `brainboxemb/lib.py.solidcraft.forge` remains the A/B authority. Use its source and generated `build` branch as machine evidence.
-
-Preserve each historical `model.yml.purpose` exactly. Verification-only models stay out of public Pages; owners with `example` are public.
-
-Do not add Forge-specific scheduling logic. Consumer-owned SCPF compilation may remain in `builder-scpf`; build/runtime/verification orchestration stays generic.
+Before starting the owner migration, promote the accepted five-owner `dev` baseline to `main` with a full promotion run.
 
 ## Handoff message
 
-> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from `docs/plan.md`, issue #16. The 1-owner gate is accepted. Migrate the four selected historical owners so the repository has five total: `primitive-csg`, `anchored-holes`, `assembly-decorator`, `parametric-attach`, plus accepted `simple-box`. Keep one physical owner per model, preserve historical purposes and reference implementations, migrate native/geometry/saved-design expectations from source, compare against retained OLD build evidence, and do not start the 10-owner gate until all five are accepted.
+> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from issue #21. The five-owner gate is accepted and durably published on `dev@606f07588c8a41ee4f2ae18aef55ff25d1ceb2fc`; see `docs/acceptance/five-owner-gate.md`. First promote this baseline from dev to main with a full run. Then migrate `corner-anchor`, `rectangular-pattern`, `rotated-sketch-cutter`, `slot-family` and `sheet-fold` as physical owners, preserving historical purposes, only existing reference implementations, model-local tests and native/saved-design/inspection evidence.

@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: associativity
+priority: 30
+title: Editable distance between attached components
+tagline: Attachment gap remains an editable native relationship parameter
+description: >
+  A Block is attached to a Base with a symbolic gap so editing the saved SolidCraft design moves the attached component without rerunning Python.
+parameters: Base 40 × 30 × 10 mm; Block 20 × 20 × 10 mm; gap 10 mm
+stages:
+  - Create Base and Block components
+  - Attach Block with a symbolic normal gap
+  - Preserve gap as an editable native relationship value
