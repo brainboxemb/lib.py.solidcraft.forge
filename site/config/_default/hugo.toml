@@ -2,6 +2,7 @@ baseURL = "https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/"
 defaultContentLanguage = "en"
 title = "SolidCraft Forge"
 enableRobotsTXT = false
+disablePathToLower = true
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
