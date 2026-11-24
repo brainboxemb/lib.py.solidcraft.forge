@@ -19,8 +19,8 @@ class ExampleTests(unittest.TestCase):
 
     def test_discovery_and_dependency_selection(self):
         self.assertEqual([x.id for x in self.examples], [
-            "simple-box", "simple-box-build123d", "simple-box-pybosl2",
-            "simple-box-pythonscad", "simple-box-solidcraft",
+            "simple-box", "simple-box-build123d", "simple-box-cadquery",
+            "simple-box-pybosl2", "simple-box-pythonscad", "simple-box-solidcraft",
         ])
         self.assertEqual(len(select_examples(self.examples, explicit=["simple-box"])), 1)
         self.assertEqual(len(select_examples(self.examples, paths=("docs/plan.md",), selected_modules=("verification",))), 6)
@@ -39,6 +39,8 @@ class ExampleTests(unittest.TestCase):
             with patch("cad_library_ci.batch.subprocess.run", side_effect=run) as invoked:
                 run_batches(self.repo, self.project, self.modules, self.examples, Path(tmp))
             self.assertEqual(invoked.call_count, 2)
+            solidcraft = manifests[0]
+            self.assertEqual({x["id"] for x in solidcraft["build_examples"]}, {"simple-box", "simple-box-solidcraft"})
             self.assertEqual([m["runtime"] for m in manifests], ["solidcraft", "reference"])
             reference = manifests[1]
             self.assertEqual(len(reference["build_examples"]), 4)
