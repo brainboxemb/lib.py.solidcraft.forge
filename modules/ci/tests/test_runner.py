@@ -62,8 +62,8 @@ class RunnerTests(unittest.TestCase):
                 "import unittest\n"
             )
             models = (
-                SimpleNamespace(root=tested),
-                SimpleNamespace(root=skipped),
+                SimpleNamespace(root=tested, needs_cadlib=True),
+                SimpleNamespace(root=skipped, needs_cadlib=False),
             )
             owner = SimpleNamespace(root=library)
 
@@ -99,11 +99,31 @@ class RunnerTests(unittest.TestCase):
             with patch("cad_library_ci.runner.subprocess.run") as run:
                 execute_model_tests(
                     repo,
-                    (SimpleNamespace(root=model),),
+                    (SimpleNamespace(root=model, needs_cadlib=True),),
                     owner,
                     dependencies_installed=True,
                 )
             self.assertEqual(run.call_count, 1)
+
+    def test_model_without_cadlib_need_does_not_install_library_dependencies(self):
+        with TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            library = repo / "cadlib"
+            (library / "src").mkdir(parents=True)
+            (library / "pyproject.toml").write_text(
+                '[project]\ndependencies = ["dependency==1"]\n'
+            )
+            model = repo / "models/tested"
+            (model / "tests").mkdir(parents=True)
+            owner = SimpleNamespace(root=library)
+            with patch("cad_library_ci.runner.subprocess.run") as run:
+                execute_model_tests(
+                    repo,
+                    (SimpleNamespace(root=model, needs_cadlib=False),),
+                    owner,
+                )
+            self.assertEqual(run.call_count, 1)
+            self.assertNotIn("pip", run.call_args.args[0])
 
 
 if __name__ == "__main__":

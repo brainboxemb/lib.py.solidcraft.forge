@@ -63,7 +63,10 @@ def execute_model_tests(repo, models, library, *, dependencies_installed=False):
     )
     if not tested:
         return
-    if not dependencies_installed:
+    if (
+        not dependencies_installed
+        and any(model.needs_cadlib for model, _ in tested)
+    ):
         install_dependencies(selected_dependencies((library,)))
 
     library_source = str((library.root / "src").resolve())
