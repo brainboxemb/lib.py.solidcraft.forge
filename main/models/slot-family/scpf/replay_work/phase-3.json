@@ -1,0 +1,59 @@
+{
+  "commands": [
+    {
+      "command": "sketch.edit",
+      "params": {
+        "sketch": 2
+      }
+    },
+    {
+      "command": "sketch.constraint.horizontal_vertical",
+      "params": {
+        "line": "l3",
+        "mode": "horizontal"
+      }
+    },
+    {
+      "command": "sketch.dimension",
+      "params": {
+        "entities": [
+          "origin",
+          "p5"
+        ],
+        "type": "horizontal",
+        "value": "abs((((c2c_start_x)) + ((c2c_end_x))) / 2)"
+      }
+    },
+    {
+      "command": "sketch.dimension",
+      "params": {
+        "entities": [
+          "origin",
+          "p5"
+        ],
+        "type": "vertical",
+        "value": "abs((((straight_y)) + ((straight_y))) / 2)"
+      }
+    },
+    {
+      "command": "sketch.draw.dimensioned",
+      "params": {
+        "command": "sketch.slot.overall",
+        "params": {
+          "p0": [
+            -10.0,
+            -35.0
+          ],
+          "p1": [
+            20.0,
+            -35.0
+          ],
+          "width": "slot_width"
+        },
+        "dimensions": {
+          "length": "abs(((overall_end_x)) - ((overall_start_x)))"
+        }
+      }
+    }
+  ]
+}

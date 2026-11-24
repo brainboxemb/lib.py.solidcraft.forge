@@ -1,0 +1,253 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            80.0,
+            60.0,
+            5.0
+          ],
+          "actual_min": [
+            -80.0,
+            -60.0,
+            -8.8641600883468505e-16
+          ],
+          "expected_max": [
+            80.0,
+            60.0,
+            5.0
+          ],
+          "expected_min": [
+            -80.0,
+            -60.0,
+            0.0
+          ],
+          "max_delta_mm": 8.8641600883468505e-16,
+          "pass": true,
+          "tolerance_mm": 0.5
+        },
+        "surface_distance_probes": [
+          {
+            "actual_mm": 4.0,
+            "delta_mm": 0.0,
+            "expected_mm": 4.0,
+            "label": "center-to-center slot at z=0.5",
+            "pass": true,
+            "point": [
+              -50.0,
+              -35.0,
+              0.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 4.0,
+            "delta_mm": 0.0,
+            "expected_mm": 4.0,
+            "label": "center-to-center slot at z=2.5",
+            "pass": true,
+            "point": [
+              -50.0,
+              -35.0,
+              2.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 4.0,
+            "delta_mm": 0.0,
+            "expected_mm": 4.0,
+            "label": "center-to-center slot at z=4.5",
+            "pass": true,
+            "point": [
+              -50.0,
+              -35.0,
+              4.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 4.0,
+            "delta_mm": 0.0,
+            "expected_mm": 4.0,
+            "label": "overall slot at z=0.5",
+            "pass": true,
+            "point": [
+              5.0,
+              -35.0,
+              0.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 4.0,
+            "delta_mm": 0.0,
+            "expected_mm": 4.0,
+            "label": "overall slot at z=2.5",
+            "pass": true,
+            "point": [
+              5.0,
+              -35.0,
+              2.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 4.0,
+            "delta_mm": 0.0,
+            "expected_mm": 4.0,
+            "label": "overall slot at z=4.5",
+            "pass": true,
+            "point": [
+              5.0,
+              -35.0,
+              4.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 4.0,
+            "delta_mm": 0.0,
+            "expected_mm": 4.0,
+            "label": "center-point slot at z=0.5",
+            "pass": true,
+            "point": [
+              55.0,
+              -35.0,
+              0.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 4.0,
+            "delta_mm": 0.0,
+            "expected_mm": 4.0,
+            "label": "center-point slot at z=2.5",
+            "pass": true,
+            "point": [
+              55.0,
+              -35.0,
+              2.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 4.0,
+            "delta_mm": 0.0,
+            "expected_mm": 4.0,
+            "label": "center-point slot at z=4.5",
+            "pass": true,
+            "point": [
+              55.0,
+              -35.0,
+              4.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.996971157135561,
+            "delta_mm": 0.003028842864439163,
+            "expected_mm": 4.0,
+            "label": "three-point arc slot at z=0.5",
+            "pass": true,
+            "point": [
+              -35.0,
+              38.0,
+              0.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.9851741225611517,
+            "delta_mm": 0.014825877438848334,
+            "expected_mm": 4.0,
+            "label": "three-point arc slot at z=2.5",
+            "pass": true,
+            "point": [
+              -35.0,
+              38.0,
+              2.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.995697928965894,
+            "delta_mm": 0.004302071034106181,
+            "expected_mm": 4.0,
+            "label": "three-point arc slot at z=4.5",
+            "pass": true,
+            "point": [
+              -35.0,
+              38.0,
+              4.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.9902130330652175,
+            "delta_mm": 0.009786966934782537,
+            "expected_mm": 4.0,
+            "label": "center arc slot at z=0.5",
+            "pass": true,
+            "point": [
+              46.0,
+              35.392304845413264,
+              0.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.9748902432239275,
+            "delta_mm": 0.025109756776072523,
+            "expected_mm": 4.0,
+            "label": "center arc slot at z=2.5",
+            "pass": true,
+            "point": [
+              46.0,
+              35.392304845413264,
+              2.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.9948196256263615,
+            "delta_mm": 0.005180374373638497,
+            "expected_mm": 4.0,
+            "label": "center arc slot at z=4.5",
+            "pass": true,
+            "point": [
+              46.0,
+              35.392304845413264,
+              4.5
+            ],
+            "tolerance_mm": 0.3
+          }
+        ],
+        "volume": {
+          "actual_mm3": 89538.44051273522,
+          "delta_mm3": 11.782517185652978,
+          "expected_mm3": 89526.65799554957,
+          "pass": true,
+          "tolerance_mm3": 55.0
+        },
+        "watertight": {
+          "actual": true,
+          "expected": true,
+          "pass": true
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/slot-family/scpf/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "slot-family-scpf-geometry"
+}

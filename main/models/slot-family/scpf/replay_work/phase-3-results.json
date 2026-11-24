@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Slot family",
+    "sketch": 2,
+    "sketching_view": 1
+  },
+  {
+    "constraint": "k9",
+    "created": {
+      "constraints": [
+        "k9"
+      ],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "sketch": {
+      "dof": 2,
+      "solved": true
+    }
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k10"
+      ],
+      "points": []
+    },
+    "expression": "abs((((c2c_start_x)) + ((c2c_end_x))) / 2)",
+    "measured": 50.0,
+    "param": "d6",
+    "sketch": {
+      "dof": 1,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k11"
+      ],
+      "points": []
+    },
+    "expression": "abs((((straight_y)) + ((straight_y))) / 2)",
+    "measured": 35.0,
+    "param": "d7",
+    "sketch": {
+      "dof": 0,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "centre_line": "l6",
+    "constraints": [
+      "k12",
+      "k13",
+      "k14",
+      "k15",
+      "k16",
+      "k17",
+      "k18"
+    ],
+    "created": {
+      "constraints": [
+        "k12",
+        "k13",
+        "k14",
+        "k15",
+        "k16",
+        "k17"
+      ],
+      "curves": [
+        "l4",
+        "a3",
+        "l5",
+        "a4",
+        "l6"
+      ],
+      "dimensions": [
+        "k18",
+        "k19"
+      ],
+      "points": [
+        "p6",
+        "p7",
+        "p8",
+        "p9",
+        "a3.center",
+        "a4.center",
+        "p10"
+      ]
+    },
+    "curves": [
+      "l4",
+      "a3",
+      "l5",
+      "a4"
+    ],
+    "dimensions": {
+      "length": {
+        "created": {
+          "constraints": [],
+          "curves": [],
+          "dimensions": [
+            "k19"
+          ],
+          "points": []
+        },
+        "expression": "abs(((overall_end_x)) - ((overall_start_x)))",
+        "measured": 30.0,
+        "param": "d9",
+        "sketch": {
+          "dof": 3,
+          "solved": true
+        },
+        "type": "LinearDimension",
+        "unit": "mm"
+      }
+    },
+    "middle": "p10",
+    "sketch": {
+      "dof": 3,
+      "solved": true
+    }
+  }
+]

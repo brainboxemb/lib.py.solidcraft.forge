@@ -1,0 +1,360 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "160",
+        "name": "width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "120",
+        "name": "depth",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "5",
+        "name": "thickness",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "-60",
+        "name": "c2c_start_x",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "-35",
+        "name": "straight_y",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "-40",
+        "name": "c2c_end_x",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "8",
+        "name": "slot_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "-10",
+        "name": "overall_start_x",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "20",
+        "name": "overall_end_x",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "55",
+        "name": "center_point_x",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "65",
+        "name": "center_point_end_x",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "SlotFamily",
+        "corner": [
+          "-width / 2",
+          "-depth / 2",
+          0
+        ],
+        "height": "thickness",
+        "length": "width",
+        "width": "depth"
+      }
+    },
+    {
+      "bind": {
+        "$face_index_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$face_point_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "SlotFamily"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Slot family",
+        "plane": {
+          "body": "SlotFamily",
+          "face": "$face_point_1",
+          "index": "$face_index_1"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "bind": {
+        "$sketch_1_slot_1_centre_line": "centre_line",
+        "$sketch_1_slot_1_middle": "middle"
+      },
+      "command": "sketch.draw.dimensioned",
+      "params": {
+        "command": "sketch.slot.center_to_center",
+        "dimensions": {
+          "length": "abs(((c2c_end_x)) - ((c2c_start_x)))"
+        },
+        "params": {
+          "p0": [
+            -60.0,
+            -35.0
+          ],
+          "p1": [
+            -40.0,
+            -35.0
+          ],
+          "width": "slot_width"
+        }
+      }
+    },
+    {
+      "command": "sketch.constraint.horizontal_vertical",
+      "params": {
+        "line": "$sketch_1_slot_1_centre_line",
+        "mode": "horizontal"
+      }
+    },
+    {
+      "command": "sketch.dimension",
+      "params": {
+        "entities": [
+          "origin",
+          "$sketch_1_slot_1_middle"
+        ],
+        "type": "horizontal",
+        "value": "abs((((c2c_start_x)) + ((c2c_end_x))) / 2)"
+      }
+    },
+    {
+      "command": "sketch.dimension",
+      "params": {
+        "entities": [
+          "origin",
+          "$sketch_1_slot_1_middle"
+        ],
+        "type": "vertical",
+        "value": "abs((((straight_y)) + ((straight_y))) / 2)"
+      }
+    },
+    {
+      "bind": {
+        "$sketch_1_slot_2_centre_line": "centre_line",
+        "$sketch_1_slot_2_middle": "middle"
+      },
+      "command": "sketch.draw.dimensioned",
+      "params": {
+        "command": "sketch.slot.overall",
+        "dimensions": {
+          "length": "abs(((overall_end_x)) - ((overall_start_x)))"
+        },
+        "params": {
+          "p0": [
+            -10.0,
+            -35.0
+          ],
+          "p1": [
+            20.0,
+            -35.0
+          ],
+          "width": "slot_width"
+        }
+      }
+    },
+    {
+      "command": "sketch.constraint.horizontal_vertical",
+      "params": {
+        "line": "$sketch_1_slot_2_centre_line",
+        "mode": "horizontal"
+      }
+    },
+    {
+      "command": "sketch.dimension",
+      "params": {
+        "entities": [
+          "origin",
+          "$sketch_1_slot_2_middle"
+        ],
+        "type": "horizontal",
+        "value": "abs((((overall_start_x)) + ((overall_end_x))) / 2)"
+      }
+    },
+    {
+      "command": "sketch.dimension",
+      "params": {
+        "entities": [
+          "origin",
+          "$sketch_1_slot_2_middle"
+        ],
+        "type": "vertical",
+        "value": "abs((((straight_y)) + ((straight_y))) / 2)"
+      }
+    },
+    {
+      "bind": {
+        "$sketch_1_slot_3_centre_line": "centre_line",
+        "$sketch_1_slot_3_middle": "middle"
+      },
+      "command": "sketch.draw.dimensioned",
+      "params": {
+        "command": "sketch.slot.center_point",
+        "dimensions": {
+          "length": "(abs(((center_point_end_x)) - ((center_point_x)))) * 2"
+        },
+        "params": {
+          "center": [
+            55.0,
+            -35.0
+          ],
+          "end": [
+            65.0,
+            -35.0
+          ],
+          "width": "slot_width"
+        }
+      }
+    },
+    {
+      "command": "sketch.constraint.horizontal_vertical",
+      "params": {
+        "line": "$sketch_1_slot_3_centre_line",
+        "mode": "horizontal"
+      }
+    },
+    {
+      "command": "sketch.dimension",
+      "params": {
+        "entities": [
+          "origin",
+          "$sketch_1_slot_3_middle"
+        ],
+        "type": "horizontal",
+        "value": "abs((center_point_x))"
+      }
+    },
+    {
+      "command": "sketch.dimension",
+      "params": {
+        "entities": [
+          "origin",
+          "$sketch_1_slot_3_middle"
+        ],
+        "type": "vertical",
+        "value": "abs((straight_y))"
+      }
+    },
+    {
+      "command": "sketch.slot.arc_three_point",
+      "params": {
+        "end": [
+          -20.0,
+          25.0
+        ],
+        "start": [
+          -50.0,
+          25.0
+        ],
+        "through": [
+          -35.0,
+          38.0
+        ],
+        "width": "slot_width"
+      }
+    },
+    {
+      "command": "sketch.slot.arc_center",
+      "params": {
+        "center": [
+          40.0,
+          25.0
+        ],
+        "start": [
+          52.0,
+          25.0
+        ],
+        "sweep": 120,
+        "width": "slot_width"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "negative",
+        "name": "Slot family",
+        "operation": "cut",
+        "targets": [
+          "SlotFamily"
+        ],
+        "through_all": true
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

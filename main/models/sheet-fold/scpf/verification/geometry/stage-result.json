@@ -1,0 +1,10 @@
+{
+  "adapter": "mesh-geometry",
+  "id": "sheet-fold--scpf",
+  "implementation": "scpf",
+  "owner": "sheet-fold",
+  "schema": 1,
+  "stage_id": "geometry",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5"
+}

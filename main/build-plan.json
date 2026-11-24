@@ -2,9 +2,14 @@
   "active": [
     "anchored-holes",
     "assembly-decorator",
+    "corner-anchor",
     "parametric-attach",
     "primitive-csg",
-    "simple-box"
+    "rectangular-pattern",
+    "rotated-sketch-cutter",
+    "sheet-fold",
+    "simple-box",
+    "slot-family"
   ],
   "full": true,
   "models": [
@@ -38,6 +43,21 @@
       ]
     },
     {
+      "id": "corner-anchor",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
       "id": "parametric-attach",
       "implementations": [
         "scpf",
@@ -66,6 +86,44 @@
       ]
     },
     {
+      "id": "rectangular-pattern",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "rotated-sketch-cutter",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "sheet-fold",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
       "id": "simple-box",
       "implementations": [
         "scpf",
@@ -79,15 +137,34 @@
         "example",
         "verification"
       ]
+    },
+    {
+      "id": "slot-family",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
     }
   ],
   "schema": 2,
   "selected": [
     "anchored-holes",
     "assembly-decorator",
+    "corner-anchor",
     "parametric-attach",
     "primitive-csg",
-    "simple-box"
+    "rectangular-pattern",
+    "rotated-sketch-cutter",
+    "sheet-fold",
+    "simple-box",
+    "slot-family"
   ],
-  "source_sha": "0d57c703d5ef908de5ffccc54a0c9ea95e7180ae"
+  "source_sha": "378b5051cc2accc98e4774af3189d377be52ab1c"
 }

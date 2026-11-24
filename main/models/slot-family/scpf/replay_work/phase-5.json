@@ -1,0 +1,88 @@
+{
+  "commands": [
+    {
+      "command": "sketch.edit",
+      "params": {
+        "sketch": 2
+      }
+    },
+    {
+      "command": "sketch.constraint.horizontal_vertical",
+      "params": {
+        "line": "l9",
+        "mode": "horizontal"
+      }
+    },
+    {
+      "command": "sketch.dimension",
+      "params": {
+        "entities": [
+          "origin",
+          "p15"
+        ],
+        "type": "horizontal",
+        "value": "abs((center_point_x))"
+      }
+    },
+    {
+      "command": "sketch.dimension",
+      "params": {
+        "entities": [
+          "origin",
+          "p15"
+        ],
+        "type": "vertical",
+        "value": "abs((straight_y))"
+      }
+    },
+    {
+      "command": "sketch.slot.arc_three_point",
+      "params": {
+        "start": [
+          -50.0,
+          25.0
+        ],
+        "through": [
+          -35.0,
+          38.0
+        ],
+        "end": [
+          -20.0,
+          25.0
+        ],
+        "width": "slot_width"
+      }
+    },
+    {
+      "command": "sketch.slot.arc_center",
+      "params": {
+        "center": [
+          40.0,
+          25.0
+        ],
+        "start": [
+          52.0,
+          25.0
+        ],
+        "width": "slot_width",
+        "sweep": 120
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "operation": "cut",
+        "targets": [
+          "SlotFamily"
+        ],
+        "name": "Slot family",
+        "through_all": true,
+        "direction": "negative"
+      }
+    }
+  ]
+}

@@ -1,0 +1,392 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "2ba13368691a35115abe3b71f6d664e69b3e13fe7b934470c950bbb7f3eaaead",
+  "variables": {
+    "$face_point_1": [
+      -40.0,
+      -20.0,
+      5.0
+    ],
+    "$face_index_1": 0,
+    "$sketch_1_slot_1_centre_line": "l3",
+    "$sketch_1_slot_1_middle": "p5",
+    "$sketch_1_slot_2_centre_line": "l6",
+    "$sketch_1_slot_2_middle": "p10",
+    "$sketch_1_slot_3_centre_line": "l9",
+    "$sketch_1_slot_3_middle": "p15"
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "width",
+        "expression": "160",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "depth",
+        "expression": "120",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "thickness",
+        "expression": "5",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 3,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "c2c_start_x",
+        "expression": "-60",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 4,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "straight_y",
+        "expression": "-35",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 5,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "c2c_end_x",
+        "expression": "-40",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 6,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "slot_width",
+        "expression": "8",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 7,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "overall_start_x",
+        "expression": "-10",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 8,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "overall_end_x",
+        "expression": "20",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 9,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "center_point_x",
+        "expression": "55",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 10,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "center_point_end_x",
+        "expression": "65",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 11,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": "width",
+        "width": "depth",
+        "height": "thickness",
+        "corner": [
+          "-width / 2",
+          "-depth / 2",
+          0
+        ],
+        "body_name": "SlotFamily"
+      }
+    },
+    {
+      "index": 12,
+      "command": "model.faces",
+      "resolved_params": {
+        "body": "SlotFamily"
+      },
+      "bindings": {
+        "$face_point_1": [
+          -40.0,
+          -20.0,
+          5.0
+        ],
+        "$face_index_1": 0
+      }
+    },
+    {
+      "index": 13,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": {
+          "face": [
+            -40.0,
+            -20.0,
+            5.0
+          ],
+          "body": "SlotFamily",
+          "index": 0
+        },
+        "project_edges": false,
+        "name": "Slot family"
+      }
+    },
+    {
+      "index": 14,
+      "command": "sketch.draw.dimensioned",
+      "resolved_params": {
+        "command": "sketch.slot.center_to_center",
+        "params": {
+          "p0": [
+            -60.0,
+            -35.0
+          ],
+          "p1": [
+            -40.0,
+            -35.0
+          ],
+          "width": "slot_width"
+        },
+        "dimensions": {
+          "length": "abs(((c2c_end_x)) - ((c2c_start_x)))"
+        }
+      },
+      "bindings": {
+        "$sketch_1_slot_1_centre_line": "l3",
+        "$sketch_1_slot_1_middle": "p5"
+      }
+    },
+    {
+      "index": 15,
+      "command": "sketch.constraint.horizontal_vertical",
+      "resolved_params": {
+        "line": "l3",
+        "mode": "horizontal"
+      }
+    },
+    {
+      "index": 16,
+      "command": "sketch.dimension",
+      "resolved_params": {
+        "entities": [
+          "origin",
+          "p5"
+        ],
+        "type": "horizontal",
+        "value": "abs((((c2c_start_x)) + ((c2c_end_x))) / 2)"
+      }
+    },
+    {
+      "index": 17,
+      "command": "sketch.dimension",
+      "resolved_params": {
+        "entities": [
+          "origin",
+          "p5"
+        ],
+        "type": "vertical",
+        "value": "abs((((straight_y)) + ((straight_y))) / 2)"
+      }
+    },
+    {
+      "index": 18,
+      "command": "sketch.draw.dimensioned",
+      "resolved_params": {
+        "command": "sketch.slot.overall",
+        "params": {
+          "p0": [
+            -10.0,
+            -35.0
+          ],
+          "p1": [
+            20.0,
+            -35.0
+          ],
+          "width": "slot_width"
+        },
+        "dimensions": {
+          "length": "abs(((overall_end_x)) - ((overall_start_x)))"
+        }
+      },
+      "bindings": {
+        "$sketch_1_slot_2_centre_line": "l6",
+        "$sketch_1_slot_2_middle": "p10"
+      }
+    },
+    {
+      "index": 19,
+      "command": "sketch.constraint.horizontal_vertical",
+      "resolved_params": {
+        "line": "l6",
+        "mode": "horizontal"
+      }
+    },
+    {
+      "index": 20,
+      "command": "sketch.dimension",
+      "resolved_params": {
+        "entities": [
+          "origin",
+          "p10"
+        ],
+        "type": "horizontal",
+        "value": "abs((((overall_start_x)) + ((overall_end_x))) / 2)"
+      }
+    },
+    {
+      "index": 21,
+      "command": "sketch.dimension",
+      "resolved_params": {
+        "entities": [
+          "origin",
+          "p10"
+        ],
+        "type": "vertical",
+        "value": "abs((((straight_y)) + ((straight_y))) / 2)"
+      }
+    },
+    {
+      "index": 22,
+      "command": "sketch.draw.dimensioned",
+      "resolved_params": {
+        "command": "sketch.slot.center_point",
+        "params": {
+          "center": [
+            55.0,
+            -35.0
+          ],
+          "end": [
+            65.0,
+            -35.0
+          ],
+          "width": "slot_width"
+        },
+        "dimensions": {
+          "length": "(abs(((center_point_end_x)) - ((center_point_x)))) * 2"
+        }
+      },
+      "bindings": {
+        "$sketch_1_slot_3_centre_line": "l9",
+        "$sketch_1_slot_3_middle": "p15"
+      }
+    },
+    {
+      "index": 23,
+      "command": "sketch.constraint.horizontal_vertical",
+      "resolved_params": {
+        "line": "l9",
+        "mode": "horizontal"
+      }
+    },
+    {
+      "index": 24,
+      "command": "sketch.dimension",
+      "resolved_params": {
+        "entities": [
+          "origin",
+          "p15"
+        ],
+        "type": "horizontal",
+        "value": "abs((center_point_x))"
+      }
+    },
+    {
+      "index": 25,
+      "command": "sketch.dimension",
+      "resolved_params": {
+        "entities": [
+          "origin",
+          "p15"
+        ],
+        "type": "vertical",
+        "value": "abs((straight_y))"
+      }
+    },
+    {
+      "index": 26,
+      "command": "sketch.slot.arc_three_point",
+      "resolved_params": {
+        "start": [
+          -50.0,
+          25.0
+        ],
+        "through": [
+          -35.0,
+          38.0
+        ],
+        "end": [
+          -20.0,
+          25.0
+        ],
+        "width": "slot_width"
+      }
+    },
+    {
+      "index": 27,
+      "command": "sketch.slot.arc_center",
+      "resolved_params": {
+        "center": [
+          40.0,
+          25.0
+        ],
+        "start": [
+          52.0,
+          25.0
+        ],
+        "width": "slot_width",
+        "sweep": 120
+      }
+    },
+    {
+      "index": 28,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 29,
+      "command": "solid.extrude",
+      "resolved_params": {
+        "operation": "cut",
+        "targets": [
+          "SlotFamily"
+        ],
+        "name": "Slot family",
+        "through_all": true,
+        "direction": "negative"
+      }
+    }
+  ],
+  "completed": 30
+}

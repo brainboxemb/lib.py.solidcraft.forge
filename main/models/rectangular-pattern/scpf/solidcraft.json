@@ -1,0 +1,152 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "3",
+        "name": "columns",
+        "unit": ""
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "24",
+        "name": "pitch",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "2",
+        "name": "rows",
+        "unit": ""
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "28",
+        "name": "row_pitch",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "RectangularPattern",
+        "corner": [
+          -60.0,
+          -40.0,
+          0
+        ],
+        "height": 4,
+        "length": 120,
+        "width": 80
+      }
+    },
+    {
+      "bind": {
+        "$face_index_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$face_point_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "RectangularPattern"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Slot",
+        "plane": {
+          "body": "RectangularPattern",
+          "face": "$face_point_1",
+          "index": "$face_index_1"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "command": "sketch.slot.center_to_center",
+      "params": {
+        "p0": [
+          -5.0,
+          0.0
+        ],
+        "p1": [
+          5.0,
+          0.0
+        ],
+        "width": 6
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "negative",
+        "distance": 4,
+        "name": "Slot",
+        "operation": "cut",
+        "targets": [
+          "RectangularPattern"
+        ]
+      }
+    },
+    {
+      "command": "solid.pattern.rectangular",
+      "params": {
+        "alignment": "right",
+        "alignment2": "right",
+        "count1": "columns",
+        "count2": "rows",
+        "dir1": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "dir2": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "features": [
+          "Slot"
+        ],
+        "reversed": false,
+        "reversed2": false,
+        "spacing1": "pitch",
+        "spacing2": "row_pitch"
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

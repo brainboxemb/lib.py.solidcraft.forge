@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Slot family",
+    "sketch": 2,
+    "sketching_view": 1
+  },
+  {
+    "constraint": "k20",
+    "created": {
+      "constraints": [
+        "k20"
+      ],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "sketch": {
+      "dof": 2,
+      "solved": true
+    }
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k21"
+      ],
+      "points": []
+    },
+    "expression": "abs((((overall_start_x)) + ((overall_end_x))) / 2)",
+    "measured": 5.0,
+    "param": "d10",
+    "sketch": {
+      "dof": 1,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k22"
+      ],
+      "points": []
+    },
+    "expression": "abs((((straight_y)) + ((straight_y))) / 2)",
+    "measured": 35.0,
+    "param": "d11",
+    "sketch": {
+      "dof": 0,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "centre_line": "l9",
+    "constraints": [
+      "k23",
+      "k24",
+      "k25",
+      "k26",
+      "k27",
+      "k28",
+      "k29"
+    ],
+    "created": {
+      "constraints": [
+        "k23",
+        "k24",
+        "k25",
+        "k26",
+        "k27",
+        "k28"
+      ],
+      "curves": [
+        "l7",
+        "a5",
+        "l8",
+        "a6",
+        "l9"
+      ],
+      "dimensions": [
+        "k29",
+        "k30"
+      ],
+      "points": [
+        "p11",
+        "p12",
+        "p13",
+        "p14",
+        "a5.center",
+        "a6.center",
+        "p15"
+      ]
+    },
+    "curves": [
+      "l7",
+      "a5",
+      "l8",
+      "a6"
+    ],
+    "dimensions": {
+      "length": {
+        "created": {
+          "constraints": [],
+          "curves": [],
+          "dimensions": [
+            "k30"
+          ],
+          "points": []
+        },
+        "expression": "(abs(((center_point_end_x)) - ((center_point_x)))) * 2",
+        "measured": 20.0,
+        "param": "d13",
+        "sketch": {
+          "dof": 3,
+          "solved": true
+        },
+        "type": "LinearDimension",
+        "unit": "mm"
+      }
+    },
+    "middle": "p15",
+    "sketch": {
+      "dof": 3,
+      "solved": true
+    }
+  }
+]

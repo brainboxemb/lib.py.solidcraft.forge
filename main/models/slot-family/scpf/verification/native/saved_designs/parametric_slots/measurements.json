@@ -1,0 +1,326 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 39715.82376384621,
+      "bbox": {
+        "max": [
+          80.0,
+          60.0,
+          5.000000000000001
+        ],
+        "min": [
+          -80.0,
+          -60.0,
+          -2.220446053338701e-15
+        ]
+      },
+      "center_of_mass": [
+        -0.2572792206855858,
+        -0.3752773706190776,
+        2.5
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 72,
+      "face_types": {
+        "cylinder": 14,
+        "plane": 12
+      },
+      "faces": 26,
+      "kernel": {
+        "edges": 72,
+        "faces": 26,
+        "shells": 1,
+        "vertices": 48
+      },
+      "mass_g": 111.73415419928682,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "SlotFamily",
+      "notes": [],
+      "vertices": 48,
+      "volume_mm3": 86615.62341029986
+    }
+  ],
+  "body_count": 1,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "160",
+      "model": false,
+      "name": "width",
+      "unit": "mm",
+      "value": 160.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "120",
+      "model": false,
+      "name": "depth",
+      "unit": "mm",
+      "value": 120.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "5",
+      "model": false,
+      "name": "thickness",
+      "unit": "mm",
+      "value": 5.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "-60",
+      "model": false,
+      "name": "c2c_start_x",
+      "unit": "mm",
+      "value": -60.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "-20 mm",
+      "model": false,
+      "name": "straight_y",
+      "unit": "mm",
+      "value": -20.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "-35 mm",
+      "model": false,
+      "name": "c2c_end_x",
+      "unit": "mm",
+      "value": -35.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "10 mm",
+      "model": false,
+      "name": "slot_width",
+      "unit": "mm",
+      "value": 10.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "-10",
+      "model": false,
+      "name": "overall_start_x",
+      "unit": "mm",
+      "value": -10.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "25 mm",
+      "model": false,
+      "name": "overall_end_x",
+      "unit": "mm",
+      "value": 25.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "55",
+      "model": false,
+      "name": "center_point_x",
+      "unit": "mm",
+      "value": 55.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "70 mm",
+      "model": false,
+      "name": "center_point_end_x",
+      "unit": "mm",
+      "value": 70.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "slot_width",
+      "model": true,
+      "name": "d4",
+      "unit": "mm",
+      "value": 10.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "abs(((c2c_end_x)) - ((c2c_start_x)))",
+      "model": true,
+      "name": "d5",
+      "unit": "mm",
+      "value": 25.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "abs((((c2c_start_x)) + ((c2c_end_x))) / 2)",
+      "model": true,
+      "name": "d6",
+      "unit": "mm",
+      "value": 47.5
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "abs((((straight_y)) + ((straight_y))) / 2)",
+      "model": true,
+      "name": "d7",
+      "unit": "mm",
+      "value": 20.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "slot_width",
+      "model": true,
+      "name": "d8",
+      "unit": "mm",
+      "value": 10.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "abs(((overall_end_x)) - ((overall_start_x)))",
+      "model": true,
+      "name": "d9",
+      "unit": "mm",
+      "value": 35.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "abs((((overall_start_x)) + ((overall_end_x))) / 2)",
+      "model": true,
+      "name": "d10",
+      "unit": "mm",
+      "value": 7.5
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "abs((((straight_y)) + ((straight_y))) / 2)",
+      "model": true,
+      "name": "d11",
+      "unit": "mm",
+      "value": 20.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "slot_width",
+      "model": true,
+      "name": "d12",
+      "unit": "mm",
+      "value": 10.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "(abs(((center_point_end_x)) - ((center_point_x)))) * 2",
+      "model": true,
+      "name": "d13",
+      "unit": "mm",
+      "value": 30.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "abs((center_point_x))",
+      "model": true,
+      "name": "d14",
+      "unit": "mm",
+      "value": 55.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "abs((straight_y))",
+      "model": true,
+      "name": "d15",
+      "unit": "mm",
+      "value": 20.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "slot_width",
+      "model": true,
+      "name": "d16",
+      "unit": "mm",
+      "value": 10.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "slot_width",
+      "model": true,
+      "name": "d17",
+      "unit": "mm",
+      "value": 10.0
+    }
+  ],
+  "sketches": [
+    {
+      "curves": 29,
+      "dof": 10,
+      "id": 2,
+      "name": "Slot family",
+      "profiles": 5,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 2.682424,
+      "name": "Box1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 0.533632,
+      "name": "Slot family",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 148.221556,
+      "name": "Slot family",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 39715.82376384621,
+    "edges": 72,
+    "faces": 26,
+    "mass_g": 111.73415419928682,
+    "open_bodies_skipped": 0,
+    "vertices": 48,
+    "volume_mm3": 86615.62341029986
+  }
+}
