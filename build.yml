@@ -1,6 +1,6 @@
 schema: 1
-branch: docs/29-closeout
-modules: [ci, builder-scpf, builder-solidcraft, verification, preview, pages]
+branch: issue/38-visual-verification
+modules: [verification, builder-scpf, builder-solidcraft]
 library: true
-models: [anchored-holes, assembly-decorator, attached-through-all, bracket, circle-negative-extrude, circular-feature-pattern, cone-boolean, corner-anchor, hole-family, native-revolve, parametric-attach, primitive-csg, rectangular-pattern, rotated-sketch-cutter, round-top-sketch, rounded-rectangle-sketch, sheet-fold, simple-box, slot-family, top-sketch-after-chamfer]
+models: [simple-box]
 tasks: [test]
