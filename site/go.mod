@@ -1,4 +1,4 @@
-module github.com/brainboxemb/template.cad.library/site
+module github.com/brainboxemb/lib.py.solidcraft.forge.NEW/site
 
 go 1.25
 

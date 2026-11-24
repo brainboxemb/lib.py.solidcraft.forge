@@ -1,8 +1,8 @@
 ---
-title: CAD library
+title: SolidCraft Forge
 ---
 
-Reusable CAD library documentation and example catalogue.
+SCPF documentation, examples and qualified CAD build evidence.
 
 - [Documentation](docs/)
 - [Examples](examples/)
