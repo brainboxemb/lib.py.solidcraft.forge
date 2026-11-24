@@ -35,6 +35,14 @@ EXPECTED_IDS = [
 ]
 
 
+SCPF_ONLY_IDS = [
+    "attached-through-all",
+    "cone-boolean",
+    "native-revolve",
+    "rotated-sketch-cutter",
+]
+
+
 class ModelTests(unittest.TestCase):
     def setUp(self):
         self.repo = Path.cwd()
@@ -72,8 +80,7 @@ class ModelTests(unittest.TestCase):
                 ("verification",),
             )
 
-        scpf_only = ["attached-through-all","cone-boolean","native-revolve","rotated-sketch-cutter"]
-        for model_id in set(EXPECTED_IDS) - set(scpf_only):
+        for model_id in set(EXPECTED_IDS) - set(SCPF_ONLY_IDS):
             model = by_id[model_id]
             self.assertEqual(
                 [impl.id for impl in model.implementations],
@@ -92,7 +99,7 @@ class ModelTests(unittest.TestCase):
                 ("scpf",),
             )
 
-        for model_id in scpf_only:
+        for model_id in SCPF_ONLY_IDS:
             model = by_id[model_id]
             self.assertEqual(
                 [impl.id for impl in model.implementations],
@@ -193,7 +200,7 @@ class ModelTests(unittest.TestCase):
         self.assertEqual(len(reference["preview_items"]), 64)
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
-            set(EXPECTED_IDS) - set(scpf_only),
+            set(EXPECTED_IDS) - set(SCPF_ONLY_IDS),
         )
         self.assertEqual(
             {
