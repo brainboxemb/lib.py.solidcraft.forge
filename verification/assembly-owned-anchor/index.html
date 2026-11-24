@@ -1,0 +1,1085 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="index, follow"><link rel="icon shortcut" href=/lib.py.solidcraft.forge.NEW/favicon.ico sizes=32x32><link rel=icon href=/lib.py.solidcraft.forge.NEW/favicon.svg type=image/svg+xml id=favicon-svg><link rel=icon href=/lib.py.solidcraft.forge.NEW/favicon-16x16.png type=image/png sizes=16x16><link rel=icon href=/lib.py.solidcraft.forge.NEW/favicon-32x32.png type=image/png sizes=32x32><link rel=apple-touch-icon href=/lib.py.solidcraft.forge.NEW/apple-touch-icon.png sizes=180x180><link fetchpriority=low href=/lib.py.solidcraft.forge.NEW/site.webmanifest rel=manifest><title>Assembly-owned named anchor – SolidCraft Forge</title><meta name=description content=" Primary implementation: scpf Build source: c5152b7d004b225e7b62b36a8f982c3ed5c9a1f6 Durable scope: main Implementations build123d — builder-build123d: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification cadquery — builder-cadquery: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification pybosl2 — builder-pybosl2: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification pythonscad — builder-pythonscad: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification scpf — builder-scpf: build=pass, verification=pass · STL · SC · Preview · commands · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification native: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · verification visual: status=pass, adapter=solidcraft-visual, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · verification "><link rel=canonical href=https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/verification/assembly-owned-anchor/ itemprop=url><meta property="og:title" content="Assembly-owned named anchor"><meta property="og:description" content="
+    
+      
+Primary implementation: scpf
+Build source: c5152b7d004b225e7b62b36a8f982c3ed5c9a1f6
+Durable scope: main
+
+Implementations
+    
+build123d — builder-build123d: build=pass, verification=pass · STL · Preview · verification · result
+
+geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification
+
+
+cadquery — builder-cadquery: build=pass, verification=pass · STL · Preview · verification · result
+
+geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification
+
+
+pybosl2 — builder-pybosl2: build=pass, verification=pass · STL · Preview · verification · result
+
+geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification
+
+
+pythonscad — builder-pythonscad: build=pass, verification=pass · STL · Preview · verification · result
+
+geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification
+
+
+scpf — builder-scpf: build=pass, verification=pass · STL · SC · Preview · commands · verification · result
+
+geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification
+native: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · verification
+visual: status=pass, adapter=solidcraft-visual, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · verification
+
+
+
+    
+  "><meta property="og:type" content="
+    article
+  "><meta property="og:url" content="https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/verification/assembly-owned-anchor/"><meta property="article:section" content="verification"><meta itemprop=name content="Assembly-owned named anchor"><meta itemprop=description content="Primary implementation: scpf Build source: c5152b7d004b225e7b62b36a8f982c3ed5c9a1f6 Durable scope: main Implementations build123d — builder-build123d: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification cadquery — builder-cadquery: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification pybosl2 — builder-pybosl2: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification pythonscad — builder-pythonscad: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification scpf — builder-scpf: build=pass, verification=pass · STL · SC · Preview · commands · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification native: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · verification visual: status=pass, adapter=solidcraft-visual, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · verification"><meta itemprop=wordCount content="121"><meta name=twitter:card content="summary"><meta name=twitter:title content="Assembly-owned named anchor"><meta name=twitter:description content="Primary implementation: scpf Build source: c5152b7d004b225e7b62b36a8f982c3ed5c9a1f6 Durable scope: main Implementations build123d — builder-build123d: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification cadquery — builder-cadquery: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification pybosl2 — builder-pybosl2: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification pythonscad — builder-pythonscad: build=pass, verification=pass · STL · Preview · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification scpf — builder-scpf: build=pass, verification=pass · STL · SC · Preview · commands · verification · result geometry: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · verification native: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · verification visual: status=pass, adapter=solidcraft-visual, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · verification"><link rel=preload href=/lib.py.solidcraft.forge.NEW/css/compiled/main.min.2070845fd69138f8ba81487e97fe7a1942954eff3d0846ca8d631b594362ec8e.css as=style integrity="sha256-IHCEX9aROPi6gUh+l/56GUKVTv89CEbKjWMbWUNi7I4="><link href=/lib.py.solidcraft.forge.NEW/css/compiled/main.min.2070845fd69138f8ba81487e97fe7a1942954eff3d0846ca8d631b594362ec8e.css rel=stylesheet integrity="sha256-IHCEX9aROPi6gUh+l/56GUKVTv89CEbKjWMbWUNi7I4="><script src=/lib.py.solidcraft.forge.NEW/js/main-head.min.2af169268bdbd71475da0b4c30f443604e43a5b3abd3fa24691aada97fab46cf.js integrity="sha256-KvFpJovb1xR12gtMMPRDYE5DpbOr0/okaRqtqX+rRs8="></script></head><body><a href=#content class="hx:sr-only hx:focus-visible:not-sr-only hx:focus-visible:fixed hx:focus-visible:z-50 hx:focus-visible:top-2 hx:focus-visible:left-2 hx:focus-visible:bg-primary-500 hx:focus-visible:text-white hx:focus-visible:px-4 hx:focus-visible:py-2 hx:focus-visible:rounded-md hx:focus-visible:text-sm hx:focus-visible:font-medium">Skip to content</a><div class="hextra-nav-container hx:sticky hx:top-0 hx:z-20 hx:w-full hx:bg-transparent hx:print:hidden"><div class="hextra-nav-container-blur hx:pointer-events-none hx:absolute hx:z-[-1] hx:h-full hx:w-full hx:bg-white hx:dark:bg-dark hx:shadow-[0_2px_4px_rgba(0,0,0,.02),0_1px_0_rgba(0,0,0,.06)] hx:contrast-more:shadow-[0_0_0_1px_#000] hx:dark:shadow-[0_-1px_0_rgba(255,255,255,.1)_inset] hx:contrast-more:dark:shadow-[0_0_0_1px_#fff]"></div><nav class="hextra-max-navbar-width hx:mx-auto hx:flex hx:items-center hx:justify-end hx:gap-1 hx:md:gap-2 hx:h-[var(--hextra-navbar-height)] hx:px-6"><a class="hx:flex hx:items-center hx:hover:opacity-75 hx:ltr:mr-auto hx:rtl:ml-auto" href=/lib.py.solidcraft.forge.NEW/><span class="hx:mr-2 hx:font-extrabold hx:inline hx:select-none">SolidCraft Forge</span>
+</a><a title href=/lib.py.solidcraft.forge.NEW/docs class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Documentation</span>
+</a><a title href=/lib.py.solidcraft.forge.NEW/guide class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Guide</span>
+</a><a title href=/lib.py.solidcraft.forge.NEW/reference class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>API Reference</span>
+</a><a title href=/lib.py.solidcraft.forge.NEW/cheatsheet class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Cheatsheet</span>
+</a><a title href=/lib.py.solidcraft.forge.NEW/examples class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Examples</span>
+</a><a title href=/lib.py.solidcraft.forge.NEW/verification class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:font-medium"><span class=hx:text-center>Verification</span>
+</a><button type=button class=hextra-search-trigger data-search-open aria-haspopup=dialog aria-controls=hextra-search-dialog aria-label=Search...><svg class="hextra-search-trigger-icon" focusable="false" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg><span class=hextra-search-trigger-label>Search...</span>
+<kbd class=hextra-search-trigger-kbd>CTRL K</kbd></button><div class="hx:flex hx:justify-items-start hx:group" data-theme=light><button title="Change theme" data-state=closed data-location=top class="hextra-theme-toggle hx:cursor-pointer hx:rounded-md hx:text-left hx:font-medium hx:p-1 hx:md:p-2 hx:grow" type=button aria-label="Change theme" aria-expanded=false aria-haspopup=menu><div class="hx:flex hx:items-center hx:gap-2 hx:capitalize"><svg height="24" class="hx:group-data-[theme=dark]:hidden hx:group-data-[theme=system]:hidden" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg><svg height="24" class="hx:group-data-[theme=light]:hidden hx:group-data-[theme=system]:hidden" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg><svg height="24" class="hx:group-data-[theme=dark]:hidden hx:group-data-[theme=light]:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M11.996094 2C6.4986225 2.0192368 2.03125 6.5024993 2.03125 12c0 5.497501 4.4673725 9.980763 9.964844 10H12 12.0039c5.497471-.01924 9.964844-4.502499 9.964844-10 0-5.4975007-4.467373-9.9807632-9.964844-10H12zM12 4c4.417218.017598 7.96875 3.5822356 7.96875 8 0 4.417764-3.551532 7.982402-7.96875 8z"/></svg></div></button><ul class="hextra-theme-toggle-options hx:hidden hx:z-20 hx:max-h-64 hx:overflow-auto hx:rounded-lg hx:border hx:border-gray-200 hx:bg-white hx:p-1 hx:text-sm hx:shadow-lg hx:dark:border-neutral-700 hx:dark:bg-neutral-900" style="position:fixed;inset:auto auto 0 0;margin:0;min-width:100px" data-theme=light role=menu><li role=none class="hx:flex hx:flex-col"><button type=button role=menuitemradio aria-checked=true tabindex=-1 data-item=light class="hx:text-gray-700 hx:dark:text-gray-300 hx:hover:bg-gray-100 hx:hover:text-gray-900 hx:dark:hover:bg-neutral-800 hx:dark:hover:text-gray-100 hx:relative hx:cursor-pointer hx:whitespace-nowrap hx:rounded-sm hx:py-1.5 hx:transition-colors hx:ltr:pl-3 hx:ltr:pr-9 hx:rtl:pr-3 hx:rtl:pl-9 hx:text-left hx:w-full hx:bg-transparent hx:border-0">
+Light
+<span class="hx:absolute hx:inset-y-0 hx:flex hx:items-center hx:ltr:right-3 hx:rtl:left-3 hx:group-data-[theme=dark]:hidden hx:group-data-[theme=system]:hidden"><svg height="1em" width="1em" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></button></li><li role=none class="hx:flex hx:flex-col"><button type=button role=menuitemradio aria-checked=false tabindex=-1 data-item=dark class="hx:text-gray-700 hx:dark:text-gray-300 hx:hover:bg-gray-100 hx:hover:text-gray-900 hx:dark:hover:bg-neutral-800 hx:dark:hover:text-gray-100 hx:relative hx:cursor-pointer hx:whitespace-nowrap hx:rounded-sm hx:py-1.5 hx:transition-colors hx:ltr:pl-3 hx:ltr:pr-9 hx:rtl:pr-3 hx:rtl:pl-9 hx:text-left hx:w-full hx:bg-transparent hx:border-0">
+Dark
+<span class="hx:absolute hx:inset-y-0 hx:flex hx:items-center hx:ltr:right-3 hx:rtl:left-3 hx:group-data-[theme=light]:hidden hx:group-data-[theme=system]:hidden"><svg height="1em" width="1em" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></button></li><li role=none class="hx:flex hx:flex-col"><button type=button role=menuitemradio aria-checked=false tabindex=-1 data-item=system class="hx:text-gray-700 hx:dark:text-gray-300 hx:hover:bg-gray-100 hx:hover:text-gray-900 hx:dark:hover:bg-neutral-800 hx:dark:hover:text-gray-100 hx:relative hx:cursor-pointer hx:whitespace-nowrap hx:rounded-sm hx:py-1.5 hx:transition-colors hx:ltr:pl-3 hx:ltr:pr-9 hx:rtl:pr-3 hx:rtl:pl-9 hx:text-left hx:w-full hx:bg-transparent hx:border-0">
+System
+<span class="hx:absolute hx:inset-y-0 hx:flex hx:items-center hx:ltr:right-3 hx:rtl:left-3 hx:group-data-[theme=dark]:hidden hx:group-data-[theme=light]:hidden"><svg height="1em" width="1em" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></button></li></ul></div><button type=button aria-label=Menu aria-expanded=false class="hextra-hamburger-menu hx:cursor-pointer hx:-mr-1 hx:rounded-sm hx:p-1 hx:active:bg-gray-400/20 hx:md:hidden hx:hextra-focus-visible-inset"><svg height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><g><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8H20"/></g><g><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16H20"/></g></svg></button></nav></div><article class="cad-page-shell cad-model-detail"><header class=cad-model-hero><p class=cad-model-kicker>Verification</p><h1>Assembly-owned named anchor</h1><p>A semantic datum belongs to the assembly rather than the reusable part</p></header><div class=cad-model-statusbar><span class="cad-status cad-status-ok">Verified</span>
+<span class=cad-status>scpf</span>
+<span class=cad-status>Base 40 × 30 × 20 mm; Companion 10 mm cube; Marker 10 mm cube</span></div><section class=cad-panel id=expected-setup><h2 class=cad-section-title>What this model makes</h2><p class=cad-model-description>An assembly publishes a named corner datum and a Marker consumes it without adding application-specific anchor names to the generic Base component.</p><div class=cad-model-overview><div class=cad-preview-panel id=featured-result><h3 class=cad-section-subtitle>SolidCraft native snapshot</h3><div class=cad-preview><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/model.png class=cad-preview-link><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/model.png alt="Assembly-owned named anchor published scpf result"></a></div><p class=cad-section-help>Snapshot of the saved native SolidCraft model, not an STL render.</p></div><div class=cad-preview-panel><h3 class=cad-section-subtitle>Expected setup</h3><div class=cad-preview><a href=/lib.py.solidcraft.forge.NEW/verification/assembly-owned-anchor/setup.svg class=cad-preview-link><img src=/lib.py.solidcraft.forge.NEW/verification/assembly-owned-anchor/setup.svg alt="Assembly-owned named anchor expected setup diagram"></a></div><p class=cad-section-help>Published scpf baseline: declared expected body envelopes. Conceptual projection, not verification output.</p></div></div></section><section class="cad-code-section cad-source-section" id=primary-source><h2 class=cad-section-title>scpf source</h2><p class=cad-section-help>Complete primary source from the site branch; built revision below.</p><div class=cad-code-frame><div class=cad-code-label>scpf/model.py</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=s2>&#34;&#34;&#34;Qualification: an assembly-owned named anchor remains associative.&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Base</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>width</span> <span class=o>=</span> <span class=mf>40.0</span>
+</span></span><span class=line><span class=cl>    <span class=n>height</span> <span class=o>=</span> <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>    <span class=n>DEPTH</span> <span class=o>=</span> <span class=mf>30.0</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>build</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>Box</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>width</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>DEPTH</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>height</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>anchor</span><span class=o>=</span><span class=n>Anchor</span><span class=o>.</span><span class=n>BOTTOM</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Companion</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>SIZE</span> <span class=o>=</span> <span class=mf>10.0</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>build</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=c1># Position is not part of this qualification. Keep its old visible</span>
+</span></span><span class=line><span class=cl>        <span class=c1># location inside this unique component definition.</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>Box</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>SIZE</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>SIZE</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>SIZE</span><span class=p>)</span><span class=o>.</span><span class=n>move</span><span class=p>(</span><span class=n>x</span><span class=o>=</span><span class=mi>70</span><span class=p>,</span> <span class=n>z</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>SIZE</span> <span class=o>/</span> <span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Marker</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>build</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>Box</span><span class=p>(</span><span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>AssemblyOwnedAnchor</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>base_width</span> <span class=o>=</span> <span class=mf>40.0</span>
+</span></span><span class=line><span class=cl>    <span class=n>base_height</span> <span class=o>=</span> <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>build</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>base</span> <span class=o>=</span> <span class=n>Base</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>width</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>base_width</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>height</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>base_height</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>name</span><span class=o>=</span><span class=s2>&#34;base&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>companion</span> <span class=o>=</span> <span class=n>Companion</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&#34;companion&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>frame</span> <span class=o>=</span> <span class=p>(</span><span class=n>base</span> <span class=o>+</span> <span class=n>companion</span><span class=p>)</span><span class=o>.</span><span class=n>with_anchor</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;inspection_corner&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>base</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>Anchor</span><span class=o>.</span><span class=n>FRONT_TOP_RIGHT</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>datum</span> <span class=o>=</span> <span class=n>frame</span><span class=o>.</span><span class=n>anchor</span><span class=p>(</span><span class=s2>&#34;inspection_corner&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>marker</span> <span class=o>=</span> <span class=n>Marker</span><span class=p>()</span><span class=o>.</span><span class=n>attach</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>datum</span><span class=o>.</span><span class=n>target</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>parent</span><span class=o>=</span><span class=n>datum</span><span class=o>.</span><span class=n>reference</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>child</span><span class=o>=</span><span class=n>Anchor</span><span class=o>.</span><span class=n>BACK_TOP_RIGHT</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>offset</span><span class=o>=</span><span class=n>datum</span><span class=o>.</span><span class=n>offset</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>frame</span> <span class=o>+</span> <span class=n>marker</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>AssemblyOwnedAnchor</span><span class=p>()</span>
+</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></section><details class="cad-code-section cad-command-section cad-collapsible" data-implementation=scpf><summary><span class="cad-section-title cad-collapsible-title">Generated command sequence — scpf (14)</span></summary><div class=cad-collapsible-body><p class=cad-section-help><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/solidcraft.json>Open published command JSON</a></p><ol class=cad-command-sequence><li class=cad-command-step><h3 class=cad-command-name><code>parameters.add</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;parameters.add&#34;,
+  &#34;params&#34;: {
+    &#34;expression&#34;: &#34;40&#34;,
+    &#34;name&#34;: &#34;base_width&#34;,
+    &#34;unit&#34;: &#34;mm&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>parameters.add</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;parameters.add&#34;,
+  &#34;params&#34;: {
+    &#34;expression&#34;: &#34;20&#34;,
+    &#34;name&#34;: &#34;base_height&#34;,
+    &#34;unit&#34;: &#34;mm&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>component.create</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$base&#34;: &#34;occurrence&#34;
+  },
+  &#34;command&#34;: &#34;component.create&#34;,
+  &#34;params&#34;: {
+    &#34;grounded&#34;: true,
+    &#34;name&#34;: &#34;Base&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>solid.box</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;solid.box&#34;,
+  &#34;params&#34;: {
+    &#34;body_name&#34;: &#34;Base&#34;,
+    &#34;corner&#34;: [
+      &#34;-base_width / 2&#34;,
+      -15.0,
+      0
+    ],
+    &#34;height&#34;: &#34;base_height&#34;,
+    &#34;length&#34;: &#34;base_width&#34;,
+    &#34;width&#34;: 30.0
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>component.activate</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;component.activate&#34;,
+  &#34;params&#34;: {
+    &#34;component&#34;: &#34;root&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>component.create</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$companion&#34;: &#34;occurrence&#34;
+  },
+  &#34;command&#34;: &#34;component.create&#34;,
+  &#34;params&#34;: {
+    &#34;grounded&#34;: false,
+    &#34;name&#34;: &#34;Companion&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>solid.box</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;solid.box&#34;,
+  &#34;params&#34;: {
+    &#34;body_name&#34;: &#34;Companion&#34;,
+    &#34;center&#34;: [
+      70.0,
+      0.0,
+      5.0
+    ],
+    &#34;height&#34;: 10.0,
+    &#34;length&#34;: 10.0,
+    &#34;operation&#34;: &#34;new&#34;,
+    &#34;width&#34;: 10.0
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>component.activate</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;component.activate&#34;,
+  &#34;params&#34;: {
+    &#34;component&#34;: &#34;root&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>component.create</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$marker&#34;: &#34;occurrence&#34;
+  },
+  &#34;command&#34;: &#34;component.create&#34;,
+  &#34;params&#34;: {
+    &#34;grounded&#34;: false,
+    &#34;name&#34;: &#34;Marker&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>solid.box</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;solid.box&#34;,
+  &#34;params&#34;: {
+    &#34;body_name&#34;: &#34;Marker&#34;,
+    &#34;center&#34;: [
+      0,
+      0,
+      0
+    ],
+    &#34;height&#34;: 10,
+    &#34;length&#34;: 10,
+    &#34;width&#34;: 10
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>component.activate</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;component.activate&#34;,
+  &#34;params&#34;: {
+    &#34;component&#34;: &#34;root&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>occurrence.move</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;occurrence.move&#34;,
+  &#34;params&#34;: {
+    &#34;occurrence&#34;: &#34;$marker&#34;,
+    &#34;translate&#34;: [
+      &#34;((-(base_width / 2)) &#43; (base_width)) - 5 mm&#34;,
+      -20.0,
+      &#34;base_height - 5 mm&#34;
+    ]
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>joint.create</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;joint.create&#34;,
+  &#34;params&#34;: {
+    &#34;a&#34;: {
+      &#34;corner&#34;: [
+        20.0,
+        -15.0,
+        20.0
+      ],
+      &#34;edge&#34;: [
+        20.0,
+        -15.0,
+        10.0
+      ],
+      &#34;occurrence&#34;: &#34;$base&#34;,
+      &#34;on&#34;: [
+        0.0,
+        -15.0,
+        10.0
+      ]
+    },
+    &#34;b&#34;: {
+      &#34;occurrence&#34;: &#34;$marker&#34;,
+      &#34;point&#34;: [
+        20.0,
+        -15.0,
+        20.0
+      ],
+      &#34;x&#34;: [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      &#34;z&#34;: [
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    &#34;name&#34;: &#34;Attach Marker to base&#34;,
+    &#34;type&#34;: &#34;rigid&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>browser.visibility</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;browser.visibility&#34;,
+  &#34;params&#34;: {
+    &#34;folder&#34;: &#34;joints&#34;,
+    &#34;visible&#34;: false
+  }
+}</code></pre></li></ol></div></details><section class=cad-section id=reference-code><h2 class=cad-section-title>Reference code</h2><section class="cad-panel cad-reference-comparison" data-implementation=cadquery><h3 class=cad-section-subtitle>cadquery source · pass</h3><div class=cad-reference-grid><div class=cad-reference-source><div class=cad-code-frame><div class=cad-code-label>cadquery/model.py</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=s2>&#34;&#34;&#34;CadQuery assembly reference for an assembly-owned inspection datum layout.&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>cadquery</span> <span class=k>as</span> <span class=nn>cq</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>base</span> <span class=o>=</span> <span class=n>cq</span><span class=o>.</span><span class=n>Solid</span><span class=o>.</span><span class=n>makeBox</span><span class=p>(</span><span class=mi>40</span><span class=p>,</span> <span class=mi>30</span><span class=p>,</span> <span class=mi>20</span><span class=p>,</span> <span class=n>cq</span><span class=o>.</span><span class=n>Vector</span><span class=p>(</span><span class=o>-</span><span class=mi>20</span><span class=p>,</span> <span class=o>-</span><span class=mi>15</span><span class=p>,</span> <span class=mi>0</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=n>small</span> <span class=o>=</span> <span class=n>cq</span><span class=o>.</span><span class=n>Solid</span><span class=o>.</span><span class=n>makeBox</span><span class=p>(</span><span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=n>cq</span><span class=o>.</span><span class=n>Vector</span><span class=p>(</span><span class=o>-</span><span class=mi>5</span><span class=p>,</span> <span class=o>-</span><span class=mi>5</span><span class=p>,</span> <span class=o>-</span><span class=mi>5</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>model</span> <span class=o>=</span> <span class=n>cq</span><span class=o>.</span><span class=n>Assembly</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>model</span><span class=o>.</span><span class=n>add</span><span class=p>(</span><span class=n>base</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>&#34;base&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>model</span><span class=o>.</span><span class=n>add</span><span class=p>(</span><span class=n>small</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>&#34;companion&#34;</span><span class=p>,</span> <span class=n>loc</span><span class=o>=</span><span class=n>cq</span><span class=o>.</span><span class=n>Location</span><span class=p>((</span><span class=mi>70</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl><span class=n>model</span><span class=o>.</span><span class=n>add</span><span class=p>(</span><span class=n>small</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>&#34;marker&#34;</span><span class=p>,</span> <span class=n>loc</span><span class=o>=</span><span class=n>cq</span><span class=o>.</span><span class=n>Location</span><span class=p>((</span><span class=mi>15</span><span class=p>,</span> <span class=o>-</span><span class=mi>20</span><span class=p>,</span> <span class=mi>15</span><span class=p>)))</span>
+</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div><div class=cad-reference-output><div class=cad-preview><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/cadquery/model.png class=cad-preview-link><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/cadquery/model.png alt="Published reference result"></a></div><p class=cad-section-help>Independent implementation result.</p><div class=cad-links><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/cadquery/model.stl>STL</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/cadquery/result.json>Build result</a></div></div></div></section><section class="cad-panel cad-reference-comparison" data-implementation=build123d><h3 class=cad-section-subtitle>build123d source · pass</h3><div class=cad-reference-grid><div class=cad-reference-source><div class=cad-code-frame><div class=cad-code-label>build123d/model.py</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=s2>&#34;&#34;&#34;build123d reference: companion and marker positioned by assembly intent.&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>build123d</span> <span class=kn>import</span> <span class=n>Align</span><span class=p>,</span> <span class=n>Box</span><span class=p>,</span> <span class=n>BuildPart</span><span class=p>,</span> <span class=n>Locations</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>bottom</span> <span class=o>=</span> <span class=p>(</span><span class=n>Align</span><span class=o>.</span><span class=n>CENTER</span><span class=p>,</span> <span class=n>Align</span><span class=o>.</span><span class=n>CENTER</span><span class=p>,</span> <span class=n>Align</span><span class=o>.</span><span class=n>MIN</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>with</span> <span class=n>BuildPart</span><span class=p>()</span> <span class=k>as</span> <span class=n>model</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>Box</span><span class=p>(</span><span class=mi>40</span><span class=p>,</span> <span class=mi>30</span><span class=p>,</span> <span class=mi>20</span><span class=p>,</span> <span class=n>align</span><span class=o>=</span><span class=n>bottom</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>with</span> <span class=n>Locations</span><span class=p>((</span><span class=mi>70</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>5</span><span class=p>),</span> <span class=p>(</span><span class=mi>15</span><span class=p>,</span> <span class=o>-</span><span class=mi>20</span><span class=p>,</span> <span class=mi>15</span><span class=p>)):</span>
+</span></span><span class=line><span class=cl>        <span class=n>Box</span><span class=p>(</span><span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>)</span>
+</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div><div class=cad-reference-output><div class=cad-preview><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/build123d/model.png class=cad-preview-link><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/build123d/model.png alt="Published reference result"></a></div><p class=cad-section-help>Independent implementation result.</p><div class=cad-links><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/build123d/model.stl>STL</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/build123d/result.json>Build result</a></div></div></div></section><section class="cad-panel cad-reference-comparison" data-implementation=pythonscad><h3 class=cad-section-subtitle>pythonscad source · pass</h3><div class=cad-reference-grid><div class=cad-reference-source><div class=cad-code-frame><div class=cad-code-label>pythonscad/model.py</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=s2>&#34;&#34;&#34;PythonSCAD geometry reference for an assembly-owned inspection datum.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>Forge additionally qualifies that the named datum belongs to the assembly and
+</span></span></span><span class=line><span class=cl><span class=s2>remains associated with the base corner after native parameter mutation.
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>pythonscad</span> <span class=kn>import</span> <span class=o>*</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>base</span> <span class=o>=</span> <span class=n>cube</span><span class=p>([</span><span class=mi>40</span><span class=p>,</span> <span class=mi>30</span><span class=p>,</span> <span class=mi>20</span><span class=p>],</span> <span class=n>center</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span><span class=o>.</span><span class=n>up</span><span class=p>(</span><span class=mi>10</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>companion</span> <span class=o>=</span> <span class=n>cube</span><span class=p>([</span><span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>],</span> <span class=n>center</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span><span class=o>.</span><span class=n>translate</span><span class=p>([</span><span class=mi>70</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>5</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=n>marker</span> <span class=o>=</span> <span class=n>cube</span><span class=p>([</span><span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>],</span> <span class=n>center</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span><span class=o>.</span><span class=n>translate</span><span class=p>([</span><span class=mi>15</span><span class=p>,</span> <span class=o>-</span><span class=mi>20</span><span class=p>,</span> <span class=mi>15</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=n>model</span> <span class=o>=</span> <span class=n>base</span> <span class=o>|</span> <span class=n>companion</span> <span class=o>|</span> <span class=n>marker</span>
+</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div><div class=cad-reference-output><div class=cad-preview><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/pythonscad/model.png class=cad-preview-link><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/pythonscad/model.png alt="Published reference result"></a></div><p class=cad-section-help>Independent implementation result.</p><div class=cad-links><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pythonscad/model.stl>STL</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pythonscad/result.json>Build result</a></div></div></div></section><section class="cad-panel cad-reference-comparison" data-implementation=pybosl2><h3 class=cad-section-subtitle>pybosl2 source · pass</h3><div class=cad-reference-grid><div class=cad-reference-source><div class=cad-code-frame><div class=cad-code-label>pybosl2/model.py</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=s2>&#34;&#34;&#34;pyBOSL2 geometry reference for the assembly-owned-anchor case.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>The visible geometry is comparable; Forge&#39;s named assembly datum and persisted
+</span></span></span><span class=line><span class=cl><span class=s2>SolidCraft relationship are the qualification-specific behaviour.
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>pybosl2</span> <span class=kn>import</span> <span class=n>cuboid</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>base</span> <span class=o>=</span> <span class=n>cuboid</span><span class=p>([</span><span class=mi>40</span><span class=p>,</span> <span class=mi>30</span><span class=p>,</span> <span class=mi>20</span><span class=p>])</span><span class=o>.</span><span class=n>up</span><span class=p>(</span><span class=mi>10</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>companion</span> <span class=o>=</span> <span class=n>cuboid</span><span class=p>([</span><span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>])</span><span class=o>.</span><span class=n>translate</span><span class=p>([</span><span class=mi>70</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>5</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=n>marker</span> <span class=o>=</span> <span class=n>cuboid</span><span class=p>([</span><span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>10</span><span class=p>])</span><span class=o>.</span><span class=n>translate</span><span class=p>([</span><span class=mi>15</span><span class=p>,</span> <span class=o>-</span><span class=mi>20</span><span class=p>,</span> <span class=mi>15</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=n>model</span> <span class=o>=</span> <span class=n>base</span> <span class=o>|</span> <span class=n>companion</span> <span class=o>|</span> <span class=n>marker</span>
+</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div><div class=cad-reference-output><div class=cad-preview><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/pybosl2/model.png class=cad-preview-link><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/pybosl2/model.png alt="Published reference result"></a></div><p class=cad-section-help>Independent implementation result.</p><div class=cad-links><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pybosl2/model.stl>STL</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pybosl2/result.json>Build result</a></div></div></div></section></section><section class="cad-panel cad-visual-verification" data-implementation=scpf><h2 class=cad-section-title>Current visual verification — scpf</h2><p class=cad-section-help>Each model-owned view is evaluated independently. Actual is the current native result; Goal is the declared expected profile; Overlay combines both; Diff compares the approved regression baseline.</p><section class=cad-visual-view data-view=front><div class=cad-visual-view-heading><h3 class=cad-section-subtitle>front</h3><span class="cad-status cad-status-ok">pass</span></div><p class=cad-section-help>Regression: pass · expected shape: pass</p><div class=cad-visual-grid><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/front/actual.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/front/actual.png alt="Assembly-owned named anchor Actual visual verification"></a><figcaption>Actual</figcaption></figure><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/front/goal.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/front/goal.png alt="Assembly-owned named anchor Goal visual verification"></a><figcaption>Goal</figcaption></figure><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/front/overlay.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/front/overlay.png alt="Assembly-owned named anchor Overlay visual verification"></a><figcaption>Overlay</figcaption></figure><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/front/diff.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/front/diff.png alt="Assembly-owned named anchor Diff visual verification"></a><figcaption>Diff</figcaption></figure></div></section><section class=cad-visual-view data-view=right><div class=cad-visual-view-heading><h3 class=cad-section-subtitle>right</h3><span class="cad-status cad-status-ok">pass</span></div><p class=cad-section-help>Regression: pass · expected shape: pass</p><div class=cad-visual-grid><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/right/actual.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/right/actual.png alt="Assembly-owned named anchor Actual visual verification"></a><figcaption>Actual</figcaption></figure><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/right/goal.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/right/goal.png alt="Assembly-owned named anchor Goal visual verification"></a><figcaption>Goal</figcaption></figure><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/right/overlay.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/right/overlay.png alt="Assembly-owned named anchor Overlay visual verification"></a><figcaption>Overlay</figcaption></figure><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/right/diff.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/right/diff.png alt="Assembly-owned named anchor Diff visual verification"></a><figcaption>Diff</figcaption></figure></div></section><section class=cad-visual-view data-view=iso><div class=cad-visual-view-heading><h3 class=cad-section-subtitle>iso</h3><span class="cad-status cad-status-ok">pass</span></div><p class=cad-section-help>Regression: pass · expected shape: pass</p><div class=cad-visual-grid><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/iso/actual.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/iso/actual.png alt="Assembly-owned named anchor Actual visual verification"></a><figcaption>Actual</figcaption></figure><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/iso/goal.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/iso/goal.png alt="Assembly-owned named anchor Goal visual verification"></a><figcaption>Goal</figcaption></figure><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/iso/overlay.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/iso/overlay.png alt="Assembly-owned named anchor Overlay visual verification"></a><figcaption>Overlay</figcaption></figure><figure class=cad-visual-card><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/iso/diff.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/verification/visual/visual/iso/diff.png alt="Assembly-owned named anchor Diff visual verification"></a><figcaption>Diff</figcaption></figure></div></section></section><section class=cad-panel id=image-overview><h2 class=cad-section-title>Image overview</h2><div class="cad-reference-grid cad-evidence-gallery"><figure class=cad-reference><strong>Expected setup</strong><a href=/lib.py.solidcraft.forge.NEW/verification/assembly-owned-anchor/setup.svg><img src=/lib.py.solidcraft.forge.NEW/verification/assembly-owned-anchor/setup.svg alt="Assembly-owned named anchor expected setup diagram"></a></figure><figure class=cad-reference><strong>scpf — native snapshot</strong><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/model.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/scpf/model.png alt="scpf published preview"></a></figure><figure class=cad-reference><strong>cadquery — model preview</strong><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/cadquery/model.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/cadquery/model.png alt="cadquery published preview"></a></figure><figure class=cad-reference><strong>build123d — model preview</strong><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/build123d/model.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/build123d/model.png alt="build123d published preview"></a></figure><figure class=cad-reference><strong>pythonscad — model preview</strong><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/pythonscad/model.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/pythonscad/model.png alt="pythonscad published preview"></a></figure><figure class=cad-reference><strong>pybosl2 — model preview</strong><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/pybosl2/model.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge.NEW/build/main/models/assembly-owned-anchor/pybosl2/model.png alt="pybosl2 published preview"></a></figure></div><p class=cad-section-help>Only images present in the published build are displayed. Presentation previews are not visual verification results.</p></section><section class=cad-panel id=check-overview><h2 class=cad-section-title>Verification checks</h2><h3 class=cad-section-subtitle>scpf — pass</h3><div class=cad-check><div class=cad-check-heading><strong>geometry / geometry</strong><span class="cad-status cad-status-ok">pass</span></div><div class=cad-check-table-scroll><table class=cad-check-table><thead><tr><th scope=col>Measurement</th><th scope=col>Expected</th><th scope=col>Measured</th><th scope=col>Check</th></tr></thead><tbody><tr><th scope=row>Bounds / max</th><td>75 × 15 × 20</td><td>75 × 15 × 20</td><td>pass</td></tr><tr><th scope=row>Bounds / min</th><td>-20 × -25 × 0</td><td>-20 × -25 × 0</td><td>pass</td></tr></tbody></table></div></div><div class=cad-check><div class=cad-check-heading><strong>native / baseline</strong><span class="cad-status cad-status-ok">pass</span></div><div class=cad-check-table-scroll><table class=cad-check-table><thead><tr><th scope=col>Measurement</th><th scope=col>Expected</th><th scope=col>Measured</th><th scope=col>Check</th></tr></thead><tbody><tr><th scope=row>SolidCraft body count</th><td>3</td><td>3</td><td>pass</td></tr><tr><th scope=row>Body envelopes / count</th><td>3</td><td>3</td><td>pass</td></tr><tr><th scope=row>Body 1 / min [mm]</th><td>-20 × -15 × 0</td><td>-20 × -15 × 0</td><td>—</td></tr><tr><th scope=row>Body 1 / max [mm]</th><td>20 × 15 × 20</td><td>20 × 15 × 20</td><td>—</td></tr><tr><th scope=row>Body 2 / min [mm]</th><td>65 × -5 × 0</td><td>65 × -5 × 0</td><td>—</td></tr><tr><th scope=row>Body 2 / max [mm]</th><td>75 × 5 × 10</td><td>75 × 5 × 10</td><td>—</td></tr><tr><th scope=row>Body 3 / min [mm]</th><td>10 × -25 × 10</td><td>10 × -25 × 10</td><td>—</td></tr><tr><th scope=row>Body 3 / max [mm]</th><td>20 × -15 × 20</td><td>20 × -15 × 20</td><td>—</td></tr></tbody></table></div></div><div class=cad-check><div class=cad-check-heading><strong>native / saved_design_size_80x40</strong><span class="cad-status cad-status-ok">pass</span></div><div class=cad-check-table-scroll><table class=cad-check-table><thead><tr><th scope=col>Measurement</th><th scope=col>Expected</th><th scope=col>Measured</th><th scope=col>Check</th></tr></thead><tbody><tr><th scope=row>Body envelopes / count</th><td>3</td><td>3</td><td>pass</td></tr><tr><th scope=row>Body 1 / min [mm]</th><td>-40 × -15 × 0</td><td>-40 × -15 × 0</td><td>—</td></tr><tr><th scope=row>Body 1 / max [mm]</th><td>40 × 15 × 40</td><td>40 × 15 × 40</td><td>—</td></tr><tr><th scope=row>Body 2 / min [mm]</th><td>65 × -5 × 0</td><td>65 × -5 × 0</td><td>—</td></tr><tr><th scope=row>Body 2 / max [mm]</th><td>75 × 5 × 10</td><td>75 × 5 × 10</td><td>—</td></tr><tr><th scope=row>Body 3 / min [mm]</th><td>30 × -25 × 30</td><td>30 × -25 × 30</td><td>—</td></tr><tr><th scope=row>Body 3 / max [mm]</th><td>40 × -15 × 40</td><td>40 × -15 × 40</td><td>—</td></tr><tr><th scope=row>SolidCraft parameters / base_height</th><td>40</td><td>40</td><td>pass</td></tr><tr><th scope=row>SolidCraft parameters / base_width</th><td>80</td><td>80</td><td>pass</td></tr></tbody></table></div></div><div class=cad-check><div class=cad-check-heading><strong>visual / front</strong><span class="cad-status cad-status-ok">pass</span></div></div><div class=cad-check><div class=cad-check-heading><strong>visual / right</strong><span class="cad-status cad-status-ok">pass</span></div></div><div class=cad-check><div class=cad-check-heading><strong>visual / iso</strong><span class="cad-status cad-status-ok">pass</span></div></div><h3 class=cad-section-subtitle>cadquery — pass</h3><div class=cad-check><div class=cad-check-heading><strong>geometry / geometry</strong><span class="cad-status cad-status-ok">pass</span></div><div class=cad-check-table-scroll><table class=cad-check-table><thead><tr><th scope=col>Measurement</th><th scope=col>Expected</th><th scope=col>Measured</th><th scope=col>Check</th></tr></thead><tbody><tr><th scope=row>Bounds / max</th><td>75 × 15 × 20</td><td>75 × 15 × 20</td><td>pass</td></tr><tr><th scope=row>Bounds / min</th><td>-20 × -25 × 0</td><td>-20 × -25 × 0</td><td>pass</td></tr></tbody></table></div></div><h3 class=cad-section-subtitle>build123d — pass</h3><div class=cad-check><div class=cad-check-heading><strong>geometry / geometry</strong><span class="cad-status cad-status-ok">pass</span></div><div class=cad-check-table-scroll><table class=cad-check-table><thead><tr><th scope=col>Measurement</th><th scope=col>Expected</th><th scope=col>Measured</th><th scope=col>Check</th></tr></thead><tbody><tr><th scope=row>Bounds / max</th><td>75 × 15 × 20</td><td>75 × 15 × 20</td><td>pass</td></tr><tr><th scope=row>Bounds / min</th><td>-20 × -25 × 0</td><td>-20 × -25 × 0</td><td>pass</td></tr></tbody></table></div></div><h3 class=cad-section-subtitle>pythonscad — pass</h3><div class=cad-check><div class=cad-check-heading><strong>geometry / geometry</strong><span class="cad-status cad-status-ok">pass</span></div><div class=cad-check-table-scroll><table class=cad-check-table><thead><tr><th scope=col>Measurement</th><th scope=col>Expected</th><th scope=col>Measured</th><th scope=col>Check</th></tr></thead><tbody><tr><th scope=row>Bounds / max</th><td>75 × 15 × 20</td><td>75 × 15 × 20</td><td>pass</td></tr><tr><th scope=row>Bounds / min</th><td>-20 × -25 × 0</td><td>-20 × -25 × 0</td><td>pass</td></tr></tbody></table></div></div><h3 class=cad-section-subtitle>pybosl2 — pass</h3><div class=cad-check><div class=cad-check-heading><strong>geometry / geometry</strong><span class="cad-status cad-status-ok">pass</span></div><div class=cad-check-table-scroll><table class=cad-check-table><thead><tr><th scope=col>Measurement</th><th scope=col>Expected</th><th scope=col>Measured</th><th scope=col>Check</th></tr></thead><tbody><tr><th scope=row>Bounds / max</th><td>75 × 15 × 20</td><td>75 × 15 × 20</td><td>pass</td></tr><tr><th scope=row>Bounds / min</th><td>-20 × -25 × 0</td><td>-20 × -25 × 0</td><td>pass</td></tr></tbody></table></div></div></section><section class=cad-panel id=model-stages><h2 class=cad-section-title>Model stages</h2><ol class=cad-stages><li>Create Base and Companion components</li><li>Publish the semantic corner anchor on the assembly</li><li>Attach Marker through the assembly-owned datum</li></ol></section><section class="cad-panel cad-background" id=engineering-explanation><h2 class=cad-section-title>Engineering explanation</h2><div class="cad-rich-text content"><h1 data-hextra-search-id=assembly-owned-named-anchor>Assembly-owned named anchor</h1><blockquote><p>Documentation provenance: the engineering text below is copied verbatim from the last canonical <code>qualification/cases.py</code> source before its removal, commit <code>be40b09e7454a90e87d83768a9e7453c52ba5d76</code>.</p></blockquote><p><strong>Legacy group:</strong> <code>anchors</code></p><p><strong>Saved-design required:</strong> <code>true</code></p><h2 data-hextra-search-id=goal>Goal<span class="hx:absolute hx:-mt-20" id=goal></span>
+<a href=#goal class=subheading-anchor aria-label="Permalink for this section"></a></h2><p>Verify that an assembly can publish a semantic attachment name without putting that application-specific datum on the reusable component, and that a consumer of the name still lowers to an associative native relationship.</p><h2 data-hextra-search-id=forge-api>Forge API<span class="hx:absolute hx:-mt-20" id=forge-api></span>
+<a href=#forge-api class=subheading-anchor aria-label="Permalink for this section"></a></h2><p>(base + companion).with_anchor(&lsquo;inspection_corner&rsquo;, base, Anchor.FRONT_TOP_RIGHT); datum = frame.anchor(&lsquo;inspection_corner&rsquo;); Marker().attach(datum.target, parent=datum.reference, &mldr;)</p><h2 data-hextra-search-id=forge-model>Forge model<span class="hx:absolute hx:-mt-20" id=forge-model></span>
+<a href=#forge-model class=subheading-anchor aria-label="Permalink for this section"></a></h2><p>The assembly stores a name mapped to an existing target occurrence plus a normal Forge anchor reference. The reusable Base knows nothing about the semantic name.</p><h2 data-hextra-search-id=how-forge-builds-it-in-solidcraft>How Forge builds it in SolidCraft<span class="hx:absolute hx:-mt-20" id=how-forge-builds-it-in-solidcraft></span>
+<a href=#how-forge-builds-it-in-solidcraft class=subheading-anchor aria-label="Permalink for this section"></a></h2><p>with_anchor()/anchor() are Forge-side semantic indirection only. The resulting native joint is the same topology-backed FRONT_TOP_RIGHT relationship that a direct attach would emit; no extra native helper object is required.</p><h2 data-hextra-search-id=solidcraft-result>SolidCraft result<span class="hx:absolute hx:-mt-20" id=solidcraft-result></span>
+<a href=#solidcraft-result class=subheading-anchor aria-label="Permalink for this section"></a></h2><p>The marker sits on the base front-top-right corner while an unrelated companion occurrence remains part of the same assembly.</p><h2 data-hextra-search-id=saved-design-test>Saved-design test<span class="hx:absolute hx:-mt-20" id=saved-design-test></span>
+<a href=#saved-design-test class=subheading-anchor aria-label="Permalink for this section"></a></h2><p>Change base_width/base_height from 40x20 to 80x40 mm in the saved .sc design; the marker created through the assembly-owned name must follow the moved corner without rerunning Python.</p><h2 data-hextra-search-id=geometry-evidence>Geometry evidence<span class="hx:absolute hx:-mt-20" id=geometry-evidence></span>
+<a href=#geometry-evidence class=subheading-anchor aria-label="Permalink for this section"></a></h2><blockquote><p>Geometry-rationale provenance: copied verbatim from <code>qualification/geometry_contracts.py</code> at commit <code>be40b09e7454a90e87d83768a9e7453c52ba5d76</code>.</p></blockquote><p><strong>Bounds sufficient:</strong> <code>true</code></p><p>The three body sizes and positions describe the visible assembly. The saved SolidCraft model is checked separately to confirm which assembly owns the anchor and which parts are related.</p><h2 data-hextra-search-id=reference-notes>Reference notes<span class="hx:absolute hx:-mt-20" id=reference-notes></span>
+<a href=#reference-notes class=subheading-anchor aria-label="Permalink for this section"></a></h2><ul><li><strong>BOSL2</strong> — Semantic attachment names belong naturally to the assembly that owns their meaning rather than to a generic reusable component.</li><li><strong>SolidCraft</strong> — The semantic name disappears during lowering; the persisted native relationship remains topology-backed and associative.</li></ul></div></section><section class="cad-panel cad-verification-panel" id=build-verification><h2 class=cad-section-title>Build and verification</h2><div class=content><ul><li>Primary implementation: <code>scpf</code></li><li>Build source: <code>c5152b7d004b225e7b62b36a8f982c3ed5c9a1f6</code></li><li>Durable scope: <code>main</code></li></ul><h3 data-hextra-search-id=implementations>Implementations<span class="hx:absolute hx:-mt-20" id=implementations></span>
+<a href=#implementations class=subheading-anchor aria-label="Permalink for this section"></a></h3><ul><li><strong>build123d</strong> — builder-build123d: build=pass, verification=pass · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/build123d/model.stl target=_blank rel=noopener>STL</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/build123d/model.png target=_blank rel=noopener>Preview</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/build123d/verification/verification.json target=_blank rel=noopener>verification</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/build123d/result.json target=_blank rel=noopener>result</a><ul><li><code>geometry</code>: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/build123d/verification/geometry/verification.json target=_blank rel=noopener>verification</a></li></ul></li><li><strong>cadquery</strong> — builder-cadquery: build=pass, verification=pass · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/cadquery/model.stl target=_blank rel=noopener>STL</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/cadquery/model.png target=_blank rel=noopener>Preview</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/cadquery/verification/verification.json target=_blank rel=noopener>verification</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/cadquery/result.json target=_blank rel=noopener>result</a><ul><li><code>geometry</code>: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/cadquery/verification/geometry/verification.json target=_blank rel=noopener>verification</a></li></ul></li><li><strong>pybosl2</strong> — builder-pybosl2: build=pass, verification=pass · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pybosl2/model.stl target=_blank rel=noopener>STL</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pybosl2/model.png target=_blank rel=noopener>Preview</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pybosl2/verification/verification.json target=_blank rel=noopener>verification</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pybosl2/result.json target=_blank rel=noopener>result</a><ul><li><code>geometry</code>: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pybosl2/verification/geometry/verification.json target=_blank rel=noopener>verification</a></li></ul></li><li><strong>pythonscad</strong> — builder-pythonscad: build=pass, verification=pass · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pythonscad/model.stl target=_blank rel=noopener>STL</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pythonscad/model.png target=_blank rel=noopener>Preview</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pythonscad/verification/verification.json target=_blank rel=noopener>verification</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pythonscad/result.json target=_blank rel=noopener>result</a><ul><li><code>geometry</code>: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pythonscad/verification/geometry/verification.json target=_blank rel=noopener>verification</a></li></ul></li><li><strong>scpf</strong> — builder-scpf: build=pass, verification=pass · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/model.stl target=_blank rel=noopener>STL</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/model.sc target=_blank rel=noopener>SC</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/model.png target=_blank rel=noopener>Preview</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/solidcraft.json target=_blank rel=noopener>commands</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/verification/verification.json target=_blank rel=noopener>verification</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/result.json target=_blank rel=noopener>result</a><ul><li><code>geometry</code>: status=pass, adapter=mesh-geometry, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.5 · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/verification/geometry/verification.json target=_blank rel=noopener>verification</a></li><li><code>native</code>: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/verification/native/verification.json target=_blank rel=noopener>verification</a></li><li><code>visual</code>: status=pass, adapter=solidcraft-visual, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.5 · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/verification/visual/verification.json target=_blank rel=noopener>verification</a></li></ul></li></ul></div><h3 class=cad-section-subtitle>scpf</h3><details class=cad-collapsible><summary><strong>geometry — expected versus measured evidence</strong></summary><div class=cad-collapsible-body><p><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/verification/geometry/verification.json>Open published verification report</a></p><div class=cad-code-frame><div class=cad-code-label>verification.json</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;checks&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;bounds&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_delta_mm&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;tolerance_mm&#34;</span><span class=p>:</span> <span class=mf>0.5</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;geometry&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;input&#34;</span><span class=p>:</span> <span class=s2>&#34;/output/models/assembly-owned-anchor/scpf/model.stl&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{},</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema&#34;</span><span class=p>:</span> <span class=s2>&#34;cad-verification&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema_version&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;verification_id&#34;</span><span class=p>:</span> <span class=s2>&#34;assembly-owned-anchor-scpf-geometry&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div></details><details class=cad-collapsible><summary><strong>native — expected versus measured evidence</strong></summary><div class=cad-collapsible-body><p><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/verification/native/verification.json>Open published verification report</a></p><div class=cad-code-frame><div class=cad-code-label>verification.json</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;checks&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;baseline/measurements.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;8ed44588c7c4f5aced9ce84c5888e051211dcdea2451e7c4878052b07244a20d&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>3427</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;body_count&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual&#34;</span><span class=p>:</span> <span class=mi>3</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected&#34;</span><span class=p>:</span> <span class=mi>3</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;SolidCraft body count&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;body_envelopes&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_count&#34;</span><span class=p>:</span> <span class=mi>3</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_count&#34;</span><span class=p>:</span> <span class=mi>3</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;body_envelopes&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;matched_pairs&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;actual&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;Base&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;expected&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;max_delta&#34;</span><span class=p>:</span> <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;actual&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;Companion&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>5.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>10.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>65.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-5.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;expected&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>5.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>10.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>65.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-5.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;max_delta&#34;</span><span class=p>:</span> <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;actual&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;Marker&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>10.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>10.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;expected&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>10.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>10.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;max_delta&#34;</span><span class=p>:</span> <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;tolerance&#34;</span><span class=p>:</span> <span class=mf>0.001</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;unmatched_actual&#34;</span><span class=p>:</span> <span class=p>[],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;unmatched_expected&#34;</span><span class=p>:</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;named_bodies&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>          <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;body_name&#34;</span><span class=p>:</span> <span class=s2>&#34;Marker&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;bounds&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;actual_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=mf>20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>              <span class=p>],</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;actual_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=mf>10.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>10.0</span>
+</span></span><span class=line><span class=cl>              <span class=p>],</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;deltas&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>              <span class=p>],</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;expected_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=mf>20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>              <span class=p>],</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;expected_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=mf>10.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>10.0</span>
+</span></span><span class=line><span class=cl>              <span class=p>],</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;bounds&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;Marker bounds&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;max_delta&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;tolerance&#34;</span><span class=p>:</span> <span class=mf>0.001</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;name_prefix&#34;</span><span class=p>:</span> <span class=s2>&#34;Marker&#34;</span>
+</span></span><span class=line><span class=cl>          <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>]</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;baseline&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;saved_designs/size_80x40/model.sc&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;7cae1999d174e682deb947616045149df39e2f0a822775e2eb83c40b78f535fa&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>7922</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;saved_designs/size_80x40/measurements.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;226a5c223268d65deebe8eff1733b0a364238513009cd1d9472da7706704ab01&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>3412</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;body_envelopes&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_count&#34;</span><span class=p>:</span> <span class=mi>3</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_count&#34;</span><span class=p>:</span> <span class=mi>3</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;body_envelopes&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;matched_pairs&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;actual&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;Base&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>40.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>40.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-40.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;expected&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>40.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>40.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-40.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;max_delta&#34;</span><span class=p>:</span> <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;actual&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;Companion&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>5.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>10.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>65.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-5.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;expected&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>5.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>10.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>65.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-5.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;max_delta&#34;</span><span class=p>:</span> <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;actual&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;Marker&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>40.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>40.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>30.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>30.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;expected&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>40.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>40.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>],</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>30.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                  <span class=mf>30.0</span>
+</span></span><span class=line><span class=cl>                <span class=p>]</span>
+</span></span><span class=line><span class=cl>              <span class=p>},</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;max_delta&#34;</span><span class=p>:</span> <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;tolerance&#34;</span><span class=p>:</span> <span class=mf>0.001</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;unmatched_actual&#34;</span><span class=p>:</span> <span class=p>[],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;unmatched_expected&#34;</span><span class=p>:</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;named_bodies&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>          <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;body_name&#34;</span><span class=p>:</span> <span class=s2>&#34;Marker&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;bounds&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;actual_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=mf>40.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>40.0</span>
+</span></span><span class=line><span class=cl>              <span class=p>],</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;actual_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=mf>30.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>30.0</span>
+</span></span><span class=line><span class=cl>              <span class=p>],</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;deltas&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>              <span class=p>],</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;expected_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=mf>40.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>-15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>40.0</span>
+</span></span><span class=line><span class=cl>              <span class=p>],</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;expected_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=mf>30.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=mf>30.0</span>
+</span></span><span class=line><span class=cl>              <span class=p>],</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;bounds&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;Marker bounds&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;max_delta&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;tolerance&#34;</span><span class=p>:</span> <span class=mf>0.001</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;name_prefix&#34;</span><span class=p>:</span> <span class=s2>&#34;Marker&#34;</span>
+</span></span><span class=line><span class=cl>          <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>],</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;parameters&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;base_height&#34;</span><span class=p>:</span> <span class=mf>40.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;base_width&#34;</span><span class=p>:</span> <span class=mf>80.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>},</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;base_height&#34;</span><span class=p>:</span> <span class=mf>40.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;base_width&#34;</span><span class=p>:</span> <span class=mf>80.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>},</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;SolidCraft parameters&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;saved_design_size_80x40&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;input&#34;</span><span class=p>:</span> <span class=s2>&#34;/output/models/assembly-owned-anchor/scpf/model.sc&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{},</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema&#34;</span><span class=p>:</span> <span class=s2>&#34;cad-verification&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema_version&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;verification_id&#34;</span><span class=p>:</span> <span class=s2>&#34;assembly-owned-anchor&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div></details><details class=cad-collapsible><summary><strong>visual — expected versus measured evidence</strong></summary><div class=cad-collapsible-body><p><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/scpf/verification/visual/verification.json>Open published verification report</a></p><div class=cad-code-frame><div class=cad-code-label>verification.json</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;checks&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/front/camera.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;06f855e7fe5c59e813f923c04f4abebf5292aca99906e82c541fc7691cc014eb&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>132</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/front/actual.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;c62d74239adfed4067b385b1542f77e5dd6abcb941940fadd31ac9a6c120871c&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>10345</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/front/goal.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;a9c48aa4f887dbe8159a520a6cb903812aaf2027e0c2a410b33430b098bc846c&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>2014</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/front/overlay.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;d68ea306a0d9e8eea02692cd7982074dd2ec5725793e92eaf5d3425fed776f03&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>3388</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/front/diff.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;184e0f0f22a1aa9e391748d992a1d080967425a959669ca64d78bbead3e6877a&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>789</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;actual_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/front/actual.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;baseline&#34;</span><span class=p>:</span> <span class=s2>&#34;baselines/front.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;baseline_status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;camera&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/front/camera.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;diff_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/front/diff.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;expected_shape_required&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;expected_shape_status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;goal_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/front/goal.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;overlay_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/front/overlay.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;regression&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;changed_pixel_fraction&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;changed_pixel_threshold&#34;</span><span class=p>:</span> <span class=mi>12</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_changed_fraction&#34;</span><span class=p>:</span> <span class=mf>0.08</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_mean_difference&#34;</span><span class=p>:</span> <span class=mf>6.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;mean_absolute_difference&#34;</span><span class=p>:</span> <span class=mf>0.008681</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;regression_required&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;view&#34;</span><span class=p>:</span> <span class=s2>&#34;front&#34;</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;front&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/right/camera.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;77ba64b925b900b308e71df17368045083942f83a62d477d330fd1547cb56303&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>148</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/right/actual.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;5fdf8074c9f502363dbf3c93e2c51cb2cd5d4da50037b3c66ac8dba6abb2d85e&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>10215</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/right/goal.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;7afca76c4b8ef6a928ce1483702b10ce438ff4e9aaa7e2ea735422a4f8155c3a&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>2012</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/right/overlay.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;4529ca90448db2a06fe0688fa7725b36f5b56813dc68bda6416efbf55b9ee0b3&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>2975</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/right/diff.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;3f9358890dcea0df15cbacb8ea8bee3280832ceb6de717ca51fbb516f27cb18e&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>813</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;actual_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/right/actual.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;baseline&#34;</span><span class=p>:</span> <span class=s2>&#34;baselines/right.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;baseline_status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;camera&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/right/camera.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;diff_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/right/diff.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;expected_shape_required&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;expected_shape_status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;goal_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/right/goal.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;overlay_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/right/overlay.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;regression&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;changed_pixel_fraction&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;changed_pixel_threshold&#34;</span><span class=p>:</span> <span class=mi>12</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_changed_fraction&#34;</span><span class=p>:</span> <span class=mf>0.08</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_mean_difference&#34;</span><span class=p>:</span> <span class=mf>6.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;mean_absolute_difference&#34;</span><span class=p>:</span> <span class=mf>0.010995</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;regression_required&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;view&#34;</span><span class=p>:</span> <span class=s2>&#34;right&#34;</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;right&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/iso/camera.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;cd111e30f47d9b6f38730740e9d8a5cf82ccc617b2255073f2feddb6cbf9b990&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>163</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/iso/actual.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;1feea3c06d9f20dc6e07e9d0921ae09d8428291108f41a665a9075ca599e07f4&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>25162</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/iso/goal.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;5fda83f1b81ba6cda60b492cbd4f27329495e72cb48a22d8f931b5ac9a7a1491&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>3555</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/iso/overlay.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;faa5d6754d754707b620c16e962d7b0fa0dff8f6f697c00ab48b73917530f20e&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>15871</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/iso/diff.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;f0c09719401ee7c5563806a7d45e28c1024f11d61239de9b38f49250c076bbd5&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>2098</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;actual_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/iso/actual.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;baseline&#34;</span><span class=p>:</span> <span class=s2>&#34;baselines/iso.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;baseline_status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;camera&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/iso/camera.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;diff_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/iso/diff.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;expected_shape_required&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;expected_shape_status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;goal_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/iso/goal.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;overlay_image&#34;</span><span class=p>:</span> <span class=s2>&#34;visual/iso/overlay.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;regression&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;changed_pixel_fraction&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;changed_pixel_threshold&#34;</span><span class=p>:</span> <span class=mi>12</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_changed_fraction&#34;</span><span class=p>:</span> <span class=mf>0.08</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_mean_difference&#34;</span><span class=p>:</span> <span class=mf>6.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;mean_absolute_difference&#34;</span><span class=p>:</span> <span class=mf>0.010272</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;regression_required&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;view&#34;</span><span class=p>:</span> <span class=s2>&#34;iso&#34;</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;iso&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;input&#34;</span><span class=p>:</span> <span class=s2>&#34;/output/models/assembly-owned-anchor/scpf/model.sc&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;baseline_provenance&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;approval&#34;</span><span class=p>:</span> <span class=s2>&#34;approved&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;historical_manifest_solidcraft_version&#34;</span><span class=p>:</span> <span class=s2>&#34;0.30.1&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;migrated_from&#34;</span><span class=p>:</span> <span class=s2>&#34;qualification/visual_baselines.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;migrated_without_reencoding&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;source_commit&#34;</span><span class=p>:</span> <span class=s2>&#34;d741b9b2563e62b18c3b1b485fe58607acc9d1e8&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;verified_during_solidcraft_0_42_0_qualification&#34;</span><span class=p>:</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;solidcraft-visual&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;measurements&#34;</span><span class=p>:</span> <span class=s2>&#34;measurements.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;visual_report&#34;</span><span class=p>:</span> <span class=s2>&#34;visual.json&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=p>},</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema&#34;</span><span class=p>:</span> <span class=s2>&#34;cad-verification&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema_version&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;verification_id&#34;</span><span class=p>:</span> <span class=s2>&#34;assembly-owned-anchor-scpf-visual&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div></details><h3 class=cad-section-subtitle>cadquery</h3><details class=cad-collapsible><summary><strong>geometry — expected versus measured evidence</strong></summary><div class=cad-collapsible-body><p><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/cadquery/verification/geometry/verification.json>Open published verification report</a></p><div class=cad-code-frame><div class=cad-code-label>verification.json</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;checks&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;bounds&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_delta_mm&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;tolerance_mm&#34;</span><span class=p>:</span> <span class=mf>0.5</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;geometry&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;input&#34;</span><span class=p>:</span> <span class=s2>&#34;/output/models/assembly-owned-anchor/cadquery/model.stl&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{},</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema&#34;</span><span class=p>:</span> <span class=s2>&#34;cad-verification&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema_version&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;verification_id&#34;</span><span class=p>:</span> <span class=s2>&#34;assembly-owned-anchor-cadquery-geometry&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div></details><h3 class=cad-section-subtitle>build123d</h3><details class=cad-collapsible><summary><strong>geometry — expected versus measured evidence</strong></summary><div class=cad-collapsible-body><p><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/build123d/verification/geometry/verification.json>Open published verification report</a></p><div class=cad-code-frame><div class=cad-code-label>verification.json</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;checks&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;bounds&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_delta_mm&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;tolerance_mm&#34;</span><span class=p>:</span> <span class=mf>0.5</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;geometry&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;input&#34;</span><span class=p>:</span> <span class=s2>&#34;/output/models/assembly-owned-anchor/build123d/model.stl&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{},</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema&#34;</span><span class=p>:</span> <span class=s2>&#34;cad-verification&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema_version&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;verification_id&#34;</span><span class=p>:</span> <span class=s2>&#34;assembly-owned-anchor-build123d-geometry&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div></details><h3 class=cad-section-subtitle>pythonscad</h3><details class=cad-collapsible><summary><strong>geometry — expected versus measured evidence</strong></summary><div class=cad-collapsible-body><p><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pythonscad/verification/geometry/verification.json>Open published verification report</a></p><div class=cad-code-frame><div class=cad-code-label>verification.json</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;checks&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;bounds&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_delta_mm&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;tolerance_mm&#34;</span><span class=p>:</span> <span class=mf>0.5</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;geometry&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;input&#34;</span><span class=p>:</span> <span class=s2>&#34;/output/models/assembly-owned-anchor/pythonscad/model.stl&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{},</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema&#34;</span><span class=p>:</span> <span class=s2>&#34;cad-verification&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema_version&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;verification_id&#34;</span><span class=p>:</span> <span class=s2>&#34;assembly-owned-anchor-pythonscad-geometry&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div></details><h3 class=cad-section-subtitle>pybosl2</h3><details class=cad-collapsible><summary><strong>geometry — expected versus measured evidence</strong></summary><div class=cad-collapsible-body><p><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/pybosl2/verification/geometry/verification.json>Open published verification report</a></p><div class=cad-code-frame><div class=cad-code-label>verification.json</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;checks&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;bounds&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_max&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>75.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>15.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>20.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected_min&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-20.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>-25.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>          <span class=p>],</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_delta_mm&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;tolerance_mm&#34;</span><span class=p>:</span> <span class=mf>0.5</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;geometry&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;input&#34;</span><span class=p>:</span> <span class=s2>&#34;/output/models/assembly-owned-anchor/pybosl2/model.stl&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{},</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema&#34;</span><span class=p>:</span> <span class=s2>&#34;cad-verification&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema_version&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;verification_id&#34;</span><span class=p>:</span> <span class=s2>&#34;assembly-owned-anchor-pybosl2-geometry&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div></details><h3 class=cad-section-subtitle>Published files</h3><div class="cad-links cad-file-links"><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/model.stl>STL</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/model.sc>SolidCraft .sc</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/solidcraft.json>Commands</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/result.json>Build result</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge.NEW/blob/build/main/models/assembly-owned-anchor/source.json>Build provenance</a></div></section></article><footer class="hextra-footer hx:bg-gray-100 hx:pb-[env(safe-area-inset-bottom)] hx:dark:bg-neutral-900 hx:print:bg-transparent"><div class="hextra-custom-footer hextra-max-footer-width hx:mx-auto hx:pl-[max(env(safe-area-inset-left),1.5rem)] hx:pr-[max(env(safe-area-inset-right),1.5rem)] hx:text-gray-600 hx:dark:text-gray-400"><p class="hx:py-3 hx:text-sm">Built with
+<a href=https://gohugo.io/ target=_blank rel="noopener noreferrer">Hugo</a>
+<span aria-hidden=true>·</span>
+Theme:
+<a href=https://imfing.github.io/hextra/ target=_blank rel="noopener noreferrer">Hextra</a></p></div></footer><dialog id=hextra-search-dialog class=hextra-search-dialog aria-label=Search...><div class=hextra-search><div class=hextra-search-input-wrapper><svg class="hextra-search-input-icon" focusable="false" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg><input class=hextra-search-input type=search role=combobox autocomplete=off autocorrect=off autocapitalize=off spellcheck=false placeholder=Search... aria-label=Search... aria-controls=hextra-search-results aria-expanded=false><button type=button class=hextra-search-input-kbd data-search-close aria-label=Close>ESC</button></div><div class=hextra-search-results-viewport data-search-viewport><div class="hextra-search-results-inner hextra-scrollbar" data-search-inner><ul id=hextra-search-results class=hextra-search-results role=listbox aria-label="Search results"></ul><div class=hextra-search-empty data-search-empty hidden>No results found.</div></div></div><div class="hextra-search-status hx:sr-only" aria-live=polite role=status></div></div></dialog><script defer src=/lib.py.solidcraft.forge.NEW/js/main.min.d01bb8cc6d0e5477fcb4f5d2fec63c92902a1b7c23423b5ff4cdc62d6e0aef27.js integrity="sha256-0Bu4zG0OVHf8tPXS/sY8kpAqG3wjQjtf9M3GLW4K7yc="></script><script defer src=/lib.py.solidcraft.forge.NEW/js/flexsearch.433e941a8a573ebb9931fc16fc75266ab6b93f569ac2fb4f3dc66882e0416f4c.js integrity="sha256-Qz6UGopXPruZMfwW/HUmara5P1aawvtPPcZoguBBb0w=" crossorigin=anonymous></script><script defer src=/lib.py.solidcraft.forge.NEW/en.search.min.9b4dd350e0662fe3a1429fe3409c202d98f4f7ae8abcd2efba5eb32f3b794f3b.js integrity="sha256-m03TUOBmL+OhQp/jQJwgLZj0966KvNLvul6zLzt5Tzs="></script><script defer src=/lib.py.solidcraft.forge.NEW/en.search-dialog.min.fda123910557b5b3a328696105af51f85abc3cfc6784387c49b11b5b857b256f.js integrity="sha256-/aEjkQVXtbOjKGlhBa9R+Fq8PPxnhDh8SbEbW4V7JW8="></script></body></html>

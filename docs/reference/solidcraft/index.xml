@@ -1,0 +1,71 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SolidCraft Forge – SolidCraft version references</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/docs/reference/solidcraft/</link><description>Recent content in SolidCraft version references on SolidCraft Forge</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/docs/reference/solidcraft/index.xml" rel="self" type="application/rss+xml"/><item><title>SolidCraft 0.42.0 reference snapshot</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/docs/reference/solidcraft/0.42.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/docs/reference/solidcraft/0.42.0/</guid><description>
+&lt;p&gt;This directory is the immutable, version-pinned SolidCraft 0.42.0 engineering
+reference used for Forge compatibility and qualification.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SolidCraft release: &lt;code&gt;v0.42.0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Upstream repository: &lt;code&gt;tangency-labs/solidcraft&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Upstream commit: &lt;code&gt;1b1e940cc48e4d1d5d01971a4be20e2e55647066&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 data-hextra-search-id="checked-in-reference-material"&gt;Checked-in reference material&lt;span class="hx:absolute hx:-mt-20" id="checked-in-reference-material"&gt;&lt;/span&gt;
+&lt;a href="#checked-in-reference-material" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;This qualified version tree contains:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;commands.md&lt;/code&gt; — the human-readable SolidCraft command catalog snapshot;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;contract-gaps.md&lt;/code&gt; — known typed-contract gaps relevant to Forge;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;joint-occurrence-references.md&lt;/code&gt; — qualified joint/occurrence reference behavior;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;occurrence-identity.md&lt;/code&gt; — qualified occurrence identity behavior;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;rectangular-feature-patterns.md&lt;/code&gt; — version-specific rectangular-pattern notes;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sketch-slot-family.md&lt;/code&gt; — version-specific native slot notes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;An earlier qualification implementation also generated machine-readable
+&lt;code&gt;runtime/manifest.json&lt;/code&gt;, &lt;code&gt;runtime/commands.json&lt;/code&gt; and
+&lt;code&gt;runtime/contracts/&amp;lt;command-id&amp;gt;.json&lt;/code&gt; snapshots. Those generated files and the
+snapshot generator were removed during the later CI/runtime cleanup and are not
+part of the current repository tree. Do not rely on the stale historical path.
+The retained files above are the current checked-in 0.42.0 reference evidence.&lt;/p&gt;
+&lt;h2 data-hextra-search-id="upgrade-rule"&gt;Upgrade rule&lt;span class="hx:absolute hx:-mt-20" id="upgrade-rule"&gt;&lt;/span&gt;
+&lt;a href="#upgrade-rule" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Keep all 0.42.0 evidence unchanged once qualified. When Forge targets a later
+SolidCraft release, add a new sibling version directory first, record its exact
+upstream provenance and capture the new version-specific reference material
+before compatibility work begins.&lt;/p&gt;
+&lt;p&gt;See &lt;a href="../"&gt;../README.md&lt;/a&gt; and
+&lt;a href="../../../development/"&gt;../../../development.md&lt;/a&gt; for the current procedure.&lt;/p&gt;</description></item><item><title>SolidCraft 0.45.0 canonical reference snapshot</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/docs/reference/solidcraft/0.45.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/docs/reference/solidcraft/0.45.0/</guid><description>
+&lt;p&gt;This directory is generated from the command registry emitted by the qualified
+immutable SolidCraft runtime. It is not a hand-authored Forge migration note.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SolidCraft release: &lt;code&gt;v0.45.0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Upstream commit: &lt;code&gt;e8ce12ef78fe76281a04b7242a9ce059ff7d5067&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Qualified runtime release: &lt;code&gt;v0.3.4&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Qualified runtime image: &lt;code&gt;ghcr.io/brainboxemb/cad-solidcraft:v0.3.4&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Captured CLI version: &lt;code&gt;solidcraft-cli 0.45.0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Registered commands: &lt;code&gt;819&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 data-hextra-search-id="canonical-evidence"&gt;Canonical evidence&lt;span class="hx:absolute hx:-mt-20" id="canonical-evidence"&gt;&lt;/span&gt;
+&lt;a href="#canonical-evidence" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;commands.json&lt;/code&gt; is the exact normalized JSON registry captured from
+&lt;code&gt;solidcraft-cli commands&lt;/code&gt; in the immutable runtime.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;commands.md&lt;/code&gt; is generated from &lt;code&gt;commands.json&lt;/code&gt; for human review.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;changes-from-0.42.md&lt;/code&gt; compares command identifiers with the retained
+historical 0.42.0 catalog.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Forge compatibility conclusions must be traceable to this captured registry,
+the exact runtime behavior, or separately recorded upstream source evidence.
+Do not replace this directory with a manually selected command subset.&lt;/p&gt;</description></item><item><title>SolidCraft 0.48.1 canonical reference snapshot</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/docs/reference/solidcraft/0.48.1/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/docs/reference/solidcraft/0.48.1/</guid><description>
+&lt;p&gt;This directory is generated from the command registry emitted by the qualified
+immutable SolidCraft runtime. It is not a hand-authored Forge migration note.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SolidCraft release: &lt;code&gt;v0.48.1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Upstream commit: &lt;code&gt;e5bc9288aab2f6f1d8661afc6d9702d75a6e171e&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Qualified runtime release: &lt;code&gt;v0.3.5&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Qualified runtime image: &lt;code&gt;ghcr.io/brainboxemb/cad-solidcraft:v0.3.5&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Captured CLI version: &lt;code&gt;0.48.1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Registered commands: &lt;code&gt;866&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 data-hextra-search-id="canonical-evidence"&gt;Canonical evidence&lt;span class="hx:absolute hx:-mt-20" id="canonical-evidence"&gt;&lt;/span&gt;
+&lt;a href="#canonical-evidence" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;commands.json&lt;/code&gt; is the exact normalized JSON registry captured from
+&lt;code&gt;solidcraft-cli commands&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;commands.md&lt;/code&gt; is generated from &lt;code&gt;commands.json&lt;/code&gt; for human review.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Forge compatibility conclusions must be traceable to this captured registry,
+the exact runtime behavior, or separately recorded upstream source evidence.
+Do not replace this directory with a manually selected command subset.&lt;/p&gt;</description></item></channel></rss>
