@@ -1,0 +1,142 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "30",
+        "name": "end_height",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "50",
+        "name": "contour_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "2.5",
+        "name": "thickness",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "2.5",
+        "name": "bend_radius",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "0.44",
+        "name": "k_factor",
+        "unit": ""
+      }
+    },
+    {
+      "command": "sheet.manage_rules",
+      "params": {
+        "active": true,
+        "bend_radius": "bend_radius",
+        "k_factor": "k_factor",
+        "name": "Contour Flange Rule",
+        "thickness": "thickness"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Contour",
+        "plane": "XZ"
+      }
+    },
+    {
+      "bind": {
+        "$contour_curves_1": "curves"
+      },
+      "command": "sketch.line",
+      "params": {
+        "connect": true,
+        "ids": [
+          "l1"
+        ],
+        "points": [
+          [
+            0,
+            0
+          ],
+          [
+            35,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$contour_curves_2": {
+          "field": "curves",
+          "prepend": "$contour_curves_1"
+        }
+      },
+      "command": "sketch.arc.tangent",
+      "params": {
+        "curve": "l1",
+        "end": [
+          40,
+          5
+        ],
+        "start": "l1.end"
+      }
+    },
+    {
+      "bind": {
+        "$contour_curves_3": {
+          "field": "curves",
+          "prepend": "$contour_curves_2"
+        }
+      },
+      "command": "sketch.line",
+      "params": {
+        "connect": true,
+        "ids": [
+          "l2"
+        ],
+        "points": [
+          [
+            40,
+            5
+          ],
+          [
+            40,
+            "end_height"
+          ]
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "sheet.flange",
+      "params": {
+        "body_name": "SheetContourFlange",
+        "curves": "$contour_curves_3",
+        "distance": "contour_width",
+        "rule": "Contour Flange Rule",
+        "sketch": "Contour",
+        "type": "contour"
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

@@ -1,0 +1,175 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            60.0,
+            30.0,
+            5.0
+          ],
+          "actual_min": [
+            -60.0,
+            -30.0,
+            -7.274332262344701e-32
+          ],
+          "expected_max": [
+            60.0,
+            30.0,
+            5.0
+          ],
+          "expected_min": [
+            -60.0,
+            -30.0,
+            0.0
+          ],
+          "max_delta_mm": 7.274332262344701e-32,
+          "pass": true,
+          "tolerance_mm": 0.5
+        },
+        "surface_distance_probes": [
+          {
+            "actual_mm": 3.9832696053854244,
+            "delta_mm": 0.016730394614575594,
+            "expected_mm": 4.0,
+            "label": "selected hole 1 at z=0.5",
+            "pass": true,
+            "point": [
+              -30.0,
+              0.0,
+              0.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.98120139254224,
+            "delta_mm": 0.018798607457759964,
+            "expected_mm": 4.0,
+            "label": "selected hole 1 at z=2.5",
+            "pass": true,
+            "point": [
+              -30.0,
+              0.0,
+              2.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.9832696053854244,
+            "delta_mm": 0.016730394614575594,
+            "expected_mm": 4.0,
+            "label": "selected hole 1 at z=4.5",
+            "pass": true,
+            "point": [
+              -30.0,
+              0.0,
+              4.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.98327031765847,
+            "delta_mm": 0.01672968234153016,
+            "expected_mm": 4.0,
+            "label": "selected hole 2 at z=0.5",
+            "pass": true,
+            "point": [
+              -10.0,
+              0.0,
+              0.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.9812012607791445,
+            "delta_mm": 0.01879873922085551,
+            "expected_mm": 4.0,
+            "label": "selected hole 2 at z=2.5",
+            "pass": true,
+            "point": [
+              -10.0,
+              0.0,
+              2.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.98327031765847,
+            "delta_mm": 0.01672968234153016,
+            "expected_mm": 4.0,
+            "label": "selected hole 2 at z=4.5",
+            "pass": true,
+            "point": [
+              -10.0,
+              0.0,
+              4.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.9832696053854244,
+            "delta_mm": 0.016730394614575594,
+            "expected_mm": 4.0,
+            "label": "selected hole 4 at z=0.5",
+            "pass": true,
+            "point": [
+              30.0,
+              0.0,
+              0.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.98120139254224,
+            "delta_mm": 0.018798607457759964,
+            "expected_mm": 4.0,
+            "label": "selected hole 4 at z=2.5",
+            "pass": true,
+            "point": [
+              30.0,
+              0.0,
+              2.5
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 3.9832696053854244,
+            "delta_mm": 0.016730394614575594,
+            "expected_mm": 4.0,
+            "label": "selected hole 4 at z=4.5",
+            "pass": true,
+            "point": [
+              30.0,
+              0.0,
+              4.5
+            ],
+            "tolerance_mm": 0.3
+          }
+        ],
+        "volume": {
+          "actual_mm3": 35248.68968523437,
+          "delta_mm3": 2.6719220959203085,
+          "expected_mm3": 35246.01776313845,
+          "pass": true,
+          "tolerance_mm3": 40.0
+        },
+        "watertight": {
+          "actual": true,
+          "expected": true,
+          "pass": true
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/selective-profile-extrude/scpf/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "selective-profile-extrude-scpf-geometry"
+}

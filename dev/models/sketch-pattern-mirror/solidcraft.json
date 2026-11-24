@@ -1,0 +1,286 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "8",
+        "name": "hole_diameter",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "4",
+        "name": "hole_columns",
+        "unit": ""
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "25",
+        "name": "hole_pitch",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "2",
+        "name": "slot_count",
+        "unit": ""
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "50",
+        "name": "slot_pitch",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "SketchPatternMirror",
+        "corner": [
+          -120.0,
+          -80.0,
+          0
+        ],
+        "height": 5,
+        "length": 240,
+        "width": 160
+      }
+    },
+    {
+      "bind": {
+        "$face_index_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$face_point_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "SketchPatternMirror"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Dog holes",
+        "plane": {
+          "body": "SketchPatternMirror",
+          "face": "$face_point_1",
+          "index": "$face_index_1"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "bind": {
+        "$sketch_1_profile_1": "curves"
+      },
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          -60.0,
+          -45.0
+        ],
+        "diameter": "hole_diameter"
+      }
+    },
+    {
+      "bind": {
+        "$sketch_1_operation_1": {
+          "field": "curves",
+          "prepend": "$sketch_1_profile_1"
+        }
+      },
+      "command": "sketch.pattern.rectangular",
+      "params": {
+        "count": "hole_columns",
+        "dir": [
+          1.0,
+          0.0
+        ],
+        "entities": "$sketch_1_profile_1",
+        "spacing": "hole_pitch"
+      }
+    },
+    {
+      "bind": {
+        "$sketch_1_operation_2": "curves"
+      },
+      "command": "sketch.mirror",
+      "params": {
+        "entities": "$sketch_1_operation_1",
+        "line": "x"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "negative",
+        "name": "Dog holes",
+        "operation": "cut",
+        "targets": [
+          "SketchPatternMirror"
+        ],
+        "through_all": true
+      }
+    },
+    {
+      "bind": {
+        "$face_index_2": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$face_point_2": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "SketchPatternMirror"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Clamp slots",
+        "plane": {
+          "body": "SketchPatternMirror",
+          "face": "$face_point_2",
+          "index": "$face_index_2"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "bind": {
+        "$sketch_2_profile_1": "curves"
+      },
+      "command": "sketch.slot.center_to_center",
+      "params": {
+        "p0": [
+          20.0,
+          20.0
+        ],
+        "p1": [
+          40.0,
+          20.0
+        ],
+        "width": 8.0
+      }
+    },
+    {
+      "bind": {
+        "$sketch_2_operation_1": {
+          "field": "curves",
+          "prepend": "$sketch_2_profile_1"
+        }
+      },
+      "command": "sketch.pattern.rectangular",
+      "params": {
+        "count": "slot_count",
+        "dir": [
+          1.0,
+          0.0
+        ],
+        "entities": "$sketch_2_profile_1",
+        "spacing": "slot_pitch"
+      }
+    },
+    {
+      "bind": {
+        "$sketch_2_operation_2": "curves"
+      },
+      "command": "sketch.mirror",
+      "params": {
+        "entities": "$sketch_2_operation_1",
+        "line": "y"
+      }
+    },
+    {
+      "bind": {
+        "$sketch_2_operation_3": "curves"
+      },
+      "command": "sketch.mirror",
+      "params": {
+        "entities": "$sketch_2_operation_1",
+        "line": "x"
+      }
+    },
+    {
+      "bind": {
+        "$sketch_2_operation_4": "curves"
+      },
+      "command": "sketch.mirror",
+      "params": {
+        "entities": "$sketch_2_operation_2",
+        "line": "x"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "negative",
+        "name": "Clamp slots",
+        "operation": "cut",
+        "targets": [
+          "SketchPatternMirror"
+        ],
+        "through_all": true
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

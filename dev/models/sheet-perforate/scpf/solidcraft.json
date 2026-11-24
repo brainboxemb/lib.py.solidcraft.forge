@@ -1,0 +1,121 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "60",
+        "name": "width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "40",
+        "name": "depth",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "2",
+        "name": "thickness",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "2",
+        "name": "bend_radius",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "0.5",
+        "name": "k_factor",
+        "unit": ""
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "5",
+        "name": "perforation_diameter",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "10",
+        "name": "perforation_pitch",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "5",
+        "name": "perforation_margin",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "sheet.manage_rules",
+      "params": {
+        "active": true,
+        "bend_radius": "bend_radius",
+        "k_factor": "k_factor",
+        "name": "Perforation Rule",
+        "thickness": "thickness"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Blank",
+        "plane": "XY"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": [
+          "-(width / 2)",
+          "-(depth / 2)"
+        ],
+        "p1": [
+          "width / 2",
+          "depth / 2"
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "sheet.flange",
+      "params": {
+        "body_name": "SheetPerforate",
+        "rule": "Perforation Rule",
+        "sketch": "Blank",
+        "type": "base"
+      }
+    },
+    {
+      "command": "sheet.perforate",
+      "params": {
+        "body": "SheetPerforate",
+        "diameter": "perforation_diameter",
+        "margin": "perforation_margin",
+        "pattern": "square",
+        "pitch": "perforation_pitch"
+      }
+    }
+  ]
+}

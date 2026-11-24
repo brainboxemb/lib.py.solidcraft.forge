@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-visual",
+  "id": "parametric-placement-pair--scpf",
+  "implementation": "scpf",
+  "owner": "parametric-placement-pair",
+  "schema": 1,
+  "stage_id": "visual",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.5"
+}

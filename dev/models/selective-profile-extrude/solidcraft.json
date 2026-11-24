@@ -1,0 +1,148 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "8",
+        "name": "hole_diameter",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "20",
+        "name": "hole_pitch",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "SelectiveProfileExtrude",
+        "corner": [
+          -60.0,
+          -30.0,
+          0
+        ],
+        "height": 5,
+        "length": 120,
+        "width": 60
+      }
+    },
+    {
+      "bind": {
+        "$face_index_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$face_point_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "SelectiveProfileExtrude"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Selected holes",
+        "plane": {
+          "body": "SelectiveProfileExtrude",
+          "face": "$face_point_1",
+          "index": "$face_index_1"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "bind": {
+        "$sketch_1_profile_1": "curves"
+      },
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          -30.0,
+          0.0
+        ],
+        "diameter": "hole_diameter"
+      }
+    },
+    {
+      "bind": {
+        "$sketch_1_operation_1": {
+          "field": "curves",
+          "prepend": "$sketch_1_profile_1"
+        }
+      },
+      "command": "sketch.pattern.rectangular",
+      "params": {
+        "count": 4,
+        "dir": [
+          1.0,
+          0.0
+        ],
+        "entities": "$sketch_1_profile_1",
+        "spacing": "hole_pitch"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "negative",
+        "exact_regions": true,
+        "name": "Selected holes",
+        "operation": "cut",
+        "profiles": [
+          {
+            "point": [
+              -30.0,
+              0.0
+            ]
+          },
+          {
+            "point": [
+              -10.0,
+              0.0
+            ]
+          },
+          {
+            "point": [
+              30.0,
+              0.0
+            ]
+          }
+        ],
+        "targets": [
+          "SelectiveProfileExtrude"
+        ],
+        "through_all": true
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

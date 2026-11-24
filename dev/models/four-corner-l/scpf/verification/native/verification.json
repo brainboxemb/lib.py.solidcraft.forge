@@ -1,0 +1,401 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "138678362a2535894e8ea75413dfb49adc937f94d55c28347d9923635b095b31",
+          "size": 5758
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 5,
+          "expected_count": 5,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "FrameBlock",
+                "max": [
+                  60.0,
+                  40.0,
+                  60.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  60.0,
+                  40.0,
+                  60.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile",
+                "max": [
+                  -32.0,
+                  -12.0,
+                  38.0
+                ],
+                "min": [
+                  -64.0,
+                  -44.0,
+                  22.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -32.0,
+                  -12.0,
+                  38.0
+                ],
+                "min": [
+                  -64.0,
+                  -44.0,
+                  22.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:2)",
+                "max": [
+                  64.0,
+                  -12.0,
+                  38.0
+                ],
+                "min": [
+                  32.0,
+                  -44.0,
+                  22.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  64.0,
+                  -12.0,
+                  38.0
+                ],
+                "min": [
+                  32.0,
+                  -44.0,
+                  22.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:3)",
+                "max": [
+                  64.0,
+                  44.0,
+                  38.0
+                ],
+                "min": [
+                  32.0,
+                  12.0,
+                  22.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  64.0,
+                  44.0,
+                  38.0
+                ],
+                "min": [
+                  32.0,
+                  12.0,
+                  22.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:4)",
+                "max": [
+                  -32.0,
+                  44.0,
+                  38.0
+                ],
+                "min": [
+                  -64.0,
+                  12.0,
+                  22.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -32.0,
+                  44.0,
+                  38.0
+                ],
+                "min": [
+                  -64.0,
+                  12.0,
+                  22.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "body_name": "FrameBlock",
+            "bounds": {
+              "actual_max": [
+                60.0,
+                40.0,
+                60.0
+              ],
+              "actual_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "deltas": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                40.0,
+                60.0
+              ],
+              "expected_min": [
+                -60.0,
+                -40.0,
+                0.0
+              ],
+              "kind": "bounds",
+              "label": "FrameBlock bounds",
+              "max_delta": 0.0,
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "name_prefix": "FrameBlock"
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/size_160x120/model.sc",
+          "sha256": "2c397ca9f7e5c59967b5afe0221723ff066e4f43fe69216f35697b97c1f98bb9",
+          "size": 13846
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/size_160x120/measurements.json",
+          "sha256": "ae71c1068ba48405a4ee75698fceca5263ddb861715871f8f9b9c534ba8d5335",
+          "size": 5760
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 5,
+          "expected_count": 5,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "FrameBlock",
+                "max": [
+                  80.0,
+                  60.0,
+                  60.0
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  80.0,
+                  60.0,
+                  60.0
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile",
+                "max": [
+                  -52.0,
+                  -32.0,
+                  38.0
+                ],
+                "min": [
+                  -84.0,
+                  -64.0,
+                  22.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -52.0,
+                  -32.0,
+                  38.0
+                ],
+                "min": [
+                  -84.0,
+                  -64.0,
+                  22.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:2)",
+                "max": [
+                  84.0,
+                  -32.0,
+                  38.0
+                ],
+                "min": [
+                  52.0,
+                  -64.0,
+                  22.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  84.0,
+                  -32.0,
+                  38.0
+                ],
+                "min": [
+                  52.0,
+                  -64.0,
+                  22.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:3)",
+                "max": [
+                  84.0,
+                  64.0,
+                  38.0
+                ],
+                "min": [
+                  52.0,
+                  32.0,
+                  22.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  84.0,
+                  64.0,
+                  38.0
+                ],
+                "min": [
+                  52.0,
+                  32.0,
+                  22.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "LProfile (LProfile:4)",
+                "max": [
+                  -52.0,
+                  64.0,
+                  38.0
+                ],
+                "min": [
+                  -84.0,
+                  32.0,
+                  22.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -52.0,
+                  64.0,
+                  38.0
+                ],
+                "min": [
+                  -84.0,
+                  32.0,
+                  22.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "saved_design_size_160x120",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/four-corner-l/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "four-corner-l"
+}

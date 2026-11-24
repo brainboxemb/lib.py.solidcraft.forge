@@ -1,0 +1,90 @@
+{
+  "commands": [
+    {
+      "command": "component.create",
+      "params": {
+        "activate": false,
+        "grounded": false,
+        "name": "PanelGroup"
+      }
+    },
+    {
+      "bind": {
+        "$panel_occurrence_1": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Panel",
+        "parent": "PanelGroup"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Panel",
+        "corner": [
+          -5.0,
+          -1.0,
+          0
+        ],
+        "height": 20,
+        "length": 10,
+        "width": 2
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$panel_occurrence_2": "occurrence"
+      },
+      "command": "occurrence.copy",
+      "params": {
+        "component": "Panel",
+        "translate": [
+          11.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$frame": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "Frame"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Frame",
+        "corner": [
+          -17.5,
+          15.0,
+          0.0
+        ],
+        "height": 40,
+        "length": 35,
+        "operation": "new",
+        "width": 10
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

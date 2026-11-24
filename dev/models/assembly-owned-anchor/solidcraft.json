@@ -1,0 +1,174 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "40",
+        "name": "base_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "20",
+        "name": "base_height",
+        "unit": "mm"
+      }
+    },
+    {
+      "bind": {
+        "$base": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Base"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Base",
+        "corner": [
+          "-base_width / 2",
+          -15.0,
+          0
+        ],
+        "height": "base_height",
+        "length": "base_width",
+        "width": 30.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$companion": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "Companion"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Companion",
+        "center": [
+          70.0,
+          0.0,
+          5.0
+        ],
+        "height": 10.0,
+        "length": 10.0,
+        "operation": "new",
+        "width": 10.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$marker": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "Marker"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Marker",
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "height": 10,
+        "length": 10,
+        "width": 10
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$marker",
+        "translate": [
+          "((-(base_width / 2)) + (base_width)) - 5 mm",
+          -20.0,
+          "base_height - 5 mm"
+        ]
+      }
+    },
+    {
+      "command": "joint.create",
+      "params": {
+        "a": {
+          "corner": [
+            20.0,
+            -15.0,
+            20.0
+          ],
+          "edge": [
+            20.0,
+            -15.0,
+            10.0
+          ],
+          "occurrence": "$base",
+          "on": [
+            0.0,
+            -15.0,
+            10.0
+          ]
+        },
+        "b": {
+          "occurrence": "$marker",
+          "point": [
+            20.0,
+            -15.0,
+            20.0
+          ],
+          "x": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "z": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        },
+        "name": "Attach Marker to base",
+        "type": "rigid"
+      }
+    },
+    {
+      "command": "browser.visibility",
+      "params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-model",
+  "id": "parent-derived-child-size--scpf",
+  "implementation": "scpf",
+  "owner": "parent-derived-child-size",
+  "schema": 1,
+  "stage_id": "native",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.5"
+}

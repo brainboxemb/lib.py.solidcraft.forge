@@ -1,0 +1,254 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "e27bc29ad57b894422ee51a6c29dea050d18b7dc86619659e9bd4cb138a10ddb",
+          "size": 2654
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole",
+            "sheet_metal": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body sheet_metal",
+              "pass": true
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "bend_radius": 2.5,
+            "contour_width": 50.0,
+            "end_height": 30.0,
+            "k_factor": 0.44,
+            "thickness": 2.5
+          },
+          "expected": {
+            "bend_radius": 2.5,
+            "contour_width": 50.0,
+            "end_height": 30.0,
+            "k_factor": 0.44,
+            "thickness": 2.5
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 3,
+              "name": "Contour",
+              "profiles": 0
+            },
+            "expected": {
+              "curves": 3,
+              "name": "Contour",
+              "profiles": 0
+            },
+            "label": "Contour sketch",
+            "pass": true
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/resize_contour_flange/model.sc",
+          "sha256": "ac2fbddde6281f706d630059fdd33f17bf3a60ae9c5433f283d4c0f9bcea8a82",
+          "size": 17927
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/resize_contour_flange/measurements.json",
+          "sha256": "fb7063f8780841014402d07008ca211419e16a92f6504a4928ddaa60a4933e67",
+          "size": 2632
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole",
+            "sheet_metal": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body sheet_metal",
+              "pass": true
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "contour_width": 60.0,
+            "end_height": 35.0
+          },
+          "expected": {
+            "contour_width": 60.0,
+            "end_height": 35.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 3,
+              "name": "Contour",
+              "profiles": 0
+            },
+            "expected": {
+              "curves": 3,
+              "name": "Contour",
+              "profiles": 0
+            },
+            "label": "Contour sketch",
+            "pass": true
+          }
+        ]
+      },
+      "id": "saved_design_resize_contour_flange",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/flat_pattern/results.json",
+          "sha256": "ec66d18545a9774fb5ec47da4bcf94e55f2d228ae1a28bec76e4fe0fc2f51d0a",
+          "size": 1441
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check result_count",
+              "pass": true
+            },
+            "id": "result_count",
+            "path": []
+          },
+          {
+            "comparison": {
+              "actual": "Contour Flange Rule",
+              "expected": "Contour Flange Rule",
+              "label": "SolidCraft inspection check sheet_rule",
+              "pass": true
+            },
+            "id": "sheet_rule",
+            "path": [
+              0,
+              "rule"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2.5,
+              "delta": 0.0,
+              "expected": 2.5,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check sheet_thickness",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "sheet_thickness",
+            "path": [
+              0,
+              "thickness"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 0.44,
+              "delta": 0.0,
+              "expected": 0.44,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check sheet_k_factor",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "sheet_k_factor",
+            "path": [
+              0,
+              "k_factor"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 0,
+              "expected": 0,
+              "label": "SolidCraft inspection check bend_count",
+              "pass": true
+            },
+            "id": "bend_count",
+            "path": [
+              0,
+              "bends"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_flat_pattern",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sheet-contour-flange/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sheet-contour-flange"
+}

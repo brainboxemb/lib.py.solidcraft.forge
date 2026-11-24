@@ -1,0 +1,99 @@
+{
+  "commands": [
+    {
+      "bind": {
+        "$base": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Base"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Base",
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "height": 10.0,
+        "length": 40.0,
+        "width": 30.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$marker": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "Marker"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Marker",
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "height": 8.0,
+        "length": 30.0,
+        "width": 10.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "angle": "90 deg",
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "occurrence": "$marker",
+        "translate": [
+          50,
+          20,
+          15
+        ]
+      }
+    },
+    {
+      "command": "joint.as_built",
+      "params": {
+        "a": "$base",
+        "b": "$marker",
+        "name": "Attach Marker to Base",
+        "type": "rigid"
+      }
+    },
+    {
+      "command": "browser.visibility",
+      "params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

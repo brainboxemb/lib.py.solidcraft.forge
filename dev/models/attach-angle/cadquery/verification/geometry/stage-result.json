@@ -1,0 +1,10 @@
+{
+  "adapter": "mesh-geometry",
+  "id": "attach-angle--cadquery",
+  "implementation": "cadquery",
+  "owner": "attach-angle",
+  "schema": 1,
+  "stage_id": "geometry",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5"
+}

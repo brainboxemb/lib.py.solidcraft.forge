@@ -1,0 +1,95 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "0adedd5322140838815e4e29ef19dc8cc531533163612d81a27e8b284df392d2",
+          "size": 1963
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Panel",
+                "max": [
+                  -35.0,
+                  10.0,
+                  2.0
+                ],
+                "min": [
+                  -45.0,
+                  -10.0,
+                  -2.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -35.0,
+                  10.0,
+                  2.0
+                ],
+                "min": [
+                  -45.0,
+                  -10.0,
+                  -2.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Panel (Panel:2)",
+                "max": [
+                  45.0,
+                  10.0,
+                  2.0
+                ],
+                "min": [
+                  35.0,
+                  -10.0,
+                  -2.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  45.0,
+                  10.0,
+                  2.0
+                ],
+                "min": [
+                  35.0,
+                  -10.0,
+                  -2.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/rotated-copy-placement/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "rotated-copy-placement"
+}

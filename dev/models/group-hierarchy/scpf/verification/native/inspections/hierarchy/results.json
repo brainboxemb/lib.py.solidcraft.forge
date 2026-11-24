@@ -1,0 +1,416 @@
+[
+  {
+    "component": 0,
+    "group_by": [
+      "definition"
+    ],
+    "group_children": false,
+    "levels": "top",
+    "mass": false,
+    "numbered": false,
+    "rows": [
+      {
+        "bom_type": "normal",
+        "components": [
+          7
+        ],
+        "count": 1,
+        "definition": "Frame",
+        "description": "",
+        "item": 1,
+        "material": "Default",
+        "part_number": "",
+        "properties": {},
+        "revision": ""
+      },
+      {
+        "bom_type": "normal",
+        "components": [
+          1
+        ],
+        "count": 1,
+        "definition": "PanelGroup",
+        "description": "",
+        "item": 2,
+        "material": "Default",
+        "part_number": "",
+        "properties": {},
+        "revision": ""
+      }
+    ],
+    "show_purchased_contents": false,
+    "show_suppressed_parts": false,
+    "total_occurrences": 2
+  },
+  {
+    "component": 0,
+    "group_by": [
+      "definition"
+    ],
+    "group_children": false,
+    "levels": "flat",
+    "mass": false,
+    "numbered": false,
+    "rows": [
+      {
+        "bom_type": "normal",
+        "components": [
+          7
+        ],
+        "count": 1,
+        "definition": "Frame",
+        "description": "",
+        "item": 1,
+        "material": "Default",
+        "part_number": "",
+        "properties": {},
+        "revision": ""
+      },
+      {
+        "bom_type": "normal",
+        "components": [
+          3
+        ],
+        "count": 2,
+        "definition": "Panel",
+        "description": "",
+        "item": 2,
+        "material": "Default",
+        "part_number": "",
+        "properties": {},
+        "revision": ""
+      }
+    ],
+    "show_purchased_contents": false,
+    "show_suppressed_parts": false,
+    "total_occurrences": 3
+  },
+  {
+    "active": 0,
+    "active_path": [],
+    "components": [
+      {
+        "bodies": [],
+        "children": [
+          {
+            "component": 1,
+            "grounded": false,
+            "id": 2,
+            "name": "PanelGroup:1",
+            "parent": 0,
+            "transform": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          },
+          {
+            "component": 7,
+            "grounded": false,
+            "id": 8,
+            "name": "Frame:1",
+            "parent": 0,
+            "transform": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        ],
+        "construction": [],
+        "features": [],
+        "id": 0,
+        "name": "model",
+        "occurrences": [],
+        "parent": null,
+        "sketches": []
+      },
+      {
+        "bodies": [],
+        "children": [
+          {
+            "component": 3,
+            "grounded": true,
+            "id": 4,
+            "name": "Panel:1",
+            "parent": 1,
+            "transform": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          },
+          {
+            "component": 3,
+            "grounded": false,
+            "id": 6,
+            "name": "Panel:2",
+            "parent": 1,
+            "transform": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                11.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        ],
+        "construction": [],
+        "features": [],
+        "id": 1,
+        "name": "PanelGroup",
+        "occurrences": [
+          {
+            "component": 1,
+            "grounded": false,
+            "id": 2,
+            "name": "PanelGroup:1",
+            "parent": 0,
+            "transform": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        ],
+        "parent": 0,
+        "sketches": []
+      },
+      {
+        "bodies": [
+          "Panel"
+        ],
+        "children": [],
+        "construction": [],
+        "features": [
+          "Box1"
+        ],
+        "id": 3,
+        "name": "Panel",
+        "occurrences": [
+          {
+            "component": 3,
+            "grounded": true,
+            "id": 4,
+            "name": "Panel:1",
+            "parent": 1,
+            "transform": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          },
+          {
+            "component": 3,
+            "grounded": false,
+            "id": 6,
+            "name": "Panel:2",
+            "parent": 1,
+            "transform": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                11.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        ],
+        "parent": 1,
+        "sketches": []
+      },
+      {
+        "bodies": [
+          "Frame"
+        ],
+        "children": [],
+        "construction": [],
+        "features": [
+          "Box2"
+        ],
+        "id": 7,
+        "name": "Frame",
+        "occurrences": [
+          {
+            "component": 7,
+            "grounded": false,
+            "id": 8,
+            "name": "Frame:1",
+            "parent": 0,
+            "transform": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        ],
+        "parent": 0,
+        "sketches": []
+      }
+    ],
+    "pending_moves": []
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "adapter": "mesh-geometry",
+  "id": "selective-profile-extrude--cadquery",
+  "implementation": "cadquery",
+  "owner": "selective-profile-extrude",
+  "schema": 1,
+  "stage_id": "geometry",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5"
+}
