@@ -1,0 +1,22 @@
+schema: 1
+branches:
+  stable: main
+  development: dev
+  temporary_prefixes:
+    - issue/
+    - fix/
+    - feature/
+    - docs/
+    - chore/
+generated:
+  build_branch: build
+  pages_branch: gh-pages
+runtimes:
+  reference:
+    image: ghcr.io/brainboxemb/cad-reference:v0.3.5
+  solidcraft:
+    image: ghcr.io/brainboxemb/cad-solidcraft:v0.3.5
+    version: 0.48.1
+roots:
+  modules: modules
+  output: build
