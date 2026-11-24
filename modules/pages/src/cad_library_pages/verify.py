@@ -96,6 +96,23 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
                 if (site / route / artifact).exists():
                     raise RuntimeError(f"generated CAD artifact copied into Pages: {route}/{artifact}")
 
+    parity_path = source_root / "docs" / "pages-parity.json"
+    if parity_path.is_file():
+        parity = json.loads(parity_path.read_text(encoding="utf-8"))
+        if parity.get("schema") != 1 or not isinstance(parity.get("routes"), list):
+            raise RuntimeError(f"invalid Pages parity manifest: {parity_path}")
+        for row in parity["routes"]:
+            route = row.get("path")
+            if not isinstance(route, str) or not route or route.startswith("/") or ".." in route:
+                raise RuntimeError(f"invalid Pages parity route: {route!r}")
+            target = site / route if route.endswith(".html") else site / route / "index.html"
+            if not target.is_file():
+                raise RuntimeError(f"historical Pages route missing: {route}")
+            html = unescape(target.read_text(encoding="utf-8"))
+            for expected in row.get("contains", []):
+                if expected not in html:
+                    raise RuntimeError(f"historical Pages content missing at {route}: {expected}")
+
 
 def main():
     parser = argparse.ArgumentParser()
