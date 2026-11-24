@@ -1,0 +1,6 @@
+schema: 1
+id: builder-solidcraft
+kind: python
+builder:
+  runtime: solidcraft
+  entrypoint: cad_library_builder_solidcraft:build
