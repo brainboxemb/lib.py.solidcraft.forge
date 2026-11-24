@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/31-final-plan-reconcile
-modules: []
+branch: issue/50-idempotent-merge
+modules: [merge-policy]
 library: false
 models: []
 tasks: [test]
