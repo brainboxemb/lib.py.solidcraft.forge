@@ -69,28 +69,43 @@ class ModelPagesTests(unittest.TestCase):
 
             site = root / "staged-site"
             prepare_models(root, site, build_scope)
-            page = site / "content/models/box/index.md"
-            content = page.read_text()
-            self.assertIn("test-sha", content)
+
+            example_page = site / "content/examples/box/index.md"
+            verification_page = site / "content/verification/box/index.md"
+            verification_only_page = site / "content/verification/fixture/index.md"
+
+            self.assertTrue(example_page.is_file())
+            self.assertTrue(verification_page.is_file())
+            self.assertTrue(verification_only_page.is_file())
+            self.assertFalse((site / "content/examples/fixture").exists())
+            self.assertFalse((site / "content/models").exists())
+
+            for page in (example_page, verification_page):
+                content = page.read_text()
+                self.assertIn("test-sha", content)
+                self.assertIn(
+                    "https://github.com/owner/repo/blob/build/dev/models/box/model.stl",
+                    content,
+                )
+                self.assertIn(
+                    "https://raw.githubusercontent.com/owner/repo/build/dev/models/box/model.png",
+                    content,
+                )
+                self.assertIn(
+                    "`geometry`: status=pass, adapter=mesh-geometry, runtime=reference:1",
+                    content,
+                )
+                self.assertIn(
+                    "models/box/cadquery/verification/geometry/verification.json",
+                    content,
+                )
+                self.assertIn("**legacy** — builder-legacy", content)
+
             self.assertIn(
-                "https://github.com/owner/repo/blob/build/dev/models/box/model.stl",
-                content,
+                "No published build evidence is available",
+                verification_only_page.read_text(),
             )
-            self.assertIn(
-                "https://raw.githubusercontent.com/owner/repo/build/dev/models/box/model.png",
-                content,
-            )
-            self.assertIn(
-                "`geometry`: status=pass, adapter=mesh-geometry, runtime=reference:1",
-                content,
-            )
-            self.assertIn(
-                "models/box/cadquery/verification/geometry/verification.json",
-                content,
-            )
-            self.assertIn("**legacy** — builder-legacy", content)
             self.assertFalse((site / "static/models/box/model.stl").exists())
-            self.assertFalse((site / "content/models/fixture").exists())
 
 
 if __name__ == "__main__":
