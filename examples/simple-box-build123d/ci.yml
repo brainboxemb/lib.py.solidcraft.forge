@@ -1,0 +1,9 @@
+schema: 1
+id: simple-box-build123d
+kind: example
+builder: builder-build123d
+source: build123d/model.py
+verification:
+  module: verification
+  adapter: mesh-geometry
+  definition: verification/geometry.json
