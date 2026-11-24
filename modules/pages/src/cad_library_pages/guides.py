@@ -11,7 +11,7 @@ class _GuideMarkdown(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.out = []
         self.in_pre = False
-        self.list_depth = 0
+        self.list_stack = []
         self.link_stack = []
         self.table_rows = None
         self.table_row = None
@@ -33,8 +33,12 @@ class _GuideMarkdown(HTMLParser):
             self.table_cell = []
         elif tag == "h2":
             self._append("\n## ")
+        elif tag == "h3":
+            self._append("\n### ")
         elif tag == "p":
             pass
+        elif tag == "br":
+            self._append("\n")
         elif tag == "pre":
             self.in_pre = True
             self._append("\n~~~python\n")
@@ -49,10 +53,18 @@ class _GuideMarkdown(HTMLParser):
             href = attrs.get("href", "")
             self.link_stack.append(href)
             self._append("[")
-        elif tag == "ol":
-            self.list_depth += 1
+        elif tag == "img":
+            src = attrs.get("src", "")
+            alt = attrs.get("alt", "")
+            self._append(f"![{alt}]({src})")
+        elif tag in {"ol", "ul"}:
+            self.list_stack.append(tag)
         elif tag == "li":
-            self._append("  " * max(0, self.list_depth - 1) + "1. ")
+            kind = self.list_stack[-1] if self.list_stack else "ul"
+            prefix = "1. " if kind == "ol" else "- "
+            self._append("  " * max(0, len(self.list_stack) - 1) + prefix)
+        elif tag in {"figure", "figcaption"}:
+            self._append("\n\n")
 
     def handle_endtag(self, tag):
         if tag in {"th", "td"} and self.table_cell is not None:
@@ -75,7 +87,7 @@ class _GuideMarkdown(HTMLParser):
                 for row in rows[1:]:
                     self.out.append("| " + " | ".join(row) + " |\n")
                 self.out.append("\n")
-        elif tag == "h2":
+        elif tag in {"h2", "h3"}:
             self._append("\n")
         elif tag == "p":
             self._append("\n\n")
@@ -92,16 +104,22 @@ class _GuideMarkdown(HTMLParser):
         elif tag == "a":
             href = self.link_stack.pop() if self.link_stack else ""
             self._append(f"]({href})")
-        elif tag == "ol":
-            self.list_depth = max(0, self.list_depth - 1)
+        elif tag in {"ol", "ul"}:
+            if self.list_stack:
+                self.list_stack.pop()
             self._append("\n")
         elif tag == "li":
             self._append("\n")
-        elif tag == "div":
+        elif tag in {"div", "section", "figure", "figcaption"}:
             self._append("\n")
 
     def handle_data(self, data):
-        self._append(data)
+        if self.in_pre:
+            self._append(data)
+            return
+        if not data or data.isspace():
+            return
+        self._append(re.sub(r"\s+", " ", data))
 
     def markdown(self):
         text = "".join(self.out)
