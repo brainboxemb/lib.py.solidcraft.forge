@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: parameters
+priority: 10
+title: Explicit component parameters and shared dependencies
+tagline: Published child parameters stay distinct from inherited shared values
+description: >
+  Five Panel occurrences demonstrate local component parameters, explicit overrides, shared parent dependencies and a derived half-width expression.
+parameters: Panel widths 40, 60 and shared 80 mm; shared width is editable
+stages:
+  - Create local and explicitly overridden Panel definitions
+  - Reuse one shared parent width across repeated Panels
+  - Derive one child width from half of the shared parent parameter

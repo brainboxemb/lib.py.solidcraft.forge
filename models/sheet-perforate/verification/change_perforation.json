@@ -1,0 +1,25 @@
+{
+  "commands": [
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "perforation_diameter",
+        "expression": "6 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "perforation_pitch",
+        "expression": "12 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "perforation_margin",
+        "expression": "6 mm"
+      }
+    }
+  ]
+}

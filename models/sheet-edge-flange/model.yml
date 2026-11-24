@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: sheet-metal
+priority: 20
+title: Native sheet edge flange
+tagline: Existing sheet edges grow editable flange history
+description: >
+  An 80 × 40 × 2 mm sheet receives a native edge flange whose height and bend angle remain editable while the shared sheet rule owns the material.
+parameters: 80 × 40 × 2 mm sheet; 20 mm flange; 90° bend; inherited sheet rule
+stages:
+  - Create the flat sheet with one explicit sheet rule
+  - Select the existing sheet edge and add the native flange
+  - Mutate flange height and angle and verify the flat pattern

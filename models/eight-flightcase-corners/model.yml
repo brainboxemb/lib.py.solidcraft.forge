@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: components
+priority: 110
+title: Eight flightcase corner protectors
+tagline: One neutral trihedral protector is reused on all eight case corners
+description: >
+  A parameterized case reuses one three-plate corner protector with assembly-owned positions and 3D orientations.
+parameters: Case 120 × 80 × 60 mm; protector envelope 24 × 24 × 24 mm
+stages:
+  - Create the parameterized CaseBlock
+  - Create one reusable FlightcaseCorner definition
+  - Place and orient eight protector occurrences

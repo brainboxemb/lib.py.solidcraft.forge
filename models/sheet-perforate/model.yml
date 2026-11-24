@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: sheet-metal
+priority: 60
+title: Native whole-sheet perforation
+tagline: Manufacturing perforations stay native sheet and flat-pattern history
+description: >
+  A 60 × 40 × 2 mm native sheet carries a parameterized whole-sheet perforation field without repeated B-rep hole cuts.
+parameters: 60 × 40 × 2 mm sheet; Ø5 mm perforations; 10 mm pitch; 5 mm margin; square pattern
+stages:
+  - Create the flat sheet with one shared material rule
+  - Apply one native whole-sheet perforation field
+  - Mutate diameter, pitch and margin and inspect the rebuilt flat pattern

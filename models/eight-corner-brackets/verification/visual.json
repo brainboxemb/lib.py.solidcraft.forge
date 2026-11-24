@@ -1,0 +1,262 @@
+{
+  "schema": 1,
+  "views": {
+    "front": {
+      "baseline_payload": "baselines/front.json"
+    },
+    "right": {
+      "baseline_payload": "baselines/right.json"
+    },
+    "iso": {
+      "baseline_payload": "baselines/iso.json"
+    }
+  },
+  "expected_views": [
+    "iso",
+    "front",
+    "right"
+  ],
+  "render": {
+    "width": 720,
+    "height": 540
+  },
+  "regression": {
+    "width": 96,
+    "height": 72,
+    "changed_pixel_threshold": 12,
+    "max_mean_difference": 6,
+    "max_changed_fraction": 0.08
+  },
+  "baseline_provenance": {
+    "approval": "approved",
+    "source_commit": "a34f270cc877fd55501dbe045ec4ae8dd34e0fcc",
+    "historical_manifest_solidcraft_version": "0.30.1",
+    "migrated_from": "qualification/visual_baselines.json",
+    "migrated_without_reencoding": true,
+    "verified_during_solidcraft_0_42_0_qualification": true
+  },
+  "expected_boxes": [
+    {
+      "label": "FrameBlock",
+      "minimum": [
+        -60,
+        -40,
+        0
+      ],
+      "maximum": [
+        60,
+        40,
+        60
+      ]
+    },
+    {
+      "label": "FL bottom front arm",
+      "minimum": [
+        -60,
+        -44,
+        0
+      ],
+      "maximum": [
+        -32,
+        -40,
+        16
+      ]
+    },
+    {
+      "label": "FL bottom left arm",
+      "minimum": [
+        -64,
+        -40,
+        0
+      ],
+      "maximum": [
+        -60,
+        -12,
+        16
+      ]
+    },
+    {
+      "label": "FR bottom front arm",
+      "minimum": [
+        32,
+        -44,
+        0
+      ],
+      "maximum": [
+        60,
+        -40,
+        16
+      ]
+    },
+    {
+      "label": "FR bottom right arm",
+      "minimum": [
+        60,
+        -40,
+        0
+      ],
+      "maximum": [
+        64,
+        -12,
+        16
+      ]
+    },
+    {
+      "label": "RR bottom rear arm",
+      "minimum": [
+        32,
+        40,
+        0
+      ],
+      "maximum": [
+        60,
+        44,
+        16
+      ]
+    },
+    {
+      "label": "RR bottom right arm",
+      "minimum": [
+        60,
+        12,
+        0
+      ],
+      "maximum": [
+        64,
+        40,
+        16
+      ]
+    },
+    {
+      "label": "RL bottom rear arm",
+      "minimum": [
+        -60,
+        40,
+        0
+      ],
+      "maximum": [
+        -32,
+        44,
+        16
+      ]
+    },
+    {
+      "label": "RL bottom left arm",
+      "minimum": [
+        -64,
+        12,
+        0
+      ],
+      "maximum": [
+        -60,
+        40,
+        16
+      ]
+    },
+    {
+      "label": "FL top front arm",
+      "minimum": [
+        -60,
+        -44,
+        44
+      ],
+      "maximum": [
+        -32,
+        -40,
+        60
+      ]
+    },
+    {
+      "label": "FL top left arm",
+      "minimum": [
+        -64,
+        -40,
+        44
+      ],
+      "maximum": [
+        -60,
+        -12,
+        60
+      ]
+    },
+    {
+      "label": "FR top front arm",
+      "minimum": [
+        32,
+        -44,
+        44
+      ],
+      "maximum": [
+        60,
+        -40,
+        60
+      ]
+    },
+    {
+      "label": "FR top right arm",
+      "minimum": [
+        60,
+        -40,
+        44
+      ],
+      "maximum": [
+        64,
+        -12,
+        60
+      ]
+    },
+    {
+      "label": "RR top rear arm",
+      "minimum": [
+        32,
+        40,
+        44
+      ],
+      "maximum": [
+        60,
+        44,
+        60
+      ]
+    },
+    {
+      "label": "RR top right arm",
+      "minimum": [
+        60,
+        12,
+        44
+      ],
+      "maximum": [
+        64,
+        40,
+        60
+      ]
+    },
+    {
+      "label": "RL top rear arm",
+      "minimum": [
+        -60,
+        40,
+        44
+      ],
+      "maximum": [
+        -32,
+        44,
+        60
+      ]
+    },
+    {
+      "label": "RL top left arm",
+      "minimum": [
+        -64,
+        12,
+        44
+      ],
+      "maximum": [
+        -60,
+        40,
+        60
+      ]
+    }
+  ],
+  "expected_features": []
+}

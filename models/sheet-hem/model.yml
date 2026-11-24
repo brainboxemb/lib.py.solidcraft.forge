@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: sheet-metal
+priority: 40
+title: Native sheet hem
+tagline: Existing sheet material folds back with inherited rule semantics
+description: >
+  An 80 × 40 × 2 mm sheet receives a native hem with editable length and gap while thickness, K-factor and default bend radius remain rule-owned.
+parameters: 80 × 40 × 2 mm sheet; 12 mm hem; 4 mm gap
+stages:
+  - Create the flat sheet with its shared material rule
+  - Add a native hem to the selected sheet edge
+  - Mutate hem length and gap and verify the developed flat pattern

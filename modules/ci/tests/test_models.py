@@ -11,37 +11,68 @@ from cad_library_ci.items import discover_modules
 from cad_library_ci.models import discover_models, select_models
 
 
-EXPECTED_IDS = [
+EXPECTED_IDS = {
+    "anchor-topology-mutation",
     "anchored-holes",
+    "as-built-attach",
     "assembly-decorator",
+    "assembly-owned-anchor",
+    "attach-angle",
     "attached-through-all",
     "bracket",
     "circle-negative-extrude",
     "circular-feature-pattern",
+    "components",
     "cone-boolean",
     "corner-anchor",
+    "eight-corner-brackets",
+    "eight-flightcase-corners",
+    "exploded-views",
+    "four-corner-l",
+    "group-hierarchy",
     "hole-family",
     "native-revolve",
+    "parameter-scope",
+    "parametric-anchor",
     "parametric-attach",
+    "parametric-move",
+    "parametric-offset",
+    "parametric-placement-pair",
+    "parent-derived-child-size",
     "primitive-csg",
     "rectangular-pattern",
+    "repeated-parent-attachments",
+    "rotated-copy-placement",
     "rotated-sketch-cutter",
     "round-top-sketch",
     "rounded-rectangle-sketch",
+    "selective-profile-extrude",
+    "sheet-contour-flange",
+    "sheet-edge-flange",
     "sheet-fold",
+    "sheet-hem",
+    "sheet-path-flange",
+    "sheet-perforate",
     "simple-box",
+    "sketch-pattern-mirror",
     "slot-family",
     "top-sketch-after-chamfer",
-]
+    "xz-anchor",
+}
 
 
-SCPF_ONLY_IDS = [
+SCPF_ONLY_IDS = {
     "attached-through-all",
     "cone-boolean",
+    "exploded-views",
     "native-revolve",
     "rotated-sketch-cutter",
-]
-
+    "sheet-contour-flange",
+    "sheet-edge-flange",
+    "sheet-hem",
+    "sheet-path-flange",
+    "sheet-perforate",
+}
 
 class ModelTests(unittest.TestCase):
     def setUp(self):
@@ -54,17 +85,16 @@ class ModelTests(unittest.TestCase):
             self.modules,
         )
 
-    def test_twenty_historical_owners_preserve_real_implementation_sets(self):
-        self.assertEqual(
-            [model.id for model in self.models],
-            EXPECTED_IDS,
-        )
+    def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
+        self.assertEqual(len(self.models), 46)
+        self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
         for model_id in (
             "simple-box",
             "anchored-holes",
             "corner-anchor",
+            "components",
         ):
             self.assertEqual(
                 by_id[model_id].purposes,
@@ -74,6 +104,7 @@ class ModelTests(unittest.TestCase):
             "simple-box",
             "anchored-holes",
             "corner-anchor",
+            "components",
         }:
             self.assertEqual(
                 by_id[model_id].purposes,
@@ -137,19 +168,19 @@ class ModelTests(unittest.TestCase):
             ["rotated-sketch-cutter"],
         )
         self.assertEqual(
-            [m.id for m in select_models(
+            {m.id for m in select_models(
                 self.models,
                 paths=(),
                 selected_modules=("builder-scpf",),
-            )],
+            )},
             EXPECTED_IDS,
         )
         self.assertEqual(
-            [m.id for m in select_models(
+            {m.id for m in select_models(
                 self.models,
                 paths=("cadlib/src/scpf/core.py",),
                 library=True,
-            )],
+            )},
             EXPECTED_IDS,
         )
 
@@ -190,7 +221,7 @@ class ModelTests(unittest.TestCase):
         solidcraft = manifests[0]
         self.assertEqual(
             [row["implementation"] for row in solidcraft["build_items"]],
-            ["scpf"] * 20,
+            ["scpf"] * len(EXPECTED_IDS),
         )
         self.assertEqual(
             [
@@ -209,9 +240,10 @@ class ModelTests(unittest.TestCase):
         )
 
         reference = manifests[1]
-        self.assertEqual(len(reference["build_items"]), 64)
-        self.assertEqual(len(reference["verify_items"]), 80)
-        self.assertEqual(len(reference["preview_items"]), 64)
+        multi_engine = len(EXPECTED_IDS - SCPF_ONLY_IDS)
+        self.assertEqual(len(reference["build_items"]), multi_engine * 4)
+        self.assertEqual(len(reference["verify_items"]), multi_engine * 5)
+        self.assertEqual(len(reference["preview_items"]), multi_engine * 4)
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
             set(EXPECTED_IDS) - set(SCPF_ONLY_IDS),

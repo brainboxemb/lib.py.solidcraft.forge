@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -60,
+    -30,
+    0
+  ],
+  "bounds_max": [
+    60,
+    30,
+    5
+  ],
+  "bounds_tolerance_mm": 0.5,
+  "volume_mm3": 35246.01776313845,
+  "volume_tolerance_mm3": 40,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "selected hole 1 at z=0.5",
+      "point": [
+        -30,
+        0,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "selected hole 1 at z=2.5",
+      "point": [
+        -30,
+        0,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "selected hole 1 at z=4.5",
+      "point": [
+        -30,
+        0,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "selected hole 2 at z=0.5",
+      "point": [
+        -10,
+        0,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "selected hole 2 at z=2.5",
+      "point": [
+        -10,
+        0,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "selected hole 2 at z=4.5",
+      "point": [
+        -10,
+        0,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "selected hole 4 at z=0.5",
+      "point": [
+        30,
+        0,
+        0.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "selected hole 4 at z=2.5",
+      "point": [
+        30,
+        0,
+        2.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "selected hole 4 at z=4.5",
+      "point": [
+        30,
+        0,
+        4.5
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.3
+    }
+  ]
+}
