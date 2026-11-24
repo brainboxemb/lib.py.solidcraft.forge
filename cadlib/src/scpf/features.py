@@ -1302,21 +1302,6 @@ def _non_count_parameter_names(node, found=None):
                 found,
             )
             return found
-        if node.kind == "sketch_base_revolve":
-            (
-                _sketch_name,
-                _plane,
-                _origin,
-                _plane_offset,
-                _profiles,
-                angle,
-                _axis,
-                _direction,
-                _operations,
-                _rotation,
-            ) = node.data
-            found.update(param.name for param in parameters_in(angle))
-            return found
         if node.kind == "sheet_edge_flange":
             original, edges, height, _angle, height_from, position, flip = node.data
             _non_count_parameter_names(original, found)
@@ -1376,6 +1361,21 @@ def _pattern_angle_parameter_names(node, found=None):
     if found is None:
         found = set()
     if isinstance(node, Shape):
+        if node.kind == "sketch_base_revolve":
+            (
+                _sketch_name,
+                _plane,
+                _origin,
+                _plane_offset,
+                _profiles,
+                angle,
+                _axis,
+                _direction,
+                _operations,
+                _rotation,
+            ) = node.data
+            found.update(param.name for param in parameters_in(angle))
+            return found
         if node.kind == "sheet_edge_flange":
             original, _edges, _height, angle, _height_from, _position, _flip = node.data
             found.update(param.name for param in parameters_in(angle))
