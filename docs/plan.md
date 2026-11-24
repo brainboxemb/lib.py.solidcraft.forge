@@ -62,7 +62,8 @@ Active work:
 2. restore the generated public SCPF API Reference without reviving the retired OLD site generator;
 3. migrate `components` as one physical owner with `purpose: [example, verification]` to restore the fourth historical Example;
 4. restore/replace the three special Verification routes using current durable evidence;
-5. record explicit OLD-vs-NEW Pages route/content acceptance before closing #31.
+5. restore model-local visual verification (#38) for all sixteen migrated owners that historically owned approved per-view policies; simple-box passed the first end-to-end gate and the sixteen-owner candidate is under qualification;
+6. record explicit OLD-vs-NEW Pages route/content acceptance before closing #31.
 
 ## Next — remaining model graph
 
