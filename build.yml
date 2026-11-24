@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/16-five-owner-gate
-modules: [ci, builder-scpf, builder-solidcraft, verification, preview]
-library: true
-models: [simple-box, primitive-csg, anchored-holes, assembly-decorator, parametric-attach]
+branch: issue/16-five-owner-closeout
+modules: [ci]
+library: false
+models: []
 tasks: [test]
