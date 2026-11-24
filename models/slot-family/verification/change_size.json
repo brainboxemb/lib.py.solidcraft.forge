@@ -1,0 +1,39 @@
+{
+  "commands": [
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "slot_width",
+        "expression": "10 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "straight_y",
+        "expression": "-20 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "c2c_end_x",
+        "expression": "-35 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "overall_end_x",
+        "expression": "25 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "center_point_end_x",
+        "expression": "70 mm"
+      }
+    }
+  ]
+}

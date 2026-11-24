@@ -1,0 +1,18 @@
+schema: 1
+purpose: verification
+section: features
+priority: 70
+title: Native sketch Slot family
+tagline: SolidCraft 0.45 native Slots keep width, straight length and position editable
+description: >
+  One plate sketch contains all five native Slot construction methods. The three
+  straight Slots use editable axis-aligned authored endpoints, all five share one
+  editable native width parameter, and one through cut removes the complete family.
+parameters: 160 × 120 × 5 mm plate; baseline 8 mm Slot width; editable straight-Slot length and Y position
+stages:
+  - Create the native Box plate
+  - Create three straight native Slots from editable axis-aligned endpoint parameters
+  - Create two arc Slots from fixed authored points
+  - Drive all five Slot widths from one editable native width parameter
+  - Cut the complete Slot family through the plate once
+  - Mutate width, straight length and straight position in the saved SolidCraft design

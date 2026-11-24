@@ -1,0 +1,13 @@
+schema: 1
+purpose: [example, verification]
+section: anchors
+priority: 20
+title: Topology-backed corner anchor
+tagline: A standard corner reference follows parent width and height
+description: >
+  A Marker uses matching parent and child corner anchors so the native relationship follows two changing parent dimensions.
+parameters: Base 40 × 30 × 20 mm; Marker 10 mm cube
+stages:
+  - Create the parameterized Base
+  - Attach Marker with FRONT_TOP_RIGHT to BACK_TOP_RIGHT
+  - Preserve the corner relationship through parent resize

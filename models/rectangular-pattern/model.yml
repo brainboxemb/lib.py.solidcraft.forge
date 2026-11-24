@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: features
+priority: 60
+title: Native rectangular feature pattern
+tagline: One Slot cut is repeated by a two-direction native History pattern
+description: >
+  A plate receives one Slot source cut and SolidCraft repeats that existing feature in a rectangular rows-and-columns pattern.
+parameters: 120 × 80 × 4 mm plate; 3 × 2 Slot pattern; 24 × 28 mm pitch
+stages:
+  - Create the plate and source Slot sketch
+  - Cut the source Slot once
+  - Repeat the cut with one native rectangular feature pattern

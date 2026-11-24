@@ -21,6 +21,8 @@ Permanent `build/dev/models` output exists for all five owners. Pages publishes 
 
 ## Active work — #21
 
+PR #24 has a green ten-owner candidate at `bcee6f2f9eab9e7429a06f5a219ae3e045fa87ba` (CI `45445906212`). A/B evidence is recorded in `docs/acceptance/ten-owner-gate.md`. Next: merge PR #24 to dev, verify durable output and public-purpose projection, then promote the full ten-owner baseline to main before starting remaining-graph work.
+
 Move from five accepted owners to ten total:
 
 6. `corner-anchor`;
