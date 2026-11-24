@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "views": {
+    "front": {
+      "baseline_payload": "baselines/front.json"
+    },
+    "right": {
+      "baseline_payload": "baselines/right.json"
+    },
+    "iso": {
+      "baseline_payload": "baselines/iso.json"
+    }
+  },
+  "expected_views": [
+    "top",
+    "front",
+    "iso"
+  ],
+  "render": {
+    "width": 720,
+    "height": 540
+  },
+  "regression": {
+    "width": 96,
+    "height": 72,
+    "changed_pixel_threshold": 12,
+    "max_mean_difference": 6,
+    "max_changed_fraction": 0.08
+  },
+  "baseline_provenance": {
+    "approval": "approved",
+    "source_commit": "8c59c61ed5d32cd307e76951a013f8ea5869cf06",
+    "historical_manifest_solidcraft_version": "0.30.1",
+    "migrated_from": "qualification/visual_baselines.json",
+    "migrated_without_reencoding": true,
+    "verified_during_solidcraft_0_42_0_qualification": true
+  },
+  "expected_boxes": [
+    {
+      "label": "SelectiveProfileExtrude",
+      "minimum": [
+        -60,
+        -30,
+        0
+      ],
+      "maximum": [
+        60,
+        30,
+        5
+      ]
+    }
+  ],
+  "expected_features": [
+    {
+      "type": "through_hole",
+      "label": "selected hole 1",
+      "center": [
+        -30,
+        0
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "selected hole 2",
+      "center": [
+        -10,
+        0
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "type": "through_hole",
+      "label": "selected hole 4",
+      "center": [
+        30,
+        0
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        5
+      ]
+    }
+  ]
+}

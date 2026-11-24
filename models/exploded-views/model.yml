@@ -1,0 +1,14 @@
+schema: 1
+purpose: verification
+section: components
+priority: 55
+title: Native exploded assembly views
+tagline: Persistent exploded presentations leave normal occurrence placements unchanged
+description: >
+  Three reusable Block occurrences keep their assembled placements while SolidCraft stores one automatic and one explicit exploded presentation.
+parameters: Three 30 × 20 × 10 mm blocks at X=0, 40 and 80 mm
+stages:
+  - Create and place three occurrences of one reusable Block definition
+  - Store an automatic exploded view using native scale mode
+  - Store an explicit instruction view using occurrence translations
+  - Return presentation to the normal assembled state

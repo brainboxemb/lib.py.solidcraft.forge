@@ -1,0 +1,18 @@
+{
+  "commands": [
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "hem_length",
+        "expression": "16 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "hem_gap",
+        "expression": "5 mm"
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+schema: 1
+purpose: verification
+section: components
+priority: 30
+title: Symmetric parametric occurrence Placement
+tagline: Two shared Block occurrences remain symmetric around one editable spacing parameter
+description: >
+  Two occurrences of one Block definition are positioned at the negative and positive halves of one parent spacing parameter.
+parameters: Two 20 × 20 × 10 mm Blocks; spacing 80 mm
+stages:
+  - Create one reusable Block definition
+  - Create two replay-bound occurrences
+  - Place them at -spacing/2 and +spacing/2
+  - Recompute the saved design after changing spacing
