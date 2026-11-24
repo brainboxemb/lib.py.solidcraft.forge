@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/11-model-owner-sync
-modules: [ci, build, pages]
+branch: issue/16-five-owner-plan
+modules: [ci]
 library: false
-models: [simple-box]
+models: []
 tasks: [test]

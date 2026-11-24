@@ -2,48 +2,52 @@
 
 This file contains unfinished work only.
 
-## Accepted bootstrap
+## Stable baseline
 
-Current stable bootstrap is `main@2594ff03b5dbae0e558e8ee65ce0a558292add6f`.
+The corrected repository architecture is already qualified on `dev`; promotion to `main` is the next integration step.
 
-It already contains:
-- the real `scpf` package under `cadlib/src/scpf`;
-- package-owner tests separated from unmigrated model fixtures;
-- generic CAD library modules/builders/verification/preview/build/Pages;
-- normal branch/merge/release/development guidance.
+Accepted 1-owner migration:
+- `simple-box` is one physical owner;
+- SCPF is primary;
+- historical CadQuery/build123d/PythonSCAD/pyBOSL2 references are local implementations;
+- OLD and NEW SCPF command documents match semantically;
+- historical native baseline and `length=50` saved-design mutation match retained OLD machine evidence;
+- all five implementations pass their geometry contract;
+- durable `build/dev/models/simple-box` is published;
+- Pages exposes both `native` and `geometry` stages with durable report links.
+
+Issues #6 and #14 are closed.
 
 The historical Forge repository remains the known-good A/B source.
 
-## Now — #11 corrected model-owner template sync
+## Now — #16 five-owner gate
 
-Sync Forge NEW from `template.cad.library@1d9cddfe975d508e2aaa03cb140cbf61e2fdff82`.
+Qualify **five total physical model owners** before expanding further.
 
-Acceptance:
-- source root is `models/`, not `examples/`;
-- one physical owner expands multiple engine implementations;
-- `build.yml` selects models;
-- durable `build/<scope>/models/<owner>/` publication works;
-- five standard qualification implementations pass under one `simple-box` owner;
-- no legacy `build/<scope>/examples/` remains;
-- Pages links generated CAD artifacts from `build` and does not duplicate them to `gh-pages`.
+Already accepted:
+1. `simple-box` — fundamentals / editable parameters / native Box.
 
-## Then — #6 historical Forge simple-box
+Add:
+2. `primitive-csg` — primitives and Boolean composition;
+3. `anchored-holes` — face-relative Hole plus native rectangular pattern;
+4. `assembly-decorator` — component definition, imported assembly and occurrences;
+5. `parametric-attach` — symbolic attachment gap and saved-design mutation.
 
-Rework draft PR #7 onto the accepted owner contract.
+For every new owner:
+- keep one `models/<id>/` owner;
+- preserve historical `model.yml.purpose` exactly;
+- use SCPF as the Forge implementation and migrate historical reference implementations that existed;
+- reuse generic template builders, staged verification and two runtime roles;
+- migrate owner-local native/geometry/saved-design expectations;
+- compare NEW evidence directly against retained OLD build artifacts;
+- qualify candidate before permanent integration.
 
-The historical Parameterized Box becomes one physical owner. Its SCPF/SolidCraft path and historical reference-engine implementations live inside that owner. Recover:
-- example/model-owned command-lowering contract;
-- saved-design parameter/timeline verification equivalent to historical `verification/verify.py`;
-- explicit OLD vs NEW command/geometry evidence;
-- durable build and Hugo evidence.
+Do not expand to the 10-owner gate until all five owners are accepted, durably published and correctly projected by Pages.
 
-Do not expand to five historical models until #6 is accepted.
+## After the five-owner gate
 
-## After #6
-
-1. migrate five representative physical models;
-2. migrate ten;
-3. classify and migrate the remaining graph;
-4. migrate API/guides/reference documentation;
-5. qualify NEW release/version mechanics;
-6. retire duplicated historical orchestration only after parity.
+1. migrate to ten representative physical owners;
+2. classify and migrate the remaining graph;
+3. migrate API/guides/reference documentation;
+4. qualify NEW release/version mechanics;
+5. retire duplicated historical orchestration only after parity.

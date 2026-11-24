@@ -23,6 +23,44 @@ def _repository(source_root):
     return value
 
 
+def _stage_lines(*, evidence, blob_base, impl_path, stages):
+    if stages is None:
+        return []
+    if not isinstance(stages, dict):
+        raise ValueError("verification_stages must be a mapping")
+
+    lines = []
+    for stage_id, state in sorted(stages.items()):
+        if (
+            not isinstance(stage_id, str)
+            or not _ID.fullmatch(stage_id)
+            or not isinstance(state, dict)
+        ):
+            raise ValueError("invalid verification stage evidence")
+        details = [f"status={state.get('status')}"]
+        if state.get("adapter"):
+            details.append(f"adapter={state['adapter']}")
+        if state.get("runtime"):
+            details.append(f"runtime={state['runtime']}")
+        report = (
+            evidence
+            / "verification"
+            / stage_id
+            / "verification.json"
+        )
+        suffix = ""
+        if report.is_file():
+            url = (
+                f"{blob_base}{impl_path}/verification/"
+                f"{stage_id}/verification.json"
+            )
+            suffix = f" · [verification]({url})"
+        lines.append(
+            f"  - `{stage_id}`: " + ", ".join(details) + suffix
+        )
+    return lines
+
+
 def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
     owners = source_root / "models"
     if not owners.is_dir():
@@ -93,7 +131,10 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
                 ]
             lines += ["### Implementations", ""]
             for impl_id, state in sorted(result.get("implementations", {}).items()):
+                if not isinstance(state, dict):
+                    raise ValueError(f"invalid implementation evidence: {impl_id}")
                 impl_path = f"{owner_path}/{impl_id}"
+                impl_evidence = evidence / impl_id
                 links = []
                 for name, label in (
                     ("model.stl", "STL"),
@@ -102,13 +143,21 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
                     ("verification/verification.json", "verification"),
                     ("result.json", "result"),
                 ):
-                    if (evidence / impl_id / name).is_file():
+                    if (impl_evidence / name).is_file():
                         links.append(f"[{label}]({blob_base}{impl_path}/{name})")
                 suffix = " · " + " · ".join(links) if links else ""
                 lines.append(
                     f"- **{impl_id}** — {state.get('builder')}: "
                     f"build={state.get('build_status')}, "
                     f"verification={state.get('verification_status')}{suffix}"
+                )
+                lines.extend(
+                    _stage_lines(
+                        evidence=impl_evidence,
+                        blob_base=blob_base,
+                        impl_path=impl_path,
+                        stages=state.get("verification_stages"),
+                    )
                 )
         else:
             lines.append("No published build evidence is available for this source scope.")
