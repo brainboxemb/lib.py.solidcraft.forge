@@ -8,7 +8,7 @@ from scpf.runner import run_script
 
 
 ROOT = Path(__file__).resolve().parents[3]
-EXAMPLE = ROOT / "examples/rectangular-pattern"
+EXAMPLE = ROOT / "models/rectangular-pattern"
 MODEL = EXAMPLE / "scpf/model.py"
 MUTATION = EXAMPLE / "verification/change_columns_pitch.json"
 
