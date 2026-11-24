@@ -41,15 +41,15 @@ Candidate structure:
   `purpose: [example, verification]`, restoring the fourth historical
   Example without duplicating ownership.
 
+Qualification completed for the 26-owner candidate: all owner aggregates,
+native stages, applicable geometry stages and visual stages pass. Evidence is
+recorded in `docs/acceptance/remaining-owner-gate.md`.
+
 Remaining #40 work:
-1. qualify all 26 newly migrated owners and the complete 46-owner discovery
-   contract;
-2. fix any migration-exposed public Forge API regression in `cadlib/scpf`,
-   never with model-local workarounds;
-3. record the remaining-graph OLD-vs-NEW acceptance evidence;
-4. squash the accepted work branch to `dev`;
-5. verify durable `build/dev/models` contains all 46 owners and that the four
-   example-purpose owners are projected correctly.
+1. squash the accepted work branch to `dev`;
+2. verify durable `build/dev/models` contains all 46 owners;
+3. verify purpose-driven Pages projects four Examples and all 46 Verification
+   owners without copying generated CAD artifacts.
 
 ## Next — #31 Pages and documentation parity
 
