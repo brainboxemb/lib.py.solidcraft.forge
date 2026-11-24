@@ -1,0 +1,66 @@
+{
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": {
+          "face": [
+            -20.0,
+            -10.0,
+            5.0
+          ],
+          "body": "AttachedThroughAll",
+          "index": 0
+        },
+        "project_edges": false,
+        "name": "Through cut"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            -10,
+            -8
+          ],
+          [
+            10,
+            -8
+          ],
+          [
+            10,
+            8
+          ],
+          [
+            -10,
+            8
+          ]
+        ],
+        "closed": true,
+        "ids": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "operation": "cut",
+        "targets": [
+          "AttachedThroughAll"
+        ],
+        "name": "Through cut",
+        "through_all": true,
+        "direction": "negative"
+      }
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "4",
+        "name": "radius",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "10",
+        "name": "length",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "360",
+        "name": "sweep",
+        "unit": "deg"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "RadialProfile",
+        "plane": "XZ"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "closed": true,
+        "ids": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "points": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            "radius"
+          ],
+          [
+            "length",
+            "radius"
+          ],
+          [
+            "length",
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.revolve",
+      "params": {
+        "angle": "sweep",
+        "axis": "X",
+        "body_name": "NativeRevolve",
+        "sketch": "RadialProfile"
+      }
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "2a9e4dbb41294c4257fdf4c3d2bb20c240e2c0f27643c3a8693e4fbc1fb4eca1",
+          "size": 4720
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "RoundedRectangleSketch",
+                "max": [
+                  40.0,
+                  30.0,
+                  13.0
+                ],
+                "min": [
+                  -40.0,
+                  -30.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  30.0,
+                  13.0
+                ],
+                "min": [
+                  -40.0,
+                  -30.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 4
+              },
+              "expected": {
+                "cylinder": 4
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 31828.31853071796,
+              "delta": 0.0,
+              "expected": 31828.31853071796,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.5
+            }
+          }
+        ],
+        "sketch_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 9,
+              "dof": 0,
+              "name": "Rounded pad",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 9,
+              "dof": 0,
+              "name": "Rounded pad",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Rounded pad sketch",
+            "pass": true
+          },
+          {
+            "actual": {
+              "name": "World cut",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "World cut",
+              "status": "solved"
+            },
+            "label": "World cut sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Rounded pad",
+              "type": "Sketch"
+            },
+            {
+              "name": "Rounded pad",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "World cut",
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Rounded pad",
+              "type": "Sketch"
+            },
+            {
+              "name": "Rounded pad",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "World cut",
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/rounded-rectangle-sketch/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "rounded-rectangle-sketch"
+}

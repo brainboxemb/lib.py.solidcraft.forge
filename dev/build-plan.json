@@ -2,16 +2,26 @@
   "active": [
     "anchored-holes",
     "assembly-decorator",
+    "attached-through-all",
+    "bracket",
+    "circle-negative-extrude",
+    "circular-feature-pattern",
+    "cone-boolean",
     "corner-anchor",
+    "hole-family",
+    "native-revolve",
     "parametric-attach",
     "primitive-csg",
     "rectangular-pattern",
     "rotated-sketch-cutter",
+    "round-top-sketch",
+    "rounded-rectangle-sketch",
     "sheet-fold",
     "simple-box",
-    "slot-family"
+    "slot-family",
+    "top-sketch-after-chamfer"
   ],
-  "full": false,
+  "full": true,
   "models": [
     {
       "id": "anchored-holes",
@@ -43,6 +53,68 @@
       ]
     },
     {
+      "id": "attached-through-all",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "bracket",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "circle-negative-extrude",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "circular-feature-pattern",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "cone-boolean",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
       "id": "corner-anchor",
       "implementations": [
         "scpf",
@@ -54,6 +126,30 @@
       "primary": "scpf",
       "purpose": [
         "example",
+        "verification"
+      ]
+    },
+    {
+      "id": "hole-family",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "native-revolve",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
         "verification"
       ]
     },
@@ -110,6 +206,34 @@
       ]
     },
     {
+      "id": "round-top-sketch",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "rounded-rectangle-sketch",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
       "id": "sheet-fold",
       "implementations": [
         "scpf",
@@ -151,9 +275,44 @@
       "purpose": [
         "verification"
       ]
+    },
+    {
+      "id": "top-sketch-after-chamfer",
+      "implementations": [
+        "scpf",
+        "cadquery",
+        "build123d",
+        "pythonscad",
+        "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
     }
   ],
   "schema": 2,
-  "selected": [],
-  "source_sha": "04e3f3e3d95a8cc636683ccefe4a8f821346ee7a"
+  "selected": [
+    "anchored-holes",
+    "assembly-decorator",
+    "attached-through-all",
+    "bracket",
+    "circle-negative-extrude",
+    "circular-feature-pattern",
+    "cone-boolean",
+    "corner-anchor",
+    "hole-family",
+    "native-revolve",
+    "parametric-attach",
+    "primitive-csg",
+    "rectangular-pattern",
+    "rotated-sketch-cutter",
+    "round-top-sketch",
+    "rounded-rectangle-sketch",
+    "sheet-fold",
+    "simple-box",
+    "slot-family",
+    "top-sketch-after-chamfer"
+  ],
+  "source_sha": "4d6872fdd2cba9515aa78f8aad80050ae46fd345"
 }

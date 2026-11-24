@@ -1,0 +1,134 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "80",
+        "name": "width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "60",
+        "name": "depth",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "5",
+        "name": "thickness",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "AttachedThroughAll",
+        "corner": [
+          "-width / 2",
+          "-depth / 2",
+          0
+        ],
+        "height": "thickness",
+        "length": "width",
+        "width": "depth"
+      }
+    },
+    {
+      "bind": {
+        "$face_index_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$face_point_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "AttachedThroughAll"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Through cut",
+        "plane": {
+          "body": "AttachedThroughAll",
+          "face": "$face_point_1",
+          "index": "$face_index_1"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "closed": true,
+        "ids": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "points": [
+          [
+            -10,
+            -8
+          ],
+          [
+            10,
+            -8
+          ],
+          [
+            10,
+            8
+          ],
+          [
+            -10,
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "negative",
+        "name": "Through cut",
+        "operation": "cut",
+        "targets": [
+          "AttachedThroughAll"
+        ],
+        "through_all": true
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

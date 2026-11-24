@@ -1,0 +1,85 @@
+{
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": {
+          "face": [
+            -20.0,
+            -10.0,
+            5.0
+          ],
+          "body": "RoundedRectangleSketch",
+          "index": 0
+        },
+        "project_edges": false,
+        "name": "Rounded pad"
+      }
+    },
+    {
+      "command": "sketch.rectangle.rounded",
+      "params": {
+        "p0": [
+          "(-(pad_width / 2))",
+          "(-(pad_depth / 2))"
+        ],
+        "p1": [
+          "(pad_width / 2)",
+          "(pad_depth / 2)"
+        ],
+        "radius": "radius"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "operation": "join",
+        "targets": [
+          "RoundedRectangleSketch"
+        ],
+        "name": "Rounded pad",
+        "distance": "pad_height",
+        "direction": "positive"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "YZ",
+        "name": "World cut"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": [
+          "(cut_y) + (-(cut_width / 2))",
+          "(cut_z) + (-(cut_height / 2))"
+        ],
+        "p1": [
+          "(cut_y) + (cut_width / 2)",
+          "(cut_z) + (cut_height / 2)"
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": "cut_length",
+        "direction": "symmetric",
+        "operation": "cut",
+        "targets": [
+          "RoundedRectangleSketch"
+        ]
+      }
+    }
+  ]
+}
