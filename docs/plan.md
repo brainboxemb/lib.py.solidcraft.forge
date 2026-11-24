@@ -32,15 +32,13 @@ The accepted baseline now has:
   rich joint-anatomy diagram presentation;
 - policy-owned merge execution through PR comment `/merge`, with
   `.github/workflows/merge-policy.yml` choosing and executing the merge
-  method.
+  method;
+- the accepted library/CAD NEW workflow split: pull requests run central `ci`
+  only, permanent `dev`/`main` runs use one `build` job for qualification and
+  durable publication, and Pages is dispatched as an independent workflow.
 
 The historical `brainboxemb/lib.py.solidcraft.forge` repository is now an
 archival/A-B reference rather than an unfinished migration gate.
-
-## Now
-
-- #47: align Forge CI/build/Pages workflow roles with the accepted
-  `template.cad.library` / CAD NEW split.
 
 ## Later
 
