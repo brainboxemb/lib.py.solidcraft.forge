@@ -23,13 +23,13 @@ For the gate:
 - SCPF replay semantics are preserved through `scpf.headless.run_document()`;
 - OLD vs NEW evidence is recorded in `docs/acceptance/five-owner-gate.md`;
 - durable `build/dev/models` output is published;
-- Pages exposes only owners whose `purpose` contains `example`.
+- Pages projects owners by purpose: `example` owners under Examples and `verification` owners under Verification; owners with both purposes appear in both views.
 
 The historical Forge repository remains the A/B authority.
 
 ## Now — #21 ten-owner gate
 
-Candidate PR #24 is technically qualified by CI run `45445906212` at `bcee6f2f9eab9e7429a06f5a219ae3e045fa87ba`. See `docs/acceptance/ten-owner-gate.md`. Remaining work is permanent dev publication, purpose-driven Pages verification and a full promotion to main.
+Candidate PR #24 is technically qualified by CI run `45445906212` at `bcee6f2f9eab9e7429a06f5a219ae3e045fa87ba`. See `docs/acceptance/ten-owner-gate.md`. PR #24 is squash-merged to `dev@8f28cbb46acd894554a2152611aec5d161a9ab38`; post-merge CI `45448096247` is green and permanent `build/dev/models` contains all ten owners. Remaining work is to correct and qualify the purpose-driven Pages projection, then run the full promotion to main.
 
 Add five representative physical owners:
 
