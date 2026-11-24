@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: features
+priority: 100
+title: Rotated standalone Sketch cutters
+tagline: Local Sketch frames drive non-axis-aligned native Boolean cuts
+description: >
+  Two standalone triangular Sketches use explicit local origin and rotation frames, extrude to native cutters and subtract from one Box.
+parameters: 60 × 60 × 30 mm Box; two 8 mm triangular cutters at ±45°
+stages:
+  - Author triangular Polygon2D profiles in rotated local Sketch frames
+  - Extrude each Sketch as a standalone native solid
+  - Cut both rotated solids from the parent Box
