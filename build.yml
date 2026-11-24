@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/6-simple-box
-modules: [ci, builder-scpf, builder-solidcraft, verification, preview]
-library: true
-models: [simple-box]
+branch: issue/14-page-verification-stages
+modules: [pages]
+library: false
+models: []
 tasks: [test]
