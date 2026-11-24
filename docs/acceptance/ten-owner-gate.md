@@ -113,7 +113,7 @@ All **45 applicable geometry stages pass** in `cad-reference:v0.3.5`. No artific
 The candidate is accepted for integration. The ten-owner gate is complete only after:
 1. PR #24 is squash-merged to `dev`;
 2. permanent `build/dev/models` contains all ten owners;
-3. Pages adds `corner-anchor` to the public catalogue while keeping verification-only new owners private;
+3. Pages publishes exactly three Examples entries (`simple-box`, `anchored-holes`, `corner-anchor`) and all ten owners under Verification; owners with both purposes appear in both views;
 4. post-merge dev CI/Pages are green;
 5. the ten-owner baseline survives a full `dev -> main` promotion.
 
