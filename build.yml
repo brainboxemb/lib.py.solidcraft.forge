@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/16-five-owner-plan
-modules: [ci]
-library: false
-models: []
+branch: issue/16-primitive-csg
+modules: [ci, builder-scpf, builder-solidcraft, verification, preview]
+library: true
+models: [primitive-csg]
 tasks: [test]
