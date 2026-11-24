@@ -945,3 +945,12 @@ class Sketch:
             exact_regions,
         )
         return Shape("explicit_sketch_extrusion", data)
+
+    def revolve(
+        self,
+        *,
+        axis,
+        angle=360,
+        sym=False,
+    ):
+        """Revolve one completed closed Sketch profile around a world axis.
