@@ -1,0 +1,66 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SolidCraft Forge – Forge external references</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/docs/reference/</link><description>Recent content in Forge external references on SolidCraft Forge</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/docs/reference/index.xml" rel="self" type="application/rss+xml"/><item><title>SolidCraft version references</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/docs/reference/solidcraft/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/docs/reference/solidcraft/</guid><description>
+&lt;p&gt;Forge keeps immutable, version-pinned SolidCraft engineering evidence under:&lt;/p&gt;
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
+&lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docs/reference/solidcraft/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 0.42.0/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 0.45.0/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;future-version&amp;gt;/&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"&gt;
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+&gt;
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
+&lt;/button&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The historical &lt;a href="0.42.0/"&gt;0.42.0&lt;/a&gt; tree remains accepted historical
+qualification evidence.&lt;/p&gt;
+&lt;p&gt;The hand-authored 0.43.0 migration tree was removed during the 2026-11-21
+audit because it was not a canonical command snapshot. Do not reconstruct it or
+use it as an input for newer versions.&lt;/p&gt;
+&lt;h2 data-hextra-search-id="canonical-capture-rule"&gt;Canonical capture rule&lt;span class="hx:absolute hx:-mt-20" id="canonical-capture-rule"&gt;&lt;/span&gt;
+&lt;a href="#canonical-capture-rule" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;For current and future SolidCraft targets, the command reference is captured
+from the exact qualified runtime:&lt;/p&gt;
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
+&lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;qualified immutable solidcraft-cli
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; |
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; +--&amp;gt; solidcraft-cli commands
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; |
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; +--&amp;gt; commands.json canonical machine evidence
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; |
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; +--&amp;gt; commands.md generated human catalog&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"&gt;
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+&gt;
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
+&lt;/button&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Use &lt;code&gt;scripts/capture_solidcraft_reference.py&lt;/code&gt; to create the version tree.&lt;/p&gt;
+&lt;p&gt;A versioned command reference must never be a manually selected subset. The raw
+registry is retained so completeness and later diffs can be checked directly.&lt;/p&gt;
+&lt;h2 data-hextra-search-id="adding-a-new-solidcraft-version"&gt;Adding a new SolidCraft version&lt;span class="hx:absolute hx:-mt-20" id="adding-a-new-solidcraft-version"&gt;&lt;/span&gt;
+&lt;a href="#adding-a-new-solidcraft-version" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;qualify the current stable SolidCraft release in the runtime owner
+repository;&lt;/li&gt;
+&lt;li&gt;release an immutable runtime image from the exact green commit;&lt;/li&gt;
+&lt;li&gt;run the capture script against that exact &lt;code&gt;solidcraft-cli&lt;/code&gt;;&lt;/li&gt;
+&lt;li&gt;record the exact upstream commit, runtime release and runtime image in
+&lt;code&gt;SOURCE.md&lt;/code&gt;;&lt;/li&gt;
+&lt;li&gt;review the generated registry diff before adapting Forge compatibility code;&lt;/li&gt;
+&lt;li&gt;update Forge&amp;rsquo;s tested SolidCraft version/runtime pin through the appropriate
+lane;&lt;/li&gt;
+&lt;li&gt;run Forge API/compiler qualification against that evidence.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;An accepted canonical version directory is immutable. A noncanonical migration
+note is not promoted to canonical status merely because it already exists in
+Git history.&lt;/p&gt;
+&lt;p&gt;The repository-level development procedure is documented in
+&lt;a href="../../development/"&gt;../../development.md&lt;/a&gt;.&lt;/p&gt;</description></item></channel></rss>
