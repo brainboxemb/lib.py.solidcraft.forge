@@ -4,79 +4,73 @@ This file contains unfinished work only.
 
 ## Accepted baseline
 
-The twenty-owner migration gate is accepted and promoted on `main@87ba6e3b535f4b93f65d519e7694688473bc8b96`.
+The twenty-owner migration gate is accepted and promoted on `main`.
 
-Accepted physical owners:
-1. `simple-box`;
-2. `primitive-csg`;
-3. `anchored-holes`;
-4. `assembly-decorator`;
-5. `parametric-attach`;
-6. `corner-anchor`;
-7. `rectangular-pattern`;
-8. `rotated-sketch-cutter`;
-9. `slot-family`;
-10. `sheet-fold`;
-11. `round-top-sketch`;
-12. `native-revolve`;
-13. `circle-negative-extrude`;
-14. `bracket`;
-15. `hole-family`;
-16. `top-sketch-after-chamfer`;
-17. `circular-feature-pattern`;
-18. `rounded-rectangle-sketch`;
-19. `attached-through-all`;
-20. `cone-boolean`;
-
-For the baseline:
+For the accepted baseline:
 - SCPF is primary per owner;
-- historical reference implementations are local implementations only where they existed;
-- all 20 native SCPF stages pass;
-- all 80 applicable geometry stages pass;
-- historical saved-design and inspection behavior is retained;
-- the historical public `Sketch.revolve()` contract is restored in `cadlib/scpf`;
-- OLD vs NEW evidence is recorded in `docs/acceptance/five-owner-gate.md`, `docs/acceptance/ten-owner-gate.md` and `docs/acceptance/twenty-owner-gate.md`;
-- `build/main/models` and `build/dev/models` contain all twenty owners;
-- stable Pages projects the currently migrated example-purpose owners `simple-box`, `anchored-holes` and `corner-anchor`, and all twenty owners appear under Verification.
+- historically real reference implementations remain local to the same physical owner;
+- native and applicable geometry verification pass;
+- saved-design and inspection behavior is retained;
+- the public `Sketch.revolve()` contract is restored in `cadlib/scpf`;
+- OLD-vs-NEW evidence is recorded in `docs/acceptance/five-owner-gate.md`,
+  `docs/acceptance/ten-owner-gate.md` and
+  `docs/acceptance/twenty-owner-gate.md`;
+- durable `build/main/models` and `build/dev/models` contain the accepted owners.
 
-The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the A/B authority until remaining model and documentation parity is demonstrated.
+Model-local SolidCraft visual verification has also been restored on `dev`.
+The 16 accepted visual-policy owners produce current native per-view evidence
+from `model.sc`; Pages must present that evidence rather than substitute STL
+previews.
 
-## Now — #31 Pages and documentation parity
+The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the
+A/B authority until model and documentation parity is complete.
 
-Historical stable Pages is the acceptance authority for the public documentation surface.
+## Now — #40 complete remaining model graph
 
-Recorded historical route inventory:
-- 4 Examples;
-- 48 Verification routes, including special `coverage`, `joint-anatomy` and `results`;
-- 9 Guide chapters;
-- 44 API Reference routes;
-- Cheatsheet;
-- API design contract.
+The remaining 26 historical physical owners are migrated on the #40 work
+branch, bringing the candidate repository to 46 physical owners including
+NEW's `native-revolve` qualification owner.
 
-Completed on `dev`:
-- source-owned `docs/reference/solidcraft` restored for SolidCraft 0.42.0, 0.45.0 and 0.48.1;
-- reference documentation is projected into Hugo/Hextra from `docs/reference/**`.
+Candidate structure:
+- 36 multi-engine owners: SCPF primary plus the four historically real
+  reference implementations, with native, geometry and visual verification;
+- 10 intentionally SCPF-only owners, including the specialist exploded-view
+  and native sheet-metal contracts;
+- 36 model-local approved visual policies;
+- `components` is one physical owner with
+  `purpose: [example, verification]`, restoring the fourth historical
+  Example without duplicating ownership.
 
-Active work:
-1. restore the authored 9-chapter Guide and Cheatsheet through source-owned `docs/` plus Hugo projection;
-2. restore the generated public SCPF API Reference without reviving the retired OLD site generator;
-3. migrate `components` as one physical owner with `purpose: [example, verification]` to restore the fourth historical Example;
-4. restore/replace the three special Verification routes using current durable evidence;
-5. restore model-local visual verification (#38) for all sixteen migrated owners that historically owned approved per-view policies; simple-box passed the first end-to-end gate and the sixteen-owner candidate is under qualification;
-6. record explicit OLD-vs-NEW Pages route/content acceptance before closing #31.
+Remaining #40 work:
+1. qualify all 26 newly migrated owners and the complete 46-owner discovery
+   contract;
+2. fix any migration-exposed public Forge API regression in `cadlib/scpf`,
+   never with model-local workarounds;
+3. record the remaining-graph OLD-vs-NEW acceptance evidence;
+4. squash the accepted work branch to `dev`;
+5. verify durable `build/dev/models` contains all 46 owners and that the four
+   example-purpose owners are projected correctly.
 
-## Next — remaining model graph
+## Next — #31 Pages and documentation parity
 
-Continue controlled owner slices using the historical functional groups:
-1. parameters and dependencies;
-2. components and occurrences;
-3. anchors and local frames;
-4. associative relationships;
-5. remaining sheet-metal owners.
+Historical stable Pages remains the acceptance authority.
 
-Keep one physical owner per model, SCPF primary, and preserve only historically real reference implementations.
+Required public parity includes:
+- four Examples;
+- Verification for the migrated owner graph plus the historical special
+  verification routes;
+- the authored Guide;
+- generated SCPF API Reference;
+- Cheatsheet and API design contract;
+- retained versioned SolidCraft reference documentation.
+
+The reusable visual foundation is being corrected first in
+`template.cad.library`. Forge should adopt that accepted foundation rather
+than invent a parallel site design. Forge-specific Guide/API/Cheatsheet content
+remains owned here.
 
 ## Later
 
 1. qualify NEW release/version mechanics;
-2. retire duplicated historical orchestration only after all real consumers and public documentation have equivalent coverage.
+2. retire duplicated historical orchestration only after all real consumers
+   and public documentation have equivalent coverage.
