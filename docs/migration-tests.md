@@ -19,3 +19,14 @@ When a referenced historical fixture becomes a physical owner under `models/`, r
 Known historical fixture names include `corner-anchor`, `parametric-attach`, `components`, `xz-anchor`, `anchored-holes`, `plate`, `bracket`, `model_authoring`, `slot-family` and `attached-through-all`.
 
 Do not bulk-import these to make CI green. The rollout remains 1 -> 5 -> 10 -> remaining graph.
+
+
+## Recovered at the five-owner gate
+
+The fixture-dependent assertions below are no longer deferred:
+
+- the `parametric-attach` fixture assertion from historical `test_assembly_attachments.py` is covered by `models/parametric-attach/tests/test_contract.py`;
+- the `anchored-holes` fixture assertion from historical `test_geometry_features.py` is covered (and strengthened) by `models/anchored-holes/tests/test_contract.py`;
+- the historical `simple-box`, `primitive-csg`, `assembly-decorator` and selected model-specific command contracts live under their physical owners.
+
+The remainder of the listed historical test files stays deferred where it does not belong to one of the five migrated physical owners.

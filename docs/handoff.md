@@ -21,6 +21,8 @@ Issues #6 and #14 are closed. Do not reopen engine-specific sibling owners.
 
 ## Active work — #16
 
+PR #19 has a fully green five-owner candidate at `5939c926957446b73e3669941acff9b9d44ecc63` (CI `45441165279`). `docs/acceptance/five-owner-gate.md` records OLD vs NEW command/native/saved-design/geometry evidence. The next action is integration: merge PR #19 to `dev`, verify durable `build/dev/models` for all five owners and confirm Pages exposes only `simple-box` and `anchored-holes` before opening the 10-owner gate.
+
 Move from one accepted owner to five total:
 
 1. `simple-box` — already accepted;

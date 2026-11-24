@@ -22,6 +22,8 @@ The historical Forge repository remains the known-good A/B source.
 
 ## Now — #16 five-owner gate
 
+Candidate PR #19 is technically qualified by CI run `45441165279` at `5939c926957446b73e3669941acff9b9d44ecc63`. See `docs/acceptance/five-owner-gate.md` for retained OLD vs NEW evidence. Remaining gate work is integration publication on `dev` and Pages verification.
+
 Qualify **five total physical model owners** before expanding further.
 
 Already accepted:
