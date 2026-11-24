@@ -13,6 +13,7 @@ modules/
   verification/             local generic cad_verification
   preview/                  deterministic presentation rendering
   build/                    durable generated-output publication
+  release/                  stable release-evidence qualification
   pages/                    Hugo projection/publication
 site/                       Hugo/Hextra source
 docs/                       repository contract and migration record
@@ -82,6 +83,8 @@ Pages reads the durable scope and links generated files on the build branch. Gen
 
 Workflow roles follow `template.cad.library`: pull requests run only the central `ci` qualification job; permanent `dev`/`main` events run one `build` job that executes selected project work and publishes the durable scope. After publication that build dispatches the independent `pages.yml` workflow and finishes without waiting for Pages.
 
+The schema-2 `build-plan.json` also records whether the independent `cadlib` owner was selected and qualified. Stable release qualification requires `library: true`, a full build, all active owners selected, and owner-local successful evidence whose source provenance matches the exact release commit.
+
 ## Pages projection
 
 `models/<id>/` remains the single physical owner. Pages creates views from that owner according to `model.yml.purpose`:
@@ -122,3 +125,28 @@ Before moving historical code, classify it as:
 - **obsolete orchestration/duplication** → remove after parity.
 
 Expand migration only after accepted A/B evidence: 1 → 5 → 10 → remaining graph.
+
+## Release boundary
+
+Forge consumes the generic library release boundary from
+`template.cad.library`.
+
+`modules/release` is a pure stable-evidence reader. It validates the exact
+requested `build/main` scope and never creates tags, releases or Pages output.
+
+`.github/workflows/release.yml` is a thin issue-comment adapter. It uses the
+released `tool.py.lib.ci v0.2.1` parser, checks the exact stable durable
+evidence through `modules/release`, and then delegates annotated-tag and GitHub
+Release publication to that released reusable workflow.
+
+Forge-specific release metadata remains consumer-owned in
+`cadlib/release.py`: package version, dated changelog section, active
+release-blockers and `TESTED_SOLIDCRAFT_VERSION`. The validator emits release
+notes but owns no generic build, tag or GitHub Release mechanics.
+
+The checked-in package version `0.15.0` is the immutable historical migration
+baseline. Forge NEW intentionally rejects release requests at or below that
+version. A first actual NEW release requires an explicit version bump and dated
+changelog section.
+
+Pages and `gh-pages` are not release evidence.

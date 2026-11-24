@@ -38,7 +38,11 @@
 2. Migrate one physical model end-to-end, then five, then ten, before enabling the remaining graph.
 3. Do not delete the historical external verification repository until all real consumers have migrated.
 4. Do not copy historical scripts, builders or site code merely because they exist. Re-home only behavior with a real owner.
-5. Release behavior remains separate from early model migration.
+5. Release behavior remains separate from model migration and Pages.
+6. A release requires exact full stable `build/main` evidence for the requested source, explicit library qualification, all active model owners selected, and matching successful model provenance.
+7. Release publication is explicit and owner-issued through `/release vX.Y.Z <40-character-main-sha>`; Forge must not create tags or GitHub Releases from normal CI.
+8. Generic release publication is delegated to released `tool.py.lib.ci`; Forge owns only package/changelog/blocker/SolidCraft metadata validation.
+9. The migrated `0.15.0` package version is not a NEW release. The first actual NEW release must use a version newer than `0.15.0`.
 
 ## Documentation
 
