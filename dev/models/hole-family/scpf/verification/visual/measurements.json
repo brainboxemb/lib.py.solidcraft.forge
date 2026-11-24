@@ -1,0 +1,139 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 14267.73517503237,
+      "bbox": {
+        "max": [
+          60.0,
+          20.0,
+          12.000000000000009
+        ],
+        "min": [
+          -60.0,
+          -20.0,
+          -1.7763568394002635e-15
+        ]
+      },
+      "center_of_mass": [
+        0.11487967342654275,
+        -0.00001654166568248243,
+        5.964942879337093
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 184,
+      "face_types": {
+        "cone": 1,
+        "cylinder": 6,
+        "other": 53,
+        "plane": 7
+      },
+      "faces": 67,
+      "kernel": {
+        "edges": 236,
+        "faces": 97,
+        "shells": 1,
+        "vertices": 142
+      },
+      "mass_g": 72.05634946035617,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "HoleFamily",
+      "notes": [],
+      "vertices": 120,
+      "volume_mm3": 55857.635240586176
+    }
+  ],
+  "body_count": 1,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "120",
+      "model": false,
+      "name": "width",
+      "unit": "mm",
+      "value": 120.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "40",
+      "model": false,
+      "name": "depth",
+      "unit": "mm",
+      "value": 40.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "12",
+      "model": false,
+      "name": "thickness",
+      "unit": "mm",
+      "value": 12.0
+    }
+  ],
+  "sketches": [],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 2.8027170000000003,
+      "name": "Box1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 19.465494,
+      "name": "Hole1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "HoleFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 38.921580999999996,
+      "name": "Hole2",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "HoleFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 4,
+      "ms": 74.328008,
+      "name": "Hole3",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "HoleFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 5,
+      "ms": 2722.982645,
+      "name": "Hole4",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "HoleFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 14267.73517503237,
+    "edges": 184,
+    "faces": 67,
+    "mass_g": 72.05634946035617,
+    "open_bodies_skipped": 0,
+    "vertices": 120,
+    "volume_mm3": 55857.635240586176
+  }
+}
