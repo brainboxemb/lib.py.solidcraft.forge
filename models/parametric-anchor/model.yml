@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: anchors
+priority: 10
+title: Face anchor follows parent geometry
+tagline: RIGHT-to-LEFT attachment follows an editable parent width
+description: >
+  A Block attached to the Base RIGHT face remains tied to native parent topology when the parent width changes.
+parameters: Base width 40 mm; Base depth 30 mm; Block 20 × 20 × 10 mm
+stages:
+  - Create the parameterized Base
+  - Attach Block from Base RIGHT to child LEFT
+  - Keep the face anchor associative to parent width

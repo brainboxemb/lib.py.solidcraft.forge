@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: anchors
+priority: 30
+title: Explicit topology pick follows parent resize
+tagline: A fixed baseline topology pick remains attached to the selected corner
+description: >
+  An explicit AnchorTopology identifies one baseline edge/face/corner selection and SolidCraft retains that topology when the parent dimensions change.
+parameters: Board 40 × 20 × 20 mm; Marker 10 mm cube
+stages:
+  - Create the parameterized Board
+  - Publish one named AnchorTopology selection
+  - Attach the Marker through the named topology reference

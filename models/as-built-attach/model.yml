@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: components
+priority: 50
+title: As-built rigid relationship preserves pose
+tagline: A pre-positioned child keeps its authored pose when a rigid as-built relationship is recorded
+description: >
+  Base and Marker keep their already authored occurrence poses while SolidCraft records a native rigid as-built relationship between them.
+parameters: Base 40 × 30 × 10 mm; Marker 30 × 10 × 8 mm at X=50, Y=20, Z=15 and Z rotation 90°
+stages:
+  - Create reusable Base and Marker components
+  - Move Marker to its authored translated and rotated pose
+  - Record a rigid as-built relationship without re-solving the pose
