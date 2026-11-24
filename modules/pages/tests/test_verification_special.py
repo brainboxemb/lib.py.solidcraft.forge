@@ -74,7 +74,7 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
 
             anatomy = (site / 'content/verification/joint-anatomy/index.md').read_text(encoding='utf-8')
             self.assertIn('## Concept', anatomy)
-            self.assertIn('**4 brackets**\\nOne bracket.', anatomy)
+            self.assertIn('**4 brackets**\nOne bracket.', anatomy)
             self.assertIn('### Diagram', anatomy)
             self.assertIn('[![Example diagram](example.svg)](example.svg)', anatomy)
             self.assertNotIn('    **4 brackets**', anatomy)
