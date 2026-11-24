@@ -1,52 +1,85 @@
-# Handoff
+# Forge NEW handoff
 
-Continue in `brainboxemb/lib.py.solidcraft.forge.NEW`.
+Repository: `brainboxemb/lib.py.solidcraft.forge.NEW`.
 
-Read `AGENTS.md`, `docs/requirements.md`, `docs/design.md` and `docs/plan.md` first.
+This document is the easy-to-find handoff entrypoint for a new work session.
+It contains one copyable handoff message below.
 
-## Accepted baseline
+The handoff message is deliberately an entrypoint, not a second repository
+plan. Current work must always be derived from live GitHub state and
+`docs/plan.md`.
 
-The ten-owner migration gate is accepted and promoted on `main@378b5051cc2accc98e4774af3189d377be52ab1c`.
-
-Accepted physical owners:
-- `simple-box`;
-- `primitive-csg`;
-- `anchored-holes`;
-- `assembly-decorator`;
-- `parametric-attach`;
-- `corner-anchor`;
-- `rectangular-pattern`;
-- `rotated-sketch-cutter`;
-- `slot-family`;
-- `sheet-fold`.
-
-All owner-local command contracts pass. All 10 native SCPF stages and all 45 applicable geometry stages pass. Historical saved-design/inspection behavior and SCPF multi-phase replay semantics are retained. A/B evidence is recorded in `docs/acceptance/five-owner-gate.md` and `docs/acceptance/ten-owner-gate.md`.
-
-Permanent `build/main/models` and `build/dev/models` output exists for all ten owners.
-
-Pages uses `model.yml.purpose` as a presentation projection, not as a visibility filter:
-- Examples contains `simple-box`, `anchored-holes` and `corner-anchor`;
-- Verification contains all ten owners;
-- an owner with `[example, verification]` appears in both views while remaining one physical owner;
-- generated CAD artifacts remain on `build`, not `gh-pages`.
-
-## Active work — #29
-
-The twenty-owner candidate is technically accepted:
-- candidate source: `553033bdd2ccf0e5612e8f12d2a95c51a51ec462`;
-- CI run: **45456265226**;
-- qualification artifact: **14950656646**;
-- evidence: `docs/acceptance/twenty-owner-gate.md`.
-
-PR #30 adds the ten remaining owners from historical Basic geometry and Parent/child features and faces. The migration also restores the historical public `Sketch.revolve()` SCPF contract in `cadlib/scpf`; do not replace this with a model workaround.
-
-Remaining #29 work:
-- squash PR #30 to `dev`;
-- verify all twenty durable owners and the purpose-driven Pages projection;
-- promote `dev -> main` only after the full promotion gate passes;
-- use a merge commit for that promotion;
-- close #29 only after stable post-merge CI/build/Pages/deployment pass.
+Shared SolidCraft/CAD documentation conventions live in
+`brainboxemb/meta.cad.solidcraft`. Use `templates/docs/plan.md` and
+`templates/docs/handoff.md` there as structural references.
 
 ## Handoff message
 
-> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from issue #29 / PR #30. The twenty-owner candidate is qualified at `553033bdd2ccf0e5612e8f12d2a95c51a51ec462` by CI `45456265226`; see `docs/acceptance/twenty-owner-gate.md`. Finish the integration gate: squash PR #30 to dev, verify `build/dev/models` has all twenty owners and Pages has exactly three Examples plus all twenty Verification entries, then run the full dev-to-main promotion and merge it with a merge commit. Close #29 only after stable post-merge CI/build/Pages/deployment pass.
+Copy the complete text block below into a new chat.
+
+~~~text
+You are continuing work on brainboxemb/lib.py.solidcraft.forge.NEW.
+
+Repository role:
+
+- this repository is the clean Forge migration target and owns the public
+  `scpf` package under `cadlib/`;
+- `models/<id>/` is the single physical CAD owner boundary, with multiple
+  engine implementations kept inside that owner when historically real;
+- generic CAD-CI, verification, runtime/container and product-model concerns
+  remain in their owning repositories rather than being reimplemented here.
+
+Use this handoff only as the entrypoint. Do not treat copied handoff text as
+fresher than GitHub or the repository plan.
+
+Start by:
+
+1. inspecting the current issues, pull requests and branches;
+2. reading AGENTS.md;
+3. reading docs/plan.md;
+4. treating docs/plan.md as the source of truth for unfinished work;
+5. reading docs/requirements.md and docs/design.md before changing behavior or
+   architecture;
+6. following the current work order from the plan rather than from old handoff
+   text;
+7. creating an issue before implementation when the logical change has none;
+8. keeping one logical change to one issue, branch and PR;
+9. updating requirements/design documentation when behavior or architecture
+   changes;
+10. reconciling the plan after merge or release.
+
+Durable working rules:
+
+- preserve the public `scpf` import/package contract and fix lost Forge API
+  behavior in `cadlib/scpf` rather than with model-local workarounds;
+- keep one physical owner per model and use `model.yml.purpose` only as a
+  presentation projection for `example`, `verification`, or both;
+- generated CAD artifacts remain on `build/<scope>/models/**`; Pages reads
+  durable evidence and must not duplicate generated CAD artifacts into
+  `gh-pages`;
+- use `main` for stable integration and `dev` for normal integration;
+  squash short-lived work branches into `dev`, and promote `dev -> main`
+  with a merge commit;
+- preserve the two released CAD runtime roles, `reference` and `solidcraft`,
+  unless a separately qualified change updates that contract;
+- use the historical Forge repository as the A/B migration reference until the
+  relevant model, API or documentation parity has been demonstrated;
+- do not copy retired historical orchestration or site machinery when the
+  corrected template/module architecture already owns that responsibility.
+
+Shared document structures live in brainboxemb/meta.cad.solidcraft:
+templates/docs/plan.md and templates/docs/handoff.md.
+
+Do not copy exact current SHAs, runtime/release pins, active issue/PR status,
+temporary migration phases or a short-lived "next actions" list into this
+handoff. Those facts belong in GitHub and docs/plan.md.
+~~~
+
+## Maintenance guidance
+
+The text block above is the actual handoff message.
+
+Everything outside that block only explains how to use or maintain the
+document. Keep repository-specific durable role and ownership guidance in the
+block when it helps route work correctly. Do not turn the handoff into a status
+snapshot.
