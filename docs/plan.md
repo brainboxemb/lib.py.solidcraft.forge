@@ -24,7 +24,11 @@ The accepted migration baseline now has:
 The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the
 A/B authority until documentation and public-route parity is accepted.
 
-## Now — #31 final integration
+## Now
+
+- #45: adopt the mandatory local `/merge` execution rule already accepted in the model-project, CAD NEW and library-template baselines.
+
+## #31 final integration
 
 PR #34 has been squash-merged into `dev`. It delivered:
 - historical nine-chapter Guide and Cheatsheet projections;
