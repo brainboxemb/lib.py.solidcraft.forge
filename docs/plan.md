@@ -4,7 +4,7 @@ This file contains unfinished work only.
 
 ## Accepted baseline
 
-The ten-owner migration gate is accepted and promoted on `main@378b5051cc2accc98e4774af3189d377be52ab1c`.
+The twenty-owner migration gate is accepted and promoted on `main@87ba6e3b535f4b93f65d519e7694688473bc8b96`.
 
 Accepted physical owners:
 1. `simple-box`;
@@ -16,42 +16,66 @@ Accepted physical owners:
 7. `rectangular-pattern`;
 8. `rotated-sketch-cutter`;
 9. `slot-family`;
-10. `sheet-fold`.
+10. `sheet-fold`;
+11. `round-top-sketch`;
+12. `native-revolve`;
+13. `circle-negative-extrude`;
+14. `bracket`;
+15. `hole-family`;
+16. `top-sketch-after-chamfer`;
+17. `circular-feature-pattern`;
+18. `rounded-rectangle-sketch`;
+19. `attached-through-all`;
+20. `cone-boolean`;
 
 For the baseline:
 - SCPF is primary per owner;
 - historical reference implementations are local implementations only where they existed;
-- owner-local command contracts pass;
-- all 10 native SCPF stages pass;
-- all 45 applicable geometry stages pass;
+- all 20 native SCPF stages pass;
+- all 80 applicable geometry stages pass;
 - historical saved-design and inspection behavior is retained;
-- SCPF replay semantics remain consumer-owned through `scpf.headless.run_document()`;
-- OLD vs NEW evidence is recorded in `docs/acceptance/five-owner-gate.md` and `docs/acceptance/ten-owner-gate.md`;
-- `build/main/models` and `build/dev/models` contain all ten owners;
-- Pages projects owners by purpose without creating duplicate owners: Examples contains `simple-box`, `anchored-holes` and `corner-anchor`; Verification contains all ten owners.
+- the historical public `Sketch.revolve()` contract is restored in `cadlib/scpf`;
+- OLD vs NEW evidence is recorded in `docs/acceptance/five-owner-gate.md`, `docs/acceptance/ten-owner-gate.md` and `docs/acceptance/twenty-owner-gate.md`;
+- `build/main/models` and `build/dev/models` contain all twenty owners;
+- stable Pages projects the currently migrated example-purpose owners `simple-box`, `anchored-holes` and `corner-anchor`, and all twenty owners appear under Verification.
 
-The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the A/B authority until remaining-graph parity is demonstrated.
+The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the A/B authority until remaining model and documentation parity is demonstrated.
 
-## Now — #29 core feature slice
+## Now — #31 Pages and documentation parity
 
-The twenty-owner candidate is technically accepted on `553033bdd2ccf0e5612e8f12d2a95c51a51ec462` by CI run **45456265226** with qualification artifact **14950656646**. OLD vs NEW evidence is recorded in `docs/acceptance/twenty-owner-gate.md`.
+Historical stable Pages is the acceptance authority for the public documentation surface.
 
-The ten added owners are:
-- basic geometry: `round-top-sketch`, `native-revolve`, `circle-negative-extrude`, `bracket`;
-- parent/child features and faces: `hole-family`, `top-sketch-after-chamfer`, `circular-feature-pattern`, `rounded-rectangle-sketch`, `attached-through-all`, `cone-boolean`.
+Recorded historical route inventory:
+- 4 Examples;
+- 48 Verification routes, including special `coverage`, `joint-anatomy` and `results`;
+- 9 Guide chapters;
+- 44 API Reference routes;
+- Cheatsheet;
+- API design contract.
 
-All ten remain `purpose: verification`. `native-revolve`, `attached-through-all` and `cone-boolean` are intentionally SCPF-only; the other seven retain all four historical reference implementations.
+Completed on `dev`:
+- source-owned `docs/reference/solidcraft` restored for SolidCraft 0.42.0, 0.45.0 and 0.48.1;
+- reference documentation is projected into Hugo/Hextra from `docs/reference/**`.
 
-The candidate restored the historical public `Sketch.revolve()` contract in `cadlib/scpf` because the migration exposed that NEW had lost it. No model-local workaround was introduced.
+Active work:
+1. restore the authored 9-chapter Guide and Cheatsheet through source-owned `docs/` plus Hugo projection;
+2. restore the generated public SCPF API Reference without reviving the retired OLD site generator;
+3. migrate `components` as one physical owner with `purpose: [example, verification]` to restore the fourth historical Example;
+4. restore/replace the three special Verification routes using current durable evidence;
+5. record explicit OLD-vs-NEW Pages route/content acceptance before closing #31.
 
-Remaining work for #29 is integration acceptance only: squash PR #30 to `dev`, verify durable build and Pages output for twenty owners, then complete a full `dev -> main` promotion with a merge commit and stable post-merge checks.
+## Next — remaining model graph
 
-## After #29
+Continue controlled owner slices using the historical functional groups:
+1. parameters and dependencies;
+2. components and occurrences;
+3. anchors and local frames;
+4. associative relationships;
+5. remaining sheet-metal owners.
 
-Continue the remaining graph by the historical functional groups: parameters/dependencies, components/occurrences, anchors/local frames, associative relationships, then sheet metal.
+Keep one physical owner per model, SCPF primary, and preserve only historically real reference implementations.
 
 ## Later
 
-1. migrate remaining API/guide/reference documentation;
-2. qualify NEW release/version mechanics;
-3. retire duplicated historical orchestration only after all real consumers have equivalent coverage.
+1. qualify NEW release/version mechanics;
+2. retire duplicated historical orchestration only after all real consumers and public documentation have equivalent coverage.

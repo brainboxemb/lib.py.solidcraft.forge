@@ -6,47 +6,52 @@ Read `AGENTS.md`, `docs/requirements.md`, `docs/design.md` and `docs/plan.md` fi
 
 ## Accepted baseline
 
-The ten-owner migration gate is accepted and promoted on `main@378b5051cc2accc98e4774af3189d377be52ab1c`.
+The twenty-owner gate is accepted and promoted on `main@87ba6e3b535f4b93f65d519e7694688473bc8b96`.
 
-Accepted physical owners:
-- `simple-box`;
-- `primitive-csg`;
-- `anchored-holes`;
-- `assembly-decorator`;
-- `parametric-attach`;
-- `corner-anchor`;
-- `rectangular-pattern`;
-- `rotated-sketch-cutter`;
-- `slot-family`;
-- `sheet-fold`.
+All 20 native SCPF stages and all 80 applicable geometry stages pass. Historical saved-design/inspection behavior is retained, and the historical public `Sketch.revolve()` API was restored in `cadlib/scpf`.
 
-All owner-local command contracts pass. All 10 native SCPF stages and all 45 applicable geometry stages pass. Historical saved-design/inspection behavior and SCPF multi-phase replay semantics are retained. A/B evidence is recorded in `docs/acceptance/five-owner-gate.md` and `docs/acceptance/ten-owner-gate.md`.
+A/B evidence is recorded in:
+- `docs/acceptance/five-owner-gate.md`;
+- `docs/acceptance/ten-owner-gate.md`;
+- `docs/acceptance/twenty-owner-gate.md`.
 
-Permanent `build/main/models` and `build/dev/models` output exists for all ten owners.
+Stable generated output:
+- `build/main/models` contains all twenty accepted owners;
+- stable Examples currently contains `simple-box`, `anchored-holes` and `corner-anchor`;
+- stable Verification contains all twenty owners.
 
-Pages uses `model.yml.purpose` as a presentation projection, not as a visibility filter:
-- Examples contains `simple-box`, `anchored-holes` and `corner-anchor`;
-- Verification contains all ten owners;
-- an owner with `[example, verification]` appears in both views while remaining one physical owner;
-- generated CAD artifacts remain on `build`, not `gh-pages`.
+Issue #29 is complete and closed.
 
-## Active work — #29
+## Active work — #31 Pages/documentation parity
 
-The twenty-owner candidate is technically accepted:
-- candidate source: `553033bdd2ccf0e5612e8f12d2a95c51a51ec462`;
-- CI run: **45456265226**;
-- qualification artifact: **14950656646**;
-- evidence: `docs/acceptance/twenty-owner-gate.md`.
+The historical Forge site is the public-content A/B authority.
 
-PR #30 adds the ten remaining owners from historical Basic geometry and Parent/child features and faces. The migration also restores the historical public `Sketch.revolve()` SCPF contract in `cadlib/scpf`; do not replace this with a model workaround.
+Historical stable route inventory:
+- 4 Examples;
+- 48 Verification routes total;
+- 9 Guide chapters;
+- 44 API Reference routes;
+- Cheatsheet;
+- API design contract.
 
-Remaining #29 work:
-- squash PR #30 to `dev`;
-- verify all twenty durable owners and the purpose-driven Pages projection;
-- promote `dev -> main` only after the full promotion gate passes;
-- use a merge commit for that promotion;
-- close #29 only after stable post-merge CI/build/Pages/deployment pass.
+The first #31 slice is already squash-merged to `dev` as `c6b9c9a55f35c8cc739be48b310ce0003dc40487`:
+- `docs/reference/solidcraft` is restored for 0.42.0, 0.45.0 and 0.48.1;
+- Pages projects `docs/reference/**` into Hugo rather than owning duplicate documentation.
+
+Current branch/PR work:
+- `issue/31-guide-cheatsheet`;
+- draft PR #34;
+- restores all 9 authored Guide chapters plus the Cheatsheet under source-owned `docs/`;
+- projects them to `/guide/**` and `/cheatsheet/`.
+
+Still required under #31:
+- generated public API Reference parity (44 historical routes);
+- migrate `components` with `purpose: [example, verification]` so Examples returns to the historical four;
+- special Verification routes `coverage`, `joint-anatomy`, `results`;
+- final route/content acceptance against OLD Pages.
+
+Do not copy the retired OLD site generator wholesale. Re-home authored information under normal documentation owners and let Hugo/Pages project it. Generated CAD evidence stays on `build`.
 
 ## Handoff message
 
-> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from issue #29 / PR #30. The twenty-owner candidate is qualified at `553033bdd2ccf0e5612e8f12d2a95c51a51ec462` by CI `45456265226`; see `docs/acceptance/twenty-owner-gate.md`. Finish the integration gate: squash PR #30 to dev, verify `build/dev/models` has all twenty owners and Pages has exactly three Examples plus all twenty Verification entries, then run the full dev-to-main promotion and merge it with a merge commit. Close #29 only after stable post-merge CI/build/Pages/deployment pass.
+> Continue `brainboxemb/lib.py.solidcraft.forge.NEW` from issue #31. The twenty-owner model baseline is stable on `main@87ba6e3b535f4b93f65d519e7694688473bc8b96`; issue #29 is closed. The first Pages/reference slice is on dev at `c6b9c9a55f35c8cc739be48b310ce0003dc40487`. Continue draft PR #34 for the 9 Guide chapters and Cheatsheet, then restore the 44-route SCPF API Reference, migrate the historical `components` example/verification owner, and restore the special Verification routes. Use OLD stable Pages as the A/B authority.
