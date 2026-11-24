@@ -26,7 +26,7 @@ A/B authority until documentation and public-route parity is accepted.
 
 ## Now
 
-- #45: adopt the mandatory local `/merge` execution rule already accepted in the model-project, CAD NEW and library-template baselines.
+- #47: align Forge CI/build/Pages workflow roles with the accepted `template.cad.library` / CAD NEW split.
 
 ## #31 final integration
 

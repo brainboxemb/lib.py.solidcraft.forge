@@ -53,6 +53,8 @@ Keep generic mechanics in their owning modules:
 
 Central CI schedules model owners, implementations and runtime roles but must not contain engine-specific branches.
 
+Pull requests run central `ci` only. Permanent `dev`/`main` events run one `build` job that performs qualification and durable publication, then dispatches the independent Pages workflow without waiting for it. Do not reintroduce separate permanent-branch `publish-build` or `dispatch-pages` jobs inside CI.
+
 ## Runtime policy
 
 Preserve exactly two released CAD runtime roles:
