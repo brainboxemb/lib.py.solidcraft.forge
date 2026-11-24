@@ -1,6 +1,6 @@
-# Ten-owner migration gate — candidate acceptance
+# Ten-owner migration gate — accepted
 
-This record extends the accepted five-owner baseline with five additional historical Forge owners. NEW candidate run **45445906212** at source **bcee6f2f9eab9e7429a06f5a219ae3e045fa87ba** is green. Candidate artifact: **14946042553** (`cad-qualification`).
+This record extends the accepted five-owner baseline with five additional historical Forge owners. The candidate was qualified by run **45445906212** at source **bcee6f2f9eab9e7429a06f5a219ae3e045fa87ba** with artifact **14946042553** (`cad-qualification`). The completed ten-owner baseline is promoted on `main@378b5051cc2accc98e4774af3189d377be52ab1c`.
 
 Historical authority: `brainboxemb/lib.py.solidcraft.forge` generated branch `build`, scope `dev-cad/examples/<id>/`. All corresponding OLD items report `status: pass`.
 
@@ -108,13 +108,20 @@ The ten-owner candidate contains:
 
 All **45 applicable geometry stages pass** in `cad-reference:v0.3.5`. No artificial geometry/reference stage is created for the SCPF-only owner.
 
-## Remaining integration acceptance
+## Integration acceptance
 
-The candidate is accepted for integration. The ten-owner gate is complete only after:
-1. PR #24 is squash-merged to `dev`;
-2. permanent `build/dev/models` contains all ten owners;
-3. Pages publishes exactly three Examples entries (`simple-box`, `anchored-holes`, `corner-anchor`) and all ten owners under Verification; owners with both purposes appear in both views;
-4. post-merge dev CI/Pages are green;
-5. the ten-owner baseline survives a full `dev -> main` promotion.
+The ten-owner gate is complete.
 
-Do not start remaining-graph migration before these checks are complete.
+- PR #24 was squash-merged to `dev` as `8f28cbb46acd894554a2152611aec5d161a9ab38`.
+- The Pages purpose-projection correction was squash-merged by PR #25 as `25b5dada0ee6d9ffc1cb929ed6ade4be378605d0`.
+- Post-fix dev CI **45449769354** passed and published `build/dev/models` for all ten physical owners.
+- Dev Pages assembly **45449868675** passed; `gh-pages@20dd064a44af18944b18bce45f435347e78b4a7a` contained exactly three Examples entries and all ten Verification entries. Deployment **45449908259** passed.
+- Promotion PR #26 passed full CI **45450104356** and Pages verification **45450104458**, then merged `dev -> main` with merge commit `378b5051cc2accc98e4774af3189d377be52ab1c`.
+- Post-merge main CI **45450490783** passed and published `build/main/models` for all ten owners at build commit `17148981f563ce32ce63b4aad16206218f08cef8`.
+- Main Pages assembly **45450816005** passed and published `gh-pages@30318850390e7c1381b8d497c46b9a23a90697a2`; deployment **45450873884** passed.
+- Stable and development Pages both contain exactly:
+  - Examples: `simple-box`, `anchored-holes`, `corner-anchor`;
+  - Verification: all ten owners.
+- The obsolete flattened `/models` and `/dev/models` Pages routes are absent. Generated CAD artifacts remain on the `build` branch.
+
+The remaining model graph may now be migrated using this ten-owner baseline.
