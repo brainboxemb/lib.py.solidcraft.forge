@@ -163,19 +163,6 @@ def _joint_anatomy_page(source_root: Path, site: Path) -> None:
     html = html.replace("$source_sha", "current source")
     html = html.replace("$diagram_raw_base/", "")
     html = html.replace("$diagram_blob_base/", "")
-    html = html.replace("<h3>", "<h2>").replace("</h3>", "</h2>")
-    html = re.sub(r"<br\s*/?>", "\n", html, flags=re.IGNORECASE)
-
-    def image(match):
-        src, alt = match.group(1), match.group(2)
-        return f"<p>![{alt}]({src})</p>"
-
-    html = re.sub(
-        r'<img\s+src="([^"]+)"\s+alt="([^"]*)"\s*/?>',
-        image,
-        html,
-        flags=re.IGNORECASE,
-    )
     target = site / "content" / "verification" / "joint-anatomy" / "index.md"
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(

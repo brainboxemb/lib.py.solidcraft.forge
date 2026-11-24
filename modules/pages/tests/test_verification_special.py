@@ -29,7 +29,13 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
             (joint / 'body.html').write_text(
                 '<main><section class="hero"><h1>Old title</h1></section>'
                 '<section class="panel"><h2>Concept</h2><p>Body.</p>'
-                '<img src="$diagram_raw_base/example.svg" alt="Example diagram">'
+                '<div class="concept-steps">\n'
+                '    <div><strong>4 brackets</strong><br>One bracket.</div>\n'
+                '</div>'
+                '<h3>Diagram</h3>'
+                '<figure><a href="$diagram_raw_base/example.svg">'
+                '<img src="$diagram_raw_base/example.svg" alt="Example diagram"></a>'
+                '<figcaption>Caption.</figcaption></figure>'
                 '<p><a href="example.cadcraft.json">CadCraft source</a></p></section></main>',
                 encoding='utf-8',
             )
@@ -68,7 +74,11 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
 
             anatomy = (site / 'content/verification/joint-anatomy/index.md').read_text(encoding='utf-8')
             self.assertIn('## Concept', anatomy)
-            self.assertIn('![Example diagram](example.svg)', anatomy)
+            self.assertIn('**4 brackets**\nOne bracket.', anatomy)
+            self.assertIn('### Diagram', anatomy)
+            self.assertIn('[![Example diagram](example.svg)](example.svg)', anatomy)
+            self.assertNotIn('    **4 brackets**', anatomy)
+            self.assertNotIn('    ![Example diagram]', anatomy)
             self.assertTrue((site / 'static/verification/joint-anatomy/example.svg').is_file())
             self.assertTrue((site / 'static/verification/joint-anatomy/example.cadcraft.json').is_file())
 
