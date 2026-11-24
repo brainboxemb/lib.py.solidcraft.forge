@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -60,
+    -20,
+    0
+  ],
+  "bounds_max": [
+    60,
+    20,
+    12
+  ],
+  "bounds_tolerance_mm": 0.5,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "simple bore center",
+      "point": [
+        -45,
+        0,
+        6
+      ],
+      "distance_mm": 3,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "counterbore recess wall",
+      "point": [
+        -10.5,
+        0,
+        10
+      ],
+      "distance_mm": 1.5,
+      "tolerance_mm": 0.3
+    },
+    {
+      "label": "countersink 90 degree cone",
+      "point": [
+        18.5,
+        0,
+        10.5
+      ],
+      "distance_mm": 0.70710678,
+      "tolerance_mm": 0.35
+    },
+    {
+      "label": "M6 tap-drill core",
+      "point": [
+        45,
+        0,
+        6
+      ],
+      "distance_mm": 2.5,
+      "tolerance_mm": 0.35
+    }
+  ]
+}

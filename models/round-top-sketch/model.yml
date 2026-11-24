@@ -1,0 +1,13 @@
+schema: 1
+purpose: verification
+section: fundamentals
+priority: 20
+title: TOP Sketch on circular body
+tagline: A face-attached sketch resolves the largest +Z face of round geometry
+description: >
+  A circular base extrusion receives a second explicit Sketch on its TOP face and joins a smaller circular hub without rectangular-body metadata.
+parameters: Ø100 × 10 mm disc; Ø44 × 16 mm hub
+stages:
+  - Sketch and extrude the circular Disc
+  - Resolve the Disc TOP face
+  - Sketch and join the smaller Hub from that face

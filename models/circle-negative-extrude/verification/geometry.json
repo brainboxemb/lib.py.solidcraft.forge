@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -10,
+    -10,
+    -30
+  ],
+  "bounds_max": [
+    10,
+    10,
+    0
+  ],
+  "bounds_tolerance_mm": 0.5,
+  "volume_mm3": 9424.77796076938,
+  "volume_tolerance_mm3": 100,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "circular side outside the diagonal",
+      "point": [
+        8,
+        8,
+        -15
+      ],
+      "distance_mm": 1.3137084989847612,
+      "tolerance_mm": 0.3
+    }
+  ]
+}
