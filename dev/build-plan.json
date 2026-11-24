@@ -21,7 +21,7 @@
     "slot-family",
     "top-sketch-after-chamfer"
   ],
-  "full": true,
+  "full": false,
   "models": [
     {
       "id": "anchored-holes",
@@ -292,27 +292,6 @@
     }
   ],
   "schema": 2,
-  "selected": [
-    "anchored-holes",
-    "assembly-decorator",
-    "attached-through-all",
-    "bracket",
-    "circle-negative-extrude",
-    "circular-feature-pattern",
-    "cone-boolean",
-    "corner-anchor",
-    "hole-family",
-    "native-revolve",
-    "parametric-attach",
-    "primitive-csg",
-    "rectangular-pattern",
-    "rotated-sketch-cutter",
-    "round-top-sketch",
-    "rounded-rectangle-sketch",
-    "sheet-fold",
-    "simple-box",
-    "slot-family",
-    "top-sketch-after-chamfer"
-  ],
-  "source_sha": "4d6872fdd2cba9515aa78f8aad80050ae46fd345"
+  "selected": [],
+  "source_sha": "c6b9c9a55f35c8cc739be48b310ce0003dc40487"
 }
