@@ -12,25 +12,6 @@ from unittest import mock
 from cad_verification.adapters import solidcraft_visual
 
 
-VISUAL_POLICY_IDS = [
-    "anchored-holes",
-    "assembly-decorator",
-    "bracket",
-    "circle-negative-extrude",
-    "circular-feature-pattern",
-    "corner-anchor",
-    "hole-family",
-    "parametric-attach",
-    "primitive-csg",
-    "rectangular-pattern",
-    "round-top-sketch",
-    "rounded-rectangle-sketch",
-    "sheet-fold",
-    "simple-box",
-    "slot-family",
-    "top-sketch-after-chamfer"
-]
-
 
 class SolidCraftVisualAdapterTests(unittest.TestCase):
     def setUp(self):
@@ -81,10 +62,10 @@ class SolidCraftVisualAdapterTests(unittest.TestCase):
 
     def test_all_migrated_visual_policies_are_approved_and_supported(self):
         repo = Path(__file__).resolve().parents[3]
-        self.assertEqual(len(VISUAL_POLICY_IDS), 16)
+        paths = sorted((repo / "models").glob("*/verification/visual.json"))
+        self.assertEqual(len(paths), 36)
         feature_types = set()
-        for model_id in VISUAL_POLICY_IDS:
-            path = repo / "models" / model_id / "verification" / "visual.json"
+        for path in paths:
             policy = solidcraft_visual.load_visual_policy(path)
             self.assertEqual(policy["baseline_provenance"]["approval"], "approved")
             self.assertEqual(tuple(policy["views"]), ("front", "right", "iso"))
