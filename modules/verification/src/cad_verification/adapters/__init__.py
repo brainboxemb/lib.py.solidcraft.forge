@@ -1,0 +1,43 @@
+"""CAD-tool-specific verification adapters."""
+
+from .solidcraft import (
+    SolidCraftBodyExpectation,
+    SolidCraftBodyGroupExpectation,
+    SolidCraftInspection,
+    SolidCraftInspectionCheck,
+    SolidCraftInspectionSelect,
+    SolidCraftMeasurementChangeExpectation,
+    SolidCraftModelExpectation,
+    SolidCraftSavedDesign,
+    SolidCraftSketchExpectation,
+    SolidCraftTimelineExpectation,
+    SolidCraftVerification,
+    evaluate_solidcraft_model,
+    inspect_solidcraft_model,
+    load_solidcraft_verification,
+    mutate_solidcraft_model,
+    run_solidcraft_verification,
+    run_solidcraft_verification_file,
+    verify_solidcraft_measurements,
+)
+
+__all__ = [
+    "SolidCraftBodyExpectation",
+    "SolidCraftBodyGroupExpectation",
+    "SolidCraftInspection",
+    "SolidCraftInspectionCheck",
+    "SolidCraftInspectionSelect",
+    "SolidCraftMeasurementChangeExpectation",
+    "SolidCraftModelExpectation",
+    "SolidCraftSavedDesign",
+    "SolidCraftSketchExpectation",
+    "SolidCraftTimelineExpectation",
+    "SolidCraftVerification",
+    "evaluate_solidcraft_model",
+    "inspect_solidcraft_model",
+    "load_solidcraft_verification",
+    "mutate_solidcraft_model",
+    "run_solidcraft_verification",
+    "run_solidcraft_verification_file",
+    "verify_solidcraft_measurements",
+]
