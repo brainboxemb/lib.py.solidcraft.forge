@@ -24,31 +24,30 @@ The accepted migration baseline now has:
 The historical `brainboxemb/lib.py.solidcraft.forge` repository remains the
 A/B authority until documentation and public-route parity is accepted.
 
-## Now — #31 Pages and documentation parity
+## Now — #31 final integration
 
 PR #34 is the single remaining migration lane.
 
-Already present or accepted:
-- retained versioned SolidCraft reference documentation for 0.42.0, 0.45.0
-  and 0.48.1;
-- source-owned historical nine-chapter Guide plus Hugo projection;
-- source-owned Cheatsheet plus Hugo projection;
-- the historical SCPF API design contract;
-- the historical 44-route SCPF API Reference manifest retained as authored
-  migration data.
+Implemented and qualified on the PR branch:
+- historical nine-chapter Guide and Cheatsheet projections;
+- 44 case-sensitive public SCPF API Reference routes, statically validated
+  against `cadlib/src/scpf` without importing or executing the package;
+- the API design-contract compatibility route;
+- Verification `coverage`, `joint-anatomy` and `results` projections from
+  source declarations and durable build evidence;
+- the accepted reusable Hextra/CAD presentation foundation from
+  `template.cad.library`;
+- a fixed 63-route OLD-vs-NEW route/content gate;
+- desktop/mobile rendered-layout evidence with zero missing local assets.
 
-Current work order:
-1. restore the 44 public SCPF API Reference routes without importing or
-   executing `scpf` during Pages build; validate the retained manifest
-   statically against the current `cadlib/src/scpf` source surface;
-2. restore the special Verification routes `coverage`, `joint-anatomy` and
-   `results` from current source declarations and durable build evidence;
-3. adopt the accepted reusable presentation foundation from
-   `template.cad.library`; do not invent a parallel Forge visual foundation;
-4. record a final OLD-vs-NEW route/content gate and inspect representative
-   rendered pages before declaring migration parity;
-5. merge #34 to `dev`, verify durable Pages output, close #31, then promote
-   the accepted `dev` baseline to `main` according to repository policy.
+Remaining work:
+1. require final CI and Pages checks on the current PR head;
+2. inspect the Forge-specific documentation screenshots produced by the final
+   Pages run;
+3. squash PR #34 into `dev`;
+4. verify the post-merge durable build/Pages chain and close #31;
+5. promote the accepted `dev` baseline to `main` with the repository's
+   normal merge-commit policy.
 
 The reusable visual foundation remains template-owned. Forge-specific Guide,
 API Reference, Cheatsheet and Verification explanatory content remain owned
