@@ -1,6 +1,6 @@
 schema: 1
 branch: issue/6-simple-box
-modules: [ci, builder-scpf, builder-solidcraft]
+modules: [ci, builder-scpf, builder-solidcraft, verification, preview]
 library: true
-examples: all
+models: [simple-box]
 tasks: [test]

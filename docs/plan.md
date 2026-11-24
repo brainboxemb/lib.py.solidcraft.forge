@@ -1,55 +1,43 @@
 # Forge NEW plan
 
-This file is the source of truth for unfinished work in `lib.py.solidcraft.forge.NEW`.
+This file contains unfinished work only.
 
-## Baseline
+## Stable baseline
 
-- template architecture: `template.cad.library@f73c3e76066b16751d4bd1eb7f1c221e0f3fc3fe`;
-- old Forge is the known-good A/B source;
-- SCPF source baseline: released 0.15.0 package;
-- runtimes: `docker.cad.solidcraft v0.3.5` / SolidCraft 0.48.1.
+Current stable architecture is `main@cf8bd232065279fad69e711ce46787612fa62ad7`.
 
-## Now — bootstrap
+It contains:
+- the real `scpf` package under `cadlib/src/scpf`;
+- package-owner tests separated from model fixtures;
+- corrected `models/` physical owner structure;
+- five standard template implementations under one owner;
+- generic CAD modules/builders/verification/preview/build/Pages;
+- durable owner-grouped build output.
 
-Issue #1.
+The historical Forge repository remains the known-good A/B source.
 
-- install the complete technical template baseline;
-- migrate the real `scpf` source to `cadlib/src/scpf`;
-- migrate package-focused unit tests;
-- establish AGENTS, requirements, design, manual, plan and handoff;
-- qualify the repository on a temporary branch;
-- merge bootstrap to `dev`, then promote a full-green `dev` to `main`.
+## Now — #6 historical Forge simple-box
 
-The historical Forge repository remains unchanged.
+Draft PR #7 migrates the historical Parameterized Box into `models/simple-box/`.
 
-## Next — first real example
+Target owner:
+- primary SCPF implementation using local `cadlib/src/scpf`;
+- CadQuery, build123d, PythonSCAD and pyBOSL2 historical references;
+- historical geometry contract and model documentation;
+- package-owned direct native Box lowering assertion;
+- no engine-specific sibling owners.
 
-Create a separate issue after bootstrap. Select one small genuine Forge example from the old repository and migrate it end-to-end. Keep the old build authoritative and compare:
-- SCPF source semantics;
-- generated SolidCraft command JSON;
-- native SolidCraft output;
-- STL geometry;
-- verification result/evidence;
-- preview;
-- Hugo example page.
+The remaining acceptance item is native saved-design/parameter/timeline verification equivalent to historical `verification/verify.py`. That requires generic staged verification across `solidcraft` and `reference`, owned upstream by `template.cad.library#25`. Do not add a Forge-local scheduler workaround.
 
-Do not migrate five examples until the one-example slice is accepted.
+After upstream staged verification is qualified, add the native stage to this owner, record explicit OLD vs NEW evidence, then qualify durable build and Hugo projection.
 
-## Then
+Do not expand to five historical models until #6 is accepted.
 
-1. migrate five representative examples;
-2. migrate ten examples;
+## After #6
+
+1. migrate five representative physical models;
+2. migrate ten;
 3. classify and migrate the remaining graph;
-4. migrate API/guide/reference content into Hugo/Hextra;
-5. add release/version behavior after package and CAD parity;
-6. retire duplicated old Forge CI/site/scripts only after equivalent NEW behavior is stable;
-7. only then plan retirement of the old repository/external verification ownership.
-
-## Explicit non-goals for bootstrap
-
-- no new Forge API;
-- no runtime upgrade;
-- no release;
-- no mass example migration;
-- no edits to old Forge;
-- no attempt to preserve historical CI directory layout.
+4. migrate API/guides/reference documentation;
+5. qualify NEW release/version mechanics;
+6. retire duplicated historical orchestration only after parity.

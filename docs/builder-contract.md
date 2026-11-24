@@ -1,9 +1,30 @@
-# CAD builder qualification
+# CAD builder and model-owner contract
 
-The first example is a 40 x 30 x 10 mm CadQuery box based at Z=0. Its independently authored geometry contract checks bounds, volume and watertightness.
+Forge NEW uses the corrected `template.cad.library` ownership model.
 
-Each module declares a builder capability (runtime and Python entrypoint) or verifier capability (Python entrypoint) in its local ci.yml. An example declares its builder, source, verification module, adapter and definition. Optional needs declares additional module or cadlib dependencies. CI resolves builder and verifier runtimes independently. It topologically orders runtime roles and starts each required Docker role once. A SolidCraft example is built first in the lightweight SolidCraft role and its STL is then verified in the reference role; reference-engine examples are built and verified in that same reference container. Local source directories are mounted read-only. Build and verification adapters are resolved from module metadata, not from a central engine switch.
+A physical directory under `models/<id>/` is selected and published once. Its `ci.yml` may declare multiple implementations. Standard engine implementations remain local details of the owner.
 
-This first contract currently exports STL. The generic runtime dispatcher records build status, verification status and a batch report. A failed verification fails the batch. Outputs are written below build/qualification/examples/<id>/. Successful permanent CI publishes examples to the generated build branch, with separate main/dev scopes. A full build replaces the scope; an incremental build replaces selected examples and removes deleted owners, preserving per-example source provenance for untouched output. Hugo builds a temporary site from metadata and the corresponding published scope. PRs upload candidate evidence but do not publish to generated branches. These publication paths require integration qualification.
+The template qualification owner is `models/simple-box`. It runs CadQuery, build123d, PythonSCAD, pyBOSL2 and SolidCraft against one shared geometry expectation.
 
-Temporary branch example selection is explicit in build.yml. Dev derives example selection from changed example paths and selected dependency modules; main runs all. build123d uses its isolated interpreter inside the reference container. SolidCraft command documents produce native .sc, STL and a SolidCraft snapshot in the SolidCraft role; generic mesh verification remains in the reference role. Additional non-STL interchange formats remain builder-specific follow-up work.
+Forge-specific migrated owners add an SCPF implementation whose consumer-owned compiler produces a SolidCraft command document. That document then enters the unchanged generic SolidCraft builder. Generic builder modules never import `scpf`.
+
+Reference implementations run in the shared reference role. SolidCraft command execution runs first in the lightweight SolidCraft role and its STL is then verified in reference.
+
+Durable evidence is grouped by physical owner:
+
+```text
+build/<scope>/models/<owner>/
+  result.json
+  source.json
+  model.stl
+  model.png
+  <implementation>/
+    build.json
+    result.json
+    model.stl
+    verification/
+```
+
+The configured primary implementation supplies the canonical owner-level preview/STL. Every declared implementation must pass before the owner passes.
+
+Pages may read the durable build plan and link generated artifacts from the build branch. Generated CAD artifacts are never copied into `gh-pages`.
