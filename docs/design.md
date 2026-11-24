@@ -80,6 +80,8 @@ Owner-level canonical artifacts come from the configured primary implementation.
 
 Pages reads the durable scope and links generated files on the build branch. Generated CAD artifacts are not copied into `gh-pages`.
 
+Workflow roles follow `template.cad.library`: pull requests run only the central `ci` qualification job; permanent `dev`/`main` events run one `build` job that executes selected project work and publishes the durable scope. After publication that build dispatches the independent `pages.yml` workflow and finishes without waiting for Pages.
+
 ## Pages projection
 
 `models/<id>/` remains the single physical owner. Pages creates views from that owner according to `model.yml.purpose`:
