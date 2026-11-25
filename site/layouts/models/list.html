@@ -7,15 +7,12 @@
     <p>{{ .Description }}</p>
   </section>
   {{ $pages := .RegularPages.ByWeight }}
-  {{ $verification := false }}
-  {{ with index $pages 0 }}
-    {{ with .Params.verificationsection }}{{ $verification = true }}{{ end }}
-  {{ end }}
-  {{ if $verification }}
+  {{ $verificationModels := where $pages "Params.verificationsection" "!=" nil }}
+  {{ if gt (len $verificationModels) 0 }}
     {{ $catalog := hugo.Data.cad.verification_sections }}
     {{ range $section := index $catalog "sections" }}
       {{ $key := index $section "id" }}
-      {{ $models := where $pages "Params.verificationsection" $key }}
+      {{ $models := where $verificationModels "Params.verificationsection" $key }}
       {{ if gt (len $models) 0 }}
         <section class="cad-section cad-catalog-section" data-verification-section="{{ $key }}">
           <h2>{{ index $section "label" }}</h2>
