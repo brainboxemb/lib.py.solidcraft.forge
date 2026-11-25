@@ -145,10 +145,21 @@ def implementation_evidence(root, blob_url, raw_url, state):
         for pdf in sorted(drawings.glob("*.pdf")):
             if pdf.is_file() and pdf.stat().st_size > 0:
                 relative = pdf.relative_to(root).as_posix()
+                preview = pdf.with_suffix(".png")
+                preview_relative = (
+                    preview.relative_to(root).as_posix()
+                    if preview.is_file() and preview.stat().st_size > 0
+                    else ""
+                )
                 data["drawings"].append({
                     "name": pdf.stem.replace("-", " "),
                     "bloburl": f"{blob_url}/{relative}",
                     "rawurl": f"{raw_url}/{relative}",
+                    "previewurl": (
+                        f"{raw_url}/{preview_relative}"
+                        if preview_relative
+                        else ""
+                    ),
                 })
 
     path = root / "solidcraft.json"
