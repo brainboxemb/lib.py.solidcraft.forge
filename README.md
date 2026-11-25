@@ -37,7 +37,7 @@ implementations required for its qualification.
 ## Current baseline and provenance
 
 - corrected CAD library template:
-  `brainboxemb/template.cad.library@1d9cddfe975d508e2aaa03cb140cbf61e2fdff82`;
+  `brainboxemb/template.cad.library@e9fb95cd22cb574d615d0bf9a8115c30bbac7ddf`;
 - historical Forge source baseline:
   `brainboxemb/lib.py.solidcraft.forge.OLD@8ddcf7e6f58e8da12750d63a5d3604101c9c2824`;
 - public Python package/import: `scpf`;
