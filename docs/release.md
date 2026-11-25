@@ -1,11 +1,11 @@
-# Forge NEW release boundary
+# Forge release boundary
 
-Forge NEW has release mechanics, but **no NEW release has been published yet**.
+Forge publishes only from an exact, fully qualified stable `main` commit.
 
-The checked-in package version is currently `0.15.0`. That value preserves the
-historical Forge source baseline that was migrated into this repository; it is
-not a release claim for Forge NEW. The Forge NEW validator rejects release
-requests for `0.15.0` or any older version.
+The historical `0.15.0` package version is the migration baseline. The
+canonical repository deliberately rejects release requests for `0.15.0` or
+older versions, so an old historical version can never be republished from the
+rebuilt repository.
 
 ## Ownership
 
@@ -35,7 +35,8 @@ Forge owns only:
 - active blockers in `docs/background/design/release-blockers.txt`;
 - `cadlib/src/scpf/version.py::TESTED_SOLIDCRAFT_VERSION`;
 - the release notes emitted from the matching changelog section;
-- the rule that a Forge NEW release version must be newer than `0.15.0`.
+- the rule that a canonical Forge release version must be newer than the
+  historical `0.15.0` migration baseline.
 
 ### Publication — released `tool.py.lib.ci`
 
@@ -55,9 +56,9 @@ That shared flow owns:
 
 Forge does not reimplement those mechanics.
 
-## Publishing a future NEW release
+## Publishing a release
 
-A future release starts with an explicit source change:
+A release starts with an explicit source change:
 
 1. choose a version **newer than 0.15.0**;
 2. update `cadlib/pyproject.toml` to that version;
@@ -65,8 +66,8 @@ A future release starts with an explicit source change:
    `## [X.Y.Z] - YYYY-MM-DD` section in `CHANGELOG.md`;
 4. make sure `docs/background/design/release-blockers.txt` contains no active
    blocker;
-5. merge and promote normally until the exact release commit is stable on
-   `main`;
+5. merge to `dev` and promote exact `dev -> main` through the repository
+   merge policy;
 6. require the full stable `build/main` evidence described above;
 7. on a normal release-tracking issue, the repository owner comments:
 
