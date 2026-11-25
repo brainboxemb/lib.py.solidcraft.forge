@@ -82,39 +82,37 @@ Accepted stable state:
 - stable-to-development synchronization #154 / PR #155 returned the release
   metadata to `dev` without rebasing shared history.
 
-### Active: #168 consumer-grade drawing authoring
+### Active: #172 final drawing release gate
 
-PR #165 established the drawing runtime/presentation foundation on `dev`:
-- A4/A3 native part drawings preserve paper size and use landscape;
-- final orientation is read back through native `drawing.inspect`;
-- builder-scpf publishes vector PDF + native 144 dpi sheet PNG;
-- Pages loads only the static preview and never auto-embeds the PDF.
+#168 / PR #170 is integrated on `dev` and qualified the consumer-grade
+drawing authoring system:
 
-That foundation is **not** the release boundary.
+- public `DrawingView`, `DrawingNote`, `DrawingRevision` and
+  `DrawingDimension`;
+- explicit standard-view placement/scale;
+- native linear, parallel-face and radial/diameter dimensions;
+- native notes, drawing properties, title-block overrides and one revision row;
+- durable vector PDF, native PNG and final `drawing.inspect` JSON;
+- builder-side structural validation of the saved native drawing;
+- approved generated-sheet image regression;
+- Guide, Cheatsheet and API Reference for external consumers.
 
-Before #166/#167 may proceed, #168 must qualify a Forge-owned consumer
-simulation showing that the public API can author a Wall-Hook-quality
-engineering drawing without Forge-local/model-specific hacks:
+#172 is the final release gate. It must:
+- expose and natively qualify per-view `visual_style="shaded"`;
+- keep normal orthographic views as SolidCraft line views while the consumer
+  proof uses a shaded isometric;
+- reconcile `docs/requirements.md` with the already integrated #168 behavior;
+- update and visually approve the drawing-sheet baseline only after the native
+  shaded output is reviewed;
+- pass PR CI, permanent `dev` build publication and Pages.
 
-- explicit orthographic/isometric view selection, placement and scale;
-- linear and hole/radius/diameter dimension/callout authoring supported by
-  SolidCraft;
-- centre marks/centre lines where supported;
-- notes block;
-- drawing/title-block metadata and revision information where supported;
-- native PDF + PNG evidence;
-- structural/native verification plus an explicit expected visual baseline;
-- Guide/Cheatsheet/API Reference sufficient for an external CAD consumer to
-  reproduce the same authoring workflow.
-
-Do not modify the CAD repository during #168. The real CAD Wall Hook is the
-post-qualification consumer check, not the place where Forge capability is
-invented.
+The pinned SolidCraft 0.49 registry still has no native centre-mark/centre-line
+authoring command; Forge must not fake those graphics.
 
 ### Blocked: #166 / #167 promote and release drawing work
 
-#166 promotion and #167 Forge v0.18.1 are blocked until #168 is complete and
-qualified on permanent `dev`. Only then:
+#166 promotion and #167 Forge v0.18.1 remain blocked until #172 is merged and
+the permanent `dev` build/Pages evidence is green. Only then:
 1. promote exact `dev -> main` with full stable qualification;
 2. publish metadata-only v0.18.1 from that stable product baseline;
 3. synchronize `main -> dev` through merge policy.
