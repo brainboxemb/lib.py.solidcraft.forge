@@ -36,9 +36,11 @@ The accepted baseline now has:
 - the accepted library/CAD NEW workflow split: pull requests run central `ci`
   only, permanent `dev`/`main` runs use one `build` job for qualification and
   durable publication, and Pages is dispatched as an independent workflow;
-- generic library release qualification from `template.cad.library`: durable
-  schema-2 build plans record explicit library qualification and
-  `modules/release` validates exact full stable build evidence;
+- generic stable-main release qualification from
+  `template.cad.library@e9fb95cd22cb574d615d0bf9a8115c30bbac7ddf`:
+  product-changing stable sources retain full schema-2 evidence, while
+  metadata-only release commits may reuse that evidence only across a validated
+  linear release-only history;
 - Forge-owned release metadata validation for package version, dated changelog
   section, active blockers and the tested SolidCraft version;
 - explicit owner-issued `/release` publication delegated to released
@@ -62,42 +64,36 @@ Canonical Forge **v0.16.0** is published and available to consumers:
 - durable stable evidence: `full: true`, `library: true`, 47/47 active owners;
 - qualified runtime: v0.3.6 / SolidCraft 0.49.0.
 
-The immediate priority is the active CAD project, not more Forge infrastructure:
+Current Forge priority is #98: consume the accepted generic stable-main release
+flow from template #47 before returning to Pages.
 
-1. CAD #73 — replace the temporary Forge-main SHA pin with canonical
-   `brainboxemb/lib.py.solidcraft.forge@v0.16.0` and requalify bootstrap/build.
-2. CAD #67 — finish the Basic / Components / Subassemblies / Assemblies catalog
-   taxonomy with generic Display/MFT grouping.
-3. CAD #62 / draft PR #63 — resume the MFT mounting-rail corner bracket after
-   #67 is accepted:
-   - retain the already-qualified 6 mm load-bearing feet below both rail ends;
-   - retain the low rounded outside-corner protector;
-   - preserve outward/open C-channels;
-   - keep provisional MFT screw/hardware dimensions unfrozen until measured or
-     explicitly accepted.
-
-After that CAD checkpoint, prioritize the release-process correction before
-returning to Pages:
-
-4. Template `template.cad.library#47` / PR #48 — separate release preparation
-   from normal dev promotion:
+1. Complete #98 on `dev`:
    - `release/vX.Y.Z` starts from stable `main`;
-   - only `release/*` may go directly to `main`;
-   - full stable qualification remains mandatory;
-   - after publication synchronize `main -> dev` through merge policy;
-   - never rebase the shared permanent `dev` branch.
-5. Forge #98 — consume the accepted generic release-flow policy and update
-   Forge AGENTS/development/release documentation accordingly.
-6. Return to Pages as a dedicated quality phase:
-   - restore the global development warning (#57);
-   - rewrite the landing page around Forge/SCPF itself (#58);
+   - only `CHANGELOG.md` and `cadlib/pyproject.toml:project.version` may
+     change;
+   - release PR/main-push qualification selects library + release only and zero
+     model owners;
+   - `release_only: true` candidates preserve the previous full
+     `build/main` product evidence;
+   - exact release-source history is validated before publication;
+   - release branches clean up only after merge to `main`;
+   - stable-only release metadata returns through `main -> dev`, never rebase.
+2. Run one real unmerged Forge `release/* -> main` smoke proving semantic
+   preflight, release+library selection, zero model owners and
+   `release_only:true`.
+3. After #98 is accepted, return to Pages:
+   - #57 restore the global development warning;
+   - #58 rewrite the landing page around Forge/SCPF itself;
    - visually/content-audit landing, Guide, API Reference, Cheatsheet, Examples
      and Verification;
    - create one issue per remaining independent Pages defect before changing it.
 
+CAD project work continues independently and is no longer a prerequisite for
+these Forge infrastructure/Pages tasks.
+
 #73 remains retained engine/runtime regression evidence rather than a Forge
 replay-workaround target. Other migrated Forge backlog (#59-#72) stays Later
-unless the active CAD work exposes a concrete blocker.
+unless active consumer work exposes a concrete blocker.
 
 ## Later
 

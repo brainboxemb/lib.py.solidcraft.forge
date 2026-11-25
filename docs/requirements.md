@@ -66,10 +66,13 @@
 3. Do not delete the historical external verification repository until all real consumers have migrated.
 4. Do not copy historical scripts, builders or site code merely because they exist. Re-home only behavior with a real owner.
 5. Release behavior remains separate from model migration and Pages.
-6. A release requires exact full stable `build/main` evidence for the requested source, explicit library qualification, all active model owners selected, and matching successful model provenance.
-7. Release publication is explicit and owner-issued through `/release vX.Y.Z <40-character-main-sha>`; Forge must not create tags or GitHub Releases from normal CI.
-8. Generic release publication is delegated to released `tool.py.lib.ci`; Forge owns only package/changelog/blocker/SolidCraft metadata validation.
-9. The migrated `0.15.0` package version is not a NEW release. The first actual NEW release must use a version newer than `0.15.0`.
+6. Product-changing stable commits require full `build/main` evidence with explicit library qualification, all active model owners selected and matching successful model provenance.
+7. A metadata-only release may reuse that retained full product evidence only when the requested release SHA is on its linear first-parent history and every intervening commit changes only `CHANGELOG.md` and `cadlib/pyproject.toml:project.version`.
+8. Release branches must be created from stable `main`, target `main` directly, select only the library plus release capability, and fail closed on any product/source/model/dependency/build-config change.
+9. Release publication is explicit and owner-issued through `/release vX.Y.Z <40-character-main-sha>`; the requested SHA must still be exact current stable `main`.
+10. Generic release publication is delegated to released `tool.py.lib.ci`; Forge owns only package/changelog/blocker/SolidCraft metadata validation.
+11. After a stable-only release commit, synchronize `main -> dev` through merge policy and never rebase the shared development branch.
+12. The migrated `0.15.0` package version is not a canonical release. Every published Forge version must be newer than `0.15.0`.
 
 ## Documentation
 
