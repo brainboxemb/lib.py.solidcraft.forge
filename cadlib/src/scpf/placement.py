@@ -255,7 +255,9 @@ def _anchored_features(shape):
         Anchor.CENTER, Anchor.TOP, Anchor.BOTTOM, Anchor.INNER_BOTTOM
     ):
         raise ValueError(
-            "side anchors are currently for reusable component placement only"
+            "within-component placement lowering currently supports CENTER, "
+            "TOP, BOTTOM and INNER_BOTTOM; this side Faces selection is a "
+            "native placement/topology limitation"
         )
     (width, depth), (x, y, z), thickness = _base_rectangle(target)
     if thickness is None:
