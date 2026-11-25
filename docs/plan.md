@@ -89,17 +89,21 @@ Release work order:
 3. #167 publishes Forge v0.18.1 from that stable baseline and synchronizes
    `main -> dev` through merge policy.
 
-### Active: #156 release-only stable push selection regression
+### Active: #156 release-only stable workflow-dispatch selection regression
 
 The v0.18.0 release PR itself correctly selected only the `release` module,
-the library owner and zero model owners. The subsequent metadata-only stable
-`main` push unexpectedly reran full 49-owner qualification and published a
-new full baseline instead of retaining the previous full product evidence.
+the library owner and zero model owners. Merge policy then started the
+permanent stable qualification via `workflow_dispatch`; the old selector only
+recognized release-only stable history for `push`, so that metadata-only commit
+fell through to full qualification and replaced the retained product baseline.
 
 This did not invalidate v0.18.0: the exact release SHA received stronger
 full/library/all-owner evidence and the release validator accepted it.
-Nevertheless it violates the documented release optimization contract and must
-be corrected separately without changing v0.18.0 provenance.
+The generic correction is accepted in `template.cad.library#67` / PR #68 at
+stable template baseline `7049d34bf34a4303331f3f17608eaa75febe34fc`.
+Forge #156 consumes that same trigger-independent single-parent classification
+and adds publisher regression coverage proving release-only stable publication
+preserves the prior full `build/main` scope.
 
 After #156:
 1. keep #73 as retained engine/runtime regression evidence, not a replay
