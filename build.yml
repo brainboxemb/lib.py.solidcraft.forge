@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/134-component-drawings
-modules: [ci, pages]
+branch: issue/139-a4-drawing-pdf-artifacts
+modules: [builder-scpf, ci, pages]
 library: true
 models: [components]
 tasks: [test]
