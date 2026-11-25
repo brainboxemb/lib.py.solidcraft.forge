@@ -67,7 +67,7 @@ Accepted stable state:
 - release branches start from stable `main`, allow only release metadata and
   reuse retained full product evidence only across validated release-only
   history;
-- Forge v0.16.0 remains the current canonical package release;
+- Forge v0.17.0 is the current canonical package release;
 - stable Pages source:
   `b091449dab32e75ef3c4f22ca0679d21f21beedf`;
 - permanent stable build `45623785680`: PASS;
@@ -80,8 +80,31 @@ Accepted stable state:
 No release blocker remains from the completed stabilization phase.
 
 Forge work should now return to demonstrated consumer value rather than
-continuing a broad migration/site-cleanup stream:
+continuing a broad migration/site-cleanup stream.
 
+### Active: #148 shared face/edge topology selection
+
+The Wall Hook in the active CAD repository demonstrated that face and edge
+selection is still too feature-specific. Issue #148 is the current API task.
+
+Required completion:
+- add one shared `Faces` vocabulary across `on()`, `shell()` and
+  face-boundary edge selection;
+- add semantic `Edges.from_faces(...)` without requiring caller XYZ picks;
+- resolve faces and boundary edges from native SolidCraft topology at replay
+  time, using returned identities rather than predicted topology ids;
+- preserve all existing edge-selection forms source-compatibly;
+- qualify one-face Box and two-face XZ Polygon2D extrusion chamfers natively;
+- document the world-cardinal convention: XZ profiles extrude along Y, so their
+  broad end faces are FRONT/BACK;
+- retain explicit backend/topology-limit errors where a consumer such as
+  `Shape.on(Faces.LEFT)` is accepted as intent but not yet qualified for
+  placement lowering;
+- update requirements, design, API reference, Guide and Cheatsheet;
+- merge to `dev` only after library and selected native model qualification
+  are green.
+
+After #148:
 1. keep #73 as retained engine/runtime regression evidence, not a replay
    workaround target;
 2. prioritize migrated product/API backlog (#59-#72) only when an active CAD
@@ -91,8 +114,8 @@ continuing a broad migration/site-cleanup stream:
 4. coordinate new Forge API changes with the active CAD repository rather than
    adding speculative coverage.
 
-CAD project work continues independently and may now consume the stable Forge
-and release-flow baseline.
+CAD project work continues independently and may consume the stable Forge and
+release-flow baseline.
 
 ## Later
 
