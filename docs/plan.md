@@ -59,6 +59,22 @@ The historical repository is being finalized as
 
 ## Now
 
+### #134 — native component drawings
+
+Add the first Forge/SolidCraft 0.49 drawing slice:
+
+- expose `with_drawing(...)` on standalone component occurrences and final
+  Assemblies;
+- keep drawing intent design-owned rather than component-definition-owned;
+- bind native component/occurrence/drawing ids through replay;
+- delegate standard sheet/view layout to SolidCraft;
+- exercise the feature in the existing `components` owner against the pinned
+  SolidCraft 0.49.0 runtime;
+- document the conservative-scale limitation for a component selected from a
+  larger assembly;
+- defer dimensions, balloons, parts lists and annotation authoring until the
+  base component-drawing contract is accepted.
+
 The release/CI correction and the Forge Pages quality phase are complete on
 stable `main`.
 
