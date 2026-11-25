@@ -2,7 +2,7 @@ name: Pages
 
 on:
   pull_request:
-    branches: [dev, main]
+    branches: [dev, main, exp]
     paths:
       - ".github/workflows/pages.yml"
       - "site/**"
@@ -46,7 +46,11 @@ jobs:
           --source-root .
           --destination generated-site
           --build-scope prepared-build/${{ github.base_ref }}
-          --base-url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.base_ref == 'dev' && 'dev/' || '' }}"
+          --base-url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.base_ref == 'dev' && 'dev/' || github.base_ref == 'exp' && 'exp/' || '' }}"
+          ${{ github.base_ref == 'exp' && '--experimental' || '' }}
+      - name: Check experimental banner
+        if: github.base_ref == 'exp'
+        run: grep -Fq 'Experimental development' generated-site/index.html
       - name: Check rendered routes and evidence links
         env:
           PYTHONPATH: modules/pages/src
@@ -61,7 +65,7 @@ jobs:
         run: >-
           python -m cad_library_pages.capture
           --site generated-site
-          --base-path "/${{ github.event.repository.name }}/${{ github.base_ref == 'dev' && 'dev/' || '' }}"
+          --base-path "/${{ github.event.repository.name }}/${{ github.base_ref == 'dev' && 'dev/' || github.base_ref == 'exp' && 'exp/' || '' }}"
           --output layout-evidence
       - uses: actions/upload-artifact@v7
         with:
@@ -87,6 +91,24 @@ jobs:
         with:
           ref: dev
           path: source-dev
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Detect optional experimental source
+        id: exp
+        run: |
+          if git -C source-main ls-remote --exit-code --heads origin refs/heads/exp; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            status=$?
+            test "$status" -eq 2
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Check out experimental source
+        if: steps.exp.outputs.exists == 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: exp
+          path: source-exp
           fetch-depth: 1
           persist-credentials: false
       - uses: actions/setup-python@v7
@@ -125,6 +147,24 @@ jobs:
           --build-scope prepared-build/dev
           --destination generated-site/dev
           --base-url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/dev/"
+      - name: Build experimental site
+        if: steps.exp.outputs.exists == 'true'
+        env:
+          PYTHONPATH: source-exp/modules/pages/src
+        run: >-
+          python -m cad_library_pages.build
+          --source-root source-exp
+          --build-scope prepared-build/exp
+          --destination generated-site/exp
+          --base-url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/exp/"
+          --experimental
+      - name: Verify experimental site
+        if: steps.exp.outputs.exists == 'true'
+        env:
+          PYTHONPATH: source-exp/modules/pages/src
+        run: |
+          grep -Fq 'Experimental development' generated-site/exp/index.html
+          python -m cad_library_pages.verify --source-root source-exp --site generated-site/exp --build-scope prepared-build/exp
       - name: Publish Pages branch
         env:
           PYTHONPATH: source-main/modules/pages/src
