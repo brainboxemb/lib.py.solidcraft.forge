@@ -121,6 +121,7 @@ def _unwrap_rectangular_shape(shape):
     """Follow modifiers that retain the base component's nominal bounds."""
     while shape.kind in (
         "material_assignment",
+        "appearance_assignment",
         "fillet",
         "chamfer",
         "shell",

@@ -1,6 +1,6 @@
 schema: 1
-branch: fix/176-reconcile-ci-owner-graph
-modules: [ci]
-library: false
-models: []
+branch: feature/178-appearance-color
+modules: []
+library: true
+models: [appearance-color]
 tasks: [test]

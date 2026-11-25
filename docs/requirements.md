@@ -46,6 +46,15 @@
 5. Native qualification must inspect the stored joint type/value/limits and drive the saved design to a second angle so motion is proven, not only command generation.
 6. Additional moving joint types remain consumer-driven future work.
 
+## SCPF display appearance
+
+1. `Shape.with_appearance(color)` assigns one display-only color to the final body.
+2. The initial public color contract accepts a fixed `#RRGGBB` value.
+3. Appearance authoring must lower to native SolidCraft `appearance.assign`.
+4. Appearance authoring must not create or mutate physical material, density or BOM metadata.
+5. Native qualification must inspect the saved appearance chain after replay.
+6. The first contract remains body-wide and opaque; face-level/PBR appearance work is consumer-driven future scope.
+
 ## SCPF topology selection
 
 1. `Faces.TOP/BOTTOM/LEFT/RIGHT/FRONT/BACK` is the shared world-cardinal

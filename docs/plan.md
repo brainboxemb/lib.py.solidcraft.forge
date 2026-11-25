@@ -61,27 +61,6 @@ The historical repository is being finalized as
 
 ## Now
 
-Forge **v0.18.0** is the current canonical package release.
-
-Accepted stable state:
-
-- #148 shared face/edge topology selection is implemented, promoted and
-  released;
-- `Edges.from_faces(...)` selects complete native boundaries of named
-  cardinal faces without caller XYZ picks;
-- TOP/BOTTOM, LEFT/RIGHT and FRONT/BACK are one documented world-cardinal
-  `Faces` vocabulary across topology consumers;
-- SolidCraft-returned face/edge identity is resolved at replay time and native
-  `{body, index}` edge references are consumed by modify features;
-- the Box one-face and XZ FRONT/BACK two-face qualification owners are part of
-  the 49-owner stable graph;
-- stable product promotion #150 / PR #152 received full qualification and was
-  integrated with the policy-selected merge commit;
-- release #151 / PR #153 published annotated tag `v0.18.0` exactly at
-  `009a2bd86dad7c4d452d72a4541f4bdf2dbd34d2`;
-- stable-to-development synchronization #154 / PR #155 returned the release
-  metadata to `dev` without rebasing shared history.
-
 ### Next: #156, then #166 / #167 release the qualified drawing system
 
 The consumer-grade drawing system is fully qualified on permanent `dev`:
