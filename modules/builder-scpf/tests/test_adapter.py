@@ -203,6 +203,7 @@ class SCPFBuilderTests(unittest.TestCase):
                             "note_count": 0,
                             "properties": {},
                             "title_block": {},
+                            "view_styles": {},
                         },
                     }
                 ]
@@ -345,6 +346,7 @@ class SCPFBuilderTests(unittest.TestCase):
                             "note_count": 0,
                             "properties": {},
                             "title_block": {},
+                            "view_styles": {},
                         },
                     }
                 ]
