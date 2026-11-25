@@ -19,6 +19,8 @@ blocks:
         route: reference/
       - label: Cheatsheet
         route: cheatsheet/
+      - label: SolidCraft models
+        url: https://brainboxemb.github.io/2026-011-02.cad.solidcraft/
 
   - type: flow
     title: From Python intent to native SolidCraft
@@ -51,11 +53,6 @@ blocks:
         label: Verification
         description: Native, geometry and reference evidence for declared Forge behavior.
         route: verification/
-      - kicker: Model website
-        label: SolidCraft models
-        description: Browse the physical CAD models that consume Forge.
-        url: https://brainboxemb.github.io/2026-011-02.cad.solidcraft/
-
   - type: catalogue
     title: Featured examples
     description: Practical SCPF patterns backed by published model and verification evidence.
