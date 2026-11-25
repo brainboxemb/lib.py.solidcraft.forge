@@ -76,7 +76,15 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
         marker = f'data-verification-section="{section_id}"'
         position = verification_html.find(marker)
         if position < 0:
-            raise RuntimeError(f"verification section missing: {section_id}")
+            discovered = re.findall(
+                r'data-verification-section="([^"]+)"',
+                verification_html,
+            )
+            raise RuntimeError(
+                f"verification section missing: {section_id}; "
+                f"discovered={discovered}; "
+                f"catalog_shell={'cad-page-shell cad-catalog-page' in verification_html}"
+            )
         section_positions.append(position)
         end = verification_html.find(
             'data-verification-section="',
