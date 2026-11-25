@@ -41,8 +41,97 @@ class SamplePlate:
 
 
 def sample_plate_drawing():
-    """Final design presentation with Forge's default ISO A4 landscape drawing."""
-    return SamplePlate().with_drawing(name="Sample Plate Drawing")
+    """Consumer-grade native engineering drawing authored through public Forge API."""
+    plate = SamplePlate()
+    return plate.with_drawing(
+        name="Sample Plate Drawing",
+        scale="1:1",
+        gap_mm=14,
+        views={
+            "front": DrawingView(at=(62, 128)),
+            "top": DrawingView(at=(62, 62)),
+            "right": DrawingView(at=(137, 128)),
+            "iso": DrawingView(at=(220, 128), scale="1:1"),
+        },
+        properties={
+            "project": "Forge drawing qualification",
+            "part_number": "SCPF-DWG-001",
+            "author": "Forge",
+            "organization": "brainboxemb",
+            "description": "Sample plate engineering drawing",
+        },
+        title_block={
+            "title": "Sample Plate",
+            "identification_number": "SCPF-DWG-001",
+            "material": "Qualification material",
+            "finish": "As modelled",
+            "document_status": "Qualification",
+            "department": "Engineering",
+        },
+        revision=DrawingRevision(
+            revision="A",
+            description="Initial qualified drawing",
+            designer="Forge",
+            checker="CI",
+            date="2026-11-25",
+        ),
+        notes=(
+            DrawingNote(
+                "NOTES\n1. ALL DIMENSIONS IN MM.\n2. BREAK SHARP EDGES.",
+                at=(156, 88),
+                cap_mm=2.5,
+            ),
+        ),
+        dimensions=(
+            DrawingDimension.faces(
+                "front",
+                (-40, 0, 4),
+                (40, 0, 4),
+                direction="horizontal",
+                offset_mm=12,
+                decimals=0,
+            ),
+            DrawingDimension.faces(
+                "front",
+                (30, 20, 0),
+                (30, 20, 8),
+                direction="vertical",
+                offset_mm=10,
+                decimals=0,
+            ),
+            DrawingDimension.faces(
+                "top",
+                (-40, 0, 4),
+                (40, 0, 4),
+                direction="horizontal",
+                offset_mm=12,
+                decimals=0,
+            ),
+            DrawingDimension.faces(
+                "top",
+                (0, -25, 4),
+                (0, 25, 4),
+                direction="vertical",
+                offset_mm=10,
+                decimals=0,
+            ),
+            DrawingDimension.radial(
+                "top",
+                (-25.171573, 2.828427, 8),
+                diameter=True,
+                override_text="2× {value} THRU",
+                line_through_mm=(92, 88),
+                decimals=0,
+            ),
+            DrawingDimension.radial(
+                "top",
+                (8.485281, 8.485281, 22),
+                diameter=True,
+                line_through_mm=(96, 69),
+                decimals=0,
+            ),
+        ),
+    )
 
 
 sample_plate_drawing()
