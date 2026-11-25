@@ -28,7 +28,7 @@ class SheetFold:
 
         with Sketch(name="Fold line", plane="XY") as fold_sketch:
             fold_line = fold_sketch.line(
-                start=(20, -self.depth / 2),
+                start=(20, -(self.depth / 2)),
                 end=(20, self.depth / 2),
             )
 
