@@ -66,7 +66,7 @@ class ForgeNewReleaseValidatorTests(unittest.TestCase):
 
     def test_accepts_first_possible_new_release_metadata(self):
         solidcraft, notes = self.run_validate()
-        self.assertEqual(solidcraft, "0.48.1")
+        self.assertEqual(solidcraft, "0.49.0")
         self.assertIn("## [0.16.0] - 2026-11-24", notes)
         self.assertNotIn("## [0.15.0]", notes)
 
