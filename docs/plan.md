@@ -49,6 +49,14 @@ The accepted baseline now has:
 The historical `brainboxemb/lib.py.solidcraft.forge` repository is now an
 archival/A-B reference rather than an unfinished migration gate.
 
+## Now
+
+1. Use the restored `sheet-contour-flange-recess` owner under #73 to determine
+   and fix the live-vs-headless replay divergence. The late OLD regression
+   fixture is now preserved in NEW; #73 remains open until the same replay
+   document is accepted consistently or the defect is explicitly reassigned to
+   its owning layer with reproducible evidence.
+
 ## Later
 
 1. publish the first actual Forge NEW release only after an explicit version bump above `0.15.0` and a dated changelog section;
