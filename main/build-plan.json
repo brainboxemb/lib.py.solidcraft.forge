@@ -2,6 +2,7 @@
   "active": [
     "anchor-topology-mutation",
     "anchored-holes",
+    "appearance-color",
     "as-built-attach",
     "assembly-decorator",
     "assembly-owned-anchor",
@@ -30,10 +31,12 @@
     "primitive-csg",
     "rectangular-pattern",
     "repeated-parent-attachments",
+    "revolute-joint",
     "rotated-copy-placement",
     "rotated-sketch-cutter",
     "round-top-sketch",
     "rounded-rectangle-sketch",
+    "sample-plate-drawing",
     "selective-profile-extrude",
     "sheet-contour-flange",
     "sheet-contour-flange-recess",
@@ -79,6 +82,16 @@
       "primary": "scpf",
       "purpose": [
         "example",
+        "verification"
+      ]
+    },
+    {
+      "id": "appearance-color",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
         "verification"
       ]
     },
@@ -461,6 +474,16 @@
       ]
     },
     {
+      "id": "revolute-joint",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
       "id": "rotated-copy-placement",
       "implementations": [
         "scpf",
@@ -509,6 +532,17 @@
       ],
       "primary": "scpf",
       "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "sample-plate-drawing",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
         "verification"
       ]
     },
@@ -697,6 +731,7 @@
   "selected": [
     "anchor-topology-mutation",
     "anchored-holes",
+    "appearance-color",
     "as-built-attach",
     "assembly-decorator",
     "assembly-owned-anchor",
@@ -725,10 +760,12 @@
     "primitive-csg",
     "rectangular-pattern",
     "repeated-parent-attachments",
+    "revolute-joint",
     "rotated-copy-placement",
     "rotated-sketch-cutter",
     "round-top-sketch",
     "rounded-rectangle-sketch",
+    "sample-plate-drawing",
     "selective-profile-extrude",
     "sheet-contour-flange",
     "sheet-contour-flange-recess",
@@ -745,5 +782,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "009a2bd86dad7c4d452d72a4541f4bdf2dbd34d2"
+  "source_sha": "e19c362e3703ae0d62638d76728b29d3315320f0"
 }

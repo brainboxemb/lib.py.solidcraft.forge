@@ -1,0 +1,116 @@
+{
+  "commands": [
+    {
+      "bind": {
+        "$fixed": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Leaf"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Leaf",
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "height": 3.0,
+        "length": 40.0,
+        "width": 30.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$moving": "occurrence"
+      },
+      "command": "occurrence.copy",
+      "params": {
+        "component": "Leaf"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$moving",
+        "translate": [
+          0,
+          30.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "command": "joint.create",
+      "params": {
+        "a": {
+          "occurrence": "$fixed",
+          "point": [
+            0.0,
+            15.0,
+            1.5
+          ],
+          "x": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "z": [
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        "b": {
+          "occurrence": "$moving",
+          "point": [
+            0.0,
+            15.0,
+            1.5
+          ],
+          "x": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "z": [
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        "flip": true,
+        "limits": [
+          [
+            0.0,
+            180.0
+          ]
+        ],
+        "name": "Hinge",
+        "type": "revolute",
+        "values": [
+          60.0
+        ]
+      }
+    },
+    {
+      "command": "browser.visibility",
+      "params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

@@ -3,7 +3,7 @@
     {
       "command": "drawing.open",
       "params": {
-        "drawing": "da1a5nawj5vsg"
+        "drawing": "esv93xwy77p6j"
       }
     },
     {
@@ -11,6 +11,15 @@
       "params": {
         "format": "pdf",
         "path": "/output/models/components/scpf/drawings/Block-drawing.pdf"
+      }
+    },
+    {
+      "command": "drawing.export",
+      "params": {
+        "sheet": "93wthc3j7dk7t",
+        "format": "png",
+        "path": "/output/models/components/scpf/drawings/Block-drawing.png",
+        "dpi": 144
       }
     },
     {

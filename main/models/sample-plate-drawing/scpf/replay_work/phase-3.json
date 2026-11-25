@@ -1,0 +1,67 @@
+{
+  "commands": [
+    {
+      "command": "drawing.open",
+      "params": {
+        "drawing": "571e0zjx36048"
+      }
+    },
+    {
+      "command": "drawing.sheet.set",
+      "params": {
+        "sheet": "8w1dvfj7tbzgq",
+        "orientation": "landscape",
+        "documents": {
+          "source": "58esyrkxgaxhv",
+          "component": 1
+        },
+        "title_block_overrides": {
+          "title": "Sample Plate",
+          "identification_number": "SCPF-DWG-001",
+          "material": "Qualification material",
+          "finish": "As modelled",
+          "document_status": "Qualification",
+          "department": "Engineering"
+        }
+      }
+    },
+    {
+      "command": "drawing.inspect",
+      "params": {}
+    },
+    {
+      "command": "drawing.properties.set",
+      "params": {
+        "values": {
+          "project": "Forge drawing qualification",
+          "part_number": "SCPF-DWG-001",
+          "author": "Forge",
+          "organization": "brainboxemb",
+          "description": "Sample plate engineering drawing"
+        }
+      }
+    },
+    {
+      "command": "drawing.revision.add",
+      "params": {
+        "set": {
+          "revision": "A",
+          "description": "Initial qualified drawing",
+          "designer": "Forge",
+          "checker": "CI",
+          "date": "2026-11-25",
+          "hidden": false
+        }
+      }
+    },
+    {
+      "command": "drawing.view.standard",
+      "params": {
+        "sheet": "8w1dvfj7tbzgq",
+        "iso": true,
+        "gap_mm": 14.0,
+        "scale": "1:1"
+      }
+    }
+  ]
+}

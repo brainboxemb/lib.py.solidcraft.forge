@@ -1,0 +1,27 @@
+[
+  {
+    "active": "body",
+    "steps": [
+      {
+        "look": null,
+        "step": "face"
+      },
+      {
+        "look": {
+          "color": "#ffd21a",
+          "name": "Custom",
+          "opacity": 1.0
+        },
+        "step": "body"
+      },
+      {
+        "look": null,
+        "step": "component"
+      },
+      {
+        "look": null,
+        "step": "material"
+      }
+    ]
+  }
+]
