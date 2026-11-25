@@ -81,25 +81,30 @@ The consumer-grade drawing system is fully qualified on permanent `dev`:
   centre-line authoring command, so Forge deliberately does not fake them.
 
 Release work order:
-1. resolve #156 through the generic template fix tracked by
-   `template.cad.library#67`, then consume that correction in Forge so a
+1. integrate #156 from the accepted generic template baseline
+   `template.cad.library@7049d34bf34a4303331f3f17608eaa75febe34fc` so a
    metadata-only release commit does not trigger another full model build;
 2. #166 promotes the exact qualified `dev -> main` product state with full
    stable qualification;
 3. #167 publishes Forge v0.18.1 from that stable baseline and synchronizes
    `main -> dev` through merge policy.
 
-### Active: #156 release-only stable push selection regression
+### Active: #156 release-only stable workflow-dispatch regression
 
-The v0.18.0 release PR itself correctly selected only the `release` module,
-the library owner and zero model owners. The subsequent metadata-only stable
-`main` push unexpectedly reran full 49-owner qualification and published a
-new full baseline instead of retaining the previous full product evidence.
+Branch: `fix/156-workflow-dispatch-release-only`.
 
-This did not invalidate v0.18.0: the exact release SHA received stronger
-full/library/all-owner evidence and the release validator accepted it.
-Nevertheless it violates the documented release optimization contract and must
-be corrected separately without changing v0.18.0 provenance.
+The v0.18.0 release PR correctly selected only `release` + library and zero
+models. The subsequent permanent stable build was started by merge policy with
+`workflow_dispatch`; Forge only recognized `push` as eligible for
+single-parent release-only classification, so it unnecessarily ran full model
+qualification and replaced the durable stable baseline.
+
+The generic correction is now accepted on stable
+`template.cad.library@7049d34bf34a4303331f3f17608eaa75febe34fc`.
+Forge consumes that exact behavior here: push and workflow_dispatch use the
+same single-parent metadata-only classifier, while product changes and merge
+commits stay full/fail-closed. Publication must preserve the prior full
+`build/main` scope for a release-only candidate.
 
 After #156:
 1. keep #73 as retained engine/runtime regression evidence, not a replay
