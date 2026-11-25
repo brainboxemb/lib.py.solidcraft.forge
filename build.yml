@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/89-repository-canonicalization
-modules: [pages]
-library: false
+branch: issue/92-release-v0.16.0
+modules: [release]
+library: true
 models: []
 tasks: [test]

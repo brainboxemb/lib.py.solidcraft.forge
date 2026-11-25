@@ -8,6 +8,31 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-11-25
+
+### Added
+
+- Add `Sketch.line(...)` as a reusable authored native straight-line Sketch
+  reference and allow `Shape.fold(line=...)` to bind that Sketch curve, so
+  parameter-driven fold lines remain associative through saved-design edits.
+- Restore canonical SolidCraft command-registry capture and exact immutable
+  runtime verification under `modules/solidcraft-reference`.
+
+### Changed
+
+- Publish Forge from the canonical migrated repository while preserving the
+  public `scpf` distribution/import contract and the accepted physical model
+  owner architecture.
+- Adopt immutable `docker.cad.solidcraft v0.3.6` and qualify Forge against
+  SolidCraft **0.49.0**.
+- Capture the canonical SolidCraft 0.49.0 registry from
+  `cad-solidcraft:v0.3.6`: 886 commands, 20 command IDs added versus 0.48.1
+  and none removed.
+- Preserve the historical pre-migration repository as archived
+  `brainboxemb/lib.py.solidcraft.forge.OLD`; the migrated repository now owns
+  the canonical `brainboxemb/lib.py.solidcraft.forge` identity.
+
+
 ## [0.15.0] - 2026-11-24
 
 ### Fixed
