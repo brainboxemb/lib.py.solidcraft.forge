@@ -76,11 +76,21 @@ one definition may have many physical occurrences.
 Forge lowers `with_drawing()` to native `drawing.create`,
 `drawing.sheet.set`, `drawing.view.standard`, component-filtering
 `drawing.view.edit` calls and `drawing.close`. SolidCraft owns the part
-template, standard front/top/right/isometric layout and fitted scale.
+template, standard front/top/right/isometric layout and fitted scale. A4 is the
+Forge default; A3 remains an explicit native template choice for larger or more
+complex parts.
 
-All component, occurrence, drawing-source, sheet and view identities come from
-replay-bound SolidCraft command results. Forge never predicts browser names or
-native ids.
+All component, occurrence, drawing, drawing-source, sheet and view identities
+come from replay-bound SolidCraft command results. Forge never predicts browser
+names or native ids.
+
+The replay document may also declare a drawing PDF artifact by its safe
+implementation-relative path, for example
+`drawings/Block-drawing.pdf`. `builder-scpf` owns the actual build path:
+after the native model replay succeeds it reopens `model.sc`, opens the
+replay-bound drawing and calls SolidCraft `drawing.export` with
+`format="pdf"`. The PDF is therefore a native vector drawing artifact, not a
+screenshot and not a Python-rendered document.
 
 For a component selected from a larger Assembly, SolidCraft currently computes
 the standard view group's fitted scale before Forge narrows the base views to
@@ -124,6 +134,8 @@ build/<scope>/models/<owner>/
   source.json
   model.stl
   model.png
+  drawings/
+    <drawing>.pdf
   scpf/
   cadquery/
   build123d/
