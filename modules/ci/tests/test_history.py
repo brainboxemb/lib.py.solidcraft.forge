@@ -1,7 +1,12 @@
 import unittest
 from unittest.mock import patch
 
-from cad_library_ci.history import changed_paths, last_successful_dev_sha
+from cad_library_ci.history import (
+    changed_paths,
+    changed_paths_from_base,
+    changed_paths_from_parent,
+    last_successful_dev_sha,
+)
 
 
 class HistoryTests(unittest.TestCase):
@@ -62,6 +67,34 @@ class HistoryTests(unittest.TestCase):
             ["git", "-C", ".", "diff", "--name-only", "aaa", "bbb", "--"],
         )
 
+
+    @patch("cad_library_ci.history.changed_paths")
+    @patch("cad_library_ci.history.subprocess.run")
+    def test_single_parent_delta_uses_parent_as_baseline(self, run, changed):
+        run.return_value.stdout = "target parent\n"
+        changed.return_value = ("CHANGELOG.md",)
+        self.assertEqual(
+            changed_paths_from_parent(".", "target"),
+            ("CHANGELOG.md",),
+        )
+        changed.assert_called_once_with(".", "parent", "target")
+
+    @patch("cad_library_ci.history.subprocess.run")
+    def test_merge_commit_is_not_release_only_parent_delta(self, run):
+        run.return_value.stdout = "target parent1 parent2\n"
+        self.assertIsNone(changed_paths_from_parent(".", "target"))
+
+    @patch("cad_library_ci.history.changed_paths")
+    @patch("cad_library_ci.history.subprocess.run")
+    def test_pr_delta_uses_remote_base_merge_base(self, run, changed):
+        run.return_value.returncode = 0
+        run.return_value.stdout = "base-sha\n"
+        changed.return_value = ("cadlib/pyproject.toml",)
+        self.assertEqual(
+            changed_paths_from_base(".", "main", "HEAD"),
+            ("cadlib/pyproject.toml",),
+        )
+        changed.assert_called_once_with(".", "base-sha", "HEAD")
 
 if __name__ == "__main__":
     unittest.main()
