@@ -95,6 +95,28 @@ degree value/limits plus native `flip` and `name`. Slider, cylindrical,
 pin-slot and ball authoring wait for demonstrated consumers rather than sharing
 an unqualified generic abstraction.
 
+## Display-appearance boundary
+
+Display color is intentionally separate from physical material authoring.
+
+```text
+Shape.with_appearance("#FFD21A")
+        ↓
+Shape("appearance_assignment", ...)
+        ↓
+appearance.assign(bodies=[final_body], color="#FFD21A")
+        ↓
+native SolidCraft appearance chain
+```
+
+Forge does not create a synthetic material merely to carry display color.
+`with_material(...)` remains the physical-material path with density/BOM
+semantics; `with_appearance(...)` changes only visual presentation.
+
+The initial contract is deliberately narrow: one opaque fixed body-wide color.
+Face-level looks, library recipes, opacity and PBR controls wait for concrete
+consumers.
+
 ## Native topology-selection boundary
 
 Forge uses one world-cardinal `Faces` vocabulary for within-component surface
