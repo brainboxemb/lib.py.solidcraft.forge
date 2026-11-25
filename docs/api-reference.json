@@ -2426,6 +2426,23 @@
           "reference": "reference/diagnostics/#ModelParameterWarning"
         }
       ]
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.with_appearance",
+      "summary": "Assign one fixed display color to the final body without changing physical material semantics.",
+      "guide": "guide/features/#appearance",
+      "reference": "reference/Shape.with_appearance/",
+      "use_when": "A model should open with a specific visual color while material, density and BOM behavior remain unchanged.",
+      "limits": "This first contract accepts one opaque fixed #RRGGBB color and applies it to the final body. Call it after geometry operations.",
+      "parameters": [
+        {
+          "name": "color",
+          "description": "Display color as a #RRGGBB hex string."
+        }
+      ],
+      "example": "body = Box(40, 30, 10).with_appearance(\"#FFD21A\")",
+      "signature": "Shape.with_appearance(self, color)"
     }
   ]
 }
