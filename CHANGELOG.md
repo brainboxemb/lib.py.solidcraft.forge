@@ -8,6 +8,39 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-11-25
+
+### Added
+
+- Add consumer-grade native drawing authoring with explicit standard-view
+  placement and scale, per-view visual style, linear/face/radial dimensions
+  and callouts, notes, drawing properties, title-block overrides and revision
+  rows.
+- Add bounded native revolute relationships through
+  `Occurrence.attach(..., kind="revolute", value=..., limits=..., name=...)`,
+  reusing the existing Anchor/AnchorFrame attachment model while preserving
+  native joint identity and driveable saved-design behavior.
+- Add `Shape.with_appearance("#RRGGBB")` for display-only body color without
+  changing physical material, density or BOM semantics.
+
+### Changed
+
+- Qualify native A4/A3 drawing sheets in landscape orientation and publish each
+  drawing as vector PDF, native static PNG and retained final
+  `drawing.inspect` evidence. Pages uses the static preview and opens or
+  downloads the PDF only on explicit user action.
+- Qualify shaded isometric drawing presentation independently from orthographic
+  line views through per-view visual style.
+
+### Fixed
+
+- Classify metadata-only stable `workflow_dispatch` release commits the same
+  as the existing release-only push path: select release + library and zero
+  model owners, while product/merge-commit deltas still fail closed to full
+  qualification.
+- Preserve the previously accepted full stable `build/main` product baseline
+  when publishing a release-only metadata commit.
+
 ## [0.18.0] - 2026-11-25
 
 ### Added
