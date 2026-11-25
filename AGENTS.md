@@ -55,6 +55,20 @@ Central CI schedules model owners, implementations and runtime roles but must no
 
 Pull requests run central `ci` only. Permanent `dev`/`main` events run one `build` job that performs qualification and durable publication, then dispatches the independent Pages workflow without waiting for it. Do not reintroduce separate permanent-branch `publish-build` or `dispatch-pages` jobs inside CI.
 
+## Release policy
+
+A release is an explicit repository-owner action on a normal issue. Do not create tags or GitHub Releases directly.
+
+The release path is:
+
+- stable `main` already has exact durable `build/main` evidence;
+- comment `/release vX.Y.Z <exact-40-character-main-sha>` on the release issue;
+- `.github/workflows/release.yml` checks the durable library/model evidence;
+- Forge-specific metadata validation runs from `cadlib/release.py`;
+- released `tool.py.lib.ci` owns stable-head validation, annotated tags, GitHub Releases, idempotency and issue reporting.
+
+Pages is never release evidence. The migrated package version `0.15.0` is a historical baseline and must not be published as a NEW release.
+
 ## Runtime policy
 
 Preserve exactly two released CAD runtime roles:

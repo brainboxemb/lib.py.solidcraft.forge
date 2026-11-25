@@ -4,7 +4,7 @@ This file contains unfinished work only.
 
 ## Accepted baseline
 
-The Forge migration is complete on `dev`.
+The Forge migration is complete and promoted to stable `main`.
 
 The accepted baseline now has:
 - 46 physical model owners;
@@ -35,13 +35,21 @@ The accepted baseline now has:
   method;
 - the accepted library/CAD NEW workflow split: pull requests run central `ci`
   only, permanent `dev`/`main` runs use one `build` job for qualification and
-  durable publication, and Pages is dispatched as an independent workflow.
+  durable publication, and Pages is dispatched as an independent workflow;
+- generic library release qualification from `template.cad.library`: durable
+  schema-2 build plans record explicit library qualification and
+  `modules/release` validates exact full stable build evidence;
+- Forge-owned release metadata validation for package version, dated changelog
+  section, active blockers and the tested SolidCraft version;
+- explicit owner-issued `/release` publication delegated to released
+  `tool.py.lib.ci v0.2.1`, with Pages excluded from release evidence;
+- a hard migration boundary that rejects `0.15.0` and older as Forge NEW
+  releases; no Forge NEW tag or GitHub Release has been published.
 
 The historical `brainboxemb/lib.py.solidcraft.forge` repository is now an
 archival/A-B reference rather than an unfinished migration gate.
 
 ## Later
 
-1. qualify NEW release/version mechanics;
-2. retire duplicated historical orchestration only after all real consumers
-   and public documentation have equivalent coverage.
+1. publish the first actual Forge NEW release only after an explicit version bump above `0.15.0` and a dated changelog section;
+2. retire duplicated historical orchestration only after all real consumers and public documentation have equivalent coverage.

@@ -1,0 +1,85 @@
+# Thin CAD-library release adapter.
+# Durable build qualification stays repository/template-owned.
+# Tag and GitHub Release publication stays in released tool.py.lib.ci.
+
+name: Publish library release
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  check_build:
+    if: >-
+      !github.event.issue.pull_request &&
+      startsWith(github.event.comment.body, '/release ')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      TOOL_ROOT: ${{ github.workspace }}/.tool-py-lib-ci
+
+    steps:
+      - name: Check out released Python release tool
+        uses: actions/checkout@v7
+        with:
+          repository: brainboxemb/tool.py.lib.ci
+          ref: 58ead6897a4ac8cafef22a3c1f834491bf61568d
+          path: .tool-py-lib-ci
+          fetch-depth: 1
+          fetch-tags: false
+          persist-credentials: false
+
+      - name: Parse exact release request
+        id: request
+        shell: bash
+        run: |
+          python "$TOOL_ROOT/scripts/release_command.py" parse \
+            --command "${{ github.event.comment.body }}" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Check out exact requested library source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.request.outputs.target_sha }}
+          path: source
+          fetch-depth: 1
+          fetch-tags: false
+          persist-credentials: false
+
+      - name: Check out durable build output
+        uses: actions/checkout@v7
+        with:
+          ref: build
+          path: generated-build
+          fetch-depth: 1
+          fetch-tags: false
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Check exact stable build evidence
+        env:
+          PYTHONPATH: ${{ github.workspace }}/source/modules/release/src
+        run: >-
+          python -m cad_library_release
+          --build-scope "${{ github.workspace }}/generated-build/main"
+          --source-sha "${{ steps.request.outputs.target_sha }}"
+
+  release:
+    needs: check_build
+    permissions:
+      contents: write
+      issues: write
+    uses: brainboxemb/tool.py.lib.ci/.github/workflows/reusable-release.yml@58ead6897a4ac8cafef22a3c1f834491bf61568d
+    with:
+      command: ${{ github.event.comment.body }}
+      issue_number: ${{ github.event.issue.number }}
+      stable_ref: main
+      validator_path: cadlib/release.py
