@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SolidCraft Forge – SCPF API Reference</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/</link><description>Recent content in SCPF API Reference on SolidCraft Forge</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/index.xml" rel="self" type="application/rss+xml"/><item><title>Anchor</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Anchor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Anchor/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SolidCraft Forge – SCPF API Reference</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/</link><description>Recent content in SCPF API Reference on SolidCraft Forge</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/index.xml" rel="self" type="application/rss+xml"/><item><title>Anchor</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Anchor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Anchor/</guid><description>
 &lt;p&gt;Select component attachment references and cardinal directions.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#anchor-choice"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
@@ -27,7 +27,7 @@
 &lt;li&gt;&lt;code&gt;DOWN&lt;/code&gt; = &lt;code&gt;bottom&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 data-hextra-search-id="aliases"&gt;Aliases&lt;span class="hx:absolute hx:-mt-20" id="aliases"&gt;&lt;/span&gt;
-&lt;a href="#aliases" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;CENTER&lt;/code&gt;, &lt;code&gt;TOP&lt;/code&gt;, &lt;code&gt;BOTTOM&lt;/code&gt;, &lt;code&gt;LEFT&lt;/code&gt;, &lt;code&gt;RIGHT&lt;/code&gt;, &lt;code&gt;FRONT&lt;/code&gt;, &lt;code&gt;BACK&lt;/code&gt;&lt;/p&gt;</description></item><item><title>assembly</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/assembly/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/assembly/</guid><description>
+&lt;a href="#aliases" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;CENTER&lt;/code&gt;, &lt;code&gt;TOP&lt;/code&gt;, &lt;code&gt;BOTTOM&lt;/code&gt;, &lt;code&gt;LEFT&lt;/code&gt;, &lt;code&gt;RIGHT&lt;/code&gt;, &lt;code&gt;FRONT&lt;/code&gt;, &lt;code&gt;BACK&lt;/code&gt;&lt;/p&gt;</description></item><item><title>assembly</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/assembly/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/assembly/</guid><description>
 &lt;p&gt;Declare a reusable class that composes component occurrences.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#reusable-assembly"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -67,7 +67,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Assembly.anchor</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.anchor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.anchor/</guid><description>
+&lt;/div&gt;</description></item><item><title>Assembly.anchor</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.anchor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.anchor/</guid><description>
 &lt;p&gt;Return one named assembly-owned attachment datum.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/components/#assembly-anchor"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -105,7 +105,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Assembly.group</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.group/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.group/</guid><description>
+&lt;/div&gt;</description></item><item><title>Assembly.group</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.group/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.group/</guid><description>
 &lt;p&gt;Wrap these assembly occurrences in a real nested native component.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#group"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -143,7 +143,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Assembly.show_assembled</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.show_assembled/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.show_assembled/</guid><description>
+&lt;/div&gt;</description></item><item><title>Assembly.show_assembled</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.show_assembled/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.show_assembled/</guid><description>
 &lt;p&gt;Explicitly show the normal assembled placement.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#exploded-views"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -159,7 +159,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Assembly.show_exploded</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.show_exploded/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.show_exploded/</guid><description>
+&lt;/div&gt;</description></item><item><title>Assembly.show_exploded</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.show_exploded/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.show_exploded/</guid><description>
 &lt;p&gt;Show one named exploded view after the assembly is built.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#exploded-views"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -175,7 +175,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Assembly.with_anchor</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.with_anchor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.with_anchor/</guid><description>
+&lt;/div&gt;</description></item><item><title>Assembly.with_anchor</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.with_anchor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.with_anchor/</guid><description>
 &lt;p&gt;Expose one named attachment datum owned by this assembly.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/components/#assembly-anchor"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -216,7 +216,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Assembly.with_exploded_view</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.with_exploded_view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Assembly.with_exploded_view/</guid><description>
+&lt;/div&gt;</description></item><item><title>Assembly.with_exploded_view</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.with_exploded_view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Assembly.with_exploded_view/</guid><description>
 &lt;p&gt;Add one native SolidCraft exploded presentation to this Assembly. Define exploded views after composing the final Assembly. Use either automatic scale mode or explicit occurrence translations.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#exploded-views"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -232,7 +232,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>attachment-references</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/attachment-references/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/attachment-references/</guid><description>
+&lt;/div&gt;</description></item><item><title>attachment-references</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/attachment-references/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/attachment-references/</guid><description>
 &lt;p&gt;Use richer local or topology-backed datums when a standard Anchor is not enough.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#anchor-choice"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
@@ -265,7 +265,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Axis</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Axis/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Axis/</guid><description>
+&lt;/div&gt;</description></item><item><title>Axis</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Axis/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Axis/</guid><description>
 &lt;p&gt;Select one of the native principal X, Y or Z axes.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/geometry/#solids"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
@@ -277,7 +277,7 @@ data-copied-label="Copied!"
 &lt;li&gt;&lt;code&gt;X&lt;/code&gt; = &lt;code&gt;X&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;Y&lt;/code&gt; = &lt;code&gt;Y&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;Z&lt;/code&gt; = &lt;code&gt;Z&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>component</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/component/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/component/</guid><description>
+&lt;/ul&gt;</description></item><item><title>component</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/component/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/component/</guid><description>
 &lt;p&gt;Declare one reusable physical component definition.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#simple-component"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -318,7 +318,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Depth</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Depth/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Depth/</guid><description>
+&lt;/div&gt;</description></item><item><title>Depth</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Depth/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Depth/</guid><description>
 &lt;p&gt;Choose a supported feature-depth policy.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#hole"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
@@ -328,13 +328,13 @@ data-copied-label="Copied!"
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
 &lt;a href="#members" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;THROUGH_ALL&lt;/code&gt; = &lt;code&gt;through_all&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>diagnostics</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/diagnostics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/diagnostics/</guid><description>
+&lt;/ul&gt;</description></item><item><title>diagnostics</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/diagnostics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/diagnostics/</guid><description>
 &lt;p&gt;Public diagnostics for invalid model intent and lost symbolic parameter dependencies.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
 &lt;a href="#members" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;h3 data-hextra-search-id="modelerror"&gt;ModelError&lt;span class="hx:absolute hx:-mt-20" id="modelerror"&gt;&lt;/span&gt;
 &lt;a href="#modelerror" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Report unsupported or invalid CAD model intent.&lt;/p&gt;
 &lt;h3 data-hextra-search-id="modelparameterwarning"&gt;ModelParameterWarning&lt;span class="hx:absolute hx:-mt-20" id="modelparameterwarning"&gt;&lt;/span&gt;
-&lt;a href="#modelparameterwarning" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Warn that an editable model parameter lost a native CAD dependency.&lt;/p&gt;</description></item><item><title>Edges</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Edges/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Edges/</guid><description>
+&lt;a href="#modelparameterwarning" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Warn that an editable model parameter lost a native CAD dependency.&lt;/p&gt;</description></item><item><title>Edges</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Edges/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Edges/</guid><description>
 &lt;p&gt;Select edges for supported fillet and chamfer feature operations.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#fillet"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
@@ -344,7 +344,7 @@ data-copied-label="Copied!"
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
 &lt;a href="#members" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;VERTICAL&lt;/code&gt; = &lt;code&gt;vertical&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>execution-api</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/execution-api/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/execution-api/</guid><description>
+&lt;/ul&gt;</description></item><item><title>execution-api</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/execution-api/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/execution-api/</guid><description>
 &lt;p&gt;Lower-level entry points for compiling Shapes or trusted model source files.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/getting-started/#run"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
@@ -377,7 +377,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Faces</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Faces/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Faces/</guid><description>
+&lt;/div&gt;</description></item><item><title>Faces</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Faces/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Faces/</guid><description>
 &lt;p&gt;Select named planar faces for within-component feature operations.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#hole"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
@@ -392,7 +392,7 @@ data-copied-label="Copied!"
 &lt;li&gt;&lt;code&gt;RIGHT&lt;/code&gt; = &lt;code&gt;right&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;FRONT&lt;/code&gt; = &lt;code&gt;front&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;BACK&lt;/code&gt; = &lt;code&gt;back&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>feature-constructors</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/feature-constructors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/feature-constructors/</guid><description>
+&lt;/ul&gt;</description></item><item><title>feature-constructors</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/feature-constructors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/feature-constructors/</guid><description>
 &lt;p&gt;Mechanical Hole-family and plastic-feature intent added to supported bodies.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#features"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
@@ -515,7 +515,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>geometry-constructors</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/geometry-constructors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/geometry-constructors/</guid><description>
+&lt;/div&gt;</description></item><item><title>geometry-constructors</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/geometry-constructors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/geometry-constructors/</guid><description>
 &lt;p&gt;Direct 3D primitives and 2D profile constructors.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/geometry/#solids"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
@@ -638,7 +638,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Occurrence.attach</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Occurrence.attach/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Occurrence.attach/</guid><description>
+&lt;/div&gt;</description></item><item><title>Occurrence.attach</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Occurrence.attach/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Occurrence.attach/</guid><description>
 &lt;p&gt;Create a rigid or planar relationship from this occurrence to another component.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#relationship"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -682,7 +682,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Occurrence.copy</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Occurrence.copy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Occurrence.copy/</guid><description>
+&lt;/div&gt;</description></item><item><title>Occurrence.copy</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Occurrence.copy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Occurrence.copy/</guid><description>
 &lt;p&gt;Create another occurrence of the same reusable definition.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#collection"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -721,7 +721,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Occurrence.group</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Occurrence.group/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Occurrence.group/</guid><description>
+&lt;/div&gt;</description></item><item><title>Occurrence.group</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Occurrence.group/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Occurrence.group/</guid><description>
 &lt;p&gt;Place this occurrence in a named native subassembly component.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#group"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -759,7 +759,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>parameters-positioning</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/parameters-positioning/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/parameters-positioning/</guid><description>
+&lt;/div&gt;</description></item><item><title>parameters-positioning</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/parameters-positioning/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/parameters-positioning/</guid><description>
 &lt;p&gt;Keep dimensions symbolic and express readable offsets or parent-bound positions.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/model-objects/#parameter-intent"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
@@ -933,7 +933,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape/</guid><description>
+&lt;/div&gt;</description></item><item><title>Shape</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape/</guid><description>
 &lt;p&gt;Store Forge geometry and feature operations before SolidCraft executes them.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/model-objects/#shape"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -972,7 +972,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape.at</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.at/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.at/</guid><description>
+&lt;/div&gt;</description></item><item><title>Shape.at</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.at/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.at/</guid><description>
 &lt;p&gt;Place a shape at absolute coordinates or align it to another Shape.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/geometry/#solids"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1015,7 +1015,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape.attach</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.attach/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.attach/</guid><description>
+&lt;/div&gt;</description></item><item><title>Shape.attach</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.attach/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.attach/</guid><description>
 &lt;p&gt;Anchor a supported feature explicitly to another Shape.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#anchors"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1056,7 +1056,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape.chamfer</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.chamfer/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.chamfer/</guid><description>
+&lt;/div&gt;</description></item><item><title>Shape.chamfer</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.chamfer/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.chamfer/</guid><description>
 &lt;p&gt;Chamfer selected solid edges by one equal distance.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#fillet"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1096,7 +1096,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape.circular_pattern</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.circular_pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.circular_pattern/</guid><description>
+&lt;/div&gt;</description></item><item><title>Shape.circular_pattern</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.circular_pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.circular_pattern/</guid><description>
 &lt;p&gt;Pattern an existing native history feature around a fixed axis.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#feature-patterns"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1140,7 +1140,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape.contour_flange</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.contour_flange/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.contour_flange/</guid><description>
+&lt;/div&gt;</description></item><item><title>Shape.contour_flange</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.contour_flange/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.contour_flange/</guid><description>
 &lt;p&gt;Create a native contour-flange sheet from an open Sketch chain. The receiver must be the Shape returned by Sketch.chain(&amp;hellip;).finish(). Material dimensions define the sheet rule used by the new body; the contour feature itself receives only that rule name.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/sheet-metal/#contour-flange"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1156,7 +1156,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape.fillet</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.fillet/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.fillet/</guid><description>
+&lt;/div&gt;</description></item><item><title>Shape.fillet</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.fillet/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.fillet/</guid><description>
 &lt;p&gt;Round selected solid edges with one radius.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#fillet"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1196,7 +1196,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape.flange</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.flange/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.flange/</guid><description>
+&lt;/div&gt;</description></item><item><title>Shape.flange</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.flange/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.flange/</guid><description>
 &lt;p&gt;Add a native edge flange to existing sheet material.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/sheet-metal/#edge-flange"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1225,7 +1225,7 @@ data-copied-label="Copied!"
 &lt;li&gt;&lt;code&gt;height_from&lt;/code&gt; — Optional native height datum: &amp;ldquo;outer&amp;rdquo;, &amp;ldquo;inner&amp;rdquo; or &amp;ldquo;tangent&amp;rdquo;.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;position&lt;/code&gt; — Optional native bend position: &amp;ldquo;inside&amp;rdquo;, &amp;ldquo;outside&amp;rdquo;, &amp;ldquo;middle&amp;rdquo;, &amp;ldquo;material_outside&amp;rdquo; or &amp;ldquo;tangent&amp;rdquo;.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;flip&lt;/code&gt; — Reverse the flange side when True. Defaults to False.&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Shape.fold</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.fold/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.fold/</guid><description>
+&lt;/ul&gt;</description></item><item><title>Shape.fold</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.fold/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.fold/</guid><description>
 &lt;p&gt;Fold existing sheet material along one straight line.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/sheet-metal/#fold"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1271,7 +1271,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape.hem</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.hem/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.hem/</guid><description>
+&lt;/div&gt;</description></item><item><title>Shape.hem</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.hem/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.hem/</guid><description>
 &lt;p&gt;Add a native hem to existing sheet material.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/sheet-metal/#hem"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1298,7 +1298,7 @@ data-copied-label="Copied!"
 &lt;li&gt;&lt;code&gt;length&lt;/code&gt; — Positive hem length in mm, measured to the outer face.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;gap&lt;/code&gt; — Optional positive clearance in mm between the returned leg and the face it folds over. When omitted, SolidCraft uses the sheet rule.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;flip&lt;/code&gt; — Reverse the hem side when True. Defaults to False.&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Shape.on</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.on/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.on/</guid><description>
+&lt;/ul&gt;</description></item><item><title>Shape.on</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.on/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.on/</guid><description>
 &lt;p&gt;Place a supported within-component feature on a target face.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#hole"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1338,7 +1338,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape.path_flange</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.path_flange/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.path_flange/</guid><description>
+&lt;/div&gt;</description></item><item><title>Shape.path_flange</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.path_flange/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.path_flange/</guid><description>
 &lt;p&gt;Add a native path flange to existing sheet material.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/sheet-metal/#path-flange"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1364,7 +1364,7 @@ data-copied-label="Copied!"
 &lt;li&gt;&lt;code&gt;edge&lt;/code&gt; — Fixed XYZ pick point on the existing sheet edge.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;path&lt;/code&gt; — Finished open connected Sketch chain describing the flange path across that edge.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;radius&lt;/code&gt; — Optional positive bend radius in mm. When omitted, SolidCraft inherits the active sheet rule.&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Shape.perforate</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.perforate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.perforate/</guid><description>
+&lt;/ul&gt;</description></item><item><title>Shape.perforate</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.perforate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.perforate/</guid><description>
 &lt;p&gt;Add a native whole-sheet perforation field.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/sheet-metal/#perforation"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1391,7 +1391,7 @@ data-copied-label="Copied!"
 &lt;li&gt;&lt;code&gt;pitch&lt;/code&gt; — Positive centre-to-centre perforation pitch in mm.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;margin&lt;/code&gt; — Optional positive clear margin in mm. When omitted, SolidCraft uses the perforation diameter.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;pattern&lt;/code&gt; — Native perforation layout: &amp;ldquo;staggered&amp;rdquo; or &amp;ldquo;square&amp;rdquo;. Defaults to &amp;ldquo;staggered&amp;rdquo;.&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Shape.rectangular_pattern</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.rectangular_pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.rectangular_pattern/</guid><description>
+&lt;/ul&gt;</description></item><item><title>Shape.rectangular_pattern</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.rectangular_pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.rectangular_pattern/</guid><description>
 &lt;p&gt;Pattern an existing native history feature in one or two directions.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#feature-patterns"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1439,7 +1439,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape.shell</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.shell/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Shape.shell/</guid><description>
+&lt;/div&gt;</description></item><item><title>Shape.shell</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.shell/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Shape.shell/</guid><description>
 &lt;p&gt;Hollow a supported solid and leave selected Faces open.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#shell"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1478,7 +1478,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Sketch</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch/</guid><description>
+&lt;/div&gt;</description></item><item><title>Sketch</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch/</guid><description>
 &lt;p&gt;Create an explicit named 2D sketch scope.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/geometry/#profiles"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1523,7 +1523,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>sketch-slot-constructors</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/sketch-slot-constructors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/sketch-slot-constructors/</guid><description>
+&lt;/div&gt;</description></item><item><title>sketch-slot-constructors</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/sketch-slot-constructors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/sketch-slot-constructors/</guid><description>
 &lt;p&gt;Five explicit 2D Slot construction methods mapped directly to SolidCraft sketch.slot.* commands.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/geometry/#profiles"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
@@ -1601,7 +1601,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Sketch.add</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch.add/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch.add/</guid><description>
+&lt;/div&gt;</description></item><item><title>Sketch.add</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch.add/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch.add/</guid><description>
 &lt;p&gt;Add and place a supported 2D profile in this Sketch.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/geometry/#profiles"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1641,7 +1641,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Sketch.extrude</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch.extrude/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch.extrude/</guid><description>
+&lt;/div&gt;</description></item><item><title>Sketch.extrude</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch.extrude/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch.extrude/</guid><description>
 &lt;p&gt;Extrude selected profiles from a completed Sketch.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/geometry/#profile-selection"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1686,7 +1686,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Sketch.mirror</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch.mirror/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch.mirror/</guid><description>
+&lt;/div&gt;</description></item><item><title>Sketch.mirror</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch.mirror/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch.mirror/</guid><description>
 &lt;p&gt;Mirror a profile or earlier Sketch result over the sketch X or Y axis.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/geometry/#pattern-mirror"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1733,7 +1733,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Sketch.rectangular_pattern</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch.rectangular_pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch.rectangular_pattern/</guid><description>
+&lt;/div&gt;</description></item><item><title>Sketch.rectangular_pattern</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch.rectangular_pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch.rectangular_pattern/</guid><description>
 &lt;p&gt;Repeat a profile or earlier Sketch result with a native rectangular pattern.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/geometry/#pattern-mirror"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -1790,7 +1790,7 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Sketch.sheet_metal</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch.sheet_metal/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/reference/Sketch.sheet_metal/</guid><description>
+&lt;/div&gt;</description></item><item><title>Sketch.sheet_metal</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch.sheet_metal/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/reference/Sketch.sheet_metal/</guid><description>
 &lt;p&gt;Create a native sheet-metal body from this closed flat Sketch.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/sheet-metal/#base-sheet"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;

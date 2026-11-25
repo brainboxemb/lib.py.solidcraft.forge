@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SolidCraft Forge – Verification</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/verification/</link><description>Recent content in Verification on SolidCraft Forge</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/verification/index.xml" rel="self" type="application/rss+xml"/><item><title>Joint anatomy</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/verification/joint-anatomy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/verification/joint-anatomy/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SolidCraft Forge – Verification</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/verification/</link><description>Recent content in Verification on SolidCraft Forge</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/verification/index.xml" rel="self" type="application/rss+xml"/><item><title>Joint anatomy</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/verification/joint-anatomy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/verification/joint-anatomy/</guid><description>
 &lt;h2 data-hextra-search-id="1-start-with-the-real-construction"&gt;1. Start with the real construction&lt;span class="hx:absolute hx:-mt-20" id="1-start-with-the-real-construction"&gt;&lt;/span&gt;
 &lt;a href="#1-start-with-the-real-construction" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The verification use case is an open wooden frame. A neutral &lt;code&gt;CornerBracket&lt;/code&gt; connects a side board to the top or bottom board.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;4 brackets&lt;/strong&gt;
@@ -402,7 +402,7 @@ data-copied-label="Copied!"
 &lt;a href="#native-solidcraft-references" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a href="https://docs.solidcraft.io/reference/commands.html" target="_blank" rel="noopener"&gt;Command reference — joint.origin / joint.create&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://docs.solidcraft.io/guide/assemblies.html" target="_blank" rel="noopener"&gt;Components and joints guide&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Verification coverage</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/verification/coverage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/verification/coverage/</guid><description>
+&lt;/ul&gt;</description></item><item><title>Verification coverage</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/verification/coverage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/verification/coverage/</guid><description>
 &lt;p&gt;This page projects the source-owned SCPF coverage declarations onto the current Verification owner graph.
 Linked owner status comes from the current durable build scope when one is available.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="public-python-api-exports"&gt;Public Python API exports&lt;span class="hx:absolute hx:-mt-20" id="public-python-api-exports"&gt;&lt;/span&gt;
@@ -1386,7 +1386,7 @@ Linked owner status comes from the current durable build scope when one is avail
 &lt;td&gt;Transport/argument behavior should be tested separately from headless geometry.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
-&lt;/table&gt;</description></item><item><title>Verification results</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/verification/results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge.NEW/dev/verification/results/</guid><description>
+&lt;/table&gt;</description></item><item><title>Verification results</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/verification/results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/verification/results/</guid><description>
 &lt;p&gt;One current row per Verification owner. Status and counts are read from durable build evidence; Pages does not execute CAD.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
