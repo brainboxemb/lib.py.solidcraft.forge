@@ -2,10 +2,12 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from cad_library_build.publish import (
     PublishError,
     _preserve_release_baseline,
+    publish,
     update_scope,
 )
 
@@ -59,6 +61,44 @@ class PublishTests(unittest.TestCase):
             "selected": [],
         }
         self.assertTrue(_preserve_release_baseline(plan, "main", "main"))
+
+    @patch("cad_library_build.publish._prepare_worktree")
+    @patch("cad_library_build.publish._require_fresh_source")
+    def test_release_only_publish_does_not_replace_build_scope(
+        self,
+        fresh,
+        prepare,
+    ):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            candidate = root / "candidate"
+            candidate.mkdir()
+            (root / "ci.yml").write_text(
+                "branches:\n"
+                "  stable: main\n"
+                "  development: dev\n"
+                "generated:\n"
+                "  build_branch: build\n"
+            )
+            sha = "f" * 40
+            (candidate / "build-plan.json").write_text(
+                json.dumps(
+                    {
+                        "schema": 2,
+                        "source_sha": sha,
+                        "release_only": True,
+                        "full": False,
+                        "library": True,
+                        "active": ["a"],
+                        "selected": [],
+                    }
+                )
+            )
+
+            publish(root, candidate, "main", sha)
+
+            fresh.assert_called_once_with(root.resolve(), "main", sha)
+            prepare.assert_not_called()
 
     def test_release_only_candidate_is_rejected_outside_stable(self):
         plan = {
