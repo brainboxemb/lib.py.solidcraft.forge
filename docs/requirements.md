@@ -68,24 +68,29 @@
 4. Drawing lowering must address components, occurrences, sheets, sources and
    views through replay-bound SolidCraft result ids; browser names and predicted
    ids are forbidden.
-5. Component drawings default to SolidCraft's native ISO A4 part template;
-   callers may select the native ISO A3 part template for more complex parts.
+5. Component drawings default to SolidCraft's native ISO A4 part template and
+   explicitly set the first sheet to landscape. Callers may select the native
+   ISO A3 part template for more complex parts; Forge preserves that paper size
+   while applying the same landscape sheet policy.
 6. Every declared drawing is retained in the native `.sc` design and the SCPF
-   builder exports it as a vector PDF below the implementation's
-   `drawings/` output directory using SolidCraft `drawing.export`.
+   builder exports both a vector PDF and a native static PNG of the exact
+   replay-bound sheet below the implementation's `drawings/` output directory
+   using SolidCraft `drawing.export`.
 7. Build filesystem paths are builder-owned. Model/compiler intent may declare a
    relative drawing artifact name and a replay-bound drawing id, but must not
    embed repository/build-root paths.
 8. Native qualification must execute drawing creation and PDF export against
    the pinned tested SolidCraft runtime, not only compare generated JSON.
-9. Dimensions, balloons, parts lists and annotation authoring remain later
-   demonstrated requirements.
+9. Dimensions, notes, title-block override authoring, explicit view placement,
+   balloons and parts lists remain later demonstrated requirements; this patch
+   must not invent example-specific layout or annotation behavior.
 10. Drawings are a first-class public documentation capability: Guide must have
     a dedicated Drawings chapter, Cheatsheet must expose the common drawing
     forms, and one physical owner with purpose [example, verification] must
     demonstrate the complete A4 drawing flow in both public catalogues.
-11. Pages may embed/link durable drawing PDFs from build/<scope>, but must not
-    copy generated PDFs into gh-pages.
+11. Pages must not embed/auto-open drawing PDFs. It may load the durable static
+    PNG sheet preview and expose explicit PDF open/download links from
+    build/<scope>, but must copy neither generated PDF nor PNG into gh-pages.
 
 ## SolidCraft reference evidence
 
