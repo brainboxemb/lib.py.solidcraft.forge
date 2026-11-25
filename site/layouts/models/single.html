@@ -2,6 +2,7 @@
 {{ $m := .Params.model }}
 {{ $primary := .Params.primary }}
 <article class="cad-page-shell cad-model-detail">
+  {{ partial "cad/development-warning.html" . }}
   <header class="cad-model-hero">
     <p class="cad-model-kicker">{{ .CurrentSection.Title }}</p>
     <h1>{{ .Title }}</h1>
