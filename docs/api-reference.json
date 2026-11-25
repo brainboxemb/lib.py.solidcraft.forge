@@ -353,11 +353,11 @@
     {
       "kind": "callable",
       "name": "DrawingView",
-      "summary": "Describe explicit paper placement and optional scale for one native standard drawing view.",
+      "summary": "Describe explicit paper placement, optional scale and qualified native display style for one standard drawing view.",
       "guide": "guide/drawings/#authoring",
       "reference": "reference/DrawingView/",
-      "use_when": "Place a front, top, right or isometric native SolidCraft view at a deliberate paper coordinate and optionally override that view's scale.",
-      "limits": "at is paper-space millimetres. scale is SolidCraft scale text such as '1:1' or '2:1'. DrawingView does not create a new arbitrary camera; it configures one of the standard native views.",
+      "use_when": "Place a front, top, right or isometric native SolidCraft view at a deliberate paper coordinate, optionally override its scale, and use the qualified shaded style for a pictorial view.",
+      "limits": "at is paper-space millimetres. scale is SolidCraft scale text such as '1:1'. visual_style currently qualifies only 'shaded'; omit it for the normal native line presentation. DrawingView configures one of the standard native views rather than creating an arbitrary camera.",
       "parameters": [
         {
           "name": "at",
@@ -366,10 +366,14 @@
         {
           "name": "scale",
           "description": "Optional native drawing scale text such as '1:1'."
+        },
+        {
+          "name": "visual_style",
+          "description": "Optional native view style. 'shaded' is qualified; omit it for the normal line view."
         }
       ],
-      "example": "DrawingView(at=(220, 128), scale=\"1:1\")",
-      "signature": "DrawingView(at=None, scale=None)"
+      "example": "DrawingView(at=(220, 128), scale=\"1:1\", visual_style=\"shaded\")",
+      "signature": "DrawingView(at=None, scale=None, visual_style=None)"
     },
     {
       "kind": "callable",
