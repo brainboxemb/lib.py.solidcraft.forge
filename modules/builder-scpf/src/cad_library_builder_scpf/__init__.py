@@ -12,6 +12,89 @@ def _require_artifacts(paths):
             raise RuntimeError(f"SCPF build produced no artifact: {path.name}")
 
 
+def _drawing_exports(document):
+    artifacts = document.get("artifacts", {})
+    drawings = artifacts.get("drawings", [])
+    if not isinstance(drawings, list):
+        raise RuntimeError("SCPF drawing artifacts must be a list")
+    result = []
+    seen = set()
+    for index, item in enumerate(drawings):
+        if not isinstance(item, dict) or set(item) != {"name", "drawing", "pdf"}:
+            raise RuntimeError(f"invalid SCPF drawing artifact at index {index}")
+        variable = item["drawing"]
+        relative = Path(item["pdf"])
+        if (
+            not isinstance(variable, str)
+            or not variable.startswith("$")
+            or relative.is_absolute()
+            or ".." in relative.parts
+            or relative.suffix.lower() != ".pdf"
+            or not relative.parts
+            or relative.parts[0] != "drawings"
+        ):
+            raise RuntimeError(f"invalid SCPF drawing artifact at index {index}")
+        key = relative.as_posix()
+        if key in seen:
+            raise RuntimeError(f"duplicate SCPF drawing artifact: {key}")
+        seen.add(key)
+        result.append((item["name"], variable, relative))
+    return result
+
+
+def _export_drawings(document, variables, native: Path, target: Path, replay_work: Path):
+    exports = _drawing_exports(document)
+    produced = []
+    for index, (name, variable, relative) in enumerate(exports, start=1):
+        if variable not in variables:
+            raise RuntimeError(f"unbound drawing artifact variable: {variable}")
+        pdf = target / relative
+        pdf.parent.mkdir(parents=True, exist_ok=True)
+        script = replay_work / f"drawing-export-{index}.json"
+        checkpoint = replay_work / f"drawing-export-{index}.sc"
+        script.write_text(
+            json.dumps(
+                {
+                    "commands": [
+                        {
+                            "command": "drawing.open",
+                            "params": {"drawing": variables[variable]},
+                        },
+                        {
+                            "command": "drawing.export",
+                            "params": {
+                                "format": "pdf",
+                                "path": str(pdf.resolve()),
+                            },
+                        },
+                        {"command": "drawing.close", "params": {}},
+                    ],
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        subprocess.run(
+            [
+                "solidcraft-cli",
+                "run",
+                str(script),
+                "--in",
+                str(native),
+                "--save",
+                str(checkpoint),
+                "--quiet",
+            ],
+            check=True,
+        )
+        _require_artifacts((pdf,))
+        if pdf.read_bytes()[:5] != b"%PDF-":
+            raise RuntimeError(f"SCPF drawing export is not a PDF: {name}")
+        produced.append(pdf)
+    return tuple(produced)
+
+
 def _build_replay(document, output: Path):
     """Execute an SCPF replay document with its runtime binding semantics."""
     from scpf.headless import run_document
@@ -29,13 +112,20 @@ def _build_replay(document, output: Path):
         json.dumps(document, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    run_document(
+    replay_result = run_document(
         document,
         save=native,
         export=output,
         results_out=results,
         replay_log_out=replay_log,
         work_dir=replay_work,
+    )
+    _export_drawings(
+        document,
+        replay_result.get("variables", {}),
+        native,
+        target,
+        replay_work,
     )
     subprocess.run(
         [

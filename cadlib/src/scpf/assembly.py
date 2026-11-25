@@ -866,6 +866,7 @@ def _compile_assembly_with_dependencies(value, name):
         target = drawing_targets[drawing.target_occurrence_id]
         component_ref = component_refs[target.definition.key]
         occurrence_ref = occurrence_refs[target.occurrence_id]
+        drawing_ref = f"$drawing_{drawing_number}"
         source_ref = f"$drawing_{drawing_number}_source"
         sheet_ref = f"$drawing_{drawing_number}_sheet"
         front_ref = f"$drawing_{drawing_number}_front"
@@ -878,6 +879,7 @@ def _compile_assembly_with_dependencies(value, name):
             first_sheet_name=drawing.sheet_name,
         )
         create["bind"] = {
+            drawing_ref: "id",
             source_ref: {
                 "field": "sources",
                 "where": {"path": None},
@@ -930,6 +932,17 @@ def _compile_assembly_with_dependencies(value, name):
         raise ModelError(f"{name} contains no component instances")
     dependencies = _native_dependencies(commands)
     document = _plain_command_value(replay_document(commands))
+    if assembly.drawings:
+        document["artifacts"] = {
+            "drawings": [
+                {
+                    "name": drawing.name,
+                    "drawing": f"$drawing_{index}",
+                    "pdf": drawing.pdf_path,
+                }
+                for index, drawing in enumerate(assembly.drawings, start=1)
+            ],
+        }
     return document, dependencies
 
 

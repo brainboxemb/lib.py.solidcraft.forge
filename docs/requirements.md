@@ -50,11 +50,18 @@
 4. Drawing lowering must address components, occurrences, sheets, sources and
    views through replay-bound SolidCraft result ids; browser names and predicted
    ids are forbidden.
-5. The initial drawing slice uses a native part template with standard
-   front/top/right/isometric views and leaves dimensions, balloons, parts lists
-   and annotation authoring to later demonstrated requirements.
-6. Native qualification must execute the drawing commands against the pinned
-   tested SolidCraft runtime, not only compare generated JSON.
+5. Component drawings default to SolidCraft's native ISO A4 part template;
+   callers may select the native ISO A3 part template for more complex parts.
+6. Every declared drawing is retained in the native `.sc` design and the SCPF
+   builder exports it as a vector PDF below the implementation's
+   `drawings/` output directory using SolidCraft `drawing.export`.
+7. Build filesystem paths are builder-owned. Model/compiler intent may declare a
+   relative drawing artifact name and a replay-bound drawing id, but must not
+   embed repository/build-root paths.
+8. Native qualification must execute drawing creation and PDF export against
+   the pinned tested SolidCraft runtime, not only compare generated JSON.
+9. Dimensions, balloons, parts lists and annotation authoring remain later
+   demonstrated requirements.
 
 ## SolidCraft reference evidence
 

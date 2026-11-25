@@ -5,6 +5,7 @@ These nodes are the compiler-facing representation; users do not need to
 construct Component or Occurrence objects explicitly.
 """
 from dataclasses import dataclass, field, replace
+import re
 from itertools import count
 from math import isfinite
 
@@ -650,7 +651,7 @@ class ModelInstance:
             ),
         )
 
-    def with_drawing(self, *, name=None, template="iso-a3-part", sheet_name="Sheet 1"):
+    def with_drawing(self, *, name=None, template="iso-a4-part", sheet_name="Sheet 1"):
         """Add a native technical drawing for this component occurrence.
 
         The drawing belongs to the final design presentation, not to the
@@ -691,8 +692,9 @@ class ComponentDrawing:
 
     name: str
     target_occurrence_id: int
-    template: str = "iso-a3-part"
+    template: str = "iso-a4-part"
     sheet_name: str = "Sheet 1"
+    pdf_path: str = ""
 
 
 @dataclass(frozen=True)
@@ -779,7 +781,7 @@ class Assembly:
             anchors=anchors,
         )
 
-    def with_drawing(self, target, *, name=None, template="iso-a3-part", sheet_name="Sheet 1"):
+    def with_drawing(self, target, *, name=None, template="iso-a4-part", sheet_name="Sheet 1"):
         """Add a native technical drawing of one component occurrence.
 
         Compose the final Assembly first, then select the occurrence the sheet
@@ -801,6 +803,13 @@ class Assembly:
         if any(drawing.name == name for drawing in self.drawings):
             raise ValueError(f"drawing {name!r} already exists")
 
+        pdf_stem = re.sub(r"[^A-Za-z0-9._-]+", "-", name).strip("-.")
+        if not pdf_stem:
+            raise ValueError("drawing name cannot produce a safe PDF filename")
+        pdf_path = f"drawings/{pdf_stem}.pdf"
+        if any(drawing.pdf_path == pdf_path for drawing in self.drawings):
+            raise ValueError(f"drawing PDF path {pdf_path!r} already exists")
+
         if not isinstance(template, str) or not template.strip():
             raise ValueError("drawing template must be non-empty text")
         if not isinstance(sheet_name, str) or not sheet_name.strip():
@@ -814,6 +823,7 @@ class Assembly:
                     target_occurrence_id=target.occurrence_id,
                     template=template.strip(),
                     sheet_name=sheet_name.strip(),
+                    pdf_path=pdf_path,
                 ),
             ),
         )
