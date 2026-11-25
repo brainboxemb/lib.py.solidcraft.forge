@@ -1,6 +1,6 @@
 ---
 title: Verification
-type: models
+type: verification
 description: Qualification cases and durable evidence for Forge/SCPF behaviour.
 ---
 
