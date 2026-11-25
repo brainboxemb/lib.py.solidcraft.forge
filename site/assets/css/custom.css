@@ -1203,3 +1203,28 @@ html:not(.dark) .hextra-search-trigger{font-size:.9rem}
 @media (max-width: 620px) {
   .cad-visual-grid { grid-template-columns: 1fr; }
 }
+
+/* Forge-owned development status: shared across every public content route. */
+.forge-development-warning{
+  margin:1rem 0 1.25rem;
+  padding:.75rem 1rem;
+  border:1px solid #861b1b;
+  border-left:4px solid #741515;
+  border-radius:8px;
+  background:#a92525;
+  color:#fff;
+  font-size:.9rem;
+  line-height:1.45;
+  box-shadow:0 2px 7px rgba(88,17,17,.12);
+}
+.forge-development-warning strong{
+  color:#fff;
+  margin-right:.35em;
+}
+@media(max-width:700px){
+  .forge-development-warning{
+    margin:.75rem 0 1rem;
+    padding:.7rem .8rem;
+    font-size:.86rem;
+  }
+}
